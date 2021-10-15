@@ -36,7 +36,7 @@ export const gridModel = (props:{
   setGridData
   : React.Dispatch<React.SetStateAction<any[]>>,
 
-  /** 그리드 컬럼 재설정 */
+  /** 그리드 컬럼 재설정  */
   setGridColumns
   : React.Dispatch<React.SetStateAction<IGridColumn[]>>,
 
