@@ -1,0 +1,158 @@
+@import './color.style.scss';
+@import './size.style.scss';
+@import './font.style.scss';
+
+
+
+/* #region 🔶그리드에서 사용되는 체크박스 스타일  */
+// 그리드 헤더에 있는 체크박스에 적용
+@mixin size {
+  width: $width_checkbox_md;
+  height: $height_checkbox_md;  
+}
+.tui-grid-cell.tui-grid-cell-header.tui-grid-cell-row-header > span > input {
+  @include size;
+  margin-top: $marginTop_checkbox_default;
+}
+
+// 그리드 셀에 있는 체크박스에 적용
+.tui-grid-row-header-checkbox > input[type=checkbox], .tui-grid-cell-content > input[type=checkbox]  {
+  @include size;
+  vertical-align: middle;
+}
+/* #endregion */
+
+/* #region 🔶그리드 수정모드 스타일 */
+//수정하려고 더블클릭 했을 때 콤보박스 뒤로 보여지는 배경색
+.tui-grid-layer-editing.tui-grid-cell-content.tui-grid-cell-content-editor {
+  background-color: $bg_comboBoxContent_editor;
+}
+
+tr.tui-grid-row{
+  // 수정모드에서 그리드 홀수 줄에 적용
+  &-odd > td.tui-grid-cell.tui-grid-cell-has-input.update:not(.editor,.popup){
+    background-color: $bg_gridRow_odd;
+  }
+  // 수정모드에서 그리드 짝수 줄에 적용
+  &-even > td.tui-grid-cell.tui-grid-cell-has-input.update:not(.editor,.popup){
+    background-color: $bg_gridRow_even;
+  }
+}
+/* #endregion */
+
+/* #region 🔶그리드 헤더부분 스타일 */
+.tui-grid{
+  &-header-area{
+    //그리드 헤더부분 색상 
+    background-color: $bg_gridHeader_area;
+  }
+  // 그리드 헤더 선택했을 때 색상 적용
+  &-layer-selection{
+    background-color: $bg_gridLayer_selection;
+  }
+}
+/* #endregion */
+/* #region 🔶그리드 체크박스 체크했을 때 row 스타일 */
+tr.tui-grid-row{
+  //홀수줄
+  &-odd > td.tui-grid-cell.tui-grid-cell-has-input.row-checked {
+    background-color: lighten($bg_gridRow_checkbox, 3%);
+  }
+  //짝수줄
+  &-even > td.tui-grid-cell.tui-grid-cell-has-input.row-checked {
+    background-color: $bg_gridRow_checkbox;
+  }
+}
+/* #endregion */
+
+
+
+/* #region 🔶graphGrid 그래프 옵션(설정) 스타일 */
+// 그래프 옵션 이미지에 적용
+.graphOption {
+  text-align: right; 
+  position: absolute; 
+  display: table-cell; 
+  z-index: 1; 
+  width: $width_graph_default;
+  margin-left: -20;
+}
+/* #endregion */
+
+/* #region 🔶그리드에서 사용되는 Card 스타일 */
+@mixin text ($position){
+  text-align: $position;
+}
+.card-grid + .text-left {
+  @include text(left);
+}
+
+.grid-card-two+ .text-left {
+  @include text(left);
+}
+
+.card-grid, .grid-card-two  + .text-right {
+  @include text(right);
+}
+/* #endregion */
+
+/* #region 🔶Number Input 그리드에서 사용되는 숫자 인풋박스 스타일 */
+.tui-grid-content-number{
+  width: 100%;
+  height: 30px;
+  border: 2px solid $bg_numberInput_border;
+  padding-left: 10px;
+  font-size: $fontSize_label;
+
+  &:focus{
+    outline: none;
+    border: 2px solid $bg_numberInputFocus_border;
+  }
+}
+/* #endregion */
+
+/* #region 🔶Combobox 그리드에서 사용되는 콤보박스 스타일 */
+.select{
+  padding-top: 0.5px;
+  // 콤보박스에 적용
+  &-selector{
+    width: 100%;
+    height: $height_combobox_default;
+    color: $fg_comboBoxSelector_default;
+    border-radius: $borderRadius_common;
+    font-size: $fontSize_cbo;
+    font-family: $fontFamily_default;
+    outline: none;
+    border: 2px solid $bg_comboboxFocus_border;
+  }
+  &-selector:focus{
+    border: 2px solid $bg_comboboxFocus_border;
+  }
+}
+/* #endregion */
+
+/* #region 🔶Datepicker 그리드에서 사용되는 Datepicker 스타일 */
+.tui-grid{
+  &-content-date{
+    width: 100%;
+    height: 30px;
+    outline: none;
+  }
+  &-content-date:focus{
+    border: 2px solid $bg_datepickerFocus_border;
+  }
+  &-cell{
+    border: none;
+  }
+}
+/* #endregion */
+
+/* 그리드 행 사이 간격 적용 */
+.ant-row{
+  row-gap: 0px !important;
+}
+
+/* searchbox안 라벨, 컴포넌트, 버튼 묶음 margin-bottom: -10px -> 0px로 변경 */
+.ant-space.ant-space-horizontal.ant-space-align-center{
+  margin-bottom: 0px !important;
+}

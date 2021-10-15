@@ -1,0 +1,105 @@
+{
+	// Place your snippets for typescriptreact here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"ISOS-Client-Page-Snippet": {
+		"prefix": "isos-single-page",
+		"body": [
+			"// [작성일자: $CURRENT_YEAR/$CURRENT_MONTH/$CURRENT_DATE]",
+			"// [작성자: __이름을 입력하세요__]",
+			"import React from 'react';",
+			"import { TpSingleGrid } from '~components/templates/grid-single';",
+			"import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';",
+			"import { TGridColumns, useGridState } from '~components/UI/datagrid';",
+			"import { usePopupState } from '~components/UI/popup';",
+			"import { useEffect } from 'react';",
+			"import { v4 as uuidv4 } from 'uuid';",
+			"import { useSingleGridPageState } from '~/hooks/page.hook';",
+			"import IDatagridProps from '~/components/UI/datagrid/datagrid.ui.type';",
+			"import { getItemState } from '~/functions';\n",
+			"\n",
+
+			"const uriPath='❗__ROUTE_경로를_입력하세요__';",
+			"const pageGridId = uuidv4();",
+			"const popupGridId = uuidv4();\n",
+			"\n",
+
+			"export const ❗__페이지명을_입력하세요__(ex: PgDept)__ = () => {",
+			
+			"\t// 팝업 훅",
+			"\tconst popupState = usePopupState();\n",
+
+			"\t// 입력될 조회조건 세팅",
+			"\tconst [❗__sch_name__] = getItemState('❗__input_type__', pageGridId + '__sch_key__');\n",
+
+			"\t// 조회조건 값",
+			"\tsearchParams = {",
+			"\t\t❗__key__: ❗__value__",
+			"\t}\n",
+			
+			"\t// 그리드 훅",
+			"\tconst gridState = useGridState('page');\n",
+
+			"\t// 그리드모드",
+			"\tconst gridMode = gridState.getGridMode(pageGridId);",
+			"\tconst defaultGridMode = 'view';\n",
+			"\n",
+
+			"\t// 그리드 컬럼 세팅",
+			"\tconst gridColumns:TGridColumns = [",
+			"\t\t{header: '❗__컬럼헤더명(보여지는이름)__', name:'❗__컬럼명(컬럼키값)__', alias:'❗__저장시_치환될_명칭__', width:❗__너비__, filter:'❗__필터타입__',  format:'❗__포맷설정__', editable:❗__수정가능여부__, hidden:❗__숨김여부__},",
+			"\t];\n",
+
+			"\t// 그리드 관련 세팅",
+			"\tlet gridItems:IDatagridProps = {",
+			"\t\tid: pageGridId,",
+			"\t\tcolumns: gridColumns,",
+			"\t\tgridMode: gridMode,",
+			"\t\tdefaultGridMode: defaultGridMode,",
+			"\t};\n",
+
+			"\t// 페이지에서 동작시킬 이벤트",
+			"\tconst pageState = useSingleGridPageState(pageGridId, popupGridId, uriPath, gridColumns, gridItems);\n",
+
+			"\t// 그리드에 data값 세팅",
+			"\tgridItems = {...gridItems, data: pageState.datas};\n",
+			"\n",
+
+			"\t// 페이지가 최초로 렌더링될 때 동작하는 함수",
+			"\tuseEffect(()=>{",
+			"\t\tgridState.setGridMode(pageGridId, 'view');\n",
+
+			"\t\treturn(() => {",
+			"\t\t\tpopupState.removeAll();",
+			"\t\t});",
+			"\t},[]);\n",
+			"\n",
+
+			"  // 템플릿에 넘겨줄 객체와 함수 정리",
+			"  const childProps:ITpSingleGridProps = {",
+			"    id:pageGridId,",
+			"    popupId:popupGridId,",
+			"    uriPath,",
+			"    gridItems,",
+			"    editGrid:true,",
+			"    pageState",
+			"  };\n",
+			"\n",
+
+			"  return (",
+			"    <TpSingleGrid {...childProps}/>",
+			"  );",
+			"};",
+		]
+	}
+}

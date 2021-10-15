@@ -1,0 +1,291 @@
+// COMMON
+$letterSpacing_common: 1px;
+$borderRadius_common: 3px;
+$width_common: 100%;
+
+// HEADER
+$height_header_default: 70px;
+
+// FOOTER
+$height_footer_default: 60px;
+
+// MENU
+$width_level1Menu_selected: 58px;
+$width_level1Menu_default: 70px;
+$width_level2Menu_default: 200px;
+
+// BUTTON
+$width_button_sm: 70px; 
+$width_button_md: 90px;
+$width_button_lg: 140px;
+$width_button_xlg: 350px;
+$height_button_default: 26px;
+$height_button_lg: 50px;
+$borderRadius_button_default: 3px;
+$letterSpacing_button_default: 1.5px;
+
+// SUBMIT BUTTON
+$width_submitButton_default: 50px;
+$height_submitButton_default: 26px;
+
+// CHECKBOX
+$width_checkbox_sm: 14px;
+$height_checkbox_sm: 14px;
+$width_checkbox_md: 16px;
+$height_checkbox_md: 16px;
+$width_checkbox_lg: 18px;
+$height_checkbox_lg: 18px;
+$width_checkbox_default: 120px;
+$marginTop_checkbox_default: 3px;
+
+
+// RADIO
+$width_radio_sm: 14px;
+$height_radio_sm: 14px;
+$width_radio_md: 16px;
+$height_radio_md: 16px;
+$width_radio_lg: 18px;
+$height_radio_lg: 18px;
+
+// COMBOBOX
+$width_combobox_md: 120px;
+$width_combobox_lg: 140px;
+$width_combobox_xl: 160px;
+$height_combobox_default: 26px;
+
+// CONTAINER
+$width_container_default: 100%;
+$width_container_md: 100px;
+$borderRadius_container_default: 3px;
+
+// GRAPH
+$width_graph_default: 100%;
+$width_graphNotice_md: 150px;
+
+// ATGRIDCARD
+$width_girdCard1_md: 350px;
+$height_girdCard1_md:2px;
+
+$width_girdCard2_md: 350px;
+$height_girdCard2_md: 20px;
+
+$width_downtime_md: 350px;
+$height_downtime_md:337px;
+
+$width_downtimeName_md: 100%;
+$height_downtimeName_md:100%;
+
+$width_card_md: 350px;
+$height_card_md: 337px;
+
+$width_tag_md: 49.13px;
+$height_tag_md: 22px;
+
+$width_cardGrid_md: 100%;
+$width_gridCardOne_md: 100%;
+
+$width_gridCardTwo_md: 50%;
+$height_gridCardTwo_md: 78px;
+
+// DATEPICKER
+$width_datepicker_md: 150px;
+$width_datepicker_sm: 120px;
+$width_datepicker_lg: 180px;
+$height_datepicker_default: 26px;
+
+// TEXTBOX
+$width_input_lg: 350px;
+$width_input_md: 200px;
+$width_input_sm: 150px;
+$height_input_default: 26px;
+$height_input_lg: 40px;
+
+// PASSWORD
+$width_inputPw_md: 200px;
+$width_inputPw_sm: 150px;
+$width_inputPw_lg: 250px;
+$height_inputPw_default: 250px;
+
+// INPUTNUMBER
+$width_inputNumber_md: 200px;
+$width_inputNumber_sm: 150px;
+$width_inputNumber_lg: 250px;
+$height_inputNumber_default: 26px;
+
+// SUB-TOTAL GRID
+$width_grid_default: 100%;
+$width_gridH2_default: 100%;
+
+// GRAPH
+$height_graph_default: 100%;
+
+// ASISTROW
+$height_axisY_default: 0px;
+
+// GRAPH TITLE
+$height_graphTitle_default: 30px;
+
+// CARDGRID
+$width_colorbox_md: 16px;
+$height_colorbox_md: 16px;
+$marginRight_colorBox_default: 5px;
+
+// 상태현황
+$width_state_default: 350px;
+$width_card_default: 100%;
+$height_dashboardCard_default: 234px;
+
+// 버튼사이여백
+$right_button_default: 5px;
+$left_button_default: 5px;
+
+// 그리드 셀 팝업
+$height_popupInput_default: 18px;
+$width_popupImg_max: 18px;
+$width_popup_min: 120px;
+$width_gridFilter_default: 60px;
+
+// 스크롤 (nav -> 왼쪽 메뉴,  track -> 페이지, 그리드)
+$width_scrollbar_nav: 6px;
+$height_scrollbar_nav: 6px;
+
+$width_scrollbar_page: 14px;
+$borderRadius_track: 10px;
+
+// MODAL
+$width_modalButton_close: 25px;
+$height_modalButton_close: 20px;
+
+
+
+:export{
+  letterSpacing_common: $letterSpacing_common;
+  borderRadius_common: $borderRadius_common;
+
+  width_common: $width_common;
+
+  height_dashboardCard_default: $height_dashboardCard_default;
+
+  height_header_default: $height_header_default;
+  height_footer_default: $height_footer_default;
+
+  width_level1Menu_selected: $width_level1Menu_selected;
+  width_level1Menu_default: $width_level1Menu_default;
+  width_level2Menu_default: $width_level2Menu_default;
+
+  width_button_sm: $width_button_sm; 
+  width_button_md: $width_button_md;
+  width_button_lg: $width_button_lg;
+  width_button_xlg: $width_button_xlg;
+  height_button_default: $height_button_default;
+  height_button_lg: $height_button_lg;
+  borderRadius_button_default: $borderRadius_button_default;
+  letterSpacing_button_default: $letterSpacing_button_default;
+
+  width_submitButton_default: $width_submitButton_default;
+  height_submitButton_default: $height_submitButton_default;
+  
+  width_checkbox_default: $width_checkbox_default;
+  width_checkbox_sm: $width_checkbox_sm;
+  height_checkbox_sm: $height_checkbox_sm;
+  width_checkbox_md: $width_checkbox_md;
+  height_checkbox_md: $height_checkbox_md;
+  width_checkbox_lg: $width_checkbox_lg;
+  height_checkbox_lg: $height_checkbox_lg;
+  marginTop_checkbox_default: $marginTop_checkbox_default;
+
+  width_radio_sm: $width_radio_sm;
+  height_radio_sm: $height_radio_sm;
+  width_radio_md: $width_radio_md;
+  height_radio_md: $height_radio_md;
+  width_radio_lg: $width_radio_lg;
+  height_radio_lg: $height_radio_lg;
+  
+  width_combobox_md: $width_combobox_md;
+  width_combobox_lg: $width_combobox_lg;
+  width_combobox_xl: $width_combobox_xl;
+  height_combobox_default: $height_combobox_default;
+
+  width_container_default: $width_container_default;
+  width_container_md: $width_container_md;
+  borderRadius_container_default: $borderRadius_container_default;
+
+  width_graph_default: $width_graph_default;
+  width_graphNotice_md: $width_graphNotice_md;
+
+  width_datepicker_md: $width_datepicker_md;
+  width_datepicker_sm: $width_datepicker_sm;
+  width_datepicker_lg: $width_datepicker_lg;
+  height_datepicker_default: $height_datepicker_default;
+
+  width_input_lg: $width_input_lg;
+  width_input_md: $width_input_md;
+  width_input_sm: $width_input_sm;
+  width_input_lg: $width_input_lg;
+  height_input_default: $height_input_default;
+  height_input_lg: $height_input_lg;
+
+  width_inputPw_md: $width_inputPw_md;
+  width_inputPw_sm: $width_inputPw_sm;
+  width_inputPw_lg: $width_inputPw_lg;
+  height_inputPw_default: $height_inputPw_default;
+
+  width_inputNumber_md: $width_inputNumber_md;
+  width_inputNumber_sm: $width_inputNumber_sm;
+  width_inputNumber_lg: $width_inputNumber_lg;
+  height_inputNumber_default: $height_inputNumber_default;
+
+  width_grid_default: $width_grid_default;
+
+  width_gridH2_default: $width_gridH2_default;
+  height_graph_default: $height_graph_default;
+  height_axisY_default: $height_axisY_default;
+  height_graphTitle_default: $height_graphTitle_default;
+
+  width_colorbox_md: $width_colorbox_md;
+  height_colorbox_md: $height_colorbox_md;
+
+  marginRight_colorBox_default: $marginRight_colorBox_default;
+
+  width_state_default: $width_state_default;
+  width_card_default: $width_card_default;
+
+  width_girdCard1_md: $width_girdCard1_md;
+  height_girdCard1_md: $height_girdCard1_md;
+  width_girdCard2_md: $width_girdCard2_md;
+  height_girdCard2_md: $height_girdCard2_md;
+
+  width_downtime_md: $width_downtime_md;
+  height_downtime_md: $height_downtime_md;
+  width_downtimeName_md: $width_downtimeName_md;
+  height_downtimeName_md: $height_downtimeName_md;
+
+  width_card_md: $width_card_md;
+  height_card_md: $height_card_md;
+
+  width_tag_md: $width_tag_md;
+  height_tag_md: $height_tag_md;
+
+  width_cardGrid_md: $width_cardGrid_md;
+
+  width_gridCardOne_md: $width_gridCardOne_md;
+  width_gridCardTwo_md: $width_gridCardTwo_md;
+
+  height_gridCardTwo_md: $height_gridCardTwo_md;
+
+  right_button_default: $right_button_default;
+  left_button_default: $left_button_default;
+  height_popupInput_default: $height_popupInput_default;
+  width_popupImg_max: $width_popupImg_max;
+  width_popup_min: $width_popup_min;
+  width_gridFilter_default: $width_gridFilter_default;
+
+    
+  width_scrollbar_nav: $width_scrollbar_nav;
+  height_scrollbar_nav: $height_scrollbar_nav;
+  width_scrollbar_page: $width_scrollbar_page;
+  borderRadius_track: $borderRadius_track;
+
+  width_modalButton_close: $width_modalButton_close;
+  height_modalButton_close: $height_modalButton_close;
+};

@@ -1,0 +1,462 @@
+/* #region 🔴color palette */
+$palettes_footer: #565656;
+$palettes_white: #FFFFFF;
+$palettes_fontColor: #333333;
+$palettes_titleColor: #707070;
+$palettes_loginFooter: #929292;
+$palettes_menuButton: #9faabd;
+$palettes_menuActive: #637bff;
+$palettes_darkgray: #57626f;
+$palettes_loginLabel: #393941;
+$palettes_gridFontColor: #000000;
+$palettes_submitButton: #1C263D;
+// $palettes_primary: #0055b8; 
+// $palettes_primary: #1A212B; 
+// $palettes_primary: #1F2633;
+// $palettes_primary: #2F343D;
+$palettes_primary: #383D44;
+$palettes_skyblue: #e6f7ff;
+$palettes_blue: #1890ff;
+$palettes_lightgreen: #C2EEA0;
+$palettes_green: #99D77F;
+$palettes_lightred: #FFB1AD;
+$palettes_orange: #FF6F27;
+$palettes_lightgray: #DFDFDF;
+$palettes_gray: #919191;
+$palettes_excelBtn: #035A37;
+$palettes_addBtn: #3D8B7D;
+$palettes_cancelBtn: #F38837;
+$palettes_saveBtn: #167FAC;
+$palettes_deleteBtn: #ED7425; 
+$palettes_border: #e3e3e3;
+$palettes_graphGrid: #F0F0F0;
+$Palettes_downtime: #FFB1AD80;
+$palettes_progressBar: #3378EC;
+$palettes_dots: #38bcb2;
+$palettes_lines: #eed312;
+$palettes_statistic: #40A9FF;
+$palettes_maipLast: #F4C2BE;
+$palettes_maipThis: #E0483E;
+$palettes_salesLast: #B2D6E7;
+$palettes_salesThis: #1A85B9;
+$palettes_hoverBtn: #3CA0FE;
+$palettes_gridHeader: #eeeeee;  
+$palettes_gridLayer: #00A9ff;
+$palettes_gridRow: #C8DFF7;
+$palettes_comboBoxContent: #FCFDFF;
+$palettes_comboBoxSelector: #9ea4aa;
+$palettes_comboBox: #f8f8f8;
+$palettes_gridCellBorder: #cccccc;  
+$palettes_scrollbar: #c1c1c1;
+$palettes_scrollbar_area: #f1f1f1;
+$palettes_buttonHover: rgba(60, 160, 254, .1);
+$palettes_cardShadow: #00000010;
+$palettes_evenRow: rgba(238, 238, 238, 0.3);
+$palettes_selectedHeader: rgba(213,235,254, 0.5);
+$palettes_gridRowOdd: rgba(204, 204, 204, 0.5);
+$palettes_gridRowEven: rgba(204, 204, 204, 0.65);
+
+
+$palettes_selectRowOdd: rgba(230, 230, 250,  0.5); 
+$palettes_selectRowEven: rgba(230, 230, 250, 0.8);
+
+
+$palettes_level1Menu: rgba(250,250,250,.25);
+$palettes_gridCheckbox: #D4EAFE;  
+$palettes_nivoPie01: #788EE0;
+$palettes_nivoPie02: #26A69A;
+$palettes_nivoPie03: #4CAF50;
+$palettes_nivoPie04: #7CB342;
+$palettes_nivoPie05: #6CCC3C;
+$palettes_nivoPie06: #DEDEDE;
+$palettes_nivoPie07: #F75E67;
+$palettes_nivoPie08: #B30000;
+$palettes_nivoPie09: #D7301F;
+$palettes_nivoPie10: #EF6548;
+$palettes_nivoPie11: #FC8D59;
+$palettes_nivoPie12: #FDD49E;
+$palettes_nivoPie13: #FFF7EC;
+$palettes_nivoPie14: #FEE8C8;
+$palettes_nivoPie15: #FDBB84;
+$palettes_bar01: #3C608B;
+$palettes_bar02: #E0483E;
+$palettes_bar03: #F1A838;
+$palettes_bar04: #1A85B9;
+$palettes_bar05: #01737C;
+$palettes_Pie01: #DEDEDE;
+$palettes_pie02: #F75E67;
+$palettes_pie03: #6CCC3C;
+$palettes_pie04: #E1E0A5;
+$palettes_pie05: #4CACDE;
+$palettes_pie06: #ACE6AA;
+$palettes_pie07: #CDE0BD;
+$palettes_pie08: #4CDBD3;
+$palettes_pie09: #EDCE9C;
+
+
+$palettes_submit: #587BD2;
+/* #endregion */
+
+
+$fg_fontColor_default: $palettes_fontColor;
+
+/* #region 🔶footer */
+$bg_footer_default: $palettes_footer;
+$fg_footer_copyRight: $palettes_white;
+/* #endregion */
+
+/* #region 🔶grid title */
+$bg_gridTitle_default: $palettes_white;
+/* #endregion */
+
+$bg_gridLayer_border: $palettes_gridLayer;
+
+// tab
+$fg_tab_default: $palettes_gridCellBorder;
+$bg_tabClick_border: $palettes_blue;
+
+/* #region 🔶header */
+$fg_headerText_hover: $palettes_primary;
+$fg_header_title: $palettes_fontColor;
+$fg_headerDetail_title: $palettes_titleColor;
+$bg_headerContainer_default: $palettes_white;
+$bg_headerContainer_border: $palettes_lightgray;
+/* #endregion */
+
+/* #region 🔶login */
+$fg_loginFooter_default: $palettes_loginFooter;
+$fg_loginLabel_default: $palettes_loginLabel;
+$bg_loginInput_wrapper: $palettes_white;
+/* #endregion */
+
+/* #region 🔶left nav */
+$fg_menu_default: $palettes_white;
+$bg_menuButton_default: $palettes_white;
+$bg_menu_border: $palettes_lightgray;
+$fg_level2Menu_active: $palettes_menuActive;
+$bg_menuButton_border: $palettes_menuButton;
+$bg_menuButton_hover: $palettes_darkgray;
+$bg_level1Menu_default: $palettes_level1Menu;
+$bg_menuLevel1_default: $palettes_primary;
+$bg_menuLevel2_default: $palettes_white;
+$bg_menuLevel2_selected: $palettes_skyblue;
+$fg_menuLevel2_selected: $palettes_blue;
+$bg_menuLevel2_selectedBar: $palettes_blue;
+$bg_colorbox_operation: $palettes_lightgreen;
+$bg_colorbox_operationBar: $palettes_green;
+$bg_colorbox_downtime: $palettes_lightred;
+$bg_colorbox_downtimeBar: $palettes_orange;
+$bg_colorbox_stop: $palettes_lightgray;
+$bg_colorbox_stopBar: $palettes_gray;
+/* #endregion */
+
+/* #region 🔶button */
+$bg_buttonHover_default: $palettes_hoverBtn;
+$bg_buttonHover_hover: $palettes_buttonHover;
+$bg_button_search: $palettes_primary;
+$bg_button_excel: $palettes_excelBtn;
+$bg_button_add: $palettes_addBtn;
+$bg_button_cancel: $palettes_cancelBtn;
+$bg_button_save: $palettes_saveBtn;
+$bg_button_delete: $palettes_deleteBtn;
+$fg_button_default: $palettes_white;
+$fg_submitButton_default: $palettes_white;
+$bg_submitButton_default: $palettes_submit;
+/* #endregion */
+
+/* #region 🔶checkbox  */
+$bg_chkeckBox_border: $palettes_primary;
+$bg_chkeckBox_selectedInner: $palettes_primary;
+/* #endregion */
+
+/* #region 🔶comboBox  */
+$bg_comboBox_border: $palettes_primary;
+$bg_comboBox_selectedInner: $palettes_primary;
+$bg_comboboxFocus_border: $palettes_blue;
+/* #endregion */
+
+/* #region 🔶container  */
+$bg_container_default: $palettes_white;
+$bg_container_border: $palettes_white;
+/* #endregion */
+
+/* #region 🔶datepicker  */
+$bg_datepicker_border: $palettes_border;
+$bg_datepicker_selection: $palettes_primary;
+$fg_datepicker_selection: $palettes_white;
+$bg_datepickerFocus_border: $palettes_blue;
+/* #endregion */
+
+/* #region 🔶radio  */
+$bg_radio_checkedBorder: $palettes_primary;
+$bg_radio_checkedInner: $palettes_primary;
+$bg_radio_border: $palettes_border;
+/* #endregion */
+
+/* #region 🔶textbox  */
+$bg_input_wrapper: $palettes_primary;
+$bg_input_active: $palettes_primary;
+/* #endregion */
+
+/* #region 🔶password */
+$bg_inputPassword_wrapper: $palettes_primary;
+$bg_inputPassword_active: $palettes_primary;
+/* #endregion */
+
+/* #region 🔶inputNumber (text type number) */
+$bg_inputNumber_wrapper: $palettes_primary;
+$bg_inputNumber_active: $palettes_primary;
+/* #endregion */
+
+/* #region 🔶graph */
+$bg_graph_default: $palettes_white;
+/* #endregion */
+
+/* #region 🔶gridCol */
+$bg_graphGrid_border: $palettes_graphGrid;
+/* #endregion */
+
+/* #region 🔶gridCard */
+$fg_gridCard_default : $palettes_gridFontColor;
+$bg_gridCard_downtime: $palettes_lightred;
+$bg_gridCard_default: $palettes_white;
+$bg_card_boxShadow: $palettes_cardShadow;
+/* #endregion */
+
+/* #region 🔶axios */
+$bg_progress_bar: $palettes_progressBar;
+/* #endregion */
+
+/* #region 🔶AtNivo */
+$bg_nivo_dots: $palettes_dots;
+$bg_nivo_lines: $palettes_lines;
+/* #endregion */
+
+/* #region 🔶dashboard */
+$fg_statistic_plan: $palettes_statistic;
+$fg_statistic_amount: $palettes_statistic;
+$fg_statistic_achievement: $palettes_statistic;
+/* #endregion */
+
+/* #region 🔶this, last year */
+$bg_maipData_lastYear: $palettes_maipLast;
+$bg_maipData_thisYear: $palettes_maipThis;
+$bg_salesData_lastYear: $palettes_salesLast;
+$bg_salesData_thisYear: $palettes_salesThis;
+/* #endregion */
+
+/* #region 🔶pie */
+$bg_nivoPie_01: $palettes_nivoPie01;
+$bg_nivoPie_02: $palettes_nivoPie02;
+$bg_nivoPie_03: $palettes_nivoPie03;
+$bg_nivoPie_04: $palettes_nivoPie04;
+$bg_nivoPie_05: $palettes_nivoPie05;
+$bg_nivoPie_06: $palettes_nivoPie06;
+$bg_nivoPie_07: $palettes_nivoPie07;
+$bg_nivoPie_08: $palettes_nivoPie08;
+$bg_nivoPie_09: $palettes_nivoPie09;
+$bg_nivoPie_10: $palettes_nivoPie10;
+$bg_nivoPie_11: $palettes_nivoPie11;
+$bg_nivoPie_12: $palettes_nivoPie12;
+$bg_nivoPie_13: $palettes_nivoPie13;
+$bg_nivoPie_14: $palettes_nivoPie14;
+$bg_nivoPie_15: $palettes_nivoPie15;
+
+$bg_pie_01: $palettes_Pie01;
+$bg_pie_02: $palettes_pie02;
+$bg_pie_03: $palettes_pie03;
+$bg_pie_04: $palettes_pie04;
+$bg_pie_05: $palettes_pie05;
+$bg_pie_06: $palettes_pie06;
+$bg_pie_07: $palettes_pie07;
+$bg_pie_08: $palettes_pie08;
+$bg_pie_09: $palettes_pie09;
+/* #endregion */
+
+/* #region 🔶bar */
+$bg_bar_01: $palettes_bar01;
+$bg_bar_02: $palettes_bar02;
+$bg_bar_03: $palettes_bar03;
+$bg_bar_04: $palettes_bar04;
+$bg_bar_05: $palettes_bar05;
+/* #endregion */
+
+/* #region 🔶grid */
+$bg_gridCell_border: $palettes_gridHeader;
+$bg_gridHeader_default: $palettes_gridHeader;
+$bg_gridHeader_border: $palettes_gridHeader;
+$bg_gridRowHeader_default: $palettes_gridHeader;
+$bg_gridRowHeader_border: $palettes_gridCellBorder;
+$bg_evenRow_default: $palettes_evenRow;
+$bg_grid_selectedHeader: $palettes_selectedHeader;
+$bg_danger_default: $palettes_maipThis;
+$bg_gridHeader_area: $palettes_gridHeader;
+$bg_gridLayer_selection: $palettes_gridLayer;
+$bg_gridRow_checked: $palettes_gridRow;
+$bg_comboBoxContent_editor: $palettes_comboBoxContent;
+$bg_comboBoxSelector_border: $palettes_comboBoxSelector;
+$fg_comboBoxSelector_default: $palettes_gridFontColor;
+$bg_comboBox_default: $palettes_comboBox;
+$bg_comboBox_border: $palettes_hoverBtn;
+$bg_gridRow_odd: $palettes_gridRowOdd;
+$bg_gridRow_even: $palettes_gridRowEven;
+
+$bg_gridSelectRow_odd: $palettes_selectRowOdd;
+$bg_gridSelectRow_even: $palettes_selectRowEven;
+
+$bg_gridRow_checkbox: $palettes_gridCheckbox;
+$bg_twoGridCol_default: $palettes_white;
+$bg_gridCell_border: $palettes_gridCellBorder;
+/* #endregion */
+
+/* #region 🔶scroll */
+$bg_scrollbar_bar: $palettes_scrollbar;
+$bg_scrollbar_area: $palettes_scrollbar_area;
+/* #endregion */
+
+/* #region 🔶numberInput */
+$bg_numberInput_border: $palettes_comboBoxSelector;
+$bg_numberInputFocus_border: $palettes_blue;
+/* #endregion */
+
+// ❗ 배경색이 안보여서 임의로 지정함 (나중에 수정할것)
+// $bg_background: #eeeff7;
+// $bg_background: #f5f6fc;
+// $bg_background: #F0F0F0;
+$bg_background: #ECECEC;
+
+:export{
+  fg_fontColor_default: $fg_fontColor_default;
+  bg_colorbox_operation: $bg_colorbox_operation;
+  bg_colorbox_operationBar: $bg_colorbox_operationBar;
+  bg_colorbox_downtime: $bg_colorbox_downtime;
+  bg_colorbox_downtimeBar: $bg_colorbox_downtimeBar;
+  bg_colorbox_stop: $bg_colorbox_stop;
+  bg_colorbox_stopBar: $bg_colorbox_stopBar;
+  fg_statistic_plan: $fg_statistic_plan;
+  fg_statistic_amount: $fg_statistic_amount;
+  fg_statistic_achievement: $fg_statistic_achievement;
+  bg_maipData_lastYear: $palettes_maipLast;
+  bg_maipData_thisYear: $bg_maipData_thisYear;
+  bg_salesData_lastYear: $bg_salesData_lastYear;
+  bg_salesData_thisYear: $bg_salesData_thisYear;
+  bg_nivo_dots: $bg_nivo_dots;
+  bg_nivo_lines: $bg_nivo_lines;
+  bg_footer_default: $bg_footer_default;
+  fg_footer_copyRight: $fg_footer_copyRight;
+  bg_gridTitle_default: $bg_gridTitle_default;
+  bg_gridLayer_border: $bg_gridLayer_border;
+  fg_tab_default: $fg_tab_default;
+  bg_tabClick_border: $bg_tabClick_border;
+  fg_headerText_hover: $fg_headerText_hover;
+  
+  fg_header_title: $fg_header_title;
+  fg_headerDetail_title: $fg_headerDetail_title;
+  bg_headerContainer_default: $bg_headerContainer_default;
+  bg_headerContainer_border: $bg_headerContainer_border;
+  fg_menu_default: $fg_menu_default;
+  bg_menuButton_default: $bg_menuButton_default;
+  bg_menu_border: $bg_menu_border;
+  fg_level2Menu_active: $fg_level2Menu_active;
+  bg_menuButton_border: $bg_menuButton_border;
+  bg_level1Menu_default: $bg_level1Menu_default;
+  bg_menuLevel1_default: $bg_menuLevel1_default;
+  bg_menuLevel2_default: $bg_menuLevel2_default;
+  bg_menuLevel2_selected: $bg_menuLevel2_selected;
+  fg_menuLevel2_selected: $fg_menuLevel2_selected;
+  bg_menuLevel2_selectedBar: $bg_menuLevel2_selectedBar;
+  bg_buttonHover_default: $bg_buttonHover_default;
+  bg_buttonHover_hover: $bg_buttonHover_hover;
+  bg_button_search: $bg_button_search;
+  bg_button_excel: $bg_button_excel;
+  bg_button_add: $bg_button_add;
+  bg_button_cancel: $bg_button_cancel;
+  bg_button_save: $bg_button_save;
+  bg_button_delete: $bg_button_delete;
+  fg_button_default: $fg_button_default;
+  fg_submitButton_default: $fg_submitButton_default;
+  bg_submitButton_default: $bg_submitButton_default;
+  bg_chkeckBox_border: $bg_chkeckBox_border;
+  bg_chkeckBox_selectedInner: $bg_chkeckBox_selectedInner;
+  bg_comboBox_selectedInner: $bg_comboBox_selectedInner;
+  bg_comboBox_border: $bg_comboBox_border;
+  bg_container_default: $bg_container_default;
+  bg_container_border: $bg_container_border;
+  bg_datepicker_border: $bg_datepicker_border;
+  bg_datepicker_selection: $bg_datepicker_selection;
+  fg_datepicker_selection: $fg_datepicker_selection;
+  bg_radio_checkedBorder: $bg_radio_checkedBorder;
+  bg_radio_checkedInner: $bg_radio_checkedInner;
+  bg_radio_border: $bg_radio_border;
+  bg_input_wrapper: $bg_input_wrapper;
+  bg_input_active: $bg_input_active;
+  bg_inputPassword_wrapper: $bg_inputPassword_wrapper;
+  bg_inputPassword_active: $bg_inputPassword_active;
+  bg_inputNumber_wrapper: $bg_inputNumber_wrapper;
+  bg_inputNumber_active: $bg_inputNumber_active;
+  bg_graph_default: $bg_graph_default;
+  bg_graphGrid_border: $bg_graphGrid_border;
+  fg_gridCard_default: $fg_gridCard_default;
+  bg_gridCard_downtime: $bg_gridCard_downtime;
+  bg_gridCard_default: $bg_gridCard_default;
+  bg_card_boxShadow: $bg_card_boxShadow;
+  bg_progress_bar: $bg_progress_bar;
+  bg_nivoPie_01: $bg_nivoPie_01;
+  bg_nivoPie_02: $bg_nivoPie_02;
+  bg_nivoPie_03: $bg_nivoPie_03;
+  bg_nivoPie_04: $bg_nivoPie_04;
+  bg_nivoPie_05: $bg_nivoPie_05;
+  bg_nivoPie_06: $bg_nivoPie_06;
+  bg_nivoPie_07: $bg_nivoPie_07;
+  bg_nivoPie_08: $bg_nivoPie_08;
+  bg_nivoPie_09: $bg_nivoPie_09;
+  bg_nivoPie_10: $bg_nivoPie_10;
+  bg_nivoPie_11: $bg_nivoPie_11;
+  bg_nivoPie_12: $bg_nivoPie_12;
+  bg_nivoPie_13: $bg_nivoPie_13;
+  bg_nivoPie_14: $bg_nivoPie_14;
+  bg_nivoPie_15: $bg_nivoPie_15;
+  bg_bar_01: $bg_bar_01;
+  bg_bar_02: $bg_bar_02;
+  bg_bar_03: $bg_bar_03;
+  bg_bar_04: $bg_bar_04;
+  bg_bar_05: $bg_bar_05;
+  bg_pie_01: $bg_pie_01;
+  bg_pie_02: $bg_pie_02;
+  bg_pie_03: $bg_pie_03;
+  bg_pie_04: $bg_pie_04;
+  bg_pie_05: $bg_pie_05;
+  bg_pie_06: $bg_pie_06;
+  bg_pie_07: $bg_pie_07;
+  bg_pie_08: $bg_pie_08;
+  bg_pie_09: $bg_pie_09;
+  bg_gridCell_border: $bg_gridCell_border;
+  bg_gridHeader_default: $bg_gridHeader_default;
+  bg_gridHeader_border: $bg_gridHeader_border;
+  bg_gridRowHeader_default: $bg_gridRowHeader_default;
+  bg_gridRowHeader_border: $bg_gridRowHeader_border;
+  bg_evenRow_default: $bg_evenRow_default;
+  bg_grid_selectedHeader: $bg_grid_selectedHeader;
+  bg_danger_default: $bg_danger_default;
+  bg_gridHeader_area: $bg_gridHeader_area;
+  bg_gridLayer_selection: $bg_gridLayer_selection;
+  bg_comboBoxContent_editor: $bg_comboBoxContent_editor;
+  bg_comboBoxSelector_border: $bg_comboBoxSelector_border;
+  fg_comboBoxSelector_default: $fg_comboBoxSelector_default;
+  bg_comboBox_default:  $bg_comboBox_default;
+  bg_gridRow_odd: $bg_gridRow_odd;
+  bg_gridRow_even: $bg_gridRow_even;
+  bg_gridSelectRow_odd: $bg_gridSelectRow_odd;
+  bg_gridSelectRow_even: $bg_gridSelectRow_even;
+  bg_gridRow_checkbox: $bg_gridRow_checkbox;
+  bg_twoGridCol_default: $bg_twoGridCol_default;
+  bg_scrollbar_bar: $bg_scrollbar_bar;
+  bg_scrollbar_area: $bg_scrollbar_area;
+  bg_gridCell_border: $bg_gridCell_border;
+  bg_numberInput_border: $bg_numberInput_border;
+  bg_numberInputFocus_border: $bg_numberInputFocus_border;
+  bg_comboboxFocus_border: $bg_comboboxFocus_border;
+  bg_datepickerFocus_border: $bg_datepickerFocus_border;
+  bg_gridRow_checked: $bg_gridRow_checked;
+  bg_background: $bg_background;
+};
