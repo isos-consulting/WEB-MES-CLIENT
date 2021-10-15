@@ -9,6 +9,8 @@ export default interface ISearchboxProps extends ISearchboxStyles {
   searchItems?: ISearchItem[] | undefined;
   innerRef?: any;
 
+  title?:string;
+
   /** 검색 버튼 클릭 이벤트 */
   onSearch?: (searchParams?) => void;
 };

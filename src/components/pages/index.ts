@@ -74,6 +74,7 @@ export * from './sal/outgo-order.page';
 export * from './sal/outgo-order-report.page';
 export * from './sal/outgo.page';
 export * from './sal/outgo-report.page';
+export * from './sal/outgo-lot-report.page';
 export * from './sal/order.page';
 export * from './sal/order-report.page';
 export * from './sal/return.page';
