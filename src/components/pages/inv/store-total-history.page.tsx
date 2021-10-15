@@ -6,7 +6,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
-
+ 
 /** 재고실사현황 */
 export const PgInvStoresTotalHistory = () => {
   /** 페이지 제목 */
@@ -45,8 +45,8 @@ export const PgInvStoresTotalHistory = () => {
     {header: '부적합', width:ENUM_WIDTH.M, name:'reject_nm', filter:'text'},
     {header: 'LOT NO', width:ENUM_WIDTH.L, name:'lot_no', filter:'text'},
     {header: '수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number', hidden:true},
-    {header: '창고명', name:'store_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
-    {header: '위치명', name:'location_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+    {header: '창고명', width:ENUM_WIDTH.M, name:'store_nm', filter:'text', align:'center'},
+    {header: '위치명', width:ENUM_WIDTH.M, name:'location_nm', filter:'text', align:'center'},
     {header: '기초재고', width:ENUM_WIDTH.M, name:'basic_stock', format:'number', filter:'number'},
     {header: '입고수량', width:ENUM_WIDTH.M, name:'in_qty', format:'number', filter:'number'},
     {header: '출고수량', width:ENUM_WIDTH.M, name:'out_qty', format:'number', filter:'number'},
