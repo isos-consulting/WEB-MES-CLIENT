@@ -2,6 +2,7 @@ import Grid from "@toast-ui/react-grid";
 import TuiGrid from "tui-grid";
 import { useRef, useState } from "react";
 import { IDatagridProps, IGridColumn, TGridMode } from ".";
+import { OptComplexColumnInfo } from 'tui-grid/types/options';
 
 
   
@@ -42,6 +43,10 @@ export const gridModel = (props:{
   /** 그리드 디스플레이 여부 재설정 */
   setGridHidden
   : React.Dispatch<React.SetStateAction<boolean>>,
+
+  /** 헤더 컬럼 병합 세팅 값 */
+  setComplexColumns
+  : React.Dispatch<React.SetStateAction<OptComplexColumnInfo[]>>,
 }) => {
   
   return props;
@@ -51,6 +56,7 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
   const [gridMode, setGridMode] = useState<TGridMode>(options?.gridMode ?? 'view');
   const [gridData, setGridData] = useState<any[]>([]);
   const [gridColumns, setGridColumns] = useState<IGridColumn[]>(columns);
+  const [complexColumns, setComplexColumns] = useState<OptComplexColumnInfo[]>(options?.header?.complexColumns);
   const [gridHidden, setGridHidden] = useState<boolean>(false);
   const gridRef = useRef<Grid>();
   const gridInfo: IDatagridProps = {
@@ -59,6 +65,10 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
     data: gridData,
     gridMode,
     hidden: gridHidden,
+    header: {
+      ...options?.header,
+      complexColumns
+    },
     ...options
   }
 
@@ -70,6 +80,7 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
     setGridData,
     setGridColumns,
     setGridHidden,
+    setComplexColumns,
   });
 
   return model;
