@@ -116,10 +116,10 @@ export const PgMatRelease = () => {
           const {rowKey, instance} = ev;
           const {rawData} = instance?.store?.data;
       
-          const storeUuid = rawData[rowKey]?.to_store_uuid
+          const storeUuid = rawData[rowKey]?.to_store_uuid;
           return {
             uriPath: '/std/locations',
-            params: {store_uuid: storeUuid ?? ''}
+            params: {store_uuid: storeUuid ?? null}
           }
         },
         gridMode:'select'
@@ -321,7 +321,7 @@ export const PgMatRelease = () => {
 
 
   //#region 🔶 출고요청 관리
-  const releaseRequestPopupGrid = useGrid('RELEASE_REQUEST_GRID', grid?.gridInfo?.columns, {
+  const releaseRequestPopupGrid = useGrid('RELEASE_REQUEST_GRID', cloneObject(grid?.gridInfo?.columns).filter(el => el?.name !== 'reg_date'), {
     title: '출고 요청',
     gridMode: 'create',
     gridPopupInfo: grid?.gridInfo?.gridPopupInfo,
@@ -386,7 +386,7 @@ export const PgMatRelease = () => {
   });
 
   const releaseRequestPopupInputInfo = useInputGroup('ReleaseRequest_INPUTBOX', [
-    {type:'date', id:'reg_date', label:'기준일', default:getToday()},
+    {type:'date', id:'reg_date', label:'기준일', default:getToday(), disabled:true},
     {type:'text', id:'prod_uuid', label:'품목UUID', disabled:true, hidden:true},
     {
       type:'text', id:'prod_no', label:'품번', usePopup:true,
@@ -463,18 +463,17 @@ export const PgMatRelease = () => {
     if (releaseRequestPopupVisible === false) { 
       releaseRequestPopupInputInfo?.instance?.resetForm();
       releaseRequestPopupGrid?.setGridData([]);
+
+    } else {
+      releaseRequestPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo?.values?.reg_date);
     }
   }, [releaseRequestPopupVisible]);
-
-  
-  useLayoutEffect(() => {
-    console.log('releaseRequestPopupGrid?.gridInfo?.data', releaseRequestPopupGrid?.gridInfo?.data);
-  }, [releaseRequestPopupGrid?.gridInfo?.data]);
   //#endregion
 
   const extraGridPopups:TExtraGridPopups = [
     {
       ...releaseRequestPopupGrid?.gridInfo,
+      ref: releaseRequestPopupGrid?.gridRef,
       popupId: 'EXTRA_POPUP_ReleaseRequest',
       gridMode: 'create',
       visible: releaseRequestPopupVisible,
@@ -483,11 +482,9 @@ export const PgMatRelease = () => {
       saveUriPath: '/mat/releases',
       okText: '추가하기',
       onCancel: (ev) => {
-        const releaseRequestData = releaseRequestPopupGrid?.gridInfo?.data;
-        const releaseRequestData2 = releaseRequestPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 
         console.log('releaseRequestData', releaseRequestData);
-        console.log('releaseRequestData2', releaseRequestData2);
 
         if (releaseRequestData?.length > 0) {
           modal.warning({
@@ -501,11 +498,9 @@ export const PgMatRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData = releaseRequestPopupGrid?.gridInfo?.data;
-        const releaseRequestData2 = releaseRequestPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 
         console.log('releaseRequestData', releaseRequestData);
-        console.log('releaseRequestData2', releaseRequestData2);
 
         if (releaseRequestData?.length > 0) {
           newDataPopupGrid?.gridInstance?.appendRows(releaseRequestData);
