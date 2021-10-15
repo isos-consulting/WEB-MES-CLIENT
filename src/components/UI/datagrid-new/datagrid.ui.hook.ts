@@ -47,6 +47,8 @@ export const gridModel = (props:{
   /** 헤더 컬럼 병합 세팅 값 */
   setComplexColumns
   : React.Dispatch<React.SetStateAction<OptComplexColumnInfo[]>>,
+  // setGridHeader
+  // : React.Dispatch<React.SetStateAction<OptHeader>>,
 }) => {
   
   return props;
@@ -57,6 +59,7 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
   const [gridData, setGridData] = useState<any[]>([]);
   const [gridColumns, setGridColumns] = useState<IGridColumn[]>(columns);
   const [complexColumns, setComplexColumns] = useState<OptComplexColumnInfo[]>(options?.header?.complexColumns);
+  // const [gridHeader, setGridHeader] = useState<OptHeader>(options?.header);
   const [gridHidden, setGridHidden] = useState<boolean>(false);
   const gridRef = useRef<Grid>();
   const gridInfo: IDatagridProps = {
@@ -67,10 +70,11 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
     hidden: gridHidden,
     header: {
       ...options?.header,
-      complexColumns
+      complexColumns,
     },
     ...options
   }
+
 
   const model = gridModel({
     gridRef,
@@ -81,6 +85,7 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
     setGridColumns,
     setGridHidden,
     setComplexColumns,
+    // setGridHeader,
   });
 
   return model;

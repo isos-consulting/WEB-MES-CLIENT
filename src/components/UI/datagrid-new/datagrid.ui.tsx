@@ -153,38 +153,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   let chkUpdateAtColumn = false;
 
 
-  //#region 🔶헤더 세팅
-  const header = useMemo(() => {
-    let header =  props.header;
-    // let columns = [];
-
-    // if (props.columns) {
-    //   props.columns?.forEach((el) => {
-    //     if (el?.requiredField === true)
-    //       columns.push({
-    //         name: el?.name,
-    //         renderer: CustomColumnHeader
-    //       });
-    //   });
-    // }
-
-    if (header != null) {
-      header['height'] = 60;
-      // header['columns'] = columns;
-
-    } else {
-      header = {
-        height: 30,
-        columns
-      }
-    }
-
-    return header;
-
-  }, [props.header, props.columns]);
-  //#endregion
-
-
   //#region 🔶컬럼 세팅
   const columns = useMemo(() => {
     let newColumns = JSON.parse(JSON.stringify(props.columns));
@@ -601,6 +569,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     return newColumns;
 
   }, [props.columns, props.gridComboInfo, props.gridMode, props.data, columnComboState, props.hiddenColumns, props.disabledAutoDateColumn]);
+  //#endregion
+
+
+  //#region 🔶헤더 세팅
+  useLayoutEffect(() => {
+    let header = props.header || {};
+
+    if (props.header?.complexColumns) {
+      header['height'] = 60;
+      header['columns'] = columns;
+    } else {
+      header['height'] = 30;
+    }
+
+    if (header)
+      gridRef?.current?.getInstance().setHeader(header);
+  }, [props.header, columns]);
   //#endregion
 
 
@@ -1740,7 +1725,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       <Grid
         id={props.gridId}
         ref={gridRef}
-        header={header}
+        header={props.header}
         columns={columns}
         columnOptions={columnOptions}
         summary={summary}
