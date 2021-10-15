@@ -71,6 +71,7 @@ export * from './sal/income-report.page';
 export * from './sal/release.page';
 export * from './sal/release-report.page';
 export * from './sal/outgo-order.page';
+export * from './sal/outgo-order-report.page';
 export * from './sal/outgo.page';
 export * from './sal/outgo-report.page';
 export * from './sal/order.page';
@@ -81,7 +82,9 @@ export * from './sal/return-report.page';
 export * from './inv/move.page';
 export * from './inv/store.page';
 export * from './inv/store-report.page';
+export * from './inv/store-total-history.page';
 export * from './inv/stock-reject.page';
+
 
 export * from './out/release.page';
 export * from './out/release-report,page';
