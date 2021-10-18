@@ -8,7 +8,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { ENUM_WIDTH } from '~/enums';
 import { OptComplexColumnInfo } from 'tui-grid/types/options';
 
-/** 불량현황 */
+/** 유형별 수불부 */
 export const PgInvStoresTypeHistory = () => {
   /** 페이지 제목 */
   const title = getPageName();
@@ -94,8 +94,6 @@ export const PgInvStoresTypeHistory = () => {
   }, [columns]);
 
   useLayoutEffect(() => { 
-    console.log('?? complexColumns', complexColumns)
-
     if (complexColumns)
       grid?.setComplexColumns(complexColumns);
   }, [complexColumns]);
@@ -111,13 +109,14 @@ export const PgInvStoresTypeHistory = () => {
   }, []);
 
   /** 검색 */
-  const onSearch = () => {
+  const onSearch = (values) => {
+    const searchParams = cleanupKeyOfObject(values, searchInfo?.searchItemKeys);
     
     let data = [];
 
     getData(
       {
-        ...searchInfo?.values,
+        ...searchParams,
         grouped_type:'all',
       }, 
       searchUriPath, 
