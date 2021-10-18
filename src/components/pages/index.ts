@@ -63,6 +63,7 @@ export * from './mat/return.page';
 export * from './mat/order.page';
 export * from './mat/receive.page';
 export * from './mat/receive-report.page';
+export * from './mat/recevie-lot-tracking.page';
 export * from './mat/return.page';
 export * from './mat/return-report.page';
 

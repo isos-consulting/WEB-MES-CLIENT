@@ -10,8 +10,8 @@ import { ENUM_WIDTH } from '~/enums';
 
 
 
-/** 공장관리 */
-export const PgSalOutgoLotTracking = () => {
+/** 입학기준 LOT 추적현황 */
+export const PgMatReceiveLotTracking = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,28 +20,31 @@ export const PgSalOutgoLotTracking = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'view';
-  const searchUriPath = '/sal/outgos/lot-tracking';
-  const saveUriPath = '/sal/outgos/lot-tracking';
+  const searchUriPath = '/mat/receives/lot-tracking';
+  const saveUriPath = '/mat/receives/lot-tracking';
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
-    {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '품목UUID', name:'work_prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '폼목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header: '품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text'},
+    {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text'},
+
+    {header: '공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '공정', name:'proc_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header: '설비UUID', name:'equip_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '설비', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header: '생산일자', name:'work_date', width:ENUM_WIDTH.L, format:'date', filter:'text'},
-    {header: '품목UUID', name:'work_prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '폼목유형', name:'work_item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '품번', name:'work_prod_no', width:ENUM_WIDTH.L, filter:'text'},
-    {header: '품명', name:'work_prod_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header: '품목유형', name:'work_item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header: '품번', name:'work_prod_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header: '품명', name:'work_prod_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: 'LOT NO', name:'work_lot_no', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '품목유형', name:'input_item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '품번', name:'input_prod_no', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '품명', name:'input_prod_nm', width:ENUM_WIDTH.M, filter:'text'},
-    {header: 'LOT NO', name:'input_lot_no', width:ENUM_WIDTH.M, filter:'text'},
+
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '입하일자', name:'in_reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
+    {header: '입하일자', name:'out_reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
+
     {header: 'lv', name:'lv', width:ENUM_WIDTH.M, filter:'text'},
     {header: 'sortBy', name:'sortBy', width:ENUM_WIDTH.M, filter:'text', hidden:true},
   ], {
@@ -52,14 +55,14 @@ export const PgSalOutgoLotTracking = () => {
     header: {
       complexColumns: [
         {
-          header: '투입',
+          header: '작업',
           name: '_input',
-          childNames: ['input_item_type_nm', 'input_prod_no', 'input_prod_nm', 'input_lot_no'],
+          childNames: ['proc_nm', 'equip_nm', 'work_date', 'work_item_type_nm', 'work_prod_no', 'work_prod_nm', 'work_lot_no'],
         },
         {
-          header: '입하',
+          header: '출하',
           name: '_in',
-          childNames: ['partner_nm', 'in_reg_date'],
+          childNames: ['partner_nm', 'out_reg_date'],
         },
       ]
     }
@@ -115,13 +118,13 @@ export const PgSalOutgoLotTracking = () => {
           ],
         },
         dataApiSettings: {
-          uriPath: '/sal/outgos/report',
+          uriPath: '/mat/receives/report',
           params: {
             sort_type: 'date',
           },
         },
         modalSettings: {
-          title: '출하 리스트',
+          title: '입하 리스트',
         },
       },
       popupKeys: ['partner_uuid', 'partner_nm', 'prod_uuid', 'prod_no', 'prod_nm', 'lot_no'],
@@ -142,7 +145,7 @@ export const PgSalOutgoLotTracking = () => {
     const searchParams:any = cleanupKeyOfObject(values, searchInfo?.searchItemKeys);
 
     if (!searchParams?.prod_uuid || !searchParams?.lot_no) {
-      message.warn('출하 품목을 먼저 선택하신 후 다시 시도해주세요.');
+      message.warn('입하 품목을 먼저 선택하신 후 다시 시도해주세요.');
       return;
     };
 
@@ -223,7 +226,7 @@ export const PgSalOutgoLotTracking = () => {
     gridRef: grid.gridRef,
     gridInfo: grid.gridInfo,
     searchProps: {
-      title:'출하 정보',
+      title:'입하 정보',
       ...searchInfo?.props, 
       onSearch,
     }, 
