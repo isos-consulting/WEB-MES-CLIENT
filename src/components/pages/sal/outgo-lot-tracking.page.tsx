@@ -11,7 +11,7 @@ import { ENUM_WIDTH } from '~/enums';
 
 
 /** 공장관리 */
-export const PgSalOutgoLotReport = () => {
+export const PgSalOutgoLotTracking = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,8 +20,8 @@ export const PgSalOutgoLotReport = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'view';
-  const searchUriPath = '/sal/outgo/report';
-  const saveUriPath = '/sal/outgo/report';
+  const searchUriPath = '/sal/outgos/lot-tracking';
+  const saveUriPath = '/sal/outgos/lot-tracking';
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
