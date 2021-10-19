@@ -57,7 +57,7 @@
     "cleanup-dist": "rimraf dist",
     "cleanup": "rimraf build",
     "start": "rimraf dist && parcel ./public/index.html --port 3000 --open",
-    "build": "rimraf dist && parcel -d build ./public/index.html --no-source-maps"
+    "build": "parcel -d build ./public/index.html --no-source-maps"
   },
   "browser": {
     "dom-storage": false
