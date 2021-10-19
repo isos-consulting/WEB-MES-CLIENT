@@ -35,9 +35,6 @@ export default interface IPopupButtonProps {
   /** 팝업 정보를 세팅합니다. (popupKey보다 높은 우선순위로 작동합니다.) */
   modalSettings?: IModalProps;
 
-  /** 첫줄에 빈칸 생성 */
-  firstItemEmpty?: boolean;
-
   setValues?: (values: any, shouldValidate?: boolean) => void
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
   handleChange?: (value) => void;

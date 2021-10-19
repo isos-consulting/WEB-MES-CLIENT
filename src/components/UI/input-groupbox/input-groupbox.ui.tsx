@@ -364,7 +364,6 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                     setValues(crr => ({...crr, ...values}));
                                     handleSubmit();
                                   }}
-                                  firstItemEmpty={item.required !== true}
                                   popupKey={item.popupKey}
                                   params={item.params}
                                   popupKeys={item.popupKeys}
@@ -633,7 +632,6 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                       setValues(crr => ({...crr, ...values}));
                                       handleSubmit();
                                     }}
-                                    firstItemEmpty={item.required !== true}
                                     popupKey={item.popupKey}
                                     params={item.params}
                                     popupKeys={item.popupKeys}

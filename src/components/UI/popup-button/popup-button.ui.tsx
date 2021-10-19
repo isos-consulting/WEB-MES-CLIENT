@@ -83,7 +83,7 @@ const PopupButton: React.FC<Props> = (props) => {
         const childGridId = uuidv4();
 
         // setLoading(true);
-        getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
+        getData(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
           if (typeof res === 'undefined') {
             throw new Error('에러가 발생되었습니다.');
           }
@@ -97,17 +97,6 @@ const PopupButton: React.FC<Props> = (props) => {
 
           } else {
             title = word;
-          }
-
-          // 맨 앞줄에 빈값 추가
-          if (props?.firstItemEmpty && res?.length > 0) {
-            const keys = Object.keys(res[0]);
-            let emptyValue = {};
-            keys?.forEach(key => {
-              emptyValue[key] = null;
-            });
-
-            res?.unshift(emptyValue);
           }
           
           modal.confirm({
