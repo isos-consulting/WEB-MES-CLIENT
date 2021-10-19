@@ -56,6 +56,7 @@ export default interface IDatagridProps extends GridProps {
   
   /** 모달에 새로 버튼을 추가합니다. */
   extraButtons?: TGridExtraButtons[];
+  alignExtraButton?: 'left' | 'right' | null;
   
   onClick?: (ev) => void;
   onDblclick?: (ev) => void;
@@ -271,4 +272,5 @@ type TApiSettings = {
   /** API 요청 여부를 결정하는 callback함수 */
   onInterlock?: () => boolean;
   onBeforeOk?: (ev, checkedRows) => boolean;
+  onAfterOk?: (ev, checkedRows) => void;
 };

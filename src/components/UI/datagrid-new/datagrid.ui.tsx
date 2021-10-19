@@ -896,6 +896,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
               };
               
               let onBeforeOk = null;
+              let onAfterOk = null;
 
               if (popupInfo?.popupKey == null) {
                 popupContent['datagridProps']['columns'] = popupInfo.columns;
@@ -918,6 +919,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     onBeforeOk = apiSettings.onBeforeOk;
                   }
 
+                  // afterOk
+                  if (apiSettings?.onAfterOk != null) {
+                    onAfterOk = apiSettings.onAfterOk;
+                  }
+
                 } else {
                   popupContent['uriPath'] = popupInfo.dataApiSettings.uriPath;
                   popupContent['params'] = popupInfo.dataApiSettings.params;
@@ -931,6 +937,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   // beforeOk
                   if (popupInfo.dataApiSettings?.onBeforeOk != null) {
                     onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
+                  }
+
+                  // afterOk
+                  if (popupInfo.dataApiSettings?.onAfterOk != null) {
+                    onAfterOk = popupInfo.dataApiSettings.onAfterOk;
                   }
                 }
   
@@ -1007,7 +1018,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                       message.warn('항목을 선택해주세요.');
                     }
 
-                    $this.getInstance().refreshLayout();                
+                    $this.getInstance().refreshLayout();
+
+                    if(onAfterOk != null) {
+                      onAfterOk(child, [row]);
+                    }
                   },
                   cancelText:'취소',
                   maskClosable:false,
@@ -1387,6 +1402,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     };
 
     let onBeforeOk = null;
+    let onAfterOk = null;
 
     if (rowAddPopupInfo.popupKey == null) {
       popupContent['datagridProps']['columns'] = rowAddPopupInfo.columns;
@@ -1414,6 +1430,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       if (apiSettings?.onBeforeOk != null) {
         onBeforeOk = apiSettings.onBeforeOk;
       }
+      
+      // afterOk
+      if (apiSettings?.onAfterOk != null) {
+        onAfterOk = apiSettings.onAfterOk;
+      }
 
     } else {
       popupContent = {...popupContent, ...rowAddPopupInfo, ...rowAddPopupInfo.dataApiSettings};
@@ -1429,6 +1450,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       // beforeOk
       if (rowAddPopupInfo.dataApiSettings?.onBeforeOk != null) {
         onBeforeOk = rowAddPopupInfo.dataApiSettings.onBeforeOk;
+      }
+
+      // afterOk
+      if (rowAddPopupInfo.dataApiSettings?.onAfterOk != null) {
+        onAfterOk = rowAddPopupInfo.dataApiSettings.onAfterOk;
       }
     }
     
@@ -1490,7 +1516,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
               // 행 추가
               onAppendRow(newRow);
             }
-          })
+          });
+
+          if (onAfterOk != null) {
+            onAfterOk(child, rows);
+          }
         },
         cancelText:'취소',
         maskClosable:false,
@@ -1736,7 +1766,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       <div className='modalButton'>
         {
           props?.extraButtons ?
-            <Space size={[5,null]} style={{width:'50%', textAlign:'start'}}>
+            <Space size={[5,null]} style={{textAlign:'right'}}>
               {
                 props.extraButtons.map((el, index) => {
                   const {buttonAction, buttonProps} = el;
