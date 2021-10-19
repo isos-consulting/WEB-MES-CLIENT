@@ -338,6 +338,18 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   //     setData(res);
   //   });
   // }
+  const modelWidthSize:string|number = useMemo(() => {
+    const smSize = '50%';
+    const mdSize = '70%';
+    const lgSize = '90%';
+
+    return (
+      props.modalWidth === 'sm' ? smSize
+      : props.modalWidth === 'md' ? mdSize
+      : props.modalWidth === 'lg' ? lgSize
+      : props.modalWidth || mdSize
+    );
+  }, [props.modalWidth]);
 
   return (
     <Modal
@@ -348,11 +360,10 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       cancelButtonProps={props.cancelButtonProps}
       cancelText={props.cancelText}
       onCancel={onCancel}
-      width='80%'
+      width={modelWidthSize}
       visible={props.visible ?? visible}
       maskClosable={false}
       confirmLoading={loading}
-      footer={props.footer}
     >
       <div>
       {props?.searchProps != null ? <Searchbox boxShadow={false} {...props.searchProps} /> : null}

@@ -17,6 +17,8 @@ export default interface IGridPopupProps extends ModalProps, IDatagridProps {
   /** 모달 너비 */
   width?: number;
 
+  modalWidth?: number | string | 'sm' | 'md' | 'lg';
+
   /** 그리드 reference (그리드DOM 접근 매개체) */
   ref?: MutableRefObject<Grid>;
 

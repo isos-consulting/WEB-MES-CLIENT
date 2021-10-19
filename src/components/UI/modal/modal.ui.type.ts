@@ -13,7 +13,7 @@ export default interface IModalProps extends ModalProps {
   cancelText?:string;
   
   /** 모달 고정 너비 */
-  width?:number | string;
+  width?:number | string | 'sm' | 'md' | 'lg';
 
   /** 내용 */
   children?:any;
