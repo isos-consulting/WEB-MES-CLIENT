@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - yarn add parcel-bundler@1.12.5
-      - yarn add typescript@10.2.0
+      # - yarn add typescript@10.2.0
       - yarn install
   pre_build:
     commands:
