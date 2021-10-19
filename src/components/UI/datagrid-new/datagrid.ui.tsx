@@ -1001,27 +1001,27 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   icon:null,
                   okText: '선택',
                   onOk: () => {
-                    const $this = gridRef.current;
-                    const child = childGridRef.current;
+                    const $this = gridRef.current.getInstance();
+                    const child = childGridRef.current.getInstance();
   
-                    const row = child.getInstance().getCheckedRows()[0];
+                    const row = child.getCheckedRows()[0];
                     
                     if(onBeforeOk != null) {
-                      if (!onBeforeOk(child, [row])) return;
+                      if (!onBeforeOk({popupGrid:child, parentGrid:$this, ev:ev}, [row])) return;
                     }
 
                     if (typeof row === 'object') {
                       updateColumns.forEach((column) => {
-                        $this.getInstance().setValue(rowKey, column.original, row[column.popup]);
+                        $this.setValue(rowKey, column.original, row[column.popup]);
                       });
                     } else {
                       message.warn('항목을 선택해주세요.');
                     }
 
-                    $this.getInstance().refreshLayout();
+                    $this.refreshLayout();
 
                     if(onAfterOk != null) {
-                      onAfterOk(child, [row]);
+                      onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
                     }
                   },
                   cancelText:'취소',
@@ -1495,11 +1495,12 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         icon:null,
         okText: '선택',
         onOk: () => {
-          const child = childGridRef.current;
-          const rows = child.getInstance().getCheckedRows();
+          const child = childGridRef.current.getInstance();
+          const $this = gridRef.current.getInstance();
+          const rows = child.getCheckedRows();
 
           if(onBeforeOk != null) {
-            if (!onBeforeOk(child, rows)) return;
+            if (!onBeforeOk({popupGrid:{...child}, parentGrid:{...$this}, ev:{}}, rows)) return;
           }
 
           rows?.forEach((row) => {
@@ -1519,7 +1520,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           });
 
           if (onAfterOk != null) {
-            onAfterOk(child, rows);
+            onAfterOk({popupGrid:{...child}, parentGrid:{...$this}, ev:{}}, rows);
           }
         },
         cancelText:'취소',
