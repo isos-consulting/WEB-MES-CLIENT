@@ -2,15 +2,10 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
-import React, { MutableRefObject, useRef, useState } from 'react';
+import React, { MutableRefObject, useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridComboInfo, IGridPopupInfo, Searchbox, Tabs, TGridMode } from '~/components/UI';
 import { checkGridData, executeData, getData, getModifiedRows, getToday, getUserFactoryUuid, isModified, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
-
-
-
-
-
 
 const TAB_CODE = {
   투입품목관리: 'TUIP_PROD',
@@ -28,8 +23,6 @@ const onErrorMessage = (type) => {
       break;
   }
 }
-
-
 
 /** 작업지시 */
 export const PgPrdOrder = () => {
@@ -339,9 +332,6 @@ export const PgPrdOrder = () => {
   );
   //#endregion
 
-
-
-
   //#region 🔶투입인원 관련 
   const [tuipWorkerGridMode, setTuipWorkerGridMode] = useState<TGridMode>('view');
   const [tuipWorkerDatas, setTuipWorkerDatas] = useState([]);
@@ -354,7 +344,6 @@ export const PgPrdOrder = () => {
   const TUIP_WORKER_SEARCH_URIPATH = '/prd/order-workers';
 
   const [tuipWorkerSaveOptionParams, setTuipWorkerSaveOptionParams] = useState({});
-
 
   const TUIP_WORKER_onSearch = () => {
     getData(
@@ -671,7 +660,7 @@ export const PgPrdOrder = () => {
   const [modal, contextHolder] = Modal.useModal();
 
 
-  const [gridMode, setGridMode] = useState<TGridMode>('select');
+  const [gridMode, setGridMode] = useState<TGridMode>('delete');
   const [orderDatas, setOrderDatas] = useState([]);
   const gridRef = useRef<Grid>();
   const popupGridRef = useRef<Grid>();
@@ -684,11 +673,9 @@ export const PgPrdOrder = () => {
   const ORDER_SEARCH_URIPATH = '/prd/orders';
   const ORDER_SAVE_URIPATH = '/prd/orders';
 
-  
-
   const onSearch = (values) => {
     try {
-      setLoading(true);
+      // setLoading(true);
 
       getData({
         ...values,
@@ -712,26 +699,8 @@ export const PgPrdOrder = () => {
 
 
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
-  }
-
-  const onCancel = (ev?) => {
-    onDefaultGridCancel(gridRef, ORDER_COLUMNS, modal,
-      () => {
-        setGridMode('select');
-        onSearch(searchParams);
-      }
-    );
-  }
-
-  const onSave = (ev?) => {
-    onDefaultGridSave('basic', gridRef, ORDER_COLUMNS, ORDER_SAVE_URIPATH, {}, modal,
-      () => {
-        setGridMode('select');
-        onSearch(searchParams);
-      }
-    );
   }
 
   const onAppend = (ev) => {
@@ -750,9 +719,9 @@ export const PgPrdOrder = () => {
 
   const ORDER_COLUMNS:IGridColumn[] = [
     {header:'작업지시UUID', name:'order_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-    {header:'지시일', name:'reg_date', width:180, hidden:false, editable:true, format:'datetime', filter:'date', requiredField:true},
-    {header:'시작예정일', name:'start_date', width:180, hidden:false, editable:true, format:'datetime', requiredField:true},
-    {header:'종료예정일', name:'end_date', width:180, hidden:false, editable:true, format:'datetime', requiredField:true},
+    {header:'지시일', name:'reg_date', width:180, hidden:false, editable:true, format:'date', filter:'date', requiredField:true},
+    {header:'시작예정일', name:'start_date', width:180, hidden:false, editable:true, format:'date', requiredField:true},
+    {header:'종료예정일', name:'end_date', width:180, hidden:false, editable:true, format:'date', requiredField:true},
     {header:'지시번호', name:'order_no', width:200, hidden:false, editable:true, format:'text'},
     {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text', requiredField:true},
     {header:'공정코드', name:'proc_cd', width:200, hidden:true, format:'text', requiredField:true},
@@ -787,7 +756,7 @@ export const PgPrdOrder = () => {
     {header:'입고 위치코드', name:'to_location_cd', width:200, hidden:true, format:'text'},
     {header:'입고 위치명', name:'to_location_nm', width:200, hidden:true, format:'text'},
     {header:'계획 수량', name:'plan_qty', width:100, hidden:false, editable:true, format:'number'},
-    {header:'지시 수량', name:'qty', width:100, hidden:false, editable:true, format:'number'},
+    {header:'지시 수량', name:'qty', width:100, hidden:false, editable:true, format:'number', requiredField:true},
     {header:'지시 순번', name:'seq', width:100, hidden:true, format:'text'},
     {header:'작업교대UUID', name:'shift_uuid', width:200, hidden:true, format:'text', requiredField:true},
     {header:'작업교대명', name:'shift_nm', width:100, hidden:false, editable:true, format:'combo', filter:'text', requiredField:true},
@@ -924,49 +893,9 @@ export const PgPrdOrder = () => {
 
   //#endregion
 
-
-  return (
-    <>
-      <Typography.Title level={5} style={{marginBottom:-16, fontSize:14}}><CaretRightOutlined />지시이력</Typography.Title>
-      <Divider style={{marginBottom:10}}/>
-      <Container>
-        {gridMode === 'select' ?
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} align='start'>
-              {/* <Input.Search
-                placeholder='전체 검색어를 입력하세요.'
-                enterButton
-                onSearch={onAllFiltered}/> */}
-              {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
-            </Space>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
-            </Space>
-          </div>
-          :
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-            </Space>
-          </div>
-        }
-        <div style={{maxWidth:500, marginTop:-33, marginLeft:-6}}>
-          <Searchbox 
-            id='prod_order_search'
-            innerRef={searchRef}
-            searchItems={[
-              {type:'date', id:'start_date', label:'지시기간', default:getToday()},
-              {type:'date', id:'end_date', default:getToday()},
-            ]}
-            onSearch={onSearch}
-            boxShadow={false}
-          />
-        </div>
-        {/* <p/> */}
-        <Datagrid
+  const HeaderGridElement = useMemo(() => {
+    return (
+      <Datagrid
           gridId={'PROD_ORDER_GRID'}
           ref={gridRef}
           gridMode={gridMode}
@@ -976,7 +905,7 @@ export const PgPrdOrder = () => {
           onAfterClick={(ev) => {
             const {rowKey, targetType} = ev;
         
-            if (targetType === 'cell' && gridMode === 'select') {
+            if (targetType === 'cell') {
               try {
                 // setLoading(true);
         
@@ -990,7 +919,6 @@ export const PgPrdOrder = () => {
                   setTuipProdDatas(res);
                   setTuipProdSaveOptionParams({order_uuid});
                 });
-        
                 
                 // 작업자투입 데이터 조회
                 getData({
@@ -1019,6 +947,42 @@ export const PgPrdOrder = () => {
             }
           }}
         />
+    )
+  }, [gridRef, orderDatas, gridMode]);
+
+  return (
+    <>
+      <Typography.Title level={5} style={{marginBottom:-16, fontSize:14}}><CaretRightOutlined />지시이력</Typography.Title>
+      <Divider style={{marginBottom:10}}/>
+      <Container>
+        <div style={{width:'100%', display:'inline-block'}}>
+          <Space size={[6,0]} align='start'>
+            {/* <Input.Search
+              placeholder='전체 검색어를 입력하세요.'
+              enterButton
+              onSearch={onAllFiltered}/> */}
+            {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
+          </Space>
+          <Space size={[6,0]} style={{float:'right'}}>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
+          </Space>
+        </div>
+        <div style={{maxWidth:500, marginTop:-33, marginLeft:-6}}>
+          <Searchbox 
+            id='prod_order_search'
+            innerRef={searchRef}
+            searchItems={[
+              {type:'date', id:'start_date', label:'지시기간', default:getToday()},
+              {type:'date', id:'end_date', default:getToday()},
+            ]}
+            onSearch={onSearch}
+            boxShadow={false}
+          />
+        </div>
+        {/* <p/> */}
+        {HeaderGridElement}
       </Container>
 
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />이력 항목관리</Typography.Title>
@@ -1106,29 +1070,17 @@ export const PgPrdOrder = () => {
         saveType='basic'
         defaultVisible={false}
         visible={orderPopupVisible}
+        onAfterOk={(isSuccess, savedData) => { 
+          if (!isSuccess) return;
+          setOrderPopupVisible(false);
+          onSearch(searchParams);
+        }}
       />
 
       {contextHolder}
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //#region 🔶그리드 공통 이벤트 함수 정의 (나중에 옮길거임)
 const onDefaultGridSave = async (saveType:'basic'|'headerInclude', ref:MutableRefObject<Grid>, columns, saveUriPath, optionParams, modal, saveAfterFunc?:Function) => {
