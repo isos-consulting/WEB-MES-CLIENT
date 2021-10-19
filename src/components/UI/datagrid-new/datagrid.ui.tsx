@@ -1766,9 +1766,9 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       <div className='modalButton'>
         {
           props?.extraButtons ?
-            <Space size={[5,null]} style={{textAlign:'right'}}>
+            <Space size={[5,null]} style={{width:'50%', justifyContent:'left'}}>
               {
-                props.extraButtons.map((el, index) => {
+                props.extraButtons?.filter(el => el?.align !== 'right')?.map((el, index) => {
                   const {buttonAction, buttonProps} = el;
                   return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
                 })
@@ -1776,7 +1776,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             </Space>
           : null
         }
-        <Space size={[5,null]} align='end' style={{width: props?.extraButtons ? '50%' : '100%', justifyContent:'end'}}>
+        <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
+          {
+            props.extraButtons?.filter(el => el?.align === 'right')?.map((el, index) => {
+              const {buttonAction, buttonProps} = el;
+              return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
+            })
+          }
           {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onPrepentRow}>행 추가</Button>}
           <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelRow}>행 취소</Button>
         </Space>
@@ -1784,7 +1790,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       : 
         props?.extraButtons && props.hiddenActionButtons !== true ?
           <div className='modalButton'>
-                <Space size={[5,null]} style={{width:'50%', textAlign:'start'}}>
+                <Space size={[5,null]}>
                   {
                     props.extraButtons.map((el, index) => {
                       const {buttonAction, buttonProps} = el;

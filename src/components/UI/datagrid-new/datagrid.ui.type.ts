@@ -56,7 +56,6 @@ export default interface IDatagridProps extends GridProps {
   
   /** 모달에 새로 버튼을 추가합니다. */
   extraButtons?: TGridExtraButtons[];
-  alignExtraButton?: 'left' | 'right' | null;
   
   onClick?: (ev) => void;
   onDblclick?: (ev) => void;
@@ -137,6 +136,7 @@ export type TGridMode =
 export type TGridExtraButtons = {
   buttonProps?: IButtonProps;
   buttonAction?: (ev, props?, options?) => void;
+  align?: 'left' | 'right';
 }
 
 /** 그리드 수정 동작 코드 */
