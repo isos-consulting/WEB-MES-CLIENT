@@ -1,7 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import React, { useLayoutEffect, useRef } from 'react';
 import { useState } from "react";
-import { IGridColumn, TGridMode, GridPopup, useGrid, getPopupForm, COLUMN_NAME } from "~/components/UI";
+import { useGrid, getPopupForm } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
@@ -9,7 +9,54 @@ import ITpDoubleGridProps, { TExtraGridPopups } from '~/components/templates/gri
 import { IInputGroupboxItem, useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { TProd } from '~/types/comm.types';
 
+
+type TRountings = {
+  routing_uuid: string,
+  factory_uuid: string,
+  factory_cd: string,
+  factory_nm: string,
+  prod_uuid: string,
+  prod_no: string,
+  prod_nm: string,
+  item_type_uuid: string,
+  item_type_cd: string,
+  item_type_nm: string,
+  prod_type_uuid: string,
+  prod_type_cd: string,
+  prod_type_nm: string,
+  model_uuid: string,
+  model_cd: string,
+  model_nm: string,
+  rev: string,
+  prod_std: string,
+  unit_uuid: string,
+  unit_cd: string,
+  unit_nm: string,
+  proc_no: number,
+  proc_uuid: string,
+  proc_cd: string,
+  proc_nm: string,
+  auto_work_fg: true,
+  cycle_time: number,
+  uph: number,
+}
+
+type TRountingResource = {
+  routing_resource_uuid: string,
+  factory_uuid: string,
+  routing_uuid: string,
+  factory_cd: string,
+  factory_nm: string,
+  resource_type: string,
+  equip_uuid: string,
+  equip_cd: string,
+  equip_nm: string,
+  emp_cnt: number,
+  cycle_time: number,
+  uph: number,
+}
 
 /** BOM 관리 */
 export const PgStdRouting = () => {
@@ -64,7 +111,7 @@ export const PgStdRouting = () => {
   const onSetRoutingInfo = async (routingInfo)=>{
     setRoutingInfo(routingInfo)
   }
-
+  
   //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type:'text', id:'prod_uuid', label:'품목UUID', disabled:true, hidden:true},
@@ -148,13 +195,13 @@ export const PgStdRouting = () => {
   });
 
   const getWorkingsData =()=>{
-    getData({prod_uuid:prodInfo?.prod_uuid},'/std/routing-workingses').then((res) => {
+    getData<TRountings[]>({prod_uuid:prodInfo?.prod_uuid},'/std/routing-workingses').then((res) => {
       setWorkingsData(res);
     });
   };
 
   const getResourcesData =()=>{
-    getData({routing_uuid:routingInfo?.routing_uuid, resource_type:'all'},URI_PATH_SEARCH_ROUTING_RESOURCE).then((res) => {
+    getData<TRountingResource[]>({routing_uuid:routingInfo?.routing_uuid, resource_type:'all'},URI_PATH_SEARCH_ROUTING_RESOURCE).then((res) => {
       setResourcesData(res);
     });
   };
@@ -572,7 +619,7 @@ export const PgStdRouting = () => {
     if (!uuid) return;
 
     const uriPath = `/std/routings?prod_uuid=${uuid}`;
-    getData(null, uriPath, 'raws').then((res) => {
+    getData<TRountings[]>(null, uriPath, 'raws').then((res) => {
       detailGrid.setGridData(res || []);
     });
   };
@@ -594,7 +641,7 @@ export const PgStdRouting = () => {
     const searchParams = cleanupKeyOfObject(values, searchInitKeys);
 
     let data = [];
-    await getData(searchParams, headerSearchUriPath).then((res) => {
+    await getData<TRountings[]>(searchParams, headerSearchUriPath).then((res) => {
       data = res;
     }).finally(() => {
       setSelectedHeaderRow(null);

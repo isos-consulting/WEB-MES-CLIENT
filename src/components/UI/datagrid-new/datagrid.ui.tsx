@@ -933,7 +933,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
               // 이것 때문에 리렌더링이 발생하면서 하위 그리드의 데이터가 날아가는 것처럼 보이는 현상이 발생함 (행추가 같은 멀티 팝업은 이런 현상이 없던데 여기만 그럼)
               // setLoading(true);
 
-              getData(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
+              getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
                 if (typeof res === 'undefined') {
                   throw new Error('에러가 발생되었습니다.');
                 }
@@ -946,6 +946,17 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
                 } else {
                   title = word;
+                }
+
+                if (column?.name === columnName && !column?.requiredField) {
+                  if (res?.length > 0) {
+                    const keys = Object.keys(res);
+                    let emptyValue = {};
+                    keys?.forEach(key => {
+                      emptyValue[key] = null;
+                    });
+                    res?.unshift(emptyValue);
+                  }
                 }
 
                 modal.confirm({
