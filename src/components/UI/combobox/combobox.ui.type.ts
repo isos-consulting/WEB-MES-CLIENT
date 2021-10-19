@@ -14,6 +14,8 @@ export default interface IComboboxProps extends IComboboxPropsStyles {
 
   /** 기본 선택값 */
   defaultValue?: string;
+  /** 기본 선택값 */
+  defaultText?: string;
 
   /** 중요 여부 */
   important?: boolean;

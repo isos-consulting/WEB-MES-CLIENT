@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Select } from 'antd';
 import { useRecoilState } from "recoil";
 import Props, {IComboboxItem} from './combobox.ui.type';
@@ -36,8 +36,13 @@ const Combobox: React.FC<Props> = (props) => {
         break;
 
       case 'none':
-        setComboTextValue(props.defaultValue);
-        setComboValue(props.defaultValue);
+        if (props?.defaultValue) {
+          setComboTextValue(props?.defaultText || props?.defaultValue);
+          setComboValue(props.defaultValue);
+        } else {
+          setComboTextValue(options[0]?.text);
+          setComboValue(options[0]?.code);
+        }
         break;
 
       default:
@@ -52,7 +57,7 @@ const Combobox: React.FC<Props> = (props) => {
     const { uriPath, params, codeName, textName } = props?.dataSettingOptions;
     let comboData:IComboboxItem[] = [];
     
-    getData(params, uriPath).then((res) => {
+    getData<any[]>(params, uriPath).then((res) => {
       res?.forEach(el => {
         const keys = Object.keys(el);
         
@@ -102,7 +107,7 @@ const Combobox: React.FC<Props> = (props) => {
   /** 콤보박스 기본 값 세팅 */
   useLayoutEffect(() => {
     if (props?.defaultValue) {
-      setComboTextValue(props?.defaultValue);
+      setComboTextValue(props?.defaultText || props?.defaultValue);
       setComboValue(props?.defaultValue);
     } else {
       switch (props?.firstItemType) {
@@ -117,8 +122,16 @@ const Combobox: React.FC<Props> = (props) => {
           break;
 
         case 'none':
-          setComboTextValue(props.defaultValue);
-          setComboValue(props.defaultValue);
+          if (options?.length > 0) {
+            setComboTextValue(options[0]?.text);
+            setComboValue(options[0]?.code);
+          } else {
+            setComboTextValue(null);
+            setComboValue(null);
+          }
+          
+          // setComboTextValue(props?.defaultText || props?.defaultValue);
+          // setComboValue(props.defaultValue);
           break;
 
         default:
@@ -128,6 +141,21 @@ const Combobox: React.FC<Props> = (props) => {
       }
     }
   }, [options]);
+
+  const defaultValue = useMemo(() => {
+    if (props.defaultValue) 
+      return defaultValue;
+    else
+      return options?.length > 0 ? options[0]?.code : null;
+  }, [props.defaultValue, options]);
+
+  const value = useMemo(() => {
+    if (props.value) {
+      return props.value;
+    } else {
+      return defaultValue;
+    }
+  }, [props.value, defaultValue]);
   
 
   if (props?.label != null) {
@@ -136,8 +164,8 @@ const Combobox: React.FC<Props> = (props) => {
       <Space size={10} wrap>
         <Label text={props.label} important={props.important}/>
         <ScCombobox
-          defaultValue={props?.defaultValue}
-          value={props.value}
+          defaultValue={defaultValue}
+          value={value}
           onChange={props.onChange || onChangeValue}
           disabled={props.disabled}
           widthSize={props.widthSize}
@@ -149,7 +177,7 @@ const Combobox: React.FC<Props> = (props) => {
           : props?.firstItemType === 'none' ?
             null
           :
-            <Select.Option value='-' disabled={false} >-</Select.Option> 
+            <Select.Option value='-' disabled={false}>-</Select.Option> 
           }   
             {options?.map((value, index) => {
               return (<Select.Option key={value.code} value={value.code} disabled={value.disabled}>{value.text}</Select.Option>);
@@ -162,8 +190,8 @@ const Combobox: React.FC<Props> = (props) => {
     /** 라벨이 없는 버전 */
     return (
       <ScCombobox
-        defaultValue={props?.defaultValue} 
-        value={props.value} 
+        defaultValue={defaultValue} 
+        value={value} 
         onChange={props.onChange || onChangeValue}
         disabled={props.disabled}
         widthSize={props.widthSize}
@@ -175,7 +203,7 @@ const Combobox: React.FC<Props> = (props) => {
         : props?.firstItemType === 'none' ?
           null
         :
-          <Select.Option value='-' disabled={false} >-</Select.Option> 
+          <Select.Option value='-' disabled={false}>-</Select.Option> 
         }
           {options?.map((value, index) => {
             return (<Select.Option key={value.code} value={value.code} disabled={value.disabled}>{value.text}</Select.Option>);

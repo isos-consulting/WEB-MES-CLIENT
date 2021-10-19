@@ -27,15 +27,14 @@ export const PgInvStoresIndividualHistory = () => {
       type:'combo',
       id:'store_uuid', 
       label:'재고창고', 
-      firstItemType:'all',
-      default:'all',
+      firstItemType:'none',
       dataSettingOptions:{
         codeName:'store_uuid',
         textName:'store_nm',
         uriPath:getPopupForm('창고관리')?.uriPath,
         params:{
-        store_type: 'all',
-          }
+          store_type: 'all',
+        }
       },
     },
     {type:'text', id:'tran_type', label:'수불유형', default:'inventory', hidden:true},
