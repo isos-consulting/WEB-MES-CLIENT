@@ -9,7 +9,7 @@ import ITpDoubleGridProps, { TExtraGridPopups } from '~/components/templates/gri
 import { IInputGroupboxItem, useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-
+import { FormikProps, FormikValues } from 'formik';
 
 /** BOM 관리 */
 export const PgStdRouting = () => {
@@ -34,6 +34,9 @@ export const PgStdRouting = () => {
   /** ref 관리 */
   const grdRefRoutingWorkings = useRef<Grid>();
   const grdRefRoutingResources = useRef<Grid>();
+
+  const inputRefWorkings = useRef<FormikProps<FormikValues>>();
+  const inputRefResources = useRef<FormikProps<FormikValues>>();
 
   /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -97,6 +100,7 @@ export const PgStdRouting = () => {
         onClick: (ev, props) => { 
           onSetProdInfo(props?.grid?.store?.data?.rawData[props?.rowKey]).then(() => {
             setWorkingsGridPopupVisible(true) 
+            inputRefWorkings?.current?.setValues(props?.grid?.store?.data?.rawData[props?.rowKey)
           })
         },
       }
@@ -129,6 +133,7 @@ export const PgStdRouting = () => {
         onClick: (ev, props) => { 
           onSetRoutingInfo({...props?.grid?.store?.data?.rawData[props?.rowKey], ...selectedHeaderRow }).then(() => {
             setResourcesGridPopupVisible(true) 
+            inputRefResources?.current?.setValues({...props?.grid?.store?.data?.rawData[props?.rowKey], ...selectedHeaderRow })
           })
         },
       },
@@ -137,7 +142,7 @@ export const PgStdRouting = () => {
     {header:'공정순서', name:'proc_no', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, requiredField: true},
     {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header:'공정코드', name:'proc_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header:'공정명', name:'proc_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup'},
+    {header:'공정명', name:'proc_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', requiredField:true},
     {header:'자동실적처리', name:'auto_work_fg', width:ENUM_WIDTH.L, format:'check', editable:true, requiredField:true},
     {header:'C/T', name:'cycle_time', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header:'UPH', name:'uph', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
@@ -170,7 +175,7 @@ export const PgStdRouting = () => {
       getResourcesData();
     };
   }, [resourcesGridPopupVisible, resourcesGridPopupCreateVisible, resourcesGridPopupUpdateVisible]);
-  
+
   // 작업장등록 popup 띄우는거 까지만 함
   const extraGridPopups:TExtraGridPopups = [
     //#region ✔ 작업장 등록 관련 팝업 
@@ -189,7 +194,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_WORKINGS_GRID_INPUT',
         inputItems:detailInputInfo.props.inputItems,
-        initialValues:prodInfo
+        innerRef:inputRefWorkings
       },
       gridMode:'delete',
       data:workingsData,
@@ -344,7 +349,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_RESOURCES_GRID_INPUT',
         inputItems:ROUTING_RESOURCES_INPUT_ITEMS,
-        initialValues:routingInfo
+        innerRef:inputRefResources,
       },
       gridMode:'delete',
       data:resourcesData,
@@ -395,11 +400,11 @@ export const PgStdRouting = () => {
       popupId: 'ROUTING_RESOURCES_GRID_POPUP_CREATE',
       gridId: 'ROUTING_RESOURCES_GRID_POPUP_CREATE_GRID',
       columns: [
-        {header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M, format:'combo',editable:true,disabled:false},
+        {header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M, format:'combo', editable:true, disabled:false, requiredField:true},
         {header:'설비UUID', name:'equip_uuid', width: ENUM_WIDTH.L, format:'popup', hidden: true},
         {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L, format:'popup', editable:true},
         {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
-        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
+        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
         {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true}
       ],
       gridComboInfo:[
@@ -461,12 +466,13 @@ export const PgStdRouting = () => {
               {code:'인원', text:'인원'},
             ],
           },
-          editable:true
+          editable:true,
+          requiredField:true
         },
         {header:'설비UUID', name:'equip_uuid', width: ENUM_WIDTH.L, format:'popup', hidden: true},
         {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L, format:'popup', editable:true},
         {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
-        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
+        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
         {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true}
       ],
       gridPopupInfo:[
@@ -594,7 +600,14 @@ export const PgStdRouting = () => {
     const searchParams = cleanupKeyOfObject(values, searchInitKeys);
 
     let data = [];
-    await getData(searchParams, headerSearchUriPath).then((res) => {
+    await getData(
+      {
+        ...searchParams,
+        prd_active_fg:true,
+      }, 
+      headerSearchUriPath
+    ).then((res) => 
+    {
       data = res;
     }).finally(() => {
       setSelectedHeaderRow(null);
