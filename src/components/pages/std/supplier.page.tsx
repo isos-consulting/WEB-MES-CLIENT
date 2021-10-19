@@ -81,6 +81,7 @@ export const PgStdSupplier = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
@@ -88,6 +89,7 @@ export const PgStdSupplier = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
