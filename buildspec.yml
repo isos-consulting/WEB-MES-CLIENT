@@ -4,19 +4,15 @@ phases:
   install:
     commands:
       - yarn add parcel-bundler@1.12.5
-      # - yarn add typescript@10.2.0
       - yarn install
   pre_build:
     commands:
-      # - yarn run lint
   build:
     commands:
       - yarn build
+      - echo "success build"
   post_build:
     commands:
-      # - rm -rf node_modules
-      # - rm -f yarn.lock
-      # - rm -f package-lock.json
 artifacts:
   files:
     - '**/*'
