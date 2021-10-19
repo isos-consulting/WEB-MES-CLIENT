@@ -894,6 +894,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                 searchProps: null,
                 inputGroupProps: null,
               };
+              
+              let onBeforeOk = null;
 
               if (popupInfo?.popupKey == null) {
                 popupContent['datagridProps']['columns'] = popupInfo.columns;
@@ -911,6 +913,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     if (!showModal) return;
                   }
 
+                  // beforeOk
+                  if (apiSettings?.onBeforeOk != null) {
+                    onBeforeOk = apiSettings.onBeforeOk;
+                  }
+
                 } else {
                   popupContent['uriPath'] = popupInfo.dataApiSettings.uriPath;
                   popupContent['params'] = popupInfo.dataApiSettings.params;
@@ -919,6 +926,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   if (popupInfo.dataApiSettings?.onInterlock != null) {
                     const showModal:boolean = popupInfo.dataApiSettings?.onInterlock();
                     if (!showModal) return;
+                  }
+
+                  // beforeOk
+                  if (popupInfo.dataApiSettings?.onBeforeOk != null) {
+                    onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
                   }
                 }
   
@@ -979,9 +991,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   okText: '선택',
                   onOk: () => {
                     const $this = gridRef.current;
-                    const $child = childGridRef.current;
+                    const child = childGridRef.current;
   
-                    const row = $child.getInstance().getCheckedRows()[0];
+                    const row = child.getInstance().getCheckedRows()[0];
+                    
+                    if(onBeforeOk != null) {
+                      if (!onBeforeOk(child, [row])) return;
+                    }
 
                     if (typeof row === 'object') {
                       updateColumns.forEach((column) => {
@@ -1370,6 +1386,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       modalProps: null,
     };
 
+    let onBeforeOk = null;
+
     if (rowAddPopupInfo.popupKey == null) {
       popupContent['datagridProps']['columns'] = rowAddPopupInfo.columns;
 
@@ -1392,6 +1410,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         if (!showModal) return;
       }
 
+      // beforeOk
+      if (apiSettings?.onBeforeOk != null) {
+        onBeforeOk = apiSettings.onBeforeOk;
+      }
+
     } else {
       popupContent = {...popupContent, ...rowAddPopupInfo, ...rowAddPopupInfo.dataApiSettings};
       // popupContent['uriPath'] = rowAddPopupInfo.dataApiSettings.uriPath;
@@ -1401,6 +1424,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       if (rowAddPopupInfo.dataApiSettings?.onInterlock != null) {
         const showModal:boolean = rowAddPopupInfo.dataApiSettings?.onInterlock();
         if (!showModal) return;
+      }
+
+      // beforeOk
+      if (rowAddPopupInfo.dataApiSettings?.onBeforeOk != null) {
+        onBeforeOk = rowAddPopupInfo.dataApiSettings.onBeforeOk;
       }
     }
     
@@ -1443,6 +1471,10 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         onOk: () => {
           const child = childGridRef.current;
           const rows = child.getInstance().getCheckedRows();
+
+          if(onBeforeOk != null) {
+            if (!onBeforeOk(child, rows)) return;
+          }
 
           rows?.forEach((row) => {
             let newRow = {};

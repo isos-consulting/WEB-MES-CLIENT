@@ -270,4 +270,5 @@ type TApiSettings = {
   setData?: (value: React.SetStateAction<any[]>) => void,
   /** API 요청 여부를 결정하는 callback함수 */
   onInterlock?: () => boolean;
+  onBeforeOk?: (ev, checkedRows) => boolean;
 };
