@@ -7,7 +7,7 @@ import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.tem
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 
 
@@ -55,16 +55,12 @@ export const PgStdCustomerPrice = () => {
     {header: '고객사 단가UUID', name:'customer_price_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-    {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
     {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'popup', editable:true},
-    {header: '품목', name:'prod_nm', width:ENUM_WIDTH.L, format:'popup', editable:true, requiredField:true},
-    {header: '품목 유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '품목 유형', name:'item_type_nm', width:ENUM_WIDTH.M, format:'popup', editable:true, requiredField:true, align:'center'},
-    {header: '제품 유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '품목', name:'prod_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
+    {header: '품목 유형', name:'item_type_nm', width:ENUM_WIDTH.M, format:'popup', editable:true, align:'center'},
     {header: '제품 유형', name:'prod_type_nm', width:ENUM_WIDTH.M, format:'popup', editable:true, align:'center'},
-    {header: '모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, hidden:true},
-    {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
+    {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header: 'rev', name:'rev', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header: '규격', name:'prod_std', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true},
@@ -77,9 +73,8 @@ export const PgStdCustomerPrice = () => {
     {header: '화폐 단위', name:'money_unit_nm', width:ENUM_WIDTH.S, format:'combo', filter:'text', editable:true, requiredField:true},
     {header: '단가유형UUID', name:'price_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '단가 유형', name:'price_type_nm', width:ENUM_WIDTH.M, format:'combo', filter:'text', editable:true, requiredField:true},
-    {header: '단가', name:'price', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true},
+    {header: '단가', name:'price', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true, requiredField:true},
     {header: '단가 적용일자', name:'start_date', width:ENUM_WIDTH.M, format:'date', editable:true, requiredField:true},
-    {header: '단가 적용종료일자', name:'end_date', width:ENUM_WIDTH.M, format:'date', editable:true},
     {header: '소급단가', name:'retroactive_price', width:ENUM_WIDTH.M, format:'number', editable:true},
     {header: '배분율', name:'division', width:ENUM_WIDTH.S, format:'number', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.M, filter:'text', editable:true},
@@ -221,7 +216,7 @@ export const PgStdCustomerPrice = () => {
     const searchParams = cleanupKeyOfObject(values, searchInitKeys);
 
     let data = [];
-    await getData(searchParams, headerSearchUriPath).then((res) => {
+    await getData({...searchParams, partner_fg:2}, headerSearchUriPath).then((res) => {
       data = res;
     }).finally(() => {
       setSelectedHeaderRow(null);
