@@ -3,7 +3,7 @@ import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal, Col, Row, Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
-import React, { useLayoutEffect, useReducer, useRef, useState } from 'react';
+import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
 import { Button, Container, Datagrid, IGridColumn, ISearchItem, Label, Searchbox, Tabs, TGridMode } from '~/components/UI';
 import { executeData, getData, getToday, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
@@ -19,7 +19,6 @@ import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ROUTING } from './work.page.route';
-
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -209,7 +208,6 @@ const infoReducer = (state:TState, action:TAction) => {
 }
 //#endregion
 
-
 //#region 🔶🚫생산실적
 /** 생산실적 */
 export const PgPrdWork = () => {
@@ -217,16 +215,14 @@ export const PgPrdWork = () => {
   const [,setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
 
-  const [gridMode, setGridMode] = useState<TGridMode>('select');
+  const [gridMode, setGridMode] = useState<TGridMode>('delete');
+
   const [workDatas, setWorkDatas] = useState([]);
 
   const searchRef = useRef<FormikProps<FormikValues>>();
-  const inputRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();
-  const popupGridRef = useRef<Grid>();
 
   const SEARCH_URI_PATH = '/prd/works';
-  const SAVE_URI_PATH = '/prd/works';
 
   const 공정검사 = INSP();
   const 투입품목관리 = INPUT();
@@ -237,7 +233,6 @@ export const PgPrdWork = () => {
 
   // 팝업 관련
   const [prodOrderPopupVisible, setProdOrderPopupVisible] = useState(false);
-  const [workPopupVisible, setWorkPopupVisible] = useState(false);
 
   // 작업정보, 생산정보 관리
   const [infoState, infoDispatch] = useReducer(infoReducer, infoInit);
@@ -252,7 +247,6 @@ export const PgPrdWork = () => {
   const [schData_disabled, setSchData_disabled] = useState(false);
   const searchParams = searchRef?.current?.values
   
-
   useLayoutEffect(() => {
     if (searchParams?.complete_fg === 'true') {
       setSchData_disabled(false);
@@ -261,7 +255,6 @@ export const PgPrdWork = () => {
     }
   }, [searchParams]);
   
-
   useLayoutEffect(() => {
     // 콤보박스 값 세팅 (입고창고/입고위치)
 
@@ -316,7 +309,6 @@ export const PgPrdWork = () => {
     setProdOrderPopupVisible(false);
   }
 
-
   const onSearch = () => {
     const {values} = searchRef?.current;
     const searchParams =
@@ -362,32 +354,6 @@ export const PgPrdWork = () => {
     });
   }
 
-
-  const onDelete = (ev) => {
-
-  }
-
-
-  const onEdit = (ev) => {
-
-  }
-
-
-  const onAppend = (ev) => {
-    setWorkPopupVisible(true);
-  }
-
-
-  const onCancel = (ev) => {
-
-  }
-
-
-  const onSave = (ev) => {
-
-  }
-
-  
   /** 작업 취소 처리 */
   const onCancelWork = () => {
     if (workInfo.work_uuid == null) {
@@ -428,7 +394,6 @@ export const PgPrdWork = () => {
       }
     });
   }
-
 
   /** 실적 삭제 처리 */
   const onDeleteWork = () => {
@@ -606,7 +571,6 @@ export const PgPrdWork = () => {
     infoDispatch({type:'CHANGE_WORK_INFO', name:'remark', value});
   }
   //#endregion
-
   
   //#region ✅조회조건
   const SEARCH_ITEMS:ISearchItem[] = [
@@ -620,7 +584,6 @@ export const PgPrdWork = () => {
     },
   ];
   //#endregion
-
 
   //#region ✅컬럼
   const WORK_COLUMNS:IGridColumn[] = [
@@ -671,6 +634,175 @@ export const PgPrdWork = () => {
   ];
   //#endregion
 
+  const HeaderGridElement = useMemo(() => {
+    return (
+      <Datagrid
+        gridId={'WORK_GRID'}
+        ref={gridRef}
+        gridMode={gridMode}
+        columns={WORK_COLUMNS}
+        height={300}
+        data={workDatas}
+        onAfterClick={(ev) => {
+          const {rowKey, targetType} = ev;
+      
+          if (targetType === 'cell' ) {
+            try {
+              // setLoading(true);
+              const searchParams = searchRef?.current?.values;
+
+              const row = ev?.instance?.store?.data?.rawData[rowKey];
+              const work_uuid = row?.work_uuid;
+              const prod_uuid = row?.prod_uuid;
+              const lot_no = row?.lot_no;
+              const order_qty = row?.order_qty;
+              const complete_fg = searchParams?.complete_fg;
+
+
+              //#region  공장정보 및 생산정보 값 세팅
+              // 공장정보 및 생산정보 값 세팅
+              infoDispatch(
+                {
+                  type:'CHANGE_ALL', 
+                  value:{
+                    orderInfo: {
+                      prod_uuid: row?.prod_uuid,
+                      prod_no: row?.prod_no,
+                      prod_nm: row?.prod_nm,
+                      item_type_uuid: row?.item_type_uuid,
+                      item_type_nm: row?.item_type_nm,
+                      prod_type_uuid: row?.prod_type_uuid,
+                      prod_type_nm: row?.prod_type_nm,
+                      model_uuid: row?.model_uuid,
+                      model_nm: row?.model_nm,
+                      rev: row?.rev,
+                      prod_std: row?.prod_std,
+                      unit_uuid: row?.unit_uuid,
+                      unit_nm: row?.unit_nm,
+                      equip_uuid: row?.equip_uuid,
+                      equip_nm: row?.equip_nm,
+                      proc_uuid: row?.proc_uuid,
+                      proc_nm: row?.proc_nm,
+                      shift_uuid: row?.shift_uuid,
+                      shift_nm: row?.shift_nm,
+                      workings_uuid: row?.working_uuid,
+                      workings_nm: row?.working_nm,
+                      order_remark: row?.order_remark,
+                    },
+
+                    workInfo: {
+                      work_uuid: work_uuid,
+                      complete_fg: complete_fg,
+                      start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+                      end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+                      _start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
+                      _end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
+                      _start_time: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
+                      _end_time: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
+                      to_store_uuid: row?.to_store_uuid,
+                      to_store_nm: row?.to_store_nm,
+                      to_location_uuid: row?.to_location_uuid,
+                      to_location_nm: row?.to_location_nm,
+                      order_qty: row?.order_qty, //지시수량
+                      total_qty: row?.total_qty, //생산수량
+                      qty: row?.qty, //양품수량
+                      reject_qty: row?.reject_qty, //부적합수량
+                      lot_no: row?.lot_no,
+                      remark: row?.remark,
+                    }
+                  }
+                }
+              );
+              //#endregion
+
+              //#region 하위 데이터들 조회
+              // 공정검사 데이터 조회
+              공정검사.onSearch({
+                work_uuid, 
+                prod_uuid, 
+                lot_no
+              });
+              
+              // 투입품목관리 데이터 조회
+              if (searchParams?.complete_fg === 'true') {
+                getData({
+                  work_uuid: String(work_uuid),
+                }, 투입품목관리.SEARCH_URI_PATH).then((res) => {
+                  투입품목관리.setData(res);
+                  투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
+                  투입품목관리.setSaveOptionParams({work_uuid});
+                  투입품목관리.setParentParams(searchParams);
+                  투입품목관리.setGridMode('view');
+                });
+
+              } else if (work_uuid != null) {
+                getData({
+                  work_uuid: String(work_uuid),
+                }, 투입품목관리.GOING_SEARCH_URI_PATH).then((res) => {
+                  투입품목관리.setData(res);
+                  투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
+                  투입품목관리.setSaveOptionParams({work_uuid});
+                  투입품목관리.setParentParams(searchParams);
+                  투입품목관리.setGridMode('view');
+                });
+              }
+                
+
+              // 투입인원관리 데이터 조회
+              getData({
+                work_uuid: String(work_uuid),
+              }, 투입인원관리.SEARCH_URI_PATH).then((res) => {
+                투입인원관리.setData(res);
+                투입인원관리.setSearchParams({work_uuid, complete_fg});
+                투입인원관리.setSaveOptionParams({work_uuid});
+                투입인원관리.setGridMode('view');
+              });
+
+
+              // 부적합관리 데이터 조회
+              getData({
+                work_uuid: String(work_uuid),
+              }, 부적합관리.SEARCH_URI_PATH).then((res) => {
+                부적합관리.setData(res);
+                부적합관리.setSearchParams({work_uuid, complete_fg});
+                부적합관리.setSaveOptionParams({work_uuid});
+                부적합관리.setGridMode('view');
+              });
+
+              
+              // 비가동관리 데이터 조회
+              getData({
+                work_uuid: String(work_uuid),
+              }, 비가동관리.SEARCH_URI_PATH).then((res) => {
+                비가동관리.setData(res);
+                비가동관리.setSearchParams({work_uuid, complete_fg});
+                비가동관리.setSaveOptionParams({work_uuid});
+                비가동관리.setGridMode('view');
+              });
+
+              
+              // 공정순서 데이터 조회
+              getData({
+                work_uuid: String(work_uuid),
+              }, 공정순서.SEARCH_URI_PATH).then((res) => {
+                공정순서.setData(res);
+                공정순서.setSearchParams({work_uuid, complete_fg});
+                공정순서.setSaveOptionParams({work_uuid});
+                공정순서.setGridMode('view');
+              });
+              //#endregion
+      
+            } catch(e) {
+              console.log(e);
+      
+            } finally {
+              // setLoading(false);
+            }
+          }
+        }}
+      />
+    );
+  }, [workDatas, gridRef, gridMode])
 
   //#region 🚫렌더부
   return (
@@ -678,30 +810,19 @@ export const PgPrdWork = () => {
       <Typography.Title level={5} style={{marginBottom:-16, fontSize:14}}><CaretRightOutlined />생산이력</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       <Container>
-        {gridMode === 'select' ?
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} align='start'>
-              {/* <Input.Search
-                placeholder='전체 검색어를 입력하세요.'
-                enterButton
-                onSearch={onAllFiltered}/> */}
-              {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
-            </Space>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder}>작업지시 관리</Button>
-              {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
-            </Space>
-          </div>
-          :
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-            </Space>
-          </div>
-        }
+        <div style={{width:'100%', display:'inline-block'}}>
+          <Space size={[6,0]} align='start'>
+            {/* <Input.Search
+              placeholder='전체 검색어를 입력하세요.'
+              enterButton
+              onSearch={onAllFiltered}/> */}
+            {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
+          </Space>
+          <Space size={[6,0]} style={{float:'right'}}>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder}>작업지시 관리</Button>
+            {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
+          </Space>
+        </div>
         <div style={{maxWidth:700, marginTop:-33, marginLeft:-6}}>
           <Searchbox 
             id='prod_order_search'
@@ -712,188 +833,7 @@ export const PgPrdWork = () => {
           />
         </div>
         <p/>
-        <Datagrid
-          gridId={'WORK_GRID'}
-          ref={gridRef}
-          gridMode={gridMode}
-          columns={WORK_COLUMNS}
-          height={300}
-          data={workDatas}
-          onAfterClick={(ev) => {
-            const {rowKey, targetType} = ev;
-        
-            if (targetType === 'cell' && gridMode === 'select') {
-              try {
-                // setLoading(true);
-                const searchParams = searchRef?.current?.values;
-
-                const row = ev?.instance?.store?.data?.rawData[rowKey];
-                const work_uuid = row?.work_uuid;
-                const prod_uuid = row?.prod_uuid;
-                const lot_no = row?.lot_no;
-                const order_qty = row?.order_qty;
-                const complete_fg = searchParams?.complete_fg;
-
-
-                //#region  공장정보 및 생산정보 값 세팅
-                // 공장정보 및 생산정보 값 세팅
-                infoDispatch(
-                  {
-                    type:'CHANGE_ALL', 
-                    value:{
-                      orderInfo: {
-                        prod_uuid: row?.prod_uuid,
-                        prod_no: row?.prod_no,
-                        prod_nm: row?.prod_nm,
-                        item_type_uuid: row?.item_type_uuid,
-                        item_type_nm: row?.item_type_nm,
-                        prod_type_uuid: row?.prod_type_uuid,
-                        prod_type_nm: row?.prod_type_nm,
-                        model_uuid: row?.model_uuid,
-                        model_nm: row?.model_nm,
-                        rev: row?.rev,
-                        prod_std: row?.prod_std,
-                        unit_uuid: row?.unit_uuid,
-                        unit_nm: row?.unit_nm,
-                        equip_uuid: row?.equip_uuid,
-                        equip_nm: row?.equip_nm,
-                        proc_uuid: row?.proc_uuid,
-                        proc_nm: row?.proc_nm,
-                        shift_uuid: row?.shift_uuid,
-                        shift_nm: row?.shift_nm,
-                        workings_uuid: row?.working_uuid,
-                        workings_nm: row?.working_nm,
-                        order_remark: row?.order_remark,
-                      },
-
-                      workInfo: {
-                        work_uuid: work_uuid,
-                        complete_fg: complete_fg,
-                        start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
-                        end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
-                        _start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
-                        _end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
-                        _start_time: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
-                        _end_time: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
-                        to_store_uuid: row?.to_store_uuid,
-                        to_store_nm: row?.to_store_nm,
-                        to_location_uuid: row?.to_location_uuid,
-                        to_location_nm: row?.to_location_nm,
-                        order_qty: row?.order_qty, //지시수량
-                        total_qty: row?.total_qty, //생산수량
-                        qty: row?.qty, //양품수량
-                        reject_qty: row?.reject_qty, //부적합수량
-                        lot_no: row?.lot_no,
-                        remark: row?.remark,
-                      }
-                    }
-                  }
-                );
-                //#endregion
-
-                //#region 하위 데이터들 조회
-                // 공정검사 데이터 조회
-                공정검사.onSearch({
-                  work_uuid, 
-                  prod_uuid, 
-                  lot_no
-                });
-                // getData({
-                //   work_uuid: String(work_uuid),
-                //   insp_detail_type: 'all'
-                // }, 공정검사.HEADER_SEARCH_URI_PATH).then((res) => {
-                //   공정검사.setHeaderData(res);
-                //   공정검사.setHeaderSaveOptionParams({work_uuid, prod_uuid, lot_no});
-                //   공정검사.setHeaderGridMode('select');
-                //   공정검사.setDetailGridMode('view');
-                // });
-
-                //❗공정검사 기준서 기준으로 값 조회
-                // getData({
-                //   insp_detail_type: row?.insp_uuid ,
-                //   work_uuid: String(work_uuid) 
-                // }, 공정검사.DETAIL_STD_SEARCH_URI_PATH).then((res) => {
-                //   공정검사.setDetailData(res);
-                // });
-        
-                // 투입품목관리 데이터 조회
-                if (searchParams?.complete_fg === 'true') {
-                  getData({
-                    work_uuid: String(work_uuid),
-                  }, 투입품목관리.SEARCH_URI_PATH).then((res) => {
-                    투입품목관리.setData(res);
-                    투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
-                    투입품목관리.setSaveOptionParams({work_uuid});
-                    투입품목관리.setParentParams(searchParams);
-                    투입품목관리.setGridMode('view');
-                  });
-
-                } else if (work_uuid != null) {
-                  getData({
-                    work_uuid: String(work_uuid),
-                  }, 투입품목관리.GOING_SEARCH_URI_PATH).then((res) => {
-                    투입품목관리.setData(res);
-                    투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
-                    투입품목관리.setSaveOptionParams({work_uuid});
-                    투입품목관리.setParentParams(searchParams);
-                    투입품목관리.setGridMode('view');
-                  });
-                }
-                  
-
-                // 투입인원관리 데이터 조회
-                getData({
-                  work_uuid: String(work_uuid),
-                }, 투입인원관리.SEARCH_URI_PATH).then((res) => {
-                  투입인원관리.setData(res);
-                  투입인원관리.setSearchParams({work_uuid, complete_fg});
-                  투입인원관리.setSaveOptionParams({work_uuid});
-                  투입인원관리.setGridMode('view');
-                });
-
-
-                // 부적합관리 데이터 조회
-                getData({
-                  work_uuid: String(work_uuid),
-                }, 부적합관리.SEARCH_URI_PATH).then((res) => {
-                  부적합관리.setData(res);
-                  부적합관리.setSearchParams({work_uuid, complete_fg});
-                  부적합관리.setSaveOptionParams({work_uuid});
-                  부적합관리.setGridMode('view');
-                });
-
-                
-                // 비가동관리 데이터 조회
-                getData({
-                  work_uuid: String(work_uuid),
-                }, 비가동관리.SEARCH_URI_PATH).then((res) => {
-                  비가동관리.setData(res);
-                  비가동관리.setSearchParams({work_uuid, complete_fg});
-                  비가동관리.setSaveOptionParams({work_uuid});
-                  비가동관리.setGridMode('view');
-                });
-
-                
-                // 공정순서 데이터 조회
-                getData({
-                  work_uuid: String(work_uuid),
-                }, 공정순서.SEARCH_URI_PATH).then((res) => {
-                  공정순서.setData(res);
-                  공정순서.setSearchParams({work_uuid, complete_fg});
-                  공정순서.setSaveOptionParams({work_uuid});
-                  공정순서.setGridMode('view');
-                });
-                //#endregion
-        
-              } catch(e) {
-                console.log(e);
-        
-              } finally {
-                // setLoading(false);
-              }
-            }
-          }}
-        />
+        {HeaderGridElement}
       </Container>
 
       
@@ -1116,11 +1056,15 @@ const ProdOrderModal = ({visible, onClose}) => {
   const COMPLETE_SAVE_URI_PATH = '/prd/orders/complete';
   // const CANCEL_COMPLETE_SAVE_URI_PATH = '/prd/works/cancel-complete';
   
-
   // 마감작업 체크용
   const [completeChk, setCompleteChk] = useState<boolean>(false);
   //#endregion
 
+  useLayoutEffect(() => {
+    if(!visible){
+      setData([])
+    };
+  }, [visible])
 
   //#region ✅컬럼
   const PROD_ORDER_COLUMNS:IGridColumn[] = [
