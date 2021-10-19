@@ -129,6 +129,10 @@ export const PgStdBom = () => {
         {original:'c_prod_std', popup:'prod_std'},
         {original:'c_unit_uuid', popup:'unit_uuid'},
         {original:'c_unit_nm', popup:'unit_nm'},
+        {original:'from_store_uuid', popup:'inv_to_store_uuid'},
+        {original:'store_nm', popup:'store_nm'},
+        {original:'from_location_uuid', popup:'inv_to_location_uuid'},
+        {original:'location_nm', popup:'location_nm'},
       ],
       columns: [
         {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
@@ -150,6 +154,11 @@ export const PgStdBom = () => {
         {header: '단위UUID', name:'unit_uuid', format:'text', hidden:true},
         {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
         {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.M, format:'text'},
+        {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.M, format:'text'},
+        {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'text'},
+        
       ],
       dataApiSettings: () => {
         type TParams = {use_fg?:boolean};
