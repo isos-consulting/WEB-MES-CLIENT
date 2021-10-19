@@ -21,11 +21,11 @@ const baseURL = process.env.TEST_URL;
  * @param uriPath 도메인 뒤에 붙는 URL
  * @param returnType 반환 타입
  */
-export const getData = async (
+export async function getData<T>(
   params: object,
   uriPath: string,
   returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' = 'raws'
-) => {
+):Promise<T> {
   loadProgressBar();
 
   let datas:any = null;
