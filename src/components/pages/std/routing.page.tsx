@@ -100,7 +100,7 @@ export const PgStdRouting = () => {
         onClick: (ev, props) => { 
           onSetProdInfo(props?.grid?.store?.data?.rawData[props?.rowKey]).then(() => {
             setWorkingsGridPopupVisible(true) 
-            inputRefWorkings?.current?.setValues(props?.grid?.store?.data?.rawData[props?.rowKey)
+            inputRefWorkings?.current?.setValues(props?.grid?.store?.data?.rawData[props?.rowKey])
           })
         },
       }
