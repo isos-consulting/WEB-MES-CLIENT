@@ -10,10 +10,9 @@ phases:
   build:
     commands:
       - yarn build
-      - echo "success build"
   post_build:
     commands:
 artifacts:
   files:
     - '**/*'
-  base-directory: 'build'
+  # base-directory: 'build'
