@@ -1816,7 +1816,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       <Grid
         id={props.gridId}
         ref={gridRef}
-        header={props.header}
         columns={columns}
         columnOptions={columnOptions}
         summary={summary}
