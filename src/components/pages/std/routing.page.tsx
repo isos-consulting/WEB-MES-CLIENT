@@ -204,14 +204,17 @@ export const PgStdRouting = () => {
       extraButtons: [
         {
           buttonProps:{text:'신규추가'},
-          buttonAction:()=>setWorkingsGridPopupCreateVisible(true)
+          align:'left',
+          buttonAction:()=>setWorkingsGridPopupCreateVisible(true),
         },
         {
           buttonProps:{text:'수정'},
-          buttonAction:()=>setWorkingsGridPopupUpdateVisible(true)
+          align:'right',
+          buttonAction:()=>setWorkingsGridPopupUpdateVisible(true),
         },
         {
           buttonProps:{text:'삭제'},
+          align:'right',
           buttonAction:()=>{
             dataGridEvents?.onSave(
               'basic',
@@ -359,14 +362,17 @@ export const PgStdRouting = () => {
       extraButtons: [
         {
           buttonProps:{text:'신규추가'},
-          buttonAction:()=>setResourcesGridPopupCreateVisible(true)
+          align:'left',
+          buttonAction:()=>setResourcesGridPopupCreateVisible(true),
         },
         {
           buttonProps:{text:'수정'},
-          buttonAction:()=>setResourcesGridPopupUpdateVisible(true)
+          align:'right',
+          buttonAction:()=>setResourcesGridPopupUpdateVisible(true),
         },
         {
           buttonProps:{text:'삭제'},
+          align:'right',
           buttonAction:()=>{
             dataGridEvents?.onSave(
               'basic',
