@@ -14,5 +14,5 @@ phases:
     commands:
 artifacts:
   files:
-    - 'build/*'
+    - '**/*'
   # base-directory: 'build'
