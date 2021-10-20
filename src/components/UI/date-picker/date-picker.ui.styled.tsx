@@ -22,7 +22,7 @@ export const ScDatePicker = styled(BaseDatepicker)`
   width: ${(props) => 
     props.widthSize === 'flex' ? '100%'
     : props.widthSize === 'auto' ? 'auto'
-    : Sizes.width_datepicker_md
+    : props.widthSize ? `${props.widthSize}px` : Sizes.width_datepicker_md
   };
   
   height: ${Sizes.height_datepicker_default};

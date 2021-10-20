@@ -434,7 +434,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           }
           break;
       }
-      
 
       // gridMode에 따라 editor 모드 제거
       if (el?.editable === true && !['create','update','edit'].includes(props.gridMode)) {
@@ -1672,7 +1671,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅WILL MOUNT : 기본 값 세팅 */
   useLayoutEffect(() => {
     // 이벤트 세팅
-    const instance = gridRef.current.getInstance();
+    const instance = gridRef?.current?.getInstance();
     instance.on('afterChange', onAfterChange);
 
     return (() => {
@@ -1682,7 +1681,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   useLayoutEffect(() => {
     // 이벤트 세팅
-    const instance = gridRef.current.getInstance();
+    const instance = gridRef?.current?.getInstance();
     instance.on('keydown', onKeyDown);
 
     return (() => {

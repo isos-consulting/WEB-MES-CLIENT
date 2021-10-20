@@ -37,5 +37,5 @@ export default interface IDatePickerProps extends IDatepickerStyles {
 /** 날짜선택기 스타일 인터페이스 */
 export interface IDatepickerStyles {
   /** 날짜 선택기 너비 유형 */
-  widthSize?: 'default' | 'auto' | 'flex';
+  widthSize?: 'default' | 'auto' | 'flex' | number | string;
 }

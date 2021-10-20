@@ -29,7 +29,7 @@ export interface IInputGroupboxItem {
   alias?: string;
   label?: string;
   type: 'text' | 'number' | 'date' | 'time' | 'datetime' | 'daterange' | 'check' | 'radio' | 'combo';
-  widthSize?: 'auto' | 'flex';
+  widthSize?: 'auto' | 'flex' | number | string;
   options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
   placeholder?: string;
   suffix?: string;
@@ -527,6 +527,58 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                     item?.onAfterChange(e);
                                 }}
                               />
+                            
+                            :item.type === 'datetime' ?
+                            <div>
+                              <DatePicker
+                                id={item.id}
+                                name={(item.name || item.id) + '_date'}
+                                picker='date'
+                                widthSize={item.widthSize || 121}
+                                format='YYYY-MM-DD'
+                                important={item.important}
+                                label={item?.useCheckbox ? null : item.label}
+                                disabled={
+                                  item?.useCheckbox ? 
+                                    !(values[((item.name || item.id) + '_date') + '_chk'] === true)
+                                  : item.disabled
+                                }
+                                placeholder={item.placeholder}
+                                value={values[(item.name || item.id) + '_date']}
+                                defaultValue={_initialValues[item.name || item.id] ? dayjs(_initialValues[item.name || item.id]) : null}
+                                // defaultValue={item.default ? dayjs(item.default) : null}
+                                onChange={async (e) => {
+                                  const timeValue = values[(item.name || item.id) + '_time'];
+                                  await setFieldValued((item.name || item.id) + '_date', dayjs(e).format('YYYY-MM-DD'));
+                                  await setFieldValued(item.name || item.id, dayjs(e).format('YYYY-MM-DD') + dayjs(timeValue).format('HH:mm'));
+  
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                              />
+                              <DatePicker
+                                id={item.id}
+                                name={(item.name || item.id) + '_time'}
+                                picker='time'
+                                widthSize={item.widthSize || 100}
+                                format='HH:mm'
+                                important={item.important}
+                                label={item.label}
+                                disabled={item.disabled}
+                                placeholder={item.placeholder}
+                                value={values[(item.name || item.id) + '_time']}
+                                defaultValue={_initialValues[(item.name || item.id) + '_time'] ? dayjs(_initialValues[(item.name || item.id) + '_time']) : null}
+                                // defaultValue={item.default ? dayjs(item.default) : null}
+                                onChange={async (e) => {
+                                  const dateValue = values[(item.name || item.id) + '_date'];
+                                  await setFieldValued((item.name || item.id) + '_time', dayjs(e).format('HH:mm'));
+                                  await setFieldValued(item.name || item.id, dayjs(dateValue).format('YYYY-MM-DD') + dayjs(e).format('HH:mm'));
+                                  
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                              />
+                            </div>
   
                             :item.type === 'check' ?
                               <CheckboxGroup
@@ -799,6 +851,56 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                   item?.onAfterChange(e);
                               }}
                             />
+
+                          :item.type === 'datetime' ?
+                          <div>
+                            <DatePicker
+                              id={item.id}
+                              name={(item.name || item.id) + '_date'}
+                              picker='date'
+                              widthSize={item.widthSize || 121}
+                              format='YYYY-MM-DD'
+                              important={item.important}
+                              disabled={
+                                item?.useCheckbox ? 
+                                  !(values[((item.name || item.id) + '_date') + '_chk'] === true)
+                                : item.disabled
+                              }
+                              placeholder={item.placeholder}
+                              value={values[(item.name || item.id) + '_date']}
+                              defaultValue={_initialValues[item.name || item.id] ? dayjs(_initialValues[item.name || item.id]) : null}
+                              // defaultValue={item.default ? dayjs(item.default) : null}
+                              onChange={async (e) => {
+                                const timeValue = values[(item.name || item.id) + '_time'];
+                                await setFieldValued((item.name || item.id) + '_date', dayjs(e).format('YYYY-MM-DD'));
+                                await setFieldValued(item.name || item.id, dayjs(e).format('YYYY-MM-DD') + dayjs(timeValue).format('HH:mm'));
+
+                                if (item?.onAfterChange)
+                                  item?.onAfterChange(e);
+                              }}
+                            />
+                            <DatePicker
+                              id={item.id}
+                              name={(item.name || item.id) + '_time'}
+                              picker='time'
+                              widthSize={item.widthSize || 100}
+                              format='HH:mm'
+                              important={item.important}
+                              disabled={item.disabled}
+                              placeholder={item.placeholder}
+                              value={values[(item.name || item.id) + '_time']}
+                              defaultValue={_initialValues[(item.name || item.id) + '_time'] ? dayjs(_initialValues[(item.name || item.id) + '_time']) : null}
+                              // defaultValue={item.default ? dayjs(item.default) : null}
+                              onChange={async (e) => {
+                                const dateValue = values[(item.name || item.id) + '_date'];
+                                await setFieldValued((item.name || item.id) + '_time', dayjs(e).format('HH:mm'));
+                                await setFieldValued(item.name || item.id, dayjs(dateValue).format('YYYY-MM-DD') + dayjs(e).format('HH:mm'));
+                                
+                                if (item?.onAfterChange)
+                                  item?.onAfterChange(e);
+                              }}
+                            />
+                          </div>
 
                           :item.type === 'check' ?
                             <CheckboxGroup
