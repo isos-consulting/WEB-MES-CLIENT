@@ -35,7 +35,7 @@ const BaseDatePicker: React.FC<Props> = (props) => {
       props.picker === 'datetime' ? 
         null
       : props.picker ?? null);
-  }, [props.picker])
+  }, [props.picker]);
 
   const values = useMemo(() => {
     if (props?.value == null) {
@@ -49,12 +49,11 @@ const BaseDatePicker: React.FC<Props> = (props) => {
     }
   }, [props?.value, props?.defaultValue]);
 
-
-  // 유저가 타이핑 할때마다 change를 태워서 format을 걸어버리고 싶은데
   const onChange = useCallback(
-    (ev) => {
+    (date, dateString) => {
+      const returnValue = props.returnType === 'dateString' ? dateString : date;
       if (props.onChange)
-        props.onChange(ev);
+        props.onChange(returnValue);
     },
     [props.onChange],
   );
