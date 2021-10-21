@@ -436,7 +436,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       }
 
       // gridMode에 따라 editor 모드 제거
-      if (el?.editable === true && !['create','update','edit'].includes(props.gridMode)) {
+      if (el?.editable === true && !['create','update'].includes(props.gridMode)) {
         el['editor'] = null;
       }
 
@@ -504,7 +504,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         header:COLUMN_NAME.EDIT,
         editable: false,
         format: 'text',
-        hidden: !['create','update','edit'].includes(props.gridMode),
+        hidden: !['create','update'].includes(props.gridMode),
         width: 70,
         align: 'center',
         renderer: {
@@ -678,7 +678,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     if (data) {
       const newData = data?.length > 0 ? cloneObject(data) : [];
       // create모드나 update모드일 때, 클래스명 넣기 (입력 가능한 컬럼/ 불가능한 컬럼을 구분하기 위함)
-      if (['create', 'update', 'edit'].includes(props.gridMode)) {
+      if (['create', 'update'].includes(props.gridMode)) {
         newData?.forEach((el) => {
           // 클래스명 삽입 하기
           let classNames = {column:{}};
@@ -856,7 +856,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
     if (targetType === 'cell') {
       // 팝업키는 여부 결정
-      if (['create', 'update', 'edit'].includes(props.gridMode)) {
+      if (['create', 'update'].includes(props.gridMode)) {
         props.columns.forEach(column => {
           if (column.name === columnName) {
             if (column?.format === 'popup' && column?.editable === true) {
@@ -1227,7 +1227,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   
       if (rowKey != null) {
         switch (props.gridMode) {
-          case 'edit':
           case 'delete':
             gridRef.current.getInstance().setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.DELETE);
             break;
@@ -1307,7 +1306,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         for (let i = 0; i < rowCount; i++) {
           const rowKey = rawDatas[i]?.rowKey;
           switch (props.gridMode) {
-            case 'edit':
             case 'delete':
               gridRef.current.getInstance().setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.DELETE);
               break;
@@ -1345,7 +1343,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           const rowKey = rawDatas[i]?.rowKey;
           if (rowKey != null) {
             switch (props.gridMode) {
-              case 'edit':
               case 'delete':
               case 'select':
               case 'multi-select':
@@ -1651,7 +1648,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   
   /** ✅rowHeader 세팅 */
   const rowHeaders = useMemo<any[]>(() => {
-    if (['select', 'multi-select', 'delete', 'edit'].includes(props.gridMode)) {
+    if (['select', 'multi-select', 'delete'].includes(props.gridMode)) {
       return ['checkbox', 'rowNum'];
     } else {
       return ['rowNum'];

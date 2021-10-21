@@ -131,7 +131,6 @@ export type TGridMode =
 | 'create' 
 | 'update' 
 | 'delete'
-| 'edit';
 
 export type TGridExtraButtons = {
   buttonProps?: IButtonProps;
