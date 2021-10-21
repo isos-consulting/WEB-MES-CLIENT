@@ -25,6 +25,8 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   const onSave = useMemo(() =>
     async function() {
       // setLoading(true);
+      const instance = gridRef?.current?.getInstance();
+      instance?.finishEditing();
       
 
       // 단순 수정 이력 배열을 저장
@@ -356,7 +358,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       title={props.title}
       okButtonProps={props.okButtonProps}
       okText={props.okText}
-      onOk={props.onOk || onOk}
+      onOk={onOk}
       cancelButtonProps={props.cancelButtonProps}
       cancelText={props.cancelText}
       onCancel={onCancel}
