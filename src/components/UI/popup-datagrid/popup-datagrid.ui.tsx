@@ -338,7 +338,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   //     setData(res);
   //   });
   // }
-  const modelWidthSize:string|number = useMemo(() => {
+  const modalWidthSize:string|number = useMemo(() => {
     const smSize = '50%';
     const mdSize = '70%';
     const lgSize = '90%';
@@ -360,7 +360,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       cancelButtonProps={props.cancelButtonProps}
       cancelText={props.cancelText}
       onCancel={onCancel}
-      width={modelWidthSize}
+      width={modalWidthSize}
       visible={props.visible ?? visible}
       maskClosable={false}
       confirmLoading={loading}
@@ -386,10 +386,10 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           <InputGroupbox boxShadow={false} {...props.inputProps}/>
       
       : null}
+      
 
       <Datagrid
         {...props}
-
         ref={gridRef}
         gridId={props.gridId}
         gridMode={props.gridMode}
