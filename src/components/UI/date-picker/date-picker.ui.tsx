@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import dayjs from 'dayjs';
 import Props from './date-picker.ui.type';
 import { ScDatePicker } from './date-picker.ui.styled';
@@ -11,6 +11,7 @@ import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
+import timezone from 'dayjs/plugin/timezone';
 
 
 // 날짜 로케일 설정
@@ -23,10 +24,18 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
+dayjs.extend(timezone);
 
 
 /** 날짜 선택기 */
 const BaseDatePicker: React.FC<Props> = (props) => {
+
+  const picker = useMemo(() => {
+    return (
+      props.picker === 'datetime' ? 
+        null
+      : props.picker ?? null);
+  }, [props.picker])
 
   const values = useMemo(() => {
     if (props?.value == null) {
@@ -39,7 +48,40 @@ const BaseDatePicker: React.FC<Props> = (props) => {
       return props?.defaultValue ? {value: props.defaultValue} : {};
     }
   }, [props?.value, props?.defaultValue]);
-  
+
+
+  // 유저가 타이핑 할때마다 change를 태워서 format을 걸어버리고 싶은데
+  const onChange = useCallback(
+    (ev) => {
+      if (props.onChange)
+        props.onChange(ev);
+    },
+    [props.onChange],
+  );
+
+  const showTime:boolean = useMemo(() => {
+    return props.picker === 'datetime';
+  }, [props.picker]);
+
+  const format:string = useMemo(() => {
+    if (props.format)
+      return props.format;
+
+    switch (props.picker) {
+      case 'date':
+        return 'YYYY-MM-DD';
+      case 'datetime':
+        return 'YYYY-MM-DD HH:mm:ss';
+      case 'month':
+        return 'MM';
+      case 'week':
+        return 'dddd';
+      
+      default:
+        return null;
+    }
+  }, [props.format, props.picker]);
+
 
   if (props?.label != null) {
     return (
@@ -48,12 +90,13 @@ const BaseDatePicker: React.FC<Props> = (props) => {
         <ScDatePicker
           id={props.id}
           name={props.name}
-          picker={props.picker || 'date'}
-          format={props.format || 'YYYY-MM-DD'}
+          picker={picker}
+          format={format}
+          showTime={showTime}
           // defaultValue={props.defaultValue}
           // value={value}
           {...values}
-          onChange={props.onChange}
+          onChange={onChange}
           placeholder={props.placeholder}
           disabled={props.disabled}
           widthSize={props.widthSize}
@@ -65,15 +108,17 @@ const BaseDatePicker: React.FC<Props> = (props) => {
       <ScDatePicker
         id={props.id}
         name={props.name}
-        picker={props.picker || 'date'}
-        format={props.format || 'YYYY-MM-DD'}
+        picker={picker}
+        format={format}
+        showTime={showTime}
         // defaultValue={props.defaultValue}
         // value={value}
         {...values}
-        onChange={props.onChange}
+        onChange={onChange}
         placeholder={props.placeholder} 
         disabled={props.disabled}
-        widthSize={props.widthSize}/>
+        widthSize={props.widthSize}
+      />
     );
   }
 };

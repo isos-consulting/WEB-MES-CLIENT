@@ -29,7 +29,7 @@ export interface IInputGroupboxItem {
   alias?: string;
   label?: string;
   type: 'text' | 'number' | 'date' | 'time' | 'datetime' | 'daterange' | 'check' | 'radio' | 'combo';
-  widthSize?: 'auto' | 'flex';
+  widthSize?: 'auto' | 'flex' | number | string;
   options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
   placeholder?: string;
   suffix?: string;
@@ -527,6 +527,46 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                     item?.onAfterChange(e);
                                 }}
                               />
+                            
+                            :item.type === 'datetime' ?
+                            <div>
+                              {item?.useCheckbox ?
+                                <Checkbox
+                                  id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
+                                  checked={values[(item.name || item.id) + '_chk']}
+                                  onChange={async (e) => {
+                                    await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
+    
+                                    if (item?.onAfterChange)
+                                      item?.onAfterChange(e);
+                                  }}
+                                />
+                              : null}
+                              <DatePicker
+                                id={item.id}
+                                name={item.name || item.id}
+                                picker='datetime'
+                                widthSize={item.widthSize || 'flex'}
+                                format='YYYY-MM-DD HH:mm:ss'
+                                important={item.important}
+                                label={item?.useCheckbox ? null : item.label}
+                                disabled={
+                                  item?.useCheckbox ? 
+                                    !(values[(item.name || item.id) + '_chk'] === true)
+                                  : item.disabled
+                                }
+                                placeholder={item.placeholder}
+                                value={values[item.name || item.id]}
+                                defaultValue={_initialValues[item.name || item.id] ? dayjs(_initialValues[item.name || item.id]) : null}
+                                // defaultValue={item.default ? dayjs(item.default) : null}
+                                onChange={async (e) => {
+                                  await setFieldValued(item.name || item.id, dayjs(e).format('YYYY-MM-DD HH:mm:ss'));
+  
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                              />
+                            </div>
   
                             :item.type === 'check' ?
                               <CheckboxGroup
@@ -799,6 +839,46 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                   item?.onAfterChange(e);
                               }}
                             />
+
+                          :item.type === 'datetime' ?
+                          <div>
+                            {item?.useCheckbox ?
+                              <Checkbox
+                                id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
+                                checked={values[(item.name || item.id) + '_chk']}
+                                onChange={async (e) => {
+                                  await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
+  
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                              />
+                            : null}
+                            <DatePicker
+                              id={item.id}
+                              name={item.name || item.id}
+                              picker='datetime'
+                              widthSize={item.widthSize || 'flex'}
+                              format='YYYY-MM-DD HH:mm:ss'
+                              important={item.important}
+                              // label={item?.useCheckbox ? null : item.label}
+                              disabled={
+                                item?.useCheckbox ? 
+                                  !(values[(item.name || item.id) + '_chk'] === true)
+                                : item.disabled
+                              }
+                              placeholder={item.placeholder}
+                              value={values[item.name || item.id]}
+                              defaultValue={_initialValues[item.name || item.id] ? dayjs(_initialValues[item.name || item.id]) : null}
+                              // defaultValue={item.default ? dayjs(item.default) : null}
+                              onChange={async (e) => {
+                                await setFieldValued(item.name || item.id, dayjs(e).format('YYYY-MM-DD HH:mm:ss'));
+
+                                if (item?.onAfterChange)
+                                  item?.onAfterChange(e);
+                              }}
+                            />
+                          </div>
 
                           :item.type === 'check' ?
                             <CheckboxGroup

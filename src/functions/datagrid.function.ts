@@ -59,7 +59,7 @@ export const saveGridData = async (
         for (let z = 0; z < saveData[editType[i]]?.length; z++) {
           for (let y = 0; y < columns?.length; y++) {
             // empty 허용하는 셀인지 확인 (비허용이면 해당 컬럼의 내용만 지우고 서버에 전달함)
-            if (columns[y]?.disableStringEmpty === true && saveData[editType[i]][z][columns[y].name] === '') {
+            if ((columns[y]?.disableStringEmpty === true || columns[y]?.format !== 'text') && saveData[editType[i]][z][columns[y].name] === '') {
               delete saveData[editType[i]][z][columns[y].name];
             }
 

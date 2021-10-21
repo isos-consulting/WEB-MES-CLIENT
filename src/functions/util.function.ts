@@ -438,6 +438,27 @@ export const getToday = (
   return today;
 }
 
+
+/**
+ * 오늘 년월시분초를 반환합니다.
+ * @param addNum 오늘날짜 기준에서 더할 값
+ * @param options 포맷 또는 유닛타입(day, year 등등... 기본값은 day)
+ * @returns string형식의 오늘날짜
+ */
+export const getNow = (
+  addNum:number=0,
+  options: {
+    format?:string,
+    unitType?: dayjs.UnitType,
+  }={
+    format: 'YYYY-MM-DD HH:mm:ss',
+    unitType: 'day',
+  }
+):string => {
+  const now = addNum === 0 ? dayjs().format(options.format) : addDate(dayjs(), addNum, options);
+  return now;
+}
+
 /**
  * 일자를 더합니다.
  * @param date 기존일자

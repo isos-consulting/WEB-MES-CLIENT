@@ -434,7 +434,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           }
           break;
       }
-      
 
       // gridMode에 따라 editor 모드 제거
       if (el?.editable === true && !['create','update','edit'].includes(props.gridMode)) {
@@ -1672,7 +1671,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅WILL MOUNT : 기본 값 세팅 */
   useLayoutEffect(() => {
     // 이벤트 세팅
-    const instance = gridRef.current.getInstance();
+    const instance = gridRef?.current?.getInstance();
     instance.on('afterChange', onAfterChange);
 
     return (() => {
@@ -1682,7 +1681,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   useLayoutEffect(() => {
     // 이벤트 세팅
-    const instance = gridRef.current.getInstance();
+    const instance = gridRef?.current?.getInstance();
     instance.on('keydown', onKeyDown);
 
     return (() => {
@@ -1761,44 +1760,55 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   }, [props.columns, props.gridComboInfo]);
 
 
+  const leftAlignExtraButtons = useMemo(() => {
+    return (
+      props.extraButtons?.filter(el => el?.align !== 'right')?.map((el, index) => {
+        const {buttonAction, buttonProps} = el;
+        return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
+      })
+    )
+  }, [props.extraButtons]);
+
+  const rightAlignExtraButtons = useMemo(() => {
+    return (
+      props.extraButtons?.filter(el => el?.align === 'right')?.map((el, index) => {
+        const {buttonAction, buttonProps} = el;
+        return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
+      })
+    )
+  }, [props.extraButtons]);
+
+
   return (
     <div>
-      {(props.gridMode === 'create' && props.hiddenActionButtons !== true) ? 
-      <div className='modalButton'>
-        {
-          props?.extraButtons ?
-            <Space size={[5,null]} style={{width:'50%', justifyContent:'left'}}>
-              {
-                props.extraButtons?.filter(el => el?.align !== 'right')?.map((el, index) => {
-                  const {buttonAction, buttonProps} = el;
-                  return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
-                })
-              }
-            </Space>
-          : null
-        }
-        <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
+      {props.gridMode === 'create' && props.hiddenActionButtons !== true ?
+        <div className='modalButton'>
           {
-            props.extraButtons?.filter(el => el?.align === 'right')?.map((el, index) => {
-              const {buttonAction, buttonProps} = el;
-              return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
-            })
+            props?.extraButtons ?
+              <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : null, justifyContent:'left'}}>
+                {leftAlignExtraButtons}
+              </Space>
+            : null
           }
-          {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onPrepentRow}>행 추가</Button>}
-          <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelRow}>행 취소</Button>
-        </Space>
-      </div>
-      : 
-        props?.extraButtons && props.hiddenActionButtons !== true ?
+          <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
+            {rightAlignExtraButtons}
+            {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onPrepentRow}>행 추가</Button>}
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelRow}>행 취소</Button>
+          </Space>
+        </div>
+      :
+        props?.extraButtons ?
           <div className='modalButton'>
-                <Space size={[5,null]}>
-                  {
-                    props.extraButtons.map((el, index) => {
-                      const {buttonAction, buttonProps} = el;
-                      return <Button key={buttonProps.text + index} btnType='buttonFill' heightSize='small' fontSize='small' {...buttonProps} onClick={(ev) => buttonAction(ev, props, {gridRef, childGridRef, columns, data, modal, onAppendRow})}>{buttonProps.text}</Button>
-                    })
-                  }
+            {
+              <>
+                <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : null, justifyContent:'left'}}>
+                  {leftAlignExtraButtons}
                 </Space>
+                <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
+                  {rightAlignExtraButtons}
+                </Space>
+              </>
+            }
           </div>
         : null
       }
@@ -1806,7 +1816,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       <Grid
         id={props.gridId}
         ref={gridRef}
-        header={props.header}
         columns={columns}
         columnOptions={columnOptions}
         summary={summary}

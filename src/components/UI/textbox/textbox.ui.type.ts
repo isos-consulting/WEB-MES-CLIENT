@@ -53,5 +53,5 @@ export default interface ITextboxProps extends ITextboxStyles {
 /** 입력박스 스타일 인터페이스 */
 export interface ITextboxStyles {
   /** 입력박스 선택기 너비 유형 */
-  widthSize?: 'default' | 'auto' | 'flex';
+  widthSize?: 'default' | 'auto' | 'flex' | number | string;
 }

@@ -6,13 +6,18 @@ import styled from "styled-components";
 import { DatePicker } from "antd";
 import Props from './date-picker.ui.type';
 
+type TAntdDatePicker = {
+  showTime:boolean;
+  picker: "time" | "date" | "week" | "month" | "quarter" | "year";
+}
+type IBaseDatePicker = Props & TAntdDatePicker;
 
-const BaseDatepicker:React.FC<Props> = (props) => {
+const BaseDatepicker:React.FC<IBaseDatePicker> = (props) => {
   // 커스텀으로 사용될 속성들을 제외한 기본 속성만 Datepicker 컴포넌트에 넣어야 합니다.
   const {widthSize, picker, ...otherProps} = props;
 
   return (
-    <DatePicker picker={picker} {...otherProps}/>
+    <DatePicker picker={picker} {...otherProps} />
   )
 }
 
@@ -22,7 +27,7 @@ export const ScDatePicker = styled(BaseDatepicker)`
   width: ${(props) => 
     props.widthSize === 'flex' ? '100%'
     : props.widthSize === 'auto' ? 'auto'
-    : Sizes.width_datepicker_md
+    : props.widthSize ? `${props.widthSize}px` : Sizes.width_datepicker_md
   };
   
   height: ${Sizes.height_datepicker_default};
