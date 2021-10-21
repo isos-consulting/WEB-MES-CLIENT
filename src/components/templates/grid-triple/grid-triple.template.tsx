@@ -388,6 +388,8 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
             } else {
               if (!isSuccess) return;
+              headerPopupRef?.current?.getInstance()?.uncheckAll();
+              headerPopupRef?.current?.getInstance()?.clearModifiedData();
 
               headerSearchProps.onSearch();
               setHeaderPopupVisible(false);
@@ -433,6 +435,8 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
             } else {
               if (!isSuccess) return;
+              detailPopupRef?.current?.getInstance()?.uncheckAll();
+              detailPopupRef?.current?.getInstance()?.clearModifiedData();
 
               detailSearchProps.onSearch();
               setDetailPopupVisible(false);
@@ -478,6 +482,8 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
             } else {
               if (!isSuccess) return;
+              editPopupRef?.current?.getInstance()?.uncheckAll();
+              editPopupRef?.current?.getInstance()?.clearModifiedData();
 
               editPopupSearchProps.onSearch();
               setEditPopupVisible(false);
