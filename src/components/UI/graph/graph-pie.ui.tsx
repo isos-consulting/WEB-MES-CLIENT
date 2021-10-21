@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsivePie } from '@nivo/pie';
+import { ResponsivePie } from 'nivo';
 import Props from './graph-pie.ui.type';
 import { ScPieGraph } from './graph-pie.ui.styled';
 import { setNumberToDigit } from '~functions/util.function';

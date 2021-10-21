@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveBar } from "@nivo/bar";
+import { ResponsiveBar } from "nivo";
 import Props from './graph-bar.ui.type';
 import { setNumberToDigit } from '~functions/util.function';
 

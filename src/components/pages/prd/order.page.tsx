@@ -1,5 +1,5 @@
 import { CaretRightOutlined } from '@ant-design/icons';
-import Grid from '@toast-ui/react-grid';
+import Grid from '@toast-ui/react-grid'
 import { Divider, message, Space, Typography, Modal } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { MutableRefObject, useMemo, useRef, useState } from 'react';
