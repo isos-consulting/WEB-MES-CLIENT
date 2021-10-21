@@ -1,15 +1,13 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { useGrid } from "~/components/UI";
+import { getPopupForm, useGrid } from "~/components/UI";
 import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, isModified } from "~/functions";
-import Modal from 'antd/lib/modal/Modal';
+import { Modal } from 'antd';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
-
-
 
 /** 단위 변환값 관리 */
 export const PgStdUnitConvert = () => {
@@ -55,38 +53,126 @@ export const PgStdUnitConvert = () => {
     // {header: 'From 단위UUID', name:'from_unit_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
     // {header: 'From 단위명', name:'from_unit_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
     {header: 'To 단위UUID', name:'to_unit_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
-    {header: 'To 단위명', name:'to_unit_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
+    {header: '변환단위', name:'to_unit_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
     {header: 'from 값', name:'from_value', width:ENUM_WIDTH.L, format:'number', editable:true, requiredField:true},
     {header: 'to 값', name:'to_value', width:ENUM_WIDTH.L, format:'number', editable:true, requiredField:true},
     {header: '변환값', name:'convert_value', width:ENUM_WIDTH.L, format:'number', editable:true, hidden: true},
+    {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+    {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header:'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text', format:'popup', editable:true},
+    {header:'품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header:'모델', name:'model_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header:'규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, format:'text', editable:true},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     gridMode: detailDefaultGridMode,
   });
-
+  
   /** 팝업 Grid View */
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', detailGrid.gridInfo.columns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     gridPopupInfo: [
-      { // FROM 단위
-        columnNames: [
-          {original:'from_unit_uuid', popup:'unit_uuid'},
-          {original:'from_unit_nm', popup:'unit_nm'},
-        ],
-        popupKey:'단위관리',
-        gridMode: 'select'
-      },
       { // TO 단위
         columnNames: [
           {original:'to_unit_uuid', popup:'unit_uuid'},
           {original:'to_unit_nm', popup:'unit_nm'},
         ],
-        popupKey:'단위관리',
+        columns: getPopupForm('단위관리').datagridProps.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('단위관리').uriPath,
+          params:{},
+          onBeforeOk:(ev, chkRow)=>{
+            let dataChk:boolean = false;
+            let unit_uuid:string;
+            const rowUnitUuid:string = chkRow[0]?.unit_uuid
+            if(newDataPopupGridVisible){
+              unit_uuid = newDataPopupInputInfo?.values?.unit_uuid;
+            } else if (addDataPopupGridVisible){
+              unit_uuid = addDataPopupInputInfo?.values?.unit_uuid;
+            } else if (editDataPopupGridVisible){
+              unit_uuid = editDataPopupInputInfo?.values?.unit_uuid;
+            };
+            if (rowUnitUuid && rowUnitUuid !== unit_uuid) {
+              dataChk = true;
+            };
+            if(!dataChk){
+              message.warning('대상단위와 동일한 품목 단위입니다. 확인 후 다시 입력해주세요.')
+            }
+            return dataChk;
+          },
+          onAfterOk:({ev, parentGrid, popupGrid}, checkedRows)=>{
+            parentGrid.setValue(ev.rowKey, 'prod_uuid', '')
+            parentGrid.setValue(ev.rowKey, 'item_type_nm', '')
+            parentGrid.setValue(ev.rowKey, 'prod_type_nm', '')
+            parentGrid.setValue(ev.rowKey, 'prod_no', '')
+            parentGrid.setValue(ev.rowKey, 'prod_nm', '')
+            parentGrid.setValue(ev.rowKey, 'rev', '')
+            parentGrid.setValue(ev.rowKey, 'model_nm', '')
+            parentGrid.setValue(ev.rowKey, 'prod_std', '')
+          }
+        },
         gridMode: 'select'
+
       },
+      { 
+        columnNames: [
+          {original:'prod_uuid', popup:'prod_uuid'},
+          {original:'item_type_nm', popup:'item_type_nm'},
+          {original:'prod_type_nm', popup:'prod_type_nm'},
+          {original:'prod_no', popup:'prod_no'},
+          {original:'prod_nm', popup:'prod_nm'},
+          {original:'rev', popup:'rev'},
+          {original:'model_nm', popup:'model_nm'},
+          {original:'prod_std', popup:'prod_std'},
+          {original:'to_unit_uuid', popup:'unit_uuid'},
+          {original:'to_unit_nm', popup:'unit_nm'},
+        ],
+        columns: [
+          {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
+          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text'},
+          {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, format:'text'},
+          {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, format:'text'},
+          {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, format:'text'},
+          {header: '단위UUID', name:'unit_uuid', format:'text', hidden:true},
+          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, format:'text'},
+        ],
+        dataApiSettings: {
+          uriPath: '/std/prods',
+          params: {
+            use_fg: true,
+          },
+          onBeforeOk:(ev, chkRow)=>{
+            let dataChk:boolean = false;
+            let unit_uuid:string;
+            const rowUnitUuid:string = chkRow[0]?.unit_uuid
+            if(newDataPopupGridVisible){
+              unit_uuid = newDataPopupInputInfo?.values?.unit_uuid;
+            } else if (addDataPopupGridVisible){
+              unit_uuid = addDataPopupInputInfo?.values?.unit_uuid;
+            } else if (editDataPopupGridVisible){
+              unit_uuid = editDataPopupInputInfo?.values?.unit_uuid;
+            };
+            if (rowUnitUuid && rowUnitUuid !== unit_uuid) {
+              dataChk = true;
+            };
+            if(!dataChk){
+              message.warning('대상단위와 동일한 품목 단위입니다. 확인 후 다시 입력해주세요.')
+            }
+            return dataChk;
+          }
+        },
+        gridMode:'select',
+        
+      }
     ],
     gridComboInfo: detailGrid.gridInfo.gridComboInfo,
   });
@@ -234,7 +320,6 @@ export const PgStdUnitConvert = () => {
       () => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo?.values).then((searchResult) => {
-          console.log()
           onAfterSaveAction(searchResult, selectedHeaderRow?.unit_uuid);
         });
       },
