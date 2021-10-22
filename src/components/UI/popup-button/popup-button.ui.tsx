@@ -23,11 +23,19 @@ const setPopupButtonData = (props:Props) => {
 
   const {dataApiSettings, datagridSettings} = props;
   const modalSettings = props?.modalSettings;
+
+  let dataApiInfo = {};
+  if (typeof dataApiSettings === 'function') {
+    dataApiInfo = dataApiSettings();
+
+  } else {
+    dataApiInfo = dataApiSettings;
+  }
   
   return {
     modalProps: modalSettings,
     datagridProps: datagridSettings,
-    ...dataApiSettings
+    ...dataApiInfo
   }
 }
 

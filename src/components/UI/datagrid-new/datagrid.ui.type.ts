@@ -252,7 +252,7 @@ export interface IGridPopupInfo {
   // actionType?: TGridPopupAction;
 };
 
-type TApiSettings = {
+export type TApiSettings = {
   /** 모달 커스텀 */
   modalProps?: IModalProps,
   /** API 요청 포인트 */
