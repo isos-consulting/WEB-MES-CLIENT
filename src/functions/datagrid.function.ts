@@ -1,5 +1,5 @@
 import {IGridModifiedRows} from '../components/UI/datagrid-new/datagrid.ui.type';
-import {getUserUid, getUserInfoKeys, getUserFactoryUuid} from './storage.function';
+import {getUserInfoKeys, getUserFactoryUuid} from './storage.function';
 import {getObjectKeyDuplicateCheck, isNumber} from './util.function';
 import {executeData, getData} from './comm.function';
 import {message} from 'antd';
@@ -688,3 +688,21 @@ export const dataGridEvents = {
   printExcel: () => message.info('준비중 입니다.')
 }
 //#endregion
+
+
+
+/** 그리드 포커스 잡는 용도 */
+export const setGridFocus = (gridRef, info?:{columnName:string, rowKey:number}) => {
+  if (!gridRef) return;
+
+  const instance = gridRef?.current?.getInstance();
+  if (!instance) return;
+
+  const cell = instance?.getFocusedCell();
+  const columnName = info?.columnName ?? cell?.columnName;
+  const rowKey = info?.rowKey ?? cell?.rowKey;
+
+  if (columnName == null || rowKey == null) return;
+
+  instance?.focus(rowKey, columnName);
+}

@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { IGridComboColumnInfo, IGridComboInfo, IGridPopupInfo, TGridComboItems } from './datagrid.ui.type';
-import { cloneObject, getData, setNumberToDigit } from '~/functions';
+import { cloneObject, getData, setGridFocus, setNumberToDigit } from '~/functions';
 import {message, Modal, Space} from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
@@ -123,7 +123,6 @@ function getGridComboItem(comboInfo:IGridComboInfo, columnName:IGridComboColumnI
 
   return returnValue;
 }
-
 
 // interface IColumnComboState {
 //   [key: string]: {
@@ -1733,6 +1732,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
                   }
                 },
+                onCancel: () => setGridFocus(gridRef),
                 cancelText:'취소',
                 maskClosable:false,
               })

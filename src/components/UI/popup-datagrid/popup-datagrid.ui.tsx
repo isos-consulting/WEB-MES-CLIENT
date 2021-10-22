@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
-import { checkGridData, executeData, getModifiedRows, getUserFactoryUuid, saveGridData } from '~/functions';
+import { checkGridData, executeData, getModifiedRows, getUserFactoryUuid, saveGridData, setGridFocus } from '~/functions';
 import { Modal, message } from 'antd';
 import Grid from '@toast-ui/react-grid';
 import { useMemo } from 'react';
@@ -341,12 +341,8 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
     const instance = gridRef?.current?.getInstance();
     const columnName = instance?.getColumns()?.find(el => el?.hidden !== true && el?.name !== '_edit')?.name;
-    const columnIndex = instance?.getIndexOfColumn(columnName);
-    const rowIndex = instance?.getIndexOfRow(0);
 
-    if (!columnName || columnIndex === -1 || rowIndex === -1) return;
-
-    instance?.focus(rowIndex, columnName);
+    setGridFocus(gridRef, {rowKey: 0, columnName});
   }, [data]);
 
   
