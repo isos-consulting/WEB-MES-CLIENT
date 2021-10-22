@@ -1761,7 +1761,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       const {columnName, rowKey, keyboardEvent} = ev;
       if (columnName === COLUMN_CODE.CHECK) return;
 
-      if (keyboardEvent?.keyCode === 32) { // Space
+      if (keyboardEvent?.keyCode === 32 || keyboardEvent?.keyCode === 13) { // Space
         // 셀 값 수정 가능한 상태일 떼, popup타입의 셀에서 space를 누른 경우 팝업 호출
         if (['create', 'update']?.includes(props.gridMode)) {
           onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
