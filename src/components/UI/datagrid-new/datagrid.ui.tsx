@@ -849,196 +849,224 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     [gridRef],
   );
 
+  //#region ⛔그리드 더블클릭 액션
+  type TDblPopup = {
+    popupId: string,
+    gridRef: any,
+    data: any[],
+  }
+  const [dblPopupInfo, setDblPopupInfo] = useState<TDblPopup>({});
 
   /** ⛔그리드 더블클릭 액션 */
   const onDblClick = useCallback((ev) => {
     const {columnName, rowKey, targetType} = ev;
 
-    if (targetType === 'cell') {
-      // 팝업키는 여부 결정
-      if (['create', 'update'].includes(props.gridMode)) {
-        props.columns.forEach(column => {
-          if (column.name === columnName) {
-            if (column?.format === 'popup' && column?.editable === true) {
-              // 팝업 부르기
-              let popupInfo:IGridPopupInfo = null;
-              let updateColumns:{original:string, popup:string}[] = [];
+    onLoadPopup(ev);
+
+    // if (targetType === 'cell') {
+    //   // 팝업키는 여부 결정
+    //   if (['create', 'update'].includes(props.gridMode)) {
+    //     props.columns.forEach(column => {
+    //       if (column.name === columnName) {
+    //         if (column?.format === 'popup' && column?.editable === true) {
+    //           // 팝업 부르기
+    //           let popupInfo:IGridPopupInfo = null;
+    //           let updateColumns:{original:string, popup:string}[] = [];
 
 
-              for (let i = 0; i < props.gridPopupInfo?.length; i++) {
-                const columns = props.gridPopupInfo[i].columnNames;
-                updateColumns = columns;
+    //           for (let i = 0; i < props.gridPopupInfo?.length; i++) {
+    //             const columns = props.gridPopupInfo[i].columnNames;
+    //             updateColumns = columns;
 
-                for (let z = 0; z < columns.length; z++) {
-                  if (columns[z].original === columnName) {
-                    popupInfo = props.gridPopupInfo[i];
-                    break;
-                  }
-                }
-                if (popupInfo != null) {
-                  break;
-                }
-              }
+    //             for (let z = 0; z < columns.length; z++) {
+    //               if (columns[z].original === columnName) {
+    //                 popupInfo = props.gridPopupInfo[i];
+    //                 break;
+    //               }
+    //             }
+    //             if (popupInfo != null) {
+    //               break;
+    //             }
+    //           }
 
-
-              if (popupInfo == null)
-                return;
-              let popupContent:IPopupItemsRetrunProps = {
-                datagridProps: {
-                  gridId: null,
-                  columns: null,
-                },
-                uriPath: null,
-                params: null,
-                searchProps: null,
-                inputGroupProps: null,
-              };
+    //           if (popupInfo == null)
+    //             return;
+    //           let popupContent:IPopupItemsRetrunProps = {
+    //             datagridProps: {
+    //               gridId: null,
+    //               columns: null,
+    //             },
+    //             uriPath: null,
+    //             params: null,
+    //             searchProps: null,
+    //             inputGroupProps: null,
+    //           };
               
-              let onBeforeOk = null;
-              let onAfterOk = null;
+    //           let onBeforeOk = null;
+    //           let onAfterOk = null;
 
-              if (popupInfo?.popupKey == null) {
-                popupContent['datagridProps']['columns'] = popupInfo.columns;
+    //           if (popupInfo?.popupKey == null) {
+    //             popupContent['datagridProps']['columns'] = popupInfo.columns;
                 
-                if (typeof popupInfo.dataApiSettings === 'function') {
-                  const apiSettings = popupInfo.dataApiSettings(ev);
-                  popupContent['uriPath'] = apiSettings?.uriPath;
-                  popupContent['params'] = apiSettings?.params;
-                  // popupContent['searchProps'] = apiSettings?.searchProps;
-                  // popupContent['inputGroupProps'] = apiSettings?.inputGroupProps;
+    //             if (typeof popupInfo.dataApiSettings === 'function') {
+    //               const apiSettings = popupInfo.dataApiSettings(ev);
+    //               popupContent['uriPath'] = apiSettings?.uriPath;
+    //               popupContent['params'] = apiSettings?.params;
+    //               // popupContent['searchProps'] = apiSettings?.searchProps;
+    //               // popupContent['inputGroupProps'] = apiSettings?.inputGroupProps;
 
-                  // 전처리 함수 실행
-                  if (apiSettings?.onInterlock != null) {
-                    const showModal:boolean = apiSettings?.onInterlock();
-                    if (!showModal) return;
-                  }
+    //               // 전처리 함수 실행
+    //               if (apiSettings?.onInterlock != null) {
+    //                 const showModal:boolean = apiSettings?.onInterlock();
+    //                 if (!showModal) return;
+    //               }
 
-                  // beforeOk
-                  if (apiSettings?.onBeforeOk != null) {
-                    onBeforeOk = apiSettings.onBeforeOk;
-                  }
+    //               // beforeOk
+    //               if (apiSettings?.onBeforeOk != null) {
+    //                 onBeforeOk = apiSettings.onBeforeOk;
+    //               }
 
-                  // afterOk
-                  if (apiSettings?.onAfterOk != null) {
-                    onAfterOk = apiSettings.onAfterOk;
-                  }
+    //               // afterOk
+    //               if (apiSettings?.onAfterOk != null) {
+    //                 onAfterOk = apiSettings.onAfterOk;
+    //               }
 
-                } else {
-                  popupContent['uriPath'] = popupInfo.dataApiSettings.uriPath;
-                  popupContent['params'] = popupInfo.dataApiSettings.params;
+    //             } else {
+    //               popupContent['uriPath'] = popupInfo.dataApiSettings.uriPath;
+    //               popupContent['params'] = popupInfo.dataApiSettings.params;
 
-                  // 전처리 함수 실행
-                  if (popupInfo.dataApiSettings?.onInterlock != null) {
-                    const showModal:boolean = popupInfo.dataApiSettings?.onInterlock();
-                    if (!showModal) return;
-                  }
+    //               // 전처리 함수 실행
+    //               if (popupInfo.dataApiSettings?.onInterlock != null) {
+    //                 const showModal:boolean = popupInfo.dataApiSettings?.onInterlock();
+    //                 if (!showModal) return;
+    //               }
 
-                  // beforeOk
-                  if (popupInfo.dataApiSettings?.onBeforeOk != null) {
-                    onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
-                  }
+    //               // beforeOk
+    //               if (popupInfo.dataApiSettings?.onBeforeOk != null) {
+    //                 onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
+    //               }
 
-                  // afterOk
-                  if (popupInfo.dataApiSettings?.onAfterOk != null) {
-                    onAfterOk = popupInfo.dataApiSettings.onAfterOk;
-                  }
-                }
+    //               // afterOk
+    //               if (popupInfo.dataApiSettings?.onAfterOk != null) {
+    //                 onAfterOk = popupInfo.dataApiSettings.onAfterOk;
+    //               }
+    //             }
   
-              } else {
-                popupContent = getPopupForm(popupInfo.popupKey);
-                popupContent['params'] = {};
-              }
+    //           } else {
+    //             popupContent = getPopupForm(popupInfo.popupKey);
+    //             popupContent['params'] = {};
+    //           }
 
 
-              const childGridId = uuidv4();
+    //           const childGridId = uuidv4();
 
-              // 이것 때문에 리렌더링이 발생하면서 하위 그리드의 데이터가 날아가는 것처럼 보이는 현상이 발생함 (행추가 같은 멀티 팝업은 이런 현상이 없던데 여기만 그럼)
-              // setLoading(true);
+    //           // 이것 때문에 리렌더링이 발생하면서 하위 그리드의 데이터가 날아가는 것처럼 보이는 현상이 발생함 (행추가 같은 멀티 팝업은 이런 현상이 없던데 여기만 그럼)
+    //           // setLoading(true);
 
-              getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
-                if (typeof res === 'undefined') {
-                  throw new Error('에러가 발생되었습니다.');
-                }
+    //           getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
+    //             if (typeof res === 'undefined') {
+    //               throw new Error('에러가 발생되었습니다.');
+    //             }
                 
-                let title = popupContent?.modalProps?.title;
-                const word = '단일선택';
+    //             let title = popupContent?.modalProps?.title;
+    //             const word = '단일선택';
 
-                if (title != null && String(title).length > 0) {
-                  title = title + ' - ' + word;
+    //             if (title != null && String(title).length > 0) {
+    //               title = title + ' - ' + word;
 
-                } else {
-                  title = word;
-                }
+    //             } else {
+    //               title = word;
+    //             }
 
-                if (column?.name === columnName && !column?.requiredField) {
-                  if (res?.length > 0) {
-                    const keys = Object.keys(res);
-                    let emptyValue = {};
-                    keys?.forEach(key => {
-                      emptyValue[key] = null;
-                    });
+    //             if (column?.name === columnName && !column?.requiredField) {
+    //               if (res?.length > 0) {
+    //                 const keys = Object.keys(res);
+    //                 let emptyValue = {};
+    //                 keys?.forEach(key => {
+    //                   emptyValue[key] = null;
+    //                 });
                     
-                    res?.unshift(emptyValue);
-                  }
-                }
+    //                 res?.unshift(emptyValue);
+    //               }
+    //             }
 
-                modal.confirm({
-                  title,
-                  width: '80%',
-                  content:
-                    <>
-                      {/* {popupContent?.searchProps ? <Searchbox {...popupContent.searchProps}/> : null}
-                      {popupContent?.inputGroupProps ? <InputGroupbox {...popupContent.inputGroupProps}/> : null} */}
-                      <Datagrid
-                        ref={childGridRef}
-                        gridId={childGridId}
-                        {...popupContent.datagridProps}
-                        gridMode='select'
-                        data={res}
-                      />
-                    </>,
-                  icon:null,
-                  okText: '선택',
-                  onOk: () => {
-                    const $this = gridRef.current.getInstance();
-                    const child = childGridRef.current.getInstance();
+    //             modal.confirm({
+    //               title,
+    //               width: '80%',
+    //               content:
+    //                 <>
+    //                   {/* {popupContent?.searchProps ? <Searchbox {...popupContent.searchProps}/> : null}
+    //                   {popupContent?.inputGroupProps ? <InputGroupbox {...popupContent.inputGroupProps}/> : null} */}
+    //                   <Datagrid
+    //                     ref={childGridRef}
+    //                     gridId={childGridId}
+    //                     {...popupContent.datagridProps}
+    //                     gridMode='select'
+    //                     data={res}
+    //                   />
+    //                 </>,
+    //               icon:null,
+    //               okText: '선택',
+    //               onOk: () => {
+    //                 const $this = gridRef.current.getInstance();
+    //                 const child = childGridRef.current.getInstance();
   
-                    const row = child.getCheckedRows()[0];
+    //                 const row = child.getCheckedRows()[0];
                     
-                    if(onBeforeOk != null) {
-                      if (!onBeforeOk({popupGrid:child, parentGrid:$this, ev:ev}, [row])) return;
-                    }
+    //                 if(onBeforeOk != null) {
+    //                   if (!onBeforeOk({popupGrid:child, parentGrid:$this, ev:ev}, [row])) return;
+    //                 }
 
-                    if (typeof row === 'object') {
-                      updateColumns.forEach((column) => {
-                        $this.setValue(rowKey, column.original, row[column.popup]);
-                      });
-                    } else {
-                      message.warn('항목을 선택해주세요.');
-                    }
+    //                 if (typeof row === 'object') {
+    //                   updateColumns.forEach((column) => {
+    //                     $this.setValue(rowKey, column.original, row[column.popup]);
+    //                   });
+    //                 } else {
+    //                   message.warn('항목을 선택해주세요.');
+    //                 }
 
-                    $this.refreshLayout();
+    //                 $this.refreshLayout();
 
-                    if(onAfterOk != null) {
-                      onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
-                    }
-                  },
-                  cancelText:'취소',
-                  maskClosable:false,
-                })
+    //                 if(onAfterOk != null) {
+    //                   onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
+    //                 }
+    //               },
+    //               cancelText:'취소',
+    //               maskClosable:false,
+    //             })
+                
+    //             setDblPopupInfo({
+    //               popupId: null,
+    //               gridRef: childGridRef,
+    //               data: res,
+    //             });
 
-              }).catch((e) => { // 에러 발생시
-                modal.error({
-                  icon:null,
-                  content: <Result type='loadFailed'/>
-                });
-              })//.finally(() => setLoading(false));
-            }
-          }
-        });
-      }
-    }
+    //           }).catch((e) => { // 에러 발생시
+    //             modal.error({
+    //               icon:null,
+    //               content: <Result type='loadFailed'/>
+    //             });
+    //           })//.finally(() => setLoading(false));
+    //         }
+    //       }
+    //     });
+    //   }
+    // }
   }, [props.gridMode, props.columns, props.gridPopupInfo, gridRef, childGridRef]);
+
+  useLayoutEffect(() => {
+    if (!dblPopupInfo?.gridRef) return;
+
+    const instance = childGridRef?.current?.getInstance();
+    const columnName = instance?.getColumns()?.find(el => el?.hidden !== true && el?.name !== '_edit')?.name;
+    const columnIndex = instance?.getIndexOfColumn(columnName);
+    const rowIndex = instance?.getIndexOfRow(0);
+
+    if (!columnName || columnIndex === -1 || rowIndex === -1) return;
+
+    instance?.focus(rowIndex, columnName);
+  }, [dblPopupInfo]);
+  //#endregion
 
 
   /** ✅AFTER 체인지 액션 */
@@ -1531,14 +1559,218 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     })//.finally(() => setLoading(false));
   }
 
+  const onLoadPopup = (ev, info?:{rowKey:number, columnName:string}) => {
+    const {targetType} = ev;
+    const rowKey = ev?.rowKey || info?.rowKey;
+    const columnName = ev?.columnName || info?.columnName;
+
+    // 팝업키는 여부 결정
+    if (targetType !== 'cell') return;
+
+    if (['create', 'update'].includes(props.gridMode)) {
+      props.columns.forEach(column => {
+        if (column.name === columnName) {
+          if (column?.format === 'popup' && column?.editable === true) {
+            // 팝업 부르기
+            let popupInfo:IGridPopupInfo = null;
+            let updateColumns:{original:string, popup:string}[] = [];
+
+
+            for (let i = 0; i < props.gridPopupInfo?.length; i++) {
+              const columns = props.gridPopupInfo[i].columnNames;
+              updateColumns = columns;
+
+              for (let z = 0; z < columns.length; z++) {
+                if (columns[z].original === columnName) {
+                  popupInfo = props.gridPopupInfo[i];
+                  break;
+                }
+              }
+              if (popupInfo != null) {
+                break;
+              }
+            }
+
+            if (popupInfo == null)
+              return;
+            let popupContent:IPopupItemsRetrunProps = {
+              datagridProps: {
+                gridId: null,
+                columns: null,
+              },
+              uriPath: null,
+              params: null,
+              searchProps: null,
+              inputGroupProps: null,
+            };
+            
+            let onBeforeOk = null;
+            let onAfterOk = null;
+
+            if (popupInfo?.popupKey == null) {
+              popupContent['datagridProps']['columns'] = popupInfo.columns;
+              
+              if (typeof popupInfo.dataApiSettings === 'function') {
+                const apiSettings = popupInfo.dataApiSettings(ev);
+                popupContent['uriPath'] = apiSettings?.uriPath;
+                popupContent['params'] = apiSettings?.params;
+                // popupContent['searchProps'] = apiSettings?.searchProps;
+                // popupContent['inputGroupProps'] = apiSettings?.inputGroupProps;
+
+                // 전처리 함수 실행
+                if (apiSettings?.onInterlock != null) {
+                  const showModal:boolean = apiSettings?.onInterlock();
+                  if (!showModal) return;
+                }
+
+                // beforeOk
+                if (apiSettings?.onBeforeOk != null) {
+                  onBeforeOk = apiSettings.onBeforeOk;
+                }
+
+                // afterOk
+                if (apiSettings?.onAfterOk != null) {
+                  onAfterOk = apiSettings.onAfterOk;
+                }
+
+              } else {
+                popupContent['uriPath'] = popupInfo.dataApiSettings.uriPath;
+                popupContent['params'] = popupInfo.dataApiSettings.params;
+
+                // 전처리 함수 실행
+                if (popupInfo.dataApiSettings?.onInterlock != null) {
+                  const showModal:boolean = popupInfo.dataApiSettings?.onInterlock();
+                  if (!showModal) return;
+                }
+
+                // beforeOk
+                if (popupInfo.dataApiSettings?.onBeforeOk != null) {
+                  onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
+                }
+
+                // afterOk
+                if (popupInfo.dataApiSettings?.onAfterOk != null) {
+                  onAfterOk = popupInfo.dataApiSettings.onAfterOk;
+                }
+              }
+
+            } else {
+              popupContent = getPopupForm(popupInfo.popupKey);
+              popupContent['params'] = {};
+            }
+
+
+            const childGridId = uuidv4();
+
+            // 이것 때문에 리렌더링이 발생하면서 하위 그리드의 데이터가 날아가는 것처럼 보이는 현상이 발생함 (행추가 같은 멀티 팝업은 이런 현상이 없던데 여기만 그럼)
+            // setLoading(true);
+
+            getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.
+              if (typeof res === 'undefined') {
+                throw new Error('에러가 발생되었습니다.');
+              }
+              
+              let title = popupContent?.modalProps?.title;
+              const word = '단일선택';
+
+              if (title != null && String(title).length > 0) {
+                title = title + ' - ' + word;
+
+              } else {
+                title = word;
+              }
+
+              if (column?.name === columnName && !column?.requiredField) {
+                if (res?.length > 0) {
+                  const keys = Object.keys(res);
+                  let emptyValue = {};
+                  keys?.forEach(key => {
+                    emptyValue[key] = null;
+                  });
+                  
+                  res?.unshift(emptyValue);
+                }
+              }
+
+              modal.confirm({
+                title,
+                width: '80%',
+                content:
+                  <>
+                    {/* {popupContent?.searchProps ? <Searchbox {...popupContent.searchProps}/> : null}
+                    {popupContent?.inputGroupProps ? <InputGroupbox {...popupContent.inputGroupProps}/> : null} */}
+                    <Datagrid
+                      ref={childGridRef}
+                      gridId={childGridId}
+                      {...popupContent.datagridProps}
+                      gridMode='select'
+                      data={res}
+                    />
+                  </>,
+                icon:null,
+                okText: '선택',
+                onOk: () => {
+                  const $this = gridRef.current.getInstance();
+                  const child = childGridRef.current.getInstance();
+
+                  const row = child.getCheckedRows()[0];
+                  
+                  if(onBeforeOk != null) {
+                    if (!onBeforeOk({popupGrid:child, parentGrid:$this, ev:ev}, [row])) return;
+                  }
+
+                  if (typeof row === 'object') {
+                    updateColumns.forEach((column) => {
+                      $this.setValue(rowKey, column.original, row[column.popup]);
+                    });
+                  } else {
+                    message.warn('항목을 선택해주세요.');
+                  }
+
+                  $this.refreshLayout();
+
+                  if(onAfterOk != null) {
+                    onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
+                  }
+                },
+                cancelText:'취소',
+                maskClosable:false,
+              })
+              
+              setDblPopupInfo({
+                popupId: null,
+                gridRef: childGridRef,
+                data: res,
+              });
+
+            }).catch((e) => { // 에러 발생시
+              modal.error({
+                icon:null,
+                content: <Result type='loadFailed'/>
+              });
+            })//.finally(() => setLoading(false));
+          }
+        }
+      });
+    }
+  }
+
   /** ✅그리드 키보드 액션 이벤트 */
   const onKeyDown = useCallback(
     async (ev) => {
       const {columnName, rowKey, keyboardEvent} = ev;
       if (columnName === COLUMN_CODE.CHECK) return;
-      if (props.gridMode !== 'select' && props.gridMode !== 'multi-select') return;
 
       if (keyboardEvent?.keyCode === 32) { // Space
+        // 셀 값 수정 가능한 상태일 떼, popup타입의 셀에서 space를 누른 경우 팝업 호출
+        if (['create', 'update']?.includes(props.gridMode)) {
+          onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
+          return;
+        }
+
+        if (props.gridMode !== 'select' && props.gridMode !== 'multi-select') return;
+        
+
         if (rowKey == null) return;
         const editValue = gridRef.current.getInstance().getValue(rowKey, COLUMN_CODE.EDIT);
 
@@ -1631,11 +1863,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       const instance = gridRef?.current?.getInstance();
       const {filterState, columnName} = ev;
 
-      console.log(ev);
-
       const _filterState = filterState.filter((el) => el.columnName !== columnName);
-      console.log('originData', originData)
-      console.log('_filterState', _filterState)
 
       instance.resetData(originData, {filterState: _filterState});
 

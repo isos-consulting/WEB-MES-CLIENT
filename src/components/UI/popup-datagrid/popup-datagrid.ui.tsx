@@ -11,6 +11,10 @@ import Props from './popup-datagrid.ui.type';
 import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 import { useCallback } from 'react';
 import { useLoadingState } from '~/hooks';
+import { v4 as uuidv4 } from 'uuid';
+
+
+const gridPopupUuid = uuidv4();
 
 
 /** ⛔그리드 팝업 */
@@ -317,16 +321,33 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   useLayoutEffect(() => {
     const _visible = props.visible ?? visible;
 
-    if (_visible === true)
+    if (_visible === true) {
       setData(props.defaultData);
-    else 
+    } else {
       setData([]);
+    }
   }, [props.visible, visible]);
 
   
   useLayoutEffect(() => {
     setData(props.data);
   }, [props.data]);
+  
+
+  /** 데이터가 리셋될때 포커스를 잡는 용도 */
+  useLayoutEffect(() => {
+    if (!(props.visible || visible)) return;
+    if (!data) return;
+
+    const instance = gridRef?.current?.getInstance();
+    const columnName = instance?.getColumns()?.find(el => el?.hidden !== true && el?.name !== '_edit')?.name;
+    const columnIndex = instance?.getIndexOfColumn(columnName);
+    const rowIndex = instance?.getIndexOfRow(0);
+
+    if (!columnName || columnIndex === -1 || rowIndex === -1) return;
+
+    instance?.focus(rowIndex, columnName);
+  }, [data]);
 
   
   // /** ⛔검색조건 검색 */
@@ -353,8 +374,24 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
     );
   }, [props.modalWidth]);
 
+  const [hotKey, setHotKey] = useState();
+
+  const hotKeyHandler = (el) => {
+    console.log('keyup', el);
+  };
+
+  // useLayoutEffect(() => {
+  //   if (visible)
+  //     document?.addEventListener('keyup', hotKeyHandler);
+
+  //   return () => {
+  //     document?.removeEventListener('keyup', hotKeyHandler);
+  //   };
+  // }, [visible]);
+
   return (
     <Modal
+      id={gridPopupUuid}
       title={props.title}
       okButtonProps={props.okButtonProps}
       okText={props.okText}
