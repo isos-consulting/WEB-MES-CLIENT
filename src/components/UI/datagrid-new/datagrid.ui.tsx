@@ -106,7 +106,30 @@ function getGridComboItem(comboInfo:IGridComboInfo, columnName:IGridComboColumnI
 
   // DB데이터 가져와서 동적으로 콤보박스 아이템 생성
   } else {
-    const {params, uriPath} = comboInfo.itemListFromRequest;
+    let dataApiInfo = {
+      uriPath:'',
+      params: {},
+    };
+
+    if (typeof comboInfo?.dataApiSettings === 'function') {
+      const apiSettings = comboInfo?.dataApiSettings();
+      const uriPath = apiSettings?.uriPath;
+      const params = apiSettings?.params;
+      dataApiInfo = {
+        uriPath,
+        params
+      };
+
+    } else {
+      const uriPath = comboInfo?.dataApiSettings?.uriPath;
+      const params = comboInfo?.dataApiSettings?.params;
+      dataApiInfo = {
+        uriPath,
+        params
+      };
+    }
+
+    const {params, uriPath} = dataApiInfo;
 
     getData(params, uriPath).then((result) => {
       result?.forEach(rowData => {

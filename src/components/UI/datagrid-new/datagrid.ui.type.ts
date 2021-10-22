@@ -221,14 +221,7 @@ export interface IGridComboInfo {
   /** 콤보박스 값 배열 */
   itemList?: IGridComboItem[];
 
-  /** 콤보박스 값 server에서 불러오기 */
-  itemListFromRequest?: {
-    /** end point 경로 */
-    uriPath: string;
-
-    /** path parameter (조회조건) */
-    params: object;
-  }
+  dataApiSettings?: TApiSettings | ((ev?) => TApiSettings);
 };
 
 

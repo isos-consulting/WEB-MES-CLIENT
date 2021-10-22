@@ -52,7 +52,7 @@ export const REJECT = () => {
       columnNames: [
         {codeColName:{original:'to_store_uuid', popup:'store_uuid'}, textColName:{original:'to_store_nm', popup:'store_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath: '/std/stores',
         params: {
           store_type: 'reject'
@@ -63,7 +63,7 @@ export const REJECT = () => {
       columnNames: [
         {codeColName:{original:'to_location_uuid', popup:'location_uuid'}, textColName:{original:'to_location_nm', popup:'location_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath: '/std/locations',
         params: {
           //store_uuid
