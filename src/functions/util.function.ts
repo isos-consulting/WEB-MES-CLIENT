@@ -586,9 +586,9 @@ export const blankThenNull = (value:any) => {
 
 export const onAsyncFunction = async (func, ...argument) => {
   if (argument)
-    func();
-  else {
     func(...argument);
+  else {
+    func();
   }
 }
 
