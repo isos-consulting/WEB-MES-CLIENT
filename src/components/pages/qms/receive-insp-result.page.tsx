@@ -1002,7 +1002,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   useLayoutEffect(() => {
     const inspDetailTypeCd = receiveInputData.insp_detail_type_cd;
     const inspDetailType = inspDetailTypeCd === 'MAT_RECEIVE' ? 'matReceive' : inspDetailTypeCd === 'OUT_RECEIVE' ? 'outReceive' : '';
-    console.log(receiveInputData.to_store_uuid)
+    
     inputInspResultIncome.setFieldValue('to_store_uuid',receiveInputData.to_store_uuid)
 
     if (inspDetailType && receiveInputData.receive_detail_uuid) {

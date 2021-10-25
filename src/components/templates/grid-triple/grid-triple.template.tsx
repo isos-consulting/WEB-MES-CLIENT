@@ -1,13 +1,18 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Col, Divider, Row, Space } from "antd";
+import { Col, Divider, Row, Space, Spin } from "antd";
 import { Button, Container, Datagrid, Div, GridPopup, IButtonProps, Modal, Searchbox } from "~/components/UI";
 import { InputGroupbox} from "~/components/UI/input-groupbox/input-groupbox.ui";
 import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-triple.template.type';
+import { getPermissions } from '~/functions';
 
 
 export const TpTripleGrid:React.FC<Props> = (props) => {
+  /** 🔶권한 */
+  const permissions = getPermissions(props.title);
+
+  //#region 🔶그리드 관련
   const headerGrid = props.gridInfos[0];
   const headerGridRef = props.gridRefs[0];
   const headerSearchProps = props.searchProps[0];
@@ -51,7 +56,28 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   const detailSubPopupInputProps = props.popupInputProps ? props.popupInputProps[3] : null;
   const detailSubPopupSearchProps = props.popupSearchProps ? props.popupSearchProps[3] : null;
 
-  // 검색상자가 전부 hidden이면 검색상자 컴포넌트 자체를 display하지 않습니다.
+  const headerGridMode = useMemo(() => {
+    if (permissions?.delete_fg !== true) {
+      return 'view'
+    } else return headerGrid?.gridMode;
+  }, [headerGrid?.gridMode, permissions]);
+
+  const detailGridMode = useMemo(() => {
+    if (permissions?.delete_fg !== true) {
+      return 'view'
+    } else return detailGrid?.gridMode;
+  }, [detailGrid?.gridMode, permissions]);
+
+  const detailSubGridMode = useMemo(() => {
+    if (permissions?.delete_fg !== true) {
+      return 'view'
+    } else return detailSubGrid?.gridMode;
+  }, [detailSubGrid?.gridMode, permissions]);
+  //#endregion
+
+
+  //#region 🔶검색 상자 관련
+  /** 검색상자가 전부 hidden이면 검색상자 컴포넌트 자체를 display하지 않습니다. */
   const headerSearchboxVisible = useMemo(
     () => {
       const searchItems = headerSearchProps?.searchItems;
@@ -104,7 +130,10 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
     },
     [detailSubSearchProps],
   );
+  //#endregion
 
+
+  //#region 🔶입력 상자 관련
   // 그룹입력상자가 전부 hidden이면 그룹입력상자 컴포넌트 자체를 display하지 않습니다.
   const headerInputboxVisible = useMemo(
     () => {
@@ -158,7 +187,10 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
     },
     [detailSubInputProps],
   );
+  //#endregion
 
+
+  //#region 🔶조작 버튼 관련
   /** 기타 헤더 버튼 */
   const headerExtraButtons = useMemo(() => {
     return props.headerExtraButtons?.map((el, index) =>
@@ -192,6 +224,53 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   }, [props.extraGridPopups]);
 
   const {buttonActions} = props;
+
+  const btnCreateProps:IButtonProps = props.btnProps?.create;
+  const btnAddProps:IButtonProps = props.btnProps?.add;
+  const btnEditProps:IButtonProps = props.btnProps?.edit;
+  const btnDeleteProps:IButtonProps = props.btnProps?.delete;
+
+  const btnCreateText:string = btnCreateProps?.text ?? '신규 항목 추가';
+  const btnAddText:string = btnAddProps?.text ?? '세부 항목 추가';
+  const btnEditText:string = btnEditProps?.text ?? '수정';
+  const btnDeleteText:string = btnDeleteProps?.text ?? '삭제';
+  
+  const btnDelete = useMemo(() => {
+    const disabled = !(permissions?.delete_fg === true && buttonActions.delete);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={buttonActions.delete} {...btnDeleteProps} disabled={disabled}>{btnDeleteText}</Button>
+    );
+  }, [btnDeleteProps, buttonActions, permissions]);
+
+  const btnUpdate = useMemo(() => {
+    const disabled = !(permissions?.update_fg === true && buttonActions.update);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={buttonActions.update} {...btnEditProps} disabled={disabled}>{btnEditText}</Button>
+    );
+  }, [btnEditText, buttonActions, permissions]);
+
+  const btnAdd = useMemo(() => {
+    const disabled = !(permissions?.update_fg === true && buttonActions.createDetail);
+    return (
+      <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.createDetail} disabled={disabled} {...btnAddProps}>{btnAddText}</Button>
+    );
+  }, [btnAddText, buttonActions, permissions]);
+  
+
+  const btnCreate = useMemo(() => {
+    const disabled = !(permissions?.create_fg === true && buttonActions.create);
+    return (
+      <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.create} disabled={disabled} {...btnCreateProps}>{btnCreateText}</Button>
+    );
+  }, [buttonActions, permissions]);
+
+  const btnSearch = useMemo(() => {
+    const disabled = !(permissions?.read_fg === true);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='search' colorType='blue' onClick={buttonActions.search} disabled={disabled}>조회</Button>
+    );
+  }, [buttonActions, permissions]);
+  //#endregion
 
 
   //#region 🔶 그리드 자동 높이 맞춤
@@ -288,11 +367,11 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
         {headerSearchProps != null ? headerSearchboxVisible ? <Searchbox {...headerSearchProps}/> : null : null}
         {headerInputProps != null ? headerInputboxVisible ? <InputGroupbox {...headerInputProps} /> : null : null}
         <Container>
-          <Datagrid {...headerGrid} ref={headerGridRef} height={_headerGridHeight}/>
+          <Datagrid {...headerGrid} ref={headerGridRef} height={_headerGridHeight} gridMode={headerGridMode}/>
         </Container>
       </>
     );
-  }, [headerSearchProps, headerSearchboxVisible, headerSearchProps, headerGrid, headerGridRef, headerGridHeight]);
+  }, [headerSearchProps, headerSearchboxVisible, headerSearchProps, headerGrid, headerGridRef, headerGridHeight, headerGridMode]);
 
   const detailGridElement = useMemo(() => {
     return (
@@ -300,11 +379,11 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
         {detailSearchProps != null ? detailSearchboxVisible ? <Searchbox {...detailSearchProps}/> : null : null}
         {detailInputProps != null ? detailInputboxVisible ? <InputGroupbox {...detailInputProps} /> : null : null}
         <Container>
-          <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight}/>
+          <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight} gridMode={detailGridMode}/>
         </Container>
       </>
     );
-  }, [detailSearchProps, detailSearchboxVisible, detailSearchProps, detailInputProps, detailGridRef, detailGridHeight]);
+  }, [detailSearchProps, detailSearchboxVisible, detailSearchProps, detailInputProps, detailGridRef, detailGridHeight, detailGridMode]);
 
   const detailSubGridElement = useMemo(() => {
     return (
@@ -312,37 +391,30 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
         {detailSubSearchProps != null ? detailSubSearchboxVisible ? <Searchbox {...detailSubSearchProps}/> : null : null}
         {detailSubInputProps != null ? detailSubInputboxVisible ? <InputGroupbox {...detailSubInputProps} /> : null : null}
         <Container>
-          <Datagrid {...detailSubGrid} ref={detailSubGridRef} height={detailSubGridHeight}/>
+          <Datagrid {...detailSubGrid} ref={detailSubGridRef} height={detailSubGridHeight} gridMode={detailSubGridMode}/>
         </Container>
       </>
     );
-  }, [detailSubSearchProps, detailSubSearchboxVisible, detailSubSearchProps, detailSubInputProps, detailSubGridRef, detailSubGridHeight]);
+  }, [detailSubSearchProps, detailSubSearchboxVisible, detailSubSearchProps, detailSubInputProps, detailSubGridRef, detailSubGridHeight, detailSubGridMode]);
   //#endregion
 
 
-  const btnCreateProps:IButtonProps = props.btnProps?.create;
-  const btnAddProps:IButtonProps = props.btnProps?.add;
-  const btnEditProps:IButtonProps = props.btnProps?.edit;
-  const btnDeleteProps:IButtonProps = props.btnProps?.delete;
-
-  const btnCreateText:string = btnCreateProps?.text ?? '신규 항목 추가';
-  const btnAddText:string = btnAddProps?.text ?? '세부 항목 추가';
-  const btnEditText:string = btnEditProps?.text ?? '수정';
-  const btnDeleteText:string = btnDeleteProps?.text ?? '삭제';
-
   return (
+    !permissions ?
+      <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
+    :
     <>
     <Row gutter={[16,0]}>
       {props.templateType !== 'report' ?
         <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
           <Space size={[5,0]}>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={buttonActions.delete} {...btnDeleteProps}>{btnDeleteText}</Button>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={buttonActions.update} {...btnEditProps}>{btnEditText}</Button>
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.createDetail} disabled={buttonActions.createDetail == null} {...btnAddProps}>{btnAddText}</Button>
+            {btnDelete}
+            {btnUpdate}
+            {btnAdd}
           </Space>
           <Space size={[5,0]}>
-            {headerSearchProps?.searchItems == null || !headerSearchboxVisible ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='search' colorType='blue' onClick={buttonActions.search}>조회</Button> : null}
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.create} disabled={buttonActions.create == null} {...btnCreateProps}>{btnCreateText}</Button>
+            {headerSearchProps?.searchItems == null || !headerSearchboxVisible ? btnSearch : null}
+            {btnCreate}
             {headerExtraButtons}
           </Space>
         </Div>

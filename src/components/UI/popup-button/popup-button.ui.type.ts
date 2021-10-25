@@ -1,6 +1,6 @@
 import Grid from '@toast-ui/react-grid';
 import { MutableRefObject } from 'react';
-import { IDatagridProps } from '../datagrid-new';
+import { IDatagridProps, TApiSettings } from '../datagrid-new';
 import { IModalProps } from '../modal';
 import { TPopupKey } from '../popup/popup.ui.model';
 
@@ -24,10 +24,7 @@ export default interface IPopupButtonProps {
   params?: object;
 
   /** 팝업키가 없는 경우 직접 요청옵션을 세팅 */
-  dataApiSettings?: {
-    uriPath: string;
-    params: object;
-  }
+  dataApiSettings?: TApiSettings | ((ev?) => TApiSettings);
 
   /** 팝업내에 데이터그리드 정보를 세팅합니다. (popupKey보다 높은 우선순위로 작동합니다.) */
   datagridSettings?: IDatagridProps;

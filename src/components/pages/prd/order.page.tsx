@@ -237,7 +237,7 @@ export const PgPrdOrder = () => {
       columnNames: [
         {codeColName:{original:'unit_uuid', popup:'unit_uuid'}, textColName:{original:'unit_nm', popup:'unit_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath: '/std/units',
         params: {}
       }
@@ -246,7 +246,7 @@ export const PgPrdOrder = () => {
       columnNames: [
         {codeColName:{original:'from_store_uuid', popup:'store_uuid'}, textColName:{original:'from_store_nm', popup:'store_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath: '/std/stores',
         params: {
           store_type: 'available'
@@ -257,7 +257,7 @@ export const PgPrdOrder = () => {
       columnNames: [
         {codeColName:{original:'from_location_uuid', popup:'location_uuid'}, textColName:{original:'from_location_nm', popup:'location_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath: '/std/locations',
         params: {
           // store_uuid: ''
@@ -870,16 +870,19 @@ export const PgPrdOrder = () => {
       columnNames: [
         {codeColName:{original:'shift_uuid', popup:'shift_uuid'}, textColName:{original:'shift_nm', popup:'shift_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath:'/std/shifts',
-        params:{}
+        params:{},
+      },
+      dataApiSettings: {
+
       }
     },
     { // 작업조 콤보박스
       columnNames: [
         {codeColName:{original:'worker_group_uuid', popup:'worker_group_uuid'}, textColName:{original:'worker_group_nm', popup:'worker_group_nm'}},
       ],
-      itemListFromRequest: {
+      dataApiSettings: {
         uriPath:'/std/worker-groups',
         params:{}
       }

@@ -130,7 +130,7 @@ export const PgStdCustomerPrice = () => {
         columnNames: [
           {codeColName:{original:'money_unit_uuid', popup:'money_unit_uuid'}, textColName:{original:'money_unit_nm', popup:'money_unit_nm'}}
         ],
-        itemListFromRequest: {
+        dataApiSettings: {
           uriPath: '/std/money-units',
           params: {}
         }
@@ -139,7 +139,7 @@ export const PgStdCustomerPrice = () => {
         columnNames: [
           {codeColName:{original:'price_type_uuid', popup:'price_type_uuid'}, textColName:{original:'price_type_nm', popup:'price_type_nm'}}
         ],
-        itemListFromRequest: {
+        dataApiSettings: {
           uriPath: '/std/price-types',
           params: {}
         }

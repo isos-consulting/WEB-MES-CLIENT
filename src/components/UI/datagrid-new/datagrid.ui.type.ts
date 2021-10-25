@@ -1,3 +1,4 @@
+import React from 'react';
 import {Props as GridProps} from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
 import {ColumnOptions} from 'tui-grid/types';
@@ -221,14 +222,7 @@ export interface IGridComboInfo {
   /** 콤보박스 값 배열 */
   itemList?: IGridComboItem[];
 
-  /** 콤보박스 값 server에서 불러오기 */
-  itemListFromRequest?: {
-    /** end point 경로 */
-    uriPath: string;
-
-    /** path parameter (조회조건) */
-    params: object;
-  }
+  dataApiSettings?: TApiSettings | ((ev?) => TApiSettings);
 };
 
 
@@ -259,7 +253,7 @@ export interface IGridPopupInfo {
   // actionType?: TGridPopupAction;
 };
 
-type TApiSettings = {
+export type TApiSettings = {
   /** 모달 커스텀 */
   modalProps?: IModalProps,
   /** API 요청 포인트 */
