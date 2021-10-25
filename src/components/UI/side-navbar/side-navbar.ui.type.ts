@@ -136,6 +136,17 @@ export interface ILevel3Info {
   delete_fg: boolean;
 }
 
+export interface TPermission {
+  /** 데이터 생성 권한 */
+  create_fg: boolean;
+  /** 읽기 권한 */
+  read_fg: boolean;
+  /** 수정 권한 */
+  update_fg: boolean;
+  /** 삭제 권한 */
+  delete_fg: boolean;
+}
+
 // /** 1레벨 메뉴 인터페이스 */
 // export interface ILevel1Info {
 //   /** 레벨(단계) */

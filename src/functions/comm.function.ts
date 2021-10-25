@@ -5,8 +5,11 @@ import { getObjectKeyDuplicateCheck } from './util.function';
 import { message } from 'antd';
 import dotenv from 'dotenv';
 import { useReducer } from 'react';
-import { ILevel1Info, ILevel2Info, ILevel3Info } from '~/components/UI';
+import { atSideNavMenuContent, ILevel1Info, ILevel2Info, ILevel3Info, TPermission } from '~/components/UI';
 import * as Pages from "~/components/pages";
+import { useRecoilValue } from 'recoil';
+import {useLayoutEffect, useState} from 'react';
+import { JSXElement } from '@babel/types';
 
 
 dotenv.config();
@@ -183,7 +186,7 @@ export const getMenus = async () => {
       uuid: level1.menu_uuid as string,
       path: level1.menu_uri as string,
       title: level1.menu_nm as string,
-      component: Pages[level1.component_nm] as () => JSX.Element,
+      component: Pages[level1.component_nm] as () => JSXElement,
       description: null,
       permissions: {
         create_fg: level1.create_fg,
@@ -201,7 +204,7 @@ export const getMenus = async () => {
         uuid: level2.menu_uuid as string,
         path: level2.menu_uri as string,
         title: level2.menu_nm as string,
-        component: Pages[level2.component_nm] as () => JSX.Element,
+        component: Pages[level2.component_nm] as () => JSXElement,
         description: level1.menu_nm as string,
         permissions: {
           create_fg: level2.create_fg,
@@ -219,7 +222,7 @@ export const getMenus = async () => {
           uuid: level3.menu_uuid as string,
           path: level3.menu_uri as string,
           title: level3.menu_nm as string,
-          component: Pages[level3.component_nm] as () => JSX.Element,
+          component: Pages[level3.component_nm] as () => JSXElement,
           description: level1.menu_nm + ' > ' + level2.menu_nm as string,
           permissions: {
             create_fg: level3.create_fg,
@@ -239,4 +242,24 @@ export const getMenus = async () => {
   });
 
   return {data, rawData};
+}
+
+/** 권한 정보를 가져오는 함수입니다.
+ * recoil state를 사용하여 조회하므로 컴포넌트 최상단 로직에 사용해야 합니다.
+ * @param pageName 페이지명
+ * @returns TPermssion
+ */
+export const getPermissions = (pageName:string):TPermission => {
+  const menuContent = useRecoilValue(atSideNavMenuContent);
+  const [permissions, setPermissions] = useState<TPermission>(null);
+
+  useLayoutEffect(() => {
+    if (!menuContent) return;
+    const permissions = menuContent[pageName]?.permissions;
+
+    if (!permissions) return;
+    setPermissions(permissions);
+  }, [menuContent]);
+
+  return permissions;
 }

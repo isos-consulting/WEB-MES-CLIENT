@@ -1,3 +1,4 @@
+import React from 'react';
 import {Props as GridProps} from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
 import {ColumnOptions} from 'tui-grid/types';

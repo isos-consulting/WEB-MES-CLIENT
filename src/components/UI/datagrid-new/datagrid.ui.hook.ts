@@ -1,6 +1,6 @@
 import Grid from "@toast-ui/react-grid";
 import TuiGrid from "tui-grid";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { IDatagridProps, IGridColumn, TGridMode } from ".";
 import { OptComplexColumnInfo } from 'tui-grid/types/options';
 

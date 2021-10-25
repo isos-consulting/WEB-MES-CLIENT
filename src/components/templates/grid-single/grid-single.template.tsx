@@ -1,13 +1,18 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Row, Space } from "antd";
+import { Row, Space, Spin } from "antd";
 import { Button, Container, Datagrid, Div, GridPopup, Modal, Searchbox } from "~/components/UI";
 import { InputGroupbox} from "~/components/UI/input-groupbox/input-groupbox.ui";
 import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-single.template.type';
+import { getPermissions } from '~/functions';
 
 
 export const TpSingleGrid:React.FC<Props> = (props) => {
+  /** 🔶권한 */
+  const permissions = getPermissions(props.title);
+
+  //#region 🔶그리드 관련
   const grid = props.gridInfo;
   const gridRef = props.gridRef;
   const searchProps = props.searchProps;
@@ -32,6 +37,15 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
   const subTotalGrid = props.subGridInfo;
   const subTotalGridRef = props.subGridRef;
   
+  const gridMode = useMemo(() => {
+    if (permissions?.delete_fg !== true) {
+      return 'view'
+    } else return grid?.gridMode;
+  }, [grid?.gridMode, permissions]);
+  //#endregion
+
+
+  //#region 🔶검색상자 관련
   // 검색상자가 전부 hidden이면 검색상자 컴포넌트 자체를 display하지 않습니다.
   const searchboxVisible = useMemo(
     () => {
@@ -66,41 +80,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
     },
     [inputProps],
   );
-
-  
-  /** 기타 헤더 버튼 */
-  const extraButtons = useMemo(() => {
-    return props.extraButtons?.map((el, index) =>
-      <Button 
-        key={'extraBtn_' + index}
-        {...el}
-        btnType={el.btnType || 'buttonFill'}
-        heightSize={el.heightSize || 'small'}
-        fontSize={el.fontSize || 'small'}
-        colorType={el.colorType || 'primary'}
-      >{el.text}</Button>
-    );
-  }, [props.extraButtons]);
-  
-  /** 기타 사용자 정의 팝업 */
-  const extraModals = useMemo(() => {
-    return props.extraModals?.map((el, index) =>
-      <Modal
-        key={'extraModal_' + index}
-        {...el}/>
-    );
-  }, [props.extraModals]);
-
-  /** 기타 사용자 정의 팝업 */
-  const extraGridPopups = useMemo(() => {
-    return props.extraGridPopups?.map((el, index) =>
-      <GridPopup
-        key={'extraGridPopup_' + index}
-        {...el}/>
-    );
-  }, [props.extraGridPopups]);
-
-  const {buttonActions} = props;
+  //#endregion
 
 
   //#region 🔶 그리드 자동 높이 맞춤
@@ -147,18 +127,86 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
   //#endregion
 
 
+  //#region 🔶조작 버튼 관련
+  /** 기타 헤더 버튼 */
+  const extraButtons = useMemo(() => {
+    return props.extraButtons?.map((el, index) =>
+      <Button 
+        key={'extraBtn_' + index}
+        {...el}
+        btnType={el.btnType || 'buttonFill'}
+        heightSize={el.heightSize || 'small'}
+        fontSize={el.fontSize || 'small'}
+        colorType={el.colorType || 'primary'}
+      >{el.text}</Button>
+    );
+  }, [props.extraButtons]);
+  
+  /** 기타 사용자 정의 팝업 */
+  const extraModals = useMemo(() => {
+    return props.extraModals?.map((el, index) =>
+      <Modal
+        key={'extraModal_' + index}
+        {...el}/>
+    );
+  }, [props.extraModals]);
+
+  /** 기타 사용자 정의 팝업 */
+  const extraGridPopups = useMemo(() => {
+    return props.extraGridPopups?.map((el, index) =>
+      <GridPopup
+        key={'extraGridPopup_' + index}
+        {...el}/>
+    );
+  }, [props.extraGridPopups]);
+
+  const {buttonActions} = props;
+
+  const btnDelete = useMemo(() => {
+    const disabled = !(permissions?.delete_fg === true && buttonActions.delete);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='delete' onClick={buttonActions.delete} disabled={disabled}>삭제</Button>
+    );
+  }, [buttonActions, permissions]);
+
+  const btnUpdate = useMemo(() => {
+    const disabled = !(permissions?.update_fg === true && buttonActions.update);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={buttonActions.update}  disabled={disabled}>수정</Button>
+    );
+  }, [buttonActions, permissions]);
+
+  const btnCreate = useMemo(() => {
+    const disabled = !(permissions?.create_fg === true && buttonActions.create);
+    return (
+      <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.create} disabled={disabled}>신규 항목 추가</Button>
+    );
+  }, [buttonActions, permissions]);
+
+  const btnSearch = useMemo(() => {
+    const disabled = !(permissions?.read_fg === true);
+    return (
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='search' colorType='blue' onClick={buttonActions.search} disabled={disabled}>조회</Button>
+    );
+  }, [buttonActions, permissions]);
+  //#endregion
+
+  
   return (
+    !permissions ?
+      <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
+    :
     <>
     <Row gutter={[16,0]}>
       {props.templateType !== 'report' ?
         <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
           <Space size={[5,0]}>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='delete' onClick={buttonActions.delete} disabled={buttonActions.delete ? false : true}>삭제</Button>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={buttonActions.update}  disabled={buttonActions.update ? false : true}>수정</Button>
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={buttonActions.create} disabled={buttonActions.create == null}>신규 항목 추가</Button>
+            {btnDelete}
+            {btnUpdate}
+            {btnCreate}
           </Space>
           <Space size={[5,0]}>
-            {searchProps?.searchItems == null || !searchboxVisible ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='search' colorType='blue' onClick={buttonActions.search}>조회</Button> : null}
+            {searchProps?.searchItems == null || !searchboxVisible ? btnSearch : null}
             {extraButtons}
           </Space>
         </Div>
@@ -172,7 +220,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
         </Container>
       : null}
       <Container>
-        <Datagrid {...grid} height={gridHeight} ref={gridRef}/>
+        <Datagrid {...grid} height={gridHeight} ref={gridRef} gridMode={gridMode} />
       </Container>
 
       {gridPopup == null ? null : 
