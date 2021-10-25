@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
 import { Button, Container, Datagrid, IGridColumn, ISearchItem, Label, Searchbox, Tabs, TGridMode } from '~/components/UI';
-import { executeData, getData, getToday, saveGridData } from '~/functions';
+import { executeData, getData, getToday, getUserFactoryId, getUserFactoryUuid, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -464,6 +464,7 @@ export const PgPrdWork = () => {
           start_date: workInfo.start_date,
           end_date: workInfo.end_date || null,
           remark: workInfo.remark,
+          factory_uuid: getUserFactoryUuid()
 
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {

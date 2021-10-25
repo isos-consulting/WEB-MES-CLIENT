@@ -2,6 +2,7 @@ import Grid from '@toast-ui/react-grid';
 import { Space, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridComboInfo, IGridPopupInfo, TGridMode } from '~/components/UI';
+import { ENUM_WIDTH } from '~/enums';
 import { getData } from '~/functions';
 import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -33,18 +34,19 @@ export const REJECT = () => {
   const REJECT_COLUMNS:IGridColumn[] = [
     {header:'생산부적합UUID', name:'work_reject_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
     {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
-    {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-    {header:'공정', name:'proc_nm', width:120, hidden:true, format:'text'},
-    {header:'부적합 유형UUID', name:'reject_type_uuid', width:200, hidden:true, format:'text'},
-    {header:'부적합 유형', name:'reject_type_nm', width:120, hidden:false, format:'text'},
+    {header:'공정순서UUID', name:'work_routing_uuid', width:200, hidden:true, format:'popup', editable:true},
+    {header:'공정', name:'proc_nm', width:120, format:'popup', editable:true},
+    {header:'공정순서', name:'proc_no', width:120, format:'popup', editable:true},
+    {header:'설비', name:'equip_nm', width:120, format:'popup', editable:true},
     {header:'부적합UUID', name:'reject_uuid', width:200, hidden:true, format:'text', requiredField:true},
-    {header:'부적합명', name:'reject_nm', width:120, hidden:false, format:'text', requiredField:true},
-    {header:'수량', name:'qty', width:100, hidden:false, format:'number', editable:true, requiredField:true},
+    {header:'부적합 유형', name:'reject_type_nm', width:120, format:'text'},
+    {header:'부적합명', name:'reject_nm', width:120, format:'text', requiredField:true},
+    {header:'수량', name:'qty', width:100, format:'number', editable:true, requiredField:true},
     {header:'입고 창고UUID', name:'to_store_uuid', width:200, hidden:true, format:'text', requiredField:true},
-    {header:'입고 창고', name:'to_store_nm', width:120, hidden:false, format:'combo', editable:true, requiredField:true},
+    {header:'입고 창고', name:'to_store_nm', width:120, format:'combo', editable:true, requiredField:true},
     {header:'입고 위치UUID', name:'to_location_uuid', width:200, hidden:true, format:'text', requiredField:true},
-    {header:'입고 위치', name:'to_location_nm', width:120, hidden:false, format:'combo', editable:true, requiredField:true},
-    {header:'비고', name:'remark', width:150, hidden:false, format:'text', editable:true},
+    {header:'입고 위치', name:'to_location_nm', width:120, format:'combo', editable:true, requiredField:true},
+    {header:'비고', name:'remark', width:150, format:'text', editable:true},
   ];
 
   const REJECT_COMBO_INFO:IGridComboInfo[] = [
@@ -76,12 +78,10 @@ export const REJECT = () => {
     columnNames: [
       {original:'reject_uuid', popup:'reject_uuid'},
       {original:'reject_nm', popup:'reject_nm'},
-      {original:'reject_type_uuid', popup:'reject_type_uuid'},
       {original:'reject_type_nm', popup:'reject_type_nm'},
     ],
     columns: [
       {header:'부적합UUID', name:'reject_uuid', width:200, hidden:true, format:'text'},
-      {header:'부적합 유형UUID', name:'reject_type_uuid', width:200, hidden:true, format:'text'},
       {header:'부적합 유형', name:'reject_type_nm', width:150, hidden:false, format:'text'},
       {header:'부적합명', name:'reject_nm', width:150, hidden:false, format:'text'},
     ],
@@ -91,6 +91,35 @@ export const REJECT = () => {
     },
     gridMode:'multi-select'
   }
+
+  const GRID_POPUP_INFO:IGridPopupInfo[] = [
+    {
+      columnNames: [
+        {original:'work_routing_uuid', popup:'work_routing_uuid'},
+        {original:'proc_nm', popup:'proc_nm'},
+        {original:'proc_no', popup:'proc_no'},
+        {original:'equip_nm', popup:'equip_nm'},
+      ],
+      columns: [
+        {header:'공정순서UUID', name:'work_routing_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
+        {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
+        {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
+        {header:'공정순서', name:'proc_no', width:100, format:'text'},
+        {header:'공정', name:'proc_nm', width:120, format:'text'},
+        {header:'작업장UUID', name:'workings_uuid', width:200, hidden:true, format:'text'},
+        {header:'작업장', name:'workings_nm', width:120, format:'text'},
+        {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
+        {header:'설비', name:'equip_nm', width:120, format:'text'},
+      ],
+      dataApiSettings: {
+        uriPath: '/prd/work-routings',
+        params: {
+          work_uuid: (searchParams as any)?.work_uuid
+        }
+      },
+      gridMode:'select'
+    }
+  ]
   //#endregion
 
 
@@ -219,6 +248,7 @@ export const REJECT = () => {
         columns={REJECT_COLUMNS}
         gridComboInfo={REJECT_COMBO_INFO}
         rowAddPopupInfo={ROW_ADD_POPUP_INFO}
+        gridPopupInfo={GRID_POPUP_INFO}
         saveUriPath={SAVE_URI_PATH}
         searchUriPath={SEARCH_URI_PATH}
         saveOptionParams={saveOptionParams}

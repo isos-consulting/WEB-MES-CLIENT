@@ -383,12 +383,14 @@ type TPostQmsFinalInspResultsHeader = {
   remark?: string
 }
 
+type TPostQmsFinalInspResultsDetailsValue = {
+  sample_no?: number,
+  insp_result_fg?: boolean,
+  insp_value?: number
+}
+
 type TPostQmsFinalInspResultsDetails = {
-  values?: {
-    sample_no?: number,
-    insp_result_fg?: boolean,
-    insp_value?: number
-  }[],
+  values?: TPostQmsFinalInspResultsDetailsValue[],
   factory_uuid?: string,
   insp_detail_uuid?: string,
   insp_result_fg?: boolean,
@@ -748,7 +750,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
   const onSearch = (inspResultUuid:string) => {
     if (inspResultUuid) {
       const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', inspResultUuid)
-      getData(
+      getData<TGetQmsFinalInspResultIncludeDetails>(
         {},
         searchUriPath,
         'header-details'
@@ -1139,6 +1141,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
     popupGridInstance?.setValue(rowKey, rowStateColumnName, rowStateResultValue);
     //#endregion
+
 
     //#region ✅최종 합/불 판정
     const maxRowCnt = popupGridInstance?.getRowCount() - 1;
@@ -1809,7 +1812,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
 
     if (props.inspResultUuid && props.popupVisible) {
-      getData(
+      getData<TGetQmsFinalInspResultIncludeDetails>(
         {},
         searchUriPath,
         'header-details'
