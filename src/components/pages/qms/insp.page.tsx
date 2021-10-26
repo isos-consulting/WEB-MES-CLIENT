@@ -40,6 +40,8 @@ export const PgQmsInsp = () => {
   const [selectedDetailRow, setSelectedDetailRow] = useState(null);
   const [editInspNo, setEditInspNo] = useState(null);
 
+  const [applyFg, setApplyFg] = useState(false);
+
   /** 검사기준서 적용(또는 해제) */
   const onApplyInsp = (ev, props) => {
     // 적용 이벤트
@@ -64,24 +66,52 @@ export const PgQmsInsp = () => {
       if (success) {
         message.success('검사기준서가 ' + (value ? '해제' : '적용') + '되었습니다.');
 
-        const headerRow = await cloneObject(selectedHeaderRow);
-
         await onReset();
-        await onSearchHeader(headerSearchInfo?.values);
-        await onAsyncFunction(setSelectedHeaderRow, headerRow); // ❗ state변수 값을 가지고 오지 못함
-
-        onClickDetail({
-          targetType: 'cell', 
-          rowKey, 
-          instance: grid, 
-          columnName: columnInfo?.name,
-        });
+        setApplyFg(true);
 
       } else {
         // message.error('검사기준서 ' + (value ? '해제' : '적용') + ' 실패');
       }
     });
   }
+
+  const onAfterSaveApply = async () => {
+    const headerRow = await cloneObject(selectedHeaderRow);
+    const detailRow = await cloneObject(selectedDetailRow);
+
+    await onSearchHeader(headerSearchInfo?.values);
+    
+    await onAsyncFunction(onClickHeader, {
+      targetType: 'cell',
+      rowKey: headerRow?.rowKey || 0,
+      instance: {
+        store: {
+          data: {
+            rawData: headerGrid?.gridInfo?.data
+          }
+        }
+      },
+    });
+
+    // await onAsyncFunction(onClickDetail, {
+    //   targetType: 'cell',
+    //   rowKey: detailRow?.rowKey || 0,
+    //   instance: {
+    //     store: {
+    //       data: {
+    //         rawData: detailGrid?.gridInfo?.data
+    //       }
+    //     }
+    //   },
+    // });
+  }
+
+  useLayoutEffect(() => {
+    if (!applyFg) return;
+
+    onAfterSaveApply();
+    setApplyFg(false);
+  }, [applyFg]);
 
 
   //#region 🔶그리드 상태 관리
@@ -431,7 +461,6 @@ export const PgQmsInsp = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    console.log('layout Effect', selectedHeaderRow)
     if (selectedHeaderRow == null) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.prod_uuid);
@@ -840,7 +869,7 @@ export const PgQmsInsp = () => {
       edit: {
         text: '수정/개정',
         widthSize: 'auto'
-      }
+      },
     }
   };
   //#endregion

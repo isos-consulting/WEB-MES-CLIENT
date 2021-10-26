@@ -2,14 +2,19 @@ import Grid from '@toast-ui/react-grid';
 import { Space, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridComboInfo, IGridPopupInfo, TGridMode } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
-import { getData } from '~/functions';
+import { getData, getPageName, getPermissions } from '~/functions';
 import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 
 
 //#region 🔶✅부적합관리
 /** 부적합관리 */
 export const REJECT = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
@@ -206,9 +211,9 @@ export const REJECT = () => {
         {gridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={true}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+              {/* <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={true}>수정</Button> */}
+              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
             </Space>
           </div>
           :

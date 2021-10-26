@@ -4,7 +4,7 @@ import { Divider, message, Space, Typography, Modal } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { MutableRefObject, useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridComboInfo, IGridPopupInfo, Searchbox, Tabs, TGridMode } from '~/components/UI';
-import { checkGridData, executeData, getData, getModifiedRows, getToday, getUserFactoryUuid, isModified, saveGridData } from '~/functions';
+import { checkGridData, executeData, getData, getModifiedRows, getPageName, getPermissions, getToday, getUserFactoryUuid, isModified, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 
 const TAB_CODE = {
@@ -26,6 +26,12 @@ const onErrorMessage = (type) => {
 
 /** 작업지시 */
 export const PgPrdOrder = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region 🔶투입품목 관련 
   const [tuipProdGridMode, setTuipProdGridMode] = useState<TGridMode>('view');
   const [tuipProdDatas, setTuipProdDatas] = useState([]);
@@ -272,9 +278,9 @@ export const PgPrdOrder = () => {
         {tuipProdGridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={TUIP_PROD_onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={TUIP_PROD_onEdit}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={TUIP_PROD_onAppend}>항목 추가</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={TUIP_PROD_onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={TUIP_PROD_onEdit} disabled={!permissions?.update_fg}>수정</Button>
+              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={TUIP_PROD_onAppend} disabled={!permissions?.create_fg}>항목 추가</Button>
             </Space>
           </div>
           :
@@ -446,9 +452,9 @@ export const PgPrdOrder = () => {
         {tuipWorkerGridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={TUIP_WORKER_onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium'  heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={TUIP_WORKER_onEdit} disabled={true}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large'  heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={TUIP_WORKER_onAppend}>항목 추가</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={TUIP_WORKER_onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+              {/* <Button btnType='buttonFill' widthSize='medium'  heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={TUIP_WORKER_onEdit} disabled={true}>수정</Button> */}
+              <Button btnType='buttonFill' widthSize='large'  heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={TUIP_WORKER_onAppend} disabled={!permissions?.create_fg}>항목 추가</Button>
             </Space>
           </div>
           :
@@ -625,9 +631,9 @@ export const PgPrdOrder = () => {
         {procOrderGridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={PROC_ORDER_onDelete} disabled={true}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={PROC_ORDER_onEdit}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={PROC_ORDER_onAppend} disabled={true}>항목 추가</Button>
+              {/* <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={PROC_ORDER_onDelete} disabled={true}>삭제</Button> */}
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={PROC_ORDER_onEdit} disabled={!permissions?.update_fg}>수정</Button>
+              {/* <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={PROC_ORDER_onAppend} disabled={true}>항목 추가</Button> */}
             </Space>
           </div>
           :
@@ -967,9 +973,9 @@ export const PgPrdOrder = () => {
             {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
           </Space>
           <Space size={[6,0]} style={{float:'right'}}>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button>
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={!permissions?.update_fg}>수정</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
           </Space>
         </div>
         <div style={{maxWidth:500, marginTop:-33, marginLeft:-6}}>

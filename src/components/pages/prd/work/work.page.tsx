@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
 import { Button, Container, Datagrid, IGridColumn, ISearchItem, Label, Searchbox, Tabs, TGridMode } from '~/components/UI';
-import { executeData, getData, getToday, getUserFactoryId, getUserFactoryUuid, saveGridData } from '~/functions';
+import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryId, getUserFactoryUuid, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -211,6 +211,12 @@ const infoReducer = (state:TState, action:TAction) => {
 //#region 🔶🚫생산실적
 /** 생산실적 */
 export const PgPrdWork = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+  
   //#region ✅설정값
   const [,setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
@@ -820,7 +826,7 @@ export const PgPrdWork = () => {
             {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
           </Space>
           <Space size={[6,0]} style={{float:'right'}}>
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder}>작업지시 관리</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder} disalbed={!permissions?.update_fg}>작업지시 관리</Button>
             {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
           </Space>
         </div>
@@ -829,7 +835,7 @@ export const PgPrdWork = () => {
             id='prod_order_search'
             innerRef={searchRef}
             searchItems={SEARCH_ITEMS}
-            onSearch={onSearch}
+            onSearch={permissions?.read_fg ? onSearch : null}
             boxShadow={false}
           />
         </div>
@@ -845,8 +851,8 @@ export const PgPrdWork = () => {
           <div style={{width:'100%', display:'inline-block', marginTop:-26}}>
             <div style={{float:'right', paddingRight:4}}>
               <Space>
-                <Button btnType='buttonFill' colorType='blue' widthSize='large' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelWork}>실행 취소</Button>
-                <Button btnType='buttonFill' colorType='red' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' onClick={onDeleteWork}>실적 삭제</Button>
+                <Button btnType='buttonFill' colorType='blue' widthSize='large' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelWork} disabled={!permissions?.update_fg}>실행 취소</Button>
+                <Button btnType='buttonFill' colorType='red' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' onClick={onDeleteWork} disabled={!permissions?.delete_fg}>실적 삭제</Button>
               </Space>
             </div>
           </div>
@@ -925,8 +931,8 @@ export const PgPrdWork = () => {
           <div style={{width:'100%', display:'inline-block', marginTop:-26}}>
             <div style={{float:'right', paddingRight:4}}>
               <Space>
-                <Button btnType='buttonFill' colorType='blue' widthSize='large' heightSize='small' fontSize='small' ImageType='add' onClick={onSaveWork}>실행 저장</Button>
-                <Button btnType='buttonFill' colorType='red' widthSize='large' heightSize='small' fontSize='small' ImageType='ok' onClick={onCompleteWork}>작업 종료</Button>
+                <Button btnType='buttonFill' colorType='blue' widthSize='large' heightSize='small' fontSize='small' ImageType='add' onClick={onSaveWork} disabled={!permissions?.update_fg}>실행 저장</Button>
+                <Button btnType='buttonFill' colorType='red' widthSize='large' heightSize='small' fontSize='small' ImageType='ok' onClick={onCompleteWork} disabled={!permissions?.update_fg}>작업 종료</Button>
               </Space>
             </div>
           </div>
@@ -938,24 +944,24 @@ export const PgPrdWork = () => {
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='시작 일시'/>
                     <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._start_date} onChange={onChangeStartDate}/>
-                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._start_time} onChange={onChangeStartTime}/>
+                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._start_date} onChange={onChangeStartDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._start_time} onChange={onChangeStartTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                     </div>
                   </Col>
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='종료 일시'/>
                     <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._end_date} onChange={onChangeEndDate}/>
-                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._end_time} onChange={onChangeEndTime}/>
+                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._end_date} onChange={onChangeEndDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._end_time} onChange={onChangeEndTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                     </div>
                   </Col>
                   <Col span={6}>
                     <Label text='입고 창고'/>
-                    <Select options={cboWorkStoreOptions} style={{width:'100%'}} value={workInfo.to_store_uuid} onChange={onChangeCboStore}/>
+                    <Select options={cboWorkStoreOptions} style={{width:'100%'}} value={workInfo.to_store_uuid} onChange={onChangeCboStore} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                   </Col>
                   <Col span={6}>
                     <Label text='입고 위치'/>
-                    <Select options={cboWorkLocationOptions} style={{width:'100%'}} value={workInfo.to_location_uuid} onChange={onChangeCboLocation}/>
+                    <Select options={cboWorkLocationOptions} style={{width:'100%'}} value={workInfo.to_location_uuid} onChange={onChangeCboLocation} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                   </Col>
                   <Col span={6}>
                     <Label text='LOT NO'/>
@@ -963,7 +969,7 @@ export const PgPrdWork = () => {
                   </Col>
                   <Col span={6}>
                     <Label text='비고'/>
-                    <Input value={workInfo.remark} onChange={onChangeRemark}/>
+                    <Input value={workInfo.remark} onChange={onChangeRemark} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                   </Col>
                 </Row>
               </Container>
@@ -981,7 +987,7 @@ export const PgPrdWork = () => {
                   </Col>
                   <Col span={12}>
                     <Label text='양품 수량'/>
-                    <Input type='number' inputMode='numeric' value={workInfo.qty}  onChange={onChangeQty}/>
+                    <Input type='number' inputMode='numeric' value={workInfo.qty}  onChange={onChangeQty} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                   </Col>
                   <Col span={12}>
                     <Label text='부적합 수량'/>

@@ -2,7 +2,7 @@ import Grid from '@toast-ui/react-grid';
 import { message, Space, Modal } from 'antd';
 import React, {useRef, useState } from 'react';
 import { Button, Container, Datagrid, IGridColumn, IGridModifiedRows, TGridMode } from '~/components/UI';
-import { checkGridData, getData, getModifiedRows, isModified, saveGridData } from '~/functions';
+import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onDefaultGridCancel, onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
 
@@ -11,6 +11,12 @@ import dayjs from 'dayjs';
 //#region 🔶✅공정순서
 /** 공정순서 */
 export const ROUTING = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
@@ -228,9 +234,9 @@ export const ROUTING = () => {
         {gridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={true}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={true}>신규 추가</Button>
+              {/* <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={true}>삭제</Button> */}
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={!permissions?.update_fg}>수정</Button>
+              {/* <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={true}>신규 추가</Button> */}
             </Space>
           </div>
           :
