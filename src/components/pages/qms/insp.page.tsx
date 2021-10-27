@@ -79,31 +79,22 @@ export const PgQmsInsp = () => {
     const headerRow = await cloneObject(selectedHeaderRow);
     const detailRow = await cloneObject(selectedDetailRow);
 
-    await onSearchHeader(headerSearchInfo?.values);
-    
-    await onAsyncFunction(onClickHeader, {
-      targetType: 'cell',
-      rowKey: headerRow?.rowKey || 0,
-      instance: {
-        store: {
-          data: {
-            rawData: headerGrid?.gridInfo?.data
+    onSearchHeader(headerSearchInfo?.values).then(res => {
+      onAsyncFunction(onClickHeader, {
+        targetType: 'cell',
+        rowKey: headerRow?.rowKey || 0,
+        instance: {
+          store: {
+            data: {
+              rawData: res
+            }
           }
-        }
-      },
+        },
+      });
+    }).finally(() => {
+      setSelectedHeaderRow(headerRow);
+      setSelectedDetailRow(detailRow);
     });
-
-    // await onAsyncFunction(onClickDetail, {
-    //   targetType: 'cell',
-    //   rowKey: detailRow?.rowKey || 0,
-    //   instance: {
-    //     store: {
-    //       data: {
-    //         rawData: detailGrid?.gridInfo?.data
-    //       }
-    //     }
-    //   },
-    // });
   }
 
   useLayoutEffect(() => {
@@ -405,7 +396,7 @@ export const PgQmsInsp = () => {
       popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
     },
     {
-      type:'combo', id:'insp_type_cd', label:'기준서 유형', disabled:true , default:'', firstItemType:'empty',
+      type:'combo', id:'insp_type_cd', label:'기준서 유형', disabled:true, firstItemType:'none',
       dataSettingOptions: {
         uriPath: '/adm/insp-types',
         params: {},
@@ -642,19 +633,21 @@ export const PgQmsInsp = () => {
   //#endregion
 
 
-  /** 신규 저장 이후 수행될 함수 */
+  /** 신규 저장 이후 수행될 함수 ✅ */
   const onAfterSaveNewData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
     await onReset();
-    const headerRow = cloneObject(selectedHeaderRow);
+    const headerRow = newDataPopupInputInfo?.values;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, headerRow?.prod_uuid, null); });
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { 
+      onAfterSaveAction(searchResult, headerRow?.prod_uuid, null);
+    });
     setNewDataPopupGridVisible(false);
   };
 
-  /** 세부 저장 이후 수행될 함수 */
+  /** 세부 저장 이후 수행될 함수 ✅ */
   const onAfterSaveAddData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
@@ -667,7 +660,7 @@ export const PgQmsInsp = () => {
     setAddDataPopupGridVisible(false);
   }
 
-  /** 세부항목 수정 이후 수행될 함수 */
+  /** 세부항목 수정 이후 수행될 함수 ✅ */
   const onAfterSaveEditData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
     
