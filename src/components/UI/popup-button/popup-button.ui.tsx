@@ -51,8 +51,6 @@ const PopupButton: React.FC<Props> = (props) => {
 
   const [modal, contextHolder] = Modal.useModal();
 
-
-
   useEffect(() => {
     setSelectedRow(null);
   }, []);
@@ -75,7 +73,7 @@ const PopupButton: React.FC<Props> = (props) => {
             columns: null,
           },
           uriPath: null,
-          params: null
+          params: null,
         };
         
         if (props.popupKey == null) {
@@ -89,6 +87,10 @@ const PopupButton: React.FC<Props> = (props) => {
         if (popupContent == null) return;
         
         const childGridId = uuidv4();
+
+        if (popupContent?.onInterlock) {
+          if (!popupContent?.onInterlock()) return;
+        }
 
         // setLoading(true);
         getData<any[]>(popupContent.params, popupContent.uriPath).then((res) => { // 데이터를 불러온 후 모달을 호출합니다.

@@ -2,6 +2,7 @@
 import Grid from "@toast-ui/react-grid";
 import { IButtonProps, IDatagridProps, IGridPopupProps, IModalProps, ISearchboxProps } from "~/components/UI";
 import { IInputGroupboxProps } from "~/components/UI/input-groupbox/input-groupbox.ui";
+import React from 'react';
 
 
 export default interface ITpSingleGridProps {

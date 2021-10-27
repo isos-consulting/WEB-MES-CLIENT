@@ -60,6 +60,8 @@ export interface IPopupOptionType {
 
   /** 부모 그리드 아이디 */
   parentGridId?: string;
+
+  onInterlock?: () => boolean;
 }
 
 

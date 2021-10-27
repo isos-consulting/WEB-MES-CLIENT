@@ -1,6 +1,7 @@
 import Grid from "@toast-ui/react-grid";
 import { IButtonProps, IDatagridProps, IGridPopupProps, IModalProps, ISearchboxProps } from "~/components/UI";
 import { IInputGroupboxProps } from "~/components/UI/input-groupbox";
+import React from 'react';
 
 export default interface ITpTripleGridProps {
   /** 페이지 제목 */

@@ -3,12 +3,12 @@ import { useState } from "react";
 import { COLUMN_CODE, EDIT_ACTION_CODE, getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
-import { TpSingleGrid } from '~/components/templates';
+import { TpDoubleGrid, TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
+import ITpDoubleGridProps, { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import { FormikValues } from 'formik';
 
 
@@ -36,13 +36,20 @@ export const PgQmsReworkReport = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'view';
+  const defaultDetailGridMode:TGridMode = 'view';
   const searchUriPath = '/qms/reworks';
   const saveUriPath = '/qms/reworks';
+  const detailSearchUriPath = '/qms/rework-disassembles';
+  const detailSaveUriPath = '/qms/rework-disassembles';
   const STORE_POPUP = getPopupForm('창고관리');
   const LOCATION_POPUP = getPopupForm('위치관리');
   const STOCK_POPUP = getPopupForm('재고관리');
   
+  /** 팝업 상태 관리 */
   const [disassemblePopupVisible, setDisassemblePopupVisible] = useState<boolean>(false);
+  
+  /** 헤더 클릭시 해당 Row 상태 관리 */
+  const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -50,6 +57,12 @@ export const PgQmsReworkReport = () => {
     {type:'date', id:'reg_date', label:'작업일', default:getToday()},
     {
       type:'combo', id:'rework_type_cd', label:'일괄처리기준', default:'DISPOSAL', firstItemType:'none',
+      // dataSettingOptions: {
+      //   uriPath:'/adm/rework-types',
+      //   params: {},
+      //   codeName:'rework_type_cd',
+      //   textName:'rework_type_nm'
+      // }
       options: [
         {code:'REWORK', text:'재작업'},
         {code:'DISPOSAL', text:'폐기'},
@@ -60,12 +73,12 @@ export const PgQmsReworkReport = () => {
   const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', cloneObject(newDataPopupInputInfo?.props?.inputItems)?.filter(el => el?.id !== 'rework_type_cd'));
 
   /** 그리드 상태를 관리 */
-  const grid = useGrid('GRID', [
+  const grid = useGrid('HEADER_GRID', [
     {header:'부적합품판정UUID', name:'rework_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header:'판정일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text', requiredField:true},
+    {header:'판정일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
-    {header:'품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header:'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text'},
     {header:'제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text'},
@@ -77,20 +90,20 @@ export const PgQmsReworkReport = () => {
     {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
     {header:'부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header:'부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', requiredField:true},
-    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
-    {header:'부적합판정 수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true},
-    {header:'부적합판정 코드', name:'rework_type_cd', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
-    {header:'부적합판정', name:'rework_type_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
+    {header:'부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text'},
+    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'부적합판정 수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'부적합판정 코드', name:'rework_type_cd', width:ENUM_WIDTH.M, hidden:true},
+    {header:'부적합판정', name:'rework_type_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text'},
     {header:'출고창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'출고창고', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header:'출고위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'출고위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header:'입고창고UUID', name:'to_store_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header:'입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
+    {header:'입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text'},
     {header:'입고위치UUID', name:'to_location_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header:'입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
-    {header:'비교', name:'remark', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header:'입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text'},
+    {header:'비교', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
@@ -219,6 +232,44 @@ export const PgQmsReworkReport = () => {
     },
   });
 
+  const detailGrid = useGrid('DETAIL_GRID', [
+    {header:'부적합품판정 분해UUID', name:'rework_disassemble_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'부적합품판정UUID', name:'rework_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header:'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
+    {header:'부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header:'부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text'},
+    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header:'입고 수량', name:'income_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'반출 수량', name:'return_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'폐기 수량', name:'disposal_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'분해시입고창고UUID', name:'income_store_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'입고 창고', name:'income_store_nm', width:ENUM_WIDTH.M},
+    {header:'분해시입고위치UUID', name:'income_location_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'입고 위치', name:'income_location_nm', width:ENUM_WIDTH.M},
+    {header:'반출 창고UUID', name:'return_store_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'반출 창고', name:'return_store_nm', width:ENUM_WIDTH.M},
+    {header:'반출 위치UUID', name:'return_location_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'반출 위치', name:'return_location_nm', width:ENUM_WIDTH.M},
+    {header:'비교', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
+  ], {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    gridMode: defaultDetailGridMode,
+    title: '분해이력'
+  });
+
   const newDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
     newDataPopupGridColumns,
@@ -307,9 +358,28 @@ export const PgQmsReworkReport = () => {
     {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], label:'작업기간', defaults:[getToday(-7), getToday()]},
     // {type:'date', id:'reg_date', label:'작업일', default:getToday()},
   ]);
+
+  const detailSearchInfo = useSearchbox('DETAIL_SEARCH_INPUTBOX', null);
   
 
   /** 액션 관리 */
+  const onClickHeader = (ev) => {
+
+    const {targetType, rowKey, instance} = ev;
+    const headerRow = instance?.store?.data?.rawData[rowKey];
+
+    if (targetType !== 'cell') return;
+    setSelectedHeaderRow(headerRow);
+  };
+  
+  useLayoutEffect(() => {
+    if (selectedHeaderRow == null) {
+      detailGrid.setGridData([]);
+    } else {
+      // detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.rework_uuid);
+    }
+  }, [selectedHeaderRow]);
 
   /** 검색 */
   const onSearch = (values) => {
@@ -323,8 +393,26 @@ export const PgQmsReworkReport = () => {
     }).finally(() => {
       inputInfo?.instance?.resetForm();
       grid.setGridData(data);
+      detailGrid.setGridData([]);
     });
   };
+  
+  const onSearchDetail = (uuid) => {
+    if (uuid == null) return;
+    
+    const searchParams:any = {
+      rework_uuid: uuid
+    };
+
+    let data = [];
+
+    getData(searchParams, detailSearchUriPath).then((res) => {
+      data = res;
+
+    }).finally(() => {
+      detailGrid.setGridData(data);
+    });
+  }
 
   /** UPDATE / DELETE 저장 기능 */
   const onSave = () => {
@@ -351,6 +439,7 @@ export const PgQmsReworkReport = () => {
     /** 수정 */
     update: () => {
       setEditDataPopupGridVisible(true);
+      editDataPopupGrid?.setGridData(grid?.gridInfo?.data || []);
     },
 
     /** 삭제 */
@@ -368,6 +457,8 @@ export const PgQmsReworkReport = () => {
       newDataPopupGrid?.setGridData([]);
       setNewDataPopupGridVisible(true);
     },
+
+    createDetail: null,
 
     /** 저장 */
     save: () => {
@@ -615,23 +706,36 @@ export const PgQmsReworkReport = () => {
   ];
   
   /** 템플릿에 전달할 값 */
-  const props:ITpSingleGridProps = {
+  const props:ITpDoubleGridProps = {
     title,
-    templateType: 'report',
     dataSaveType: 'basic',
-    gridRef: grid.gridRef,
-    gridInfo: grid.gridInfo,
-    searchProps: {
-      ...searchInfo?.props, 
-      onSearch
-    }, 
-    inputProps: null,  
+    templateOrientation: 'horizontal',
+    templateType:'report',
+    gridRefs: [grid.gridRef, detailGrid.gridRef],
+    gridInfos: [
+      {
+        ...grid.gridInfo,
+        onAfterClick: onClickHeader,
+      },
+      detailGrid.gridInfo
+    ],
+    searchProps: [
+      {
+        ...searchInfo?.props, 
+        onSearch,
+      }, 
+      {
+        ...detailSearchInfo?.props,
+        onSearch: () => onSearchDetail(selectedHeaderRow?.rework_uuid)
+      }
+    ],
+    inputProps: [null, null],  
     
-    popupGridRef: [newDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfo: [newDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
-    popupVisible: [newDataPopupGridVisible, editDataPopupGridVisible],
-    setPopupVisible: [setNewDataPopupGridVisible, setEditDataPopupGridVisible],
-    popupInputProps: [newDataPopupInputInfo?.props, editDataPopupInputInfo?.props],
+    popupGridRefs: [newDataPopupGrid.gridRef, null, editDataPopupGrid.gridRef],
+    popupGridInfos: [newDataPopupGrid.gridInfo, null, editDataPopupGrid.gridInfo],
+    popupVisibles: [newDataPopupGridVisible, null, editDataPopupGridVisible],
+    setPopupVisibles: [setNewDataPopupGridVisible, null, setEditDataPopupGridVisible],
+    popupInputProps: [newDataPopupInputInfo?.props, null, editDataPopupInputInfo?.props],
 
     extraGridPopups,
 
@@ -639,5 +743,5 @@ export const PgQmsReworkReport = () => {
     modalContext,
   };
 
-  return <TpSingleGrid {...props}/>;
+  return <TpDoubleGrid {...props}/>;
 }

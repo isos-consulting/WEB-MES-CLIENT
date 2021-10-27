@@ -39,6 +39,7 @@ export interface IInputGroupboxItem {
   dataApiSettings?: {
     uriPath: string,
     params: object,
+    onInterlock?: () => boolean;
   };
 
   dataSettingOptions?: TDataSettingOpionsReturn | ((ev?) => TDataSettingOpionsReturn);
@@ -46,10 +47,7 @@ export interface IInputGroupboxItem {
   /** 팝업 버튼에 세팅될 옵션 */
   popupButtonSettings?: {
     /** 팝업키가 없는 경우 직접 요청옵션을 세팅 */
-    dataApiSettings?: {
-      uriPath: string;
-      params: object;
-    }
+    dataApiSettings?: TDataApiSettings | ((ev?) => TDataApiSettings);
 
     /** 팝업내에 데이터그리드 정보를 세팅합니다. (popupKey보다 높은 우선순위로 작동합니다.) */
     datagridSettings?: IDatagridProps;
@@ -85,6 +83,13 @@ export interface IInputGroupboxItem {
   placeholders?: string[];
   defaults?: any[];
 }
+
+
+type TDataApiSettings = {
+  uriPath:string,
+  params?:object,
+}
+
 
 type TDataSettingOpionsReturn = {
   uriPath:string,
