@@ -52,7 +52,7 @@ export * from './prd/work-reject-report.page';
 export * from './prd/work-downtime-report.page';
 export * from './prd/work-report.page';
 export * from './prd/demand.page';
-export * from './prd/order.page';
+export * from './prd/order/order.page';
 export * from './prd/work/work.page';
 
 export * from './mat/order.page';
