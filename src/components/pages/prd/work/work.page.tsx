@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
 import { Button, Container, Datagrid, IGridColumn, ISearchItem, Label, Searchbox, Tabs, TGridMode } from '~/components/UI';
-import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryId, getUserFactoryUuid, saveGridData } from '~/functions';
+import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryUuid, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -332,10 +332,6 @@ export const PgPrdWork = () => {
       공정검사.onReset;
       
       투입품목관리.setGridMode('view');
-      투입인원관리.setGridMode('view');
-      부적합관리.setGridMode('view');
-      비가동관리.setGridMode('view');
-      공정순서.setGridMode('view');
       
       // 실적이력 조회되면서 하위 데이터 초기화
       투입품목관리.setSearchParams({});
@@ -762,7 +758,6 @@ export const PgPrdWork = () => {
                 투입인원관리.setData(res);
                 투입인원관리.setSearchParams({work_uuid, complete_fg});
                 투입인원관리.setSaveOptionParams({work_uuid});
-                투입인원관리.setGridMode('view');
               });
 
 
@@ -773,7 +768,6 @@ export const PgPrdWork = () => {
                 부적합관리.setData(res);
                 부적합관리.setSearchParams({work_uuid, complete_fg});
                 부적합관리.setSaveOptionParams({work_uuid});
-                부적합관리.setGridMode('view');
               });
 
               
@@ -784,7 +778,6 @@ export const PgPrdWork = () => {
                 비가동관리.setData(res);
                 비가동관리.setSearchParams({work_uuid, complete_fg});
                 비가동관리.setSaveOptionParams({work_uuid});
-                비가동관리.setGridMode('view');
               });
 
               
@@ -795,7 +788,6 @@ export const PgPrdWork = () => {
                 공정순서.setData(res);
                 공정순서.setSearchParams({work_uuid, complete_fg});
                 공정순서.setSaveOptionParams({work_uuid});
-                공정순서.setGridMode('view');
               });
               //#endregion
       
@@ -826,7 +818,7 @@ export const PgPrdWork = () => {
             {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
           </Space>
           <Space size={[6,0]} style={{float:'right'}}>
-            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder} disalbed={!permissions?.update_fg}>작업지시 관리</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onProdOrder} disabled={!permissions?.update_fg}>작업지시 관리</Button>
             {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
           </Space>
         </div>

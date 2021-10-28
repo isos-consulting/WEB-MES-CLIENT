@@ -1,7 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Space, Modal } from 'antd';
 import React, {useRef, useState } from 'react';
-import { Button, Container, Datagrid, IGridColumn, IGridModifiedRows, TGridMode } from '~/components/UI';
+import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridModifiedRows, IGridPopupProps, TGridMode } from '~/components/UI';
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onDefaultGridCancel, onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
@@ -21,7 +21,7 @@ export const ROUTING = () => {
   const [modal, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
 
-  const [gridMode, setGridMode] = useState<TGridMode>('view');
+  const gridMode = 'view';
 
   const [data, setData] = useState([]);
 
@@ -30,11 +30,6 @@ export const ROUTING = () => {
 
   const SEARCH_URI_PATH = '/prd/work-routings';
   const SAVE_URI_PATH = '/prd/work-routings';
-
-
-  //팝업 설정
-  const popupGridRef = useRef<Grid>();
-  const [popupVisible, setPopupVisible] = useState(false);
   //#endregion
 
 
@@ -59,6 +54,49 @@ export const ROUTING = () => {
   ];
   //#endregion
 
+  
+  //#region 🔶수정 팝업 관련
+  const editPopupGridRef = useRef<Grid>();
+  const [editPopupVisible, setEditPopupVisible] = useState(false);
+
+  /** 항목 수정 팝업 속성 */
+  const editGridPopupInfo:IGridPopupProps = {
+    columns: ROUTING_COLUMNS,
+    gridId: TAB_CODE.공정순서+'_EDIT_GRID',
+    ref: editPopupGridRef,
+    gridMode: 'update',
+    defaultData: data,
+    data: null,
+    height: null,
+    /** 팝업 아이디 */
+    popupId: TAB_CODE.공정순서+'_GRID'+'_EDIT_POPUP',
+    /** 팝업 제목 */
+    title: '비가동 항목 수정',
+    /** 포지티브 버튼 글자 */
+    okText: '수정하기',
+    onOk: () => onSave(editPopupGridRef, 'update'),
+    /** 네거티브 버튼 글자 */
+    cancelText: '취소',
+    onCancel: () => {
+      setEditPopupVisible(false);
+    },
+    /** 부모 참조 */
+    parentGridRef: gridRef,
+    /** 저장 유형 */
+    saveType: 'basic',
+    /** 저장 END POINT */
+    saveUriPath: SAVE_URI_PATH,
+    /** 조회 END POINT */
+    searchUriPath: SEARCH_URI_PATH,
+    /** 추가 저장 값 */
+    saveOptionParams: saveOptionParams,
+    /** 최초 visible 상태 */
+    defaultVisible: false,
+    /** visible 상태값 */
+    visible: editPopupVisible,
+  };
+  //#endregion
+
 
   //#region ✅함수
   const onSearch = () => {
@@ -67,22 +105,6 @@ export const ROUTING = () => {
       setData(res);
     });
   }
-
-
-  const onDelete = (ev) => {
-    if ((searchParams as any)?.work_uuid == null) {
-      onErrorMessage('하위이력작업시도');
-      return;
-    }
-
-    if ((searchParams as any)?.complete_fg == 'true') {
-      onErrorMessage('완료된작업시도');
-      return;
-    }
-
-    setGridMode('delete');
-  }
-
 
   const onEdit = (ev) => {
     if ((searchParams as any)?.work_uuid == null) {
@@ -95,55 +117,8 @@ export const ROUTING = () => {
       return;
     }
 
-    setGridMode('update');
+    setEditPopupVisible(true);
   }
-
-
-  const onAppend = (ev) => {
-    if ((searchParams as any)?.work_uuid == null) {
-      onErrorMessage('하위이력작업시도');
-      return;
-    }
-
-    if ((searchParams as any)?.complete_fg == 'true') {
-      onErrorMessage('완료된작업시도');
-      return;
-    }
-
-    setPopupVisible(true);
-  }
-
-
-  const onCancel = (ev) => {
-    onDefaultGridCancel(gridRef, ROUTING_COLUMNS, modal,
-      () => {
-        setGridMode('view');
-        onSearch();
-      }
-    );
-  }
-
-  const popupOnSave = () => {
-    onSave(popupGridRef, 'create');
-  }
-
-  const onCheckedSave = () => {
-    if (isModified(gridRef, ROUTING_COLUMNS)) { // 편집 이력이 있는 경우
-      modal.confirm({
-        icon: null,
-        title: '저장',
-        // icon: <ExclamationCircleOutlined />,
-        content: '편집된 내용을 저장하시겠습니까?',
-        onOk: async () => {
-          onSave();
-        },
-      });
-
-    } else {
-      message.warn('저장할 데이터가 없습니다.');
-    }
-  }
-
 
   const onSave = async (ref?, popupGridMode?) => {
     // onDefaultGridSave('basic', gridRef, WORKER_COLUMNS, SAVE_URI_PATH, {}, modal,
@@ -218,10 +193,10 @@ export const ROUTING = () => {
 
     if (chk === false) return;
 
-    saveGridData(saveData, ROUTING_COLUMNS, SAVE_URI_PATH, saveOptionParams).then(() => {
+    saveGridData(saveData, ROUTING_COLUMNS, SAVE_URI_PATH, saveOptionParams).then(({success}) => {
+      if (!success) return;
       onSearch();
-      setGridMode('view');
-      setPopupVisible(false);
+      setEditPopupVisible(false);
     });
   }
   //#endregion
@@ -231,22 +206,11 @@ export const ROUTING = () => {
   const component = (
     <>
       <Container>
-        {gridMode === 'view' ?
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              {/* <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={true}>삭제</Button> */}
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={!permissions?.update_fg}>수정</Button>
-              {/* <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={true}>신규 추가</Button> */}
-            </Space>
-          </div>
-          :
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onCheckedSave}>저장</Button>
-            </Space>
-          </div>
-        }
+        <div style={{width:'100%', display:'inline-block'}}>
+          <Space size={[6,0]} style={{float:'right'}}>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={!permissions?.update_fg}>수정</Button>
+          </Space>
+        </div>
         <p/>
         <Datagrid
           gridId={TAB_CODE.공정순서+'_GRID'}
@@ -259,6 +223,7 @@ export const ROUTING = () => {
       </Container>
 
       {contextHolder}
+      <GridPopup {...editGridPopupInfo} />
     </>
   );
   //#endregion
@@ -268,7 +233,6 @@ export const ROUTING = () => {
     component,
 
     gridMode,
-    setGridMode,
 
     data,
     setData,
