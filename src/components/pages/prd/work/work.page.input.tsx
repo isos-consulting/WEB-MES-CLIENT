@@ -457,6 +457,7 @@ export const INPUT_POPUP = (
         visible={true}
         width='80%'
         onCancel={() => props.setVisible(false)}
+        okButtonProps={{hidden:true}}
       >
         <div>
           <Row gutter={[0,16]}>
@@ -483,7 +484,7 @@ export const INPUT_POPUP = (
                   boxShadow={false}
                 />
               </div>
-              <Container>
+              <Container boxShadow={false}>
                 <Datagrid
                   gridId='투입품목등록_신규투입_그리드'
                   ref={gridRefStandardInput}
@@ -505,7 +506,7 @@ export const INPUT_POPUP = (
                 <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={()=>setInputUpdatePopupVisible(true)} disabled={!permissions?.update_fg}>수정</Button>
               </Space>
             </div>
-            <Container>
+            <Container boxShadow={false}>
               <Datagrid
                 gridId='투입품목등록_투입이력_그리드'
                 ref={gridRefWorkInput}

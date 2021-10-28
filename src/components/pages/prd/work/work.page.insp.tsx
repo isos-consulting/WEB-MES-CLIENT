@@ -479,6 +479,7 @@ export const INSP = () => {
           </Col>
           <Col span={16} style={{minHeight:440, maxHeight:440, overflow:'auto'}}>
             <InputGroupbox
+              boxShadow={false}
               id={TAB_CODE.공정검사+'_INPUT_GROUP_BOX'}
               inputItems={INSP_INPUT_ITEMS}
               innerRef={inputRef}
