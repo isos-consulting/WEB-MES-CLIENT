@@ -313,7 +313,7 @@ export const PgQmsReceiveInspResult = () => {
           <div style={{width:'100%', display:'inline-block', marginTop:-26}}> </div>
           <Divider style={{marginTop:2, marginBottom:10}}/>
           <Row gutter={[16,16]}>
-            <InputGroupbox boxShadow={false} {...inputReceive.props} />
+            <InputGroupbox {...inputReceive.props} />
           </Row>
         </Col>
       </Row>
@@ -1126,7 +1126,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
 
   //#region 그리드 컬럼세팅
   const INSP_DETAIL_COLUMNS:IGridColumn[] = [
-    {header:'검사성적서 상세UUID', name:'insp_result_detail_info_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:false},
+    {header:'검사성적서 상세UUID', name:'insp_result_detail_info_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사기준서 상세UUID', name:'insp_detail_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목 유형UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
