@@ -1,6 +1,12 @@
 export * from './login.page';
 export * from './test-double-grid.page';
 
+export * from './aut/permission.page';
+export * from './aut/group.page';
+export * from './aut/group-permission.page';
+export * from './aut/user.page';
+export * from './aut/user-permission.page';
+
 export * from './std/bom.page';
 export * from './std/dept.page';
 export * from './std/proc-reject.page';
@@ -44,7 +50,6 @@ export * from './std/customer-price.page';
 export * from './std/routing.page';
 export * from './std/routing-resource.page';
 export * from './std/routing-working.page';
-
 
 export * from './prd/return.page';
 export * from './prd/return-report.page';
