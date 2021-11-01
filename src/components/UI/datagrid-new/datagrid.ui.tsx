@@ -846,6 +846,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   const onCancelRow = useCallback(
     () => {
       const {rowKey, columnName} = gridRef.current.getInstance().getFocusedCell();
+      const rowIndex = gridRef.current.getInstance()?.getIndexOfRow(rowKey);
+      const columnIndex = gridRef.current.getInstance()?.getIndexOfColumn(columnName);
       
       if (rowKey === null) {
         message.warn('취소할 행을 선택해주세요.');
@@ -856,13 +858,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   
       // 다음 행으로 포커스 이동
       try {
-        let nextRowKey = Number(rowKey)-1;
-        const maxRow = gridRef.current.getInstance().getRowCount()-1;
+        let nextRowIndex = Number(rowIndex)-1;
   
-        if (nextRowKey > maxRow)
-          nextRowKey = 0;
+        if (nextRowIndex < 0) {
+          return;
+        }
   
-        gridRef.current.getInstance().focus(nextRowKey, columnName);
+        gridRef.current.getInstance().focusAt(nextRowIndex, columnIndex-1);
   
       } catch(e) {
         console.error('onCancelRow', e);
