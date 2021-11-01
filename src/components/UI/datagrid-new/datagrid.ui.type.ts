@@ -9,6 +9,9 @@ import { IButtonProps, IModalProps } from '~/components/UI';
 
 /** 데이터 그리드 속성 인터페이스 */
 export default interface IDatagridProps extends GridProps {
+  /** 제목 */
+  title?: string;
+  
   /** 그리드 아이디 */
   gridId: string;
 

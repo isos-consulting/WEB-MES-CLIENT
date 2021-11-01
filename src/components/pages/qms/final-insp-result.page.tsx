@@ -6,7 +6,7 @@ import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, ISearchItem, Label, Searchbox, Textbox, TGridMode } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { blankThenNull, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getToday, getUserFactoryUuid, isNumber } from '~/functions';
+import { blankThenNull, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getToday, getUserFactoryUuid, isNumber } from '~/functions';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
@@ -444,6 +444,12 @@ type TPutQmsFinalInspResults = {
 //#region 🔶최종검사 성적서
 /** 최종검사 성적서 리스트 */
 export const PgQmsFinalInspResult = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
   
@@ -546,7 +552,7 @@ export const PgQmsFinalInspResult = () => {
       <Container>
         <div style={{width:'100%', display:'inline-block'}}>
           <Space size={[6,0]} style={{float:'right', marginTop:-70}}>
-            <Button btnType='buttonFill' widthSize='auto' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onCreate}>신규 추가</Button>
+            <Button btnType='buttonFill' widthSize='auto' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onCreate} disabled={!permissions?.create_fg}>신규 추가</Button>
           </Space>
         </div>
         <div style={{maxWidth:700, marginTop:-20, marginLeft:-6}}>
@@ -616,6 +622,12 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
     onAfterSave:()=>void
   }
 ) => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region Ref 관리
   const gridRef = useRef<Grid>();
   //#endregion
@@ -779,8 +791,8 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
       <Container>
         <div style={{width:'100%', display:'inline-block'}}>
           <Space size={[6,0]} style={{float:'right', marginTop:-70}}>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onEdit}>수정</Button>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='red' onClick={onDelete}>삭제</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onEdit} disabled={!permissions?.update_fg}>수정</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='red' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
           </Space>
         </div>
         <Row gutter={[16,0]} style={{minHeight:550, maxHeight:700, marginTop:-15}}>

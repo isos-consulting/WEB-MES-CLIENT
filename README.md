@@ -199,3 +199,31 @@ client/
 2. 스니펫 적용하는 법 --- 1. vscode 왼쪽 상단 File > Preferences > User Snippets 선택후 typescriptreact를 선택합니다.
                           2. 설정 파일이 열리면 ./snippets/typescriptreact.json의 내용을 설정 파일에 덮어씌웁니다.
                           3. tsx파일 안에서 isos를 타이핑한 후 코드가 자동완성이 되는지 확인합니다.
+
+
+
+
+* * *
+🌵[권한 적용법]
+1. getPermissions(title) 함수를 써서 해당 페이지에 적용될 권한 상태 값을 가져올 수 있습니다.
+2. 인자 값으로 페이지의 제목을 넣습니다. 페이지의 제목은 getPageName() 함수를 사용하여 가져올 수 있습니다. (아래는 사용 예시)
+예시)
+     const title = getPageName(); // BOM 관리
+     const permissions = getPermissions(title);
+     
+     console.log(permissions); //   {
+                               //        create_at: true,
+                               //        update_at: false,
+                               //        delete_at: true,
+                               //        read_at: true,
+                               //   }
+
+3. 위에서 세팅된 permssions 변수를 사용해 아래와 같이 응용하여 권한을 적용합니다.
+   (아래는 응용 예시이므로 실제 적용된 방법과 다를 수 있습니다.)
+예시)
+     ...
+     return (
+          <Button disabled={!permissons?.delete_at}>삭제</Button>
+          <Button disabled={!permissons?.update_at}>수정</Button>
+          <Button disabled={!permissons?.create_at}>신규등록</Button>
+     )

@@ -299,7 +299,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
       <>
         {headerSearchProps != null ? headerSearchboxVisible ? <Searchbox {...headerSearchProps}/> : null : null}
         {headerInputProps != null ? headerInputboxVisible ? <InputGroupbox {...headerInputProps} /> : null : null}
-        <Container>
+        <Container title={headerGrid?.title}>
           <Datagrid {...headerGrid} ref={headerGridRef} height={_headerGridHeight} gridMode={headerGridMode}/>
         </Container>
       </>
@@ -311,7 +311,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
       <>
         {detailSearchProps != null ? detailSearchboxVisible ? <Searchbox {...detailSearchProps}/> : null : null}
         {detailInputProps != null ? detailInputboxVisible ? <InputGroupbox {...detailInputProps} /> : null : null}
-        <Container>
+        <Container title={detailGrid?.title}>
           <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight} gridMode={detailGridMode}/>
         </Container>
       </>

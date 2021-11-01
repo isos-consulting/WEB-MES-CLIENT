@@ -1,14 +1,20 @@
 import Grid from '@toast-ui/react-grid';
-import { Space, Col, Row, message } from 'antd';
+import { Space, Col, Row, message, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { MutableRefObject, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, TGridMode } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getUserFactoryUuid, isNumber } from '~/functions';
+import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
 //#region 🔶🚫공정검사
 export const INSP = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const gridRef = useRef<Grid>();
   const detailGridRef = useRef<Grid>();
@@ -399,14 +405,17 @@ export const INSP = () => {
 
   //#region 🚫렌더부
   const component = (
+    !permissions ?
+      <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
+    :
     <>
       <Container>
         {detailGridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} hidden={true}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} hidden={true}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} hidden={true} disabled={!permissions?.delete_fg}>삭제</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} hidden={true} disabled={!permissions?.update_fg}>수정</Button>
+              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
             </Space>
           </div>
           :
@@ -470,6 +479,7 @@ export const INSP = () => {
           </Col>
           <Col span={16} style={{minHeight:440, maxHeight:440, overflow:'auto'}}>
             <InputGroupbox
+              boxShadow={false}
               id={TAB_CODE.공정검사+'_INPUT_GROUP_BOX'}
               inputItems={INSP_INPUT_ITEMS}
               innerRef={inputRef}

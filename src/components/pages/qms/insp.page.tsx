@@ -40,6 +40,8 @@ export const PgQmsInsp = () => {
   const [selectedDetailRow, setSelectedDetailRow] = useState(null);
   const [editInspNo, setEditInspNo] = useState(null);
 
+  const [applyFg, setApplyFg] = useState(false);
+
   /** 검사기준서 적용(또는 해제) */
   const onApplyInsp = (ev, props) => {
     // 적용 이벤트
@@ -64,24 +66,43 @@ export const PgQmsInsp = () => {
       if (success) {
         message.success('검사기준서가 ' + (value ? '해제' : '적용') + '되었습니다.');
 
-        const headerRow = await cloneObject(selectedHeaderRow);
-
         await onReset();
-        await onSearchHeader(headerSearchInfo?.values);
-        await onAsyncFunction(setSelectedHeaderRow, headerRow); // ❗ state변수 값을 가지고 오지 못함
-
-        onClickDetail({
-          targetType: 'cell', 
-          rowKey, 
-          instance: grid, 
-          columnName: columnInfo?.name,
-        });
+        setApplyFg(true);
 
       } else {
         // message.error('검사기준서 ' + (value ? '해제' : '적용') + ' 실패');
       }
     });
   }
+
+  const onAfterSaveApply = async () => {
+    const headerRow = await cloneObject(selectedHeaderRow);
+    const detailRow = await cloneObject(selectedDetailRow);
+
+    onSearchHeader(headerSearchInfo?.values).then(res => {
+      onAsyncFunction(onClickHeader, {
+        targetType: 'cell',
+        rowKey: headerRow?.rowKey || 0,
+        instance: {
+          store: {
+            data: {
+              rawData: res
+            }
+          }
+        },
+      });
+    }).finally(() => {
+      setSelectedHeaderRow(headerRow);
+      setSelectedDetailRow(detailRow);
+    });
+  }
+
+  useLayoutEffect(() => {
+    if (!applyFg) return;
+
+    onAfterSaveApply();
+    setApplyFg(false);
+  }, [applyFg]);
 
 
   //#region 🔶그리드 상태 관리
@@ -375,7 +396,7 @@ export const PgQmsInsp = () => {
       popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
     },
     {
-      type:'combo', id:'insp_type_cd', label:'기준서 유형', disabled:true , default:'', firstItemType:'empty',
+      type:'combo', id:'insp_type_cd', label:'기준서 유형', disabled:true, firstItemType:'none',
       dataSettingOptions: {
         uriPath: '/adm/insp-types',
         params: {},
@@ -431,7 +452,6 @@ export const PgQmsInsp = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    console.log('layout Effect', selectedHeaderRow)
     if (selectedHeaderRow == null) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.prod_uuid);
@@ -613,19 +633,21 @@ export const PgQmsInsp = () => {
   //#endregion
 
 
-  /** 신규 저장 이후 수행될 함수 */
+  /** 신규 저장 이후 수행될 함수 ✅ */
   const onAfterSaveNewData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
     await onReset();
-    const headerRow = cloneObject(selectedHeaderRow);
+    const headerRow = newDataPopupInputInfo?.values;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, headerRow?.prod_uuid, null); });
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { 
+      onAfterSaveAction(searchResult, headerRow?.prod_uuid, null);
+    });
     setNewDataPopupGridVisible(false);
   };
 
-  /** 세부 저장 이후 수행될 함수 */
+  /** 세부 저장 이후 수행될 함수 ✅ */
   const onAfterSaveAddData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
@@ -638,7 +660,7 @@ export const PgQmsInsp = () => {
     setAddDataPopupGridVisible(false);
   }
 
-  /** 세부항목 수정 이후 수행될 함수 */
+  /** 세부항목 수정 이후 수행될 함수 ✅ */
   const onAfterSaveEditData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
     
@@ -840,7 +862,7 @@ export const PgQmsInsp = () => {
       edit: {
         text: '수정/개정',
         widthSize: 'auto'
-      }
+      },
     }
   };
   //#endregion

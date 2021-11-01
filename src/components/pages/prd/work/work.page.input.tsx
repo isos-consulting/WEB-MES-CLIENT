@@ -1,12 +1,12 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, message, Space, Typography, Modal, Row } from 'antd';
+import { Divider, message, Space, Typography, Modal, Row, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, IGridPopupInfo, TGridMode } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import { Modal as CustomModal } from '~/components/UI';
-import { cloneObject, executeData, getData, getModifiedRows, getToday } from '~/functions';
+import { cloneObject, executeData, getData, getModifiedRows, getPageName, getPermissions, getToday } from '~/functions';
 import Colors from '~styles/color.style.scss';
 import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
@@ -21,6 +21,12 @@ const URI_PATH_WORK_INPUT = '/prd/work-inputs';
 const URI_PATH_SAVE_INPUT = '/prd/work-inputs';
 
 export const INPUT = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
@@ -153,10 +159,10 @@ export const INPUT = () => {
         {gridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' colorType='gray' onClick={onReset}>투입 초기화</Button>
+              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' colorType='gray' onClick={onReset} disabled={!permissions?.delete_fg}>투입 초기화</Button>
               {/* <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
               <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit}>수정</Button> */}
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>투입</Button>
+              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!(permissions?.create_fg || permissions?.update_fg || permissions?.delete_fg)}>투입</Button>
             </Space>
           </div>
           : null
@@ -238,6 +244,12 @@ export const INPUT_POPUP = (
     setVisible: (value?) => void,
   }
 ) => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region 🚫설정값
   const [modal, contextHolder] = Modal.useModal();
   
@@ -256,7 +268,12 @@ export const INPUT_POPUP = (
   const [inputUpdatePopupVisible, setInputUpdatePopupVisible] = useState(false);
   const [inputInfo, setInputInfo] = useState({});
 
-  const [workInputGridMode, setWorkInputGridMode] = useState<TGridMode>('delete');
+  const workInputGridMode = useMemo(() => {
+    if (permissions?.delete_fg !== true) {
+      return 'view'
+    } else return 'delete';
+  }, [permissions]);
+  // const [workInputGridMode, setWorkInputGridMode] = useState<TGridMode>('delete');
 
   // const newGridPopupRef = useRef<Grid>();
 
@@ -328,7 +345,8 @@ export const INPUT_POPUP = (
           onSetInputInfo(props).then(() => {
             setInputCreatePopupVisible(true)
           })
-        }
+        },
+        disabled: !permissions?.create_fg,
       }
     },
     {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
@@ -431,11 +449,15 @@ export const INPUT_POPUP = (
   //#region 🚫렌더부
   if (props.visible) {
     return (
+      !permissions ?
+        <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
+      :
       <CustomModal
         title='투입품목등록'
         visible={true}
         width='80%'
         onCancel={() => props.setVisible(false)}
+        okButtonProps={{hidden:true}}
       >
         <div>
           <Row gutter={[0,16]}>
@@ -462,7 +484,7 @@ export const INPUT_POPUP = (
                   boxShadow={false}
                 />
               </div>
-              <Container>
+              <Container boxShadow={false}>
                 <Datagrid
                   gridId='투입품목등록_신규투입_그리드'
                   ref={gridRefStandardInput}
@@ -479,17 +501,18 @@ export const INPUT_POPUP = (
             <Divider style={{marginBottom:10}}/>
             <div style={{width:'100%', display:'inline-block'}}>
               <Space size={[6,0]} style={{float:'right'}}>
-                <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' colorType='gray' onClick={onReset}>투입 초기화</Button>
-                <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-                <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={()=>setInputUpdatePopupVisible(true)}>수정</Button>
+                <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='delete' colorType='gray' onClick={onReset} disabled={!permissions?.delete_fg}>투입 초기화</Button>
+                <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+                <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={()=>setInputUpdatePopupVisible(true)} disabled={!permissions?.update_fg}>수정</Button>
               </Space>
             </div>
-            <Container>
+            <Container boxShadow={false}>
               <Datagrid
                 gridId='투입품목등록_투입이력_그리드'
                 ref={gridRefWorkInput}
                 columns={props.columns}
                 data={inputData}
+                // gridMode={permissions?.delete_fg ? 'delete' : 'view'}
                 gridMode={workInputGridMode}
               />
             </Container>
@@ -550,6 +573,7 @@ export const INPUT_POPUP_CREATE = (props:{
   },
   setVisible: (value?) => void,
 }) => {
+
   const [modal, contextHolder] = Modal.useModal();
 
   const {rowKey, grid} = props.searchParams?.inputInfo as any;

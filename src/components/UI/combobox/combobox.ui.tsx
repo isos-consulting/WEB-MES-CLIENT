@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { Select } from 'antd';
 import { useRecoilState } from "recoil";
 import Props, {IComboboxItem} from './combobox.ui.type';
@@ -17,13 +17,19 @@ const Combobox: React.FC<Props> = (props) => {
   const [options, setOptions] = useState([]);
 
   /** 콤보박스 값 변경 이벤트 */
-  const onChangeValue = (value:any, option:any) => {
-    setComboTextValue(option.children);
-    setComboValue(value);
-  };
+  const onChangeValue = useCallback(
+    (value:any, option:any) => {
+      setComboTextValue(option.children);
+      setComboValue(value);
+
+      if (props.onChange)
+        props.onChange(value);
+    },
+    [props.onChange],
+  )
 
   /** 데이터 리셋 함수 */
-  const resetState=()=>{
+  const resetState = () => {
     switch (props?.firstItemType) {
       case 'all':
         setComboTextValue('전체');
@@ -143,11 +149,19 @@ const Combobox: React.FC<Props> = (props) => {
   }, [options]);
 
   const defaultValue = useMemo(() => {
-    if (props.defaultValue) 
-      return defaultValue;
-    else
-      return options?.length > 0 ? options[0]?.code : null;
+    if (props.defaultValue) {
+      return props.defaultValue;
+
+    } else {
+      const value = options?.length > 0 ? options[0]?.code : null;
+      return value;
+    }
   }, [props.defaultValue, options]);
+
+  useLayoutEffect(() => {
+    if ((options?.length > 0) === false) return;
+    onChangeValue(defaultValue, options[0]?.text);
+  }, [defaultValue, options]);
 
   const value = useMemo(() => {
     if (props.value) {
@@ -158,7 +172,7 @@ const Combobox: React.FC<Props> = (props) => {
   }, [props.value, defaultValue]);
   
 
-  if (props?.label != null) {
+  if (props?.label) {
     /** 라벨이 있는 버전 */
     return (
       <Space size={10} wrap>
@@ -166,7 +180,7 @@ const Combobox: React.FC<Props> = (props) => {
         <ScCombobox
           defaultValue={defaultValue}
           value={value}
-          onChange={props.onChange || onChangeValue}
+          onChange={onChangeValue}
           disabled={props.disabled}
           widthSize={props.widthSize}
           fontSize={props.fontSize}>
@@ -192,7 +206,7 @@ const Combobox: React.FC<Props> = (props) => {
       <ScCombobox
         defaultValue={defaultValue} 
         value={value} 
-        onChange={props.onChange || onChangeValue}
+        onChange={onChangeValue}
         disabled={props.disabled}
         widthSize={props.widthSize}
         fontSize={props.fontSize}>

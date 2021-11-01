@@ -504,6 +504,7 @@ export const PgStdBom = () => {
   const props:ITpTripleGridProps = {
     title,
     dataSaveType: 'basic',
+    templateOrientation: 'filledLayoutLeft',
     gridRefs: [headerGrid.gridRef, detailGrid.gridRef, detailSubGrid.gridRef],
     gridInfos: [
       {

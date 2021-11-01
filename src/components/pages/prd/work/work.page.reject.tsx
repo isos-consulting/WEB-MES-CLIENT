@@ -1,20 +1,24 @@
 import Grid from '@toast-ui/react-grid';
-import { Space, Modal } from 'antd';
+import { Space, Modal, message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridComboInfo, IGridPopupInfo, TGridMode } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
-import { getData } from '~/functions';
+import { getData, getPageName, getPermissions, isModified } from '~/functions';
 import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 
 
 //#region 🔶✅부적합관리
 /** 부적합관리 */
 export const REJECT = () => {
+  /** 페이지 제목 */
+  const title = getPageName();
+
+  /** 권한 관련 */
+  const permissions = getPermissions(title);
+
   //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
-
-  const [gridMode, setGridMode] = useState<TGridMode>('view');
+  const gridMode:TGridMode = 'delete';
 
   const [data, setData] = useState([]);
 
@@ -131,6 +135,33 @@ export const REJECT = () => {
     });
   }
 
+  const onSave = () => {
+    onDefaultGridSave('basic', gridRef, REJECT_COLUMNS, SAVE_URI_PATH, saveOptionParams, modal,
+      ({success}) => {
+        if (!success) return;
+        onSearch();
+        setPopupVisible(false);
+      }
+    );
+  }
+
+  /** 저장 여부 확인 후 저장하는 이벤트 */
+  const onCheckedSave = () => {
+    if (isModified(gridRef, REJECT_COLUMNS)) { // 편집 이력이 있는 경우
+      modal.confirm({
+        icon: null,
+        title: '저장',
+        // icon: <ExclamationCircleOutlined />,
+        content: '편집된 내용을 저장하시겠습니까?',
+        onOk: async () => {
+          onSave();
+        },
+      });
+
+    } else {
+      message.warn('저장할 데이터가 없습니다.');
+    }
+  }
 
   const onDelete = (ev) => {
     if ((searchParams as any)?.work_uuid == null) {
@@ -143,24 +174,8 @@ export const REJECT = () => {
       return;
     }
 
-    setGridMode('delete');
+    onCheckedSave();
   }
-
-
-  const onEdit = (ev) => {
-    if ((searchParams as any)?.work_uuid == null) {
-      onErrorMessage('하위이력작업시도');
-      return;
-    }
-
-    if ((searchParams as any)?.complete_fg === 'true') {
-      onErrorMessage('완료된작업시도');
-      return;
-    }
-
-    setGridMode('update');
-  }
-
 
   const onAppend = (ev) => {
     if ((searchParams as any)?.work_uuid == null) {
@@ -176,26 +191,15 @@ export const REJECT = () => {
     setPopupVisible(true);
   }
 
-
   const onCancel = (ev) => {
     onDefaultGridCancel(gridRef, REJECT_COLUMNS, modal,
       () => {
         onSearch();
-        setGridMode('view');
       }
     );
   }
 
 
-  const onSave = (ev) => {
-    onDefaultGridSave('basic', gridRef, REJECT_COLUMNS, SAVE_URI_PATH, {work_uuid: (searchParams as any)?.work_uuid}, modal,
-      () => {
-        onSearch();
-        setGridMode('view');
-        setPopupVisible(false);
-      }
-    );
-  }
   //#endregion
 
 
@@ -203,22 +207,12 @@ export const REJECT = () => {
   const component = (
     <>
       <Container>
-        {gridMode === 'view' ?
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} disabled={true}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button>
-            </Space>
-          </div>
-          :
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-            </Space>
-          </div>
-        }
+        <div style={{width:'100%', display:'inline-block'}}>
+          <Space size={[6,0]} style={{float:'right'}}>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
+          </Space>
+        </div>
         <p/>
         <Datagrid
           gridId={TAB_CODE.부적합관리+'_GRID'}
@@ -266,7 +260,6 @@ export const REJECT = () => {
     component,
 
     gridMode,
-    setGridMode,
 
     data,
     setData,
