@@ -1199,6 +1199,7 @@ const ProdOrderModal = ({visible, onClose}) => {
         gridRef?.current?.getInstance()?.clearModifiedData();
 
       }).catch((e) => console.log(e));
+    onClose();
   }
   //#endregion
 
@@ -1213,6 +1214,7 @@ const ProdOrderModal = ({visible, onClose}) => {
       visible={visible}
       onCancel={onClose}
       onOk={onSave}
+      
       width='80%'
     >
       <>

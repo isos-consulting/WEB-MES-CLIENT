@@ -188,7 +188,7 @@ export const REJECT = () => {
 
 
   const onSave = (ev) => {
-    onDefaultGridSave('basic', gridRef, REJECT_COLUMNS, SAVE_URI_PATH, saveOptionParams, modal,
+    onDefaultGridSave('basic', gridRef, REJECT_COLUMNS, SAVE_URI_PATH, {work_uuid: (searchParams as any)?.work_uuid}, modal,
       () => {
         onSearch();
         setGridMode('view');
@@ -251,7 +251,7 @@ export const REJECT = () => {
         gridPopupInfo={GRID_POPUP_INFO}
         saveUriPath={SAVE_URI_PATH}
         searchUriPath={SEARCH_URI_PATH}
-        saveOptionParams={saveOptionParams}
+        saveOptionParams={searchParams}
         data={[]}
         saveType='basic'
         defaultVisible={false}
