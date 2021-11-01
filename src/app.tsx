@@ -57,6 +57,7 @@ const App = () => {
       onOk: () => {
         // 로그인 해제
         setLogout();
+        SET_NOT_PERMISSION(false);
       },
       cancelButtonProps: {
         hidden: true,
