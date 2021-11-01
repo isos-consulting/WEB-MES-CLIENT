@@ -1,14 +1,14 @@
 import React, { lazy, Suspense, useLayoutEffect, useState } from "react";
 import { Spin } from "antd";
-import { useEffect } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
 import { getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
+import { Modal } from 'antd';
 
 
 
@@ -18,13 +18,18 @@ const Layout = lazy(() => import('./components/UI/layout').then(module=>({defaul
 
 const App = () => {
   const [loading, setLoading] = useLoadingState();
+  const [modal, contextHolder] = Modal.useModal();
   
   const [user] = useRecoilState(authStore.user.state);
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
+  const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
+  const setUser = useSetRecoilState(authStore.user.state);
+  const setLogout = () => {sessionStorage.removeItem('userInfo'); setUser(undefined);}
 
 
-  useEffect(() => {
+  /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
+  useLayoutEffect(() => {
     if (!user) return;
     setLoading(true);
     getMenus().then((menu) => {
@@ -33,9 +38,36 @@ const App = () => {
     }).finally(() => setLoading(false));
   }, [user]);
 
+  useLayoutEffect(() => {
+    if (Array.isArray(menuRawData) && menuRawData?.length === 0) {
+      SET_NOT_PERMISSION(true);
+    } else {
+      SET_NOT_PERMISSION(false);
+    }
+  }, [menuRawData]);
+
+  useLayoutEffect(() => {
+    if (!NOT_PERMISSION) return;
+    modal.error({
+      content: <div>
+        권한 정보가 없습니다. <p/>
+        관리자에게 문의하신 후 다시 로그인해주세요. <br/>
+      </div>,
+      okText: '로그인 페이지로 돌아가기',
+      onOk: () => {
+        // 로그인 해제
+        setLogout();
+      },
+      cancelButtonProps: {
+        hidden: true,
+      }
+    });
+  }, [NOT_PERMISSION]);
+
   return <div>
     <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
       {user ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />}
+      {contextHolder}
     </Spin>
   </div>;
 };
