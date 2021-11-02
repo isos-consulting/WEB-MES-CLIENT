@@ -73,6 +73,10 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
       return 'view'
     } else return detailSubGrid?.gridMode;
   }, [detailSubGrid?.gridMode, permissions]);
+
+  const templateOrientation = useMemo(() => {
+    return props.templateOrientation ?? 'filledLayoutRight';
+  }, [props.templateOrientation]);
   //#endregion
 
 
@@ -238,7 +242,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   const btnDelete = useMemo(() => {
     const disabled = !(permissions?.delete_fg === true && buttonActions.delete);
     return (
-      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={buttonActions.delete} {...btnDeleteProps} disabled={disabled}>{btnDeleteText}</Button>
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='delete' onClick={buttonActions.delete} {...btnDeleteProps} disabled={disabled}>{btnDeleteText}</Button>
     );
   }, [btnDeleteProps, buttonActions, permissions]);
 
@@ -278,72 +282,78 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   const [headerGridHeight, setHeaderGridHeight] = useState(headerGrid.height || 0);
   const [detailGridHeight, setDetailGridHeight] = useState(detailGrid.height || 0);
   const [detailSubGridHeight, setDetailSubGridHeight] = useState(detailSubGrid.height || 0);
+  const headerHeight = 45;
+  const paddingSize = 36;
+  const footerHeight = 60;
+  const [headerMargin, setHeaderMargin] = useState<number>(0);
+  const [detailMargin, setDetailMargin] = useState<number>(0);
+  const [detailSubMargin, setDetailSubMargin] = useState<number>(0);
+  const [minHeight, setMinHeight] = useState(window.innerHeight - headerHeight - paddingSize - footerHeight);
   const [eventTrigger, setEventTrigger] = useState<boolean>(false); // 강제로 window resize 이벤트를 실행시키기 위한 트리거 상태 값입니다.
 
-  const onResize = (ev) => {
-    onHeaderResize(ev);
-    onDetailResize(ev);
-    onDetailSubResize(ev);
-  }
+  const onHeaderResize = (minHeight) => {
+    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
+    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
+    const headerInputElementHeight = document.getElementById('HEADER_INPUT_ELEMENT')?.clientHeight || 0;
 
-  const onHeaderResize = (ev) => {
-    if (props.templateOrientation === 'filledLayoutRight') {
-      setHeaderGridHeight(300);
-      return;
+    if (templateOrientation === 'filledLayoutRight') {
+      const height = 300;
+      setHeaderGridHeight(height);
+
+    } else {
+      const height = minHeight - (actionButtonsHeight + subGridContainerHeight + headerInputElementHeight + headerMargin);
+      setHeaderGridHeight(height);
     }
-    const screenHeight = ev.target.innerHeight;
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-
-    const searchboxHeight = document.getElementById(headerSearchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(headerInputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = headerGrid?.header?.height || 30;
-
-    const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing);
-
-    setHeaderGridHeight(height);
   }
 
-  const onDetailResize = (ev) => {
-    const screenHeight = ev.target.innerHeight;
+  const onDetailResize = (minHeight, headerGridHeight?) => {
     const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
     const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-
-    const searchboxHeight = document.getElementById(detailSearchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(detailInputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = detailGrid?.header?.height || 30;
+    const headerInputElementHeight = document.getElementById('HEADER_INPUT_ELEMENT')?.clientHeight || 0;
+    const detailInputElementHeight = document.getElementById('DETAIL_INPUT_ELEMENT')?.clientHeight || 0;
     
-    if (props.templateOrientation === 'filledLayoutRight') {
-      const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing) - headerGridHeight;
+    if (templateOrientation === 'filledLayoutRight') {
+      const height = minHeight - (headerGridHeight + headerInputElementHeight + headerMargin) - (actionButtonsHeight + subGridContainerHeight + detailInputElementHeight + detailMargin);
       setDetailGridHeight(height);
 
     } else {
-      const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing);
+      const height = 300;
       setDetailGridHeight(height);
     }
   }
 
-  const onDetailSubResize = (ev) => {
-    const screenHeight = ev.target.innerHeight;
+  const onDetailSubResize = (minHeight, detailGridHeight?) => {
     const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
     const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
+    const detailInputElementHeight = document.getElementById('DETAIL_INPUT_ELEMENT')?.clientHeight || 0;
+    const detailSubInputElementHeight = document.getElementById('DETAIL_SUB_INPUT_ELEMENT')?.clientHeight || 0;
+    
+    if (templateOrientation === 'filledLayoutRight') {
+      const height = minHeight - (actionButtonsHeight + subGridContainerHeight + detailSubInputElementHeight);
+      setDetailSubGridHeight(height);
 
-    const searchboxHeight = document.getElementById(detailSubSearchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(detailSubInputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = detailGrid?.header?.height || 30;
+    } else {
+      const height = minHeight - (detailGridHeight + detailInputElementHeight + detailMargin) - (actionButtonsHeight + subGridContainerHeight + detailSubInputElementHeight + detailSubMargin);
+      setDetailSubGridHeight(height);
+    }
+  }
 
-    const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing);
+  const onWindowResize = (ev) => {
+    setMinHeight(ev.target.innerHeight - headerHeight - paddingSize);
+  }
 
-    setDetailSubGridHeight(height);
+  const onResize = (ev) => {
+    onHeaderResize(ev);
+    if (templateOrientation !== 'filledLayoutRight') onDetailResize(ev, headerGridHeight);
+    if (templateOrientation !== 'filledLayoutLeft') onDetailSubResize(ev, detailGridHeight);
   }
 
   useLayoutEffect(() => {
-    if (headerGrid.height) return;
-    window.addEventListener('resize', onResize, true);
+    window.addEventListener('resize', onWindowResize, true);
     setEventTrigger(true);
 
     return () => {
-      window.removeEventListener('resize', onResize, true);
+      window.removeEventListener('resize', onWindowResize, true);
     };
   }, []);
 
@@ -354,20 +364,87 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   }, [eventTrigger]);
 
   useLayoutEffect(() => {
-    onResize({target:{innerHeight: window.innerHeight}});
+    onWindowResize({target:{innerHeight:window.innerHeight}});
   }, [layoutState]);
+
+  useLayoutEffect(() => {
+    onResize(minHeight);
+  }, [minHeight]);
+  
+  useLayoutEffect(() => {
+    if (templateOrientation === 'filledLayoutRight')
+      onDetailResize(minHeight, headerGridHeight);
+  }, [headerGridHeight]);
+  
+  useLayoutEffect(() => {
+    if (templateOrientation === 'filledLayoutLeft')
+      onDetailSubResize(minHeight, detailGridHeight);
+  }, [detailGridHeight]);
+
+  useLayoutEffect(() => {
+    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
+    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
+
+    if (templateOrientation === 'filledLayoutRight') {
+      const headerMargin = (0
+        + (actionButtonsHeight > 0 ? 1 : 0)
+        + (subGridContainerHeight > 0 ? 1 : 0)
+        + (headerSearchProps != null ? 1 : 0)
+        + (headerInputProps != null ? 1 : 0)
+      ) * 8;
+      const detailMargin = (0
+        + (detailSearchProps != null ? 1 : 0)
+        + (detailInputProps != null ? 1 : 0)
+      ) * 8;
+      const detailSubMargin = (0
+        + (actionButtonsHeight > 0 ? 1 : 0)
+        + (subGridContainerHeight > 0 ? 1 : 0)
+        + (detailSubSearchProps != null ? 1 : 0)
+        + (detailSubInputProps != null ? 1 : 0)
+      ) * 8;
+      setHeaderMargin(headerMargin);
+      setDetailMargin(detailMargin + 8);
+      setDetailSubMargin(detailSubMargin);
+
+    } else {
+      const headerMargin = (0
+        + (actionButtonsHeight > 0 ? 1 : 0)
+        + (subGridContainerHeight > 0 ? 1 : 0)
+        + (headerSearchProps != null ? 1 : 0)
+        + (headerInputProps != null ? 1 : 0)
+      ) * 8;
+      const detailMargin = (0
+        + (actionButtonsHeight > 0 ? 1 : 0)
+        + (subGridContainerHeight > 0 ? 1 : 0)
+        + (detailSearchProps != null ? 1 : 0)
+        + (detailInputProps != null ? 1 : 0)
+      ) * 8;
+      const detailSubMargin = (0
+        + (detailSubSearchProps != null ? 1 : 0)
+        + (detailSubInputProps != null ? 1 : 0)
+      ) * 8;
+      setHeaderMargin(headerMargin);
+      setDetailMargin(detailMargin);
+      setDetailSubMargin(detailSubMargin + 8);
+    }
+  }, [headerSearchProps, headerInputProps, detailSearchProps, detailInputProps, detailSubSearchProps, detailSubInputProps]);
+
+  // useLayoutEffect(() => {
+    
+  // }, [templateOrientation]);
   //#endregion
 
   
   //#region 🔶 렌더러에 작성될 엘리먼트 정의
   const headerGridElement = useMemo(() => {
-    const _headerGridHeight = props?.templateOrientation === 'filledLayoutRight' ? 300 : headerGridHeight;
     return (
       <>
+        <div id='HEADER_INPUT_ELEMENT'>
         {headerSearchProps != null ? headerSearchboxVisible ? <Searchbox {...headerSearchProps}/> : null : null}
         {headerInputProps != null ? headerInputboxVisible ? <InputGroupbox {...headerInputProps} /> : null : null}
+        </div>
         <Container>
-          <Datagrid {...headerGrid} ref={headerGridRef} height={_headerGridHeight} gridMode={headerGridMode}/>
+          <Datagrid {...headerGrid} ref={headerGridRef} height={headerGridHeight} gridMode={headerGridMode}/>
         </Container>
       </>
     );
@@ -376,8 +453,10 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   const detailGridElement = useMemo(() => {
     return (
       <>
+        <div id='DETAIL_INPUT_ELEMENT'>
         {detailSearchProps != null ? detailSearchboxVisible ? <Searchbox {...detailSearchProps}/> : null : null}
         {detailInputProps != null ? detailInputboxVisible ? <InputGroupbox {...detailInputProps} /> : null : null}
+        </div>
         <Container>
           <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight} gridMode={detailGridMode}/>
         </Container>
@@ -388,8 +467,10 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
   const detailSubGridElement = useMemo(() => {
     return (
       <>
+        <div id='DETAIL_SUB_INPUT_ELEMENT'>
         {detailSubSearchProps != null ? detailSubSearchboxVisible ? <Searchbox {...detailSubSearchProps}/> : null : null}
         {detailSubInputProps != null ? detailSubInputboxVisible ? <InputGroupbox {...detailSubInputProps} /> : null : null}
+        </div>
         <Container>
           <Datagrid {...detailSubGrid} ref={detailSubGridRef} height={detailSubGridHeight} gridMode={detailSubGridMode}/>
         </Container>
@@ -400,193 +481,197 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
 
   return (
-    !permissions ?
-      <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
-    :
-    <>
-    <Row gutter={[16,0]}>
-      {props.templateType !== 'report' ?
-        <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
-          <Space size={[5,0]}>
-            {btnDelete}
-            {btnUpdate}
-            {btnAdd}
-          </Space>
-          <Space size={[5,0]}>
-            {headerSearchProps?.searchItems == null || !headerSearchboxVisible ? btnSearch : null}
-            {btnCreate}
-            {headerExtraButtons}
-          </Space>
-        </Div>
-      : null}
-
-      {props.templateOrientation === 'filledLayoutRight' ?
+    <div id='TEMPLATE_TRIPLE_GRID' style={{minHeight:minHeight}}>
+      {
+        !permissions ?
+          <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
+        :
         <>
-          <Col span={8}>
-            {headerGridElement}
-            {detailGridElement}
-          </Col>
+        <Row gutter={[16,0]}>
+          {props.templateType !== 'report' ?
+            <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
+              <Space size={[5,0]}>
+                {btnDelete}
+                {btnUpdate}
+                {btnAdd}
+              </Space>
+              <Space size={[5,0]}>
+                {headerSearchProps?.searchItems == null || !headerSearchboxVisible ? btnSearch : null}
+                {btnCreate}
+                {headerExtraButtons}
+              </Space>
+            </Div>
+          : null}
 
-          <Col span={16}>
-            {detailSubGridElement}
-          </Col>
+          {templateOrientation === 'filledLayoutRight' ?
+            <>
+              <Col span={8}>
+                {headerGridElement}
+                {detailGridElement}
+              </Col>
+
+              <Col span={16}>
+                {detailSubGridElement}
+              </Col>
+            </>
+          :
+            <>
+              <Col span={8}>
+                {headerGridElement}
+              </Col>
+
+              <Col span={16}>
+                {detailGridElement}
+                {detailSubGridElement}
+              </Col>
+            </>
+          }
+          {headerPopup == null ? null :
+            <GridPopup
+              {...headerPopup}
+              popupId={headerPopup.gridId+'_POPUP'}
+              defaultVisible={false}
+
+              title={props.title + ' - ' + btnCreateText}
+              visible={headerPopupVisible}
+              
+              okText='추가하기'
+              cancelText='취소'
+              onAfterOk={(isSuccess, savedData) => { 
+                if (props?.onAfterOkNewDataPopup) {
+                  props.onAfterOkNewDataPopup(isSuccess, savedData);
+
+                } else {
+                  if (!isSuccess) return;
+                  headerPopupRef?.current?.getInstance()?.uncheckAll();
+                  headerPopupRef?.current?.getInstance()?.clearModifiedData();
+
+                  headerSearchProps.onSearch();
+                  setHeaderPopupVisible(false);
+                }
+              }}
+              onCancel={() => setHeaderPopupVisible(false)}
+
+              ref={headerPopupRef}
+              parentGridRef={headerGridRef}
+
+              gridId={headerPopup.gridId}
+              gridMode='create'
+              defaultData={[]}
+              columns={headerPopup.columns}
+              saveType={props.dataSaveType || 'basic'}
+              searchUriPath={headerPopup.searchUriPath}
+              searchParams={headerPopup.searchParams}
+              saveUriPath={headerPopup.saveUriPath}
+              saveParams={headerPopup.saveParams}
+
+              searchProps={headerPopupSearchProps}
+              inputProps={headerPopupInputProps}
+              gridComboInfo={headerPopup.gridComboInfo}
+              gridPopupInfo={headerPopup.gridPopupInfo}
+              rowAddPopupInfo={headerPopup.rowAddPopupInfo}
+            />
+          }
+
+          {detailPopup == null ? null :
+            <GridPopup
+            {...detailPopup}
+              popupId={detailPopup.gridId+'_POPUP'}
+              defaultVisible={false}
+
+              title={props.title + ' - ' + btnAddText}
+              visible={detailPopupVisible}
+
+              okText='추가하기'
+              cancelText='취소'
+              onAfterOk={(isSuccess, savedData) => { 
+                if (props?.onAfterOkAddDataPopup) {
+                  props.onAfterOkAddDataPopup(isSuccess, savedData);
+
+                } else {
+                  if (!isSuccess) return;
+                  detailPopupRef?.current?.getInstance()?.uncheckAll();
+                  detailPopupRef?.current?.getInstance()?.clearModifiedData();
+
+                  detailSearchProps.onSearch();
+                  setDetailPopupVisible(false);
+                }
+              }}
+              onCancel={() => setDetailPopupVisible(false)}
+
+              ref={detailPopupRef}
+              parentGridRef={detailGridRef}
+
+              gridId={detailPopup.gridId}
+              gridMode='create'
+              defaultData={[]}
+              columns={detailPopup.columns}
+              saveType={props.dataSaveType || 'basic'}
+              searchUriPath={detailPopup.searchUriPath}
+              searchParams={detailPopup.searchParams}
+              saveUriPath={detailPopup.saveUriPath}
+              saveParams={detailPopup.saveParams}
+
+              searchProps={detailPopupSearchProps}
+              inputProps={detailPopupInputProps}
+              gridComboInfo={detailPopup.gridComboInfo}
+              gridPopupInfo={detailPopup.gridPopupInfo}
+              rowAddPopupInfo={detailPopup.rowAddPopupInfo}
+            />
+          }
+
+          {editPopup == null ? null :
+            <GridPopup
+            {...editPopup}
+              popupId={editPopup.gridId+'_POPUP'}
+              defaultVisible={false}
+
+              title={props.title + ' - ' + btnEditText}
+              visible={editPopupVisible}
+
+              okText='수정하기'
+              cancelText='취소'
+              onAfterOk={(isSuccess, savedData) => { 
+                if (props?.onAfterOkEditDataPopup) {
+                  props.onAfterOkEditDataPopup(isSuccess, savedData);
+
+                } else {
+                  if (!isSuccess) return;
+                  editPopupRef?.current?.getInstance()?.uncheckAll();
+                  editPopupRef?.current?.getInstance()?.clearModifiedData();
+
+                  editPopupSearchProps.onSearch();
+                  setEditPopupVisible(false);
+                }
+              }}
+              onCancel={() => setEditPopupVisible(false)}
+
+              ref={editPopupRef}
+              parentGridRef={detailGridRef}
+
+              gridId={editPopup.gridId}
+              gridMode='update'
+              defaultData={detailGrid.data}
+              columns={editPopup.columns}
+              saveType={props.dataSaveType || 'basic'}
+              searchUriPath={editPopup.searchUriPath}
+              searchParams={editPopup.searchParams}
+              saveUriPath={editPopup.saveUriPath}
+              saveParams={editPopup.saveParams}
+
+              searchProps={editPopupSearchProps}
+              inputProps={editPopupInputProps}
+              gridComboInfo={editPopup.gridComboInfo}
+              gridPopupInfo={editPopup.gridPopupInfo}
+              rowAddPopupInfo={editPopup.rowAddPopupInfo}
+            />
+          }
+          {props.modalContext}
+          {extraModals}
+          {extraGridPopups}
+        </Row>
         </>
-      :
-        <>
-          <Col span={8}>
-            {headerGridElement}
-          </Col>
-
-          <Col span={16}>
-            {detailGridElement}
-            {detailSubGridElement}
-          </Col>
-        </>
       }
-      {headerPopup == null ? null :
-        <GridPopup
-          {...headerPopup}
-          popupId={headerPopup.gridId+'_POPUP'}
-          defaultVisible={false}
-
-          title={props.title + ' - ' + btnCreateText}
-          visible={headerPopupVisible}
-          
-          okText='추가하기'
-          cancelText='취소'
-          onAfterOk={(isSuccess, savedData) => { 
-            if (props?.onAfterOkNewDataPopup) {
-              props.onAfterOkNewDataPopup(isSuccess, savedData);
-
-            } else {
-              if (!isSuccess) return;
-              headerPopupRef?.current?.getInstance()?.uncheckAll();
-              headerPopupRef?.current?.getInstance()?.clearModifiedData();
-
-              headerSearchProps.onSearch();
-              setHeaderPopupVisible(false);
-            }
-          }}
-          onCancel={() => setHeaderPopupVisible(false)}
-
-          ref={headerPopupRef}
-          parentGridRef={headerGridRef}
-
-          gridId={headerPopup.gridId}
-          gridMode='create'
-          defaultData={[]}
-          columns={headerPopup.columns}
-          saveType={props.dataSaveType || 'basic'}
-          searchUriPath={headerPopup.searchUriPath}
-          searchParams={headerPopup.searchParams}
-          saveUriPath={headerPopup.saveUriPath}
-          saveParams={headerPopup.saveParams}
-
-          searchProps={headerPopupSearchProps}
-          inputProps={headerPopupInputProps}
-          gridComboInfo={headerPopup.gridComboInfo}
-          gridPopupInfo={headerPopup.gridPopupInfo}
-          rowAddPopupInfo={headerPopup.rowAddPopupInfo}
-        />
-      }
-
-      {detailPopup == null ? null :
-        <GridPopup
-        {...detailPopup}
-          popupId={detailPopup.gridId+'_POPUP'}
-          defaultVisible={false}
-
-          title={props.title + ' - ' + btnAddText}
-          visible={detailPopupVisible}
-
-          okText='추가하기'
-          cancelText='취소'
-          onAfterOk={(isSuccess, savedData) => { 
-            if (props?.onAfterOkAddDataPopup) {
-              props.onAfterOkAddDataPopup(isSuccess, savedData);
-
-            } else {
-              if (!isSuccess) return;
-              detailPopupRef?.current?.getInstance()?.uncheckAll();
-              detailPopupRef?.current?.getInstance()?.clearModifiedData();
-
-              detailSearchProps.onSearch();
-              setDetailPopupVisible(false);
-            }
-          }}
-          onCancel={() => setDetailPopupVisible(false)}
-
-          ref={detailPopupRef}
-          parentGridRef={detailGridRef}
-
-          gridId={detailPopup.gridId}
-          gridMode='create'
-          defaultData={[]}
-          columns={detailPopup.columns}
-          saveType={props.dataSaveType || 'basic'}
-          searchUriPath={detailPopup.searchUriPath}
-          searchParams={detailPopup.searchParams}
-          saveUriPath={detailPopup.saveUriPath}
-          saveParams={detailPopup.saveParams}
-
-          searchProps={detailPopupSearchProps}
-          inputProps={detailPopupInputProps}
-          gridComboInfo={detailPopup.gridComboInfo}
-          gridPopupInfo={detailPopup.gridPopupInfo}
-          rowAddPopupInfo={detailPopup.rowAddPopupInfo}
-        />
-      }
-
-      {editPopup == null ? null :
-        <GridPopup
-        {...editPopup}
-          popupId={editPopup.gridId+'_POPUP'}
-          defaultVisible={false}
-
-          title={props.title + ' - ' + btnEditText}
-          visible={editPopupVisible}
-
-          okText='수정하기'
-          cancelText='취소'
-          onAfterOk={(isSuccess, savedData) => { 
-            if (props?.onAfterOkEditDataPopup) {
-              props.onAfterOkEditDataPopup(isSuccess, savedData);
-
-            } else {
-              if (!isSuccess) return;
-              editPopupRef?.current?.getInstance()?.uncheckAll();
-              editPopupRef?.current?.getInstance()?.clearModifiedData();
-
-              editPopupSearchProps.onSearch();
-              setEditPopupVisible(false);
-            }
-          }}
-          onCancel={() => setEditPopupVisible(false)}
-
-          ref={editPopupRef}
-          parentGridRef={detailGridRef}
-
-          gridId={editPopup.gridId}
-          gridMode='update'
-          defaultData={detailGrid.data}
-          columns={editPopup.columns}
-          saveType={props.dataSaveType || 'basic'}
-          searchUriPath={editPopup.searchUriPath}
-          searchParams={editPopup.searchParams}
-          saveUriPath={editPopup.saveUriPath}
-          saveParams={editPopup.saveParams}
-
-          searchProps={editPopupSearchProps}
-          inputProps={editPopupInputProps}
-          gridComboInfo={editPopup.gridComboInfo}
-          gridPopupInfo={editPopup.gridPopupInfo}
-          rowAddPopupInfo={editPopup.rowAddPopupInfo}
-        />
-      }
-      {props.modalContext}
-      {extraModals}
-      {extraGridPopups}
-    </Row>
-    </>
+    </div>
   );
 }

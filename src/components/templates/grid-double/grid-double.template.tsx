@@ -184,7 +184,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
   const btnDelete = useMemo(() => {
     const disabled = !(permissions?.delete_fg === true && buttonActions.delete);
     return (
-      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={buttonActions.delete} {...btnDeleteProps} disabled={disabled}>{btnDeleteText}</Button>
+      <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='delete' onClick={buttonActions.delete} {...btnDeleteProps} disabled={disabled}>{btnDeleteText}</Button>
     );
   }, [btnDeleteProps, buttonActions, permissions]);
 
@@ -407,7 +407,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
 
       {detailPopup == null ? null :
         <GridPopup
-        {...detailPopup}
+          {...detailPopup}
           popupId={detailPopup.gridId+'_POPUP'}
           defaultVisible={false}
 
