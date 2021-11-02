@@ -1817,6 +1817,10 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     }
   }, [props.columns, props.gridComboInfo]);
 
+  useLayoutEffect(() => {
+    gridRef?.current?.getInstance()?.refreshLayout();
+  }, [gridRef, data]);
+
 
   const leftAlignExtraButtons = useMemo(() => {
     return (
