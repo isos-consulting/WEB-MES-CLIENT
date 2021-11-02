@@ -1,229 +1,415 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import {
-  newCreateGridInit as defaultNewCreateGridInit,
-  newDetailCreateGridInit as defaultNewDetailCreateGridInit, 
-  TpDoubleGrid,
-  doubleGridEvents,
-  baseHeaderDetailPage} 
-from '~components/templates/grid-double-new';
-import { v4 as uuidv4 } from 'uuid';
-import { useLoadingState } from '~/hooks';
-import { IInitialGridState } from '~/components/templates/grid-single-new';
-import { FormikProps, FormikValues } from 'formik';
+import React, { useLayoutEffect } from 'react';
+import { useState } from "react";
+import { useGrid, useSearchbox } from "~/components/UI";
+import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, isModified } from "~/functions";
+import Modal from 'antd/lib/modal/Modal';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { message } from 'antd';
+import { ENUM_WIDTH } from '~/enums';
 
 
 
-const { onSearch } = doubleGridEvents;
-
-
-
-//#region 🔶초기 값
-/** (header) 페이지 그리드의 상태 초기값 */
-const headerGridInit:IInitialGridState = {
-  gridId: uuidv4(),
-  gridMode:'view',
-  columns: [
-    {header: '작업조UUID', name:'worker_group_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-    {header: '작업조코드', name:'worker_group_cd', width:150, format:'text', hidden:true},
-    {header: '작업조명', name:'worker_group_nm', width:200, format:'text', filter:'text'},
-  ],
-  data: [],
-  searchUriPath:'/std/worker-groups',
-  saveUriPath:'/std/worker-groups',
-};
-
-
-/** (detail) 페이지 그리드의 상태 초기값 */
-const detailGridInit:IInitialGridState = {
-  gridId: uuidv4(),
-  gridMode:'view',
-  columns: [
-    {header: '작업조-작업자UUID', name:'worker_group_worker_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-    {header: '작업조UUID', name:'worker_group_uuid', width:150, format:'text', hidden:true},
-    {header: '작업자UUID', name:'worker_uuid', width:150, format:'text', hidden:true},
-    {header: '작업자코드', name:'worker_cd', width:150, format:'text', hidden:true},
-    {header: '작업자명', name:'worker_nm', width:200, format:'popup', editable:true, requiredField:true},
-    {header: '비고', name:'remark', width:150, format:'text', editable:true},
-  ],
-  data: [],
-  inputItems: [
-    {type:'text', id:'worker_group_uuid', label:'작업조UUID', disabled:true, hidden:true},
-    {type:'text', id:'worker_group_cd', label:'작업조코드', disabled:true, hidden:true},
-    {type:'text', id:'worker_group_nm', label:'작업조명', disabled:true},
-  ],
-  searchUriPath:'/std/worker-group-workers',
-  saveUriPath:'/std/worker-group-workers',
-  searchParams: {},
-
-  gridPopupInfo: [
-    {
-      columnNames: [
-        {original:'worker_uuid', popup:'worker_uuid'},
-        {original:'worker_cd', popup:'worker_cd'},
-        {original:'worker_nm', popup:'worker_nm'},
-      ],
-      columns: [
-        {header: '작업자UUID', name:'worker_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '공정코드', name:'proc_cd', width:150, format:'text', hidden:true},
-        {header: '공정명', name:'proc_nm', width:200, format:'text'},
-        {header: '작업장UUID', name:'workings_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '작업장코드', name:'workings_cd', width:150, format:'text', hidden:true},
-        {header: '작업장명', name:'workings_nm', width:200, format:'text'},
-        {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '사번', name:'emp_cd', width:150, format:'text'},
-        {header: '사원명', name:'emp_nm', width:200, format:'text'},
-        {header: '작업자명', name:'worker_nm', width:200, format:'text'},
-      ],
-      dataApiSettings: {
-        uriPath: '/std/workers',
-        params: {}
-      },
-      gridMode:'select'
-    }
-  ]
-};
-
-
-/** 신규 생성 팝업 그리드의 상태 초기값 */
-const newCreateGridInit = {
-  ...defaultNewCreateGridInit,
-  columns:detailGridInit.columns,
-  inputProps: {
-    inputItems: detailGridInit.inputItems
-  },
-  gridPopupInfo: detailGridInit.gridPopupInfo,
-  rowAddPopupInfo: {
-    columnNames: [
-      {original:'worker_uuid', popup:'worker_uuid'},
-      {original:'worker_cd', popup:'reject_type_nm'},
-      {original:'worker_nm', popup:'worker_nm'},
-    ],
-    columns: [
-      {header: '작업자UUID', name:'worker_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-      {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-      {header: '공정코드', name:'proc_cd', width:150, format:'text', hidden:true},
-      {header: '공정명', name:'proc_nm', width:200, format:'text'},
-      {header: '작업장UUID', name:'workings_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-      {header: '작업장코드', name:'workings_cd', width:150, format:'text', hidden:true},
-      {header: '작업장명', name:'workings_nm', width:200, format:'text'},
-      {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-      {header: '사번', name:'emp_cd', width:150, format:'text'},
-      {header: '사원명', name:'emp_nm', width:200, format:'text'},
-      {header: '작업자명', name:'worker_nm', width:200, format:'text'},
-    ],
-    dataApiSettings: {
-      uriPath: '/std/workers',
-      params: {}
-    },
-    gridMode:'multi-select'
-  }
-};
-
-/** 신규 생성 팝업 그리드의 상태 초기값 */
-const newDetailCreateGridInit = {
-  ...defaultNewDetailCreateGridInit, 
-  columns:detailGridInit.columns, 
-  inputProps: {
-    inputItems: detailGridInit.inputItems
-  },
-  gridPopupInfo: detailGridInit.gridPopupInfo,
-  rowAddPopupInfo: {...newCreateGridInit.rowAddPopupInfo}
-};
-//#endregion
-
-
-
-
-/** 작업조별 작업자관리 */
+/** 작업조별 작업자 관리 */
 export const PgStdWorkerGroupWorker = () => {
-  //#region 🔶세팅 값
-  const inputRef = useRef<FormikProps<FormikValues>>();
+  /** 페이지 제목 */
+  const title = getPageName();
 
-  const {headerGrid, detailGrid, newCreateGrid, newDetailCreateGrid} = baseHeaderDetailPage(headerGridInit, detailGridInit, newCreateGridInit, newDetailCreateGridInit);
-  const headerGridRef = headerGrid.content.gridRef;
-  const detailGridRef = detailGrid.content.gridRef;
+  /** 모달 DOM */
+  const [modal, modalContext] = Modal.useModal();
 
-  const [,setLoading] = useLoadingState();
+  /** INIT */
+  const headerDefaultGridMode = 'view';
 
-  const saveOptionParams = inputRef?.current?.values;
-  const [clickedRowKey, setClickedRowKey] = useState(null);
+  const headerSearchUriPath = '/std/worker-groups';
+  const headerSaveUriPath = '/std/worker-groups';
+  const detailDefaultGridMode = 'delete';
+  const detailSearchUriPath = '/std/worker-group-workers';
+  const detailSaveUriPath = '/std/worker-group-workers';
 
+  /** 팝업 Visible 상태 관리 */
+  const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
+  const [addDataPopupGridVisible, setAddDataPopupGridVisible] = useState<boolean>(false);
+  const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
+
+  /** 헤더 클릭시 해당 Row 상태 관리 */
+  const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
+
+  
+  //#region 🔶입력상자 관리
+  const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
+    {type:'text', id:'worker_group_uuid', label:'작업조UUID', disabled:true, hidden:true},
+    {type:'text', id:'worker_group_nm', label:'작업조명', disabled:true},
+  ]);
+
+  const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo.props.inputItems));
+  const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo.props.inputItems));
+  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo.props.inputItems));
   //#endregion
 
 
-  /** 셀 클릭 트리거 */
-  const headerRowClickedValue = useMemo(() => {
-    if (clickedRowKey == null) return null;
-    return headerGridRef?.current?.getInstance().getValue(clickedRowKey, 'worker_group_uuid');
-  }, [clickedRowKey]);
+  //#region 🔶그리드 상태 관리
+  /** 화면 Grid View */
+  const headerGrid = useGrid('HEADER_GRID', [
+    {header: '작업조UUID', name:'worker_group_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '작업조명', name:'worker_group_nm', width:ENUM_WIDTH.XL, filter:'text'},
+  ], {
+    searchUriPath: headerSearchUriPath,
+    saveUriPath: headerSaveUriPath,
+    gridMode: headerDefaultGridMode,
+    // disabledAutoDateColumn: true,
+  });
 
-
-  /** 헤더 셀 클릭 변경되면 디테일 조회 */
-  useLayoutEffect(() => {
-    if (headerRowClickedValue != null) {
-      const {dispatch, content} = detailGrid;
-
-      const row = headerGridRef?.current?.getInstance().getRow(clickedRowKey);
-      inputRef.current.setValues(row);
-
-      const searchParams = {worker_group_uuid: headerRowClickedValue};
-      onSearch(content.gridRef, dispatch, content.searchUriPath, searchParams, content.gridItems.columns, setLoading);
-      
-      setClickedRowKey(null);
-    }
-  }, [headerRowClickedValue]);
-
-  useLayoutEffect(() => {
-    const ref = headerGrid.content.gridRef;
-
-    ref?.current.getInstance().on('click', (ev) => {
-      const {rowKey, targetType} = ev as any;
-
-      if (targetType === 'cell') {
-        setClickedRowKey(rowKey)
+  const detailGrid = useGrid('DETAIL_GRID', [
+    {header: '작업조-작업자UUID', name:'worker_group_worker_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '작업조UUID', name:'worker_group_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '작업자UUID', name:'worker_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '작업자명', name:'worker_nm', width:ENUM_WIDTH.L, format:'popup', editable:true, requiredField:true},
+    {header: '비고', name:'remark', width:ENUM_WIDTH.L, editable:true},
+  ], {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    gridMode: detailDefaultGridMode,
+    gridPopupInfo: [
+      {
+        columnNames: [
+          {original:'worker_uuid', popup:'worker_uuid'},
+          {original:'worker_cd', popup:'worker_cd'},
+          {original:'worker_nm', popup:'worker_nm'},
+        ],
+        columns: [
+          {header: '작업자UUID', name:'worker_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+          {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+          {header: '공정명', name:'proc_nm', width:ENUM_WIDTH.L},
+          {header: '작업장UUID', name:'workings_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+          {header: '작업장명', name:'workings_nm', width:ENUM_WIDTH.L},
+          {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+          {header: '사번', name:'emp_cd', width:ENUM_WIDTH.M},
+          {header: '사원명', name:'emp_nm', width:ENUM_WIDTH.L},
+          {header: '작업자명', name:'worker_nm', width:ENUM_WIDTH.L},
+        ],
+        dataApiSettings: {
+          uriPath: '/std/workers',
+          params: {}
+        },
+        gridMode:'select'
       }
-    });
-    
-    return () => {
-      ref?.current?.getInstance().off('click');
+    ],
+    saveParams: detailInputInfo.values,
+  });
+  
+  /** 팝업 Grid View */
+  const newDataPopupGrid = useGrid(
+    'NEW_DATA_POPUP_GRID', 
+    cloneObject(detailGrid.gridInfo.columns), 
+    {
+      searchUriPath: headerSearchUriPath,
+      saveUriPath: headerSaveUriPath,
+      saveParams: newDataPopupInputInfo?.values,
     }
-  }, [headerGrid]);
+  );
+
+  const addDataPopupGrid = useGrid(
+    'ADD_DATA_POPUP_GRID',
+    cloneObject(detailGrid.gridInfo.columns), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      rowAddPopupInfo: detailGrid?.gridInfo?.gridPopupInfo[0],
+      gridPopupInfo: detailGrid?.gridInfo?.gridPopupInfo,
+      saveParams: addDataPopupInputInfo?.values,
+    }
+  );
+
+  const editDataPopupGrid = useGrid(
+    'EDIT_DATA_POPUP_GRID',
+    cloneObject(detailGrid.gridInfo.columns)?.map((el) => {
+      if (el?.name === 'worker_nm')
+        el['editable'] = false;
+
+      return el;
+    }),
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      gridPopupInfo: detailGrid?.gridInfo?.gridPopupInfo,
+      saveParams: editDataPopupInputInfo?.values,
+    }
+  );
+
+  /** 헤더 클릭 이벤트 */
+  const onClickHeader = (ev) => {
+
+    const {targetType, rowKey, instance} = ev;
+    const headerRow = instance?.store?.data?.rawData[rowKey];
+
+    if (targetType !== 'cell') return;
+    setSelectedHeaderRow(headerRow);
+  };
+
+  /** 상세 그리드 데이터 세팅 */
+  const reloadDetailGrid = (uuid) => {
+    if (!uuid) return;
+
+    getData({
+      worker_group_uuid: uuid,
+    }, detailSearchUriPath).then((res) => {
+      detailGrid.setGridData(res || []);
+    });
+  };
+  //#endregion
 
 
+  //#region 🔶조회조건 관리
+  /** 조회조건 View */
+  const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', null);
+  const detailSearchInfo = useSearchbox('DETAIL_SEARCH_INPUTBOX', null);
 
-  return (
-    <TpDoubleGrid
-      gridMode={detailGrid.state.gridMode}
-      createNewPopupGridItems={newCreateGrid.state}
-      createNewPopupGridRef={newCreateGrid.ref}
-      createDetailPopupGridItems={newDetailCreateGrid.state}
-      createDetailPopupGridRef={newDetailCreateGrid.ref}
-      parentGridRef={detailGridRef}
+  const newDataPopupSearchInfo = null;
+  const addDataPopupSearchInfo = null;
+  const editDataPopupSearchInfo = null;
 
-      saveUriPath={detailGrid.state.saveUriPath}
-      saveOptionParams={saveOptionParams}
+  /** 조회조건 Event */
+  const onSearchHeader = async (values) => {
+    const searchParams = cleanupKeyOfObject(values, Object.keys(values));
 
-      searchUriPath={detailGrid.state.searchUriPath}
-      searchParams={headerGrid.content.searchParams}
+    let data = [];
+    await getData(searchParams, headerSearchUriPath).then((res) => {
+      data = res;
+    }).finally(() => {
+      detailInputInfo.ref.current.resetForm();
+      setSelectedHeaderRow(null);
+      headerGrid.setGridData(data);
+    });
 
-      inputProps={{
-        id:'inputItems',
-        inputItems:detailGridInit.inputItems,
-        innerRef: inputRef
-      }}
+    return data;
+  };
 
-      onSearch={() => {
-        onSearch(headerGrid.content.gridRef, headerGrid.dispatch, headerGrid.content.searchUriPath, headerGrid.content.searchParams, headerGrid.content.gridItems.columns, setLoading);
-        inputRef?.current.resetForm();
-        detailGrid.dispatch({type:'setData', data:[]});
-      }}
+  const onSearchDetail = (uuid) => {
+    if (uuid == null) return;
+    reloadDetailGrid(uuid);
+  }
+  //#endregion
+  
 
-      setParentData={headerGrid.dispatch}
-      newCreateBtnDisabled={true}
+
+  //#region 🔶페이지 액션 관리
+  useLayoutEffect(() => {
+    if (selectedHeaderRow == null) {
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.worker_group_uuid);
+    }
+  }, [selectedHeaderRow]);
+
+  useLayoutEffect(() => {
+    if (newDataPopupGridVisible === true) {
+
+    } else {
+      newDataPopupInputInfo?.instance?.resetForm();
+    }
+  }, [newDataPopupGridVisible]);
+
+  useLayoutEffect(() => {
+    if (addDataPopupGridVisible === true) {
+      // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
+      addDataPopupInputInfo.setValues(detailInputInfo.values);
+    }
+
+  }, [addDataPopupGridVisible, detailInputInfo.values]);
+  
+  useLayoutEffect(() => {
+    if (editDataPopupGridVisible === true) {
+      // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
+      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
+    }
+
+  }, [editDataPopupGridVisible, detailInputInfo.values, detailGrid.gridInfo.data]);
+  //#endregion
+
+  const onSave = () => {
+    const {gridRef, setGridMode} = detailGrid;
+    const {columns, saveUriPath} = detailGrid.gridInfo;
+
+    if (!detailInputInfo.isModified && !isModified(detailGrid.gridRef, detailGrid.gridInfo.columns)) {
+      message.warn('편집된 데이터가 없습니다.');
+      return;
+    }
+    
+    dataGridEvents.onSave('basic', {
+      gridRef,
+      setGridMode,
+      columns,
+      saveUriPath,
+    }, detailInputInfo.values, modal,
+      ({success, savedData}) => {
+        if (!success) return;
+        // 헤더 그리드 재조회
+        onSearchHeader(headerSearchInfo.values).then((searchResult) => {
+          if (!savedData) return;
+
+          const headerRow = savedData[0];
+          onAfterSaveAction(searchResult, headerRow?.worker_group_uuid);
+        });
+      },
+      true
+    );
+  }
+
+  const onCheckUuid = ():boolean => {
+    if (detailInputInfo?.values.worker_group_uuid == null) {
+      message.warn('작업조를 선택하신 후 다시 시도해 주세요.');
+      return false;
+    };
+    return true;
+  }
+  
+  //#region 🔶작동될 버튼들의 기능 정의 (By Template) 
+  const buttonActions = {
+    /** 조회 */
+    search: () => {
+      onSearchHeader(headerSearchInfo.values);
+    },
+
+    /** 수정 */
+    update: () => {
+      if (!onCheckUuid()) return;
+      setEditDataPopupGridVisible(true);
+    },
+
+    /** 삭제 */
+    delete: () => {
+      if (getModifiedRows(detailGrid.gridRef, detailGrid.gridInfo.columns)?.deletedRows?.length === 0) {
+        message.warn('편집된 데이터가 없습니다.');
+        return;
+      }
+      onSave();
+    },
+    
+    /** 신규 추가 */
+    create: null,
+    
+    /** 상세 신규 추가 */
+    createDetail: () => {
+      if (!onCheckUuid()) return;
+      setAddDataPopupGridVisible(true);
+    },
+
+    /** 저장(수정, 삭제) */
+    save: () => {
+      onSave();
+    },
+
+    /** 편집 취소 */
+    cancelEdit: () => {
+      const {gridRef, setGridMode} = detailGrid;
+      const {columns} = detailGrid.gridInfo;
       
-      header={headerGrid.content}
-      detail={detailGrid.content}
-    />
-  )
+      if (detailInputInfo.isModified || isModified(gridRef, columns)) { // 편집 이력이 있는 경우
+        modal.confirm({
+          title: '편집 취소',
+          // icon: <ExclamationCircleOutlined />,
+          content: '편집된 이력이 있습니다. 편집을 취소하시겠습니까?',
+          onOk:() => {
+            detailInputInfo.setValues(selectedHeaderRow);
+            setGridMode('view');
+          },
+          onCancel:() => {
+          },
+          okText: '예',
+          cancelText: '아니오',
+        });
+
+      } else { // 편집 이력이 없는 경우
+        setGridMode('view');
+      }
+    },
+
+    printExcel: dataGridEvents.printExcel
+  };
+  //#endregion
+
+
+  /** 신규 저장 이후 수행될 함수 */
+  const onAfterSaveNewData = (isSuccess, savedData?) => {
+    if (!isSuccess) return;
+    const savedUuid = savedData[0]?.worker_group_uuid;
+
+    // 헤더 그리드 재조회
+    onSearchHeader(headerSearchInfo.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    setNewDataPopupGridVisible(false);
+  }
+
+  /** 수정 이후 수행될 함수 */
+  const onAfterSaveEditData = (isSuccess, savedData?) => {
+    if (!isSuccess) return;
+    const savedUuid = savedData[0]?.worker_group_uuid;
+
+    // 헤더 그리드 재조회
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    setEditDataPopupGridVisible(false);
+  }
+
+  /** 세부 저장 이후 수행될 함수 */
+  const onAfterSaveAddData = (isSuccess, savedData?) => {
+    if (!isSuccess) return;
+    const savedUuid = savedData[0]?.worker_group_uuid;
+
+    // 헤더 그리드 재조회
+    onSearchHeader(headerSearchInfo.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    setAddDataPopupGridVisible(false);
+  }
+
+  // 사용자가 저장한 데이터의 결과를 찾아서 보여줍니다.
+  const onAfterSaveAction = (searchResult, uuid) => {
+    let selectedRow = searchResult?.find(el => el?.worker_group_uuid === uuid);
+      
+    if (!selectedRow) { selectedRow = searchResult[0]; }
+    setSelectedHeaderRow(cleanupKeyOfObject(selectedRow, detailInputInfo.inputItemKeys));
+  }
+
+  //#region 🔶템플릿에 값 전달
+  const props:ITpDoubleGridProps = {
+    title,
+    dataSaveType: 'basic',
+    gridRefs: [headerGrid.gridRef, detailGrid.gridRef],
+    gridInfos: [
+      {
+        ...headerGrid.gridInfo,
+        onAfterClick: onClickHeader
+      }, 
+      detailGrid.gridInfo
+    ],
+    popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
+    popupGridInfos: [newDataPopupGrid.gridInfo, addDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    searchProps: [
+      {
+        ...headerSearchInfo?.props, 
+        onSearch: onSearchHeader
+      }, 
+      {
+        ...detailSearchInfo?.props,
+        onSearch: () => onSearchDetail(selectedHeaderRow?.worker_group_uuid)
+      }
+    ],
+    inputProps: [null, detailInputInfo.props],  
+    popupVisibles: [newDataPopupGridVisible, addDataPopupGridVisible, editDataPopupGridVisible],
+    setPopupVisibles: [setNewDataPopupGridVisible, setAddDataPopupGridVisible, setEditDataPopupGridVisible],
+    popupSearchProps: [newDataPopupSearchInfo?.props, addDataPopupSearchInfo?.props, editDataPopupSearchInfo?.props],
+    popupInputProps: [newDataPopupInputInfo?.props, addDataPopupInputInfo?.props, editDataPopupInputInfo?.props],
+    buttonActions,
+    modalContext,
+
+    onAfterOkNewDataPopup: onAfterSaveNewData,
+    onAfterOkEditDataPopup: onAfterSaveEditData,
+    onAfterOkAddDataPopup: onAfterSaveAddData,
+  };
+  //#endregion
+
+
+  return <TpDoubleGrid {...props}/>;
 }
+
