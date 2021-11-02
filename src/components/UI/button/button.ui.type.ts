@@ -34,7 +34,7 @@ export interface IButtonStyles {
   heightSize?: 'small' | 'medium' ;
 
   /** 버튼 색상 유형 */
-  colorType?: string;
+  colorType?: 'basic' | 'delete' | 'add' | 'cancel' | 'excel' | 'save';
 
   /** 버튼 폰트 사이즈 유형 */
   fontSize?: 'small' | 'medium' | 'large';
