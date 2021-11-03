@@ -64,7 +64,6 @@ export const PgAutGroupPermission = () => {
 
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '그룹별 메뉴권한UUID', name:'group_permission_uuid', alias:'uuid', hidden:true},
-    // {header: '권한그룹UUID', name:'group_uuid', hidden:true},
     {header: '메뉴UUID', name:'menu_uuid', hidden:true},
     {header: '대분류', width:ENUM_WIDTH.L, name:'first_menu_nm'},
     {header: '메뉴명', width:ENUM_WIDTH.L, name:'menu_nm'},

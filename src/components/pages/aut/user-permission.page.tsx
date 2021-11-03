@@ -65,13 +65,13 @@ export const PgAutUserPermission = () => {
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
-    {header: '메뉴UUID', name:'menu_uuid', alias:'uuid', hidden:true},
+    {header: '사용자별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'user_permission_uuid', alias:'uuid', hidden:true},
+    {header: '메뉴UUID', name:'menu_uuid', hidden:true},
     {header: '최상위 메뉴', width:ENUM_WIDTH.L, name:'first_menu_nm'},
     {header: '메뉴명', width:ENUM_WIDTH.L, name:'menu_nm'},
     {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
     {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
-    {header: '그룹별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'group_permission_uuid', hidden:true},
     {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
     {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup'},
   ], {
