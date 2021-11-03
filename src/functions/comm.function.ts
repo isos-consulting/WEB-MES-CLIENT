@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { loadProgressBar } from 'axios-progress-bar';
-import { getUserInfoKeys, getUserFactoryUuid, getUserToken } from './storage.function';
+import { getUserInfoKeys, getUserFactoryUuid, getUserAccessToken } from './storage.function';
 import { getObjectKeyDuplicateCheck } from './util.function';
 import { message } from 'antd';
 import dotenv from 'dotenv';
@@ -17,6 +17,7 @@ dotenv.config();
 const baseURL = process.env.TEST_URL;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
+// const baseURL ="http://191.1.70.5:3000/";
 
 /**
  * 서버 데이터 가져오기
@@ -49,7 +50,7 @@ export async function getData<T = any[]>(
       url: uriPath,
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
-        authorization:getUserToken(),
+        authorization:getUserAccessToken(),
       }
     });
 
@@ -124,7 +125,7 @@ export const executeData = async (
           url: uriPath,
           data: data,
           headers:{
-            authorization:getUserToken(),
+            authorization:getUserAccessToken(),
           }
         });
   } catch (error) {

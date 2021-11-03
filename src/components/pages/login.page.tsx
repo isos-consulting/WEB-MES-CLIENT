@@ -208,7 +208,8 @@ export const PgLogin = () => {
                 // id:formState.id,
                 id: userId,
                 userNm: raws[0].user_nm,
-                token: raws[0].token,
+                access_token: raws[0].access_token,
+                refresh_token: raws[0].refresh_token,
                 factory_uuid:factory['factory_uuid'],
               })
             );

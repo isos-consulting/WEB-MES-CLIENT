@@ -2,13 +2,14 @@ import React, { lazy, Suspense, useLayoutEffect, useState } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { PgLogin } from "./components/pages";
+import { PgInvStockReject, PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
 import { getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
+import { Dashboard } from "./components/pages/dashboard.page";
 
 
 
@@ -110,6 +111,11 @@ const LoggedIn = (props: any) => {
       <Layout>
         <Switch>
           <Redirect exact from="/" to='/dashboard' />
+          <Route
+            key={'hugufgf'}
+            path={'/dashboard'}
+            component={Dashboard}
+          />
           {Object.keys(props.menuContent).map((item, key) => (
             <Route
               key={key}
