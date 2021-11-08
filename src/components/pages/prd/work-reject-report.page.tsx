@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo } from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -30,6 +30,7 @@ export const PgPrdWorkRejectReport = () => {
     gridMode: defaultGridMode,
   });
   const subGrid = useGrid('SUB_GRID', [], {
+    disabledAutoDateColumn: true,
     summaryOptions: {
       sumColumns: ['total_qty', 'qty', 'reject_detail_qty'],
       textColumns: [
@@ -58,11 +59,10 @@ export const PgPrdWorkRejectReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(), getToday()], label:'작업일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'작업일', useCheckbox:true},
 
-    {type:'radio', id:'sort_type', default:'none', label:'조회기준',
+    {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
-        {code:'none', text:'없음'},
         {code:'proc', text:'공정별'},
         {code:'prod', text:'품목별'},
         {code:'reject', text:'불량항목별'},
@@ -77,7 +77,7 @@ export const PgPrdWorkRejectReport = () => {
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
 
       case 'prod':
         _columns = [
@@ -163,10 +163,10 @@ export const PgPrdWorkRejectReport = () => {
 
   const subColumns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
       case 'proc':
         _columns = [
-          {header: '불량공정', width:ENUM_WIDTH.M,name:'reject_proc_id', filter:'text',hidden:true},
+          {header: '불량공정', width:ENUM_WIDTH.M,name:'reject_proc_uuid', filter:'text', hidden:true},
           {header: '불량 발생 공정', width:ENUM_WIDTH.M,name:'reject_proc_nm', filter:'text'},
           {header: '불량수량', width:ENUM_WIDTH.M, name:'reject_detail_qty', format:'number', filter:'number'},
         ];
@@ -174,17 +174,19 @@ export const PgPrdWorkRejectReport = () => {
 
       case 'prod':
         _columns = [
-          {header: '품목', width:ENUM_WIDTH.M,name:'prod_id', filter:'text',hidden:true},
+          {header: '품목', width:ENUM_WIDTH.M,name:'prod_uuid', filter:'text', hidden:true},
           {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
           {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
-          {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
+          {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '불량수량', width:ENUM_WIDTH.M, name:'reject_detail_qty', format:'number', filter:'number'},
         ];
         break;
 
       case 'reject':
         _columns = [
+          {header: '불량UUID', width:ENUM_WIDTH.L, name:'reject_uuid', filter:'text', hidden:true},
+          {header: '불량유형UUID', width:ENUM_WIDTH.L, name:'reject_type_uuid', filter:'text', hidden:true},
           {header: '불량유형', width:ENUM_WIDTH.L, name:'reject_type_nm', filter:'text'},
           {header: '불량명', width:ENUM_WIDTH.L, name:'reject_nm', filter:'text'},
           {header: '불량수량', width:ENUM_WIDTH.M, name:'reject_detail_qty', format:'number', filter:'number'},
@@ -218,12 +220,37 @@ export const PgPrdWorkRejectReport = () => {
 
   useLayoutEffect(() => {
     setSubTitle(
-      searchInfo.values?.sub_total_type === 'proc' ? '공정별'
-      : searchInfo.values?.sub_total_type === 'prod' ? '품목별'
-      : searchInfo.values?.sub_total_type === 'reject' ? '불량항목별'
+      searchInfo.values?.sort_type === 'proc' ? '공정별'
+      : searchInfo.values?.sort_type === 'prod' ? '품목별'
+      : searchInfo.values?.sort_type === 'reject' ? '불량항목별'
       : ''
     );
   }, [searchInfo?.values]);
+  
+  // subTotal 데이터 세팅
+  useLayoutEffect(() => {
+    if (grid?.gridInfo?.data?.length <= 0) return;
+    const curculationColumnNames = ['reject_detail_qty'];
+    const standardNames = (
+      searchInfo.values?.sort_type === 'prod' ?
+        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'prod_nm', 'prod_no']
+      : searchInfo.values?.sort_type === 'proc' ?
+        ['reject_proc_uuid', 'reject_proc_nm']
+      : searchInfo.values?.sort_type === 'reject' ?
+        ['reject_uuid', 'reject_nm', 'reject_type_uuid', 'reject_type_nm']
+      : null
+    );
+    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+      standardNames: standardNames,
+      curculations: [
+        {names: curculationColumnNames, type:'sum'},
+      ],
+    }).subTotals || [];
+
+    subGrid.setGridData(subGridData);
+
+  }, [subColumns, grid?.gridInfo?.data]);
+
 
   /** 검색 */
   const onSearch = (values) => {
@@ -236,15 +263,14 @@ export const PgPrdWorkRejectReport = () => {
     }
 
     let data = [];
-    let subTotalData = [];
 
     getData(searchParams, searchUriPath, 'raws').then((res) => {
       data = res;
 
     }).finally(() => {
       inputInfo?.instance?.resetForm();
+      subGrid.setGridData([]);
       grid.setGridData(data);
-      subGrid.setGridData(subTotalData);
     });
   };
 

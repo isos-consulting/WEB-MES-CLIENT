@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo } from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -30,6 +30,7 @@ export const PgPrdWorkDowntimeReport = () => {
     gridMode: defaultGridMode,
   });
   const subGrid = useGrid('SUB_GRID', [], {
+    disabledAutoDateColumn: true,
     summaryOptions: {
       sumColumns: ['downtime'],
       textColumns: [
@@ -58,11 +59,10 @@ export const PgPrdWorkDowntimeReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(), getToday()], label:'작업일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'작업일', useCheckbox:true},
 
-    {type:'radio', id:'sort_type', default:'none', label:'조회기준',
+    {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
-        {code:'none', text:'없음'},
         {code:'proc', text:'공정별'},
         {code:'equip', text:'설비별'},
         {code:'downtime', text:'비가동별'},
@@ -77,16 +77,16 @@ export const PgPrdWorkDowntimeReport = () => {
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
 
       case 'proc':
         _columns = [
-            {header: '공정', width:ENUM_WIDTH.M, name:'proc_id', filter:'text',hidden :true},
+            {header: '공정', width:ENUM_WIDTH.M, name:'proc_uuid', filter:'text',hidden :true},
             {header: '공정', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
             {header: '작업장명', width:ENUM_WIDTH.M, name:'workings_nm', filter:'text'},
             {header: '설비', width:ENUM_WIDTH.M, name:'equip_nm', filter:'text'},
-            {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-            {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+            {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+            {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
             {header: '품목', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
             {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
             {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
@@ -103,12 +103,12 @@ export const PgPrdWorkDowntimeReport = () => {
 
       case 'equip':
         _columns = [
-            {header: '설비', width:ENUM_WIDTH.M, name:'equip_id', filter:'text', hidden :true},
+            {header: '설비', width:ENUM_WIDTH.M, name:'equip_uuid', filter:'text', hidden :true},
             {header: '설비', width:ENUM_WIDTH.M, name:'equip_nm', filter:'text'},
             {header: '작업장명', width:ENUM_WIDTH.M, name:'workings_nm', filter:'text'},
             {header: '공정', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
-            {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-            {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+            {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+            {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
             {header: '품목', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
             {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
             {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
@@ -125,14 +125,14 @@ export const PgPrdWorkDowntimeReport = () => {
 
       case 'downtime':
         _columns = [
-            {header: '비가동', width:ENUM_WIDTH.L, name:'downtime_id', filter:'text', hidden :true},
+            {header: '비가동', width:ENUM_WIDTH.L, name:'downtime_uuid', filter:'text', hidden :true},
             {header: '비가동유형', width:ENUM_WIDTH.L, name:'downtime_type_nm', filter:'text'},
             {header: '비가동명', width:ENUM_WIDTH.L, name:'downtime_nm', filter:'text'},
             {header: '공정', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
             {header: '작업장명', width:ENUM_WIDTH.M, name:'workings_nm', filter:'text'},
             {header: '설비', width:ENUM_WIDTH.M, name:'equip_nm', filter:'text'},
-            {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-            {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+            {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+            {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
             {header: '품목', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
             {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
             {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
@@ -153,8 +153,8 @@ export const PgPrdWorkDowntimeReport = () => {
             {header: '공정', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
             {header: '작업장명', width:ENUM_WIDTH.M, name:'workings_nm', filter:'text'},
             {header: '설비', width:ENUM_WIDTH.M, name:'equip_nm', filter:'text'},
-            {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-            {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+            {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+            {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
             {header: '품목', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
             {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
             {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
@@ -173,9 +173,10 @@ export const PgPrdWorkDowntimeReport = () => {
 
   const subColumns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
       case 'proc':
         _columns = [
+          {header: '공정UUID', width:ENUM_WIDTH.L, name:'proc_uuid', filter:'text', hidden:true},
           {header: '공정', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
           {header: '비가동 시간(분)', width:ENUM_WIDTH.M,name:'downtime',  filter:'number', format:'number'},
         ];
@@ -183,6 +184,7 @@ export const PgPrdWorkDowntimeReport = () => {
 
       case 'equip':
         _columns = [
+          {header: '설비UUID', width:ENUM_WIDTH.L, name:'equip_uuid', filter:'text', hidden:true},
           {header: '설비', width:ENUM_WIDTH.M, name:'equip_nm', filter:'text'},
           {header: '비가동 시간(분)', width:ENUM_WIDTH.M,name:'downtime',  filter:'number', format:'number'},
         ];
@@ -190,7 +192,9 @@ export const PgPrdWorkDowntimeReport = () => {
 
       case 'downtime':
         _columns = [
+          {header: '비가동유형UUID', width:ENUM_WIDTH.L, name:'downtime_type_uuid', filter:'text', hidden:true},
           {header: '비가동유형', width:ENUM_WIDTH.L, name:'downtime_type_nm', filter:'text'},
+          {header: '비가동UUID', width:ENUM_WIDTH.L, name:'downtime_uuid', filter:'text', hidden:true},
           {header: '비가동명', width:ENUM_WIDTH.L, name:'downtime_nm', filter:'text'},
           {header: '비가동 시간(분)', width:ENUM_WIDTH.M,name:'downtime',  filter:'number', format:'number'},
         ];
@@ -223,12 +227,37 @@ export const PgPrdWorkDowntimeReport = () => {
 
   useLayoutEffect(() => {
     setSubTitle(
-      searchInfo.values?.sub_total_type === 'proc' ? '공정별'
-      : searchInfo.values?.sub_total_type === 'equip' ? '설비별'
-      : searchInfo.values?.sub_total_type === 'downtime' ? '비가동별'
+      searchInfo.values?.sort_type === 'proc' ? '공정별'
+      : searchInfo.values?.sort_type === 'equip' ? '설비별'
+      : searchInfo.values?.sort_type === 'downtime' ? '비가동별'
       : ''
     );
   }, [searchInfo?.values]);
+
+  // subTotal 데이터 세팅
+  useLayoutEffect(() => {
+    if (grid?.gridInfo?.data?.length <= 0) return;
+    const curculationColumnNames = ['downtime'];
+    const standardNames = (
+      searchInfo.values?.sort_type === 'equip' ?
+        ['equip_uuid', 'equip_nm']
+      : searchInfo.values?.sort_type === 'proc' ?
+        ['proc_uuid', 'proc_nm']
+      : searchInfo.values?.sort_type === 'downtime' ?
+        ['downtime_uuid', 'downtime_nm', 'downtime_type_uuid', 'downtime_type_nm']
+      : null
+    );
+    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+      standardNames: standardNames,
+      curculations: [
+        {names: curculationColumnNames, type:'sum'},
+      ],
+    }).subTotals || [];
+
+    subGrid.setGridData(subGridData);
+
+  }, [subColumns, grid?.gridInfo?.data]);
+
 
   /** 검색 */
   const onSearch = (values) => {
@@ -241,15 +270,14 @@ export const PgPrdWorkDowntimeReport = () => {
     }
 
     let data = [];
-    let subTotalData = [];
 
     getData(searchParams, searchUriPath, 'raws').then((res) => {
       data = res;
 
     }).finally(() => {
       inputInfo?.instance?.resetForm();
+      subGrid.setGridData([]);
       grid.setGridData(data);
-      subGrid.setGridData(subTotalData);
     });
   };
 

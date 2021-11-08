@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo } from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -30,6 +30,7 @@ export const PgSalReturnReport = () => {
     gridMode: defaultGridMode,
   });
   const subGrid = useGrid('SUB_GRID', [], {
+    disabledAutoDateColumn: true,
     summaryOptions: {
       sumColumns: ['qty', 'supply_price', 'tax', 'total_price'],
       textColumns: [
@@ -57,11 +58,10 @@ export const PgSalReturnReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'반입일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-6), getToday()], label:'반입일', useCheckbox:true},
 
-    {type:'radio', id:'sub_total_type', default:'none', label:'조회기준',
+    {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
       options: [
-        {code:'none', text:'없음'},
         {code:'partner', text:'거래처별'},
         {code:'prod', text:'품목별'},
         {code:'date', text:'일자별'},
@@ -76,18 +76,18 @@ export const PgSalReturnReport = () => {
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
       case 'prod':
         _columns = [
-          {header: '품목', width:ENUM_WIDTH.L, name:'prod_id', filter:'text', hidden:true},
-          {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-          {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+          {header: '품목', width:ENUM_WIDTH.L, name:'prod_uuid', filter:'text', hidden:true},
+          {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+          {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
           {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
           {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
           {header: '모델', width:ENUM_WIDTH.L, name:'model_nm', filter:'text'},
           {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text'},
-          {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', filter:'text'},
+          {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text'},
           {header: '거래처', width:ENUM_WIDTH.L, name:'partner_nm', filter:'text'},
           {header: '반입일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
           {header: 'LOT NO', width:ENUM_WIDTH.M, name:'lot_no', filter:'text'},
@@ -107,14 +107,14 @@ export const PgSalReturnReport = () => {
         _columns = [
           {header: '반입일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
           {header: '거래처', width:ENUM_WIDTH.L, name:'partner_nm', filter:'text'},
-          {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-          {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+          {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+          {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
           {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
           {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
           {header: '모델', width:ENUM_WIDTH.L, name:'model_nm', filter:'text'},
           {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text'},
-          {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', filter:'text'},
+          {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text'},
           {header: 'LOT NO', width:ENUM_WIDTH.M, name:'lot_no', filter:'text'},
           {header: '반입수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},
           {header: '단가', width:ENUM_WIDTH.M, name:'price', format:'number', filter:'number'},
@@ -131,17 +131,17 @@ export const PgSalReturnReport = () => {
       case 'partner':
       default:
         _columns = [
-          {header: '거래처', name:'partner_id', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+          {header: '거래처', name:'partner_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '반입일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
-          {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-          {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+          {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+          {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
           {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
           {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
           {header: '모델', width:ENUM_WIDTH.L, name:'model_nm', filter:'text'},
           {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text'},
-          {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', filter:'text'},
+          {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text'},
           {header: 'LOT NO', width:ENUM_WIDTH.M, name:'lot_no', filter:'text'},
           {header: '반입수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},
           {header: '단가', width:ENUM_WIDTH.M, name:'price', format:'number', filter:'number'},
@@ -161,17 +161,18 @@ export const PgSalReturnReport = () => {
 
   const subColumns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
-    switch (searchInfo.values?.sub_total_type) {
+    switch (searchInfo.values?.sort_type) {
       case 'prod':
         _columns = [
-          {header: '품목유형', width:ENUM_WIDTH.L, name:'item_type_nm', filter:'text'},
-          {header: '제품유형', width:ENUM_WIDTH.L, name:'prod_type_nm', filter:'text'},
+          {header: '품목', width:ENUM_WIDTH.L, name:'prod_uuid', filter:'text', hidden:true},
+          {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
+          {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
           {header: '품번', width:ENUM_WIDTH.L, name:'prod_no', filter:'text'},
           {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text'},
           {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
           {header: '모델', width:ENUM_WIDTH.L, name:'model_nm', filter:'text'},
           {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text'},
-          {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', filter:'text'},
+          {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text'},
           {header: '반입수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '부가세액', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
@@ -227,30 +228,53 @@ export const PgSalReturnReport = () => {
   
   useLayoutEffect(() => {
     setSubTitle(
-      searchInfo.values?.sub_total_type === 'prod' ? '품목별'
-      : searchInfo.values?.sub_total_type === 'date' ? '일자별'
-      : searchInfo.values?.sub_total_type === 'partner' ? '거래처별'
+      searchInfo.values?.sort_type === 'prod' ? '품목별'
+      : searchInfo.values?.sort_type === 'date' ? '일자별'
+      : searchInfo.values?.sort_type === 'partner' ? '거래처별'
       : ''
     );
   }, [searchInfo?.values]);
 
+  // subTotal 데이터 세팅
+  useLayoutEffect(() => {
+    if (grid?.gridInfo?.data?.length <= 0) return;
+    const curculationColumnNames = ['qty', 'supply_price', 'tax', 'total_price'];
+    const standardNames = (
+      searchInfo.values?.sort_type === 'prod' ?
+        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'prod_no', 'rev', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
+      : searchInfo.values?.sort_type === 'partner' ?
+        ['partner_uuid', 'partner_nm']
+      : searchInfo.values?.sort_type === 'date' ?
+        ['reg_date']
+      : null
+    );
+    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+      standardNames: standardNames,
+      curculations: [
+        {names: curculationColumnNames, type:'sum'},
+      ],
+    }).subTotals || [];
+
+    subGrid.setGridData(subGridData);
+
+  }, [subColumns, grid?.gridInfo?.data]);
+
+
   /** 검색 */
   const onSearch = (values) => {
-    const searchKeys = ['start_date', 'end_date', 'sub_total_type'];//Object.keys(searchInfo.values);
+    const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
 
     let data = [];
     let subTotalData = [];
 
-    getData(searchParams, searchUriPath, 'report').then((res) => {
-      const {datas, subTotals} = res;
-      data = datas;
-      subTotalData = subTotals;
+    getData(searchParams, searchUriPath, 'raws').then((res) => {
+      data = res;
 
     }).finally(() => {
       inputInfo?.instance?.resetForm();
-      grid.setGridData(data);
       subGrid.setGridData(subTotalData);
+      grid.setGridData(data);
     });
   };
 

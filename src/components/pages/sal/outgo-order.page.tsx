@@ -42,10 +42,10 @@ export const PgSalOutgoOrder = () => {
   /** 화면 Grid View */
   const headerGrid = useGrid('HEADER_GRID', [
     {header: '출하지시UUID', name:'outgo_order_uuid', alias:'uuid', hidden:true},
-    {header: '출하지시일', name:'reg_date', width:ENUM_WIDTH.M, format:'date'},
+    {header: '출하지시일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L},
-    {header: '합계금액(￦)', name:'total_price', width:ENUM_WIDTH.M, format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
+    {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header: '합계금액(￦)', name:'total_price', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
   ], {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
@@ -272,7 +272,7 @@ export const PgSalOutgoOrder = () => {
     if (!uuid) return;
 
     const uriPath = detailSearchUriPath.replace('$', uuid);
-    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
+    getData({complete_state:'all'}, uriPath, 'header-details').then((res) => {
       detailGrid.setGridData(res?.details || []);
     });
   };
@@ -282,7 +282,7 @@ export const PgSalOutgoOrder = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'입하일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-6), getToday()], label:'입하일'},
   ]);
 
   const detailSearchInfo = null;//useSearchbox('DETAIL_SEARCH_INPUTBOX', []);

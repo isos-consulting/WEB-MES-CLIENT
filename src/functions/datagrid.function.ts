@@ -1,6 +1,7 @@
+import React from 'react';
 import {IGridModifiedRows} from '../components/UI/datagrid-new/datagrid.ui.type';
 import {getUserInfoKeys, getUserFactoryUuid} from './storage.function';
-import {getObjectKeyDuplicateCheck, isNumber} from './util.function';
+import {cleanupKeyOfObject, getObjectKeyDuplicateCheck, getToday, isNumber} from './util.function';
 import {executeData, getData} from './comm.function';
 import {message} from 'antd';
 import { MutableRefObject } from 'react';
@@ -8,7 +9,7 @@ import Grid from '@toast-ui/react-grid';
 import { COLUMN_CODE, EDIT_ACTION_CODE, IGridColumn, TGridMode } from '~/components/UI/datagrid-new';
 import dayjs from 'dayjs';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
-import { cloneObject } from '.';
+import { cloneObject } from '../functions';
 
 
 
@@ -271,7 +272,7 @@ export const checkGridData = async (
  * @param key key는 데이터를 합산 시킬 기준 컬럼, name은 기준 컬럼과 같이 보여줘야 할 display 컬럼 (예를 들면 { key: equipmentCode, name: equipmentName })
  * @param values 기준 컬럼 이외 서브토탈에서 사용되는 컬럼명들
  */
- export function createSubTotal(
+export function createSubTotal(
   datas:object[] = [],
   key:any = {key:'', name:''},
   values:string[] = []
@@ -706,3 +707,287 @@ export const setGridFocus = (gridRef, info?:{columnName:string, rowKey:number}) 
 
   instance?.focus(rowKey, columnName);
 }
+
+
+type TSubTotal = {
+  subTotals: any[],
+  total: object,
+};
+type TGroupInfos = {
+  originalNames: string[];
+  originalValues: any[];
+  groupKey: string;
+}[];
+type TConvDataToSubTotalProps = {
+  standardNames: string[],
+  curculations: {
+    names: string[],
+    type: 'sum' | 'min' | 'max' | 'avg',
+  }[],
+  sortby?:{
+    names?: string[],
+    type?: 'asc' | 'desc',
+  }
+};
+export const convDataToSubTotal = (data:any[]=[], options:TConvDataToSubTotalProps):TSubTotal => {
+  let result:TSubTotal = {
+    subTotals: [],
+    total: {}
+  }
+  let groupInfos:TGroupInfos = [];
+  const {standardNames, curculations, sortby} = options;
+
+  if (data?.length <= 1) {
+    const _data = cloneObject(data);
+    standardNames?.forEach((stdName) => {
+      delete _data[stdName];
+    });
+    return {
+      subTotals: data,
+      total: _data[0],
+    }
+  }
+
+  try {
+    
+    // 계산할 키 추출하기
+    let curculationNames = [];
+    cloneObject(curculations).forEach((el) => {
+      curculationNames = curculationNames.concat(el.names);
+    });
+    
+    // 필요한 데이터만 추출
+    let tempData:any[] = cloneObject(data).map(el => {
+      const keys = Object.keys(el);
+      keys.forEach(key => {
+        if ((standardNames.concat(curculationNames)).includes(key) === false) {
+          delete el[key];
+        }
+      });
+      return el;
+    });
+    console.log('tempData', tempData)
+
+    // 연산될 기준명의 키 그룹을 생성
+    const groupData:any[] = cloneObject(tempData).map(el => cleanupKeyOfObject(el, standardNames));
+
+    // 기준 컬럼을 바탕으로 그룹핑
+    let cnt = 0;
+    groupData.forEach((data) => {
+      const values = Object.values(data);
+
+      if (values == null) return;
+      if (groupInfos.findIndex(el => el.originalValues.join('') === values.join('')) !== -1) return;
+
+      groupInfos.push({
+        originalNames: standardNames,
+        originalValues: values,
+        groupKey: cnt+'',
+      });
+
+      cnt++;
+    });
+
+    // 서브토탈 계산
+    let sumData = {};
+    let total = {};
+    let chkData:any[] = cloneObject(tempData.reverse());
+    tempData.forEach((raw, index) => {
+      const value = cleanupKeyOfObject(raw, standardNames);
+      let groupKey = groupInfos.find(el => el.originalValues.join('') === Object.values(value).join(''))?.groupKey;
+      let count:{groupKey:string, cnt:number}[] = [];
+      
+      curculationNames.forEach((curlName) => {
+        if (!sumData[groupKey]) {
+          sumData[groupKey] = {[curlName] : null};
+        }
+        
+        const curlType = curculations.find(el => el.names.includes(curlName))?.type;
+        const previousValue:number = Number(sumData[groupKey][curlName] || 0);
+        const currentValue:number = Number(raw[curlName]);
+
+        switch (curlType) {
+          case 'max':
+            sumData[groupKey][curlName] = (
+              sumData[groupKey][curlName] == null ? currentValue
+              : (
+                previousValue > currentValue ? previousValue
+                : currentValue
+              )
+            );
+            
+            total[curlName] = (
+              total[curlName] == null ? currentValue
+              : (
+                Number(total[curlName]) > currentValue ? Number(total[curlName])
+                : currentValue
+              )
+            );
+            break;
+
+          case 'min':
+            sumData[groupKey][curlName] = (
+              sumData[groupKey][curlName] == null ? currentValue
+              : (
+                previousValue < currentValue ? previousValue
+                : currentValue
+              )
+            );
+
+            total[curlName] = (
+              total[curlName] == null ? currentValue
+              : (
+                Number(total[curlName]) < currentValue ? Number(total[curlName])
+                : currentValue
+              )
+            );
+            break;
+
+          case 'avg':
+          case 'sum':
+          default:
+            let countInfo = count.find((el) => el.groupKey === groupKey);
+            if (countInfo) {
+              countInfo.cnt += 1;
+            } else {
+              count.push({groupKey, cnt:1});
+            }
+            sumData[groupKey][curlName] = previousValue + currentValue;
+            total[curlName] = (total[curlName] || 0) + (raw[curlName] || 0);
+            break;
+        }
+
+
+        if (!chkData.find(el => {
+          const stdObj = cleanupKeyOfObject(el, standardNames);
+          const values = Object.values(stdObj);
+          return JSON.stringify(values) === JSON.stringify(groupInfos?.find(el => el.groupKey === groupKey));
+        })) {
+          if (curlType === 'avg') {
+            const cnt:number = count.find(el => el.groupKey === groupKey).cnt;
+            sumData[groupKey][curlName] = sumData[groupKey][curlName] / cnt; //(Object.keys(sumData).length || 1);
+            total[curlName] = (total[curlName] || 0) / Object.keys(sumData).length;
+          }
+        }
+      });
+
+      chkData.pop();
+    });
+
+    // 총합계
+    result.total = total;
+
+    // 계산 값 정형화
+    groupInfos.forEach((groupInfo) => {
+      let row = {}
+      standardNames.forEach((value, index) => {
+        const _key = groupInfo.originalNames[index];
+        const _value = groupInfo.originalValues[index];
+
+        row = {...row, [_key]: _value};
+      });
+
+      result.subTotals.push({...row, ...sumData[groupInfo.groupKey]});
+    });
+
+    // 정렬 작업    
+    if (sortby?.names) {
+      standardNames.forEach((stdName) => {
+        result.subTotals.sort((a, b) => {
+          let x = a[stdName].toLowerCase();
+          let y = b[stdName].toLowerCase();
+          if (x < y) {
+              return -1;
+          }
+          if (x > y) {
+              return 1;
+          }
+          return 0;
+        })
+      });
+    }
+
+    // switch (sortby.type) {
+    //   case 'desc':
+    //     curculationNames.forEach((curlName) => {
+    //       result.subTotals.sort((a, b) => parseFloat(b[curlName]) - parseFloat(a[curlName]));
+    //     });
+    //     break;
+    
+    //   case 'asc':
+    //   default:
+    //     curculationNames.forEach((curlName) => {
+    //       result.subTotals.sort((a, b) => parseFloat(a[curlName]) - parseFloat(b[curlName]));
+    //     });
+    //     break;
+    // }
+    
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  return result;
+}
+
+
+export const getTestData = (count:number=10) => {
+  const today = getToday();
+  const USD = 0.00085;
+  const KRW = 1182.00;
+
+  const testData = {
+    partner_uuid: 'awtwtawyadgdxg',
+    partner_nm: '거래처',
+    reg_date: today,
+    prod_uuid: 'eatwat23534wyhg54y34',
+    prod_no: 'P_CA',
+    prod_nm: '품목',
+    model_uuid: '142f34tgeojg34yge',
+    model_nm: '모델',
+    qty: 50,
+    price: 1000, 
+    exchange: 1181,
+  }
+
+  let result:any[] = [];
+  for (let i = 1; i <= count; i++) {
+    result[i-1] = [testData]?.map((el) => {
+      const keys = Object.keys(el);
+      const price = Math.floor(Math.random() * (100000 - 0)) + 0;
+      const index = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
+      const index2 = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
+      let result = {};
+      keys.forEach(key => {
+        if (typeof el[key] === 'number') {
+          if (key === 'qty')
+            result[key] = Math.floor(Math.random() * (1000 - 0)) + 0;
+          if (key === 'price')
+            result[key] = price;
+          if (key === 'exchange')
+            result[key] = price * USD;
+        } else {
+          if (key === 'prod_uuid') result[key] = 'eatwat23534wyhg54y34' + index;
+          if (key === 'prod_no') result[key] = 'P_CA' + index;
+          if (key === 'prod_nm') result[key] = '품목' + index;
+          if (key === 'partner_uuid') result[key] = 'awtwtawyadgdxg' + index2;
+          if (key === 'partner_nm') result[key] = '거래처' + index2;
+          // if (i % 3 === 0) {
+          //   if (key === 'prod_uuid') result[key] = 'awtwtawyadgdxg' + index;
+          //   if (key === 'prod_no') result[key] = 'P-CA-1' + index;
+          //   if (key === 'prod_nm') result[key] = '품목1' + index;
+
+          // } else {
+          //   result[key] = el[key] + '_' + i;
+          // }
+        }
+        
+      });
+
+      return result;
+    })[0];
+  }
+
+  return result;
+}
+

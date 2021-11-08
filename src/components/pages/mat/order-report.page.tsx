@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useMemo } from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -33,6 +33,7 @@ export const PgMatOrderReport = () => {
     gridMode: defaultGridMode,
   });
   const subGrid = useGrid('SUB_GRID', [], {
+    disabledAutoDateColumn: true,
     summaryOptions: {
       sumColumns: ['qty', 'supply_price', 'tax', 'total_price', 'receive_qty', 'balance'],
       textColumns: [
@@ -49,7 +50,7 @@ export const PgMatOrderReport = () => {
           content: '합계',
         },
       ]
-    }
+    },
   });
 
   const newDataPopupGrid = null;
@@ -60,8 +61,8 @@ export const PgMatOrderReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(), getToday()], label:'발주일', useCheckbox:true},
-    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(), getToday()], label:'납기일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'발주일', useCheckbox:true},
+    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-6), getToday()], label:'납기일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
       options: [
@@ -93,32 +94,28 @@ export const PgMatOrderReport = () => {
         _columns = [
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
           {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
-          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
-          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
+          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
           {header: '품목아이디', name:'prod_uuid', hidden:true},
           {header: '품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', hidden:true},
           {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text'},
           {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '발주일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
           {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '모델', name:'model_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
           {header: '단위아이디', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'text'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
-          {header: '화폐단위코드', name:'money_unit_cd', width:ENUM_WIDTH.S, hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
           {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
@@ -135,30 +132,26 @@ export const PgMatOrderReport = () => {
           {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
           {header: '발주일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
-          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
-          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
+          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
           {header: '품목아이디', name:'prod_uuid', hidden:true},
           {header: '품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', hidden:true},
           {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text'},
           {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '모델', name:'model_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
           {header: '단위아이디', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'select'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
-          {header: '화폐단위코드', name:'money_unit_cd', width:ENUM_WIDTH.S, hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
           {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
@@ -175,31 +168,27 @@ export const PgMatOrderReport = () => {
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
           {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '발주일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
-          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
-          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
+          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
           {header: '품목아이디', name:'prod_uuid', hidden:true},
           {header: '품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', hidden:true},
           {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text'},
           {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '모델', name:'model_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
           {header: '단위아이디', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'select'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
-          {header: '화폐단위코드', name:'money_unit_cd', width:ENUM_WIDTH.S, hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
           {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
@@ -221,56 +210,50 @@ export const PgMatOrderReport = () => {
       case 'prod':
         _columns = [
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
-          {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
-          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
-          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', align:'center'},
+          {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+          {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
           {header: '품목아이디', name:'prod_uuid', hidden:true},
           {header: '품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', hidden:true},
           {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text'},
           {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '모델', name:'model_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
           {header: '단위아이디', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.L, hidden:true},
-          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
         ];
         break;
 
       case 'date':
         _columns = [
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
-          {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
           {header: '발주일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
         ];
         break;
 
       case 'partner':
         _columns = [
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
-          {header: '자재공정출고아이디', name:'release_uuid', hidden:true},
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
-          {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
           {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
         ];
         break;
 
@@ -284,10 +267,12 @@ export const PgMatOrderReport = () => {
 
 
   /** 액션 관리 */
+  // 서브토탈 컬럼 세팅
   useLayoutEffect(() => {
     grid?.setGridColumns(columns);
   }, [columns]);
 
+  // 서브토탈 그리드 숨김 여부
   useLayoutEffect(() => {
     if (subColumns) {
       subGrid?.setGridColumns(subColumns);
@@ -298,6 +283,7 @@ export const PgMatOrderReport = () => {
     }
   }, [subColumns]);
 
+  // 서브토탈 타이틀 세팅
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'prod' ? '품목별'
@@ -306,11 +292,35 @@ export const PgMatOrderReport = () => {
       : ''
     );
   }, [searchInfo?.values]);
+  
+  // subTotal 데이터 세팅
+  useLayoutEffect(() => {
+    if (grid?.gridInfo?.data?.length <= 0) return;
+    const curculationColumnNames = ['qty', 'supply_price', 'tax', 'total_price', 'receive_qty', 'balance'];
+    const standardNames = (
+      searchInfo.values?.sort_type === 'prod' ?
+        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
+      : searchInfo.values?.sort_type === 'partner' ?
+        ['partner_uuid', 'partner_nm']
+      : searchInfo.values?.sort_type === 'date' ?
+        ['reg_date']
+      : null
+    );
+    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+      standardNames: standardNames,
+      curculations: [
+        {names: curculationColumnNames, type:'sum'},
+      ],
+    }).subTotals || [];
+
+    subGrid.setGridData(subGridData);
+
+  }, [subColumns, grid?.gridInfo?.data]);
+
 
   /** 검색 */
   const onSearch = (values) => {
-    setLoading(true);
-    const searchKeys = ['start_reg_date', 'end_reg_date', 'start_due_date', 'end_due_date', 'complete_state', 'sort_type'];//Object.keys(searchInfo.values);
+    const searchKeys = ['start_reg_date', 'end_reg_date', 'start_due_date', 'end_due_date', 'complete_state', 'sort_type'];
 
     const searchParams = cleanupKeyOfObject(values, searchKeys);
     
@@ -331,17 +341,18 @@ export const PgMatOrderReport = () => {
     }
 
     let data = [];
-    let subTotalData = [];
     
     getData(searchParams, searchUriPath, 'raws').then((res) => {
       data = res;
+
     }).finally(() => {
       inputInfo?.instance?.resetForm();
+      subGrid.setGridData([]);
       grid.setGridData(data);
-      subGrid.setGridData(subTotalData);
-      setLoading(false);
+      // subGrid.setGridData(subGridData);
     });
   };
+
 
   /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {

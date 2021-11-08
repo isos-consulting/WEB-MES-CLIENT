@@ -1,6 +1,6 @@
 import Grid from "@toast-ui/react-grid";
 import TuiGrid from "tui-grid";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { IDatagridProps, IGridColumn, TGridMode } from ".";
 import { OptComplexColumnInfo } from 'tui-grid/types/options';
 
@@ -49,6 +49,8 @@ export const gridModel = (props:{
   : React.Dispatch<React.SetStateAction<OptComplexColumnInfo[]>>,
   // setGridHeader
   // : React.Dispatch<React.SetStateAction<OptHeader>>,
+  gridColumnKeys
+  : string[],
 }) => {
   
   return props;
@@ -75,11 +77,20 @@ export const useGrid = (gridId, columns:IGridColumn[], options?:IAllowedDatagrid
     ...options
   }
 
+  
+  const gridColumnKeys = useMemo(() => {
+    let result:string[] = [];
+    gridColumns?.forEach((el) => result.push(el?.name));
+
+    return result;
+  }, [gridColumns]);
+
 
   const model = gridModel({
     gridRef,
     gridInstance: gridRef?.current?.getInstance(),
     gridInfo,
+    gridColumnKeys,
     setGridMode,
     setGridData,
     setGridColumns,
