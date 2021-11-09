@@ -221,80 +221,56 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
 
   //#region 🔶그리드 자동 높이 맞춤
   const layoutState = useRecoilValue(layoutStore.state);
-  const [headerGridHeight, setHeaderGridHeight] = useState(headerGrid.height || 0);
-  const [detailGridHeight, setDetailGridHeight] = useState(detailGrid.height || 0);
-  const [eventTrigger, setEventTrigger] = useState<boolean>(false); // 강제로 window resize 이벤트를 실행시키기 위한 트리거 상태 값입니다.
 
-  const onResize = (ev) => {
-    onHeaderResize(ev);
-    onDetailResize(ev);
+  const [headerGridHeight, setHeaderGridHeight] = useState<number>(headerGrid?.height ?? document.getElementById('main-body')?.clientHeight);
+  const [detailGridHeight, setDetailGridHeight] = useState<number>(detailGrid?.height ?? document.getElementById('main-body')?.clientHeight);
+
+  const onResize = (ev?) => {
+    const mainBody = Number(document.getElementById('main-body')?.clientHeight || 0);
+    const mainFooter = Number(document.getElementById('main-footer')?.clientHeight || 0)
+    const buttons = Number(document.getElementById('template-buttons')?.clientHeight || 0);
+    const headerSearch = Number(document.getElementById(headerSearchProps?.id)?.clientHeight || 0);
+    const headerInput = Number(document.getElementById(headerInputProps?.id)?.clientHeight || 0);
+    const detailSearch = Number(document.getElementById(detailSearchProps?.id)?.clientHeight || 0);
+    const detailInput = Number(document.getElementById(detailInputProps?.id)?.clientHeight || 0);
+
+    const datagridHeaderHeight = 30;
+    const bodyVertialMargin = 32;
+    const headerSubtracttHeight = (((buttons > 0 ? 1 : 0) + (headerSearch > 0 ? 1 : 0) + (headerInput > 0 ? 1 : 0)) * 8) + (buttons) + (headerSearch) + (headerInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin;
+    const detailSubtracttHeight = (((buttons > 0 ? 1 : 0) + (detailSearch > 0 ? 1 : 0) + (detailInput > 0 ? 1 : 0)) * 8) + (buttons) + (detailSearch) + (detailInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin;
+
+    const headerHeight = mainBody - headerSubtracttHeight;
+    const detailHeight = mainBody - detailSubtracttHeight;
+    
+    setHeaderGridHeight(headerHeight);
+    setDetailGridHeight(detailHeight);
   }
 
-  const onHeaderResize = (ev) => {
-    const screenHeight = ev.target.innerHeight;
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-
-    const searchboxHeight = document.getElementById(headerSearchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(headerInputProps?.id)?.clientHeight || 0;
-    const detailSearchboxHeight = document.getElementById(detailSearchProps?.id)?.clientHeight || 0;
-    const detailInputboxHeight = document.getElementById(detailInputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = headerGrid?.header?.height || 30;
-    
-    const headerContainerCnt = [searchboxHeight, inputboxHeight].filter(el => el > 0)?.length;
-    const detailContainerCnt = [detailSearchboxHeight, detailInputboxHeight].filter(el => el > 0)?.length;
-    const containerMarginTop = headerContainerCnt - detailContainerCnt >= 1 ? (headerContainerCnt - detailContainerCnt) * 10 : 0;
-
-    const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing) - (containerMarginTop);
-
-    setHeaderGridHeight(height);
-  }
-
-  const onDetailResize = (ev) => {
-    const screenHeight = ev.target.innerHeight;
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-
-    const headerSearchboxHeight = document.getElementById(headerSearchProps?.id)?.clientHeight || 0;
-    const headerInputboxHeight = document.getElementById(headerInputProps?.id)?.clientHeight || 0;
-    const searchboxHeight = document.getElementById(detailSearchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(detailInputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = detailGrid?.header?.height || 30;
-    
-    const headerContainerCnt = [headerSearchboxHeight, headerInputboxHeight].filter(el => el > 0)?.length;
-    const detailContainerCnt = [searchboxHeight, inputboxHeight].filter(el => el > 0)?.length;
-    const containerMarginTop = detailContainerCnt - headerContainerCnt >= 1 ? (detailContainerCnt - headerContainerCnt) * 10 : 0;
-
-    const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing) - (containerMarginTop);
-
-    setDetailGridHeight(height);
+  /** 강제로 리사이징을 하기 위한 함수 입니다. */
+  const forceReszing = () => {
+    onResize();
+    clearTimeout();
   }
 
   useLayoutEffect(() => {
     if (headerGrid.height) return;
-    window.addEventListener('resize', onResize, true);
-    setEventTrigger(true);
+    window.addEventListener('resize', onResize);
+    setTimeout(forceReszing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
 
     return () => {
-      window.removeEventListener('resize', onResize, true);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   useLayoutEffect(() => {
-    if (!eventTrigger) return;
-    // 강제로 resize 이벤트를 실행
-    window.dispatchEvent(new Event('resize'));
-  }, [eventTrigger]);
-
-  useLayoutEffect(() => {
-    onResize({target:{innerHeight: window.innerHeight}});
+    onResize();
   }, [layoutState]);
   //#endregion
 
   
   //#region 🔶렌더러에 작성될 엘리먼트 정의
   const headerGridElement = useMemo(() => {
-    const _headerGridHeight = props.templateOrientation === 'horizontal' ? 300 : headerGridHeight;
+    const _headerGridHeight = headerGrid?.height ?? props.templateOrientation === 'horizontal' ? 300 : headerGridHeight;
     return (
       <>
         {headerSearchProps != null ? headerSearchboxVisible ? <Searchbox {...headerSearchProps}/> : null : null}
@@ -304,19 +280,20 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
         </Container>
       </>
     );
-  }, [headerSearchProps, headerSearchboxVisible, headerSearchProps, headerGrid, headerGridRef, headerGridHeight, headerGridMode]);
+  }, [headerSearchProps, headerSearchboxVisible, headerSearchProps, headerGrid, headerGridRef, headerGridMode, headerGridHeight]);
 
   const detailGridElement = useMemo(() => {
+    const _detailGridHeight = detailGrid?.height ?? props.templateOrientation === 'horizontal' ? 300 : detailGridHeight;
     return (
       <>
         {detailSearchProps != null ? detailSearchboxVisible ? <Searchbox {...detailSearchProps}/> : null : null}
         {detailInputProps != null ? detailInputboxVisible ? <InputGroupbox {...detailInputProps} /> : null : null}
         <Container title={detailGrid?.title}>
-          <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight} gridMode={detailGridMode}/>
+          <Datagrid {...detailGrid} ref={detailGridRef} height={_detailGridHeight} gridMode={detailGridMode}/>
         </Container>
       </>
     );
-  }, [detailSearchProps, detailSearchboxVisible, detailSearchProps, detailInputProps, detailGridRef, detailGridHeight, detailGridMode]);
+  }, [detailSearchProps, detailSearchboxVisible, detailSearchProps, detailInputProps, detailGridRef, detailGridMode, detailGridHeight]);
   //#endregion
 
 
@@ -327,7 +304,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
     <>
     <Row gutter={[16,0]}>
       {props.templateType !== 'report' ?
-        <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
+        <Div id='template_buttons' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
           <Space size={[5,0]}>
             {btnDelete}
             {btnUpdate}
