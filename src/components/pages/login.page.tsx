@@ -56,7 +56,12 @@ export const PgLogin = () => {
     // setUserId(id);
 
     // 공장 콤보박스 조회
-    getFactories();
+    if(sessionStorage.getItem('userInfo')){
+      window.location.href = "/dashboard"
+    } else {
+      getFactories();
+    }
+    
   }, []);
 
 
@@ -155,7 +160,7 @@ export const PgLogin = () => {
 
   // 아이디와 패스워드가 둘다 입력된 상태면 로그인 버튼 활성화
   const clickable = useMemo(
-    () => !!userId?.length && !!userPw?.length,
+    () => !!userId?.length && !!userPw?.length, 
     [userId, userPw]
   );
 
@@ -208,12 +213,16 @@ export const PgLogin = () => {
                 // id:formState.id,
                 id: userId,
                 userNm: raws[0].user_nm,
-                access_token: raws[0].access_token,
-                refresh_token: raws[0].refresh_token,
                 factory_uuid:factory['factory_uuid'],
               })
             );
-
+            sessionStorage.setItem(
+              'tokenInfo',
+              JSON.stringify({
+                access_token: raws[0].access_token,
+                refresh_token: raws[0].refresh_token
+              })
+            );
             if (checked) {
               localStorage.setItem('iso-factory',cboFactoryCode as string)
               localStorage.setItem('iso-user-id',userId)
@@ -221,8 +230,8 @@ export const PgLogin = () => {
               localStorage.removeItem('iso-factory')
               localStorage.removeItem('iso-user-id')
             }
-            
-            return setUser(JSON.parse(sessionStorage.getItem("userInfo") as string));
+            window.location.href = "/dashboard"
+            // return setUser(JSON.parse(sessionStorage.getItem("userInfo") as string));
           }
         }
       })

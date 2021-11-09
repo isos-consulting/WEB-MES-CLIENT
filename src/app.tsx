@@ -68,7 +68,8 @@ const App = () => {
 
   return <div>
     <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {user ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />}
+      {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
+      <LoggedIn menuContent={menuContent} />
       {contextHolder}
     </Spin>
   </div>;
@@ -103,16 +104,21 @@ const errorPage404 = () => {
 
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
-  if (Object.keys(props?.menuContent).length <= 0) return null;
+  // if (Object.keys(props?.menuContent).length <= 0) return null;
 
   return (
     <Suspense fallback='...loading'>
     <BrowserRouter>
-      <Layout>
-        <Switch>
-          <Redirect exact from="/" to='/dashboard' />
+      <Switch>
+        <Redirect exact from="/" to='/login' />
+        <Route
+          key={'login'}
+          path={'/login'}
+          component={PgLogin}
+        />
+        <Layout>
           <Route
-            key={'hugufgf'}
+            key={'dashboard'}
             path={'/dashboard'}
             component={Dashboard}
           />
@@ -123,8 +129,8 @@ const LoggedIn = (props: any) => {
               component={props.menuContent[item]?.component ?? errorPage404}
             />
           ))}
-        </Switch>
-      </Layout>
+        </Layout>
+      </Switch>
     </BrowserRouter>
     </Suspense>
   );

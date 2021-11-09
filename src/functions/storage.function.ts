@@ -7,6 +7,9 @@ export const getUserInfo = () => {
   return JSON.parse(sessionStorage.getItem('userInfo'));
 }
 
+export const getTokenInfo = () => {
+  return JSON.parse(sessionStorage.getItem('tokenInfo'));
+}
 
 /** 로그인 유저의 공장 고유아이디를 가져옵니다. */
 export const getUserFactoryUuid = () => {
@@ -28,11 +31,11 @@ export const getUserUserName = () => {
 
 /** 로그인 유저의 토큰을 가져옵니다. */
 export const getUserAccessToken = () => {
-  return process.env.ACCESS_TOKEN_PREFIX + ' ' + getUserInfo()?.access_token;
+  return process.env.ACCESS_TOKEN_PREFIX + ' ' + getTokenInfo()?.access_token;
 }
 
 export const getUserRefreshToken = () => {
-  return getUserInfo()?.refresh_token;
+  return getTokenInfo()?.refresh_token;
 }
 
 /** 로그인 유저의 야이디를 가져옵니다. */

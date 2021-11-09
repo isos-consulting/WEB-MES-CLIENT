@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { layoutStore, authStore } from '~hooks/index';
 import Props from './header.ui.type';
 import { ScMyPageText, ScRightWrapper, ScTitleBodyDescription, ScUserLogo} from './header.ui.styled';
+import { setLogout } from "~/functions";
 
 const ScContainer = lazy(() => import('./header.ui.styled').then(module=>({default:module.ScContainer})));
 const ScLogo = lazy(() => import('./header.ui.styled').then(module=>({default:module.ScLogo})));
@@ -16,7 +17,7 @@ const ScLogo = lazy(() => import('./header.ui.styled').then(module=>({default:mo
 /** 헤더 */
 const Header: React.FC<Props> = (props) => {
   const setUser = useSetRecoilState(authStore.user.state);
-  const setLogout = () => {sessionStorage.removeItem('userInfo'); setUser(undefined);}
+  // const setLogout = () => {sessionStorage.removeItem('userInfo'); sessionStorage.removeItem('tokenInfo'); setUser(undefined);}
   const setLayoutState = useSetRecoilState(layoutStore.state);
 
   return (
@@ -31,6 +32,7 @@ const Header: React.FC<Props> = (props) => {
                 color: 'inherit'
               }}
               onClick={()=>{
+                setLogout();
                 setLayoutState((prevState) => ({
                   ...prevState,
                   leftSpacing: 70,

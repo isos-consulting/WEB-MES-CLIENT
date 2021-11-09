@@ -7,9 +7,12 @@ import dotenv from 'dotenv';
 import { useReducer } from 'react';
 import { atSideNavMenuContent, ILevel1Info, ILevel2Info, ILevel3Info, TPermission } from '~/components/UI';
 import * as Pages from "~/components/pages";
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {useLayoutEffect, useState} from 'react';
 import { JSXElement } from '@babel/types';
+import { errorState } from '~/enums/response.enum';
+import { getUserRefreshToken, onAsyncFunction } from '.';
+import { authStore } from '~/hooks';
 
 
 dotenv.config();
@@ -28,10 +31,11 @@ const baseURL = process.env.TEST_URL;
 export async function getData<T = any[]>(
   params: object,
   uriPath: string,
-  returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' = 'raws'
+  returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' | 'original' = 'raws',
+  headersObj?: object,
 ):Promise<T> {
   loadProgressBar();
-
+  
   let datas:any = null;
   // let FACTORY_INSERT_FLAG:boolean = true;
 
@@ -43,7 +47,6 @@ export async function getData<T = any[]>(
         // FACTORY_INSERT_FLAG = false;
       }
     }
-    
     datas = await axios({
       method: 'get',
       baseURL:baseURL,
@@ -51,13 +54,37 @@ export async function getData<T = any[]>(
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
-      }
-    });
+        ...headersObj
 
+        //refresh:getUserRefreshToken(),
+      },
+    })
   } catch (error) {
-    console.log(error);
-    datas = null;
+    console.log(error.response.data.state)
+    if (error.response.data.state.state_no === errorState.EXPIRED_ACCESS_TOKEN) {
+      await getData({},'/refresh-token', 'raws', {refresh:getUserRefreshToken()}).then(async (res)=>{
+        await onAsyncFunction(sessionStorage.setItem, 
+          'tokenInfo',
+          JSON.stringify({
+            access_token: res[0].access_token,
+            refresh_token: res[0].refresh_token
+          })
+        )
 
+        await getData(params, uriPath, 'original', headersObj).then((res)=>{
+          datas = res;
+        });
+      }).catch((error)=>{
+        
+        setLogout();
+
+        datas = null
+      })
+    } else {
+      datas = null;
+
+      console.log('err', error);
+    }
   } finally {
     switch (returnType) {
       case 'datas':
@@ -86,6 +113,9 @@ export async function getData<T = any[]>(
       
       case 'report':
         datas = datas?.data?.datas?.raws[0]; // {datas. subTotals}
+        break;
+
+      case 'original':
         break;
 
       case 'data':
@@ -263,4 +293,14 @@ export const getPermissions = (pageName:string):TPermission => {
   }, [menuContent]);
 
   return permissions;
+}
+
+/**
+ * 로그아웃 함수 ..
+ * 로그인 된 정보를 해당 함수에서 삭제해줘야 함.
+ */
+export const setLogout = async () => {
+  await sessionStorage.removeItem('userInfo');
+  await sessionStorage.removeItem('tokenInfo');
+  window.location.href = "/login";
 }

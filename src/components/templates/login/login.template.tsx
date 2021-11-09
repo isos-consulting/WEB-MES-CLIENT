@@ -98,6 +98,7 @@ export const TpLogin: React.FC<Props> = (props) => {
                       onChange={onChangeId}
                       placeholder='아이디를 입력하세요.'
                       widthSize='flex'
+                      onPressEnter={onLogin}
                     />
                   </Form.Item>
 

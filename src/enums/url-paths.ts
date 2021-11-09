@@ -1489,6 +1489,112 @@ const URL_PATH = {
       
     },
 
+  },
+  QMS: {
+    INSP:{
+      GET:{
+        INSP: '/qms/insp/{uuid}',
+        INSPS: '/qms/insps',
+        DETAILS: '/qms/insp/{uuid}/details',
+        INCLUDE_DETAILS: '/qms/insp/{uuid}/include-details',
+        RECEIVE_INCLUDE_DETAILS: '/qms/insp/receive/include-details',
+        PROC_INCLUDE_DETAILS: '/qms/insp/proc/include-details'
+      },
+      POST:{
+        INSPS: '/qms/insps'
+      },
+      PUT:{
+        APPLY: '/qms/insps/apply',
+        CANCEL_APPLY: '/qms/insps/cancel-apply',
+        INSPS: '/qms/insps'
+      },
+      PATCH:{
+        INSPS: '/qms/insps'
+      },
+      DELETE:{
+        INSPS: '/qms/insps'
+      }
+    },
+    INSP_DETAIL:{
+      GET:{
+        INSP_DETAIL: '/qms/insp-detail/{uuid}',
+        INSP_DETAILS: '/qms/insp-details'
+      },
+    },
+    PROC_INSP:{
+      GET:{
+        INSP_RESULT_MAX_SEQ: '/qms/proc/insp-result/max-seq',
+        INSP_RESULT_REPORT: '/qms/proc/insp-results/report',
+        INSP_RESULT_INCLUDE_DETAILS: '/qms/proc/insp-result/{uuid}/include-details',
+        INSP_RESULTS: '/qms/proc/insp-results'
+      },
+      POST:{
+        INSP_RESULTS: '/qms/proc/insp-results'
+      },
+      PUT:{
+        INSP_RESULTS: '/qms/proc/insp-results'
+      },
+      DELETE:{
+        INSP_RESULTS: '/qms/proc/insp-results'
+      }
+    },
+    RECEIVE_INSP:{
+      GET:{
+        INSP_RESULT_WAITING: '/qms/receive/insp-result/waiting',
+        INSP_RESULT_INCLUDE_DETAILS: '/qms/receive/insp-result/{uuid}/include-details',
+        INSP_RESULTS: '/qms/receive/insp-results'
+      },
+      POST:{
+        INSP_RESULTS: '/qms/receive/insp-results'
+      },
+      PUT:{
+        INSP_RESULTS: '/qms/receive/insp-results'
+      },
+      DELETE:{
+        INSP_RESULTS: '/qms/receive/insp-results'
+      }
+    },
+    FINAL_INSP:{
+      GET:{
+        INSP_RESULT_INCLUDE_DETAILS: '/qms/final/insp-result/{uuid}/include-details',
+        INSP_RESULTS: '/qms/final/insp-results'
+      },
+      POST:{
+        INSP_RESULTS: '/qms/final/insp-results'
+      },
+      PUT:{
+        INSP_RESULTS: '/qms/final/insp-results'
+      },
+      DELETE:{
+        INSP_RESULTS: '/qms/final/insp-results'
+      }
+    },
+    REWORK:{
+      GET:{
+        REWORK: '/qms/rework/{uuid}',
+        REWORKS: '/qms/reworks',
+      },
+      POST:{
+        DISASSEMBLES: '/qms/reworks/disassembles',
+        REWORKS: '/qms/reworks'
+      },
+      PUT:{
+        REWORKS: '/qms/reworks'
+      },
+      PATCH:{
+        REWORKS: '/qms/reworks'
+      },
+      DELETE:{
+        REWORKS: '/qms/reworks'
+      }
+    },
+    REWORK_DISASSEMBLE:{
+      GET:{
+        REWORK_DISASSEMBLE: '/qms/rework-disassemble/{uuid}',
+        REWORK_DISASSEMBLES: '/qms/rework-disassembles'
+      }
+    }
+
   }
 }
 
@@ -1498,3 +1604,4 @@ export const URL_PATH_OUT = URL_PATH.OUT
 export const URL_PATH_PRD = URL_PATH.PRD
 export const URL_PATH_SAL = URL_PATH.SAL
 export const URL_PATH_STD = URL_PATH.STD
+export const URL_PATH_QMS = URL_PATH.QMS
