@@ -1,3 +1,4 @@
+import React, {useCallback} from 'react';
 import axios from 'axios';
 import { loadProgressBar } from 'axios-progress-bar';
 import { getUserInfoKeys, getUserFactoryUuid, getUserAccessToken } from './storage.function';
@@ -7,13 +8,12 @@ import dotenv from 'dotenv';
 import { useReducer } from 'react';
 import { atSideNavMenuContent, ILevel1Info, ILevel2Info, ILevel3Info, TPermission } from '~/components/UI';
 import * as Pages from "~/components/pages";
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import {useLayoutEffect, useState} from 'react';
 import { JSXElement } from '@babel/types';
 import { errorState } from '~/enums/response.enum';
-import { getUserRefreshToken, onAsyncFunction } from '.';
-import { authStore } from '~/hooks';
-
+import { cloneObject, getUserRefreshToken, onAsyncFunction } from '.';
+import {useHistory} from 'react-router-dom';
 
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
@@ -21,7 +21,6 @@ const baseURL = process.env.TEST_URL;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
-
 /**
  * 서버 데이터 가져오기
  * @param params 서버에 전달할 파라메터
@@ -60,26 +59,18 @@ export async function getData<T = any[]>(
       },
     })
   } catch (error) {
-    console.log(error.response.data.state)
-    if (error.response.data.state.state_no === errorState.EXPIRED_ACCESS_TOKEN) {
-      await getData({},'/refresh-token', 'raws', {refresh:getUserRefreshToken()}).then(async (res)=>{
-        await onAsyncFunction(sessionStorage.setItem, 
-          'tokenInfo',
-          JSON.stringify({
-            access_token: res[0].access_token,
-            refresh_token: res[0].refresh_token
-          })
-        )
-
-        await getData(params, uriPath, 'original', headersObj).then((res)=>{
-          datas = res;
-        });
-      }).catch((error)=>{
-        
-        setLogout();
-
-        datas = null
-      })
+    if (error?.response?.data?.state?.state_no === errorState.EXPIRED_ACCESS_TOKEN) {
+      
+      const refreshState = await getAccessToken();
+      
+      if(!refreshState || refreshState?.state_no === errorState.EXPIRED_REFRESH_TOKEN){
+        return ;
+      }
+      
+      await getData(params, uriPath, 'original', headersObj).then((res)=>{
+        datas = res;
+      });
+      
     } else {
       datas = null;
 
@@ -142,7 +133,7 @@ export const executeData = async (
   data: object[] | object,
   uriPath: string,
   mothodType: 'post' | 'put' | 'patch' | 'delete',
-  returnType: 'data' | 'datas' | 'raws' | 'value' | 'message' | 'success' = 'data',
+  returnType: 'data' | 'datas' | 'raws' | 'value' | 'message' | 'success' | 'original' = 'data',
   disableErrorMessage: boolean = false,
 ) => {
   loadProgressBar();
@@ -150,18 +141,31 @@ export const executeData = async (
   let datas : any;
   try {
     datas = await axios({
-          method: mothodType,
-          baseURL: baseURL,
-          url: uriPath,
-          data: data,
-          headers:{
-            authorization:getUserAccessToken(),
-          }
-        });
+      method: mothodType,
+      baseURL: baseURL,
+      url: uriPath,
+      data: data,
+      headers:{
+        authorization:getUserAccessToken(),
+      }
+    });
   } catch (error) {
-    if (!disableErrorMessage) message.error(error.response.data.message);
-    console.log(error);
-    datas = null;
+    console.log(error.response)
+    if (error?.response?.data?.state?.state_no === errorState.EXPIRED_ACCESS_TOKEN) {
+      const refreshState = await getAccessToken();
+      if(!refreshState || refreshState?.state_no === errorState.EXPIRED_REFRESH_TOKEN){
+        return ;
+      }
+
+      await executeData(data, uriPath, mothodType, 'original', disableErrorMessage).then((res)=>{
+        datas = res;
+      });
+      
+    } else {
+      if (!disableErrorMessage) message.error(error.response.data.message);
+      console.log(error);
+      datas = null;
+    }
   }
 
   switch (returnType) {
@@ -184,7 +188,9 @@ export const executeData = async (
     case 'success':
       datas = datas?.data?.success;
       break;
-  
+    case 'original':
+      break;
+
     case 'data':
     default:
       datas = datas?.data;
@@ -295,12 +301,53 @@ export const getPermissions = (pageName:string):TPermission => {
   return permissions;
 }
 
+const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type:string}> => {
+  let refreshData:any = null;
+  let refreshState:any = null;
+  try {
+    refreshData = await axios({
+      method: 'get',
+      baseURL:baseURL,
+      url: '/refresh-token',
+      params: {factory_uuid:getUserFactoryUuid()},
+      headers: {
+        authorization:getUserAccessToken(),
+        refresh:getUserRefreshToken()
+      },
+    })
+    
+    sessionStorage.setItem(
+      'tokenInfo',
+      JSON.stringify({
+        access_token: refreshData.data.datas.raws[0].access_token,
+        refresh_token: refreshData.data.datas.raws[0].refresh_token,
+      })
+    )
+
+    refreshState = refreshData.data.state
+  } catch (error) {
+    console.log(error)
+    if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
+      sessionStorage.setItem('state',JSON.stringify({
+        EXPIRED_REFRESH_TOKEN: true,
+      }));
+      await setLogout();
+      
+    }
+    refreshState = error.response.data.state
+  }
+  console.log(...refreshState)
+  return {...refreshState}
+}
+
 /**
  * 로그아웃 함수 ..
  * 로그인 된 정보를 해당 함수에서 삭제해줘야 함.
  */
 export const setLogout = async () => {
-  await sessionStorage.removeItem('userInfo');
-  await sessionStorage.removeItem('tokenInfo');
+  
+  sessionStorage.removeItem('userInfo');
+  sessionStorage.removeItem('tokenInfo');
+  
   window.location.href = "/login";
 }

@@ -32,7 +32,6 @@ const Header: React.FC<Props> = (props) => {
                 color: 'inherit'
               }}
               onClick={()=>{
-                setLogout();
                 setLayoutState((prevState) => ({
                   ...prevState,
                   leftSpacing: 70,

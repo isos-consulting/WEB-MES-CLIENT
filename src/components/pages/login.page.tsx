@@ -59,6 +59,10 @@ export const PgLogin = () => {
     if(sessionStorage.getItem('userInfo')){
       window.location.href = "/dashboard"
     } else {
+      if(JSON.parse(sessionStorage.getItem('state'))?.EXPIRED_REFRESH_TOKEN){
+        sessionStorage.removeItem('state');
+        message.error('로그인이 만료되었습니다. 다시 로그인해주세요.')
+      }
       getFactories();
     }
     
