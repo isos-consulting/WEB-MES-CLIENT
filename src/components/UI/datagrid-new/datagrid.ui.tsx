@@ -16,7 +16,7 @@ import { Result } from '../result';
 import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
 import { Button } from '../button';
 import TuiDatePicker from 'tui-date-picker';
-import 'tui-grid/dist/tui-grid.css'
+import 'tui-grid/dist/tui-grid.css';
 import Colors from '~styles/color.style.scss';
 import { COLUMN_NAME } from '.';
 import { layoutStore } from '../layout/layout.ui.hook';
@@ -42,7 +42,10 @@ TuiGrid.setLanguage('ko', {
     afterEq: '이상',
     before: '미만',
     beforeEq: '이하',
-  }
+  },
+  contextMenu: {
+    csvExport: 'CSV로 내보내기 (사용X)',
+  },
 });
 
 // 그리드 일자 location 설정
@@ -557,7 +560,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     
     if (!props?.disabledAutoDateColumn) {
       if (chkCreateAtColumn === false) {
-        newColumns.push({header:'등록일시', name:'created_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, filter:'text',
+        newColumns.push({header:'등록일시', name:'created_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, filter:{type:'date', options:{format:'yyyy-MM-dd'}},
           renderer:{
             type:DatagridDateRenderer,
             options: {
@@ -1641,6 +1644,9 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   ,[gridRef, props.gridMode, props?.onAfterKeyDown]);
   //#endregion
 
+
+  //#region 🔶 필터 핸들링
+  const [filterInfo, setFilterInfo] = useState<any[]>(null);
   /** 필터 핸들링 */
   const onBeforeFilter = useCallback(
     (ev) => {
@@ -1649,6 +1655,9 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       const {code, value} = columnFilterState[0];
 
       if (!['date', 'datetime'].includes(type)) return;
+
+      const chk = filterInfo?.findIndex(el => el?.columnName === columnName) || -1;
+      if (chk > -1) return;
 
       const format = ENUM_FORMAT.DATE;
 
@@ -1686,6 +1695,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       instance.resetData(filterdData, {filterState});
 
       ev.stop();
+
+      setFilterInfo(null);
     },
     [gridRef, props.gridMode, data],
   );
@@ -1693,17 +1704,37 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ⛔필터 초기화 이벤트 */
   const onBeforeUnfilter = useCallback(
     (ev) => {
+      if (filterInfo) return;
       const instance = gridRef?.current?.getInstance();
       const {filterState, columnName} = ev;
 
+      const columnInfo = columns?.find(el => el?.name === columnName);
+      if (!['date', 'datetime'].includes(columnInfo?.filter?.type)) return;
+
       const _filterState = filterState.filter((el) => el.columnName !== columnName);
+      const _filterInfo = _filterState?.map((el) => {
+        return {
+          columnName: el?.columnName,
+          columnFilterState: el?.state,
+        }
+      });
 
-      instance.resetData(originData, {filterState: _filterState});
-
+      instance.resetData(originData);
       ev.stop();
+
+      setFilterInfo(_filterInfo);
     },
-    [gridRef, props.gridMode, originData],
-  )
+    [gridRef, props.gridMode, originData, columns],
+  );
+
+  useLayoutEffect(() => {
+    if (!filterInfo) return;
+    filterInfo?.forEach(el => {
+      gridRef?.current?.getInstance().filter(el?.columnName, el?.columnFilterState);
+    });
+
+    setFilterInfo(null);
+  }, [gridRef, filterInfo]);
   //#endregion
 
   
@@ -1747,25 +1778,25 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     });
   }, [gridRef, onKeyDown]);
 
-  // useLayoutEffect(() => {
-  //   // 이벤트 세팅
-  //   const instance = gridRef.current.getInstance();
-  //   instance.on('beforeFilter', onBeforeFilter);
+  useLayoutEffect(() => {
+    // 이벤트 세팅
+    const instance = gridRef.current.getInstance();
+    instance.on('beforeFilter', onBeforeFilter);
 
-  //   return () => {
-  //     instance.off('beforeFilter');
-  //   };
-  // }, [gridRef, onBeforeFilter]);
+    return () => {
+      instance.off('beforeFilter');
+    };
+  }, [gridRef, onBeforeFilter]);
 
-  // useLayoutEffect(() => {
-  //   // 이벤트 세팅
-  //   const instance = gridRef.current.getInstance();
-  //   instance.on('beforeUnfilter', onBeforeUnfilter);
+  useLayoutEffect(() => {
+    // 이벤트 세팅
+    const instance = gridRef.current.getInstance();
+    instance.on('beforeUnfilter', onBeforeUnfilter);
 
-  //   return () => {
-  //     instance.off('beforeUnfilter');
-  //   };
-  // }, [gridRef, onBeforeUnfilter]);
+    return () => {
+      instance.off('beforeUnfilter');
+    };
+  }, [gridRef, onBeforeUnfilter]);
 
   useLayoutEffect(() => {
     // combo 포맷을 사용하는 컬럼에 적용하기 위해 콤보리스트를 세팅
