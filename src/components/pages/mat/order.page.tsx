@@ -238,7 +238,7 @@ export const PgMatOrder = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'발주일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-6), getToday()], label:'발주일'},
   ]);
 
   const detailSearchInfo = useSearchbox('DETAIL_SEARCH_INPUTBOX', [
