@@ -1769,12 +1769,12 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@toast-ui/react-grid@4.18.1":
-  version "4.18.1"
-  resolved "https://registry.yarnpkg.com/@toast-ui/react-grid/-/react-grid-4.18.1.tgz#85b2609ef65494d00354197c0a344062e51ff887"
-  integrity sha512-xoKIrUK5OOAcj1CXLNaQDdB3KX3jadfHe9/NI4s0N0YpClKBk+dkQQeWv7FRDQkEa3r/lIQ5AhdU4Mx56buBHA==
+"@toast-ui/react-grid@^4.19.4":
+  version "4.19.4"
+  resolved "https://registry.yarnpkg.com/@toast-ui/react-grid/-/react-grid-4.19.4.tgz#1ed528d1e53479ff67c1038926f9645f779ca9b2"
+  integrity sha512-WyQ9g/X51gve+ztkmNCH1XIA8iT/apyowVraJnEd7RXQXAWNlssyeesGAKaaP7nI6SAdR95rPkpxcqlUJoMluw==
   dependencies:
-    tui-grid "^4.18.1"
+    tui-grid "^4.19.4"
 
 "@tootallnate/once@1":
   version "1.1.2"
@@ -11945,10 +11945,10 @@ tui-date-picker@^4.1.0:
   dependencies:
     tui-time-picker "^2.1.3"
 
-tui-grid@^4.18.1:
-  version "4.19.2"
-  resolved "https://registry.yarnpkg.com/tui-grid/-/tui-grid-4.19.2.tgz#fb48ac1ebdcf2a225027bf3be5f7245089da7055"
-  integrity sha512-WX2FNskL/hY49ofDx/jbXsnRsE9U0KT1Au91aEjepRIqP5JHRTqHXYhj+UxsSf7ttTH+t/t07ZanKJ2hqK+4Og==
+tui-grid@^4.19.4:
+  version "4.19.4"
+  resolved "https://registry.yarnpkg.com/tui-grid/-/tui-grid-4.19.4.tgz#d07ecb91453cced76d18ebf1d0408c3c99ad7591"
+  integrity sha512-rew6QJkSY9Lw6tiYTxNV7NWKoy10Gg7hAD7tOLw01FqxnXL3XPPw2rWavf42VR5KY2S3SyByDY81SNq9U9SjZA==
   dependencies:
     tui-date-picker "^4.1.0"
     tui-pagination "^3.4.0"
