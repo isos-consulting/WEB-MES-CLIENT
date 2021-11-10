@@ -346,7 +346,8 @@ tr.tui-grid-row{
 }
 // 그리드 헤더부분 수직정렬
 .tui-grid-cell.tui-grid-cell-header{
-  padding-bottom: 6px;
+  padding: 2px 2.5px
+  /* padding-bottom: 6px; */
 }
 //#endregion
 
