@@ -43,9 +43,6 @@ TuiGrid.setLanguage('ko', {
     before: '미만',
     beforeEq: '이하',
   },
-  contextMenu: {
-    csvExport: 'CSV로 내보내기 (사용X)',
-  },
 });
 
 // 그리드 일자 location 설정
