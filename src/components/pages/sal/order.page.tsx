@@ -232,7 +232,7 @@ export const PgSalOrder = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'수주일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'수주일'},
   ]);
 
   const detailSearchInfo = useSearchbox('DETAIL_SEARCH_INPUTBOX', [

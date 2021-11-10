@@ -59,7 +59,7 @@ export const PgPrdWorkRejectReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'작업일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [

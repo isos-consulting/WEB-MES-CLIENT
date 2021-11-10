@@ -22,7 +22,7 @@ export const PgInvStoresTotalHistory = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'기준일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'기준일'},
     {type:'text', id:'reject_fg', label:'부적합', default:'false', hidden:true},
     {type:'text', id:'stock_type', label:'조회유형', default:'all', hidden:true},
     {type:'text', id:'grouped_type', label:'분류유형', default:'all', hidden:true},

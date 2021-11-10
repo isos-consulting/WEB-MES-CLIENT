@@ -59,7 +59,7 @@ export const PgPrdWorkReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'생산일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'생산일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
@@ -140,7 +140,7 @@ export const PgPrdWorkReport = () => {
       case 'date':
       default:
         _columns = [
-            {header: '실적일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
+            {header: '실적일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'date', format:'date'},
             {header: '공정명', width:ENUM_WIDTH.M, name:'proc_nm', filter:'text'},
             {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text'},
             {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text'},
@@ -158,8 +158,8 @@ export const PgPrdWorkReport = () => {
             {header: '생산수량', width:ENUM_WIDTH.M, name:'total_qty', format:'number', filter:'number'},
             {header: '양품수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},
             {header: '부적합수량', width:ENUM_WIDTH.M, name:'reject_qty', format:'number', filter:'number'},
-            {header: '생산 시작 일시', width:ENUM_WIDTH.M,name:'start_date',  filter:'text', format:'date'},
-            {header: '생산 종료 일시', width:ENUM_WIDTH.M,name:'end_date',  filter:'text', format:'date'},
+            {header: '생산 시작 일시', width:ENUM_WIDTH.M,name:'start_date',  filter:'date', format:'date'},
+            {header: '생산 종료 일시', width:ENUM_WIDTH.M,name:'end_date',  filter:'date', format:'date'},
             {header: '입고창고', width:ENUM_WIDTH.L, name:'to_store_nm', filter:'text'},
             {header: '입고위치', width:ENUM_WIDTH.L, name:'to_location_nm', filter:'text'},
             {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
@@ -200,7 +200,7 @@ export const PgPrdWorkReport = () => {
 
       case 'date':
         _columns = [
-          {header: '실적일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
+          {header: '실적일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'date', format:'date'},
           {header: '발주수량', width:ENUM_WIDTH.M, name:'order_qty', format:'number', filter:'number'},
           {header: '생산수량', width:ENUM_WIDTH.M, name:'total_qty', format:'number', filter:'number'},
           {header: '양품수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},

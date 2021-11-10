@@ -58,7 +58,7 @@ export const PgMatReceiveReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-6),getToday()], label:'입하일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7),getToday()], label:'입하일'},
     {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
       options: [
         {code:'partner', text:'거래처별'},

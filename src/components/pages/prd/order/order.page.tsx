@@ -471,7 +471,7 @@ export const PgPrdOrder = () => {
             id='prod_order_search'
             innerRef={searchRef}
             searchItems={[
-              {type:'date', id:'start_date', label:'지시기간', default:getToday(-6)},
+              {type:'date', id:'start_date', label:'지시기간', default:getToday(-7)},
               {type:'date', id:'end_date', default:getToday()},
             ]}
             onSearch={onSearch}

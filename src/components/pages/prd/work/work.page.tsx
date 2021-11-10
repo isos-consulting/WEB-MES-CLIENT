@@ -577,7 +577,7 @@ export const PgPrdWork = () => {
   
   //#region ✅조회조건
   const SEARCH_ITEMS:ISearchItem[] = [
-    {type:'date', id:'start_date', label:'작업기간', default:dayjs(getToday()).add(-6, 'day').format('YYYY-MM-DD'), disabled: schData_disabled},
+    {type:'date', id:'start_date', label:'작업기간', default:getToday(-7), disabled: schData_disabled},
     {type:'date', id:'end_date', default:getToday(), disabled: schData_disabled},
     {type:'radio', id:'complete_fg', default:'false',
       options:[

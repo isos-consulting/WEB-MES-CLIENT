@@ -212,7 +212,7 @@ export const PgOutReceive = () => {
         {header: '입고위치UUID', name:'to_location_uuid', width:ENUM_WIDTH.M, hidden:true},
         {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M},
         {header: '발주최소수량', name:'mat_order_min_qty', width:ENUM_WIDTH.M, format:'number'},
-        {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:true, defaultValue: getToday('YYYYMMDD')},
+        {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:true, defaultValue: getToday(0, {format:'YYYYMMDD'})},
       ],
       dataApiSettings: () => {
         type TParams = {date?:string, partner_uuid?:string, supplier_uuid?:string, uuid?:string};
@@ -328,7 +328,7 @@ export const PgOutReceive = () => {
                       {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.L, filter:'text'},
                       {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
                       {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true},
-                      {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:false, defaultValue: getToday('YYYYMMDD')},
+                      {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:false, defaultValue: getToday(0, {format:'YYYYMMDD'})},
                     ]}
                     gridMode='multi-select'
                     data={res}
@@ -403,7 +403,7 @@ export const PgOutReceive = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(), getToday()], label:'입하일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'입하일'},
   ]);
 
   const detailSearchInfo = null;//useSearchbox('DETAIL_SEARCH_INPUTBOX', []);

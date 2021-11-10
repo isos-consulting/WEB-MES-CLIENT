@@ -240,7 +240,7 @@ export const PgQmsProcInspResultReport = () => {
 
   //#region ✅조회조건
   const SEARCH_ITEMS:ISearchItem[] = [
-    {type:'date', id:'start_date', label:'작업일', default:dayjs(getToday()).add(-6, 'day').format('YYYY-MM-DD')},
+    {type:'date', id:'start_date', label:'작업일', default:getToday(-7)},
     {type:'date', id:'end_date', default:getToday()}
   ];
   //#endregion

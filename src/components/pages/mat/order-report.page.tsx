@@ -61,8 +61,8 @@ export const PgMatOrderReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-6), getToday()], label:'발주일', useCheckbox:true},
-    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-6), getToday()], label:'납기일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'발주일', useCheckbox:true},
+    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-7), getToday()], label:'납기일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
       options: [

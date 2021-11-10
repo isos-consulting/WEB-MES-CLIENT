@@ -133,7 +133,7 @@ export const PgQmsReceiveInspResultReport = () => {
 
   //#region ✅조회조건
   const SEARCH_ITEMS:ISearchItem[] = [
-    {type:'date', id:'start_date', label:'검사일', default:dayjs(getToday()).add(-6, 'day').format('YYYY-MM-DD')},
+    {type:'date', id:'start_date', label:'검사일', default:getToday(-7)},
     {type:'date', id:'end_date', default:getToday()},
     {type:'radio', id:'insp_detail_type', default:'all',
       options:[
