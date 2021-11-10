@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -21,8 +21,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
 
-
-  useEffect(() => {
+  const getCrruentRouter = () => {
     const menus = pathname.split("/");
     const menu1 = menus[1];
     const menu2 = menus[2];
@@ -35,8 +34,13 @@ export const Layout: React.FC<Props> = ({ children }) => {
     if (router) {
       window.document.title = `ISOS | ` + router;
     }
+
     setCurrentRouterType(menuContent[router]);
-  }, [pathname]);
+  }
+
+  useEffect(() => {
+    getCrruentRouter();
+  }, [pathname, menuContent]);
 
   
   return (

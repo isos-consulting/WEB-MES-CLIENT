@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useMemo } from "react";
 import { Dropdown, Menu, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { layoutStore, authStore } from '~hooks/index';
 import Props from './header.ui.type';
 import { ScMyPageText, ScRightWrapper, ScTitleBodyDescription, ScUserLogo} from './header.ui.styled';
-import { setLogout } from "~/functions";
+import { getUserInfo, setLogout } from "~/functions";
 
 const ScContainer = lazy(() => import('./header.ui.styled').then(module=>({default:module.ScContainer})));
 const ScLogo = lazy(() => import('./header.ui.styled').then(module=>({default:module.ScLogo})));
@@ -16,9 +16,12 @@ const ScLogo = lazy(() => import('./header.ui.styled').then(module=>({default:mo
 
 /** 헤더 */
 const Header: React.FC<Props> = (props) => {
-  const setUser = useSetRecoilState(authStore.user.state);
-  // const setLogout = () => {sessionStorage.removeItem('userInfo'); sessionStorage.removeItem('tokenInfo'); setUser(undefined);}
+  const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
+
+  const userName = useMemo(() => {
+    return userInfo?.userNm ? userInfo?.userNm + '님' : '';
+  }, [userInfo?.userNm]);
 
   return (
     <div>
@@ -54,34 +57,19 @@ const Header: React.FC<Props> = (props) => {
           {/* 우측 버튼 */}
           <ScRightWrapper key='RightWrapper'>
             {/* <BellOutlined onClick={() => alert('아이콘 클릭')} /> */}
-            <Link to='/mypage' style={{
+            {/* <Link to='/mypage' style={{
               color: 'inherit'
             }}>
               <ScMyPageText>마이페이지</ScMyPageText>
-            </Link>
+            </Link> */}
+            <ScMyPageText>{userName}</ScMyPageText>
             <Dropdown overlay={<Menu>
               <Menu.Item
                 key='0'
                 style={{ textAlign: 'center' }}
-                onClick={() => {
-                  setLogout();
-                }}
+                onClick={setLogout}
               >
                 로그아웃
-              </Menu.Item>
-              <Menu.Item
-                key='1'
-                style={{ textAlign: 'center' }}
-                onClick={() => alert('텍스트1 클릭')}
-              >
-                텍스트1
-              </Menu.Item>
-              <Menu.Item
-                key='3'
-                onClick={() => alert('텍스트2 클릭')}
-                style={{ textAlign: 'center' }}
-              >
-                텍스트2
               </Menu.Item>
             </Menu>} trigger={['click']}>
               <Space className='ant-dropdown-link'>
