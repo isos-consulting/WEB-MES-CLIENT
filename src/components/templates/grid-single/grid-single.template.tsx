@@ -85,45 +85,46 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
 
   //#region 🔶 그리드 자동 높이 맞춤
   const layoutState = useRecoilValue(layoutStore.state);
-  const [gridHeight, setGridHeight] = useState(grid.height || 0);
-  const [eventTrigger, setEventTrigger] = useState<boolean>(false); // 강제로 window resize 이벤트를 실행시키기 위한 트리거 상태 값입니다.
 
-  const onResize = (ev) => {
-    const screenHeight = ev.target.innerHeight;
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-    const searchboxHeight = document.getElementById(searchProps?.id)?.clientHeight || 0;
-    const inputboxHeight = document.getElementById(inputProps?.id)?.clientHeight || 0;
-    const gridHeaderHeight = grid?.header?.height || 30;
+  const [gridHeight, setGridHeight] = useState<number>(grid?.height ?? document.getElementById('main-body')?.clientHeight);
 
-    const height = screenHeight - (actionButtonsHeight + subGridContainerHeight + searchboxHeight + inputboxHeight + gridHeaderHeight) - (layoutState.bottomSpacing + layoutState.contentSpacing);
+  const onResize = (ev?) => {
+    const mainBody = Number(document.getElementById('main-body')?.clientHeight || 0);
+    const mainFooter = Number(document.getElementById('main-footer')?.clientHeight || 0)
+    const buttons = Number(document.getElementById('template-buttons')?.clientHeight || 0);
+    const search = Number(document.getElementById(searchProps?.id)?.clientHeight || 0);
+    const Input = Number(document.getElementById(inputProps?.id)?.clientHeight || 0);
+    const subTotalHeight = subTotalGrid && !subTotalGrid?.hidden ? 230 + 30 + 35 + 16 : 0;// Number(document.getElementById(subTotalGrid?.gridId)?.clientHeight || 0);
+
+    const datagridHeight = 30;
+    const bodyVertialMargin = 32;
+    const subtracttHeight = (((buttons > 0 ? 1 : 0) + (search > 0 ? 1 : 0) + (Input > 0 ? 1 : 0) + (subTotalHeight > 0 ? 1 : 0)) * 8) + (buttons) + (search) + (Input) + mainFooter + datagridHeight + bodyVertialMargin + subTotalHeight;
+
+    const height = mainBody - subtracttHeight;
+    
     setGridHeight(height);
+  }
+
+  /** 강제로 리사이징을 하기 위한 함수 입니다. */
+  const forceReszing = () => {
+    onResize();
+    clearTimeout();
   }
 
   useLayoutEffect(() => {
     if (grid.height) return;
-    window.addEventListener('resize', onResize, true);
-    setEventTrigger(true);
+    window.addEventListener('resize', onResize);
+    setTimeout(forceReszing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
 
     return () => {
-      window.removeEventListener('resize', onResize, true);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   useLayoutEffect(() => {
-    if (!eventTrigger) return;
-    // 강제로 resize 이벤트를 실행
-    window.dispatchEvent(new Event('resize'));
-    setEventTrigger(false);
-  }, [eventTrigger]);
-
-  useLayoutEffect(() => {
-    onResize({target:{innerHeight: window.innerHeight}});
+    onResize();
   }, [layoutState]);
 
-  useLayoutEffect(() => {
-    setEventTrigger(true);
-  }, [subTotalGrid?.data]);
   //#endregion
 
 
@@ -199,7 +200,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
     <>
     <Row gutter={[16,0]}>
       {props.templateType !== 'report' ?
-        <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
+        <Div id='template_buttons' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
           <Space size={[5,0]}>
             {btnDelete}
             {btnUpdate}
