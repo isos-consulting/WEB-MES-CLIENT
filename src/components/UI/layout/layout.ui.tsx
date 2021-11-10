@@ -50,6 +50,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       <SideNavbar top={layoutState.topSpacing} width={layoutState.leftSpacing} />
 
       <ScMainBody
+        id='main-body'
         top={layoutState.topSpacing}
         left={layoutState.leftSpacing}
         bottom={layoutState.bottomSpacing}
@@ -64,6 +65,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         </ScContent>
 
         <Footer
+          id='main-footer'
           height={layoutState.bottomSpacing}
           left={layoutState.leftSpacing}
         />
