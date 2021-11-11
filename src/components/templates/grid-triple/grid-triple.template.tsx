@@ -279,200 +279,122 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
   //#region 🔶 그리드 자동 높이 맞춤
   const layoutState = useRecoilValue(layoutStore.state);
-  const [headerGridHeight, setHeaderGridHeight] = useState(headerGrid.height || 0);
-  const [detailGridHeight, setDetailGridHeight] = useState(detailGrid.height || 0);
-  const [detailSubGridHeight, setDetailSubGridHeight] = useState(detailSubGrid.height || 0);
-  const headerHeight = 45;
-  const paddingSize = 36;
-  const footerHeight = 60;
-  const [headerMargin, setHeaderMargin] = useState<number>(0);
-  const [detailMargin, setDetailMargin] = useState<number>(0);
-  const [detailSubMargin, setDetailSubMargin] = useState<number>(0);
-  const [minHeight, setMinHeight] = useState(window.innerHeight - headerHeight - paddingSize - footerHeight);
-  const [eventTrigger, setEventTrigger] = useState<boolean>(false); // 강제로 window resize 이벤트를 실행시키기 위한 트리거 상태 값입니다.
+  const fixHeight = 220;
+  
+  const [headerGridHeight, setHeaderGridHeight] = useState<number>(headerGrid?.height ?? templateOrientation === 'filledLayoutRight' ? fixHeight : document.getElementById('main-body')?.clientHeight);
+  const [detailGridHeight, setDetailGridHeight] = useState<number>(detailGrid?.height ?? templateOrientation === 'filledLayoutLeft' ? fixHeight : document.getElementById('main-body')?.clientHeight);
+  const [detailSubGridHeight, setDetailSubGridHeight] = useState<number>(detailSubGrid?.height ?? document.getElementById('main-body')?.clientHeight);
 
-  const onHeaderResize = (minHeight) => {
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-    const headerInputElementHeight = document.getElementById('HEADER_INPUT_ELEMENT')?.clientHeight || 0;
+  const onResize = (ev?) => {
+    const mainBody = Number(document.getElementById('main-body')?.clientHeight || 0);
+    const mainFooter = Number(document.getElementById('main-footer')?.clientHeight || 0)
+    const buttons = Number(document.getElementById('template-buttons')?.clientHeight || 0);
+    const headerSearch = Number(document.getElementById(headerSearchProps?.id)?.clientHeight || 0);
+    const headerInput = Number(document.getElementById(headerInputProps?.id)?.clientHeight || 0);
+    const detailSearch = Number(document.getElementById(detailSearchProps?.id)?.clientHeight || 0);
+    const detailInput = Number(document.getElementById(detailInputProps?.id)?.clientHeight || 0);
+    const detailSubSearch = Number(document.getElementById(detailSubSearchProps?.id)?.clientHeight || 0);
+    const detailSubInput = Number(document.getElementById(detailSubInputProps?.id)?.clientHeight || 0);
 
-    if (templateOrientation === 'filledLayoutRight') {
-      const height = 300;
-      setHeaderGridHeight(height);
+    const datagridHeaderHeight = 30;
+    const bodyVertialMargin = 32;
 
-    } else {
-      const height = minHeight - (actionButtonsHeight + subGridContainerHeight + headerInputElementHeight + headerMargin);
-      setHeaderGridHeight(height);
+    let headerSubtracttHeight = 0;
+    let detailSubtracttHeight = 0;
+    let detailSubSubtractHeight = 0;
+    let headerHeight = 0;
+    let detailHeight = 0;
+    let detailSubHeight = 0;
+
+    if (templateOrientation === 'filledLayoutLeft') {
+      headerSubtracttHeight = (
+        ((buttons > 0 ? 1 : 0) + (headerSearch > 0 ? 1 : 0) + (headerInput > 0 ? 1 : 0)) * 8 // marginCount
+      ) + (buttons) + (headerSearch) + (headerInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin;
+      detailSubtracttHeight = 0;
+      detailSubSubtractHeight = (
+        ((buttons > 0 ? 1 : 0) + (detailSearch > 0 ? 1 : 0) + (detailInput > 0 ? 1 : 0) + (detailSubSearch > 0 ? 1 : 0) + (detailSubInput > 0 ? 1 : 0) + 1) * 8 // marginCount
+      ) + (buttons) + (detailSearch) + (detailInput) + (detailSubSearch) + (detailSubInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin + (fixHeight + datagridHeaderHeight);
+
+      headerHeight = mainBody - headerSubtracttHeight;
+      detailHeight = fixHeight;
+      detailSubHeight = mainBody - detailSubSubtractHeight;
+
+    } else if (templateOrientation === 'filledLayoutRight') {
+      headerSubtracttHeight = 0;
+      detailSubtracttHeight = (
+        ((buttons > 0 ? 1 : 0) + (headerSearch > 0 ? 1 : 0) + (headerInput > 0 ? 1 : 0) + (detailSearch > 0 ? 1 : 0) + (detailInput > 0 ? 1 : 0) + 1) * 8 // marginCount
+      ) + (buttons) + (headerSearch) + (headerInput) + (detailSearch) + (detailInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin + (fixHeight + datagridHeaderHeight);
+      detailSubSubtractHeight = (
+        ((buttons > 0 ? 1 : 0) + (detailSubSearch > 0 ? 1 : 0) + (detailSubInput > 0 ? 1 : 0)) * 8 // marginCount
+      ) + (buttons) + (detailSubSearch) + (detailSubInput) + mainFooter + datagridHeaderHeight + bodyVertialMargin;
+
+      headerHeight = fixHeight;
+      detailHeight = mainBody - detailSubtracttHeight;
+      detailSubHeight = mainBody - detailSubSubtractHeight;
     }
-  }
-
-  const onDetailResize = (minHeight, headerGridHeight?) => {
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-    const headerInputElementHeight = document.getElementById('HEADER_INPUT_ELEMENT')?.clientHeight || 0;
-    const detailInputElementHeight = document.getElementById('DETAIL_INPUT_ELEMENT')?.clientHeight || 0;
     
-    if (templateOrientation === 'filledLayoutRight') {
-      const height = minHeight - (headerGridHeight + headerInputElementHeight + headerMargin) - (actionButtonsHeight + subGridContainerHeight + detailInputElementHeight + detailMargin);
-      setDetailGridHeight(height);
-
-    } else {
-      const height = 300;
-      setDetailGridHeight(height);
-    }
+    setHeaderGridHeight(headerHeight);
+    setDetailGridHeight(detailHeight);
+    setDetailSubGridHeight(detailSubHeight);
   }
 
-  const onDetailSubResize = (minHeight, detailGridHeight?) => {
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-    const detailInputElementHeight = document.getElementById('DETAIL_INPUT_ELEMENT')?.clientHeight || 0;
-    const detailSubInputElementHeight = document.getElementById('DETAIL_SUB_INPUT_ELEMENT')?.clientHeight || 0;
-    
-    if (templateOrientation === 'filledLayoutRight') {
-      const height = minHeight - (actionButtonsHeight + subGridContainerHeight + detailSubInputElementHeight);
-      setDetailSubGridHeight(height);
-
-    } else {
-      const height = minHeight - (detailGridHeight + detailInputElementHeight + detailMargin) - (actionButtonsHeight + subGridContainerHeight + detailSubInputElementHeight + detailSubMargin);
-      setDetailSubGridHeight(height);
-    }
-  }
-
-  const onWindowResize = (ev) => {
-    setMinHeight(ev.target.innerHeight - headerHeight - paddingSize);
-  }
-
-  const onResize = (ev) => {
-    onHeaderResize(ev);
-    if (templateOrientation !== 'filledLayoutRight') onDetailResize(ev, headerGridHeight);
-    if (templateOrientation !== 'filledLayoutLeft') onDetailSubResize(ev, detailGridHeight);
+  /** 강제로 리사이징을 하기 위한 함수 입니다. */
+  const forceReszing = () => {
+    onResize();
+    clearTimeout();
   }
 
   useLayoutEffect(() => {
-    window.addEventListener('resize', onWindowResize, true);
-    setEventTrigger(true);
+    if (headerGrid.height) return;
+    window.addEventListener('resize', onResize);
+    setTimeout(forceReszing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
 
     return () => {
-      window.removeEventListener('resize', onWindowResize, true);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
   useLayoutEffect(() => {
-    if (!eventTrigger) return;
-    // 강제로 resize 이벤트를 실행
-    window.dispatchEvent(new Event('resize'));
-  }, [eventTrigger]);
-
-  useLayoutEffect(() => {
-    onWindowResize({target:{innerHeight:window.innerHeight}});
+    onResize();
   }, [layoutState]);
-
-  useLayoutEffect(() => {
-    onResize(minHeight);
-  }, [minHeight]);
-  
-  useLayoutEffect(() => {
-    if (templateOrientation === 'filledLayoutRight')
-      onDetailResize(minHeight, headerGridHeight);
-  }, [headerGridHeight]);
-  
-  useLayoutEffect(() => {
-    if (templateOrientation === 'filledLayoutLeft')
-      onDetailSubResize(minHeight, detailGridHeight);
-  }, [detailGridHeight]);
-
-  useLayoutEffect(() => {
-    const actionButtonsHeight = document.getElementById('TEMPLATE_BUTTONS')?.clientHeight || 0;
-    const subGridContainerHeight = document.getElementById('SUB_GRID_CONTAINER')?.clientHeight || 0;
-
-    if (templateOrientation === 'filledLayoutRight') {
-      const headerMargin = (0
-        + (actionButtonsHeight > 0 ? 1 : 0)
-        + (subGridContainerHeight > 0 ? 1 : 0)
-        + (headerSearchProps != null ? 1 : 0)
-        + (headerInputProps != null ? 1 : 0)
-      ) * 8;
-      const detailMargin = (0
-        + (detailSearchProps != null ? 1 : 0)
-        + (detailInputProps != null ? 1 : 0)
-      ) * 8;
-      const detailSubMargin = (0
-        + (actionButtonsHeight > 0 ? 1 : 0)
-        + (subGridContainerHeight > 0 ? 1 : 0)
-        + (detailSubSearchProps != null ? 1 : 0)
-        + (detailSubInputProps != null ? 1 : 0)
-      ) * 8;
-      setHeaderMargin(headerMargin);
-      setDetailMargin(detailMargin + 8);
-      setDetailSubMargin(detailSubMargin);
-
-    } else {
-      const headerMargin = (0
-        + (actionButtonsHeight > 0 ? 1 : 0)
-        + (subGridContainerHeight > 0 ? 1 : 0)
-        + (headerSearchProps != null ? 1 : 0)
-        + (headerInputProps != null ? 1 : 0)
-      ) * 8;
-      const detailMargin = (0
-        + (actionButtonsHeight > 0 ? 1 : 0)
-        + (subGridContainerHeight > 0 ? 1 : 0)
-        + (detailSearchProps != null ? 1 : 0)
-        + (detailInputProps != null ? 1 : 0)
-      ) * 8;
-      const detailSubMargin = (0
-        + (detailSubSearchProps != null ? 1 : 0)
-        + (detailSubInputProps != null ? 1 : 0)
-      ) * 8;
-      setHeaderMargin(headerMargin);
-      setDetailMargin(detailMargin);
-      setDetailSubMargin(detailSubMargin + 8);
-    }
-  }, [headerSearchProps, headerInputProps, detailSearchProps, detailInputProps, detailSubSearchProps, detailSubInputProps]);
-
-  // useLayoutEffect(() => {
-    
-  // }, [templateOrientation]);
   //#endregion
 
   
   //#region 🔶 렌더러에 작성될 엘리먼트 정의
   const headerGridElement = useMemo(() => {
+    const _headerGridHeight = headerGrid?.height ?? templateOrientation === 'filledLayoutRight' ? fixHeight : headerGridHeight;
     return (
       <>
-        <div id='HEADER_INPUT_ELEMENT'>
         {headerSearchProps != null ? headerSearchboxVisible ? <Searchbox {...headerSearchProps}/> : null : null}
         {headerInputProps != null ? headerInputboxVisible ? <InputGroupbox {...headerInputProps} /> : null : null}
-        </div>
         <Container>
-          <Datagrid {...headerGrid} ref={headerGridRef} height={headerGridHeight} gridMode={headerGridMode}/>
+          <Datagrid {...headerGrid} ref={headerGridRef} height={_headerGridHeight} gridMode={headerGridMode}/>
         </Container>
       </>
     );
   }, [headerSearchProps, headerSearchboxVisible, headerSearchProps, headerGrid, headerGridRef, headerGridHeight, headerGridMode]);
 
   const detailGridElement = useMemo(() => {
+    const _detailGridHeight = detailGrid?.height ?? templateOrientation !== 'filledLayoutRight' ? fixHeight : detailGridHeight;
     return (
       <>
-        <div id='DETAIL_INPUT_ELEMENT'>
         {detailSearchProps != null ? detailSearchboxVisible ? <Searchbox {...detailSearchProps}/> : null : null}
         {detailInputProps != null ? detailInputboxVisible ? <InputGroupbox {...detailInputProps} /> : null : null}
-        </div>
         <Container>
-          <Datagrid {...detailGrid} ref={detailGridRef} height={detailGridHeight} gridMode={detailGridMode}/>
+          <Datagrid {...detailGrid} ref={detailGridRef} height={_detailGridHeight} gridMode={detailGridMode}/>
         </Container>
       </>
     );
   }, [detailSearchProps, detailSearchboxVisible, detailSearchProps, detailInputProps, detailGridRef, detailGridHeight, detailGridMode]);
 
   const detailSubGridElement = useMemo(() => {
+    const _detailSubGridHeight = detailSubGridHeight;
     return (
       <>
-        <div id='DETAIL_SUB_INPUT_ELEMENT'>
         {detailSubSearchProps != null ? detailSubSearchboxVisible ? <Searchbox {...detailSubSearchProps}/> : null : null}
         {detailSubInputProps != null ? detailSubInputboxVisible ? <InputGroupbox {...detailSubInputProps} /> : null : null}
-        </div>
         <Container>
-          <Datagrid {...detailSubGrid} ref={detailSubGridRef} height={detailSubGridHeight} gridMode={detailSubGridMode}/>
+          <Datagrid {...detailSubGrid} ref={detailSubGridRef} height={_detailSubGridHeight} gridMode={detailSubGridMode}/>
         </Container>
       </>
     );
@@ -481,7 +403,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
 
 
   return (
-    <div id='TEMPLATE_TRIPLE_GRID' style={{minHeight:minHeight}}>
+    <>
       {
         !permissions ?
           <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
@@ -489,7 +411,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
         <>
         <Row gutter={[16,0]}>
           {props.templateType !== 'report' ?
-            <Div id='TEMPLATE_BUTTONS' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
+            <Div id='template-buttons' divType='singleGridButtonsDiv' optionType={{singleGridtype:'view'}}> 
               <Space size={[5,0]}>
                 {btnDelete}
                 {btnUpdate}
@@ -672,6 +594,6 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
         </Row>
         </>
       }
-    </div>
+    </>
   );
 }
