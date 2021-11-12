@@ -1,20 +1,18 @@
 import React, { lazy, Suspense, useLayoutEffect, useState } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { PgInvStockReject, PgLogin } from "./components/pages";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
-import { getMenus } from "./functions";
+import { getMenus, setLogout } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
 
 
-
 const Layout = lazy(() => import('./components/UI/layout').then(module=>({default:module.Layout})));
-
 
 
 const App = () => {
@@ -25,8 +23,6 @@ const App = () => {
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
   const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
-  const setUser = useSetRecoilState(authStore.user.state);
-  const setLogout = () => {sessionStorage.removeItem('userInfo'); setUser(undefined);}
 
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
@@ -136,16 +132,5 @@ const LoggedIn = (props: any) => {
   );
 };
 
-
-/**
- *  인증전의 렌더링될 컴포넌트.
- */
-const LoggedOut = () => {
-  return (
-    <>
-      <PgLogin /> 
-    </>
-  );
-};
 
 export default App;
