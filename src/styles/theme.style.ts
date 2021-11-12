@@ -92,9 +92,6 @@ export const GlobalStyles = createGlobalStyle`
 .ant-radio-wrapper {
   font-size: ${Fonts.fontSize_label};
 }
-.ant-card-bordered{
-  border: 1px solid ${Colors.bg_radio_border};
-}
 //#endregion
 
 //#region 🌵RADIO 
@@ -366,13 +363,9 @@ tr.tui-grid-row{
   text-align: right;
 }
 
-// RADIO GROUP (폰트)
-.ant-card {
-  font-size: ${Fonts.fontSize_label};
-  // RADIO GROUP
-  &.ant-card-bordered .ant-card-body {
-    padding: 2.625px 5px;
-  }
+// RADIO GROUP
+.ant-card-bordered .ant-card-body {
+  padding: 2.625px 5px;
 }
 //#endregion
 
@@ -549,24 +542,33 @@ div.tui-grid-content-area.tui-grid-has-summary-bottom {
 //#endregion
 
 //#region 🌵ANTD - CARD
-div.ant-card-head {
-  padding-left: 5px;
-  font-size: ${Fonts.fontSize_default_md};
-  font-weight: bold;
-  color: #1890FF; //#587BD2;
-  min-height: 30px;
-}
+div.ant-card.container {
+  font-size: ${Fonts.fontSize_label};
 
-div.ant-card-head-title {
-  padding: 4px 0 0 0 !important;
-}
+  & .ant-card-head {
+    padding-left: 5px;
+    font-size: ${Fonts.fontSize_default_md};
+    font-weight: bold;
+    color: #1890FF; //#587BD2;
+    min-height: 30px;
+  }
 
-div.ant-card > .ant-card-body {
-  padding: 4px 4px 4px 4px !important;
-  div{
-    margin-top: 0px;
+  & .ant-card-head-title {
+    padding: 4px 0 0 0 !important;
+  }
+
+  & .ant-card > .ant-card-body {
+    padding: 4px 4px 4px 4px !important;
+    div{
+      margin-top: 0px;
+    }
+  }
+
+  & .ant-card-bordered{
+    border: 1px solid ${Colors.bg_radio_border};
   }
 }
+
 //#endregion
 
 // 그리드 total을 구분하기 위한 배경색
