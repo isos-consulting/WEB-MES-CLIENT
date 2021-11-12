@@ -48,8 +48,6 @@ export * from './std/proc-reject.page';
 export * from './std/vendor-price.page';
 export * from './std/customer-price.page';
 export * from './std/routing.page';
-export * from './std/routing-resource.page';
-export * from './std/routing-working.page';
 
 export * from './prd/return.page';
 export * from './prd/return-report.page';
