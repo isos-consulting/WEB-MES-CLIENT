@@ -1,5 +1,5 @@
 import React from "react";
-import { ResponsiveLine } from "nivo";
+import { ResponsiveLine } from "@nivo/line";
 import Props from './graph-line.ui.type';
 
 

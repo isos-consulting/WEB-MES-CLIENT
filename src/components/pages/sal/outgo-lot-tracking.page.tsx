@@ -95,7 +95,7 @@ export const PgSalOutgoLotTracking = () => {
         datagridSettings: {
           gridId: 'OUTGO_REPORT',
           columns: [
-            {header: '출하일자', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
+            {header: '출하일자', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'date'},
             {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
             {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.M, filter:'text'},
             {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},

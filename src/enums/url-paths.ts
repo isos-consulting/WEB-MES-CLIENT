@@ -1594,7 +1594,18 @@ const URL_PATH = {
         REWORK_DISASSEMBLES: '/qms/rework-disassembles'
       }
     }
-
+  },
+  DAS: {
+    WORK_COMPARED_ORDER:{
+      GET:{
+        WORK_COMPARED_ORDER:'/das/work-compared-order'
+      }
+    },
+    PASSED_INSP_RESULT:{
+      GET:{
+        PASSED_INSP_RESULT:'/das/passed-insp-result'
+      }
+    }
   }
 }
 
@@ -1605,3 +1616,4 @@ export const URL_PATH_PRD = URL_PATH.PRD
 export const URL_PATH_SAL = URL_PATH.SAL
 export const URL_PATH_STD = URL_PATH.STD
 export const URL_PATH_QMS = URL_PATH.QMS
+export const URL_PATH_DAS = URL_PATH.DAS

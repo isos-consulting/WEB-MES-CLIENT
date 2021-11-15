@@ -83,6 +83,7 @@ export const GlobalStyles = createGlobalStyle`
   row-gap: 0px !important;
   margin-left: 0px !important;
   margin-right: 0px !important;
+  margin-top: 10px !important;
 }
 
 //#region 🌵CHECKBOX GROUP, RADIO GROUP 

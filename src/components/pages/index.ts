@@ -85,12 +85,14 @@ export * from './sal/return.page';
 export * from './sal/return-report.page';
 
 export * from './inv/move.page';
+export * from './inv/move-report.page';
 export * from './inv/store.page';
 export * from './inv/store-report.page';
 export * from './inv/stock-reject.page';
 export * from './inv/stores-total-history.page';
 export * from './inv/stores-type-history.page';
 export * from './inv/stores-individual-history.page';
+export * from './inv/stores-stocks.page';
 
 export * from './out/release.page';
 export * from './out/release-report,page';

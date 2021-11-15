@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveBar } from "nivo";
+import { ResponsiveBar } from "@nivo/bar";
 import Props from './graph-bar.ui.type';
 import { setNumberToDigit } from '~functions/util.function';
 
@@ -20,7 +20,7 @@ const BarGraph: React.FC<Props> = (props) => {
       margin={{ top: 70, right: 140, bottom: (props.bottomMargin || 50), left: 100 }}
       padding={0.3}
       groupMode={props.groupMode}
-      layout={props.layout}
+      layout={props.layout || 'vertical'}
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
       colors={['#3C608B', '#E0483E', '#F1A838', '#1A85B9', '#01737C']} 
