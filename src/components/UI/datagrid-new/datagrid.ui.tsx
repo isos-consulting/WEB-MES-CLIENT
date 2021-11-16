@@ -557,7 +557,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     
     if (!props?.disabledAutoDateColumn) {
       if (chkCreateAtColumn === false) {
-        newColumns.push({header:'등록일시', name:'created_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, filter:{type:'date', options:{format:'yyyy-MM-dd'}},
+        newColumns.push({
+          header:'등록일시', name:'created_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true,
+          filter:{
+            type:'date', 
+            showClearBtn: true,
+            options:{format:'yyyy-MM-dd'}
+          },
           renderer:{
             type:DatagridDateRenderer,
             options: {
@@ -566,11 +572,22 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             }
           }
         });
-        newColumns.push({header:'등록자', name:'created_nm', width:100, editable: false, noSave:true, align:'center', format:'text', resizable:true, sortable:true, filter:'text',});
+        newColumns.push({
+          header:'등록자', name:'created_nm', width:100, editable: false, noSave:true, align:'center', format:'text', resizable:true, sortable:true,
+          filter: {
+            type: 'text',
+            showClearBtn: true,
+          },
+        });
       }
 
       if (chkUpdateAtColumn === false) {
-        newColumns.push({header:'수정일시', name:'updated_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, filter:'text', 
+        newColumns.push({
+          header:'수정일시', name:'updated_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, 
+          filter: {
+            type: 'text',
+            showClearBtn: true,
+          },
           renderer:{
             type:DatagridDateRenderer,
             options: {
@@ -579,7 +596,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             }
           }
         });
-        newColumns.push({header:'수정자', name:'updated_nm', width:100, editable: false, noSave:true, align:'center', format:'text', resizable:true, sortable:true, filter:'text'});
+        newColumns.push({
+          header:'수정자', name:'updated_nm', width:100, editable: false, noSave:true, align:'center', format:'text', resizable:true, sortable:true, 
+          filter: {
+            type: 'text',
+            showClearBtn: true,
+          },
+        });
       }
     }
 
