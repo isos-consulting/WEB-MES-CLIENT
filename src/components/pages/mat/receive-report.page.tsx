@@ -5,7 +5,7 @@ import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPag
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 
 
@@ -28,7 +28,10 @@ export const PgMatReceiveReport = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
-  });
+    onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
+    }
+  );
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -251,9 +254,9 @@ export const PgMatReceiveReport = () => {
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
-          {header: '발주수량', name:'order_qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'qty', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '단가', name:'price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'order_qty', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '입하수량', name:'qty', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '단가', name:'price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '부가세액', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
           {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
@@ -301,28 +304,33 @@ export const PgMatReceiveReport = () => {
   
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
-    if (grid?.gridInfo?.data?.length <= 0) return;
-    const curculationColumnNames = ['order_qty', 'qty', 'price', 'supply_price', 'tax', 'total_price', 'income_qty', 'reject_qty'];
-    const standardNames = (
-      searchInfo.values?.sort_type === 'prod' ?
-        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
-      : searchInfo.values?.sort_type === 'partner' ?
-        ['partner_uuid', 'partner_nm']
-      : searchInfo.values?.sort_type === 'date' ?
-        ['reg_date']
-      : null
-    );
-    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
-      standardNames: standardNames,
-      curculations: [
-        {names: curculationColumnNames, type:'sum'},
-      ],
-    }).subTotals || [];
-
-    subGrid.setGridData(subGridData);
-
+    setSubTotalDatas(grid?.gridInfo?.data);
   }, [subColumns, grid?.gridInfo?.data]);
 
+  const setSubTotalDatas = (data:object[]) => {
+    if (data?.length > 0) {
+      const curculationColumnNames = ['order_qty', 'qty', 'price', 'supply_price', 'tax', 'total_price', 'income_qty', 'reject_qty'];
+      const standardNames = (
+        searchInfo.values?.sort_type === 'prod' ?
+          ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
+        : searchInfo.values?.sort_type === 'partner' ?
+          ['partner_uuid', 'partner_nm']
+        : searchInfo.values?.sort_type === 'date' ?
+          ['reg_date']
+        : null
+      );
+      const subGridData = convDataToSubTotal(data, {
+        standardNames: standardNames,
+        curculations: [
+          {names: curculationColumnNames, type:'sum'},
+        ],
+      }).subTotals || [];
+
+      subGrid.setGridData(subGridData);
+    } else {
+      subGrid.setGridData([]);
+    };
+  }
 
   /** 검색 */
   const onSearch = (values) => {

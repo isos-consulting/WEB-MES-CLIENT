@@ -295,26 +295,29 @@ export const PgMatOrderReport = () => {
   
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
-    if (grid?.gridInfo?.data?.length <= 0) return;
-    const curculationColumnNames = ['qty', 'supply_price', 'tax', 'total_price', 'receive_qty', 'balance'];
-    const standardNames = (
-      searchInfo.values?.sort_type === 'prod' ?
-        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
-      : searchInfo.values?.sort_type === 'partner' ?
-        ['partner_uuid', 'partner_nm']
-      : searchInfo.values?.sort_type === 'date' ?
-        ['reg_date']
-      : null
-    );
-    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
-      standardNames: standardNames,
-      curculations: [
-        {names: curculationColumnNames, type:'sum'},
-      ],
-    }).subTotals || [];
+    
+    if (grid?.gridInfo?.data?.length > 0) {
+      const curculationColumnNames = ['qty', 'supply_price', 'tax', 'total_price', 'receive_qty', 'balance'];
+      const standardNames = (
+        searchInfo.values?.sort_type === 'prod' ?
+          ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
+        : searchInfo.values?.sort_type === 'partner' ?
+          ['partner_uuid', 'partner_nm']
+        : searchInfo.values?.sort_type === 'date' ?
+          ['reg_date']
+        : null
+      );
+      const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+        standardNames: standardNames,
+        curculations: [
+          {names: curculationColumnNames, type:'sum'},
+        ],
+      }).subTotals || [];
 
-    subGrid.setGridData(subGridData);
-
+      subGrid.setGridData(subGridData);
+    } else {
+      subGrid.setGridData([]);
+    }
   }, [subColumns, grid?.gridInfo?.data]);
 
 

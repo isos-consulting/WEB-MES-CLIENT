@@ -3,20 +3,37 @@ import { getData } from "~/functions";
 import { Card, Col, Row, Statistic } from 'antd';
 import { BarGraph, PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
+import dayjs from 'dayjs';
 
 export const Dashboard = () => {
   const [productionData, setProductionData] = useState<object>([]);
   const [qualityData, setQualityData] = useState<object>([]);
+  const [delayedSalOrderData, setDelayedSalOrderData] = useState<object>([]);
+  const [operatingeRateData, setOperatingeRateData] = useState<object>([]);
+  const [deliveredInWeekData, setDeliveredInWeekData] = useState<object>([]);
 
   useLayoutEffect(() => {
     getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
       if (res) {
         [{"id": "id","value": 0},{"id": "make2","value": 1}]
-      }
-      setProductionData(res)
+      };
+      setProductionData(res);
     });
     getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
-      setQualityData(res)
+      setQualityData(res);
+    });
+    getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
+      setDelayedSalOrderData(res);
+    });
+    getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
+      setOperatingeRateData(res);
+    });
+    getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
+      const datas:object[] = res.map((el)=> {
+        el['date'] = dayjs(el.date).format('YYYY-MM-DD')
+        return el
+      });
+      setDeliveredInWeekData(res);
     });
 
   }, []);
@@ -39,16 +56,16 @@ export const Dashboard = () => {
             title='품질실적'
             extra={<a href="#">{'상세보기 >'}</a>}
             height={180}
-            data={qualityData}
+          data={qualityData}
           />
         </Col>
         <Col span={6}>
           <PercentPie 
             id='prod'
-            title='납품현황'
+            title='미납현황'
             extra={<a href="#">{'상세보기 >'}</a>}
             height={180}
-            data={[]}
+            data={delayedSalOrderData}
           />
         </Col>
         <Col span={6}>
@@ -57,7 +74,7 @@ export const Dashboard = () => {
             title='가동율'
             extra={<a href="#">{'상세보기 >'}</a>}
             height={180}
-            data={[]}
+            data={operatingeRateData}
           />
         </Col>
       </Row>
@@ -70,16 +87,8 @@ export const Dashboard = () => {
           >
             <div style={{height:250}}>
               <BarGraph 
-                data={[
-                  {date:'2021-11-12', order:1000, result:800},
-                  {date:'2021-11-13', order:1000, result:800},
-                  {date:'2021-11-14', order:1000, result:800},
-                  {date:'2021-11-15', order:1000, result:800},
-                  {date:'2021-11-16', order:1000, result:800},
-                  {date:'2021-11-17', order:1000, result:800},
-                  {date:'2021-11-18', order:1000, result:800},
-                ]}
-                dataKeys={['order','result']}
+                data={deliveredInWeekData}
+                dataKeys={['total','delivered']}
                 indexBy='date'
                 groupMode='grouped'
                 colors={['#E0483E','#F4C2BE']}
@@ -124,11 +133,10 @@ const PercentPie:React.FC<TPercentPie> = (props) => {
   } else {
     colors = ['#788EE0', '#788EE03F' ];
     isInteractive = true;
-    if(pieData[0]?.value){
+    if (pieData[0]?.value) {
       centerStr = (pieData[0]?.value * 100).toFixed(2) + '%'
     }
-    statisticData = 
-    [
+    statisticData = [
       {title: pieData[0]?.label, value: Number((pieData[0]?.value * 100).toFixed(2)), unit: '%'},
       {title: pieData[1]?.label, value: Number((pieData[1]?.value * 100).toFixed(2)), unit: '%'},
     ]

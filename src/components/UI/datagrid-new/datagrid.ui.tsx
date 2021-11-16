@@ -609,7 +609,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   }, [props.header, columns]);
   //#endregion
 
-
   //#region 🔶컬럼 옵션 세팅
   const columnOptions = useMemo(() => {
     let result = {};
@@ -663,14 +662,18 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       {mapKey: 'sum', contetns: sums},
     ]
 
+
+
     items?.forEach((el) => {
-      const {mapKey, contetns} = el;
       
+      
+      const {mapKey, contetns} = el;
       contetns?.forEach((columnName) => {
+        const decimal:number = columns?.find(el => el?.name === columnName)?.decimal | 0
         columnContent[columnName] = {
           template: (valueMap) => {
             const value = valueMap[mapKey];
-            return `<div style='text-align:right;'>${setNumberToDigit(value)}</div>`;
+            return `<div style='text-align:right;'>${setNumberToDigit(value.toFixed(decimal))}</div>`;
           }
         }
       });
@@ -687,9 +690,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     });
 
     result['columnContent'] = columnContent;
-
     return result;
-  }, [props.summary, props.summaryOptions]);
+  }, [props.summary, props.summaryOptions, columns]);
   //#endregion
 
 
@@ -1794,6 +1796,17 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       instance.off('beforeUnfilter');
     };
   }, [gridRef, onBeforeUnfilter]);
+
+  useLayoutEffect(() => {
+    // 이벤트 세팅
+    const instance = gridRef.current.getInstance();
+    if(props.onAfterFilter){
+      instance.on('afterFilter', props.onAfterFilter);
+    }
+    return () => {
+      instance.off('afterFilter');
+    };
+  }, [gridRef, props.onAfterFilter]);
 
   useLayoutEffect(() => {
     // combo 포맷을 사용하는 컬럼에 적용하기 위해 콤보리스트를 세팅
