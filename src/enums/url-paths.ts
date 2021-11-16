@@ -1605,7 +1605,22 @@ const URL_PATH = {
       GET:{
         PASSED_INSP_RESULT:'/das/passed-insp-result'
       }
-    }
+    },
+    DELAYED_SAL_ORDER:{
+      GET:{
+        DELAYED_SAL_ORDER:'/das/delayed-sal-order'
+      }
+    },
+    OPERATING_RATE:{
+      GET:{
+        OPERATING_RATE:'/das/operating-rate'
+      }
+    },
+    DELIVERED_IN_WEEK:{
+      GET:{
+        DELIVERED_IN_WEEK:'/das/delivered-in-week'
+      }
+    },
   }
 }
 
