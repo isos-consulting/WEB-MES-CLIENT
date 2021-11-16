@@ -23,21 +23,30 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
   const detailSearchProps = props.searchProps[1];
   const detailInputProps = props.inputProps[1];
 
-  const headerPopup = props.popupGridInfos[0];
+  const headerPopup = {
+    ...props.popupGridInfos[0],
+    disabledAutoDateColumn: props.popupGridInfos[0]?.disabledAutoDateColumn == null ? true : props.popupGridInfos[0]?.disabledAutoDateColumn,
+  };
   const headerPopupRef = props.popupGridRefs[0];
   const headerPopupVisible = props.popupVisibles[0];
   const setHeaderPopupVisible = props.setPopupVisibles[0];
   const headerPopupInputProps = props.popupInputProps ? props.popupInputProps[0] : null;
   const headerPopupSearchProps = props.popupSearchProps ? props.popupSearchProps[0] : null;
 
-  const detailPopup = props.popupGridInfos[1];
+  const detailPopup = {
+    ...props.popupGridInfos[1],
+    disabledAutoDateColumn: props.popupGridInfos[1]?.disabledAutoDateColumn == null ? true : props.popupGridInfos[1]?.disabledAutoDateColumn,
+  };
   const detailPopupRef = props.popupGridRefs[1];
   const detailPopupVisible = props.popupVisibles[1];
   const setDetailPopupVisible = props.setPopupVisibles[1];
   const detailPopupInputProps = props.popupInputProps ? props.popupInputProps[1] : null;
   const detailPopupSearchProps = props.popupSearchProps ? props.popupSearchProps[1] : null;
   
-  const editPopup = props.popupGridInfos[2];
+  const editPopup = {
+    ...props.popupGridInfos[2],
+    disabledAutoDateColumn: props.popupGridInfos[2]?.disabledAutoDateColumn == null ? true : props.popupGridInfos[2]?.disabledAutoDateColumn,
+  };
   const editPopupRef = props.popupGridRefs[2];
   const editPopupVisible = props.popupVisibles[2];
   const setEditPopupVisible = props.setPopupVisibles[2];

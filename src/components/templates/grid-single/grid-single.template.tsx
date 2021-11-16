@@ -18,7 +18,10 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
   const searchProps = props.searchProps;
   const inputProps = props.inputProps;
   
-  const gridPopup = props.popupGridInfo[0];
+  const gridPopup = {
+    ...props.popupGridInfo[0],
+    disabledAutoDateColumn: props.popupGridInfo[0]?.disabledAutoDateColumn == null ? true : props.popupGridInfo[0]?.disabledAutoDateColumn,
+  };
   const gridPopupRef = props.popupGridRef[0];
   const gridPopupVisible = props.popupVisible[0];
   const setGridPopupVisible = props.setPopupVisible[0];
@@ -26,7 +29,10 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
   const popupInputProps = props.popupInputProps ? props.popupInputProps[0] : null;
   const onNewDataPopupAfterOk = props.onPopupAfterOk ? props.onPopupAfterOk[0] : null;
   
-  const gridUpdatePopup = props.popupGridInfo[1];
+  const gridUpdatePopup = {
+    ...props.popupGridInfo[1],
+    disabledAutoDateColumn: props.popupGridInfo[1]?.disabledAutoDateColumn == null ? true : props.popupGridInfo[1]?.disabledAutoDateColumn,
+  };
   const gridUpdatePopupRef = props.popupGridRef[1];
   const gridUpdatePopupVisible = props.popupVisible[1];
   const setGridUpdatePopupVisible = props.setPopupVisible[1];
@@ -192,6 +198,23 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
   }, [buttonActions, permissions]);
   //#endregion
 
+
+  const gridElement = useMemo(() => {
+    return (
+      <>
+      {inputProps != null ? inputboxVisible ? <InputGroupbox {...inputProps} /> : null : null}
+      {subTotalGrid && !subTotalGrid?.hidden ?
+        <Container id='SUB_GRID_CONTAINER' title={'소계' + (props.subTitle ? (' - ' + props.subTitle) : '')}>
+          <Datagrid {...subTotalGrid} ref={subTotalGridRef} height={230}/>
+        </Container>
+      : null}
+      <Container>
+        <Datagrid {...grid} height={gridHeight} ref={gridRef} gridMode={gridMode} />
+      </Container>
+      </>
+    );
+  }, [inputProps, inputboxVisible, subTotalGrid, props.subTitle, subTotalGridRef, grid, gridHeight, gridRef, gridMode]);
+
   
   return (
     !permissions ?
@@ -214,15 +237,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
       : null}
 
       <div style={props.templateType === 'report' ? {marginTop:-8, width:'100%'} : {width:'100%'}}>{searchProps != null ? searchboxVisible ? <Searchbox {...searchProps}/> : null : null}</div>
-      {inputProps != null ? inputboxVisible ? <InputGroupbox {...inputProps} /> : null : null}
-      {subTotalGrid && !subTotalGrid?.hidden ?
-        <Container id='SUB_GRID_CONTAINER' title={'소계' + (props.subTitle ? (' - ' + props.subTitle) : '')}>
-          <Datagrid {...subTotalGrid} ref={subTotalGridRef} height={230}/>
-        </Container>
-      : null}
-      <Container>
-        <Datagrid {...grid} height={gridHeight} ref={gridRef} gridMode={gridMode} />
-      </Container>
+      {gridElement}
 
       {gridPopup == null ? null : 
         <GridPopup
