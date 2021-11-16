@@ -1,8 +1,8 @@
 import React from 'react';
 import {Props as GridProps} from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
-import {ColumnOptions} from 'tui-grid/types';
-import {ModifiedRows} from 'tui-grid/types';
+import {ColumnOptions, ModifiedRows} from 'tui-grid/types';
+import { GridEventProps } from 'tui-grid/types/event';
 import { IButtonProps, IModalProps } from '~/components/UI';
 
 
@@ -226,7 +226,7 @@ export interface IGridComboInfo {
   /** 콤보박스 값 배열 */
   itemList?: IGridComboItem[];
 
-  dataApiSettings?: TApiSettings | ((ev?) => TApiSettings);
+  dataApiSettings?: TApiSettings | ((ev?:GridEventProps) => TApiSettings);
 };
 
 
@@ -248,7 +248,7 @@ export interface IGridPopupInfo {
   
   popupKey?: TPopupKey;
 
-  dataApiSettings?: TApiSettings | ((ev?) => TApiSettings);
+  dataApiSettings?: TApiSettings | ((ev?:GridEventProps) => TApiSettings);
 
   columns?: IGridColumn[];
 
@@ -257,6 +257,11 @@ export interface IGridPopupInfo {
   // actionType?: TGridPopupAction;
 };
 
+type TApiOkEvent = {
+  popupGrid: any,
+  parentGrid: any,
+  ev: GridEventProps,
+}
 export type TApiSettings = {
   /** 모달 커스텀 */
   modalProps?: IModalProps,
@@ -268,6 +273,6 @@ export type TApiSettings = {
   setData?: (value: React.SetStateAction<any[]>) => void,
   /** API 요청 여부를 결정하는 callback함수 */
   onInterlock?: () => boolean;
-  onBeforeOk?: ({popupGrid, parentGrid, ev}, checkedRows) => boolean;
-  onAfterOk?: ({popupGrid, parentGrid, ev}, checkedRows) => void;
+  onBeforeOk?: (options:TApiOkEvent, checkedRows) => boolean;
+  onAfterOk?: (options:TApiOkEvent, checkedRows) => void;
 };
