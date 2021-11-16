@@ -28,149 +28,154 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
   const onSave = useMemo(() =>
     async function() {
-      setLoading(true);
-      const instance = gridRef?.current?.getInstance();
-      instance?.finishEditing();
-      
+      try {
+        setLoading(true);
 
-      // 단순 수정 이력 배열을 저장
-      if (props.saveType === 'basic') {
-        const modifiedRows = await getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
+        const instance = gridRef?.current?.getInstance();
+        instance?.finishEditing();
+        
 
-        // 저장 가능한지 체크
-        const chk:boolean = await checkGridData(props.columns, modifiedRows);
+        // 단순 수정 이력 배열을 저장
+        if (props.saveType === 'basic') {
+          const modifiedRows = await getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
 
-        if (chk === false) return;
+          // 저장 가능한지 체크
+          const chk:boolean = await checkGridData(props.columns, modifiedRows);
 
-        // 신규 추가된 데이터들을 api에 전송
-        saveGridData(modifiedRows, props.columns, props.saveUriPath, props.saveParams).then((result) => {
-          const {success, count, savedData} = result;
-          if (success === false) return;
-          
-          // 팝업 닫기
-          if (props?.visible == null)
-            setVisible(false);
+          if (chk === false) return;
 
-          if (props?.onAfterOk) 
-            props.onAfterOk(true, savedData);
+          // 신규 추가된 데이터들을 api에 전송
+          saveGridData(modifiedRows, props.columns, props.saveUriPath, props.saveParams).then((result) => {
+            const {success, count, savedData} = result;
+            if (success === false) return;
             
-          // message.info('저장이 완료되었습니다.');
-
-        }).catch((e) => {
-          console.log('Error', e);
-          
-          if (props?.onAfterOk)
-            props.onAfterOk(false, null);
-        });
-
-
-      // {header, detail} 형식으로 저장
-      } else if (props.saveType === 'headerInclude') {
-        let methodType:'delete' | 'post' | 'put' | 'patch' = 'post';
-        let detailDatas = [];
-
-        const modifiedRows = getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
-
-        const {createdRows, updatedRows, deletedRows} = modifiedRows;
-
-        if (createdRows?.length > 0) {
-          detailDatas = createdRows;
-          methodType = 'post';
-
-        } else if (updatedRows?.length > 0) {
-          detailDatas = updatedRows;
-          methodType = 'put';
-
-        } else if (deletedRows?.length > 0) {
-          detailDatas = deletedRows;
-          methodType = 'delete';
-        }
-
-        const chk:boolean = await checkGridData(props.columns, modifiedRows);
-
-        if (chk !== true) {
-          return;
-        }
-
-        // 옵션 데이터 추가
-        for (let i = 0; i < detailDatas.length; i++) {
-          detailDatas[i]['factory_uuid'] = getUserFactoryUuid();
-
-          // alias에 따라 키값 변경
-          props.columns?.forEach((column) => {
-            if (column?.alias != null) {
-              detailDatas[i][column?.alias] = detailDatas[i][column?.name];
-              delete detailDatas[i][column?.name];
-            }
-          });
-        }
-
-        let optionValues:object = {};
-        // 헤더 데이터 추가
-        if (props.inputProps) {
-          if (Array.isArray(props.inputProps)) {
-            props.inputProps?.forEach(el => {
-              optionValues = {...optionValues, ...el};
-            });
-
-          } else {
-            optionValues = props.inputProps?.innerRef?.current?.values;
-          }
-        } else {
-          optionValues = props.saveOptionParams;
-        }
-        // const optionValues = props.inputProps?.innerRef?.current?.values || props.saveOptionParams;
-        const optionKeys = Object.keys(optionValues);
-
-        let headerData = {}
-        optionKeys.forEach((optionKey) => {
-          const alias = props.inputProps?.inputItems?.find(el => el?.id === optionKey)?.alias;
-
-          if (alias)
-            headerData[alias] = optionValues[optionKey];
-          else
-            headerData[optionKey] = optionValues[optionKey];
-        });
-
-        headerData['factory_uuid'] = getUserFactoryUuid();
-
-        // 최종적으로 저장될 데이터
-        const saveData = {
-          header: headerData,
-          details: detailDatas,
-        }
-
-        if (headerData?._saveType != null) {
-          methodType = headerData['_saveType'];
-        }
-
-
-        let response = null;
-        // 저장
-        await executeData(saveData, props.saveUriPath, methodType, 'data').then((res) => {
-          const {success, datas} = res;
-          response = datas?.raws;
-
-          if (success === true) {
             // 팝업 닫기
             if (props?.visible == null)
               setVisible(false);
 
-            if (props?.onAfterOk)
-              props.onAfterOk(true, response);
+            if (props?.onAfterOk) 
+              props.onAfterOk(true, savedData);
+              
+            // message.info('저장이 완료되었습니다.');
 
-            message.info('저장이 완료되었습니다.');
+          }).catch((e) => {
+            console.log('Error', e);
+            
+            if (props?.onAfterOk)
+              props.onAfterOk(false, null);
+          });
+
+
+        // {header, detail} 형식으로 저장
+        } else if (props.saveType === 'headerInclude') {
+          let methodType:'delete' | 'post' | 'put' | 'patch' = 'post';
+          let detailDatas = [];
+
+          const modifiedRows = getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
+
+          const {createdRows, updatedRows, deletedRows} = modifiedRows;
+
+          if (createdRows?.length > 0) {
+            detailDatas = createdRows;
+            methodType = 'post';
+
+          } else if (updatedRows?.length > 0) {
+            detailDatas = updatedRows;
+            methodType = 'put';
+
+          } else if (deletedRows?.length > 0) {
+            detailDatas = deletedRows;
+            methodType = 'delete';
           }
 
-        }).catch(e => {
-          console.log('Error',e);
+          const chk:boolean = await checkGridData(props.columns, modifiedRows);
 
-          if (props?.onAfterOk)
-            props.onAfterOk(false, response);
-        });
+          if (chk !== true) {
+            return;
+          }
+
+          // 옵션 데이터 추가
+          for (let i = 0; i < detailDatas.length; i++) {
+            detailDatas[i]['factory_uuid'] = getUserFactoryUuid();
+
+            // alias에 따라 키값 변경
+            props.columns?.forEach((column) => {
+              if (column?.alias != null) {
+                detailDatas[i][column?.alias] = detailDatas[i][column?.name];
+                delete detailDatas[i][column?.name];
+              }
+            });
+          }
+
+          let optionValues:object = {};
+          // 헤더 데이터 추가
+          if (props.inputProps) {
+            if (Array.isArray(props.inputProps)) {
+              props.inputProps?.forEach(el => {
+                optionValues = {...optionValues, ...el};
+              });
+
+            } else {
+              optionValues = props.inputProps?.innerRef?.current?.values;
+            }
+          } else {
+            optionValues = props.saveOptionParams;
+          }
+          // const optionValues = props.inputProps?.innerRef?.current?.values || props.saveOptionParams;
+          const optionKeys = Object.keys(optionValues);
+
+          let headerData = {}
+          optionKeys.forEach((optionKey) => {
+            const alias = props.inputProps?.inputItems?.find(el => el?.id === optionKey)?.alias;
+
+            if (alias)
+              headerData[alias] = optionValues[optionKey];
+            else
+              headerData[optionKey] = optionValues[optionKey];
+          });
+
+          headerData['factory_uuid'] = getUserFactoryUuid();
+
+          // 최종적으로 저장될 데이터
+          const saveData = {
+            header: headerData,
+            details: detailDatas,
+          }
+
+          if (headerData?._saveType != null) {
+            methodType = headerData['_saveType'];
+          }
+
+
+          let response = null;
+          // 저장
+          await executeData(saveData, props.saveUriPath, methodType, 'data').then((res) => {
+            const {success, datas} = res;
+            response = datas?.raws;
+
+            if (success === true) {
+              // 팝업 닫기
+              if (props?.visible == null)
+                setVisible(false);
+
+              if (props?.onAfterOk)
+                props.onAfterOk(true, response);
+
+              message.info('저장이 완료되었습니다.');
+            }
+
+          }).catch(e => {
+            console.log('Error',e);
+
+            if (props?.onAfterOk)
+              props.onAfterOk(false, response);
+          });
+        }
+      } catch {
+
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     }
   , [props.onOk, props.gridMode, gridRef, props.columns, props.saveUriPath, props.searchParams, props.saveOptionParams, props?.setParentData, props.parentGridRef, props.inputProps]);
 
