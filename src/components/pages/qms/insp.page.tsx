@@ -148,7 +148,6 @@ export const PgQmsInsp = () => {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     gridMode: detailDefaultGridMode,
-    height: 250
   });
 
   const detailSubGrid = useGrid('DETAIL_SUB_GRID', [
