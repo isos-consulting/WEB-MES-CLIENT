@@ -845,26 +845,30 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅행 취소 : 포커스된 행을 하나 제거합니다. (기존 데이터에 영향 없음) */
   const onCancelRow = useCallback(
     () => {
-      const {rowKey, columnName} = gridRef.current.getInstance().getFocusedCell();
-      const rowIndex = gridRef.current.getInstance()?.getIndexOfRow(rowKey);
-      const columnIndex = gridRef.current.getInstance()?.getIndexOfColumn(columnName);
+      const instance = gridRef.current.getInstance();
+      const {rowKey, columnName} = instance.getFocusedCell();
+      const rowIndex = instance?.getIndexOfRow(rowKey);
+      const columns = instance?.store?.column?.visibleColumns;
+      const columnIndex = columns?.findIndex(el => el?.name === columnName);
       
       if (rowKey === null) {
         message.warn('취소할 행을 선택해주세요.');
       }
   
       // 행 제거
-      gridRef.current.getInstance().removeRow(rowKey, {removeOriginalData:false});
+      instance.removeRow(rowKey, {removeOriginalData:false});
   
       // 다음 행으로 포커스 이동
       try {
+        if (instance.getRowCount() <= 0) return;
+
         let nextRowIndex = Number(rowIndex)-1;
   
         if (nextRowIndex < 0) {
-          return;
+          nextRowIndex = 0;
         }
   
-        gridRef.current.getInstance().focusAt(nextRowIndex, columnIndex-1);
+        instance.focusAt(nextRowIndex, columnIndex);
   
       } catch(e) {
         console.error('onCancelRow', e);
@@ -1921,6 +1925,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         onUncheck={props.onUncheck || onUncheck}
         onCheckAll={props.onCheckAll || onCheckAll}
         onUncheckAll={props.onUncheckAll || onUncheckAll}
+        treeColumnOptions={props.treeColumnOptions}
         // onFilter={props.onFilter || onFilter}
         // onGridBeforeDestroy={onGridBeforeDestroy}
         // onGridMounted={onGridMounted}
