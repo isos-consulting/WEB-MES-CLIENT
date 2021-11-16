@@ -28,7 +28,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
   const onSave = useMemo(() =>
     async function() {
-      // setLoading(true);
+      setLoading(true);
       const instance = gridRef?.current?.getInstance();
       instance?.finishEditing();
       
@@ -370,11 +370,11 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
     );
   }, [props.modalWidth]);
 
-  const [hotKey, setHotKey] = useState();
+  // const [hotKey, setHotKey] = useState();
 
-  const hotKeyHandler = (el) => {
-    console.log('keyup', el);
-  };
+  // const hotKeyHandler = (el) => {
+  //   console.log('keyup', el);
+  // };
 
   // useLayoutEffect(() => {
   //   if (visible)
