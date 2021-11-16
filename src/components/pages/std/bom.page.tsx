@@ -72,9 +72,9 @@ export const PgStdBom = () => {
     {header:'단위명', name:'c_unit_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, requiredField: true},
     {header: '소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, requiredField:true},
-    {header: '소모창고', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모위치', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모위치', name:'from_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
@@ -98,9 +98,9 @@ export const PgStdBom = () => {
     {header: '소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
     {header: '소요량', name:'t_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
     {header: '소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모창고', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모위치', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모위치', name:'from_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSubSearchUriPath,
     saveUriPath: null,
@@ -130,9 +130,9 @@ export const PgStdBom = () => {
         {original:'c_unit_uuid', popup:'unit_uuid'},
         {original:'c_unit_nm', popup:'unit_nm'},
         {original:'from_store_uuid', popup:'inv_to_store_uuid'},
-        {original:'store_nm', popup:'store_nm'},
+        {original:'from_store_nm', popup:'inv_to_store_nm'},
         {original:'from_location_uuid', popup:'inv_to_location_uuid'},
-        {original:'location_nm', popup:'location_nm'},
+        {original:'from_location_nm', popup:'inv_to_location_nm'},
       ],
       columns: [
         {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
@@ -155,9 +155,9 @@ export const PgStdBom = () => {
         {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
         {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, format:'text'},
         {header: '창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.M, format:'text'},
-        {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '창고', name:'inv_to_store_nm', width:ENUM_WIDTH.M, format:'text'},
         {header: '위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.M, format:'text'},
-        {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '위치', name:'inv_to_location_nm', width:ENUM_WIDTH.M, format:'text'},
         
       ],
       dataApiSettings: () => {
@@ -205,7 +205,7 @@ export const PgStdBom = () => {
       { // 창고팝업
         columnNames: [
           {original:'from_store_uuid', popup:'store_uuid'},
-          {original:'store_nm', popup:'store_nm'},
+          {original:'from_store_nm', popup:'store_nm'},
         ],
         columns: [
           {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
@@ -221,7 +221,7 @@ export const PgStdBom = () => {
       { // 위치팝업
         columnNames: [
           {original:'from_location_uuid', popup:'location_uuid'},
-          {original:'location_nm', popup:'location_nm'},
+          {original:'from_location_nm', popup:'location_nm'},
         ],
         columns: [
           {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},

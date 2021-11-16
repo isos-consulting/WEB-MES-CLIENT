@@ -50,9 +50,9 @@ export const PgStdProd = () => {
     {header: '포장단위수량', name:'inv_package_qty', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
     {header: '안전재고수량', name:'inv_safe_qty', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
     {header: '입고창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '입고창고', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '입고창고', name:'inv_to_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '입고위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '입고위치', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '입고위치', name:'inv_to_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '고객주문가능여부', name:'sal_order_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '수입검사여부', name:'qms_receive_insp_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '공정검사여부', name:'qms_proc_insp_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
@@ -88,7 +88,7 @@ export const PgStdProd = () => {
         {
           header: '재고',
           name: '_stock_group',
-          childNames: ['inv_use_fg', 'inv_safe_qty', 'inv_package_qty', 'store_nm', 'location_nm']
+          childNames: ['inv_use_fg', 'inv_safe_qty', 'inv_package_qty', 'inv_to_store_nm', 'location_nm']
         },
         {
           header: '영업',
@@ -209,8 +209,8 @@ export const PgStdProd = () => {
       { // 창고팝업
         columnNames: [
           {original:'inv_to_store_uuid', popup:'store_uuid'},
-          {original:'store_cd', popup:'store_cd'},
-          {original:'store_nm', popup:'store_nm'},
+          {original:'inv_to_store_cd', popup:'store_cd'},
+          {original:'inv_to_store_nm', popup:'store_nm'},
         ],
         columns: [
           {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
@@ -226,8 +226,8 @@ export const PgStdProd = () => {
       { // 위치팝업
         columnNames: [
           {original:'inv_to_location_uuid', popup:'location_uuid'},
-          {original:'location_cd', popup:'location_cd'},
-          {original:'location_nm', popup:'location_nm'},
+          {original:'inv_to_location_cd', popup:'location_cd'},
+          {original:'inv_to_location_nm', popup:'location_nm'},
         ],
         columns: [
           {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
