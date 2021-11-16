@@ -51,7 +51,11 @@ const BaseDatePicker: React.FC<Props> = (props) => {
 
   const onChange = useCallback(
     (date, dateString) => {
-      const returnValue = props.returnType === 'dateString' ? dateString : date;
+      let returnValue = props.returnType === 'dateString' ? dateString : date;
+
+      if ((returnValue === '' || returnValue == null) && props.defaultValue)
+        returnValue = props.defaultValue;
+
       if (props.onChange)
         props.onChange(returnValue);
     },
