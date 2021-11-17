@@ -1,15 +1,14 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { COLUMN_CODE, EDIT_ACTION_CODE, getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
+import { getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup, afInputGroupValues } from '~/components/UI/input-groupbox';
+import { useInputGroup } from '~/components/UI/input-groupbox';
 import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
-import {useRecoilState} from 'recoil';
 import dayjs from 'dayjs';
 
 
@@ -153,30 +152,22 @@ export const PgMatRelease = () => {
       ],
       columns: [
         {header: '창고UUID', name:'store_uuid', filter:'text', format:'text', hidden:true},
-        {header: '창고코드', name:'store_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        
         {header: '위치UUID', name:'location_uuid', filter:'text', format:'text', hidden:true},
-        {header: '위치코드', name:'location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '위치명', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-
         {header: '품목UUID', name:'prod_uuid', filter:'text', format:'text', hidden:true},
         {header: '품목 유형UUID', name:'item_type_uuid', filter:'text', format:'text', hidden:true},
-        {header: '품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '품목 유형명', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
         {header: '제품 유형UUID', name:'prod_type_uuid', filter:'text', format:'text', hidden:true},
-        {header: '제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '제품 유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
         {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
         {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
         {header: '모델UUID', name:'model_uuid', filter:'text', format:'text', hidden:true},
-        {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
         {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text', format:'text'},
         {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text', format:'text'},
         {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
         {header: '단위UUID', name:'unit_uuid', filter:'text', format:'text', hidden:true},
-        {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
         {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
         {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
         {header: '재고', name:'qty', width:ENUM_WIDTH.S, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
@@ -198,7 +189,14 @@ export const PgMatRelease = () => {
     },
   });
 
-  const newDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
+  const newDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter(
+    (el) => {
+      if (!['qty', 'to_store_nm', 'to_location_nm', 'remark'].includes(el?.name))
+        el['editable'] = false;
+
+      return el?.name !== 'reg_date';
+    }
+  );
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
     newDataPopupGridColumns,
     {
@@ -218,12 +216,12 @@ export const PgMatRelease = () => {
       ],
     }
   );
-  const editDataPopupGridColumns = cloneObject(newDataPopupGrid?.gridInfo?.columns)?.map(
+  const editDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter(
     (el) => {
-      if (!['qty', 'to_store_nm', 'to_location_nm', 'remark'].includes(el?.name))
+      if (!['qty', 'remark'].includes(el?.name))
         el['editable'] = false;
 
-      return el;
+      return el?.name !== 'reg_date';
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
@@ -470,9 +468,11 @@ export const PgMatRelease = () => {
   }, [releaseRequestPopupVisible]);
   //#endregion
 
+  const extraGridColumns = cloneObject(newDataPopupGridColumns);
   const extraGridPopups:TExtraGridPopups = [
     {
       ...releaseRequestPopupGrid?.gridInfo,
+      columns: extraGridColumns,
       ref: releaseRequestPopupGrid?.gridRef,
       popupId: 'EXTRA_POPUP_ReleaseRequest',
       gridMode: 'create',
@@ -484,13 +484,17 @@ export const PgMatRelease = () => {
       onCancel: (ev) => {
         const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 
-        console.log('releaseRequestData', releaseRequestData);
-
         if (releaseRequestData?.length > 0) {
-          modal.warning({
+          modal.confirm({
             title: '추가 취소',
             content: '작성중인 항목이 있습니다. 출고요청 불러오기를 취소하시겠습니까?',
             onOk: () => setReleaseRequestPopupVisible(false),
+            okText: '예',
+            cancelText: '아니오',
+            cancelButtonProps: {
+              hidden: false,
+              visible: true
+            }
           });
 
         } else {
@@ -499,8 +503,6 @@ export const PgMatRelease = () => {
       },
       onOk: () => {
         const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
-
-        console.log('releaseRequestData', releaseRequestData);
 
         if (releaseRequestData?.length > 0) {
           newDataPopupGrid?.gridInstance?.appendRows(releaseRequestData);

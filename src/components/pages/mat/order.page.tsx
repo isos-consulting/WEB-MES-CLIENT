@@ -201,13 +201,15 @@ export const PgMatOrder = () => {
     }
   );
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name)), {
+  const popupColumns = detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name));
+
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', popupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name)), {
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', popupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -356,10 +358,18 @@ export const PgMatOrder = () => {
       columns,
       saveUriPath,
     }, detailInputInfo.values, modal,
-      (res) => {
+      ({success, datas}) => {
+        if (!success) return;
+        
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo.values).then((searchResult) => {
-          const headerRow = res.datas.raws[0].header[0];
+          const headerRow = datas.raws[0].header[0];
+
+          if (headerRow?.uuid == null) {
+            setSelectedHeaderRow(null);
+            return;
+          }
+
           onAfterSaveAction(searchResult, headerRow?.uuid);
         });
       },
@@ -390,10 +400,6 @@ export const PgMatOrder = () => {
 
     /** 삭제 */
     delete: () => {
-      if (getModifiedRows(detailGrid.gridRef, detailGrid.gridInfo.columns)?.deletedRows?.length === 0) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
       onSave();
     },
     
@@ -448,39 +454,42 @@ export const PgMatOrder = () => {
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.header[0]?.uuid;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    onSearchHeader(headerSearchInfo.values).then((searchResult) => onAfterSaveAction(searchResult, savedUuid));
     setNewDataPopupGridVisible(false);
   }
 
   /** 수정 이후 수행될 함수 */
   const onAfterSaveEditData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.outgo?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.outgo?.header[0]?.uuid;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => onAfterSaveAction(searchResult, savedUuid));
     setEditDataPopupGridVisible(false);
   }
 
   /** 세부 저장 이후 수행될 함수 */
   const onAfterSaveAddData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.header[0]?.uuid;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    onSearchHeader(headerSearchInfo.values).then((searchResult) => onAfterSaveAction(searchResult, savedUuid));
     setAddDataPopupGridVisible(false);
   }
 
   // 사용자가 저장한 데이터의 결과를 찾아서 보여줍니다.
   const onAfterSaveAction = (searchResult, uuid) => {
-    let selectedRow = searchResult?.find(el => el?.order_uuid === uuid);
+    const selectedRow = searchResult?.find(el => el?.order_uuid === uuid);
       
-    if (!selectedRow) { selectedRow = searchResult[0]; }
-    setSelectedHeaderRow(cleanupKeyOfObject(selectedRow, detailInputInfo.inputItemKeys));
+    if (!selectedRow) {
+      setSelectedHeaderRow(null);
+    } else {
+      setSelectedHeaderRow(cleanupKeyOfObject(selectedRow, detailInputInfo?.inputItemKeys));
+    }
   }
 
   //#region 🔶템플릿에 값 전달
