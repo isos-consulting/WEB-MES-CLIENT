@@ -30,7 +30,7 @@ export const PgStdSupplier = () => {
     {header: '공급처명', name:'supplier_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '담당자', name:'manager', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '이메일', name:'email', width:ENUM_WIDTH.XL, filter:'text', editable:true},
     {header: '전화번호', name:'tel', width:ENUM_WIDTH.L, filter:'text', editable:true},

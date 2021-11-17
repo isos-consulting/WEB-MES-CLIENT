@@ -34,7 +34,7 @@ export const PgStdProd = () => {
     {header: '제품유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '모델UUID', name:'model_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header: '모델명', name:'model_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
-    {header: '리비전', name:'rev', width:ENUM_WIDTH.S, filter:'text', editable:true},
+    {header: '리비전', name:'rev', width:ENUM_WIDTH.S, filter:'text', editable:true, requiredField:true},
     {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true, hidden:true},
     {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup', requiredField:true},
@@ -254,6 +254,7 @@ export const PgStdProd = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      header: grid.gridInfo?.header,
       gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );
@@ -262,6 +263,7 @@ export const PgStdProd = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      header: grid.gridInfo?.header,
       gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );

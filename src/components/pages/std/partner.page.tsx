@@ -26,7 +26,7 @@ export const PgStdPartner = () => {
   const grid = useGrid('GRID', [
     {header: '거래처유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '거래처유형코드', name:'partner_type_cd', width:ENUM_WIDTH.M, filter:'text', hidden:true },
-    {header: '거래처유형명', name:'partner_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+    {header: '거래처유형명', name:'partner_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '거래처UUID', name:'partner_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},

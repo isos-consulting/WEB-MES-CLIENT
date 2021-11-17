@@ -54,7 +54,7 @@ export const PgAutUserPermission = () => {
   //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
   const headerGrid = useGrid('HEADER_GRID', [
-    {header: '사용자UUID', name:'user_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '사용자UUID', name:'user_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '권한그룹UUID', name:'group_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '로그인ID', name:'id', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '성명', name:'user_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
@@ -65,15 +65,15 @@ export const PgAutUserPermission = () => {
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
-    {header: '사용자별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'user_permission_uuid', alias:'uuid', hidden:true},
+    {header: '사용자별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'user_permission_uuid', alias:'uuid', hidden:false},
     {header: '메뉴UUID', name:'menu_uuid', hidden:true},
     {header: '최상위 메뉴', width:ENUM_WIDTH.L, name:'first_menu_nm'},
     {header: '메뉴명', width:ENUM_WIDTH.L, name:'menu_nm'},
     {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
     {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
-    {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
-    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup'},
+    {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:false},
+    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup', requiredField:true},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,

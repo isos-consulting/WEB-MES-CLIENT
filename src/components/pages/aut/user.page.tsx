@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { cloneObject, dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -45,8 +45,15 @@ export const PgAutUser = () => {
       saveUriPath: saveUriPath,
     }
   );
+  
+  const popupColumns = cloneObject(grid.gridInfo.columns)?.map(el => {
+    if (['id', 'user_nm'].includes(el?.name)) {
+      el['editable'] = false;
+    }
+    return el;
+  });
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    grid.gridInfo.columns,
+    popupColumns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,

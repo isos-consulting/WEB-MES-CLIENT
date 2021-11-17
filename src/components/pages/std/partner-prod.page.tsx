@@ -55,7 +55,7 @@ export const PgStdPartnerProd = () => {
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '거래처 품목UUID', name:'partner_prod_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true, requiredField:true},
     {header: '거래처유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '거래처유형', name:'partner_type_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
@@ -63,7 +63,7 @@ export const PgStdPartnerProd = () => {
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text'},
+    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header: '거래처 품번', name:'partner_prod_no', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '품목', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
     {header: '모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
