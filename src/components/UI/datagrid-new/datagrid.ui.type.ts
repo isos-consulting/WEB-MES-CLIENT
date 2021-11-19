@@ -68,7 +68,8 @@ export default interface IDatagridProps extends GridProps {
   onCheckAll?: (ev) => void;
   onUncheckAll?: (ev) => void;
 
-  onAfterFilter?: () => void;
+  onAfterUnfilter?: (ev) => void;
+  onAfterFilter?: (ev) => void;
   onAfterClick?: (ev) => void;
   onAfterChange?: (ev) => void;
   onAfterKeyDown?: (ev) => void;
