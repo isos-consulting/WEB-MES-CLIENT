@@ -952,8 +952,10 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           targetValues['_array'] = [...targetValues?._array, instance.getValue(rowKey, targetColumnName)];
         });
 
-        const formulaValue = formula.formula({columnName, value, targetColumnName, targetValue, targetColumnNames, targetValues, rowKey, gridRef}, props);
-        instance.setValue(rowKey, formula.resultColumnName, formulaValue);
+        if (typeof formula?.formula === 'function') {
+          const formulaValue = formula?.formula({columnName, value, targetColumnName, targetValue, targetColumnNames, targetValues, rowKey, gridRef}, props);
+          instance.setValue(rowKey, formula.resultColumnName, formulaValue);
+        }
       }
 
       if (origin === 'cell' && props.gridMode !== 'create') { //직접 입력시
