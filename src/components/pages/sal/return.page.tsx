@@ -7,7 +7,7 @@ import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.tem
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
 
 
@@ -60,7 +60,7 @@ export const PgSalReturn = () => {
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
-    {header: '제품반입상세UUID', name:'outgo_detail_uuid', alias:'uuid', hidden:true},
+    {header: '제품반입상세UUID', name:'return_detail_uuid', alias:'uuid', hidden:true},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
@@ -75,15 +75,20 @@ export const PgSalReturn = () => {
     {header: '안전재고', name:'safe_stock', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
     {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
-    {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.S, filter:'text'},
+    {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '부적합', name:'reject_nm', width:ENUM_WIDTH.S, filter:'text', format:'popup', editable:true},
     {header: '입고창고UUID', name:'to_store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '입고위치UUID', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
-    {header: '수주수량', name:'order_detail_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
-    {header: '지시수량', name:'outgo_order_detail_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
+    {header: '출하수량', name:'outgo_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
+    {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', requiredField:true, editable:true,
+      formula: {
+        targetColumnNames:['price', 'exchange'], resultColumnName:'total_price',
+        formula: priceFormula
+      }
+    },
     {header: '화폐단위UUID', name:'money_unit_uuid', width:ENUM_WIDTH.S, hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text', requiredField:true},
     {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,
@@ -95,12 +100,6 @@ export const PgSalReturn = () => {
     {header: '환율', name:'exchange', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, requiredField:true, editable:true,
       formula: {
         targetColumnNames:['qty', 'price'], resultColumnName:'total_price',
-        formula: priceFormula
-      }
-    },
-    {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', requiredField:true, editable:true,
-      formula: {
-        targetColumnNames:['price', 'exchange'], resultColumnName:'total_price',
         formula: priceFormula
       }
     },
@@ -245,16 +244,6 @@ export const PgSalReturn = () => {
     if (targetType !== 'cell') return;
     setSelectedHeaderRow(headerRow);
   };
-
-  /** 상세 그리드 데이터 세팅 */
-  const reloadDetailGrid = (uuid) => {
-    if (!uuid) return;
-
-    const uriPath = detailSearchUriPath.replace('$', uuid);
-    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
-      detailGrid.setGridData(res?.details || []);
-    });
-  };
   //#endregion
 
 
@@ -286,8 +275,17 @@ export const PgSalReturn = () => {
   };
 
   const onSearchDetail = (uuid) => {
-    if (uuid == null) return;
-    reloadDetailGrid(uuid);
+    if (uuid) {
+      const uriPath = URL_PATH_SAL.RETURN.GET.DETAILS.replace('$', uuid);
+      
+      getData(detailSearchInfo?.values, uriPath, 'raws').then((res) => {
+        detailGrid.setGridData(res || []);
+      });  
+    } else {
+      detailGrid.setGridData([]);
+    }
+
+    
   }
   //#endregion
 
@@ -473,7 +471,6 @@ export const PgSalReturn = () => {
 
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
-    console.log(isSuccess, savedData)
     if (!isSuccess) return;
     const savedUuid = savedData[0]?.outgo?.header[0]?.uuid;
 

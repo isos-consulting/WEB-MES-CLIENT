@@ -60,13 +60,15 @@ export const Dashboard = () => {
           />
         </Col>
         <Col span={6}>
-          <PercentPie 
-            id='prod'
+          <Card
             title='미납현황'
+            headStyle={{}}
             extra={<a href="#">{'상세보기 >'}</a>}
-            height={180}
-            data={delayedSalOrderData}
-          />
+          >
+            <div style={{display:'flex', height:'100%', justifyContent:'center', alignItems:'center'}}>
+              <Statistic title={delayedSalOrderData[0]?.label} value={delayedSalOrderData[0]?.value} suffix={'건'} style={{height:190, textOverflow:'ellipsis', whiteSpace:'nowrap', overflow:'hidden'}}/>
+            </div>
+          </Card>
         </Col>
         <Col span={6}>
           <PercentPie 

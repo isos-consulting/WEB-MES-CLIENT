@@ -53,7 +53,6 @@ export const PgInvStoresTotalHistory = () => {
     {header: '변경수량', width:ENUM_WIDTH.M, name:'update_qty', format:'number', filter:'number'},
     {header: '기말재고', width:ENUM_WIDTH.M, name:'final_stock', format:'number', filter:'number'},
     {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
-
   ];
 
   /** 그리드 상태를 관리 */
@@ -61,6 +60,7 @@ export const PgInvStoresTotalHistory = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    disabledAutoDateColumn: true
   });
   const newDataPopupGrid = null;
   const editDataPopupGrid = null;

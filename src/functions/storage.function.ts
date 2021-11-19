@@ -2,7 +2,16 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+type TgetStorageValueParams = {
+  storageName: 'userInfo' | 'tokenInfo',
+  keyName: 'uid' | 'id' | 'user_nm' | 'factory_uuid' | 'super_admin_fg'
+}
+
 /** 로그인 유저 정보를 session storage에서 가져옵니다. */
+export const getStorageValue = (props:TgetStorageValueParams ) => {
+  return JSON.parse(sessionStorage.getItem(props.storageName))?.[props.keyName]
+}
+
 export const getUserInfo = () => {
   return JSON.parse(sessionStorage.getItem('userInfo'));
 }
@@ -22,12 +31,15 @@ export const getUserFactoryId = () => {
   return getUserInfo()?.factory_id;
 }
 
-
 /** 로그인 유저의 이름을 가져옵니다. */
 export const getUserUserName = () => {
-  return getUserInfo()?.userNm;
+  return getUserInfo()?.user_nm;
 }
 
+/** 로그인 유저의 관리자권한을 가져옵니다. */
+export const getUserSuperAdminFg = () => {
+  return getUserInfo()?.super_admin_fg
+}
 
 /** 로그인 유저의 토큰을 가져옵니다. */
 export const getUserAccessToken = () => {

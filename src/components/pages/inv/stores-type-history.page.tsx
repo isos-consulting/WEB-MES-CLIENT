@@ -28,6 +28,7 @@ export const PgInvStoresTypeHistory = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    disabledAutoDateColumn: true
     // header: {
     //   height: 60,
     //   complexColumns: [

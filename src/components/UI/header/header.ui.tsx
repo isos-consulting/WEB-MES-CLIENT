@@ -20,8 +20,8 @@ const Header: React.FC<Props> = (props) => {
   const setLayoutState = useSetRecoilState(layoutStore.state);
 
   const userName = useMemo(() => {
-    return userInfo?.userNm ? userInfo?.userNm + '님' : '';
-  }, [userInfo?.userNm]);
+    return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
+  }, [userInfo?.user_nm]);
 
   return (
     <div>

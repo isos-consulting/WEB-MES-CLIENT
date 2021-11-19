@@ -72,6 +72,7 @@ export const PgInvStoresIndividualHistory = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    disabledAutoDateColumn: true
   });
   const newDataPopupGrid = null;
   const editDataPopupGrid = null;

@@ -282,7 +282,7 @@ export const PgSalOutgoOrder = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'입하일'},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'출하지시일'},
   ]);
 
   const detailSearchInfo = null;//useSearchbox('DETAIL_SEARCH_INPUTBOX', []);
@@ -316,7 +316,7 @@ export const PgSalOutgoOrder = () => {
   //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type: 'text', id: 'outgo_order_uuid', alias:'uuid', label: '외주입하UUID', disabled:true, hidden:true},
-    {type:'date', id:'reg_date', label:'입하일', disabled:true, default:getToday()},
+    {type:'date', id:'reg_date', label:'출하지시일', disabled:true, default:getToday()},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},

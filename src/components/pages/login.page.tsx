@@ -196,7 +196,6 @@ export const PgLogin = () => {
       .then(res => {
         const {success, datas} = res;
         const {raws} = datas;
-
         if (success === true) {
           sessionStorage.setItem(
             'userInfo',
@@ -216,8 +215,9 @@ export const PgLogin = () => {
                 uid: raws[0].uid,
                 // id:formState.id,
                 id: userId,
-                userNm: raws[0].user_nm,
+                user_nm: raws[0].user_nm,
                 factory_uuid:factory['factory_uuid'],
+                super_admin_fg: raws[0].super_admin_fg
               })
             );
             sessionStorage.setItem(
