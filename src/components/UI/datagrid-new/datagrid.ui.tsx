@@ -1749,6 +1749,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       ev.stop();
 
       setFilterInfo(_filterInfo);
+
+
     },
     [gridRef, props.gridMode, originData, columns],
   );
@@ -1823,6 +1825,16 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       instance.off('beforeUnfilter');
     };
   }, [gridRef, onBeforeUnfilter]);
+  
+  useLayoutEffect(() => {
+    // 이벤트 세팅
+    const instance = gridRef.current.getInstance();
+    instance.on('afterUnfilter', props.onAfterUnfilter);
+
+    return () => {
+      instance.off('afterUnfilter');
+    };
+  }, [gridRef, props.onAfterUnfilter]);
 
   useLayoutEffect(() => {
     // 이벤트 세팅
