@@ -101,7 +101,6 @@ const errorPage404 = () => {
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
   // if (Object.keys(props?.menuContent).length <= 0) return null;
-
   return (
     <Suspense fallback='...loading'>
     <BrowserRouter>
@@ -113,11 +112,14 @@ const LoggedIn = (props: any) => {
           component={PgLogin}
         />
         <Layout>
-          <Route
-            key={'dashboard'}
-            path={'/dashboard'}
-            component={Dashboard}
-          />
+          {Object.keys(props.menuContent)?.length > 0  ? 
+            <Route
+              key={'dashboard'}
+              path={'/dashboard'}
+              component={Dashboard}
+            />
+            : null
+          }
           {Object.keys(props.menuContent).map((item, key) => (
             <Route
               key={key}
