@@ -140,7 +140,7 @@ export const PgMatReturnReport = () => {
           {header: '환율', name:'exchange', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '부가세액', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
           {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text' },
         ];
