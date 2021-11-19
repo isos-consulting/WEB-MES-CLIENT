@@ -5,9 +5,10 @@ import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPag
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useLoadingState } from '~/hooks';
 import { message } from 'antd';
+
 
 
 
@@ -31,6 +32,8 @@ export const PgMatOrderReport = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
+    onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
@@ -111,17 +114,17 @@ export const PgMatOrderReport = () => {
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'text'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
-          {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '단가', name:'price', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text'},
         ];
         break;
@@ -147,17 +150,17 @@ export const PgMatOrderReport = () => {
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'select'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
-          {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '단가', name:'price', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text'},
         ];
         break;
@@ -184,17 +187,17 @@ export const PgMatOrderReport = () => {
           {header: '납기일자', name:'due_date', width:ENUM_WIDTH.M, format:'date', align:'center', filter:'text'},
       
           {header: '완료유무', name:'complete_state', width:ENUM_WIDTH.M, align:'center', filter:'select'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
           
           {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
           {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text'},
-          {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
+          {header: '단가', name:'price', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '환율', name:'exchange', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
           {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text'},
         ];
         break;
@@ -221,12 +224,12 @@ export const PgMatOrderReport = () => {
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
           {header: '단위아이디', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true},
           {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
         ];
         break;
 
@@ -234,12 +237,12 @@ export const PgMatOrderReport = () => {
         _columns = [
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
           {header: '발주일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
         ];
         break;
 
@@ -248,12 +251,12 @@ export const PgMatOrderReport = () => {
           {header: 'row_type', name:'row_type', width:ENUM_WIDTH.L, align:'center', hidden:true},
           {header: '거래처아이디', name:'partner_uuid', width:ENUM_WIDTH.L, hidden:true},
           {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
-          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number', filter:'number'},
-          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+          {header: '발주수량', name:'qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '공급가액', name:'supply_price', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '부가세', name:'tax', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number'},
+          {header: '입하수량', name:'receive_qty', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
+          {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', filter:'number'},
         ];
         break;
 
@@ -295,8 +298,11 @@ export const PgMatOrderReport = () => {
   
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
+    setSubTotalDatas(grid?.gridInfo?.data);
+  }, [subColumns, grid?.gridInfo?.data]);
     
-    if (grid?.gridInfo?.data?.length > 0) {
+  const setSubTotalDatas = (data:object[]) => {
+    if (data?.length > 0) {
       const curculationColumnNames = ['qty', 'supply_price', 'tax', 'total_price', 'receive_qty', 'balance'];
       const standardNames = (
         searchInfo.values?.sort_type === 'prod' ?
@@ -306,20 +312,19 @@ export const PgMatOrderReport = () => {
         : searchInfo.values?.sort_type === 'date' ?
           ['reg_date']
         : null
-      );
-      const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
-        standardNames: standardNames,
-        curculations: [
-          {names: curculationColumnNames, type:'sum'},
-        ],
-      }).subTotals || [];
-
-      subGrid.setGridData(subGridData);
+        );
+        const subGridData = convDataToSubTotal(data, {
+          standardNames: standardNames,
+          curculations: [
+            {names: curculationColumnNames, type:'sum'},
+          ],
+        }).subTotals || [];
+  
+        subGrid.setGridData(subGridData);
     } else {
       subGrid.setGridData([]);
-    }
-  }, [subColumns, grid?.gridInfo?.data]);
-
+    };
+  }
 
   /** 검색 */
   const onSearch = (values) => {
