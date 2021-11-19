@@ -23,6 +23,7 @@ export const PgStdBom = () => {
   const headerSearchUriPath = '/std/prods';
   // const headerSaveUriPath = '/mat/orders';
   const detailDefaultGridMode = 'delete';
+  const detailSubDefaultGridMode = 'view';
   const detailSearchUriPath = '/std/boms';
   const detailSaveUriPath = '/std/boms';
   const detailSubSearchUriPath = '/std/boms';
@@ -70,11 +71,11 @@ export const PgStdBom = () => {
     {header:'규격', name:'c_prod_std', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header:'단위UUID', name:'c_unit_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup', hidden: true, requiredField:true},
     {header:'단위명', name:'c_unit_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
-    {header: '소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, requiredField: true},
-    {header: '소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, requiredField:true},
-    {header: '소모창고', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
-    {header: '소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모위치', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header:'소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, requiredField: true},
+    {header:'소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, requiredField:true},
+    {header:'소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header:'소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header:'소모위치', name:'from_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
@@ -98,17 +99,17 @@ export const PgStdBom = () => {
     {header: '소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
     {header: '소요량', name:'t_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
     {header: '소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모창고', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
-    {header: '소모위치', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header: '소모위치', name:'from_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSubSearchUriPath,
     saveUriPath: null,
-    gridMode: detailDefaultGridMode,
+    gridMode: detailSubDefaultGridMode,
   });
 
   /** 팝업 Grid View */
-  const newDataPopupGrid = [];
+  const newDataPopupGrid = null;
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', 
     cloneObject(detailGrid.gridInfo.columns)?.map(el => {
       if (el?.name === 'c_unit_uuid')
@@ -130,9 +131,9 @@ export const PgStdBom = () => {
         {original:'c_unit_uuid', popup:'unit_uuid'},
         {original:'c_unit_nm', popup:'unit_nm'},
         {original:'from_store_uuid', popup:'inv_to_store_uuid'},
-        {original:'store_nm', popup:'store_nm'},
+        {original:'from_store_nm', popup:'inv_to_store_nm'},
         {original:'from_location_uuid', popup:'inv_to_location_uuid'},
-        {original:'location_nm', popup:'location_nm'},
+        {original:'from_location_nm', popup:'inv_to_location_nm'},
       ],
       columns: [
         {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
@@ -154,10 +155,10 @@ export const PgStdBom = () => {
         {header: '단위UUID', name:'unit_uuid', format:'text', hidden:true},
         {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
         {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, format:'text'},
-        {header: '창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.M, format:'text'},
-        {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'text'},
-        {header: '위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.M, format:'text'},
-        {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+        {header: '창고', name:'inv_to_store_nm', width:ENUM_WIDTH.M, format:'text'},
+        {header: '위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+        {header: '위치', name:'inv_to_location_nm', width:ENUM_WIDTH.M, format:'text'},
         
       ],
       dataApiSettings: () => {
@@ -205,7 +206,7 @@ export const PgStdBom = () => {
       { // 창고팝업
         columnNames: [
           {original:'from_store_uuid', popup:'store_uuid'},
-          {original:'store_nm', popup:'store_nm'},
+          {original:'from_store_nm', popup:'store_nm'},
         ],
         columns: [
           {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
@@ -221,7 +222,7 @@ export const PgStdBom = () => {
       { // 위치팝업
         columnNames: [
           {original:'from_location_uuid', popup:'location_uuid'},
-          {original:'location_nm', popup:'location_nm'},
+          {original:'from_location_nm', popup:'location_nm'},
         ],
         columns: [
           {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
@@ -387,8 +388,9 @@ export const PgStdBom = () => {
       (res) => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo?.values).then((searchResult) => {
-          const headerRow = res.savedData[0];
-          onAfterSaveAction(searchResult, headerRow?.prod_uuid);
+          onAfterSaveAction(searchResult, selectedHeaderRow?.prod_uuid);
+          // const headerRow = savedData[0];
+          // onAfterSaveAction(searchResult, headerRow?.prod_uuid);
         });
       },
       true
@@ -475,20 +477,20 @@ export const PgStdBom = () => {
   /** 세부 저장 이후 수행될 함수 */
   const onAfterSaveAddData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.p_prod_uuid;
+    const selectedUuid = selectedHeaderRow?.prod_uuid;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => onAfterSaveAction(searchResult, selectedUuid));
     setAddDataPopupGridVisible(false);
   }
 
   /** 세부항목 수정 이후 수행될 함수 */
   const onAfterSaveEditData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.p_prod_uuid;
+    const selectedUuid = selectedHeaderRow?.prod_uuid;
 
     // 헤더 그리드 재조회
-    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => onAfterSaveAction(searchResult, selectedUuid));
     setEditDataPopupGridVisible(false);
   }
 

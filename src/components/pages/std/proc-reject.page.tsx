@@ -68,44 +68,49 @@ export const PgStdProcReject = () => {
     gridMode: detailDefaultGridMode,
   });
 
+  const rejectPopupInfo = {
+    columnNames:[
+      {original:'reject_type_uuid', popup:'reject_type_uuid'},
+      {original:'reject_type_nm', popup:'reject_type_nm'},
+      {original:'reject_uuid', popup:'reject_uuid'},
+      {original:'reject_cd', popup:'reject_cd'},
+      {original:'reject_nm', popup:'reject_nm'},
+    ],
+    columns: [
+      {header: '부적합 유형UUID', name:'reject_type_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+      {header: '부적합 유형코드', name:'reject_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+      {header: '부적합 유형명', name:'reject_type_nm', width:ENUM_WIDTH.L, format:'text'},
+      {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+      {header: '부적합코드', name:'reject_cd', width:ENUM_WIDTH.M, format:'text'},
+      {header: '부적합명', name:'reject_nm', width:ENUM_WIDTH.L, format:'text'},
+    ],
+    dataApiSettings: {
+      uriPath: '/std/rejects',
+      params: {}
+    },
+    gridMode:'multi-select'
+  };
+
   /** 팝업 Grid View */
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', detailGrid.gridInfo.columns, {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
-    rowAddPopupInfo: {
-      columnNames:[
-        {original:'reject_type_uuid', popup:'reject_type_uuid'},
-        {original:'reject_type_nm', popup:'reject_type_nm'},
-        {original:'reject_uuid', popup:'reject_uuid'},
-        {original:'reject_cd', popup:'reject_cd'},
-        {original:'reject_nm', popup:'reject_nm'},
-      ],
-      columns: [
-        {header: '부적합 유형UUID', name:'reject_type_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-        {header: '부적합 유형코드', name:'reject_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
-        {header: '부적합 유형명', name:'reject_type_nm', width:ENUM_WIDTH.L, format:'text'},
-        {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-        {header: '부적합코드', name:'reject_cd', width:ENUM_WIDTH.M, format:'text'},
-        {header: '부적합명', name:'reject_nm', width:ENUM_WIDTH.L, format:'text'},
-      ],
-      dataApiSettings: {
-        uriPath: '/std/rejects',
-        params: {}
-      },
-      gridMode:'multi-select'
-    },
+    rowAddPopupInfo: rejectPopupInfo,
+    gridPopupInfo: [rejectPopupInfo],
   });
 
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', detailGrid.gridInfo.columns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', detailGrid.gridInfo.columns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
   });
 
   /** 헤더 클릭 이벤트 */

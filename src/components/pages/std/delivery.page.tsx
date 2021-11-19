@@ -29,7 +29,7 @@ export const PgStdDelivery = () => {
     {header: '납품처명', name:'delivery_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
     {header: '거래처코드', name:'partner_cd', width:ENUM_WIDTH.M, editable:true, hidden:true},
-    {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
+    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '담당자', name:'manager', width:ENUM_WIDTH.M, filter:'text', editable:true},
     {header: '이메일', name:'email', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '전화번호', name:'tel', width:ENUM_WIDTH.M, filter:'text', editable:true},

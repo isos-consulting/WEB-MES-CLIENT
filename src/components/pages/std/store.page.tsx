@@ -32,7 +32,8 @@ export const PgStdStore = () => {
     {header: '부적합창고여부', name:'reject_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true},
     {header: '반출창고여부', name:'return_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true},
     {header: '출하창고여부', name:'outgo_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true},
-    {header: '최종검사창고여부', name:'final_insp_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true}
+    {header: '최종검사창고여부', name:'final_insp_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true},
+    {header: '외주창고여부', name:'outsourcing_store_fg', width:ENUM_WIDTH.XS, format:'check', editable:true, requiredField:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,

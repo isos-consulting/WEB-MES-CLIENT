@@ -29,11 +29,8 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   const onSave = useMemo(() =>
     async function() {
       try {
-        setLoading(true);
-
         const instance = gridRef?.current?.getInstance();
         instance?.finishEditing();
-        
 
         // 단순 수정 이력 배열을 저장
         if (props.saveType === 'basic') {
@@ -45,6 +42,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           if (chk === false) return;
 
           // 신규 추가된 데이터들을 api에 전송
+          setLoading(true);
           saveGridData(modifiedRows, props.columns, props.saveUriPath, props.saveParams).then((result) => {
             const {success, count, savedData} = result;
             if (success === false) return;
@@ -95,6 +93,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           }
 
           // 옵션 데이터 추가
+          setLoading(true);
           for (let i = 0; i < detailDatas.length; i++) {
             detailDatas[i]['factory_uuid'] = getUserFactoryUuid();
 
