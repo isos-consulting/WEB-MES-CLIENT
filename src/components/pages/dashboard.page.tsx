@@ -12,23 +12,23 @@ export const Dashboard = () => {
   const [operatingeRateData, setOperatingeRateData] = useState<object>([]);
   const [deliveredInWeekData, setDeliveredInWeekData] = useState<object>([]);
 
-  useLayoutEffect(() => {
-    getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
+  const onSearchDashboardDatas = async ()  => {
+    await getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
       if (res) {
         [{"id": "id","value": 0},{"id": "make2","value": 1}]
       };
       setProductionData(res);
     });
-    getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
+    await getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
       setQualityData(res);
     });
-    getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
+    await getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
       setDelayedSalOrderData(res);
     });
-    getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
+    await getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
       setOperatingeRateData(res);
     });
-    getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
+    await getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
       const datas:object[] = res.map((el)=> {
         el['date'] = dayjs(el.date).format('YYYY-MM-DD')
         return el
@@ -36,7 +36,9 @@ export const Dashboard = () => {
       setDeliveredInWeekData(res);
     });
 
-  }, []);
+  }
+
+  useLayoutEffect(() => {onSearchDashboardDatas()}, []);
   
   return (
     <div>
