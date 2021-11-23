@@ -546,26 +546,26 @@ div.tui-grid-content-area.tui-grid-has-summary-bottom {
 div.ant-card.container {
   font-size: ${Fonts.fontSize_label};
 
-  & .ant-card-head {
+  & > .ant-card-head {
     padding-left: 5px;
     font-size: ${Fonts.fontSize_default_md};
     font-weight: bold;
     color: #1890FF; //#587BD2;
     min-height: 30px;
+    
+    & > .ant-card-head-wrapper > .ant-card-head-title {
+      padding: 4px 0 0 0 !important;
+    }
   }
 
-  & .ant-card-head-title {
-    padding: 4px 0 0 0 !important;
-  }
-
-  & .ant-card > .ant-card-body {
+  & > .ant-card-body {
     padding: 4px 4px 4px 4px !important;
     div{
       margin-top: 0px;
     }
   }
 
-  & .ant-card-bordered{
+  &.ant-card-bordered{
     border: 1px solid ${Colors.bg_radio_border};
   }
 }
