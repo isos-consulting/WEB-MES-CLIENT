@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday, isModified } from "~/functions";
+import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
@@ -25,6 +25,11 @@ const completeCondition = [
   }
 ];
 
+// 금액 컬럼 계산 (단가 * 수량 * 환율)
+const priceFormula = (params, props) => {
+  const {value, targetValues} = params;
+  return (Number(value) * Number(targetValues?._array[0]) * Number(targetValues?._array[1])) || 0;
+};
 
 /** 수주관리 */
 export const PgSalOrder = () => {
@@ -54,7 +59,7 @@ export const PgSalOrder = () => {
   const headerGrid = useGrid('HEADER_GRID', [
     {header: '수주UUID', name:'order_uuid', alias:'uuid', hidden:true},
     {header: '전표번호', name:'stmt_no', width:ENUM_WIDTH.M},
-    {header: '수주일시', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'datetime', requiredField:true},
+    {header: '수주일', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'date', requiredField:true},
     {header: '거래처UUID', name:'partner_uuid', hidden:true, requiredField:true},
     {header: '거래처코드', name:'partner_cd', hidden:true},
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.M, editable:true},
@@ -69,33 +74,57 @@ export const PgSalOrder = () => {
     {header: '수주UUID', name:'order_uuid', hidden:true},
     {header: '완료상태', width:ENUM_WIDTH.S, name:'complete_state', format:'tag', options:{conditions: completeCondition}, hiddenCondition: (props) => !['view', 'delete'].includes(props?.gridMode)},
     {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_fg', format:'check', editable:true, hiddenCondition: (props) => ['view', 'delete'].includes(props?.gridMode)},
-    {header: '품목UUID', name:'prod_uuid', hidden:true, requiredField:true},
+    {header: '품목UUID', name:'prod_uuid', hidden:true},
     {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
     {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
-    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format:'popup', editable:true},
-    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true},
+    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '모델', width:ENUM_WIDTH.M, name:'model_nm', filter:'text', format:'popup', editable:true},
     {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', format:'popup', editable:true},
     {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', format:'popup', editable:true},
     {header: '안전재고', width:ENUM_WIDTH.S, name:'safe_stock', format:'popup', editable:true},
     {header: '단위UUID', name:'unit_uuid', format:'popup', editable:true, hidden:true},
     {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', format:'popup', editable:true},
-    {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true, format:'popup', editable:true, requiredField:true},
-    {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm', format:'popup', editable:true},
-    {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', editable:true},
-    {header: '환율', width:ENUM_WIDTH.S, name:'exchange', format:'number', editable:true, requiredField:true},
-    {header: '수량', width:ENUM_WIDTH.S, name:'qty', format:'number', editable:true, requiredField:true},
+    {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true, format:'popup', editable:true},
+    {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm', format:'popup', editable:true, requiredField:true},
+    {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', editable:true, requiredField:true,
+      formula: {
+        targetColumnNames:['qty', 'exchange'], resultColumnName:'total_price',
+        formula: priceFormula
+      },
+    },
+    {header: '환율', width:ENUM_WIDTH.S, name:'exchange', format:'number', editable:true, requiredField:true,
+      formula: {
+        targetColumnNames:['qty', 'price'], resultColumnName:'total_price',
+        formula: priceFormula
+      },
+    },
+    {header: '수량', width:ENUM_WIDTH.S, name:'qty', format:'number', editable:true, requiredField:true,
+      formula: {
+        targetColumnNames:['price', 'exchange'], resultColumnName:'total_price',
+        formula: priceFormula
+      },
+    },
     {header: '금액', width:ENUM_WIDTH.S, name:'total_price', format:'number', editable:true},
     {header: '단위수량', width:ENUM_WIDTH.M, name:'unit_qty', format:'number', editable:true},
-    {header: '납기일시', width:ENUM_WIDTH.M, name:'due_date', format:'datetime', editable:true},
+    {header: '납기일', width:ENUM_WIDTH.M, name:'due_date', format:'date', editable:true},
     {header: '비고', width:ENUM_WIDTH.XL, name:'remark', editable:true},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
   });
 
+  const gridPopupColumns = cloneObject(detailGrid.gridInfo.columns)?.map((el) => {
+    if (['prod_type_nm', 'item_type_nm', 'prod_no', 'prod_nm', 'model_nm', 'rev', 'prod_std', 'safe_stock', 'unit_nm', 'money_unit_nm'].includes(el?.name))
+      el['editable'] = false;
+
+    if (el?.formula)
+      console.log('el?.formula', el?.formula)
+    return el;
+  });
+
   /** 팝업 Grid View */
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name)), {
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', gridPopupColumns, {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
 
@@ -192,7 +221,7 @@ export const PgSalOrder = () => {
     }
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', detailGrid.gridInfo.columns.filter((value) => ['total_price'].includes(value.name)), {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', gridPopupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -213,7 +242,7 @@ export const PgSalOrder = () => {
     if (!uuid) return;
 
     const uriPath = `/sal/order/${uuid}/include-details`;
-    getData({}, uriPath, 'header-details').then((res) => {
+    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
       detailGrid.setGridData(res?.details || []);
     });
   };
