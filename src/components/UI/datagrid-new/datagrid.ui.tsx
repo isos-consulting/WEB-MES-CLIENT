@@ -526,7 +526,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         header:COLUMN_NAME.EDIT,
         editable: false,
         format: 'text',
-        hidden: !['create','update'].includes(props.gridMode),
+        //hidden: !['create','update'].includes(props.gridMode),
         width: 70,
         align: 'center',
         renderer: {
@@ -562,7 +562,10 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           filter:{
             type:'date', 
             showClearBtn: true,
-            options:{format:'yyyy-MM-dd'}
+            options:{
+              language: 'ko',
+              format:'yyyy-MM-dd',
+            }
           },
           renderer:{
             type:DatagridDateRenderer,
@@ -585,8 +588,12 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         newColumns.push({
           header:'수정일시', name:'updated_at', width:160, editable: false, noSave:true, align:'center', resizable:true, sortable:true, 
           filter: {
-            type: 'text',
+            type: 'date',
             showClearBtn: true,
+            options:{
+              language: 'ko',
+              format:'yyyy-MM-dd',
+            }
           },
           renderer:{
             type:DatagridDateRenderer,
@@ -1141,6 +1148,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           if (className?.includes('selected-row') === false) {
             gridRef.current.getInstance().addRowClassName(rowKey, 'selected-row');
           }
+        } else {
+          gridRef.current.getInstance().addRowClassName(rowKey, 'selected-row');
         }
       }
     },
@@ -1160,20 +1169,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         const classNameRow = rawData?._attributes?.className?.row;
         if (Array.isArray(classNameRow)) {
           if (classNameRow?.includes('selected-row')) {
-            // instance.removeRowClassName(rowKey, 'selected-row');
-            const newClassNameRow = classNameRow.filter(value => value !== 'selected-row');
-            gridRef.current.getInstance().setRow(rowKey,
-              {
-                ...rawData,
-                _attributes: {
-                  ...rawData?._attributes, 
-                  className: {
-                    ...rawData?._attributes?.className,
-                    row:newClassNameRow
-                  }
-                }
-              }
-            );
+            gridRef.current.getInstance().removeRowClassName(rowKey, 'selected-row');
           }
         }
       }
@@ -1185,8 +1181,9 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 */
   const onCheckAll = useCallback(
     (ev) => {
-      const rawDatas = ev?.instance?.store?.data?.rawData;
-      const rowCount:number = rawDatas?.length;
+      // const rawDatas = ev?.instance?.store?.data?.rawData;
+      const filterdDatas:any[] = ev?.instance?.store?.data?.filteredRawData;
+      const rowCount:number = filterdDatas?.length;
 
       if (props.gridMode === 'select') {
         onUncheckRows();
@@ -1195,7 +1192,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
       if (rowCount > 0) {
         for (let i = 0; i < rowCount; i++) {
-          const rowKey = rawDatas[i]?.rowKey;
+          const rowKey = filterdDatas[i]?.rowKey;
           switch (props.gridMode) {
             case 'delete':
               gridRef.current.getInstance().setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.DELETE);
@@ -1205,12 +1202,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
               gridRef.current.getInstance().setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.SELECT);
               break;
           
+
             default:
               break;
           }
 
           // row에 특정 클래스네임이 있는 경우 추가
-          const className = rawDatas[i]?._attributes?.className?.row;
+          const className = filterdDatas[i]?._attributes?.className?.row;
           if (Array.isArray(className) || className == null) {
             if (className?.includes('selected-row') === false) {
               gridRef.current.getInstance().addRowClassName(rowKey, 'selected-row');
@@ -1226,45 +1224,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 해제 */
   const onUncheckAll = useCallback(
     (ev) => {
-      const rawDatas = ev?.instance?.store?.data?.rawData;
-      const rowCount:number = rawDatas?.length;
+      // const rawDatas:any[] = ev?.instance?.store?.data?.rawData;
+      const filterdDatas:any[] = ev?.instance?.store?.data?.filteredRawData;
+      const rowCount:number = filterdDatas?.length;
 
       if (rowCount > 0) {
         for (let i = 0; i < rowCount; i++) {
-          const rowKey = rawDatas[i]?.rowKey;
+          const rowKey = filterdDatas[i]?.rowKey;
           if (rowKey != null) {
             switch (props.gridMode) {
               case 'delete':
               case 'select':
               case 'multi-select':
-                onUnselect(rowKey)
+                gridRef?.current?.getInstance()?.uncheck(rowKey);
                 break;
             
               default:
                 break;
-            }
-
-            // row에 특정 클래스네임이 있는 경우 삭제
-            // const classNames = rawData?._attributes?.className;
-            const rawData = rawDatas[rowKey];
-            const classNameRow = rawData?._attributes?.className?.row;
-            if (Array.isArray(classNameRow)) {
-              if (classNameRow?.includes('selected-row')) {
-                // gridRef.current.getInstance().removeRowClassName(rowKey, 'selected-row');
-                const newClassNameRow = classNameRow.filter(value => value !== 'selected-row');
-                gridRef.current.getInstance().setRow(rowKey,
-                  {
-                    ...rawData,
-                    _attributes: {
-                      ...rawData?._attributes, 
-                      className: {
-                        ...rawData?._attributes?.className,
-                        row:newClassNameRow
-                      }
-                    }
-                  }
-                );
-              }
             }
           }
         }
@@ -1675,6 +1651,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   //#region 🔶 필터 핸들링
   const [filterInfo, setFilterInfo] = useState<any[]>(null);
+  // const [previousFilterData, setPreviousFilterData] = useState<any[]>(null);
   /** 필터 핸들링 */
   const onBeforeFilter = useCallback(
     (ev) => {
@@ -1689,6 +1666,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
       const format = ENUM_FORMAT.DATE;
 
+      const data = ev?.instance?.store?.data?.rawData;
       const filterdData = data?.filter((el) => {
         let compValue = el[columnName];
           
@@ -1717,7 +1695,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             break;
         }
       });
-
+      
       // filter state 값 (데이터를 리셋해도 필터 효과가 남아있게 합니다.)
       const filterState = {columnName, columnFilterState};
       instance.resetData(filterdData, {filterState});
@@ -1725,11 +1703,14 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       ev.stop();
 
       setFilterInfo(null);
+      // setUnfilterTrigger(data);
+      // setPreviousFilterData(data);
     },
-    [gridRef, props.gridMode, data],
+    [gridRef, props.gridMode],
   );
 
   /** ⛔필터 초기화 이벤트 */
+  // const [unfilterTrigger, setUnfilterTrigger] = useState<any>(null);
   const onBeforeUnfilter = useCallback(
     (ev) => {
       if (filterInfo) return;
@@ -1739,23 +1720,44 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       const columnInfo = columns?.find(el => el?.name === columnName);
       if (!['date', 'datetime'].includes(columnInfo?.filter?.type)) return;
 
-      const _filterState = filterState.filter((el) => el.columnName !== columnName);
+      const _filterState = filterState?.filter((el) => el.columnName !== columnName);
       const _filterInfo = _filterState?.map((el) => {
         return {
           columnName: el?.columnName,
           columnFilterState: el?.state,
         }
       });
+      
+      // const rawData:any[] = ev?.instance?.store?.data?.rawData;
 
       instance.resetData(originData);
       ev.stop();
 
       setFilterInfo(_filterInfo);
-
-
+      // setUnfilterTrigger(rawData);
     },
     [gridRef, props.gridMode, originData, columns],
   );
+
+  // useLayoutEffect(() => {
+  //   if (!unfilterTrigger) return;
+
+  //   const instance = gridRef?.current?.getInstance();
+  //   // const rawData = instance?.store?.data?.rawData;
+  //   console.log('unfilterTrigger', unfilterTrigger);
+  //   previousFilterData?.forEach(row => {
+  //     const currentRow = unfilterTrigger?.find(rawEl => rawEl?.rowKey === row?.rowKey);
+  //     if (currentRow?._attributes?.checked) {
+  //       instance.check(currentRow?.rowKey);
+
+  //     } else if (row?._attributes?.checked) {
+  //       instance.check(row?.rowKey);
+  //     }
+  //   });
+
+  //   setPreviousFilterData(null);
+  //   setUnfilterTrigger(null);
+  // }, [gridRef, unfilterTrigger]);
 
   useLayoutEffect(() => {
     if (!filterInfo) return;
@@ -1764,7 +1766,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     });
 
     setFilterInfo(null);
-  }, [gridRef, filterInfo]);
+  }, [gridRef, filterInfo, originData]);
   //#endregion
 
   
