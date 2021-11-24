@@ -26,7 +26,7 @@ const setPopupButtonData = (props:Props) => {
 
   let dataApiInfo = {};
   if (typeof dataApiSettings === 'function') {
-    dataApiInfo = dataApiSettings();
+    dataApiInfo = dataApiSettings(props);
 
   } else {
     dataApiInfo = dataApiSettings;
