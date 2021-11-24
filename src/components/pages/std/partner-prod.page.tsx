@@ -8,6 +8,7 @@ import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.t
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -42,8 +43,8 @@ export const PgStdPartnerProd = () => {
   //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
   const headerGrid = useGrid('HEADER_GRID', [
-    {header: '거래처UUID', name:'partner_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '거래처유형UUID', name:'partner_type_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '거래처유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처유형', name:'partner_type_nm', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
   ], {
@@ -209,7 +210,7 @@ export const PgStdPartnerProd = () => {
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    JSON.parse(JSON.stringify(detailInputInfo.props?.inputItems))?.map(
+    cloneDeep(detailInputInfo.props?.inputItems)?.map(
       (el) => {
         el['disabled'] = false;
         return el;
@@ -273,7 +274,6 @@ export const PgStdPartnerProd = () => {
       () => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo?.values).then((searchResult) => {
-          console.log()
           onAfterSaveAction(searchResult, selectedHeaderRow?.partner_uuid);
         });
       },
@@ -412,9 +412,9 @@ export const PgStdPartnerProd = () => {
     ],
     popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
     popupGridInfos: [
-      {...newDataPopupGrid.gridInfo, saveParams: {...newDataPopupInputInfo.values}},
-      {...addDataPopupGrid.gridInfo, saveParams: {...addDataPopupInputInfo.values}},
-      {...editDataPopupGrid.gridInfo, saveParams: {...editDataPopupInputInfo.values}},
+      {...newDataPopupGrid.gridInfo},
+      {...addDataPopupGrid.gridInfo},
+      {...editDataPopupGrid.gridInfo},
     ],
     searchProps: [
       {

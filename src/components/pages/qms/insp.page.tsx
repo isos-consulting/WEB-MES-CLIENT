@@ -1,13 +1,14 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { Button, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, isModified, onAsyncFunction } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, isModified, onAsyncFunction } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
 import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
+import { cloneDeep } from 'lodash';
 
 
 /** 검사기준서관리 */
@@ -76,8 +77,8 @@ export const PgQmsInsp = () => {
   }
 
   const onAfterSaveApply = async () => {
-    const headerRow = await cloneObject(selectedHeaderRow);
-    const detailRow = await cloneObject(selectedDetailRow);
+    const headerRow = await cloneDeep(selectedHeaderRow);
+    const detailRow = await cloneDeep(selectedDetailRow);
 
     onSearchHeader(headerSearchInfo?.values).then(res => {
       onAsyncFunction(onClickHeader, {
@@ -193,7 +194,7 @@ export const PgQmsInsp = () => {
 
   /** 팝업 Grid View */
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', 
-    cloneObject(detailSubGrid.gridInfo.columns)?.map((el) => {
+    cloneDeep(detailSubGrid.gridInfo.columns)?.map((el) => {
       if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) == false) {
         el['editable'] = true;
       }
@@ -317,17 +318,7 @@ export const PgQmsInsp = () => {
   //#region 🔶조회조건 관리
   /** 조회조건 View */
   // const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
-  const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
-    // {
-    //   type:'combo', id:'insp_type_cd', label:'기준서 유형', default:'RECEIVE_INSP', firstItemType:'none',
-    //   dataSettingOptions: {
-    //     uriPath: '/adm/insp-types',
-    //     params: {},
-    //     codeName: 'insp_type_cd',
-    //     textName: 'insp_type_nm',
-    //   }
-    // },
-  ]);
+  const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const detailSearchInfo = null;
   const detailSubSearchInfo = null;
 
@@ -381,18 +372,48 @@ export const PgQmsInsp = () => {
     {type:'text', id:'prod_nm', label:'품명', disabled:true, hidden:true},
     {type:'text', id:'prod_std', label:'규격', disabled:true, hidden:true},
   ]);
+
+  const PROD_POPUP = getPopupForm('품목관리');
+  const prodApiSettings = (ev) => {
+    const values = ev?.values;
+    const params = {};
+
+    if(values?.['insp_type_cd'] === 'RECEIVE_INSP') {
+      params['qms_receive_insp_fg'] = true;
+
+    } else if(values?.['insp_type_cd'] === 'PROC_INSP') {
+      params['qms_proc_insp_fg'] = true;
+
+    } else if(values?.['insp_type_cd'] === 'FINAL_INSP') {
+      params['qms_final_insp_fg'] = true;
+    }
+
+    return {
+      uriPath: PROD_POPUP.uriPath,
+      params: params,
+    }
+  };
+  const prodPopupButtonSettings = {
+    dataApiSettings: prodApiSettings,
+    datagridSettings: PROD_POPUP.datagridProps,
+    modalSettings: {
+      title: '품목관리',
+    }
+  }
+
   const detailSubInputInfo = useInputGroup('DETAIL_SUB_INPUTBOX', [
     {type:'text', id:'insp_uuid', alias:'uuid', label:'검사기준서UUID', disabled:true, hidden:true},
     {type:'text', id:'prod_uuid', label:'품목UUID', disabled:true, hidden:true},
     {
       type:'text', id:'prod_no', label:'품번', disabled:true, usePopup:true,
-      popupKey: '품목관리',
       popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
+      popupButtonSettings: prodPopupButtonSettings,
     },
     {
       type:'text', id:'prod_nm', label:'품명', disabled:true, usePopup:true,
-      popupKey: '품목관리',
+      // popupKey: '품목관리',
       popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
+      popupButtonSettings: prodPopupButtonSettings,
     },
     {
       type:'combo', id:'insp_type_cd', label:'기준서 유형', disabled:true, firstItemType:'none',
@@ -412,7 +433,7 @@ export const PgQmsInsp = () => {
 
   const newDataPopupInputInfo = useInputGroup(
     'NEW_DATA_POPUP_INPUTBOX',
-    cloneObject(detailSubInputInfo?.props?.inputItems)?.map(
+    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
         el['disabled'] = false;
         return el;
@@ -421,7 +442,7 @@ export const PgQmsInsp = () => {
   );
   const addDataPopupInputInfo = useInputGroup(
     'ADD_DATA_POPUP_INPUTBOX',
-    cloneObject(detailSubInputInfo?.props?.inputItems)?.map(
+    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
         if (['insp_no', 'contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
@@ -431,7 +452,7 @@ export const PgQmsInsp = () => {
   );
   const editDataPopupInputInfo = useInputGroup(
     'EDIT_DATA_POPUP_INPUTBOX',
-    cloneObject(detailSubInputInfo?.props?.inputItems)?.map(
+    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
         if (['insp_no', 'contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
@@ -514,7 +535,7 @@ export const PgQmsInsp = () => {
     const value = inputInfo?.values?.insp_type_cd;
     if (!value) return;
 
-    const columns = cloneObject(grid?.gridInfo?.columns)?.map(
+    const columns = cloneDeep(grid?.gridInfo?.columns)?.map(
       (el) => {
         if (['worker_sample_cnt', 'worker_insp_cycle'].includes(el?.name)) {
           el['hidden'] = value !== 'PROC_INSP';
@@ -543,8 +564,8 @@ export const PgQmsInsp = () => {
     }, detailSubInputInfo.values, modal,
       async (res) => {
         // 헤더 그리드 재조회
-        const headerRow = cloneObject(selectedHeaderRow);
-        const detailRow = cloneObject(selectedDetailRow);
+        const headerRow = cloneDeep(selectedHeaderRow);
+        const detailRow = cloneDeep(selectedDetailRow);
         
         await onReset();
         onSearchHeader(headerSearchInfo?.values).then(async (searchResult) => {
@@ -651,8 +672,8 @@ export const PgQmsInsp = () => {
     if (!isSuccess) return;
 
     await onReset();
-    const headerRow = cloneObject(selectedHeaderRow);
-    const detailRow = cloneObject(selectedDetailRow);
+    const headerRow = cloneDeep(selectedHeaderRow);
+    const detailRow = cloneDeep(selectedDetailRow);
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, headerRow?.prod_uuid, detailRow?.insp_uuid); });
@@ -664,8 +685,8 @@ export const PgQmsInsp = () => {
     if (!isSuccess) return;
     
     await onReset();
-    const headerRow = cloneObject(selectedHeaderRow);
-    const detailRow = cloneObject(selectedDetailRow);
+    const headerRow = cloneDeep(selectedHeaderRow);
+    const detailRow = cloneDeep(selectedDetailRow);
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, headerRow?.prod_uuid, detailRow?.insp_uuid); });
@@ -677,7 +698,7 @@ export const PgQmsInsp = () => {
     let selectedHeaderRow = searchResult?.find(el => el?.prod_uuid === header_uuid);
       
     if (!selectedHeaderRow) { selectedHeaderRow = searchResult[0]; }
-    onAsyncFunction(setSelectedHeaderRow, cloneObject(selectedHeaderRow)).then(() => {
+    onAsyncFunction(setSelectedHeaderRow, cloneDeep(selectedHeaderRow)).then(() => {
       let selectedDetailRow = searchResult?.find(el => el?.insp_uuid === detail_uuid);
       setSelectedDetailRow(selectedDetailRow);
     });
@@ -724,7 +745,9 @@ export const PgQmsInsp = () => {
       : 'put'
     );
 
-    const optionSaveParams = cloneObject(inputInfo?.values);
+    const optionSaveParams = cloneDeep(inputInfo?.values);
+
+    console.log('optionSaveParams', optionSaveParams)
 
     if (methodType === 'post') {
       // post로 저장할 경우 uuid키를 제거
@@ -743,8 +766,8 @@ export const PgQmsInsp = () => {
           setVisible(false);
 
           // 데이터 재조회
-          const headerRow = cloneObject(selectedHeaderRow);
-          const detailRow = cloneObject(selectedDetailRow);
+          const headerRow = cloneDeep(selectedHeaderRow);
+          const detailRow = cloneDeep(selectedDetailRow);
 
           await onReset();
           onSearchHeader(headerSearchInfo?.values).then(async (searchResult) => {
