@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { Datagrid, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
@@ -9,6 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -104,7 +105,7 @@ export const PgOutRelease = () => {
       }
     },
     {header: '수입검사', name:'insp_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', requiredField:true},
-    {header: '이월', name:'carry_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', editable:true, requiredField:true},
+    {header: '이월', name:'carry_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', requiredField:true},
     {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
     {header: '출고창고', name:'from_store_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', requiredField:true},
     {header: '출고위치아이디', name:'from_location_uuid', width:ENUM_WIDTH.L,format:'popup', filter:'text', hidden:true},
@@ -273,12 +274,14 @@ export const PgOutRelease = () => {
 
   /** 상세 그리드 데이터 세팅 */
   const reloadDetailGrid = (uuid) => {
-    if (!uuid) return;
-
-    const uriPath = detailSearchUriPath.replace('$', uuid);
-    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
-      detailGrid.setGridData(res?.details || []);
-    });
+    if (uuid) {
+      const uriPath = detailSearchUriPath.replace('$', uuid);
+      getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
+        detailGrid.setGridData(res?.details || []);
+      });  
+    } else {
+      detailGrid.setGridData([]);
+    };
   };
   //#endregion
 
@@ -303,6 +306,7 @@ export const PgOutRelease = () => {
     await getData(searchParams, headerSearchUriPath).then((res) => {
       data = res;
     }).finally(() => {
+      detailInputInfo.ref.current.resetForm();
       setSelectedHeaderRow(null);
       headerGrid.setGridData(data);
     });
@@ -311,7 +315,6 @@ export const PgOutRelease = () => {
   };
 
   const onSearchDetail = (uuid) => {
-    if (uuid == null) return;
     reloadDetailGrid(uuid);
   }
   //#endregion
@@ -329,7 +332,7 @@ export const PgOutRelease = () => {
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_price'].includes(el?.id))
           el['disabled'] = false;
 
@@ -342,7 +345,7 @@ export const PgOutRelease = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['partner_nm', 'reg_date', 'total_price'].includes(el?.id))
           el['disabled'] = false;
 
@@ -361,9 +364,12 @@ export const PgOutRelease = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
-    detailInputInfo.setValues(selectedHeaderRow);
-    onSearchDetail(selectedHeaderRow?.release_uuid);
+    if (selectedHeaderRow == null) {
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.release_uuid);
+    };
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {
