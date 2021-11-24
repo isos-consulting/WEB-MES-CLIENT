@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from "react";
 import { getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -25,12 +25,13 @@ export const PgPrdReturn = () => {
   const searchUriPath = '/prd/returns';
   const saveUriPath = '/prd/returns';
   const STORE_POPUP = getPopupForm('창고관리');
+  const LOCATION_POPUP = getPopupForm('위치관리');
   const STOCK_POPUP = getPopupForm('재고관리');
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header: '자재반납아이디', name:'return_uuid', alias: 'uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-    {header: '반납일', name:'reg_date', width:ENUM_WIDTH.L, filter:'text', format:'date', editable:true, requiredField:true},
+    {header: '반납일', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date', editable:true, requiredField:true},
     {header: '품목아이디', name:'prod_uuid', format:'text', hidden:true, requiredField: true},
     {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:true, editable:true, requiredField: true},
     {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:false, editable:true, requiredField: true},
@@ -52,10 +53,10 @@ export const PgPrdReturn = () => {
     {header: '출고위치', name:'from_location_nm', width:ENUM_WIDTH.M, format:'popup'},
 
     {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true, requiredField: true},
-    {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, format:'combo', editable:true, requiredField: true},
+    {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, format:'popup', editable:true, requiredField: true},
 
     {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-    {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, format:'combo', editable:true},
+    {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, format:'popup', editable:true},
 
     {header: '비고', name:'remark', width:ENUM_WIDTH.XL, format:'text', editable:true },
   ], {
@@ -63,62 +64,63 @@ export const PgPrdReturn = () => {
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
     gridPopupInfo: [
-      { // 가용창고재고 조회
-        columnNames: [
-          {original:'prod_uuid', popup:'prod_uuid'},
-          {original:'prod_no', popup:'prod_no'},
-          {original:'prod_nm', popup:'prod_nm'},
-          {original:'model_nm', popup:'model_nm'},
-          {original:'rev', popup:'rev'},
-          {original:'prod_std', popup:'prod_std'},
-          {original:'unit_uuid', popup:'unit_uuid'},
-          {original:'unit_nm', popup:'unit_nm'},
-          {original:'lot_no', popup:'lot_no'},
-          {original:'qty', popup:'qty'},
-          {original:'from_store_uuid', popup:'store_uuid'},
-          {original:'from_store_nm', popup:'store_nm'},
-          {original:'from_location_uuid', popup:'location_uuid'},
-          {original:'from_location_nm', popup:'location_nm'},
-        ],
-        columns: STORE_POPUP.datagridProps.columns,
-        dataApiSettings: () => {
-
-          const reg_date = searchInfo?.values;
+      // { // 가용창고재고 팝업
+      //   columnNames: [
+      //     {original:'prod_uuid', popup:'prod_uuid'},
+      //     {original:'prod_no', popup:'prod_no'},
+      //     {original:'prod_nm', popup:'prod_nm'},
+      //     {original:'model_nm', popup:'model_nm'},
+      //     {original:'rev', popup:'rev'},
+      //     {original:'prod_std', popup:'prod_std'},
+      //     {original:'unit_uuid', popup:'unit_uuid'},
+      //     {original:'unit_nm', popup:'unit_nm'},
+      //     {original:'lot_no', popup:'lot_no'},
+      //     {original:'qty', popup:'qty'},
+      //     {original:'from_store_uuid', popup:'store_uuid'},
+      //     {original:'from_store_nm', popup:'store_nm'},
+      //     {original:'from_location_uuid', popup:'location_uuid'},
+      //     {original:'from_location_nm', popup:'location_nm'},
+      //   ],
+      //   columns: STORE_POPUP.datagridProps.columns,
+      //   dataApiSettings: () => {
+      //     const reg_date = searchInfo?.values;
           
-          return {
-            uriPath: STORE_POPUP.uriPath,
-            params: {
-              stock_type: 'available',
-              grouped_type: 'all',
-              price_type: 'all',
-              reg_date,
-            }
-          };
-        },
-        gridMode:'select',
-      },
-      { // 입고창고 콤보박스
+      //     return {
+      //       uriPath: STORE_POPUP.uriPath,
+      //       params: {
+      //         stock_type: 'available',
+      //         grouped_type: 'all',
+      //         price_type: 'all',
+      //         reg_date,
+      //       }
+      //     };
+      //   },
+      //   gridMode:'select',
+      // },
+      { // 입고창고 팝업
         columnNames: [
           {original:'to_store_uuid', popup:'store_uuid'},
           {original:'to_store_nm', popup:'store_nm'},
         ],
         dataApiSettings: {
-          uriPath: '/std/stores',
+          uriPath: STORE_POPUP.uriPath,
           params: {
             store_type: 'available'
           }
         },
+        columns: STORE_POPUP.datagridProps.columns,
         gridMode: 'select',
       },
-      { // 입고위치 콤보박스
+      { // 입고위치 팝업
         columnNames: [
           {original:'to_location_uuid', popup:'location_uuid'},
           {original:'to_location_nm', popup:'location_nm'},
         ],
         dataApiSettings: {
-          uriPath: '/std/locations',
+          uriPath: LOCATION_POPUP.uriPath,
           params: {}
         },
+        columns: LOCATION_POPUP.datagridProps.columns,
         gridMode: 'select',
       },
     ],
@@ -138,38 +140,62 @@ export const PgPrdReturn = () => {
         {original:'prod_std', popup:'prod_std'},
         {original:'unit_uuid', popup:'unit_uuid'},
         {original:'unit_nm', popup:'unit_nm'},
-        {original:'store_uuid', popup:'store_uuid'},
-        {original:'store_nm', popup:'store_nm'},
-        {original:'location_uuid', popup:'location_uuid'},
-        {original:'location_nm', popup:'location_nm'},
+        {original:'from_store_uuid', popup:'store_uuid'},
+        {original:'from_store_nm', popup:'store_nm'},
+        {original:'from_location_uuid', popup:'location_uuid'},
+        {original:'from_location_nm', popup:'location_nm'},
         {original:'lot_no', popup:'lot_no'},
         {original:'qty', popup:'qty'},
       ],
       columns: STOCK_POPUP.datagridProps.columns,
       gridMode: 'multi-select',
-      dataApiSettings: {
-        uriPath: STOCK_POPUP.uriPath,
-        params: STOCK_POPUP.params,
+      dataApiSettings: () => {
+        let reg_date = null;
+        if (newDataPopupGridVisible) {
+          reg_date = newDataPopupInputInfo?.values?.reg_date;
+
+        } else if (editDataPopupGridVisible) {
+          reg_date = editDataPopupInputInfo?.values?.reg_date;
+        }
+
+        return {
+          uriPath: STOCK_POPUP.uriPath,
+          params: {
+            stock_type: 'available',
+            grouped_type: 'all',
+            price_type: 'all',
+            reg_date: reg_date,
+          },
+          onInterlock: () => {
+            const regDateFg = reg_date != null;
+            if (!regDateFg) {
+              message.warn('기준일을 선택한 후 다시 시도해주세요.');
+              return false;
+            }
+
+            return true;
+          }
+        }
       }
     }
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
-    {
-      searchUriPath: searchUriPath,
-      saveUriPath: saveUriPath,
-    gridPopupInfo: grid?.gridInfo?.gridPopupInfo,
-      rowAddPopupInfo: grid?.gridInfo?.rowAddPopupInfo,
-    }
-  );
-  const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    grid.gridInfo.columns,
+    cloneObject(grid.gridInfo.columns)?.filter(el => el?.name !== 'reg_date'),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       gridPopupInfo: grid?.gridInfo?.gridPopupInfo,
       rowAddPopupInfo: grid?.gridInfo?.rowAddPopupInfo,
+    }
+  );
+  const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
+    cloneObject(newDataPopupGrid.gridInfo.columns),
+    {
+      searchUriPath: searchUriPath,
+      saveUriPath: saveUriPath,
+      gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+      rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -285,10 +311,23 @@ export const PgPrdReturn = () => {
       ...searchInfo?.props, 
       onSearch
     }, 
-    inputProps: null,  
+    inputProps: null,
     
     popupGridRef: [newDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfo: [newDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridInfo: [
+      {
+        ...newDataPopupGrid.gridInfo,
+        saveParams: {
+          reg_date: newDataPopupInputInfo?.values?.reg_date,
+        },
+      },
+      {
+        ...editDataPopupGrid.gridInfo,
+        saveParams: {
+          reg_date: editDataPopupInputInfo?.values?.reg_date,
+        },
+      },
+    ],
     popupVisible: [newDataPopupGridVisible, editDataPopupGridVisible],
     setPopupVisible: [setNewDataPopupGridVisible, setEditDataPopupGridVisible],
     popupInputProps: [newDataPopupInputInfo?.props, editDataPopupInputInfo?.props],

@@ -527,7 +527,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         header:COLUMN_NAME.EDIT,
         editable: false,
         format: 'text',
-        //hidden: !['create','update'].includes(props.gridMode),
+        hidden: !['create','update'].includes(props.gridMode),
         width: 70,
         align: 'center',
         renderer: {
