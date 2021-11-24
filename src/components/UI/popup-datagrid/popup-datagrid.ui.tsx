@@ -324,7 +324,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   /** ⛔WILL MOUNT : 외부 데이터가 변경되면 state data에 적용 */
   useLayoutEffect(() => {
     const _visible = props.visible ?? visible;
-    const data = props.data ? props.data : props.defaultData;
+    const data = props.defaultData?.length > 0 ? props.defaultData : props.data;
     
     if (_visible === true) {
       setData(data);
