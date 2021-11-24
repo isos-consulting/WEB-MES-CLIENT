@@ -320,6 +320,7 @@ export const DOWNTIME = () => {
           updatedRows: [],
           deletedRows: []
         };
+        console.log(saveData)
 
     await saveData[_gridMode+'dRows']?.forEach((el) => {
       if (el['start_date'] != null && el['start_time'] != null) {
@@ -351,6 +352,7 @@ export const DOWNTIME = () => {
 
     // 저장 가능한지 체크
     const chk:boolean = await checkGridData(gridInfo.columns, saveData);
+    console.log(saveData)
 
     if (chk === false) return;
 
