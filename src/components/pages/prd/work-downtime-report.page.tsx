@@ -28,7 +28,10 @@ export const PgPrdWorkDowntimeReport = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
+    onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -59,7 +62,7 @@ export const PgPrdWorkDowntimeReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['work_start_date', 'work_end_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
@@ -236,37 +239,42 @@ export const PgPrdWorkDowntimeReport = () => {
 
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
-    if (grid?.gridInfo?.data?.length <= 0) return;
-    const curculationColumnNames = ['downtime'];
-    const standardNames = (
-      searchInfo.values?.sort_type === 'equip' ?
-        ['equip_uuid', 'equip_nm']
-      : searchInfo.values?.sort_type === 'proc' ?
-        ['proc_uuid', 'proc_nm']
-      : searchInfo.values?.sort_type === 'downtime' ?
-        ['downtime_uuid', 'downtime_nm', 'downtime_type_uuid', 'downtime_type_nm']
-      : null
-    );
-    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
-      standardNames: standardNames,
-      curculations: [
-        {names: curculationColumnNames, type:'sum'},
-      ],
-    }).subTotals || [];
-
-    subGrid.setGridData(subGridData);
-
+    setSubTotalDatas(grid?.gridInfo?.data);
   }, [subColumns, grid?.gridInfo?.data]);
 
+  const setSubTotalDatas = (data:object[]) => {
+    if (data?.length > 0) {
+      const curculationColumnNames = ['downtime'];
+      const standardNames = (
+        searchInfo.values?.sort_type === 'equip' ?
+          ['equip_uuid', 'equip_nm']
+        : searchInfo.values?.sort_type === 'proc' ?
+          ['proc_uuid', 'proc_nm']
+        : searchInfo.values?.sort_type === 'downtime' ?
+          ['downtime_uuid', 'downtime_nm', 'downtime_type_uuid', 'downtime_type_nm']
+        : null
+      );
+      const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
+        standardNames: standardNames,
+        curculations: [
+          {names: curculationColumnNames, type:'sum'},
+        ],
+      }).subTotals || [];
+
+      subGrid.setGridData(subGridData);
+    } else {
+      subGrid.setGridData([]);
+    };
+  }
 
   /** 검색 */
   const onSearch = (values) => {
-    const searchKeys = ['start_reg_date', 'end_reg_date', 'sort_type'];//Object.keys(searchInfo.values);
+    const searchKeys = ['work_start_date', 'work_end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
     
     if (!values?.reg_date_chk) {
-      delete searchParams['start_reg_date'];
-      delete searchParams['end_reg_date'];
+      delete searchParams['work_start_date'];
+      delete searchParams['work_end_date'];
     }
 
     let data = [];

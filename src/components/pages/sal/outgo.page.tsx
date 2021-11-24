@@ -97,12 +97,12 @@ export const PgSalOutgo = () => {
         formula: priceFormula
       }
     },
-    {header: '금액', name:'total_price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, requiredField:true},
+    {header: '금액', name:'total_price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
     {header: '이월', name:'carry_fg', width:ENUM_WIDTH.S, filter:'text', format:'check', editable:true, requiredField:true},
     {header: '창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '창고', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'number', format:'number', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '바코드', name:'barcode', width:ENUM_WIDTH.L, filter:'text', editable:true},
@@ -163,6 +163,8 @@ export const PgSalOutgo = () => {
         {original:'price_type_nm', popup:'price_type_nm'},
         {original:'price', popup:'price'},
         {original:'exchange', popup:'exchange'},
+        {original:'lot_no', popup:'lot_no'},
+        {original:'qty', popup:'qty'},
       ],
       columns: getPopupForm('재고관리')?.datagridProps?.columns,
       dataApiSettings: () => {

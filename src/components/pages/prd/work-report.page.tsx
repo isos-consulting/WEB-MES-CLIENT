@@ -28,6 +28,8 @@ export const PgPrdWorkReport = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
+    onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
@@ -59,7 +61,7 @@ export const PgPrdWorkReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'생산일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'생산일', useCheckbox:true},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
@@ -245,39 +247,44 @@ export const PgPrdWorkReport = () => {
     );
   }, [searchInfo?.values]);
 
+  const setSubTotalDatas = (data:object[]) => {
+    if (data?.length > 0) {
+      const curculationColumnNames = ['order_qty', 'total_qty', 'qty', 'reject_qty'];
+      const standardNames = (
+        searchInfo.values?.sort_type === 'prod' ?
+          ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
+        : searchInfo.values?.sort_type === 'proc' ?
+          ['proc_uuid', 'proc_nm']
+        : searchInfo.values?.sort_type === 'date' ?
+          ['reg_date']
+        : null
+      );
+      const subGridData = convDataToSubTotal(data, {
+        standardNames: standardNames,
+        curculations: [
+          {names: curculationColumnNames, type:'sum'},
+        ],
+      }).subTotals || [];
+
+      subGrid.setGridData(subGridData);
+    } else {
+      subGrid.setGridData([]);
+    };
+  }
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
-    if (grid?.gridInfo?.data?.length <= 0) return;
-    const curculationColumnNames = ['order_qty', 'total_qty', 'qty', 'reject_qty'];
-    const standardNames = (
-      searchInfo.values?.sort_type === 'prod' ?
-        ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'rev', 'prod_no', 'prod_nm', 'model_nm', 'prod_std', 'unit_nm']
-      : searchInfo.values?.sort_type === 'proc' ?
-        ['proc_uuid', 'proc_nm']
-      : searchInfo.values?.sort_type === 'date' ?
-        ['reg_date']
-      : null
-    );
-    const subGridData = convDataToSubTotal(grid?.gridInfo?.data, {
-      standardNames: standardNames,
-      curculations: [
-        {names: curculationColumnNames, type:'sum'},
-      ],
-    }).subTotals || [];
-
-    subGrid.setGridData(subGridData);
-
+    setSubTotalDatas(grid?.gridInfo?.data);
   }, [subColumns, grid?.gridInfo?.data]);
 
 
   /** 검색 */
   const onSearch = (values) => {
-    const searchKeys = ['start_reg_date', 'end_reg_date', 'sort_type'];//Object.keys(searchInfo.values);
+    const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
 
     if (!values?.reg_date_chk) {
-      delete searchParams['start_reg_date'];
-      delete searchParams['end_reg_date'];
+      delete searchParams['start_date'];
+      delete searchParams['end_date'];
     }
 
     let data = [];
