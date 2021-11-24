@@ -404,6 +404,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       visible={props.visible ?? visible}
       maskClosable={false}
       confirmLoading={loading}
+      footer={props.footer}
     >
       <div>
       {props?.searchProps != null ? <Searchbox boxShadow={false} {...props.searchProps} /> : null}

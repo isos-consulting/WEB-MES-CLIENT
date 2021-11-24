@@ -375,6 +375,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                   popupKeys={item.popupKeys}
                                   disabled={item.disabled}
                                   handleChange={item.handleChange}
+                                  values={values}
                                 />
                               : null}
                               </div>
@@ -684,6 +685,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                     popupKeys={item.popupKeys}
                                     disabled={item.disabled}
                                     handleChange={item.handleChange}
+                                    values={values}
                                   />
                                   </div>
                                 : null}

@@ -230,7 +230,7 @@ export const PgPrdReturn = () => {
   /** 검색 */
   const onSearch = (values) => {
     // const searchKeys = Object.keys(values);
-    const searchParams = cleanupKeyOfObject(searchInfo.values, searchInfo.searchItemKeys);
+    const searchParams = cleanupKeyOfObject(values, searchInfo.searchItemKeys);
 
     let data = [];
 
