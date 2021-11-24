@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-
+import _ from 'lodash';
 
 /** 완료상태 컬럼 renderer 조건 */
 const completeCondition = [
@@ -40,8 +40,10 @@ export const PgSalOrder = () => {
   const [modal, modalContext] = Modal.useModal();
 
   /** INIT */
+  const headerDefaultGridMode = 'view';
   const headerSearchUriPath = '/sal/orders';
   const headerSaveUriPath = '/sal/orders';
+  const detailDefaultGridMode = 'delete';
   const detailSearchUriPath = '/sal/orders';
   const detailSaveUriPath = '/sal/orders';
   const searchInitKeys = ['start_date', 'end_date'];
@@ -49,6 +51,7 @@ export const PgSalOrder = () => {
   /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [addDataPopupGridVisible, setAddDataPopupGridVisible] = useState<boolean>(false);
+  const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
@@ -67,6 +70,7 @@ export const PgSalOrder = () => {
   ], {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
+    gridMode: headerDefaultGridMode,
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
@@ -112,9 +116,10 @@ export const PgSalOrder = () => {
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
+    gridMode: detailDefaultGridMode,
   });
 
-  const gridPopupColumns = cloneObject(detailGrid.gridInfo.columns)?.map((el) => {
+  const gridPopupColumns = _.cloneDeep(detailGrid.gridInfo.columns)?.map((el) => {
     if (['prod_type_nm', 'item_type_nm', 'prod_no', 'prod_nm', 'model_nm', 'rev', 'prod_std', 'safe_stock', 'unit_nm', 'money_unit_nm'].includes(el?.name))
       el['editable'] = false;
 
@@ -224,7 +229,17 @@ export const PgSalOrder = () => {
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', gridPopupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
+    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
+  });
+
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
   /** 헤더 클릭 이벤트 */
@@ -245,15 +260,6 @@ export const PgSalOrder = () => {
     getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
       detailGrid.setGridData(res?.details || []);
     });
-  };
-
-  /** 그리드의 모드 변경 액션 */
-  const changeGridMode = (mode:TGridMode) => {
-    detailGrid.setGridMode(mode);
-
-    if (mode === 'view') {
-      reloadDetailGrid(selectedHeaderRow?.order_uuid);
-    }
   };
   //#endregion
 
@@ -303,7 +309,21 @@ export const PgSalOrder = () => {
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    JSON.parse(JSON.stringify(detailInputInfo.props?.inputItems))?.map((el) => {
+    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+        if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
+          el['disabled'] = false;
+        }
+
+        if (el?.id === 'reg_date')
+          el['default'] = getToday();
+          
+        return el;
+      }
+    )
+  );
+
+  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
+    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
@@ -323,9 +343,12 @@ export const PgSalOrder = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
-    detailInputInfo.setValues(selectedHeaderRow);
-    onSearchDetail(selectedHeaderRow?.order_uuid);
+    if (selectedHeaderRow == null) {
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.order_uuid);
+    }
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {
@@ -343,9 +366,50 @@ export const PgSalOrder = () => {
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
+
+  // useLayoutEffect(() => {
+  //   if (editDataPopupGridVisible === true) {
+  //     // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다
+  //     editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
+  //   }
+
+  // }, [editDataPopupGridVisible, detailInputInfo.values, detailGrid.gridInfo.data]);
   //#endregion
 
-  
+  const onSave = () => {
+    const {gridRef, setGridMode} = detailGrid;
+    const {columns, saveUriPath} = detailGrid.gridInfo;
+
+    if (!detailInputInfo.isModified && !isModified(detailGrid.gridRef, detailGrid.gridInfo.columns)) {
+      message.warn('편집된 데이터가 없습니다.');
+      return;
+    }
+    
+    dataGridEvents.onSave('headerInclude', {
+      gridRef,
+      setGridMode,
+      columns,
+      saveUriPath,
+    }, detailInputInfo.values, modal,
+      (res) => {
+        // 헤더 그리드 재조회
+        onSearchHeader(headerSearchInfo.values).then((searchResult) => {
+          const headerRow = res.datas.raws[0].header[0];
+          onAfterSaveAction(searchResult, headerRow?.uuid);
+        });
+      },
+      true
+    );
+  };
+
+  const onCheckUuid = ():boolean => {
+    if (detailInputInfo?.values?.order_uuid == null) {
+      message.warn('전표를 선택하신 후 다시 시도해 주세요.');
+      return false;
+    };
+    return true;
+  };
+
   //#region 🔶작동될 버튼들의 기능 정의 (By Template) 
   const buttonActions = {
     /** 조회 */
@@ -355,12 +419,13 @@ export const PgSalOrder = () => {
 
     /** 수정 */
     update: () => {
-      changeGridMode('update');
+      if (!onCheckUuid()) return;
+      setEditDataPopupGridVisible(true);
     },
 
     /** 삭제 */
     delete: () => {
-      changeGridMode('delete');
+      onSave();
     },
     
     /** 신규 추가 */
@@ -371,39 +436,14 @@ export const PgSalOrder = () => {
     
     /** 상세 신규 추가 */
     createDetail: () => {
-      if (detailInputInfo?.values.order_uuid == null) {
-        message.warn('전표를 선택하신 후 다시 시도해 주세요.');
-        return;
-      };
+      if (!onCheckUuid()) return;
 
       setAddDataPopupGridVisible(true);
     },
 
     /** 저장(수정, 삭제) */
     save: () => {
-      const {gridRef, setGridMode} = detailGrid;
-      const {columns, saveUriPath} = detailGrid.gridInfo;
-
-      if (!detailInputInfo.isModified && !isModified(detailGrid.gridRef, detailGrid.gridInfo.columns)) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      
-      dataGridEvents.onSave('headerInclude', {
-        gridRef,
-        setGridMode,
-        columns,
-        saveUriPath,
-      }, detailInputInfo.values, modal,
-        (res) => {
-          // 헤더 그리드 재조회
-          onSearchHeader(headerSearchInfo.values).then((searchResult) => {
-            const headerRow = res.datas.raws[0].header[0];
-            onAfterSaveAction(searchResult, headerRow?.uuid);
-          });
-        },
-        true
-      );
+      onSave();
     },
 
     /** 편집 취소 */
@@ -446,6 +486,16 @@ export const PgSalOrder = () => {
     setNewDataPopupGridVisible(false);
   }
 
+  /** 수정 이후 수행될 함수 */
+  const onAfterSaveEditData = (isSuccess, savedData?) => {
+    if (!isSuccess) return;
+    const savedUuid = savedData[0]?.receive?.header[0]?.uuid;
+
+    // 헤더 그리드 재조회
+    onSearchHeader(headerSearchInfo?.values).then((searchResult) => { onAfterSaveAction(searchResult, savedUuid); });
+    setEditDataPopupGridVisible(false);
+  }
+
   /** 세부 저장 이후 수행될 함수 */
   const onAfterSaveAddData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
@@ -476,8 +526,8 @@ export const PgSalOrder = () => {
       }, 
       detailGrid.gridInfo
     ],
-    popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef],
-    popupGridInfos: [newDataPopupGrid.gridInfo, addDataPopupGrid.gridInfo],
+    popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
+    popupGridInfos: [newDataPopupGrid.gridInfo, addDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
     searchProps: [
       {
         ...headerSearchInfo.props, 
@@ -489,13 +539,14 @@ export const PgSalOrder = () => {
       }
     ],
     inputProps: [null, detailInputInfo.props],  
-    popupVisibles: [newDataPopupGridVisible, addDataPopupGridVisible],
-    setPopupVisibles: [setNewDataPopupGridVisible, setAddDataPopupGridVisible],
-    popupInputProps: [newDataPopupInputInfo.props, addDataPopupInputInfo.props],
+    popupVisibles: [newDataPopupGridVisible, addDataPopupGridVisible, editDataPopupGridVisible],
+    setPopupVisibles: [setNewDataPopupGridVisible, setAddDataPopupGridVisible, setEditDataPopupGridVisible],
+    popupInputProps: [newDataPopupInputInfo?.props, addDataPopupInputInfo?.props, editDataPopupInputInfo?.props],
     buttonActions,
     modalContext,
 
     onAfterOkNewDataPopup: onAfterSaveNewData,
+    onAfterOkEditDataPopup: onAfterSaveEditData,
     onAfterOkAddDataPopup: onAfterSaveAddData,
   };
   //#endregion

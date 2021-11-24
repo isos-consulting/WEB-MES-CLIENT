@@ -45,7 +45,6 @@ export const PgSalOutgoOrder = () => {
     {header: '출하지시일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
-    {header: '합계금액(￦)', name:'total_price', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
   ], {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
@@ -317,11 +316,10 @@ export const PgSalOutgoOrder = () => {
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type: 'text', id: 'outgo_order_uuid', alias:'uuid', label: '외주입하UUID', disabled:true, hidden:true},
     {type:'date', id:'reg_date', label:'출하지시일', disabled:true, default:getToday()},
-    {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
-    {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
     {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
-    {type:'text', id:'supplier_nm', label:'납품처', disabled:true, usePopup:true, popupKey:'납품처관리', popupKeys:['supplier_uuid', 'supplier_nm']},
+    {type:'text', id:'delivery_uuid', label:'납품처UUID', disabled:true, hidden:true},
+    {type:'text', id:'delivery_nm', label:'납품처', disabled:true, usePopup:true, popupKey:'납품처관리', popupKeys:['delivery_uuid', 'delivery_nm']},
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);
 

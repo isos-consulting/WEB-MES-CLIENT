@@ -1106,7 +1106,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];
@@ -1218,6 +1218,9 @@ const INSP_RESULT_CREATE_POPUP = (props:{
       return;
     }else if(!inputInspResultValues?.emp_uuid){
       message.warn('검사자를 등록해주세요.')
+      return;
+    }else if(!inputInspResultValues?.reg_date_time){
+      message.warn('검사시간을 등록해주세요.')
       return;
     }
 
@@ -1419,7 +1422,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
 
   //#region 그리드 컬럼세팅
   const COLUMNS_FINAL_INSP_DETAILS:IGridColumn[] = [
-    {header:'검사성적서 상세UUID', name:'insp_result_detail_info_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:false},
+    {header:'검사성적서 상세UUID', name:'insp_result_detail_info_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사기준서 상세UUID', name:'insp_detail_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목 유형UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
@@ -1443,7 +1446,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       if (inspResult?.header?.max_sample_cnt > 0) {
         //시료수 최대값에 따라 컬럼 생성
         for (let i = 1; i <= inspResult?.header?.max_sample_cnt; i++) {
-          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:false});
+          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true});
           items.push({header:'x'+i+'_sample_no', name:'x'+i+'_sample_no', width:ENUM_WIDTH.M, filter:'text', hidden:true});
           items.push({header:'x'+i, name:'x'+i+'_insp_value', width:ENUM_WIDTH.L, filter:'text', editable:true});
           items.push({header:'x'+i+'_판정', name:'x'+i+'_insp_result_fg', width:ENUM_WIDTH.M, filter:'text', hidden:true});
@@ -1634,7 +1637,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];
@@ -1745,6 +1748,9 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       return;
     }else if(!inputInspResultValues?.emp_uuid){
       message.warn('검사자를 등록해주세요.')
+      return;
+    }else if(!inputInspResultValues?.reg_date_time){
+      message.warn('검사시간을 등록해주세요.')
       return;
     }
 

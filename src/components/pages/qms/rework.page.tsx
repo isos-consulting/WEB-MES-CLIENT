@@ -1,20 +1,20 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { COLUMN_CODE, EDIT_ACTION_CODE, getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid, TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { TpDoubleGrid } from '~/components/templates';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import ITpDoubleGridProps, { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import { FormikValues } from 'formik';
+import _ from 'lodash';
 
 
 
 const changeNameToAlias = (data:object, items:any[]) => {
-  let newData = cloneObject(data);
+  let newData = _.cloneDeep(data);
   
   Object.keys(newData)?.forEach(key => {
     const item = items?.find(el => el?.id === key);
@@ -64,13 +64,13 @@ export const PgQmsRework = () => {
       //   textName:'rework_type_nm'
       // }
       options: [
-        {code:'REWORK', text:'재작업'},
         {code:'DISPOSAL', text:'폐기'},
+        {code:'REWORK', text:'재작업'},
         {code:'RETURN', text:'반품'},
       ]
     },
   ]);
-  const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', cloneObject(newDataPopupInputInfo?.props?.inputItems)?.filter(el => el?.id !== 'rework_type_cd'));
+  const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', _.cloneDeep(newDataPopupInputInfo?.props?.inputItems)?.filter(el => el?.id !== 'rework_type_cd'));
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('HEADER_GRID', [
@@ -270,7 +270,7 @@ export const PgQmsRework = () => {
     title: '분해이력'
   });
 
-  const newDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
+  const newDataPopupGridColumns = _.cloneDeep(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
     newDataPopupGridColumns,
     {
@@ -295,11 +295,12 @@ export const PgQmsRework = () => {
               stock_type: 'reject',
               grouped_type: 'all',
               price_type: 'all',
+              exclude_zero_fg:true,
               reg_date: getToday(),
             }, STOCK_POPUP.uriPath).then((res) => {
               res?.map((el) => {
                 el[COLUMN_CODE.EDIT] = EDIT_ACTION_CODE.CREATE;
-                el['rework_type_cd'] = newDataPopupInputInfo?.values?.rework_type_cd;
+                el['rework_type_cd'] = inputValues?.rework_type_cd;
 
                 const rework_type_nm = (
                   el['rework_type_cd'] === 'REWORK' ?
@@ -319,7 +320,6 @@ export const PgQmsRework = () => {
                 el['from_store_nm'] = el?.store_nm;
 
                 el['reg_date'] = inputValues?.reg_date;
-                el['qty'] = 0;
 
                 return el;
               });
@@ -333,7 +333,7 @@ export const PgQmsRework = () => {
       ],
     }
   );
-  const editDataPopupGridColumns = cloneObject(newDataPopupGrid?.gridInfo?.columns)?.map(
+  const editDataPopupGridColumns = _.cloneDeep(newDataPopupGrid?.gridInfo?.columns)?.map(
     (el) => {
       if (el?.name !== 'remark')
         el['editable'] = false;
@@ -432,6 +432,12 @@ export const PgQmsRework = () => {
     );
   }
 
+  useLayoutEffect(() => {
+    if(editDataPopupGridVisible && editDataPopupGrid){
+      editDataPopupGrid?.setGridData(grid?.gridInfo?.data || []);
+    }
+  }, [editDataPopupGridVisible, editDataPopupGrid])
+
   /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {
     /** 조회 */
@@ -442,7 +448,6 @@ export const PgQmsRework = () => {
     /** 수정 */
     update: () => {
       setEditDataPopupGridVisible(true);
-      editDataPopupGrid?.setGridData(grid?.gridInfo?.data || []);
     },
 
     /** 삭제 */

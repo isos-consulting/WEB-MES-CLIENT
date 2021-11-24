@@ -924,7 +924,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];
@@ -1187,7 +1187,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       if (inspResultIncludeDetails?.header?.max_sample_cnt > 0) {
         //시료수 최대값에 따라 컬럼 생성
         for (let i = 1; i <= inspResultIncludeDetails?.header?.max_sample_cnt; i++) {
-          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:false});
+          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true});
           items.push({header:'x'+i+'_sample_no', name:'x'+i+'_sample_no', width:ENUM_WIDTH.M, filter:'text', hidden:true});
           items.push({header:'x'+i, name:'x'+i+'_insp_value', width:ENUM_WIDTH.L, filter:'text', editable:true});
           items.push({header:'x'+i+'_판정', name:'x'+i+'_insp_result_fg', width:ENUM_WIDTH.M, filter:'text', hidden:true});
@@ -1245,7 +1245,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];

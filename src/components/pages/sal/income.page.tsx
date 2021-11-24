@@ -8,6 +8,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import _ from 'lodash';
 
 
 
@@ -51,28 +52,67 @@ export const PgSalIncome = () => {
     {header: '출고위치코드', name:'from_location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
     {header: '출고위치명', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
 
-    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
-    {header: '입고창고코드', name:'to_store_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '입고창고명', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup'},
+    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
+    {header: '입고창고명', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
 
-    {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'text',  hidden:true},
-    {header: '입고위치코드', name:'to_location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
-    {header: '입고위치명', name:'to_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
+    {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup',  hidden:true},
+    {header: '입고위치명', name:'to_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true },
 
-    {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text', format:'text' },
+    {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text', format:'text', editable:true },
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    gridPopupInfo: [
+      { // 창고팝업
+        columnNames: [
+          {original:'to_store_uuid', popup:'store_uuid'},
+          {original:'to_store_nm', popup:'store_nm'},
+        ],
+        columns: [
+          {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+          {header: '창고코드', name:'store_cd', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text'},
+        ],
+        dataApiSettings: {
+          uriPath: '/std/stores',
+          params: {store_type:'available'}
+        },
+        gridMode:'select'
+      },
+      { // 위치팝업
+        columnNames: [
+          {original:'to_location_uuid', popup:'location_uuid'},
+          {original:'to_location_nm', popup:'location_nm'},
+        ],
+        columns: [
+          {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+          {header: '위치코드', name:'location_cd', width:ENUM_WIDTH.M, filter:'text'},
+          {header: '위치명', name:'location_nm', width:ENUM_WIDTH.L, filter:'text'},
+        ],
+        dataApiSettings: (ev) => {
+          const {rowKey, instance} = ev;3
+          const {rawData} = instance?.store?.data;
+      
+          const storeUuid = rawData[rowKey]?.to_store_uuid
+          return {
+            uriPath: '/std/locations',
+            params: {store_uuid: storeUuid ?? ''}
+          }
+        },
+        gridMode:'select'
+      }
+    ]
   });
 
   const [multiPopupDatas, setMultiPopupDatas] = useState<any[]>([]);
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns?.filter(el => el.name !== 'reg_date'),
+    _.cloneDeep(grid.gridInfo.columns)?.filter(el => el.name !== 'reg_date'),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridPopupInfo: grid.gridInfo.gridPopupInfo,
       rowAddPopupInfo: {
         columnNames: [
           {original:'prod_uuid', popup:'prod_uuid'},
@@ -115,9 +155,10 @@ export const PgSalIncome = () => {
         ],
         dataApiSettings: (ev) => {
           const params = {
-            stock_type: 'all',
+            stock_type: 'available',
             grouped_type: 'all',
             price_type: 'all',
+            exclude_zero_fg:true,
           };
 
           if (newDataPopupGridVisible) {
@@ -139,7 +180,12 @@ export const PgSalIncome = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    grid.gridInfo.columns,
+    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+      if (el.name === 'to_location_nm' || el.name === 'to_store_nm') {
+        el.editable = false
+      }
+      return el.name !== 'reg_date';
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,

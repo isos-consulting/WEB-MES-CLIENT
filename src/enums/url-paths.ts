@@ -1621,6 +1621,116 @@ const URL_PATH = {
         DELIVERED_IN_WEEK:'/das/delivered-in-week'
       }
     },
+  },
+  AUT:{
+    PERMISSION:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PERMISSION:'/aut/permission/{uuid}',
+        PERMISSIONS:'/aut/permissions',
+      },
+      POST:{
+        PERMISSIONS:'/aut/permissions' 
+      },
+      PUT:{
+        PERMISSIONS:'/aut/permissions'
+      },
+      PATCH:{
+        PERMISSIONS:'/aut/permissions'
+      },
+      DELETE:{
+        PERMISSIONS:'/aut/permissions'
+      },
+    },
+    GROUP:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        GROUP:'/aut/group/{uuid}',
+        GROUPS:'/aut/groups',
+      },
+      POST:{
+        GROUPS:'/aut/groups' 
+      },
+      PUT:{
+        GROUPS:'/aut/groups'
+      },
+      PATCH:{
+        GROUPS:'/aut/groups'
+      },
+      DELETE:{
+        GROUPS:'/aut/groups'
+      },
+    },
+    GROUP_PERMISSION:{
+      GET:{
+        GROUP_PERMISSION:'/aut/group-permissions'
+      },
+      PUT:{
+        GROUP_PERMISSION:'/aut/group-permissions'
+      }
+    },
+    MENU_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        MENU_TYPE:'/aut/menu-type/{uuid}',
+        MENU_TYPES:'/aut/menu-types',
+      },
+      POST:{
+        MENU_TYPES:'/aut/menu-types' 
+      },
+      PUT:{
+        MENU_TYPES:'/aut/menu-types'
+      },
+      PATCH:{
+        MENU_TYPES:'/aut/menu-types'
+      },
+      DELETE:{
+        MENU_TYPES:'/aut/menu-types'
+      },
+    },
+    MENU:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        MENUS_PERMISSION:'/aut/menus/permission',
+        MENU:'/aut/menu',
+        MENUS:'/aut/menus',
+      },
+      PUT:{
+        MENUS:'/aut/menus'
+      },
+      DELETE:{
+        MENUS:'/aut/menus'
+      },
+    },
+    USER:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        USER:'/aut/user/{uuid}',
+        USERS:'/aut/users',
+      },
+      POST:{
+        SIGN_IN:'/aut/user/sign-in',
+        USERS:'/aut/users',
+      },
+      PUT:{
+        PWD:'/aut/users/pwd',
+        USERS:'/aut/users',
+      },
+      PATCH:{
+        USERS:'/aut/users',
+      },
+      DELETE:{
+        USERS:'/aut/users',
+      },
+    },
+    USER_PERMISSION:{
+      GET:{
+        USER_PERMISSIONS:'/aut/user-permissions'
+      },
+      PUT:{
+        USER_PERMISSIONS:'/aut/user-permissions'
+      }
+    },
   }
 }
 
@@ -1632,3 +1742,4 @@ export const URL_PATH_SAL = URL_PATH.SAL
 export const URL_PATH_STD = URL_PATH.STD
 export const URL_PATH_QMS = URL_PATH.QMS
 export const URL_PATH_DAS = URL_PATH.DAS
+export const URL_PATH_AUT = URL_PATH.AUT
