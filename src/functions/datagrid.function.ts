@@ -55,7 +55,7 @@ export const saveGridData = async (
             }
           }
         }
-        
+
 
         for (let z = 0; z < saveData[editType[i]]?.length; z++) {
           for (let y = 0; y < columns?.length; y++) {
@@ -74,7 +74,6 @@ export const saveGridData = async (
           }
         }
 
-
         // 필수값 삽입
         await saveData[editType[i]]?.forEach((value) => {
           // value['uid'] = getUserUid();
@@ -86,7 +85,6 @@ export const saveGridData = async (
             }
           }
         });
-
 
         saveData = saveData[editType[i]];
         

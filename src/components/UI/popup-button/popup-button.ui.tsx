@@ -133,7 +133,7 @@ const PopupButton: React.FC<Props> = (props) => {
               />,
             icon:null,
             okText: '선택',
-            onOk: () => {
+            onOk: (close) => {
               const child = childGridRef.current;
               let row:object = child.getInstance().getCheckedRows()[0];
 
@@ -155,6 +155,8 @@ const PopupButton: React.FC<Props> = (props) => {
                     props.setFieldValue(key, value);
                   }
                 }
+                close();
+                
               } else {
                 message.warn('항목을 선택해주세요.');
               }

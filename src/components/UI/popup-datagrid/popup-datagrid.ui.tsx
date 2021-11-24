@@ -201,7 +201,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
         // ✅선택된 로우가 하나인지 확인 후 부모 그리드에게 row append
         case 'select':
-          return function () {
+          return function (close) {
             // 체크(선택)된 row data 가져오기
             const selectedRowDatas = gridRef.current.getInstance().getCheckedRows();
 
@@ -209,6 +209,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             if (selectedRowDatas?.length === 1) {
               // 선택된 항목 부모 그리드에게 전달
               props.parentGridRef?.current.getInstance()?.appendRow(selectedRowDatas[0]);
+              close();
 
             } else if (selectedRowDatas?.length > 1) {
               message.warn('하나만 선택해주세요.');
@@ -221,7 +222,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
         // ✅선택된 로우가 있는지 확인 후 부모 그리드에게 row append
         case 'multi-select':
-          return function () {
+          return function (close) {
             // 체크(선택)된 row data 가져오기
             const selectedRowDatas = gridRef.current.getInstance().getCheckedRows();
 
@@ -229,6 +230,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             if (selectedRowDatas?.length > 1) {
               // 선택된 항목 부모 그리드에게 전달
               props.parentGridRef?.current.getInstance()?.appendRows(selectedRowDatas);
+              close();
 
             } else {
               message.warn('항목을 선택해주세요.');
