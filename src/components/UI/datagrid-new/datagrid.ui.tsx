@@ -1549,28 +1549,33 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   </>,
                 icon:null,
                 okText: '선택',
-                onOk: () => {
-                  const $this = gridRef.current.getInstance();
+                onOk: (close) => {
+                  const instance = gridRef.current.getInstance();
                   const child = childGridRef.current.getInstance();
-
                   const row = child.getCheckedRows()[0];
+                  let isClose:boolean = false;
                   
                   if(onBeforeOk != null) {
-                    if (!onBeforeOk({popupGrid:child, parentGrid:$this, ev:ev}, [row])) return;
+                    if (!onBeforeOk({popupGrid:child, parentGrid:instance, ev:ev}, [row])) return;
                   }
 
                   if (typeof row === 'object') {
                     updateColumns.forEach((column) => {
-                      $this.setValue(rowKey, column.original, row[column.popup]);
+                      instance.setValue(rowKey, column.original, row[column.popup]);
                     });
+                    isClose = true;
                   } else {
                     message.warn('항목을 선택해주세요.');
                   }
 
-                  $this.refreshLayout();
+                  instance.refreshLayout();
 
                   if(onAfterOk != null) {
-                    onAfterOk({popupGrid:child, parentGrid:$this, ev:ev}, [row]);
+                    onAfterOk({popupGrid:child, parentGrid:instance, ev:ev}, [row]);
+                  }
+
+                  if (isClose) {
+                    close();
                   }
                 },
                 onCancel: () => setGridFocus(gridRef),
