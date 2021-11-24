@@ -399,9 +399,9 @@ const INSP_RESULT_DETAIL_GRID = (props:{
   //#region inputbox 세팅
   const INPUT_ITEMS_INSP_RESULT:IInputGroupboxItem[] = [
     {id:'insp_result_state', label:'최종판정', type:'text', disabled:true},
-    {id:'reg_date', label:'검사일', type:'date', disabled:true },
-    {id:'reg_date_time', label:'검사시간', type:'time', disabled:true },
-    {id:'emp_nm', label:'검사자', type:'text', disabled:true}, 
+    {id:'reg_date', label:'검사일', type:'date', disabled:true, required:true },
+    {id:'reg_date_time', label:'검사시간', type:'time', disabled:true, required:true },
+    {id:'emp_nm', label:'검사자', type:'text', disabled:true, required:true}, 
     {id:'insp_handling_type_nm', label:'처리결과', type:'text', disabled:true},
     {id:'remark', label:'비고', type:'text', disabled:true},
   ];
@@ -659,7 +659,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       handleChange: (values) => {setReceiveInputData(values);}
     },
     {id:'partner_nm', label:'거래처', type:'text', disabled:true},
-    {id:'reg_date', label:'입하일', type:'text', disabled:true},
+    {id:'reg_date', label:'입하일', type:'date', disabled:true},
     {id:'insp_detail_type_cd', label:'입하구분코드', type:'text', hidden:true},
     {id:'insp_detail_type_nm', label:'입하구분', type:'text', disabled:true},
     {id:'prod_uuid', label:'품목UUID', type:'text', hidden:true},
@@ -830,7 +830,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];
@@ -942,6 +942,9 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     }else if(!inputInspResultValues?.emp_uuid){
       message.warn('검사자를 등록해주세요.')
       return;
+    }else if(!inputInspResultValues?.reg_date_time){
+      message.warn('검사시간을 등록해주세요.')
+      return;
     }
 
     headerData = {
@@ -950,7 +953,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       insp_detail_type_cd: inputInputItemsValues?.insp_detail_type_cd,
       insp_handling_type_cd: inputInspResultValues?.insp_handling_type_cd,
       insp_uuid: receiveInspHeaderData?.insp_uuid,
-      unit_uuid: receiveInspHeaderData?.unit_uuid,
+      unit_uuid: inputInputItemsValues?.unit_uuid,
       prod_uuid: receiveInspHeaderData?.prod_uuid,
       lot_no: inputInputItemsValues?.lot_no,
       emp_uuid: inputInspResultValues?.emp_uuid,
@@ -1150,7 +1153,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
       if (receiveInspHeaderData?.max_sample_cnt > 0) {
         //시료수 최대값에 따라 컬럼 생성
         for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
-          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:false});
+          items.push({header:'x'+i+'_insp_result_detail_value_uuid', name:'x'+i+'_insp_result_detail_value_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true});
           items.push({header:'x'+i+'_sample_no', name:'x'+i+'_sample_no', width:ENUM_WIDTH.M, filter:'text', hidden:true});
           items.push({header:'x'+i, name:'x'+i+'_insp_value', width:ENUM_WIDTH.L, filter:'text', editable:true});
           items.push({header:'x'+i+'_판정', name:'x'+i+'_insp_result_fg', width:ENUM_WIDTH.M, filter:'text', hidden:true});
@@ -1345,7 +1348,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];
@@ -1456,6 +1459,9 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
       return;
     }else if(!inputInspResultValues?.emp_uuid){
       message.warn('검사자를 등록해주세요.')
+      return;
+    }else if(!inputInspResultValues?.reg_date_time){
+      message.warn('검사시간을 등록해주세요.')
       return;
     }
 

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useLayoutEffect, useState } from "react";
+import React, { lazy, Suspense, useLayoutEffect, useState, useMemo } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -10,7 +10,7 @@ import { getMenus, setLogout } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
-
+import { PgAutMenu } from '~components/pages';
 
 const Layout = lazy(() => import('./components/UI/layout').then(module=>({default:module.Layout})));
 
@@ -100,6 +100,7 @@ const errorPage404 = () => {
 
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
+  
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
@@ -112,14 +113,16 @@ const LoggedIn = (props: any) => {
           component={PgLogin}
         />
         <Layout>
-          {Object.keys(props.menuContent)?.length > 0  ? 
-            <Route
-              key={'dashboard'}
-              path={'/dashboard'}
-              component={Dashboard}
-            />
-            : null
-          }
+          <Route
+            key={'dashboard'}
+            path={'/dashboard'}
+            component={Dashboard}
+          />
+          <Route
+            key={'autMenu'}
+            path={'/aut/menus'}
+            component={PgAutMenu}
+          />
           {Object.keys(props.menuContent).map((item, key) => (
             <Route
               key={key}

@@ -1,6 +1,7 @@
 export * from './login.page';
 export * from './test-double-grid.page';
 
+export * from './aut/menu.page';
 export * from './aut/permission.page';
 export * from './aut/group.page';
 export * from './aut/group-permission.page';

@@ -120,7 +120,7 @@ export const INSP = () => {
     
     const {columnName, rowKey, value} = changes[0];
     
-    if ((origin !== 'cell' && origin !== 'delete' )  || !columnName?.includes('_insp_value')) return;
+    if ((!['cell', 'delete', 'paste'].includes(origin))  || !columnName?.includes('_insp_value')) return;
     
     const {rawData} = instance?.store?.data;
     const rowData = rawData[rowKey];

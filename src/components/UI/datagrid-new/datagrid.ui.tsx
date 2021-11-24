@@ -25,6 +25,7 @@ import { ENUM_DECIMAL, ENUM_FORMAT } from '~/enums';
 import dayjs from 'dayjs';
 import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
+import _ from 'lodash';
 
 
 //#region 🔶Tui-Grid 설정 관련
@@ -177,7 +178,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   //#region 🔶컬럼 세팅
   const columns = useMemo(() => {
-    let newColumns = JSON.parse(JSON.stringify(props.columns));
+    let newColumns = _.cloneDeep(props.columns);
 
     newColumns.forEach((el, colIndex) => {
       if (el?.name === 'created_at') {

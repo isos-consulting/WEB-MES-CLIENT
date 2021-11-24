@@ -1,4 +1,3 @@
-import React, {useCallback} from 'react';
 import axios from 'axios';
 import { loadProgressBar } from 'axios-progress-bar';
 import { getUserInfoKeys, getUserFactoryUuid, getUserAccessToken } from './storage.function';
@@ -12,8 +11,7 @@ import { useRecoilValue } from 'recoil';
 import {useLayoutEffect, useState} from 'react';
 import { JSXElement } from '@babel/types';
 import { errorState } from '~/enums/response.enum';
-import { cloneObject, getUserRefreshToken, onAsyncFunction } from '.';
-import {useHistory} from 'react-router-dom';
+import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
@@ -277,7 +275,35 @@ export const getMenus = async () => {
 
     data = result;
   });
-
+  rawData.unshift({
+    component_nm: null,
+    create_fg: null,
+    delete_fg: null,
+    first_menu_uuid: null,
+    icon: 'ico_nav_standard',
+    lv: 1,
+    menu_nm: '관리자 정보',
+    menu_type: 'menu',
+    menu_uri: 'aut',
+    menu_uuid: 'aut',
+    read_fg: null,
+    sub_menu: [{
+      component_nm: 'PgAutMenu',
+      create_fg: true,
+      delete_fg: true,
+      first_menu_uuid: 'aut',
+      icon: null,
+      lv: 2,
+      menu_nm: '메뉴 관리',
+      menu_type: 'page',
+      menu_uri: '/aut/menus',
+      menu_uuid: 'autMenus',
+      read_fg: true,
+      sub_menu: [],
+      update_fg: true
+    }],
+    update_fg: null
+  })
   return {data, rawData};
 }
 
@@ -289,7 +315,9 @@ export const getMenus = async () => {
 export const getPermissions = (pageName:string):TPermission => {
   const menuContent = useRecoilValue(atSideNavMenuContent);
   const [permissions, setPermissions] = useState<TPermission>(null);
-
+  if (getStorageValue({storageName:'userInfo', keyName:'super_admin_fg'})) {
+    return {create_fg: true, delete_fg: true, read_fg: true, update_fg: true};
+  }
   useLayoutEffect(() => {
     if (!menuContent) return;
     const permissions = menuContent[pageName]?.permissions;

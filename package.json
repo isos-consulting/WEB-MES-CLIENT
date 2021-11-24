@@ -15,6 +15,7 @@
     "@nivo/line": "^0.74.0",
     "@nivo/pie": "^0.74.0",
     "@toast-ui/react-grid": "^4.19.4",
+    "@types/lodash": "^4.14.177",
     "ant-design": "1.0.0",
     "antd": "4.16.1",
     "axios": "0.21.1",

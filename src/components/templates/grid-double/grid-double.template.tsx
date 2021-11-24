@@ -470,6 +470,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
           gridId={editPopup.gridId}
           gridMode='update'
           defaultData={detailGrid.data}
+          data={editPopup.data}
           columns={editPopup.columns}
           saveType={props.dataSaveType || 'basic'}
           searchUriPath={editPopup.searchUriPath}
