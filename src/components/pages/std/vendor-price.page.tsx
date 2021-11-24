@@ -42,7 +42,7 @@ export const PgStdVendorPrice = () => {
   /** 화면 Grid View */
   const headerGrid = useGrid('HEADER_GRID', [
     {header: '거래처UUID', name:'partner_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '거래처 유형UUID', name:'partner_type_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '거래처 유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '거래처 유형명', name:'partner_type_nm', width:ENUM_WIDTH.M, filter:'text', editable:true},
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', editable:true},
   ], {
@@ -446,9 +446,9 @@ export const PgStdVendorPrice = () => {
     ],
     popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
     popupGridInfos: [
-      {...newDataPopupGrid.gridInfo, saveParams: newDataPopupInputInfo.values},
-      {...addDataPopupGrid.gridInfo, saveParams: addDataPopupInputInfo.values},
-      {...editDataPopupGrid.gridInfo, saveParams: editDataPopupInputInfo.values},
+      {...newDataPopupGrid.gridInfo},
+      {...addDataPopupGrid.gridInfo},
+      {...editDataPopupGrid.gridInfo},
     ],
     searchProps: [
       {
