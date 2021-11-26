@@ -222,7 +222,7 @@ export const PgPrdWork = () => {
   const [,setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
 
-  const [gridMode, setGridMode] = useState<TGridMode>('delete');
+  const [gridMode, setGridMode] = useState<TGridMode>('view');
 
   const [workDatas, setWorkDatas] = useState([]);
 
@@ -407,6 +407,7 @@ export const PgPrdWork = () => {
       okText:'예',
       cancelText:'아니오',
       onOk: () => {
+          
         //실적완료처리
         executeData({
           uuid: workInfo.work_uuid,
@@ -419,7 +420,7 @@ export const PgPrdWork = () => {
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 저장되었습니다.');
-            searchInfo?.onSearch();
+            searchInfo?.onSearch(searchInfo.values);
 
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -671,8 +672,10 @@ export const PgPrdWork = () => {
             try {
               // setLoading(true);
               const searchParams = searchInfo.values;
-
-              const row = ev?.instance?.store?.data?.rawData[rowKey];
+              const row = ev?.instance?.store?.data?.rawData?.find(el => el?.rowKey === rowKey);
+              // console.log('ev', ev);
+              // console.log(row?.qty);
+              // console.log(row);
               const work_uuid = row?.work_uuid;
               const prod_uuid = row?.prod_uuid;
               const lot_no = row?.lot_no;
