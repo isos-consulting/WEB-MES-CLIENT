@@ -43,8 +43,8 @@ export const PgStdCustomerPrice = () => {
   const headerGrid = useGrid('HEADER_GRID', [
     {header: '거래처UUID', name:'partner_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '거래처 유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '거래처 유형명', name:'partner_type_nm', width:ENUM_WIDTH.M, filter:'text', editable:true},
-    {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '거래처 유형', name:'partner_type_nm', width:ENUM_WIDTH.M, filter:'text', editable:true},
+    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', editable:true},
   ], {
     searchUriPath: headerSearchUriPath,
     saveUriPath: headerSaveUriPath,
@@ -104,18 +104,18 @@ export const PgStdCustomerPrice = () => {
           {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '품목명', name:'prod_nm', width:ENUM_WIDTH.L, format:'text'},
           {header: '품목 유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-          {header: '품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, format:'text'},
+          {header: '품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '품목 유형명', name:'item_type_nm', width:ENUM_WIDTH.L, format:'text'},
           {header: '제품 유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-          {header: '제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, format:'text'},
+          {header: '제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '제품 유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, format:'text'},
           {header: '모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, format:'text'},
+          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '모델명', name:'model_nm', width:ENUM_WIDTH.L, format:'text'},
           {header: 'rev', name:'rev', width:ENUM_WIDTH.L, format:'text'},
           {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, format:'text'},
           {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text'},
+          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.L, format:'text'},
         ],
         dataApiSettings: {
@@ -444,9 +444,18 @@ export const PgStdCustomerPrice = () => {
     ],
     popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
     popupGridInfos: [
-      {...newDataPopupGrid.gridInfo},
-      {...addDataPopupGrid.gridInfo},
-      {...editDataPopupGrid.gridInfo},
+      {
+        ...newDataPopupGrid.gridInfo,
+        saveParams: newDataPopupInputInfo.values
+      },
+      {
+        ...addDataPopupGrid.gridInfo,
+        saveParams: addDataPopupInputInfo.values
+      },
+      {
+        ...editDataPopupGrid.gridInfo,
+        saveParams: editDataPopupInputInfo.values
+      },
     ],
     searchProps: [
       {
