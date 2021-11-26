@@ -2,9 +2,8 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal, Col, Row, Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
-import { Button, Container, Datagrid, IGridColumn, ISearchItem, Label, Searchbox, Tabs, TGridMode } from '~/components/UI';
+import { Button, Container, Datagrid, IGridColumn, Label, Searchbox, Tabs, TGridMode, useSearchbox } from '~/components/UI';
 import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryUuid, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -19,6 +18,8 @@ import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ROUTING } from './work.page.route';
+import { ENUM_WIDTH } from '~/enums';
+import Fonts from '~styles/font.style.scss';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -225,7 +226,6 @@ export const PgPrdWork = () => {
 
   const [workDatas, setWorkDatas] = useState([]);
 
-  const searchRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();
 
   const SEARCH_URI_PATH = '/prd/works';
@@ -250,17 +250,6 @@ export const PgPrdWork = () => {
 
 
   //#region 🚫사이드 이펙트
-  const [schData_disabled, setSchData_disabled] = useState(false);
-  const searchParams = searchRef?.current?.values
-  
-  useLayoutEffect(() => {
-    if (searchParams?.complete_fg === 'true') {
-      setSchData_disabled(false);
-    } else {
-      setSchData_disabled(true);
-    }
-  }, [searchParams]);
-  
   useLayoutEffect(() => {
     // 콤보박스 값 세팅 (입고창고/입고위치)
 
@@ -315,47 +304,6 @@ export const PgPrdWork = () => {
     setProdOrderPopupVisible(false);
   }
 
-  const onSearch = () => {
-    const {values} = searchRef?.current;
-    const searchParams =
-      values?.complete_fg === 'true' ?
-        values
-      : {complete_fg: values?.complete_fg};
-
-    getData(searchParams, SEARCH_URI_PATH).then((res) => {
-      setWorkDatas(res || []);
-
-      // 작업정보 및 실적정보 초기화
-      infoDispatch({type:'CLEAR_ALL'});
-
-      // 실적이력 조회되면서 하위 데이터 초기화
-      공정검사.onReset;
-      
-      투입품목관리.setGridMode('view');
-      
-      // 실적이력 조회되면서 하위 데이터 초기화
-      투입품목관리.setSearchParams({});
-      투입품목관리.setSaveOptionParams({});
-      투입품목관리.setData([]);
-
-      투입인원관리.setSearchParams({});
-      투입인원관리.setSaveOptionParams({});
-      투입인원관리.setData([]);
-
-      부적합관리.setSearchParams({});
-      부적합관리.setSaveOptionParams({});
-      부적합관리.setData([]);
-
-      비가동관리.setSearchParams({});
-      비가동관리.setSaveOptionParams({});
-      비가동관리.setData([]);
-
-      공정순서.setSearchParams({});
-      공정순서.setSaveOptionParams({});
-      공정순서.setData([]);
-    });
-  }
-
   /** 작업 취소 처리 */
   const onCancelWork = () => {
     if (workInfo.work_uuid == null) {
@@ -383,7 +331,7 @@ export const PgPrdWork = () => {
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 취소되었습니다.');
-            onSearch();
+            searchInfo?.onSearch();
 
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -424,7 +372,7 @@ export const PgPrdWork = () => {
         }, SAVE_URI_PATH, 'delete', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 삭제되었습니다.');
-            onSearch();
+            searchInfo?.onSearch();
 
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -471,7 +419,7 @@ export const PgPrdWork = () => {
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 저장되었습니다.');
-            onSearch();
+            searchInfo?.onSearch();
 
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -514,7 +462,7 @@ export const PgPrdWork = () => {
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 종료되었습니다.');
-            onSearch();
+            searchInfo?.onSearch();
 
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -576,64 +524,134 @@ export const PgPrdWork = () => {
   //#endregion
   
   //#region ✅조회조건
-  const SEARCH_ITEMS:ISearchItem[] = [
-    {type:'date', id:'start_date', label:'작업기간', default:getToday(-7), disabled: schData_disabled},
-    {type:'date', id:'end_date', default:getToday(), disabled: schData_disabled},
-    {type:'radio', id:'complete_fg', default:'false',
-      options:[
-        {code:'false', text:'작업중'},
-        {code:'true', text:'작업완료'},
-      ]
-    },
-  ];
+  const onSearch = (values) => {
+    const dateParams = values?.complete_fg === 'true' ? {
+      start_date: values?.start_date,
+      end_date: values?.end_date,
+    } : {};
+    const searchParams = {
+      ...dateParams,
+      complete_fg: values?.complete_fg,
+    };
+
+    getData(searchParams, SEARCH_URI_PATH).then((res) => {
+      setWorkDatas(res || []);
+
+      // 작업정보 및 실적정보 초기화
+      infoDispatch({type:'CLEAR_ALL'});
+
+      // 실적이력 조회되면서 하위 데이터 초기화
+      공정검사.onReset;
+      
+      투입품목관리.setGridMode('view');
+      
+      // 실적이력 조회되면서 하위 데이터 초기화
+      투입품목관리.setSearchParams({});
+      투입품목관리.setSaveOptionParams({});
+      투입품목관리.setData([]);
+
+      투입인원관리.setSearchParams({});
+      투입인원관리.setSaveOptionParams({});
+      투입인원관리.setData([]);
+
+      부적합관리.setSearchParams({});
+      부적합관리.setSaveOptionParams({});
+      부적합관리.setData([]);
+
+      비가동관리.setSearchParams({});
+      비가동관리.setSaveOptionParams({});
+      비가동관리.setData([]);
+
+      공정순서.setSearchParams({});
+      공정순서.setSaveOptionParams({});
+      공정순서.setData([]);
+    });
+  }
+
+  const [completeChk, setCompleteChk] = useState<boolean>(false);
+  const searchItems = useMemo(() => {
+    return [
+      {type:'date', id:'start_date', label:'작업기간', default:getToday(-7), disabled: !completeChk},
+      {type:'date', id:'end_date', default:getToday(), disabled: !completeChk},
+      {type:'radio', id:'complete_fg', default:'false',
+        options:[
+          {code:'false', text:'작업중'},
+          {code:'true', text:'작업완료'},
+        ],
+      },
+    ];
+  }, [completeChk]);
+
+  const searchInfo = useSearchbox(
+    'WORK_SEARCHBOX', 
+    searchItems,
+    onSearch,
+    {
+      validate: (values) => {
+        const completeFg = values?.complete_fg;
+        if (completeFg === 'true') {
+          setCompleteChk(true);
+        } else {
+          setCompleteChk(false);
+        }
+        return values;
+      }
+    }
+  );
+
+  useLayoutEffect(() => {
+    if (searchInfo && searchItems) {
+      searchInfo.setSearchItems(searchItems);
+    }
+  }, [searchInfo, searchItems]);
   //#endregion
 
   //#region ✅컬럼
   const WORK_COLUMNS:IGridColumn[] = [
-    {header:'생산실적UUID', name:'work_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-    {header:'실적 일시', name:'reg_date', width:200, hidden:true, format:'text'},
-    {header:'작업지시UUID', name:'order_uuid', width:200, hidden:true, format:'text'},
-    {header:'지시번호', name:'order_no', width:200, hidden:true, format:'text'},
-    {header:'생산실적 순번', name:'seq', width:200, hidden:true, format:'text'},
-    {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-    {header:'공정', name:'proc_nm', width:120, hidden:false, format:'text'},
-    {header:'작업장UUID', name:'workings_uuid', width:200, hidden:true, format:'text'},
-    {header:'작업장', name:'workings_nm', width:120, hidden:false, format:'text'},
-    {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
-    {header:'설비', name:'equip_nm', width:120, hidden:false, format:'text'},
-    {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
-    {header:'품목유형UUID', name:'item_type_uuid', width:200, hidden:true, format:'text'},
-    {header:'품목유형', name:'item_type_nm', width:120, hidden:false, format:'text'},
-    {header:'제품유형UUID', name:'prod_type_uuid', width:200, hidden:true, format:'text'},
-    {header:'제품유형', name:'prod_type_nm', width:120, hidden:false, format:'text'},
-    {header:'품번', name:'prod_no', width:150, hidden:false, format:'text'},
-    {header:'품명', name:'prod_nm', width:150, hidden:false, format:'text'},
-    {header:'모델UUID', name:'model_uuid', width:200, hidden:true, format:'text'},
-    {header:'모델', name:'model_nm', width:120, hidden:false, format:'text'},
-    {header:'Rev', name:'rev', width:100, hidden:false, format:'text'},
-    {header:'규격', name:'prod_std', width:100, hidden:false, format:'text'},
-    {header:'단위UUID', name:'unit_uuid', width:200, hidden:true, format:'text'},
-    {header:'단위명', name:'unit_nm', width:80, hidden:false, format:'text'},
-    {header:'LOT NO', name:'lot_no', width:100, hidden:false, format:'text'},
-    {header:'지시 수량', name:'order_qty', width:100, hidden:false, format:'number'},
-    {header:'생산 수량', name:'total_qty', width:100, hidden:false, format:'number'},
-    {header:'양품 수량', name:'qty', width:100, hidden:false, format:'number'},
-    {header:'부적합 수량', name:'reject_qty', width:100, hidden:false, format:'number'},
-    {header:'생산시작 일시', name:'start_date', width:100, hidden:false, format:'datetime'},
-    {header:'생산종료 일시', name:'end_date', width:100, hidden:false, format:'datetime'},
-    {header:'작업시간', name:'work_time', width:80, hidden:true, format:'text'},
-    {header:'작업교대UUID', name:'shift_uuid', width:200, hidden:true, format:'text'},
-    {header:'작업교대명', name:'shift_nm', width:120, hidden:false, format:'text'},
-    {header:'작업자수', name:'worker_cnt', width:100, hidden:false, format:'text'},
-    {header:'작업자명', name:'worker_nm', width:100, hidden:false, format:'text'},
-    {header:'생산 완료여부(완료, 미완료)', name:'complete_state', width:200, hidden:true, format:'text'},
-    {header:'생산 종료여부', name:'complete_fg', width:200, hidden:true, format:'text'},
-    {header:'입고 창고UUID', name:'to_store_uuid', width:200, hidden:true, format:'text'},
-    {header:'입고 창고', name:'to_store_nm', width:120, hidden:false, format:'text'},
-    {header:'입고 위치UUID', name:'to_location_uuid', width:200, hidden:true, format:'text'},
-    {header:'입고 위치', name:'to_location_nm', width:120, hidden:false, format:'text'},
-    {header:'지시 비고', name:'order_remark', width:150, hidden:false, format:'text'},
-    {header:'생산 비고', name:'remark', width:150, hidden:false, format:'text'},
+    {header:'생산실적UUID', name:'work_uuid', alias:'uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'실적 일시', name:'reg_date', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'작업지시UUID', name:'order_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'지시번호', name:'order_no', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'생산실적 순번', name:'seq', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'공정', name:'proc_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'설비', name:'equip_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'품명', name:'prod_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'Rev', name:'rev', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, hidden:false, format:'text'},
+    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'지시 수량', name:'order_qty', width:ENUM_WIDTH.M, hidden:false, format:'number'},
+    {header:'생산 수량', name:'total_qty', width:ENUM_WIDTH.M, hidden:false, format:'number'},
+    {header:'양품 수량', name:'qty', width:ENUM_WIDTH.M, hidden:false, format:'number'},
+    {header:'부적합 수량', name:'reject_qty', width:ENUM_WIDTH.M, hidden:false, format:'number'},
+    {header:'생산시작 일시', name:'start_date', width:ENUM_WIDTH.M, hidden:false, format:'datetime'},
+    {header:'생산종료 일시', name:'end_date', width:ENUM_WIDTH.M, hidden:false, format:'datetime'},
+    {header:'작업시간', name:'work_time', width:ENUM_WIDTH.S, hidden:true, format:'text'},
+    {header:'작업교대UUID', name:'shift_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'작업교대명', name:'shift_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'작업자수', name:'worker_cnt', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'작업자명', name:'worker_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'생산 완료여부(완료, 미완료)', name:'complete_state', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'생산 종료여부', name:'complete_fg', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'입고 창고UUID', name:'to_store_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'입고 창고', name:'to_store_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'입고 위치UUID', name:'to_location_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    {header:'입고 위치', name:'to_location_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header:'지시 비고', name:'order_remark', width:ENUM_WIDTH.L, hidden:false, format:'text'},
+    {header:'생산 비고', name:'remark', width:ENUM_WIDTH.L, hidden:false, format:'text'},
   ];
   //#endregion
 
@@ -652,7 +670,7 @@ export const PgPrdWork = () => {
           if (targetType === 'cell' ) {
             try {
               // setLoading(true);
-              const searchParams = searchRef?.current?.values;
+              const searchParams = searchInfo.values;
 
               const row = ev?.instance?.store?.data?.rawData[rowKey];
               const work_uuid = row?.work_uuid;
@@ -823,10 +841,8 @@ export const PgPrdWork = () => {
           </Space>
         </div>
         <div style={{maxWidth:700, marginTop:-33, marginLeft:-6}}>
-          <Searchbox 
-            id='prod_order_search'
-            innerRef={searchRef}
-            searchItems={SEARCH_ITEMS}
+          <Searchbox
+            {...searchInfo.props}
             onSearch={permissions?.read_fg ? onSearch : null}
             boxShadow={false}
           />
@@ -855,35 +871,35 @@ export const PgPrdWork = () => {
                 <Row gutter={[16,16]}>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='품번'/>
-                    <Input disabled={true} value={orderInfo.prod_no}/>
+                    <Input disabled={true} value={orderInfo.prod_no} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='품명'/>
-                    <Input disabled={true} value={orderInfo.prod_nm}/>
+                    <Input disabled={true} value={orderInfo.prod_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='품목유형'/>
-                    <Input disabled={true} value={orderInfo.item_type_nm}/>
+                    <Input disabled={true} value={orderInfo.item_type_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='제품유형'/>
-                    <Input disabled={true} value={orderInfo.prod_type_nm}/>
+                    <Input disabled={true} value={orderInfo.prod_type_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6}>
                     <Label text='모델'/>
-                    <Input disabled={true} value={orderInfo.model_nm}/>
+                    <Input disabled={true} value={orderInfo.model_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6}>
                     <Label text='REV'/>
-                    <Input disabled={true} value={orderInfo.rev}/>
+                    <Input disabled={true} value={orderInfo.rev} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6}>
                     <Label text='규격'/>
-                    <Input disabled={true} value={orderInfo.prod_std}/>
+                    <Input disabled={true} value={orderInfo.prod_std} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6}>
                     <Label text='단위'/>
-                    <Input disabled={true} value={orderInfo.unit_nm}/>
+                    <Input disabled={true} value={orderInfo.unit_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                 </Row>
               </Container>
@@ -893,23 +909,23 @@ export const PgPrdWork = () => {
                 <Row gutter={[16,16]}>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='설비'/>
-                    <Input disabled={true} value={orderInfo.equip_nm}/>
+                    <Input disabled={true} value={orderInfo.equip_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='공정'/>
-                    <Input disabled={true} value={orderInfo.proc_nm}/>
+                    <Input disabled={true} value={orderInfo.proc_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='작업교대'/>
-                    <Input disabled={true} value={orderInfo.shift_nm}/>
+                    <Input disabled={true} value={orderInfo.shift_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6} style={{marginBottom:16}}>
                     <Label text='작업장'/>
-                    <Input disabled={true} value={orderInfo.workings_nm}/>
+                    <Input disabled={true} value={orderInfo.workings_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={24}>
                     <Label text='지시 비고'/>
-                    <Input disabled={true} value={orderInfo.remark}/>
+                    <Input disabled={true} value={orderInfo.remark} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                 </Row>
               </Container>
@@ -936,32 +952,32 @@ export const PgPrdWork = () => {
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='시작 일시'/>
                     <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._start_date} onChange={onChangeStartDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._start_time} onChange={onChangeStartTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='date' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._start_date} onChange={onChangeStartDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='time' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._start_time} onChange={onChangeStartTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                     </div>
                   </Col>
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='종료 일시'/>
                     <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%'}} value={workInfo._end_date} onChange={onChangeEndDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                      <DatePicker picker='time' style={{width:'50%'}} value={workInfo._end_time} onChange={onChangeEndTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='date' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._end_date} onChange={onChangeEndDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                      <DatePicker picker='time' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._end_time} onChange={onChangeEndTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                     </div>
                   </Col>
                   <Col span={6}>
                     <Label text='입고 창고'/>
-                    <Select options={cboWorkStoreOptions} style={{width:'100%'}} value={workInfo.to_store_uuid} onChange={onChangeCboStore} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                    <Select options={cboWorkStoreOptions} style={{width:'100%', fontSize:Fonts.fontSize_default}} value={workInfo.to_store_uuid} onChange={onChangeCboStore} disabled={!(permissions?.create_fg || permissions?.update_fg)} />
                   </Col>
                   <Col span={6}>
                     <Label text='입고 위치'/>
-                    <Select options={cboWorkLocationOptions} style={{width:'100%'}} value={workInfo.to_location_uuid} onChange={onChangeCboLocation} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                    <Select options={cboWorkLocationOptions} style={{width:'100%', fontSize:Fonts.fontSize_default}} value={workInfo.to_location_uuid} onChange={onChangeCboLocation} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
                   </Col>
                   <Col span={6}>
                     <Label text='LOT NO'/>
-                    <Input disabled={true} value={workInfo.lot_no}/>
+                    <Input disabled={true} value={workInfo.lot_no} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={6}>
                     <Label text='비고'/>
-                    <Input value={workInfo.remark} onChange={onChangeRemark} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                    <Input value={workInfo.remark} onChange={onChangeRemark} disabled={!(permissions?.create_fg || permissions?.update_fg)} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                 </Row>
               </Container>
@@ -971,19 +987,19 @@ export const PgPrdWork = () => {
                 <Row gutter={[16,16]}>
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='지시 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.order_qty}/>
+                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.order_qty} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={12} style={{marginBottom:16}}>
                     <Label text='생산 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.total_qty}/>
+                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.total_qty} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={12}>
                     <Label text='양품 수량'/>
-                    <Input type='number' inputMode='numeric' value={workInfo.qty}  onChange={onChangeQty} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
+                    <Input type='number' inputMode='numeric' value={workInfo.qty}  onChange={onChangeQty} disabled={!(permissions?.create_fg || permissions?.update_fg)} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                   <Col span={12}>
                     <Label text='부적합 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.reject_qty}/>
+                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.reject_qty} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                 </Row>
               </Container>
@@ -1045,23 +1061,78 @@ export const PgPrdWork = () => {
 const ProdOrderModal = ({visible, onClose}) => {
   //#region ✅설정값
   const gridRef = useRef<Grid>();
-  const searchRef = useRef<FormikProps<FormikValues>>();
 
   const [data, setData] = useState([]);
 
-  const searchParams = searchRef?.current?.values;
+  // 마감작업 체크용
+  const [completeChk, setCompleteChk] = useState<boolean>(false);
+  const searchItems = useMemo(
+    () => {
+      return [
+        {type:'radio', id:'complete_fg', default:'wait',
+          options: [
+            {code:'wait', text:'작업대기'},
+            {code:'complete', text:'마감작업'},
+          ],
+        },
+        {type:'date', id:'start_date', default:getToday(-7), label:'마감일', disabled:!completeChk},
+        {type:'date', id:'end_date', default:getToday(), disabled:!completeChk},
+      ];
+    },
+    [completeChk]
+  );
+  
+  //#region ✅함수
+  const onSearch = (values) => {
+    const dateParams = values?.complete_fg === 'complete' ? {
+      start_date: values?.start_date,
+      end_date: values?.end_date,
+    } : {};
+    const searchParams = {
+      order_state: values?.complete_fg,
+      ...dateParams
+    }
+
+    getData(searchParams, '/prd/orders').then((res) => {
+      setData(res);
+    });
+  }
+
+  const searchInfo = useSearchbox(
+    'PRD_ORDER_CREATE_SEARCHBOX',
+    searchItems,
+    onSearch,
+    {
+      validate: (values) => {
+        const completeFg = values?.complete_fg;
+        if (completeFg === 'complete') {
+          setCompleteChk(true);
+        } else {
+          setCompleteChk(false);
+        }
+
+        return values;
+      }
+    }
+  );
+
+  useLayoutEffect(() => {
+    if (searchInfo && searchItems) {
+      searchInfo.setSearchItems(searchItems);
+    }
+  }, [searchInfo, searchItems]);
+
+  const searchParams = searchInfo.values;
 
   const WORK_START_SAVE_URI_PATH = '/prd/works';
   const COMPLETE_SAVE_URI_PATH = '/prd/orders/complete';
   // const CANCEL_COMPLETE_SAVE_URI_PATH = '/prd/works/cancel-complete';
   
-  // 마감작업 체크용
-  const [completeChk, setCompleteChk] = useState<boolean>(false);
   //#endregion
 
   useLayoutEffect(() => {
     if(!visible){
-      setData([])
+      setData([]);
     };
   }, [visible])
 
@@ -1114,26 +1185,6 @@ const ProdOrderModal = ({visible, onClose}) => {
   //#endregion
 
 
-  //#region ✅함수
-  const onSearch = (values) => {
-    const searchParams =
-      values?.complete_fg === 'true' ?
-        {
-          order_state:'complete',
-          start_date: values?.start_date,
-          end_date: values?.end_date,
-        }
-      : 
-        {
-          order_state:'wait',
-        }
-    
-    setCompleteChk(values?.complete_fg === 'true');
-
-    getData(searchParams, '/prd/orders').then((res) => {
-      setData(res);
-    });
-  }
 
 
   const onSave = () => {
@@ -1174,7 +1225,7 @@ const ProdOrderModal = ({visible, onClose}) => {
 
     // 마감 처리
     let completeChkList = [];
-    if (searchParams?.complete_fg === 'true') {
+    if (searchParams?.complete_fg === 'complete') {
       completeChkList = updatedRows?.map((el) => ({...el, uuid:el?.order_uuid, complete_date: start_date}));
 
     } else {
@@ -1195,9 +1246,8 @@ const ProdOrderModal = ({visible, onClose}) => {
 
       ).then(() => {
         gridRef?.current?.getInstance()?.clearModifiedData();
-
+        onClose();
       }).catch((e) => console.log(e));
-    onClose();
   }
   //#endregion
 
@@ -1217,19 +1267,9 @@ const ProdOrderModal = ({visible, onClose}) => {
     >
       <>
         <Searchbox
-          id='PROD_ORDER_SEARCH'
-          innerRef={searchRef}
-          searchItems={[
-            {type:'radio', id:'complete_fg', default:'false',
-              options: [
-                {code:'false', text:'작업대기'},
-                {code:'true', text:'마감작업'},
-              ],
-            },
-            {type:'date', id:'start_date', default:getToday(), label:'마감일', disabled:!completeChk},
-            {type:'date', id:'end_date', default:getToday(), disabled:!completeChk},
-          ]}
-          onSearch={onSearch}
+          {...searchInfo.props}
+          onSearch={searchInfo.onSearch}
+          boxShadow={false}
         />
         <Datagrid
           gridId='PROD_ORDER_GRID'

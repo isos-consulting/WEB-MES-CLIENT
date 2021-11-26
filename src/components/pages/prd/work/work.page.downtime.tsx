@@ -5,6 +5,7 @@ import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridModifiedRo
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -165,11 +166,20 @@ export const DOWNTIME = () => {
   //#region 🔶수정 팝업 관련
   const editPopupGridRef = useRef<Grid>();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
+  const editPopupGridColumns = cloneDeep(gridInfo.columns)?.map(
+    (el) => {
+      if (['proc_nm', 'proc_no', 'equip_nm'].includes(el?.name)) {
+        el['editable'] = false;
+      }
+      return el;
+    }
+  );
 
   /** 항목 수정 팝업 속성 */
   const editGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
     gridId: TAB_CODE.비가동관리+'_EDIT_GRID',
+    columns: editPopupGridColumns,
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
@@ -352,7 +362,6 @@ export const DOWNTIME = () => {
 
     // 저장 가능한지 체크
     const chk:boolean = await checkGridData(gridInfo.columns, saveData);
-    console.log(saveData)
 
     if (chk === false) return;
 

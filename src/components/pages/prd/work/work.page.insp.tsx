@@ -1,10 +1,14 @@
 import Grid from '@toast-ui/react-grid';
-import { Space, Col, Row, message, Spin } from 'antd';
+import { Space, Col, Row, message, Spin, Modal } from 'antd';
+import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
+import { cloneDeep } from 'lodash';
 import React, { MutableRefObject, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Button, Container, Datagrid, GridPopup, IGridColumn, TGridMode } from '~/components/UI';
+import { Button, Container, Datagrid, GridPopup, IGridColumn, TGridMode, useGrid } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber } from '~/functions';
+import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber, saveGridData } from '~/functions';
+import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
 //#region 🔶🚫공정검사
@@ -15,22 +19,23 @@ export const INSP = () => {
   /** 권한 관련 */
   const permissions = getPermissions(title);
 
+  const [modal, modalContext] = Modal.useModal();
+
   //#region ✅설정값
   const gridRef = useRef<Grid>();
-  const detailGridRef = useRef<Grid>();
   const inputRef = useRef<FormikProps<FormikValues>>();
 
-  const [headerGridMode, setHeaderGridMode] = useState<TGridMode>('select');
-  const [detailGridMode, setDetailGridMode] = useState<TGridMode>('view');
+  const defaultHeaderGridMode = 'delete';
+  const defaultDetailGridMode = 'view';
+
+  const [headerGridMode, setHeaderGridMode] = useState<TGridMode>(defaultHeaderGridMode);
 
   const [headerData, setHeaderData] = useState([]);
-  const [detailData, setDetailData] = useState([]);
-  const [newDetailData, setNewDetailData] = useState([]);
 
   const [headerSaveOptionParams, setHeaderSaveOptionParams] = useState({});
   const [detailSaveOptionParams, setDetailSaveOptionParams] = useState({});
 
-  const [maxSampleCnt, setMaxSampleCnt] = useState(0); // max 시료수
+  const [selectedRow, setSelectedRow] = useState({});
 
   const HEADER_SEARCH_URI_PATH      = '/qms/proc/insp-results';
   const DETAIL_STD_SEARCH_URI_PATH  = '/qms/proc/insp/include-details';
@@ -39,18 +44,12 @@ export const INSP = () => {
   const SAVE_URI_PATH = '/qms/proc/insp-results';
 
   // 팝업 관련 설정
-  const popupGridRef = useRef<Grid>();
-  const popupInputRef = useRef<FormikProps<FormikValues>>();
-  const [popupVisible, setPopupVisible] = useState<boolean>(false);
+  // const popupGridRef = useRef<Grid>();
+  // const popupInputRef = useRef<FormikProps<FormikValues>>();
+  const [createPopupVisible, setCreatePopupVisible] = useState<boolean>(false);
+  const [editPopupVisible, setEditPopupVisible] = useState<boolean>(false);
 
   //#endregion
-
-  useLayoutEffect(() => {
-    if(!popupVisible){
-      popupInputRef.current?.resetForm();
-      onSearch(headerSaveOptionParams);
-    }
-  }, [popupVisible])
 
   //#region 🚫컬럼정보
   const INSP_COLUMNS:IGridColumn[] = [
@@ -90,31 +89,63 @@ export const INSP = () => {
     {header:'검사 주기', name:'insp_cycle', width:100, hidden:false},
   ];
 
-  const INSP_DETAIL_COLUMNS = useMemo(
-    () => {
-      let items:IGridColumn[] = INSP_DETAIL_BASIC_COLUMNS;
+  const INSP_DETAIL_HEADER = {
+    height:60,
+    complexColumns: [
+      {
+        header: '작업자',
+        name: '_worker',
+        childNames:['worker_sample_cnt', 'worker_insp_cycle']
+      },
+      {
+        header: '검사원',
+        name: '_inspector',
+        childNames:['inspector_sample_cnt', 'inspector_insp_cycle']
+      },
+    ]
+  }
+  
+  const detailGrid = useGrid(
+    'WORK_INSP_DETAIL_GRID',
+    INSP_DETAIL_BASIC_COLUMNS,
+    {
+      gridMode: defaultDetailGridMode,
+      header: INSP_DETAIL_HEADER,
+    }
+  )
 
-      if (maxSampleCnt > 0) {
-        //시료수 최대값에 따라 컬럼 생성
-        for (let i = 1; i <= maxSampleCnt; i++) {
-          items.push({header:'x'+ i +'_insp_result_detail_value_uuid', name:'x'+ i +'_insp_result_detail_value_uuid', width:80, hidden:true});
-          items.push({header:'x'+ i +'_sample_no', name:'x'+ i +'_sample_no', width:80, hidden:true});
-          items.push({header:'x'+ i, name:'x'+ i +'_insp_value', width:80, hidden:false, editable:true, align:'center'});
-          items.push({header:'x'+ i +'_insp_result_fg', name:'x'+ i +'_insp_result_fg', width:80, format:'text', hidden:true});
-          items.push({header:'x'+ i +'_insp_result_state', name:'x'+ i +'_insp_result_state', width:80,  format:'text', hidden:true});
-        }
+  const createInspDetailColumns = (maxSampleCnt:number) => {
+    let items:IGridColumn[] = cloneDeep(INSP_DETAIL_BASIC_COLUMNS);
+
+    if (maxSampleCnt > 0) {
+      //시료수 최대값에 따라 컬럼 생성
+      for (let i = 1; i <= maxSampleCnt; i++) {
+        items.push({header:'x'+ i +'_insp_result_detail_value_uuid', name:'x'+ i +'_insp_result_detail_value_uuid', width:80, hidden:true});
+        items.push({header:'x'+ i +'_sample_no', name:'x'+ i +'_sample_no', width:80, hidden:true});
+        items.push({header:'x'+ i, name:'x'+ i +'_insp_value', width:80, hidden:false, editable:true, align:'center'});
+        items.push({header:'x'+ i +'_insp_result_fg', name:'x'+ i +'_insp_result_fg', width:80, format:'text', hidden:true});
+        items.push({header:'x'+ i +'_insp_result_state', name:'x'+ i +'_insp_result_state', width:80,  format:'text', hidden:true});
       }
-      
-      items.push({header:'합격여부', name:'insp_result_fg', width:120, hidden:true})
-      items.push({header:'판정', name:'insp_result_state', width:100, hidden:false})
-      items.push({header:'비고', name:'remark', width:150, hidden:false})
+    }
+    
+    items.push({header:'합격여부', name:'insp_result_fg', width:120, hidden:true})
+    items.push({header:'판정', name:'insp_result_state', width:100, hidden:false})
+    items.push({header:'비고', name:'remark', width:150, hidden:false})
 
-      return items;
+    return items;
+  }
 
-    }, [INSP_DETAIL_BASIC_COLUMNS, maxSampleCnt]
-  );
+  // const INSP_DETAIL_COLUMNS = useMemo(
+  //   () => {
+  //     if (!maxSampleCnt) {
+  //       return INSP_DETAIL_BASIC_COLUMNS;
+  //     }
+  //     return createInspDetailColumns(maxSampleCnt);
+  //   }
+  //   , [INSP_DETAIL_BASIC_COLUMNS, maxSampleCnt]
+  // );
 
-  const onAfterChange = (ev:any) => {
+  const onAfterChange = (ev:any, {gridInstance, inputInstance}) => {
     const {origin, changes, instance} = ev;
     if (changes.length===0) return;
     
@@ -133,8 +164,8 @@ export const INSP = () => {
     let resultFg:boolean = true;
     let emptyFg:boolean;
 
-    const popupGridInstance = popupGridRef.current?.getInstance();
-    const popupInputboxInstance = popupInputRef.current;
+    const popupGridInstance = gridInstance;
+    const popupInputboxInstance = inputInstance;
 
     //#region ✅CELL단위 합/불 판정
     [nullFg, resultFg] = getInspCheckResultValue(value, {specMin, specMax});
@@ -196,23 +227,29 @@ export const INSP = () => {
     //#endregion
   }
   
-  const INSP_DETAIL_HEADER = {
-    height:60,
-    complexColumns: [
-      {
-        header: '작업자',
-        name: '_worker',
-        childNames:['worker_sample_cnt', 'worker_insp_cycle']
-      },
-      {
-        header: '검사원',
-        name: '_inspector',
-        childNames:['inspector_sample_cnt', 'inspector_insp_cycle']
-      },
-    ]
-  }
   //#endregion
 
+  type GetMaxSampleCntParams = {
+    insp_detail_type: 'patrolProc' | 'selfProc' | unknown;
+    work_uuid: string;
+  }
+  type GetMaxSampleCntResponse = {
+    datas: any,
+    header: any,
+    details: any,
+    maxSampleCnt: number,
+  }
+  const getMaxSampleCnt = async (params:GetMaxSampleCntParams):Promise<GetMaxSampleCntResponse> => {
+    const datas = await getData(params, DETAIL_STD_SEARCH_URI_PATH, 'header-details');
+    const maxSampleCnt = datas?.header?.max_sample_cnt;
+
+    return {
+      datas,
+      header: datas?.header,
+      details: datas?.details,
+      maxSampleCnt,
+    };
+  }
 
   //#region 🚫입력상자
   const INSP_INPUT_ITEMS:IInputGroupboxItem[] = [
@@ -222,7 +259,6 @@ export const INSP = () => {
     {id:'seq', label:'검사차수', type:'text', disabled:true,},
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', disabled:true, usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
-    // {id:'insp_type_cd', label:'검사유형', type:'text'},
     {id:'insp_type_nm', label:'검사유형', type:'text', disabled:true, hidden:true},
     {id:'insp_detail_type_cd', label:'검사유형', type:'combo', disabled:true, 
       dataSettingOptions:{
@@ -234,33 +270,98 @@ export const INSP = () => {
         }
       },
       onAfterChange: (ev) => {
-        if (popupVisible && (ev != '-')) {
-          getData(
-            {
-              insp_detail_type: 
-              ev === 'PATROL_PROC' ? 'patrolProc' :
-              ev === 'SELF_PROC' ? 'selfProc' : null,
-              work_uuid: (headerSaveOptionParams as any)?.work_uuid
-            },
-            DETAIL_STD_SEARCH_URI_PATH, 
-            'header-details'
+        if (createPopupVisible && (ev != '-')) {
+          getMaxSampleCnt({
+            insp_detail_type: 
+            ev === 'PATROL_PROC' ? 'patrolProc' :
+            ev === 'SELF_PROC' ? 'selfProc' : null,
+            work_uuid: (headerSaveOptionParams as any)?.work_uuid
+          }).then(({datas, maxSampleCnt, header, details}) => {
+            // setMaxSampleCnt(res?.header?.max_sample_cnt);
+            const newColumns = createInspDetailColumns(maxSampleCnt);
+            detailGrid.setGridColumns(newColumns);
 
-          ).then((res) => {
-            setMaxSampleCnt(res?.header?.max_sample_cnt);
-            setNewDetailData(res?.details);
-            popupInputRef.current.setFieldValue('insp_uuid',res?.header?.insp_uuid)
+            if (createPopupVisible) {
+              createPopupGrid.setGridData(details);
+              createPopupInput.setFieldValue('insp_uuid', header?.insp_uuid);
+              createPopupGrid.setGridColumns(newColumns);
+            }
           });
           
         } else {
-          setNewDetailData([]);
+          createPopupGrid.setGridData([]);
         };
       }
     },
     {id:'reg_date', label:'검사일자', type:'date', disabled:true,},
-    {id:'reg_date_time', label:'검사시간', type:'time', disabled:true,},
+    {id:'reg_date_time', label:'검사시간', type:'time', disabled:true, required:true, important:true},
     {id:'remark', label:'비고', type:'text', disabled:true,},
   ];
   //#endregion
+  
+  const createPopupInput = useInputGroup(
+    'WORK_INSP_CREATE_POPUP_INPUTBOX',
+    INSP_INPUT_ITEMS,
+    {
+      boxShadow:false,
+    }
+  )
+  const createPopupGrid = useGrid(
+    'WORK_INSP_CREATE_POPUP_GRID',
+    INSP_DETAIL_BASIC_COLUMNS,
+    {
+      header: INSP_DETAIL_HEADER,
+      hiddenActionButtons: true,
+      disabledAutoDateColumn: true,
+    }
+  );
+  const editPopupInput = useInputGroup(
+    'WORK_INSP_EDIT_POPUP_INPUTBOX',
+    INSP_INPUT_ITEMS,
+    {
+      boxShadow:false,
+    }
+  )
+  const editPopupGrid = useGrid(
+    'WORK_INSP_EDIT_POPUP_GRID',
+    INSP_DETAIL_BASIC_COLUMNS,
+    {
+      header: INSP_DETAIL_HEADER,
+      hiddenActionButtons: true,
+      disabledAutoDateColumn: true,
+    }
+  );
+
+  useLayoutEffect(() => {
+    if(createPopupVisible && createPopupInput){
+      
+      createPopupInput?.instance?.resetForm();
+      getMaxSampleCnt({
+        insp_detail_type: 'selfProc',
+        work_uuid: (headerSaveOptionParams as any)?.work_uuid
+
+      }).then(({
+        maxSampleCnt,
+        details
+      }) => {
+        const columns = createInspDetailColumns(maxSampleCnt);
+        createPopupGrid.setGridColumns(columns);
+        createPopupGrid.setGridData(details);
+
+      }).finally(() => {
+        onSearch(headerSaveOptionParams);
+      })
+    }
+  }, [createPopupVisible]);
+
+  // useLayoutEffect(() => {
+  //   if(editPopupVisible && editPopupInput){
+  //     editPopupInput.setValues(inputRef?.current?.values);
+  //     editPopupGrid.setGridColumns(INSP_DETAIL_COLUMNS);
+  //     editPopupGrid.setGridData(detailData);
+  //   }
+  // }, [editPopupVisible]);
+
 
   //#region 🚫함수
   const onSearch = (headerSaveOptionParams:{work_uuid?:string,prod_uuid?:string,lot_no?:string}) => {
@@ -276,8 +377,8 @@ export const INSP = () => {
           prod_uuid, 
           lot_no
         });
-        setHeaderGridMode('select');
-        setDetailGridMode('view');
+        // setHeaderGridMode(defaultHeaderGridMode);
+        // setDetailGridMode('view');
       });
     }
   }
@@ -287,9 +388,10 @@ export const INSP = () => {
     setHeaderSaveOptionParams({});
     setDetailSaveOptionParams({});
     setHeaderData([]);
-    setDetailData([]);
-    setHeaderGridMode('select');
-    setDetailGridMode('view');
+    detailGrid.setGridData([]);
+    // setDetailData([]);
+    // setHeaderGridMode(defaultHeaderGridMode);
+    // setDetailGridMode('view');
   }
 
 
@@ -299,6 +401,36 @@ export const INSP = () => {
       return;
     }
 
+    const isModified = gridRef?.current?.getInstance()?.isModified();
+    // const modifiedDatas = gridRef?.current?.getInstance()?.getModifiedRows();
+
+    if (!isModified) {
+      message.error('삭제할 항목을 선택해주세요.');
+      return;
+    }
+
+    onDefaultGridSave(
+      'basic',
+      gridRef,
+      INSP_COLUMNS,
+      SAVE_URI_PATH,
+      {},
+      modal,
+      ({success, count, savedData}) => {
+        // const insp_result_uuid = inputRef?.current?.values?.insp_result_uuid;
+        const preSelectedRow = cloneDeep(selectedRow);
+        if (success) {
+          inputRef?.current?.resetForm();
+          setHeaderData([]);
+          onSearch(headerSaveOptionParams);
+          headerData?.forEach(row => {
+            if (row?.insp_result_uuid === preSelectedRow?.insp_result_uuid) {
+              setSelectedRow(row);
+            }
+          });
+        }
+      },
+    )
   }
 
 
@@ -307,7 +439,13 @@ export const INSP = () => {
       onErrorMessage('하위이력작업시도');
       return;
     }
+    
+    if (inputRef?.current?.values?.insp_result_uuid == null) {
+      message.error('검사결과 항목을 선택해주세요.');
+      return;
+    }
 
+    setEditPopupVisible(true);
   }
 
 
@@ -316,8 +454,7 @@ export const INSP = () => {
       onErrorMessage('하위이력작업시도');
       return;
     }
-
-    setPopupVisible(true);
+    setCreatePopupVisible(true);
   }
 
 
@@ -326,43 +463,49 @@ export const INSP = () => {
   }
 
   
-  const onSave = async (ref?, popupGridMode=false) => {
-    const popupMode:boolean = popupGridMode ? popupGridMode : true;
-    const saveGridRef:MutableRefObject<Grid> = popupGridMode?detailGridRef:popupGridRef;
-    const saveInputRef:MutableRefObject<FormikProps<FormikValues>> = popupGridMode ? inputRef : popupInputRef;
+  const onSave = async (gridRef, inputRef) => {
+    const saveGridRef:MutableRefObject<Grid> = gridRef;
+    const saveInputRef:MutableRefObject<FormikProps<FormikValues>> = inputRef;
     
-    let methodType:'delete' | 'post' | 'put' | 'patch' = popupGridMode?'post':'put';
+    const methodType:'delete' | 'post' | 'put' | 'patch' = createPopupVisible ? 'post' : 'put';
     let headerData:object;
     let detailDatas:object[] = [];
 
     const saveGridInstance = saveGridRef?.current?.getInstance();
-    const popupGridInstance = popupGridRef?.current?.getInstance();
+    // const popupGridInstance = saveInputRef?.current;
 
-    methodType = 'post';
+    const saveInputValues = saveInputRef?.current?.values;
+    const regDate = dayjs(saveInputValues?.reg_date).isValid() ? dayjs(saveInputValues?.reg_date).format('YYYY-MM-DD') : saveInputValues?.reg_date;
+    const regTime = dayjs(saveInputValues?.reg_date_time).isValid() ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss') : saveInputValues?.reg_date_time;
+    const regDateTime = regDate + ' ' + regTime + ':00';
 
     headerData = {
+      //uuid: saveInputValues?.insp_result_uuid,
+      factory_uuid: getUserFactoryUuid(),
       work_uuid: (headerSaveOptionParams as any)?.work_uuid,
-      insp_detail_type_cd: saveInputRef?.current?.values?.insp_detail_type_cd,
-      insp_uuid: saveInputRef?.current?.values?.insp_uuid,
+      insp_detail_type_cd: saveInputValues?.insp_detail_type_cd,
+      insp_uuid: saveInputValues?.insp_uuid,
       prod_uuid: (headerSaveOptionParams as any)?.prod_uuid,
       lot_no: (headerSaveOptionParams as any)?.lot_no,
-      emp_uuid:  saveInputRef?.current?.values?.emp_uuid,
-      reg_date: saveInputRef?.current?.values?.reg_date + ' ' + saveInputRef?.current?.values?.reg_date_time + ':00',
-      insp_result_fg: saveInputRef?.current?.values?.insp_result_fg,
+      emp_uuid:  saveInputValues?.emp_uuid,
+      reg_date: regDateTime,
+      insp_result_fg: saveInputValues?.insp_result_fg,
       insp_qty: 0,
       pass_qty: 0,
       reject_qty: 0,
-      remark: saveInputRef?.current?.values?.remark,
-      factory_uuid: getUserFactoryUuid(),
+      remark: saveInputValues?.remark,
     };
+
     for (let i = 0; i <= saveGridInstance.getRowCount() - 1 ; i++) {
       const values:object[] = [];
-      const row = popupGridInstance?.getRow(i);
+      const row = saveGridInstance?.getRow(i);
+      const inspResultDetailInfoUuid = methodType === 'post' ? null : row?.insp_result_detail_info_uuid;
 
       for (let k = 1; k <= row.sample_cnt; k++) {
         const value:any = row?.['x'+k+'_insp_value'];
         if(value){
           values.push({
+            uuid: inspResultDetailInfoUuid,
             sample_no: k,
             insp_result_fg: row?.['x'+k+'_insp_result_fg'],
             insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value
@@ -370,10 +513,12 @@ export const INSP = () => {
         }
       };
 
+      //const uuidKey = methodType === 'post' ? 'insp_detail_uuid' : 'uuid';
+
       detailDatas.push({
         values,
         factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: row?.insp_detail_uuid,
+        //[uuidKey]: row?.insp_detail_uuid,
         insp_result_fg: row?.insp_result_fg,
         remark: row?.remark
       })
@@ -385,8 +530,9 @@ export const INSP = () => {
     });
     await executeData(saveData, SAVE_URI_PATH, methodType, 'success').then((value) => {
       if (!value) return;
-      message.info('저장되었습니다.')
-      setPopupVisible(false);
+      message.info('저장되었습니다.');
+      setCreatePopupVisible(false);
+      setEditPopupVisible(false);
     }).catch(e => {console.log(e)});
   }
   //#endregion
@@ -397,11 +543,48 @@ export const INSP = () => {
   useEffect(() => {
     if (headerData?.length === 0) {
       inputRef?.current?.resetForm();
-      setDetailData([]);
+      detailGrid.setGridData([]);
     }
   }, [headerData]);
   //#endregion
 
+  useLayoutEffect(() => {
+    if (Object.keys(selectedRow)?.length > 0 && selectedRow) {
+      try {
+        const insp_result_uuid = selectedRow?.insp_result_uuid;
+        const work_uuid = selectedRow?.work_uuid;
+        const URI_PATH = DETAIL_SEARCH_URI_PATH.replace('$', insp_result_uuid);
+        // 공정검사 상세 데이터 조회
+        getData({}, URI_PATH, 'header-details').then((res) => {
+          const {header, details} = res;
+          const maxSampleCnt = header?.max_sample_cnt;
+          const columns = createInspDetailColumns(maxSampleCnt);
+
+          inputRef?.current?.setValues({...header, reg_date_time: header?.reg_date});
+          detailGrid.setGridColumns(columns);
+          detailGrid.setGridData(details);
+          setDetailSaveOptionParams({work_uuid});
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [selectedRow]);
+
+
+  const onClickHeader = (ev) => {
+    const {rowKey, targetType} = ev;
+    if (targetType === 'cell' && headerGridMode === defaultHeaderGridMode) {
+      try {
+        const row = ev?.instance?.store?.data?.rawData[rowKey];
+        setSelectedRow(row);
+      } catch(e) {
+        console.log(e);
+      } finally {
+        // setLoading(false);
+      }
+    }
+  }
 
   //#region 🚫렌더부
   const component = (
@@ -410,22 +593,13 @@ export const INSP = () => {
     :
     <>
       <Container>
-        {detailGridMode === 'view' ?
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} hidden={true} disabled={!permissions?.delete_fg}>삭제</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} hidden={true} disabled={!permissions?.update_fg}>수정</Button>
-              <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
-            </Space>
-          </div>
-          :
-          <div style={{width:'100%', display:'inline-block'}}>
-            <Space size={[6,0]} style={{float:'right'}}>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-              <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-            </Space>
-          </div>
-        }
+        <div style={{width:'100%', display:'inline-block'}}>
+          <Space size={[6,0]} style={{float:'right'}}>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} hidden={true} disabled={!permissions?.delete_fg}>삭제</Button>
+            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='edit' colorType='blue' onClick={onEdit} hidden={true} disabled={!permissions?.update_fg}>수정</Button>
+            <Button btnType='buttonFill' widthSize='large' heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>신규 추가</Button>
+          </Space>
+        </div>
         <p/>
         <Row gutter={[16,0]} style={{minHeight:440, maxHeight:440}}>
           <Col span={8}>
@@ -436,45 +610,11 @@ export const INSP = () => {
               columns={INSP_COLUMNS}
               data={headerData}
               height={400}
-              onAfterChange={onAfterChange}
-              onAfterClick={(ev) => {
-                const {rowKey, targetType} = ev;
-                if (targetType === 'cell' && headerGridMode === 'select') {
-                  try {
-                    const row = ev?.instance?.store?.data?.rawData[rowKey];
-                    const insp_result_uuid = row?.insp_result_uuid;
-                    const work_uuid = row?.work_uuid;
-                    const URI_PATH = DETAIL_SEARCH_URI_PATH.replace('$', insp_result_uuid);
-                    // 공정검사 상세 데이터 조회
-                    getData({}, URI_PATH, 'header-details').then((res) => {
-                      const {header, details} = res;
-                      inputRef?.current?.setValues({...header, reg_date_time: header?.reg_date});
-                      setDetailData(details);
-                      setDetailSaveOptionParams({work_uuid});
-                      setMaxSampleCnt(header?.max_sample_cnt);
-                      
-                      // 시료수 MAX값 가져오기
-                      // getData(
-                      //   {
-                      //     insp_detail_type:
-                      //       header?.insp_detail_type_cd === 'PATROL_PROC' ? 'patrolProc' :
-                      //       header?.insp_detail_type_cd === 'SELF_PROC' ? 'selfProc' : null,
-                      //     work_uuid
-                      //   },
-                      //   MAX_SEQ_SEARCH_URI_PATH,
-                      //   'string'
-                      // ).then((res) => {
-                      //   const {seq} = res;
-                      //   setMaxSeq(seq);
-                      // });
-                    });
-                  } catch(e) {
-                    console.log(e);
-                  } finally {
-                    // setLoading(false);
-                  }
-                }
-              }}
+              onAfterChange={(ev) => onAfterChange(ev, {
+                gridInstance: gridRef?.current?.getInstance(),
+                inputInstance: inputRef?.current,
+              })}
+              onAfterClick={onClickHeader}
             />
           </Col>
           <Col span={16} style={{minHeight:440, maxHeight:440, overflow:'auto'}}>
@@ -485,33 +625,27 @@ export const INSP = () => {
               innerRef={inputRef}
             />
             <Datagrid
-              gridId={TAB_CODE.공정검사+'_DETAIL_GRID'}
-              ref={detailGridRef}
-              gridMode={detailGridMode}
-              columns={INSP_DETAIL_COLUMNS}
-              header={INSP_DETAIL_HEADER}
-              data={detailData}
+              {...detailGrid.gridInfo}
+              ref={detailGrid.gridRef}
             />
           </Col>
         </Row>
       </Container>
       
       <GridPopup
-        title='데이터 추가하기'
-        onOk={onSave}
+        {...createPopupGrid.gridInfo}
+        title='데이터 추가'
+        onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
         okText='추가하기'
         cancelText='취소'
         onCancel={() => {
           // TUIP_PROD_onSearch();
-          setPopupVisible(false);
+          setCreatePopupVisible(false);
         }}
         gridMode='create'
         popupId={'INSP_GRID_POPUP_POPUP'}
-        gridId={'INSP_GRID_POPUP'}
-        ref={popupGridRef}
+        ref={createPopupGrid.gridRef}
         parentGridRef={gridRef}
-        header={INSP_DETAIL_HEADER}
-        columns={INSP_DETAIL_COLUMNS}
         inputProps={{
           id: 'INSP_DETAIL_GRID_POPUP_INPUT',
           inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
@@ -520,22 +654,56 @@ export const INSP = () => {
             }
             return el;
           }),
-          innerRef: popupInputRef,
+          innerRef: createPopupInput.ref,
         }}
-
-        onAfterChange={onAfterChange}
-
+        onAfterChange={(ev) => onAfterChange(ev, {
+          gridInstance: createPopupGrid.gridInstance,
+          inputInstance: createPopupInput.instance,
+        })}
         saveUriPath={SAVE_URI_PATH}
         searchUriPath={DETAIL_SEARCH_URI_PATH}
-        // saveOptionParams={tuipWorkerSaveOptionParams}
-        // setParentData={TUIP_WORKER_setData}
-        data={newDetailData}
-        // defaultData={newDetailData}
         saveType='basic'
         defaultVisible={false}
-        visible={popupVisible}
-        
+        visible={createPopupVisible}
       />
+
+      
+      <GridPopup
+        {...editPopupGrid.gridInfo}
+        title='데이터 수정'
+        onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
+        okText='수정하기'
+        cancelText='취소'
+        onCancel={() => {
+          // TUIP_PROD_onSearch();
+          setEditPopupVisible(false);
+        }}
+        gridMode='update'
+        popupId={'INSP_EDIT_GRID_POPUP_POPUP'}
+        ref={editPopupGrid.gridRef}
+        parentGridRef={gridRef}
+        inputProps={{
+          id: 'INSP_DETAIL_EDIT_GRID_POPUP_INPUT',
+          inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
+            if (['emp_nm', 'insp_detail_type_cd', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
+              el['disabled'] = false;
+            }
+            return el;
+          }),
+          innerRef: editPopupInput.ref,
+        }}
+        onAfterChange={(ev) => onAfterChange(ev, {
+          gridInstance: editPopupGrid.gridInstance,
+          inputInstance: editPopupInput.instance,
+        })}
+        saveUriPath={SAVE_URI_PATH}
+        searchUriPath={DETAIL_SEARCH_URI_PATH}
+        saveType='basic'
+        defaultVisible={false}
+        visible={editPopupVisible}
+      />
+
+      {modalContext}
     </>
   );
   //#endregion
@@ -550,14 +718,14 @@ export const INSP = () => {
     headerGridMode,
     setHeaderGridMode,
 
-    detailGridMode,
-    setDetailGridMode,
+    detailGridMode: detailGrid.gridInfo.gridMode,
+    setDetailGridMode: detailGrid.setGridMode,
 
     headerData,
     setHeaderData,
 
-    detailData,
-    setDetailData,
+    detailData: detailGrid.gridInfo.data,
+    setDetailData: detailGrid.setGridData,
 
     headerSaveOptionParams,
     setHeaderSaveOptionParams,
