@@ -27,15 +27,12 @@ export const PgStdInspItem = () => {
   const grid = useGrid('GRID', [
     {header: '검사항목UUID', name:'insp_item_uuid', alias:'uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
     {header: '검사항목 유형UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사항목 유형코드', name:'insp_item_type_cd', width:ENUM_WIDTH.M, editable:true, hidden:true},
-    {header: '검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
+    {header: '검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '검사항목코드', name:'insp_item_cd', width:ENUM_WIDTH.M, editable:true, requiredField:true},
     {header: '검사항목명', name:'insp_item_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '검사구UUID', name:'insp_tool_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사구코드', name:'insp_tool_cd', width:ENUM_WIDTH.M, editable:true, hidden:true},
     {header: '검사구명', name:'insp_tool_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
     {header: '검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사방법코드', name:'insp_method_cd', width:ENUM_WIDTH.M, editable:true, hidden:true},
     {header: '검사방법명', name:'insp_method_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
   ], {
     searchUriPath: searchUriPath,
