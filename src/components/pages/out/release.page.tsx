@@ -536,7 +536,7 @@ export const PgOutRelease = () => {
   const onAfterSaveAction = (searchResult, uuid) => {
     let selectedRow = searchResult?.find(el => el?.release_uuid === uuid);
       
-    if (!selectedRow) { selectedRow = searchResult[0]; }
+    if (!selectedRow) { selectedRow = {}; }
     setSelectedHeaderRow(cleanupKeyOfObject(selectedRow, detailInputInfo?.inputItemKeys));
   }
 
