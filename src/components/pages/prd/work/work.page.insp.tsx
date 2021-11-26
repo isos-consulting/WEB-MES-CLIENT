@@ -384,7 +384,7 @@ export const INSP = () => {
   }
 
 
-  const onReset = (ev) => {
+  const onReset = () => {
     setHeaderSaveOptionParams({});
     setDetailSaveOptionParams({});
     setHeaderData([]);
