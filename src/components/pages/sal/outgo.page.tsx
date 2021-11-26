@@ -1,7 +1,6 @@
-import React, { useLayoutEffect } from 'react';
-import { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Datagrid, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
@@ -9,6 +8,8 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
+import _ from 'lodash';
+import Grid from '@toast-ui/react-grid';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -42,6 +43,7 @@ export const PgSalOutgo = () => {
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
 
+  const gridRef = useRef<Grid>();
 
   //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
@@ -60,6 +62,8 @@ export const PgSalOutgo = () => {
 
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '제품출하상세UUID', name:'outgo_detail_uuid', alias:'uuid', hidden:true},
+    {header: '수주상세UUID', name:'order_detail_uuid', alias:'uuid', hidden:true},
+    {header: '출하지시상세UUID', name:'outgo_order_detail_uuid', alias:'uuid', hidden:true},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
@@ -250,7 +254,7 @@ export const PgSalOutgo = () => {
 
           ).then((res) => {
             modal.confirm({
-              title: '수주품목 - 다중선택',
+              title: '수주품목',
               width: '80%',
               content:
                 <>
@@ -258,28 +262,49 @@ export const PgSalOutgo = () => {
                     ref={childGridRef}
                     gridId={'GRID_POPUP_ORDER'}
                     columns={getPopupForm('수주품목관리')?.datagridProps?.columns}
-                    gridMode='multi-select'
+                    gridMode='select'
                     data={res}
                   />
                 </>,
               icon:null,
               okText: '선택',
-              onOk: () => {
+              onOk: (close) => {
                 const child = childGridRef.current;
-                const rows = child.getInstance().getCheckedRows();
-      
-                rows?.forEach((row) => {
-                  let newRow = {};
-                  if (typeof row === 'object') {
-                    updateColumns.forEach((columnName) => {
-                      // 값 설정
-                      newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
-                    });
+                const row = child.getInstance().getCheckedRows();
+                let inputValues = null;
+                if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
+                  inputValues = newDataPopupInputInfo.values;
+                } else { // 세부 항목 등록 팝업일 경우
+                  inputValues = addDataPopupInputInfo.values;
+                }
+                if (row.length > 0) {
+                  close();
+                  getData(
+                    {
+                      stock_type:'outgo',
+                      grouped_type:'all',
+                      price_type:'sales',
+                      exclude_zero_fg:true,
+                      exclude_minus_fg:true,
+                      reg_date: inputValues?.reg_date ? dayjs(inputValues?.reg_date).format('YYYY-MM-DD') : null,
+                      partner_uuid: params?.partner_uuid,
+                      prod_uuid: row[0].prod_uuid,
+                    }, 
+                    getPopupForm('재고관리')?.uriPath,
         
-                    // 행 추가
-                    onAppendRow(newRow);
-                  }
-                })
+                  ).then((res) => {
+                    
+                    addStocks(
+                      {
+                        order_detail_uuid: row[0].order_detail_uuid,
+                        order_detail_qty: row[0].qty,
+                        carry_fg:false
+                      }, res, updateColumns
+                    )
+                  });
+                } else {
+                  message.warning('품목을 선택 후 선택 버튼을 클릭 해 주세요.')
+                };
               },
               cancelText:'취소',
               maskClosable:false,
@@ -319,7 +344,7 @@ export const PgSalOutgo = () => {
 
           ).then((res) => {
             modal.confirm({
-              title: '출하지시품목 - 다중선택',
+              title: '출하지시품목',
               width: '80%',
               content:
                 <>
@@ -327,28 +352,52 @@ export const PgSalOutgo = () => {
                     ref={childGridRef}
                     gridId={'GRID_POPUP_ORDER'}
                     columns={getPopupForm('출하지시품목관리')?.datagridProps?.columns}
-                    gridMode='multi-select'
+                    gridMode='select'
                     data={res}
                   />
                 </>,
               icon:null,
               okText: '선택',
-              onOk: () => {
+              onOk: (close) => {
                 const child = childGridRef.current;
-                const rows = child.getInstance().getCheckedRows();
-      
-                rows?.forEach((row) => {
-                  let newRow = {};
-                  if (typeof row === 'object') {
-                    updateColumns.forEach((columnName) => {
-                      // 값 설정
-                      newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
-                    });
+                const row = child.getInstance().getCheckedRows();
+                let inputValues = null;
+                if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
+                  inputValues = newDataPopupInputInfo.values;
+                } else { // 세부 항목 등록 팝업일 경우
+                  inputValues = addDataPopupInputInfo.values;
+                }
+                console.log(row)
+                if (row.length > 0) {
+                  close();
+                  getData(
+                    {
+                      stock_type:'outgo',
+                      grouped_type:'all',
+                      price_type:'sales',
+                      exclude_zero_fg:true,
+                      exclude_minus_fg:true,
+                      reg_date: inputValues?.reg_date ? dayjs(inputValues?.reg_date).format('YYYY-MM-DD') : null,
+                      partner_uuid: params?.partner_uuid,
+                      prod_uuid: row[0].prod_uuid,
+                    }, 
+                    getPopupForm('재고관리')?.uriPath,
         
-                    // 행 추가
-                    onAppendRow(newRow);
-                  }
-                })
+                  ).then((res) => {
+                    
+                    addStocks(
+                      {
+                        order_detail_uuid: row[0].order_detail_uuid,
+                        order_detail_qty: row[0].order_qty,
+                        outgo_order_detail_uuid: row[0].order_detail_uuid,
+                        outgo_order_detail_qty: row[0].qty,
+                        carry_fg:false
+                      }, res, updateColumns
+                    )
+                  });
+                } else {
+                  message.warning('품목을 선택 후 선택 버튼을 클릭 해 주세요.')
+                };
               },
               cancelText:'취소',
               maskClosable:false,
@@ -358,6 +407,58 @@ export const PgSalOutgo = () => {
       },
     ],
   });
+  
+  const addStocks = (mainData, res, updateColumns) => {
+    return (
+      modal.confirm({
+        title: '재고관리 - 수주품목',
+        width: '80%',
+        content:
+          <>
+            <Datagrid 
+              ref={gridRef}
+              gridId={'GRID_POPUP_ORDER'}
+              columns={getPopupForm('재고관리')?.datagridProps?.columns}
+              gridMode='multi-select'
+              data={res}
+            />
+          </>,
+        icon:null,
+        okText: '선택',
+        cancelText: '취소',
+        onOk: (close) => {
+          const child = gridRef.current;
+          const rows = child.getInstance().getCheckedRows();
+
+          let popupGridRef = null;
+          if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
+            popupGridRef = newDataPopupGrid.gridRef;
+          } else { // 세부 항목 등록 팝업일 경우
+            popupGridRef = editDataPopupGrid.gridRef;
+          }
+          
+          if ( rows.length > 0 ) {
+            rows?.forEach((row) => {
+              let newRow = {};
+              if (typeof row === 'object') {
+                updateColumns.forEach((columnName) => {
+                  // 값 설정
+                  newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
+                });
+  
+                // 행 추가
+                popupGridRef?.current?.getInstance()?.appendRow({...mainData, ...newRow});
+              }
+            });
+            close();
+          } else {
+            message.warning('재고를 선택 후 선택 버튼을 클릭 해 주세요.')
+          }
+          
+        }
+      })
+    )
+  }
 
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
     searchUriPath: detailSearchUriPath,
@@ -372,7 +473,6 @@ export const PgSalOutgo = () => {
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
     gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
   /** 헤더 클릭 이벤트 */
@@ -445,7 +545,7 @@ export const PgSalOutgo = () => {
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_price'].includes(el?.id))
           el['disabled'] = false; 
 
@@ -458,7 +558,7 @@ export const PgSalOutgo = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['partner_nm', 'reg_date', 'total_price'].includes(el?.id))
           el['disabled'] = false;
 
