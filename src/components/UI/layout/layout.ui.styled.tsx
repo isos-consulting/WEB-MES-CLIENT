@@ -10,9 +10,9 @@ export const ScContainer = styled.div<ILayoutSpacing>`
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  .ant-card.ant-card-bordered{
+  /* .ant-card.ant-card-bordered{ */
     /* margin-bottom: 8px; */
-  }
+  /* } */
   // searchbox 높이 지정하려고 했었음 (대시보드까지 적용돼서 일단 주석)
   /* .ant-card-body{
     height: 57px;

@@ -334,7 +334,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
 
           return (
             <Form>
-              <Space size={10} wrap>
+              <Space size={[10,0]} align='center' style={{marginTop:'-8px', paddingTop:'0px', paddingBottom:'2px'}} wrap>
                 {inputItems?.map((item) => {
                   if (!item.hidden)
                     return (
@@ -643,7 +643,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                         :
                         <Row style={{width:380}}>
                         <Col span={10} style={{paddingTop: 5}}>
-                          <Label text={item.label}/>
+                          <Label text={item.label} important={item.important} />
                         </Col>
                         <Col span={14} style={{width: '100%', display: 'block'}}>
                         {

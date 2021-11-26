@@ -551,12 +551,12 @@ div.ant-card.container {
     font-size: ${Fonts.fontSize_default_md};
     font-weight: bold;
     color: #1890FF; //#587BD2;
-    min-height: 30px;
+    min-height: 30px;      
     
     & > .ant-card-head-wrapper > .ant-card-head-title {
       padding: 4px 0 0 0 !important;
     }
-  }
+  } 
 
   & > .ant-card-body {
     padding: 4px 4px 4px 4px !important;
@@ -566,7 +566,8 @@ div.ant-card.container {
   }
 
   &.ant-card-bordered{
-    border: 1px solid ${Colors.bg_radio_border};
+    /* border: 1px solid ${Colors.bg_radio_border}; */
+    /* padding-bottom: 10px; */
   }
 }
 
