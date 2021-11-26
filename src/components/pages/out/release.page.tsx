@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -121,16 +121,16 @@ export const PgOutRelease = () => {
       { // 입고창고
         popupKey: '창고관리',
         columnNames: [
-          {original:'to_store_uuid', popup:'store_uuid'},
-          {original:'to_store_nm', popup:'store_nm'},
+          {original:'from_store_uuid', popup:'store_uuid'},
+          {original:'from_store_nm', popup:'store_nm'},
         ],
         gridMode: 'select',
       },
       { // 입고위치
         popupKey: '위치관리',
         columnNames: [
-          {original:'to_location_uuid', popup:'location_uuid'},
-          {original:'to_location_nm', popup:'location_nm'},
+          {original:'from_location_uuid', popup:'location_uuid'},
+          {original:'from_location_nm', popup:'location_nm'},
         ],
         gridMode: 'select',
       },
@@ -254,7 +254,13 @@ export const PgOutRelease = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (el?.name === 'from_location_nm') {
+        el['editable'] = false;
+      }
+      return el;
+    }), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
