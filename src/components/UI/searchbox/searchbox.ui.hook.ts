@@ -1,5 +1,5 @@
-import { FormikProps, FormikValues } from "formik";
-import { useMemo, useRef, useState } from "react";
+import { FormikErrors, FormikProps, FormikValues } from "formik";
+import React, { useMemo, useRef, useState } from "react";
 import ISearchboxProps, { ISearchItem } from "./searchbox.ui.type";
 
 
@@ -34,13 +34,25 @@ export const searchboxModel = (props:{
 
   setSearchItems
   : React.Dispatch<React.SetStateAction<ISearchItem[]>>,
+
+  options?
+  : {
+    validate: (values?: any) => Promise<FormikErrors<FormikValues>>;
+  }
 }) => {
   
   return props;
 };
 
 
-export const useSearchbox = (id: string, searchItems:ISearchItem[], onSearch?:(values?) => void) => {
+export const useSearchbox = (
+  id: string,
+  searchItems:ISearchItem[],
+  onSearch?:(values?) => void,
+  options?:{
+    validate: (values?: any) => Promise<FormikErrors<FormikValues>>;
+  }
+) => {
   const ref = useRef<FormikProps<FormikValues>>();
   const [_searchItems, setSearchItems] = useState<ISearchItem[]>(searchItems);
   const initValues = useMemo(() => createInitialValues(_searchItems), _searchItems);
@@ -64,6 +76,7 @@ export const useSearchbox = (id: string, searchItems:ISearchItem[], onSearch?:(v
     id,
     innerRef: ref,
     searchItems: _searchItems,
+    ...options
   };
 
   const model = searchboxModel({

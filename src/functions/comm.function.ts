@@ -30,6 +30,7 @@ export async function getData<T = any[]>(
   uriPath: string,
   returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' | 'original' = 'raws',
   headersObj?: object,
+  disabledErrorMessage: boolean = false,
 ):Promise<T> {
   loadProgressBar();
   
@@ -71,8 +72,11 @@ export async function getData<T = any[]>(
       
     } else {
       datas = null;
+      console.log('getData', error);
 
-      console.log('err', error);
+      if (!disabledErrorMessage) {
+        message.error(error.response.data.message);
+      }
     }
   } finally {
     switch (returnType) {
