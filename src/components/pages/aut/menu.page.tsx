@@ -1,13 +1,48 @@
 import React from 'react';
 import { useState } from "react";
-import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { menuData, TGridMode, useGrid, useSearchbox } from "~/components/UI";
+import { checkGridData, dataGridEvents, executeData, getData, getModifiedRows, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
+import { moduleExpression } from '@babel/types';
 
+type TGridAttributes = {
+  expanded?: boolean,
+  disabled?: boolean,
+}
+
+type TMenuData = {
+  component_nm?: string,
+  icon?: string,
+  lv?: number,
+  menu_nm?: string,
+  menu_type_nm?: string,
+  menu_type_uuid?: string,
+  menu_uri?: string,
+  menu_uuid?: string,
+  sortby?: string,
+  use_fg?:boolean,
+  created_at?: string,
+  created_nm?: string,
+  updated_at?: string,
+  updated_nm?: string,
+  _attributes?:TGridAttributes,
+  _children?:TMenuData[]
+}
+
+type TGetMenuData = {
+  lv?: number,
+  menu_nm?: string,
+  menu_type_nm?: string,
+  menu_type_uuid?: string,
+  menu_uri?: string,
+  menu_uuid?: string,
+  sortby?: string,
+  use_fg?: boolean
+}
 
 /** 그룹 관리 */
 export const PgAutMenu = () => {
@@ -25,12 +60,13 @@ export const PgAutMenu = () => {
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header: '메뉴UUID', name:'menu_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '메뉴레벨', name:'lv', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '메뉴명', name:'menu_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '메뉴유형UUID', name:'menu_type_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, requiredField:true},
-    {header: '메뉴유형', name:'menu_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '메뉴유형UUID', name:'menu_type_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, },
+    {header: '메뉴유형', name:'menu_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, },
     {header: '메뉴URL', name:'menu_uri', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '컴포넌트명', name:'component_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '아이콘', name:'icon', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '컴포넌트명', name:'component_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, },
+    {header: '아이콘', name:'icon', width:ENUM_WIDTH.L, filter:'text', editable:true, },
     {header: '사용', name:'use_fg', width:ENUM_WIDTH.S, format:'check', editable:true, requiredField:true},
   ], {
     searchUriPath: searchUriPath,
@@ -59,7 +95,74 @@ export const PgAutMenu = () => {
         name: 'menu_nm',
         useIcon: true,
         useCascadingCheckbox: true
-      }
+      },
+      extraButtons: [
+        {
+          buttonProps:{text:'행 추가'},
+          buttonAction:(ev, props, options) => {
+            const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
+
+            const gridInstance = gridRef.current.getInstance()
+            const {rowKey} = gridInstance.getFocusedCell()
+            const rowData = gridInstance.getRow(rowKey)
+            console.log(rowData)
+            // gridRef.current.getInstance().appendRow({},{at:rowData._attributes.rowNum, parentRowKey: rowData._attributes.tree.parentRowKey})
+            gridRef.current.getInstance().appendRow({},{at:1, parentRowKey: rowData._attributes.tree.parentRowKey})
+            if (null) {
+              message.warn('거래처를 선택하신 후 다시 시도해주세요.');
+              return;
+            }
+          },
+        },
+        {
+          buttonProps:{text:'행 취소'},
+          buttonAction:(ev, props, options) => {
+            const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
+            const gridInstance = gridRef.current.getInstance()
+            const {rowKey} = gridInstance.getFocusedCell()
+            const rowData = gridInstance.getRow(rowKey)
+
+            if(rowData?.menu_uuid){
+              message.warn('추가한 행에만 취소가 가능합니다.');
+              return;
+            } else {
+              gridInstance.removeRow(rowKey)
+            }
+          },
+        },
+        {
+          buttonProps:{text:'◀'},
+          buttonAction:(ev, props, options) => {
+            const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
+            const gridInstance = gridRef.current.getInstance()
+            const {rowKey} = gridInstance.getFocusedCell()
+            const rowData = gridInstance.getRow(rowKey)
+
+            if(rowData?.menu_uuid){
+              message.warn('추가한 행에만 취소가 가능합니다.');
+              return;
+            } else {
+              gridInstance.removeRow(rowKey)
+            }
+          },
+        },
+        {
+          buttonProps:{text:'▶'},
+          buttonAction:(ev, props, options) => {
+            const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
+            const gridInstance = gridRef.current.getInstance()
+            const {rowKey} = gridInstance.getFocusedCell()
+            const rowData = gridInstance.getRow(rowKey)
+
+            if(rowData?.menu_uuid){
+              message.warn('추가한 행에만 취소가 가능합니다.');
+              return;
+            } else {
+              gridInstance.removeRow(rowKey)
+            }
+          },
+        },
+      ],
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -82,37 +185,41 @@ export const PgAutMenu = () => {
     const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
 
     let data = [];
-
-    // const dataS = [
-    //   {
-    //     menu_nm: 'foo',
-    //     menu_type_nm: 'bar',
-    //     _attributes: {
-    //       expanded: true // default: false
-    //     },
-    //     _children: [
-    //       {
-    //         menu_nm: 'baz',
-    //         menu_type_nm: 'qux',
-    //         _children: [
-    //           {
-    //             menu_nm: 'baz',
-    //             menu_type_nm: 'qux'
-    //           },
-    //           // ...,
-    //         ]
-    //       },
-    //       // ...,
-    //     ]
-    //   },
-    //   // ...,
-    // ];
-    getData(searchParams, searchUriPath).then((res) => {
+    getData<TGetMenuData[]>(searchParams, searchUriPath).then((res) => {
       data = res;
 
     }).finally(() => {
+      let menuDatas:TMenuData[] = [];
+      data.map((el)=>{
+        if ( el.lv == 1 ) {
+          menuDatas.push ({
+            ...el,
+            _attributes: {
+              expanded: true
+            },
+            _children: []
+          }) 
+        } else if ( el.lv == 2 ) {
+          menuDatas[menuDatas.length - 1]._children.push ({
+            ...el,
+            _attributes: {
+              expanded: true
+            },
+            _children: el.component_nm ? null : []
+          }) 
+        } else if ( el.lv ==3 ) {
+          menuDatas[menuDatas.length - 1]?._children[menuDatas[menuDatas.length - 1]?._children?.length - 1]?._children.push ({
+            ...el,
+            _attributes: {
+              expanded: false
+            },
+            _children: null
+          }) 
+        }
+      })
+      
       inputInfo?.instance?.resetForm();
-      grid.setGridData(data);
+      grid.setGridData(menuDatas);
     });
   };
 
@@ -129,6 +236,46 @@ export const PgAutMenu = () => {
         defaultGridMode,
       },inputInfo?.values, modal, () => onSearch(searchInfo?.values)
     );
+  }
+
+  const onEditSave = () => {
+    const {gridRef, setGridMode} = editDataPopupGrid;
+    const {columns, saveUriPath} = editDataPopupGrid.gridInfo;
+    console.log(grid.gridInfo.data, grid.gridInstance.getData(), editDataPopupGrid.gridInfo.data)
+    const saveDatas = gridRef.current.getInstance().getData().map((el) => {
+      return({
+        uuid:el.menu_uuid,
+        menu_type_uuid:el.menu_type_uuid,
+        menu_nm:el.menu_nm,
+        menu_uri:el.menu_uri,
+        component_nm:el.component_nm,
+        icon:el.icon,
+        lv:el.lv,
+        use_fg:el.use_fg
+      })
+    })
+    console.log(saveDatas)
+    modal.confirm({
+      icon: null,
+      title: '저장',
+      // icon: <ExclamationCircleOutlined />,
+      content: '편집된 내용을 저장하시겠습니까?',
+      onOk: async () => {
+
+        // 저장 가능한지 체크
+        const chk:boolean = await checkGridData(columns, saveDatas, false, ['emptyDatas']);
+
+        if (chk === false) return;
+
+        executeData(saveDatas, URL_PATH_AUT.MENU.PUT.MENUS,'put').then((res) => {
+          
+        })
+      },
+      onCancel: () => {
+      },
+      okText: '예',
+      cancelText: '아니오',
+    });
   }
 
   /** 템플릿에서 작동될 버튼들의 기능 정의 */
@@ -187,7 +334,7 @@ export const PgAutMenu = () => {
     inputProps: null,  
     
     popupGridRef: [newDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfo: [newDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridInfo: [newDataPopupGrid.gridInfo, {...editDataPopupGrid.gridInfo, onOk:onEditSave}],
     popupVisible: [newDataPopupGridVisible, editDataPopupGridVisible],
     setPopupVisible: [setNewDataPopupGridVisible, setEditDataPopupGridVisible],
     popupInputProps: [newDataPopupInputInfo?.props, editDataPopupInputInfo?.props],

@@ -1,13 +1,14 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getPageName, isModified } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
+import _ from 'lodash';
 
 
 
@@ -43,11 +44,11 @@ export const PgAutGroupPermission = () => {
     {type:'text', id:'group_uuid', label:'그룹UUID', disabled:true, hidden:true},
   ]);
 
-  const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo?.inputItems));
+  const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
 
-  const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo?.inputItems));
+  const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
 
-  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', cloneObject(detailInputInfo?.inputItems));
+  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
   //#endregion
 
 
@@ -65,22 +66,29 @@ export const PgAutGroupPermission = () => {
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '그룹별 메뉴권한UUID', name:'group_permission_uuid', alias:'uuid', hidden:true},
     {header: '메뉴UUID', name:'menu_uuid', hidden:true},
-    {header: '대분류', width:ENUM_WIDTH.L, name:'first_menu_nm'},
-    {header: '메뉴명', width:ENUM_WIDTH.L, name:'menu_nm'},
+    {header: '메뉴명', width:ENUM_WIDTH.XL, name:'menu_nm'},
     {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
-    {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', format:'popup', hidden:true},
+    {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
     {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
-    {header: '권한기준', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup'},
+    {header: '권한명', width:ENUM_WIDTH.L, name:'permission_nm', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     gridMode: detailDefaultGridMode,
     disabledAutoDateColumn: true,
+    treeColumnOptions: {
+      name: 'menu_nm',
+      useIcon: true,
+      useCascadingCheckbox: true
+    },
   });
   
   /** 팝업 Grid View */
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
+  const newDataPopupGrid = null;
+  const addDataPopupGrid = null;
+
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', _.cloneDeep(detailGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     disabledAutoDateColumn: true,
@@ -96,26 +104,24 @@ export const PgAutGroupPermission = () => {
         ],
         dataApiSettings: {
           uriPath: '/aut/permissions',
-          params: {}
+          params: {},
+          onInterlock: () =>{
+            let showPopupFg:boolean = false;
+            const {rowKey} = editDataPopupGrid?.gridInstance?.getFocusedCell();
+            const {_attributes} = editDataPopupGrid?.gridInstance?.getRow(rowKey);
+
+            if (_attributes?.disabled === false) {
+              showPopupFg = true
+            };
+
+            return showPopupFg;
+          }
         },
         gridMode: 'select',
       },
     ],
-  });
-
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    disabledAutoDateColumn: true,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
-  });
-
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    disabledAutoDateColumn: true,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
     saveParams: editDataPopupInputInfo.values,
+    treeColumnOptions: detailGrid?.gridInfo?.treeColumnOptions,
   });
 
   /** 헤더 클릭 이벤트 */
@@ -130,13 +136,48 @@ export const PgAutGroupPermission = () => {
 
   /** 상세 그리드 데이터 세팅 */
   const reloadDetailGrid = (uuid) => {
-    if (!uuid) return;
+    if (!uuid) {
+      detailGrid.setGridData([]);
+    } else { 
 
-    getData({
-      group_uuid: uuid,
-    }, detailSearchUriPath).then((res) => {
-      detailGrid.setGridData(res || []);
-    });
+      getData({
+        group_uuid: uuid,
+      }, detailSearchUriPath).then((res) => {
+        let menuDatas = [];
+        
+        res.map((el)=>{
+          if ( el.lv == 1 ) {
+            menuDatas.push ({
+              ...el,
+              _attributes: {
+                expanded: true,
+                disabled: true
+              },
+              _children: []
+            }) 
+          } else if ( el.lv == 2 ) {
+            menuDatas[menuDatas.length - 1]._children.push ({
+              ...el,
+              _attributes: {
+                expanded: true,
+                disabled: el.menu_type_nm ? false : true
+              },
+              _children: el.menu_type_nm ? null : []
+            }) 
+          } else if ( el.lv ==3 ) {
+            menuDatas[menuDatas.length - 1]?._children[menuDatas[menuDatas.length - 1]?._children?.length - 1]?._children.push ({
+              ...el,
+              _attributes: {
+                expanded: false,
+                disabled: false
+              },
+              _children: null
+            }) 
+          }
+        })
+        detailGrid.setGridData(menuDatas);
+      });
+    };
   };
   //#endregion
 
@@ -168,14 +209,11 @@ export const PgAutGroupPermission = () => {
   };
 
   const onSearchDetail = (uuid) => {
-    if (uuid == null) return;
     reloadDetailGrid(uuid);
   }
   //#endregion
 
   
-
-
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
     if (selectedHeaderRow == null) {
@@ -185,31 +223,16 @@ export const PgAutGroupPermission = () => {
       onSearchDetail(selectedHeaderRow?.group_uuid);
     }
   }, [selectedHeaderRow]);
-
-  useLayoutEffect(() => {
-    if (newDataPopupGridVisible === true) {
-
-    } else {
-      newDataPopupInputInfo?.instance?.resetForm();
-    }
-  }, [newDataPopupGridVisible]);
-
-  useLayoutEffect(() => {
-    if (addDataPopupGridVisible === true) {
-      // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
-    }
-
-  }, [addDataPopupGridVisible, detailInputInfo.values]);
   
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
       editDataPopupInputInfo.setValues(detailInputInfo.values);
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
+      
     }
-
   }, [editDataPopupGridVisible, detailInputInfo.values, detailGrid.gridInfo.data]);
+
   //#endregion
 
   const onSave = () => {
@@ -240,7 +263,7 @@ export const PgAutGroupPermission = () => {
 
   const onCheckUuid = ():boolean => {
     if (detailInputInfo?.values.group_uuid == null) {
-      message.warn('전표를 선택하신 후 다시 시도해 주세요.');
+      message.warn('데이터를 조회 후 다시 시도해 주세요.');
       return false;
     };
     return true;
@@ -353,8 +376,8 @@ export const PgAutGroupPermission = () => {
       }, 
       detailGrid.gridInfo
     ],
-    popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfos: [newDataPopupGrid.gridInfo, addDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridRefs: [newDataPopupGrid?.gridRef, addDataPopupGrid?.gridRef, editDataPopupGrid?.gridRef],
+    popupGridInfos: [newDataPopupGrid?.gridInfo, addDataPopupGrid?.gridInfo, editDataPopupGrid?.gridInfo],
     searchProps: [
       {
         ...headerSearchInfo?.props, 

@@ -9,8 +9,6 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 
-
-
 /** 사용자별 권한 관리 */
 export const PgAutUserPermission = () => {
   /** 페이지 제목 */
@@ -65,27 +63,36 @@ export const PgAutUserPermission = () => {
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
-    {header: '사용자별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'user_permission_uuid', alias:'uuid', hidden:false},
+    {header: '사용자별 메뉴권한UUID', width:ENUM_WIDTH.M, name:'user_permission_uuid', alias:'uuid', hidden:true},
     {header: '메뉴UUID', name:'menu_uuid', hidden:true},
-    {header: '최상위 메뉴', width:ENUM_WIDTH.L, name:'first_menu_nm'},
-    {header: '메뉴명', width:ENUM_WIDTH.L, name:'menu_nm'},
+    {header: '메뉴명', width:ENUM_WIDTH.XL, name:'menu_nm'},
     {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
     {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
-    {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:false},
-    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup', requiredField:true},
+    {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
+    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup'},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     gridMode: detailDefaultGridMode,
     disabledAutoDateColumn: true,
+    treeColumnOptions: {
+      name: 'menu_nm',
+      useIcon: true,
+      useCascadingCheckbox: true
+    },
   });
   
   /** 팝업 Grid View */
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
+  const newDataPopupGrid = null;
+
+  const addDataPopupGrid = null;
+
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     disabledAutoDateColumn: true,
+    saveParams: editDataPopupInputInfo.values,    
     gridPopupInfo: [
       { // 권한기준
         columnNames: [
@@ -98,26 +105,23 @@ export const PgAutUserPermission = () => {
         ],
         dataApiSettings: {
           uriPath: '/aut/permissions',
-          params: {}
+          params: {},
+          onInterlock: () =>{
+            let showPopupFg:boolean = false;
+            const {rowKey} = editDataPopupGrid?.gridInstance?.getFocusedCell();
+            const {_attributes} = editDataPopupGrid?.gridInstance?.getRow(rowKey);
+
+            if (_attributes?.disabled === false) {
+              showPopupFg = true
+            };
+
+            return showPopupFg;
+          }
         },
         gridMode: 'select',
       },
     ],
-  });
-
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    disabledAutoDateColumn: true,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
-  });
-
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', cloneObject(detailGrid.gridInfo.columns), {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    disabledAutoDateColumn: true,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
-    saveParams: editDataPopupInputInfo.values,
+    treeColumnOptions: detailGrid?.gridInfo?.treeColumnOptions,
   });
 
   /** 헤더 클릭 이벤트 */
@@ -132,13 +136,49 @@ export const PgAutUserPermission = () => {
 
   /** 상세 그리드 데이터 세팅 */
   const reloadDetailGrid = (uuid) => {
-    if (!uuid) return;
+    if (!uuid) {
+      detailGrid.setGridData([]);
+    } else { 
 
-    getData({
-      user_uuid: uuid,
-    }, detailSearchUriPath).then((res) => {
-      detailGrid.setGridData(res || []);
-    });
+      getData({
+        user_uuid: uuid,
+      }, detailSearchUriPath).then((res) => {
+        let menuDatas = [];
+        
+        res.map((el)=>{
+          if ( el.lv == 1 ) {
+            menuDatas.push ({
+              ...el,
+              _attributes: {
+                expanded: true,
+                disabled: true
+              },
+              _children: []
+            }) 
+          } else if ( el.lv == 2 ) {
+            menuDatas[menuDatas.length - 1]._children.push ({
+              ...el,
+              _attributes: {
+                expanded: true,
+                disabled: el.menu_type_nm ? false : true
+              },
+              _children: el.menu_type_nm ? null : []
+            }) 
+          } else if ( el.lv ==3 ) {
+            menuDatas[menuDatas.length - 1]?._children[menuDatas[menuDatas.length - 1]?._children?.length - 1]?._children.push ({
+              ...el,
+              _attributes: {
+                expanded: false,
+                disabled: false
+              },
+              _children: null
+            }) 
+          }
+        })
+        detailGrid.setGridData(menuDatas);
+      });
+
+    }
   };
   //#endregion
 
@@ -170,13 +210,9 @@ export const PgAutUserPermission = () => {
   };
 
   const onSearchDetail = (uuid) => {
-    if (uuid == null) return;
     reloadDetailGrid(uuid);
   }
   //#endregion
-
-  
-
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
@@ -188,22 +224,6 @@ export const PgAutUserPermission = () => {
     }
   }, [selectedHeaderRow]);
 
-  useLayoutEffect(() => {
-    if (newDataPopupGridVisible === true) {
-
-    } else {
-      newDataPopupInputInfo?.instance?.resetForm();
-    }
-  }, [newDataPopupGridVisible]);
-
-  useLayoutEffect(() => {
-    if (addDataPopupGridVisible === true) {
-      // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
-    }
-
-  }, [addDataPopupGridVisible, detailInputInfo.values]);
-  
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
@@ -221,8 +241,7 @@ export const PgAutUserPermission = () => {
     if (!detailInputInfo.isModified && !isModified(detailGrid.gridRef, detailGrid.gridInfo.columns)) {
       message.warn('편집된 데이터가 없습니다.');
       return;
-    }
-    
+    };
     dataGridEvents.onSave('basic', {
       gridRef,
       setGridMode,
@@ -242,7 +261,7 @@ export const PgAutUserPermission = () => {
 
   const onCheckUuid = ():boolean => {
     if (detailInputInfo?.values.user_uuid == null) {
-      message.warn('전표를 선택하신 후 다시 시도해 주세요.');
+      message.warn('데이터를 조회 후 다시 시도해 주세요.');
       return false;
     };
     return true;
@@ -355,8 +374,8 @@ export const PgAutUserPermission = () => {
       }, 
       detailGrid.gridInfo
     ],
-    popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfos: [newDataPopupGrid.gridInfo, addDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridRefs: [newDataPopupGrid?.gridRef, addDataPopupGrid?.gridRef, editDataPopupGrid?.gridRef],
+    popupGridInfos: [newDataPopupGrid?.gridInfo, addDataPopupGrid?.gridInfo, editDataPopupGrid?.gridInfo],
     searchProps: [
       {
         ...headerSearchInfo?.props, 

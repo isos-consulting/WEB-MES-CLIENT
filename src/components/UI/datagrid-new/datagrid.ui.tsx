@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { IGridComboColumnInfo, IGridComboInfo, IGridPopupInfo, TGridComboItems } from './datagrid.ui.type';
-import { cloneObject, getData, setGridFocus, setNumberToDigit } from '~/functions';
+import { getData, setGridFocus, setNumberToDigit } from '~/functions';
 import {message, Modal, Space} from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
@@ -725,45 +725,51 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   }, [props.summary, props.summaryOptions, columns]);
   //#endregion
 
+  const defaultDataSetting = (datas, columns) => {
+    // 클래스명 삽입 하기
+    datas?.forEach((el) => {
+      let classNames = {column:{}};
+      columns?.forEach(column => {
+        if (!el['_attributes']?.disabled){
+          if (column.name !== COLUMN_CODE.EDIT)
+            classNames['column'][column.name] = [props.gridMode];
+    
+          // editor 클래스명 삽입
+          if (column?.editable === true  && column.name !== COLUMN_CODE.EDIT) {
+            classNames['column'][column.name] = [...classNames['column'][column.name], 'editor'];
+          }
+    
+          // popup 클래스명 삽입
+          if (column?.editable === true && column?.format === 'popup') {
+            classNames['column'][column.name] = [...classNames['column'][column.name], 'popup'];
+          }
+    
+          // 기본값 삽입
+          if (column?.defaultValue != null) {
+            el[column.name] = el[column.name] != null ? el[column.name] : typeof column?.defaultValue === 'function' ? column?.defaultValue(props, el) : column?.defaultValue;
+          }
+        };
+      });
+      // 최종적으로 데이터 _attributes에 클래스명을 삽입
+      if (Object.keys(classNames['column']).length > 0) {
+        el['_attributes'] = {
+          ...el['_attributes'],
+          className: classNames
+        };
+      };
+      defaultDataSetting(el['_children'] ? el['_children'] : null, columns)
+    });
+  };
 
   //#region 🔶데이터 세팅
   const data = useMemo(() => {
     const data = props?.data?.length > 0 ? props?.data : [];
 
     if (data) {
-      const newData = data?.length > 0 ? cloneObject(data) : [];
+      const newData = data?.length > 0 ? _.cloneDeep(data) : [];
       // create모드나 update모드일 때, 클래스명 넣기 (입력 가능한 컬럼/ 불가능한 컬럼을 구분하기 위함)
       if (['create', 'update'].includes(props.gridMode)) {
-        newData?.forEach((el) => {
-          // 클래스명 삽입 하기
-          let classNames = {column:{}};
-          columns?.forEach(column => {
-            if (column.name !== COLUMN_CODE.EDIT)
-              classNames['column'][column.name] = [props.gridMode];
-
-            // editor 클래스명 삽입
-            if (column?.editable === true  && column.name !== COLUMN_CODE.EDIT) {
-              classNames['column'][column.name] = [...classNames['column'][column.name], 'editor'];
-            }
-    
-            // popup 클래스명 삽입
-            if (column?.editable === true && column?.format === 'popup') {
-              classNames['column'][column.name] = [...classNames['column'][column.name], 'popup'];
-            }
-
-            // 기본값 삽입
-            if (column?.defaultValue != null) {
-              el[column.name] = el[column.name] != null ? el[column.name] : typeof column?.defaultValue === 'function' ? column?.defaultValue(props, el) : column?.defaultValue;
-            }
-          });
-          
-          // 최종적으로 데이터 _attributes에 클래스명을 삽입
-          if (Object.keys(classNames['column']).length > 0) {
-            el['_attributes'] = {
-              className: classNames
-            }
-          }
-        });
+        defaultDataSetting(newData, columns)
       }
       setOriginData(newData);
       return newData;
@@ -1415,7 +1421,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             let popupInfo:IGridPopupInfo = null;
             let updateColumns:{original:string, popup:string}[] = [];
 
-
             for (let i = 0; i < props.gridPopupInfo?.length; i++) {
               const columns = props.gridPopupInfo[i].columnNames;
               updateColumns = columns;
@@ -1447,6 +1452,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             let onBeforeOk = null;
             let onAfterOk = null;
 
+            // 전처리 함수 실행
             if (popupInfo?.popupKey == null) {
               popupContent['datagridProps']['columns'] = popupInfo.columns;
               

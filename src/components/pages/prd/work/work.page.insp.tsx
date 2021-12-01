@@ -178,7 +178,7 @@ export const INSP = () => {
     if (!isNumber(specMin) && !isNumber(specMax)) {
       if (resultFg === true ) {
         popupGridInstance?.setValue(rowKey, columnName, 'OK');  
-      } else {
+      } else if (resultFg === false ) {
         popupGridInstance?.setValue(rowKey, columnName, 'NG');  
       }
     }

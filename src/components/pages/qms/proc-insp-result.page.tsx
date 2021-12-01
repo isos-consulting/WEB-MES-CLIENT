@@ -950,7 +950,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     if (!isNumber(specMin) && !isNumber(specMax)) {
       if (resultFg === true ) {
         popupGridInstance?.setValue(rowKey, columnName, 'OK');  
-      } else {
+      } else if (resultFg === false ) {
         popupGridInstance?.setValue(rowKey, columnName, 'NG');  
       }
     }
@@ -1271,7 +1271,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     if (!isNumber(specMin) && !isNumber(specMax)) {
       if (resultFg === true ) {
         popupGridInstance?.setValue(rowKey, columnName, 'OK');  
-      } else {
+      } else if (resultFg === false ) {
         popupGridInstance?.setValue(rowKey, columnName, 'NG');  
       }
     }
