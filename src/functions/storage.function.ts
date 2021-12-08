@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 type TgetStorageValueParams = {
-  storageName: 'userInfo' | 'tokenInfo',
-  keyName: 'uid' | 'id' | 'user_nm' | 'factory_uuid' | 'super_admin_fg'
+  storageName: 'userInfo' | 'tokenInfo' | 'tenantInfo',
+  keyName: 'uid' | 'id' | 'user_nm' | 'factory_uuid' | 'super_admin_fg' | 'tenantUuid'
 }
 
 /** 로그인 유저 정보를 session storage에서 가져옵니다. */

@@ -15,7 +15,8 @@ import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
-const baseURL = process.env.TEST_URL;
+// const baseURL = process.env.TEST_URL;
+const baseURL = process.env.TEST_URL_ADM;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
@@ -31,6 +32,7 @@ export async function getData<T = any[]>(
   returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' | 'original' = 'raws',
   headersObj?: object,
   disabledErrorMessage: boolean = false,
+  optionBaseURL: string = baseURL
 ):Promise<T> {
   loadProgressBar();
   
@@ -47,11 +49,14 @@ export async function getData<T = any[]>(
     }
     datas = await axios({
       method: 'get',
-      baseURL:baseURL,
+      baseURL:optionBaseURL,
       url: uriPath,
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
+        'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
+        'service-type':'iso',
+        environment:'development',
         ...headersObj
 
         //refresh:getUserRefreshToken(),
@@ -137,6 +142,7 @@ export const executeData = async (
   mothodType: 'post' | 'put' | 'patch' | 'delete',
   returnType: 'data' | 'datas' | 'raws' | 'value' | 'message' | 'success' | 'original' = 'data',
   disableErrorMessage: boolean = false,
+  optionBaseURL:string = baseURL
 ) => {
   loadProgressBar();
 
@@ -144,11 +150,14 @@ export const executeData = async (
   try {
     datas = await axios({
       method: mothodType,
-      baseURL: baseURL,
+      baseURL: optionBaseURL,
       url: uriPath,
       data: data,
       headers:{
         authorization:getUserAccessToken(),
+        'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
+        'service-type':'iso',
+        environment:'development',
       }
     });
   } catch (error) {

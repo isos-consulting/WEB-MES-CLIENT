@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useLayoutEffect, useState, useMemo } from "react
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { PgLogin } from "./components/pages";
+import { PgAuthentication, PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
@@ -106,7 +106,12 @@ const LoggedIn = (props: any) => {
     <Suspense fallback='...loading'>
     <BrowserRouter>
       <Switch>
-        <Redirect exact from="/" to='/login' />
+        <Redirect exact from="/" to='/authentication' />
+        <Route
+          key={'authentication'}
+          path={'/authentication'}
+          component={PgAuthentication}
+        />
         <Route
           key={'login'}
           path={'/login'}
