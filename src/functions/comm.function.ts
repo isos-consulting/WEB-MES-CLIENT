@@ -16,10 +16,20 @@ import { getStorageValue, getUserRefreshToken } from '.';
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
 // const baseURL = process.env.TEST_URL;
+// const baseURL = process.env.TEST_URL_TEST;
 const baseURL = process.env.TEST_URL_ADM;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
+
+const getTenantInfo = () => {
+  return {
+    'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
+    'service-type':'iso',
+    environment:'development',
+  }
+}
+
 /**
  * 서버 데이터 가져오기
  * @param params 서버에 전달할 파라메터
@@ -54,11 +64,8 @@ export async function getData<T = any[]>(
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
-        'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
-        'service-type':'iso',
-        environment:'development',
+        ...getTenantInfo(),
         ...headersObj
-
         //refresh:getUserRefreshToken(),
       },
     })
@@ -155,9 +162,7 @@ export const executeData = async (
       data: data,
       headers:{
         authorization:getUserAccessToken(),
-        'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
-        'service-type':'iso',
-        environment:'development',
+        ...getTenantInfo(),
       }
     });
   } catch (error) {
@@ -353,7 +358,8 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
       params: {factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
-        refresh:getUserRefreshToken()
+        refresh:getUserRefreshToken(),
+        ...getTenantInfo(),
       },
     })
     

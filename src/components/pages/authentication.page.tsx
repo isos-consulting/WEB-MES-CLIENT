@@ -9,7 +9,7 @@ export const PgAuthentication = () => {
 
   // constructor
   useLayoutEffect(() => {
-    //const webURL:string = window.location.hostname
+    // const webURL:string = window.location.hostname
     const webURL:string = 'najs.i-so.kr'
 
     getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'http://admin.was.kisos.net:3000/').then((res)=>{
