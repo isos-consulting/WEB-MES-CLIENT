@@ -22,11 +22,12 @@ const baseURL = process.env.TEST_URL_ADM;
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
 
+// environment : production, development, test
 const getTenantInfo = () => {
   return {
     'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
     'service-type':'iso',
-    environment:'development',
+    environment:'production',
   }
 }
 
