@@ -115,15 +115,16 @@ const LoggedIn = (props: any) => {
     } else {
       return null
     }
+    
   } 
   ,[props?.menuContent])
-    
+  
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
     <BrowserRouter>
       <Switch>
-        <Redirect exact from="/" to='/authentication' />
+        <Redirect exact from="/" to='/login' />
         <Route
           key={'authentication'}
           path={'/authentication'}
