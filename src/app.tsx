@@ -61,9 +61,7 @@ const App = () => {
       }
     });
   }, [NOT_PERMISSION]);
-  if(1 = 2){
-
-  } else {
+  
     return <div>
       <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
         {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
@@ -71,7 +69,6 @@ const App = () => {
         {contextHolder}
       </Spin>
     </div>;
-  }
   
 };
 
