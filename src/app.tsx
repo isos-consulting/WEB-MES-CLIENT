@@ -60,8 +60,8 @@ const App = () => {
         hidden: true,
       }
     });
-      }, [NOT_PERMISSION]);
-
+  }, [NOT_PERMISSION]);
+  
   return <div>
     <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
       {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
@@ -119,7 +119,7 @@ const LoggedIn = (props: any) => {
     
   } 
   ,[props?.menuContent])
-  
+  console.log(PgLogin)
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
@@ -132,8 +132,8 @@ const LoggedIn = (props: any) => {
           component={PgAuthentication}
         />
         <Route
-          key={'login-test'}
-          path={'/login-test'}
+          key={'login'}
+          path={'/login'}
           component={PgLogin}
         />
         <Layout>

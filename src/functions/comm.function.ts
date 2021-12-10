@@ -397,5 +397,5 @@ export const setLogout = async () => {
   sessionStorage.removeItem('userInfo');
   sessionStorage.removeItem('tokenInfo');
   
-  window.location.href = "/login-test";
+  window.location.href = "/login";
 }
