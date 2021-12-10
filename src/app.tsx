@@ -61,14 +61,18 @@ const App = () => {
       }
     });
   }, [NOT_PERMISSION]);
+  if(1 = 2){
 
-  return <div>
-    <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
-      <LoggedIn menuContent={menuContent} />
-      {contextHolder}
-    </Spin>
-  </div>;
+  } else {
+    return <div>
+      <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
+        {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
+        <LoggedIn menuContent={menuContent} />
+        {contextHolder}
+      </Spin>
+    </div>;
+  }
+  
 };
 
 const errorPage404 = () => {
@@ -124,7 +128,7 @@ const LoggedIn = (props: any) => {
     <Suspense fallback='...loading'>
     <BrowserRouter>
       <Switch>
-        <Redirect exact from="/" to='/login' />
+        <Redirect exact from="/" to='/authentication' />
         <Route
           key={'authentication'}
           path={'/authentication'}
