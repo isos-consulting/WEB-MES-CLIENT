@@ -27,7 +27,7 @@ export const PgAuthentication = () => {
           tenantUuid: tenantUuid
         })
       )
-      window.location.href = "/login"
+      window.location.href = "/login-test"
     }
   }, [tenantUuid]);
 

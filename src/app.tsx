@@ -60,16 +60,16 @@ const App = () => {
         hidden: true,
       }
     });
-  }, [NOT_PERMISSION]);
-  
-    return <div>
-      <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-        {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
-        <LoggedIn menuContent={menuContent} />
-        {contextHolder}
-      </Spin>
-    </div>;
-  
+      }, [NOT_PERMISSION]);
+
+  return <div>
+    <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
+      {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
+      <LoggedIn menuContent={menuContent} />
+      {contextHolder}
+    </Spin>
+  </div>;
+
 };
 
 const errorPage404 = () => {
@@ -132,8 +132,8 @@ const LoggedIn = (props: any) => {
           component={PgAuthentication}
         />
         <Route
-          key={'login'}
-          path={'/login'}
+          key={'login-test'}
+          path={'/login-test'}
           component={PgLogin}
         />
         <Layout>
