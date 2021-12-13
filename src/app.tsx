@@ -99,24 +99,7 @@ const errorPage404 = () => {
 
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
-  const menueData = useMemo(() => {
-    if (props?.menuContent.length > 0) {
-      return (
-        Object.keys(props.menuContent).map((item, key) => (
-          <Route
-            key={key}
-            path={props.menuContent[item]?.path}
-            component={props.menuContent[item]?.component ?? errorPage404}
-          />
-        )) 
-      )
-    } else {
-      return null
-    }
-    
-  } 
-  ,[props?.menuContent])
-  
+
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
@@ -139,7 +122,14 @@ const LoggedIn = (props: any) => {
             path={'/aut/menus'}
             component={PgAutMenu}
           />
-          {menueData}
+          {Object.keys(props.menuContent).map((item, key) => (
+            <Route
+              key={key}
+              path={props.menuContent[item]?.path}
+              component={props.menuContent[item]?.component ?? errorPage404}
+            />
+            ))
+          }
         </Layout>
       </Switch>
     </BrowserRouter>
