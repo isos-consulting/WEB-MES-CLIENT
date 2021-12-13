@@ -23,7 +23,7 @@ const App = () => {
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
   const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
-
+  const [tenantUuid, setTenantUuid] = useState<string>('');
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
@@ -64,8 +64,7 @@ const App = () => {
   
   return <div>
     <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
-      <LoggedIn menuContent={menuContent} />
+      {tenantUuid ? <LoggedIn menuContent={menuContent} /> : <PgAuthentication setTenantUuid={setTenantUuid}/>}
       {contextHolder}
     </Spin>
   </div>;
@@ -98,8 +97,6 @@ const errorPage404 = () => {
   )
 }
 
-
-
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
   const menueData = useMemo(() => {
@@ -119,18 +116,13 @@ const LoggedIn = (props: any) => {
     
   } 
   ,[props?.menuContent])
-  console.log(PgLogin)
+  
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
     <BrowserRouter>
       <Switch>
-        <Redirect exact from="/" to='/authentication' />
-        <Route
-          key={'authentication'}
-          path={'/authentication'}
-          component={PgAuthentication}
-        />
+        <Redirect exact from="/" to='/login' />
         <Route
           key={'login'}
           path={'/login'}
