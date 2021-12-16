@@ -37,7 +37,7 @@ export const PgStdDelivery = () => {
     {header: '우편번호', name:'post', width:ENUM_WIDTH.S, filter:'text', editable:true, align:'center'},
     {header: '주소', name:'addr', width:ENUM_WIDTH.XL, filter:'text', editable:true},
     {header: '상세주소', name:'addr_detail', width:ENUM_WIDTH.XL, filter:'text', editable:true},
-    {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.XS, format:'check', filter:'select', editable:true, requiredField:true},
+    {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.XS, format:'check', filter:'select', editable:true, requiredField:true, defaultValue:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text', editable:true},
   ], {
     searchUriPath: searchUriPath,
