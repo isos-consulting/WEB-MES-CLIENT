@@ -204,6 +204,8 @@ export const INPUT = () => {
   return {
     component,
 
+    gridRef,
+    
     gridMode,
     setGridMode,
 
