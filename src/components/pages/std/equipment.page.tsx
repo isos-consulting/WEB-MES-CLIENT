@@ -31,6 +31,7 @@ export const PgStdEquipment = () => {
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true},
+    {header: '생산설비', name:'prd_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text', editable:true},
   ], {
     searchUriPath: searchUriPath,
