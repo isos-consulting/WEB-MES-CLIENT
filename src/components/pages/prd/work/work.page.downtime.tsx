@@ -137,7 +137,7 @@ export const DOWNTIME = () => {
     okText: '추가하기',
     onOk: () => {
       onSave(newPopupGridRef, 'create').then((res) => {
-        console.log(res);
+        
       });
     },
     /** 네거티브 버튼 글자 */
@@ -330,7 +330,6 @@ export const DOWNTIME = () => {
           updatedRows: [],
           deletedRows: []
         };
-        console.log(saveData)
 
     await saveData[_gridMode+'dRows']?.forEach((el) => {
       if (el['start_date'] != null && el['start_time'] != null) {
@@ -364,7 +363,7 @@ export const DOWNTIME = () => {
     const chk:boolean = await checkGridData(gridInfo.columns, saveData);
 
     if (chk === false) return;
-
+    
     saveGridData(saveData, gridInfo.columns, gridInfo.saveUriPath, saveOptionParams).then(({success}) => {
       if (!success) return;
       onSearch();
@@ -401,7 +400,9 @@ export const DOWNTIME = () => {
 
   return {
     component,
-
+    
+    gridRef,
+    
     gridMode: gridInfo.gridMode,
 
     data,
