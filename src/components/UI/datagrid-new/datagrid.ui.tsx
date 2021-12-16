@@ -1994,7 +1994,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         // onGridBeforeDestroy={onGridBeforeDestroy}
         // onGridMounted={onGridMounted}
         // onKeyDown={onKeyDown}
-        // draggable={true}
+        draggable={props.draggable}
       />
       {contextHolder}
     </div>
