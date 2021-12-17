@@ -67,7 +67,7 @@ export const PgAutGroupPermission = () => {
     {header: '그룹별 메뉴권한UUID', name:'group_permission_uuid', alias:'uuid', hidden:true},
     {header: '메뉴UUID', name:'menu_uuid', hidden:true},
     {header: '메뉴명', width:ENUM_WIDTH.XL, name:'menu_nm'},
-    {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
+    // {header: '정렬', width:ENUM_WIDTH.M, name:'sortby', hidden:true},
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
     {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
     {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
