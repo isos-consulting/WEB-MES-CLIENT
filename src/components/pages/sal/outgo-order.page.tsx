@@ -317,7 +317,7 @@ export const PgSalOutgoOrder = () => {
     {type: 'text', id: 'outgo_order_uuid', alias:'uuid', label: '외주입하UUID', disabled:true, hidden:true},
     {type:'date', id:'reg_date', label:'출하지시일', disabled:true, default:getToday()},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
+    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params: {'partner_fg': 2}, required: true},
     {type:'text', id:'delivery_uuid', label:'납품처UUID', disabled:true, hidden:true},
     {type:'text', id:'delivery_nm', label:'납품처', disabled:true, usePopup:true, popupKey:'납품처관리', popupKeys:['delivery_uuid', 'delivery_nm']},
     {type:'text', id:'remark', label:'비고', disabled:true},
