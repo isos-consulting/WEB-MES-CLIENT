@@ -954,7 +954,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
       const {rowKey, columnName, prevValue, value} = changes[0];
       const formula = props.columns.filter(el => el.name === columnName)[0]?.formula;
-      
 
       if (formula) {
         const {targetColumnName, targetColumnNames} = formula;
@@ -973,24 +972,24 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       }
 
       if (origin === 'cell' && props.gridMode !== 'create') { //직접 입력시
+        
         if (columnName === COLUMN_CODE.EDIT) return;
-
+        editChk = false;
         if (editChk && (prevValue !== value)) {
           instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.UPDATE);
           ev.stop();
         }
         
       } else if (origin === 'paste' || origin ==='delete') { //복붙 수행시
+        
         for (let i = 0; i < changes?.length; i++) {
           const {rowKey, columnName, prevValue, value} = changes[i];
-
           const chk = props.columns.findIndex(el => el.name === columnName && el.format === 'combo');
 
-          if (chk === -1) {
+          if (props.gridMode === 'create') {
+            editChk = false;
+          } else if (chk === -1) {
             // 콤보박스가 아닌 경우
-            if (props.gridMode === 'create') {
-              editChk = false;
-            }
 
           } else {
             // 콤보박스인 경우
@@ -1009,6 +1008,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
           // 전에 값과 다른 값이면 edit처리
           if (editChk && (prevValue !== value)) {
+
+            console.log("타냐?")
             instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.UPDATE);
             ev.stop();
           }
