@@ -96,6 +96,7 @@ export const PgAutMenu = () => {
         useIcon: true,
         useCascadingCheckbox: true
       },
+      draggable: true,
       extraButtons: [
         {
           buttonProps:{text:'행 추가'},
@@ -105,9 +106,8 @@ export const PgAutMenu = () => {
             const gridInstance = gridRef.current.getInstance()
             const {rowKey} = gridInstance.getFocusedCell()
             const rowData = gridInstance.getRow(rowKey)
-            console.log(rowData)
-            // gridRef.current.getInstance().appendRow({},{at:rowData._attributes.rowNum, parentRowKey: rowData._attributes.tree.parentRowKey})
-            gridRef.current.getInstance().appendRow({},{at:1, parentRowKey: rowData._attributes.tree.parentRowKey})
+
+            gridRef.current.getInstance().appendRow({},{at:0})
             if (null) {
               message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               return;

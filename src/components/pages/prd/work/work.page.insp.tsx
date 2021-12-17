@@ -715,6 +715,9 @@ export const INSP = () => {
     onReset,
     onSearch,
 
+    gridRef,
+    detailGrid,
+
     headerGridMode,
     setHeaderGridMode,
 

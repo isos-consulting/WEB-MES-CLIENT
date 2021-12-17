@@ -354,6 +354,8 @@ export const WORKER = () => {
 
   return {
     component,
+    
+    gridRef,
 
     gridMode: gridInfo.gridMode,
 

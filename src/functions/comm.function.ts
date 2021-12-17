@@ -15,10 +15,23 @@ import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
-const baseURL = process.env.TEST_URL;
+// const baseURL = process.env.TEST_URL;
+// const baseURL = process.env.TEST_URL_TEST;
+// const baseURL = process.env.TEST_URL_JO;
+const baseURL = process.env.TEST_URL_ADM;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
+
+// environment : production, development, test
+const getTenantInfo = () => {
+  return {
+    'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
+    'service-type':'iso',
+    environment:'production',
+  }
+}
+
 /**
  * 서버 데이터 가져오기
  * @param params 서버에 전달할 파라메터
@@ -31,6 +44,7 @@ export async function getData<T = any[]>(
   returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' | 'original' = 'raws',
   headersObj?: object,
   disabledErrorMessage: boolean = false,
+  optionBaseURL: string = baseURL
 ):Promise<T> {
   loadProgressBar();
   
@@ -47,13 +61,13 @@ export async function getData<T = any[]>(
     }
     datas = await axios({
       method: 'get',
-      baseURL:baseURL,
+      baseURL:optionBaseURL,
       url: uriPath,
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
+        ...getTenantInfo(),
         ...headersObj
-
         //refresh:getUserRefreshToken(),
       },
     })
@@ -137,6 +151,7 @@ export const executeData = async (
   mothodType: 'post' | 'put' | 'patch' | 'delete',
   returnType: 'data' | 'datas' | 'raws' | 'value' | 'message' | 'success' | 'original' = 'data',
   disableErrorMessage: boolean = false,
+  optionBaseURL:string = baseURL
 ) => {
   loadProgressBar();
 
@@ -144,11 +159,12 @@ export const executeData = async (
   try {
     datas = await axios({
       method: mothodType,
-      baseURL: baseURL,
+      baseURL: optionBaseURL,
       url: uriPath,
       data: data,
       headers:{
         authorization:getUserAccessToken(),
+        ...getTenantInfo(),
       }
     });
   } catch (error) {
@@ -344,7 +360,8 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
       params: {factory_uuid:getUserFactoryUuid()},
       headers: {
         authorization:getUserAccessToken(),
-        refresh:getUserRefreshToken()
+        refresh:getUserRefreshToken(),
+        ...getTenantInfo(),
       },
     })
     

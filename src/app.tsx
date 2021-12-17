@@ -1,8 +1,8 @@
-import React, { lazy, Suspense, useLayoutEffect, useState, useMemo } from "react";
+import React, { lazy, Suspense, useLayoutEffect, useState, useCallback, useMemo } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { PgLogin } from "./components/pages";
+import { PgAuthentication, PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
@@ -23,7 +23,7 @@ const App = () => {
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
   const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
-
+  const [tenantUuid, setTenantUuid] = useState<string>('');
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
@@ -61,14 +61,14 @@ const App = () => {
       }
     });
   }, [NOT_PERMISSION]);
-
+  
   return <div>
     <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {/* {sessionStorage.getItem('userInfo') ? <LoggedIn menuContent={menuContent} /> : <LoggedOut />} */}
-      <LoggedIn menuContent={menuContent} />
+      {tenantUuid ? <LoggedIn menuContent={menuContent} /> : <PgAuthentication setTenantUuid={setTenantUuid}/>}
       {contextHolder}
     </Spin>
   </div>;
+
 };
 
 const errorPage404 = () => {
@@ -97,10 +97,9 @@ const errorPage404 = () => {
   )
 }
 
-
 /** 인증완료시의 렌더링될 컴포넌트 */
 const LoggedIn = (props: any) => {
-  
+
   // if (Object.keys(props?.menuContent).length <= 0) return null;
   return (
     <Suspense fallback='...loading'>
@@ -129,7 +128,8 @@ const LoggedIn = (props: any) => {
               path={props.menuContent[item]?.path}
               component={props.menuContent[item]?.component ?? errorPage404}
             />
-          ))}
+            ))
+          }
         </Layout>
       </Switch>
     </BrowserRouter>

@@ -232,6 +232,8 @@ export const ROUTING = () => {
   return {
     component,
 
+    gridRef,
+    
     gridMode,
 
     data,

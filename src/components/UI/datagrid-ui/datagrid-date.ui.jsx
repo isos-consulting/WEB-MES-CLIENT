@@ -24,7 +24,7 @@ export class DatagridDateEditor {
     rootDiv.name = name;
 
     if (type === 'time') {
-      rootDiv.step = '1'; //seconds표시
+      // rootDiv.step = '1'; //seconds표시
       rootDiv.value = props.value;
 
     } else if (type === 'date') {
@@ -33,7 +33,7 @@ export class DatagridDateEditor {
       
     } else {
       rootDiv.max = '9999-12-31T23:59:59';
-      rootDiv.step = '1'; //seconds표시
+      // rootDiv.step = '1'; //seconds표시
       if (props.value !== null) {
         let value = String(props.value);
 
@@ -106,7 +106,13 @@ export class DatagridDateRenderer {
   render(props) {
     switch (this.state.type) {
       case 'time':
-        this.el.innerText =  props.value;
+        var timeRegExp = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/;
+        var timeSecondRegExp = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+        let value = props.value;
+        if (!timeRegExp.test(value) && !timeSecondRegExp.test(value) && dayjs(value).isValid()) {
+          value = dayjs(value).format('HH:mm');
+        }
+        this.el.innerText = value;
         break;
     
       default:

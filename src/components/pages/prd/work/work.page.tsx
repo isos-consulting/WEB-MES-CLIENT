@@ -227,6 +227,8 @@ export const PgPrdWork = () => {
 
   const [workDatas, setWorkDatas] = useState([]);
 
+  const [tabKey, setTabKey] = useState('')
+
   const gridRef = useRef<Grid>();
 
   const SEARCH_URI_PATH = '/prd/works';
@@ -848,6 +850,39 @@ export const PgPrdWork = () => {
     );
   }, [workDatas, gridRef, gridMode])
 
+  function tabChange(key) {
+    setTabKey(key)
+  }
+
+  useLayoutEffect(() => {
+    if(tabKey){
+      switch (tabKey) {
+        case 'INSP':
+          공정검사?.gridRef?.current?.getInstance()?.refreshLayout()
+          공정검사?.detailGrid?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+        case 'INPUT':
+          투입품목관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+        case 'WORKER':
+          투입인원관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+        case 'REJECT':
+          부적합관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+        case 'DOWNTIME':
+          비가동관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+        case 'ROUTING':
+          공정순서?.gridRef?.current?.getInstance()?.refreshLayout()
+          break;
+      
+        default:
+          break;
+      }
+    }
+  }, [tabKey, 부적합관리?.gridRef])
+
   //#region 🚫렌더부
   return (
     <>
@@ -1039,6 +1074,7 @@ export const PgPrdWork = () => {
       <Divider style={{marginBottom:10}}/>
       <Tabs
         type='card'        
+        onChange={tabChange}
         panels={[
           {
             tab: '공정검사',
