@@ -302,7 +302,7 @@ export const PgSalOrder = () => {
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'수주일', disabled:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
+    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params: {'partner_fg': 2}, required: true },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'remark', label:'비고', disabled:!(detailGrid.gridInfo.gridMode === 'update')},
