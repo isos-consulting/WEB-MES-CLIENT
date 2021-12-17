@@ -988,10 +988,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
           if (props.gridMode === 'create') {
             editChk = false;
-          } else if (chk === -1) {
-            // 콤보박스가 아닌 경우
-
-          } else {
+          } else if (chk !== -1) {
             // 콤보박스인 경우
             const comboInfo = columnComboState?.find(el => el.columnName === columnName);
             const matchColumnName = comboInfo?.matchColumnName;
