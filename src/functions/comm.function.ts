@@ -15,10 +15,10 @@ import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
 // const baseURL = process.env.TEST_URL_WON;
-// const baseURL = process.env.TEST_URL;
+const baseURL = process.env.TEST_URL;
 // const baseURL = process.env.TEST_URL_TEST;
 // const baseURL = process.env.TEST_URL_JO;
-const baseURL = process.env.TEST_URL_ADM;
+// const baseURL = process.env.TEST_URL_ADM;
 // const baseURL ="http://191.1.70.134:3000/";
 // const baseURL = process.env.URL;
 // const baseURL ="http://191.1.70.5:3000/";
@@ -93,6 +93,10 @@ export async function getData<T = any[]>(
       }
     }
   } finally {
+    
+    if (datas?.data?.datas?.value?.count === 0 ) {
+      message.warning('조회 할 데이터가 없습니다.')
+    }
     switch (returnType) {
       case 'datas':
         datas = datas?.data?.datas;
