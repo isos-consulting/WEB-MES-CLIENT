@@ -1731,7 +1731,28 @@ const URL_PATH = {
         USER_PERMISSIONS:'/aut/user-permissions'
       }
     },
-  }
+  },
+  MLD:{
+    PROBLEM:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PROBLEM:'/mld/problem/{uuid}',
+        PROBLEMS:'/mld/problems',
+      },
+      POST:{
+        PROBLEMS:'/mld/problems',
+      },
+      PUT:{
+        PROBLEMS:'/mld/problems',
+      },
+      PATCH:{
+        PROBLEMS:'/mld/problems',
+      },
+      DELETE:{
+        PROBLEMS:'/mld/problems',
+      },
+    },
+  },
 }
 
 export const URL_PATH_INV = URL_PATH.INV
@@ -1743,3 +1764,4 @@ export const URL_PATH_STD = URL_PATH.STD
 export const URL_PATH_QMS = URL_PATH.QMS
 export const URL_PATH_DAS = URL_PATH.DAS
 export const URL_PATH_AUT = URL_PATH.AUT
+export const URL_PATH_MLD = URL_PATH.MLD
