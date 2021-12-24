@@ -949,7 +949,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     (ev) => {
       const {origin, changes} = ev;
       const instance = gridRef.current.getInstance();
-  
+      
       let editChk:boolean = true;
 
       const {rowKey, columnName, prevValue, value} = changes[0];
@@ -970,11 +970,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           instance.setValue(rowKey, formula.resultColumnName, formulaValue);
         }
       }
-
+      
       if (origin === 'cell' && props.gridMode !== 'create') { //직접 입력시
         
         if (columnName === COLUMN_CODE.EDIT) return;
-        editChk = false;
+
         if (editChk && (prevValue !== value)) {
           instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.UPDATE);
           ev.stop();
@@ -985,7 +985,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         for (let i = 0; i < changes?.length; i++) {
           const {rowKey, columnName, prevValue, value} = changes[i];
           const chk = props.columns.findIndex(el => el.name === columnName && el.format === 'combo');
-
+          
           if (props.gridMode === 'create') {
             editChk = false;
           } else if (chk !== -1) {
@@ -1013,7 +1013,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         }
       }
       
-
       if (props?.onAfterChange) {
         props?.onAfterChange(ev);
       }
