@@ -145,7 +145,7 @@ export const PgMatReceive = () => {
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'입하일', disabled:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
+    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params:{partner_fg:1}, required:true},
     {type:'text', id:'supplier_nm', label:'공급처', disabled:true, usePopup:true, popupKey:'공급처관리', popupKeys:['supplier_uuid', 'supplier_nm']},
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
