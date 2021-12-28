@@ -570,6 +570,7 @@ const URL_PATH = {
     },
     OUTGO_ORDER:{
       GET:{
+        REPORT:'/sal/outgo-orders/report',
         /** UUID 문자열 변환 필요 */
         OUTGO_ORDER:'/sal/outgo-order/{uuid}',
         OUTGO_ORDERS:'/sal/outgo-orders',
