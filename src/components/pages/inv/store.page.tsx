@@ -1,7 +1,7 @@
-import React, { useLayoutEffect, useMemo, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useMemo } from 'react';
 import { useState } from "react";
 import { getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps, { IExtraButton, TExtraButtons, TExtraGridPopups } from '~/components/templates/grid-single/grid-single.template.type';
@@ -9,6 +9,8 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { onDefaultGridSave } from '../prd/work';
 import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import _ from 'lodash';
 
 
 /** 재고실사관리 */
@@ -32,7 +34,8 @@ export const PgInvStore = () => {
   const [storeUuid, setStoreUuid] = useState('all');
   const [storeOptions, setStoreOptions] = useState([]);
   const [rejectHidden, setRejectHidden] = useState(true);
-
+  const [partnerHidden, setPartnerHidden] = useState(true);
+  
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header: '품목UUID', name:'prod_uuid', filter:'text', hidden:true},
@@ -48,12 +51,14 @@ export const PgInvStore = () => {
     {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
     {header: '단위UUID', name:'unit_uuid', filter:'text', hidden:true},
     {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+    {header: '외주거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '외주거래처', name:'partner_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:false, editable:true},
     {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:rejectHidden, editable:true},
+    {header: '부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:false, editable:true},
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '재고', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true, decimal:ENUM_DECIMAL.DEC_STCOK},
     // {header: '실사수량', name:'inv_qty', width:ENUM_WIDTH.M, alias:'qty', format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, editable:true},
@@ -74,7 +79,7 @@ export const PgInvStore = () => {
         dataApiSettings: {
           uriPath: STORE_POPUP.uriPath,
           params: {
-            store_type: 'all',
+            store_type: stockType,
           }
         },
         gridMode: 'select',
@@ -85,10 +90,26 @@ export const PgInvStore = () => {
           {original:'location_nm', popup:'location_nm'},
         ],
         columns: LOCATION_POPUP.datagridProps?.columns,
-        dataApiSettings: {
-          uriPath: LOCATION_POPUP.uriPath,
-          params: {}
+        dataApiSettings: (el) => {
+          const rowKey = el?.rowKey
+          const rowData = el?.instance?.store?.data?.rawData.find((el)=> el.rowKey === rowKey)
+          
+          return {
+            uriPath: LOCATION_POPUP.uriPath,
+            params: {
+              store_uuid: rowData?.store_uuid
+            },
+            onInterlock: ()=> {
+              if(rowData?.store_uuid) {
+                return true;
+              } else {
+                message.warning('창고를 먼저 선택해주세요.')
+                return false;
+              }
+            }
+          }
         },
+        
         gridMode: 'select',
       },
       { // 부적합
@@ -131,7 +152,7 @@ export const PgInvStore = () => {
     }
   });
 
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', grid?.gridInfo?.columns,
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -149,7 +170,7 @@ export const PgInvStore = () => {
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {type:'date', id:'reg_date', label:'기준일', default:getToday()},
     {
-      type:'combo', id:'stock_type', label:'창고유형', default:'all', firstItemType:'all',
+      type:'combo', id:'stock_type', label:'창고유형', firstItemType:'none',
       dataSettingOptions: {
         uriPath: '/adm/store-types',
         params: {},
@@ -220,6 +241,9 @@ export const PgInvStore = () => {
     };
 
     setRejectHidden(stockType !== 'reject');
+    setPartnerHidden(stockType !== 'outsourcing');
+
+    grid.setGridData([])
 
     // 기준창고 콤보박스 데이터 불러오기
     searchInfo?.setSearchItems((crr) => {
@@ -259,21 +283,23 @@ export const PgInvStore = () => {
       {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text'},
       {header: '단위UUID', name:'unit_uuid', filter:'text', hidden:true},
       {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
+      {header: '외주거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+      {header: '외주거래처', name:'2partner_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:partnerHidden, editable:true, requiredField:!partnerHidden},
       {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
       {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
       {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
       {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
       {header: '부적합UUID', name:'reject_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-      {header: '부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:rejectHidden, editable:true},
+      {header: '부적합', name:'reject_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:rejectHidden, editable:true, requiredField:!rejectHidden},
       {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
-      {header: (newDataPopupGridVisible || editDataPopupGridVisible) ? '실샤수량' : '재고', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true, decimal:ENUM_DECIMAL.DEC_STCOK},
+      {header: (newDataPopupGridVisible || editDataPopupGridVisible) ? '실사수량' : '재고', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true, decimal:ENUM_DECIMAL.DEC_STCOK},
       // {header: '실사수량', name:'inv_qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, editable:true, hidden:grid?.gridInfo?.gridMode === defaultGridMode},
     ];
 
     grid?.setGridColumns(columns);
     newDataPopupGrid?.setGridColumns(columns);
     editDataPopupGrid?.setGridColumns(columns);
-  }, [rejectHidden, newDataPopupGridVisible, editDataPopupGridVisible]);
+  }, [partnerHidden, rejectHidden, newDataPopupGridVisible, editDataPopupGridVisible]);
 
 
   /** 입력상자 관리 */
