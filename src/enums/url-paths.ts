@@ -1734,6 +1734,7 @@ const URL_PATH = {
   },
   MLD:{
 <<<<<<< HEAD
+<<<<<<< HEAD
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
@@ -1753,6 +1754,28 @@ const URL_PATH = {
         REPAIR_HISTORIES:'/mld/repair-histories'
       },
     }
+=======
+    MOLD:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        MOLD:'/mld/mold/{uuid}',
+        MOLDS:'/mld/molds',
+      },
+      POST:{
+        MOLDS:'/mld/molds' 
+      },
+      PUT:{
+        MOLDS:'/mld/molds'
+      },
+      PATCH:{
+        MOLDS:'/mld/molds'
+      },
+      DELETE:{
+        MOLDS:'/mld/molds'
+      },
+    },
+    
+>>>>>>> origin/feature/IC-21
   }
 =======
     PROBLEM:{
