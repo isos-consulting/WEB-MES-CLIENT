@@ -111,3 +111,5 @@ export * from './qms/proc-insp-result-report.page';
 export * from './qms/final-insp-result-report.page';
 export * from './qms/rework.page';
 export * from './qms/rework-report.page';
+
+export * from './mld/repair-history.page';
