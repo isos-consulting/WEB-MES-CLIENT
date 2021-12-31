@@ -6,7 +6,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 
 
 
@@ -26,16 +26,28 @@ export const PgAutUser = () => {
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header: '사용자UUID', name:'user_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '권한그룹UUID', name:'group_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '로그인ID', name:'id', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '성명', name:'user_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '권한그룹UUID', name:'group_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+    {header: '권한그룹', name:'group_nm', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'combo'},
     {header: '이메일', name:'email', width:ENUM_WIDTH.XL, filter:'text', editable:true, requiredField:true},
     {header: '비밀번호 변경여부', name:'pwd_fg', width:ENUM_WIDTH.L, format: 'check', filter:'text', editable:true, requiredField:true},
     {header: '관리자 유무', name:'admin_fg', width:ENUM_WIDTH.M, format: 'check', filter:'text', editable:true, requiredField:true},
-  ], {
+  ],{
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    gridComboInfo: [
+      { // 투입단위 콤보박스
+        columnNames: [
+          {codeColName:{original:'group_uuid', popup:'group_uuid'}, textColName:{original:'group_nm', popup:'group_nm'}},
+        ],
+        dataApiSettings: {
+          uriPath: URL_PATH_AUT.GROUP.GET.GROUPS,
+          params: {}
+        }
+      }
+    ],
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -43,6 +55,7 @@ export const PgAutUser = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridComboInfo: grid.gridInfo.gridComboInfo
     }
   );
   
@@ -52,11 +65,13 @@ export const PgAutUser = () => {
     }
     return el;
   });
+
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
     popupColumns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridComboInfo: grid.gridInfo.gridComboInfo
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
