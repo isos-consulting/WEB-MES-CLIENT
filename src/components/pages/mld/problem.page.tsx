@@ -6,6 +6,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
+import { URL_PATH_MLD } from '~/enums';
 
 
 
@@ -19,14 +20,12 @@ export const PgMldProblem = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'delete';
-  const searchUriPath = '/mld/problems';
-  const saveUriPath = '/mld/problems';
+  const searchUriPath = URL_PATH_MLD.PROBLEM.GET.PROBLEMS;
+  const saveUriPath = URL_PATH_MLD.PROBLEM.PUT.PROBLEMS;
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header: '금형문제점UUID', name:'problem_uuid', alias:'uuid', width:150,  filter:'text', hidden:true},
-    {header: '공장코드', name:'factory_cd', width:150, filter:'text', editable:true},
-    {header: '공장명', name:'factory_nm', width:200, filter:'text', editable:true},
     {header: '금형문제점코드', name:'problem_cd', width:150, filter:'text', editable:true, requiredField:true},
     {header: '금형문제점명', name:'problem_nm', width:200, filter:'text', editable:true, requiredField:true},
   ], {
