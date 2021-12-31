@@ -1731,6 +1731,27 @@ const URL_PATH = {
         USER_PERMISSIONS:'/aut/user-permissions'
       }
     },
+  },
+  EQM:{
+    REPAIR_HISTORY:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        REPAIR_HISTORY:'/eqm/REPAIR_HISTORY/{uuid}',
+        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES',
+      },
+      POST:{
+        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES' 
+      },
+      PUT:{
+        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+      },
+      PATCH:{
+        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+      },
+      DELETE:{
+        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+      },
+    },
   }
 }
 
@@ -1743,3 +1764,4 @@ export const URL_PATH_STD = URL_PATH.STD
 export const URL_PATH_QMS = URL_PATH.QMS
 export const URL_PATH_DAS = URL_PATH.DAS
 export const URL_PATH_AUT = URL_PATH.AUT
+export const URL_PATH_EQM = URL_PATH.EQM
