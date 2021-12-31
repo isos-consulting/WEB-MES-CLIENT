@@ -2,8 +2,6 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: latest
     commands:
       - yarn add parcel-bundler@1.12.5
       - yarn install
