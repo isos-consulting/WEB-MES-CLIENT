@@ -1733,6 +1733,7 @@ const URL_PATH = {
     },
   },
   MLD:{
+<<<<<<< HEAD
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
@@ -1753,6 +1754,28 @@ const URL_PATH = {
       },
     }
   }
+=======
+    PROBLEM:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PROBLEM:'/mld/problem/{uuid}',
+        PROBLEMS:'/mld/problems',
+      },
+      POST:{
+        PROBLEMS:'/mld/problems',
+      },
+      PUT:{
+        PROBLEMS:'/mld/problems',
+      },
+      PATCH:{
+        PROBLEMS:'/mld/problems',
+      },
+      DELETE:{
+        PROBLEMS:'/mld/problems',
+      },
+    },
+  },
+>>>>>>> origin/feature/IC-23
 }
 
 export const URL_PATH_INV = URL_PATH.INV
