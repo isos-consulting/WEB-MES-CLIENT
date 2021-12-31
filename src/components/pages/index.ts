@@ -113,3 +113,4 @@ export * from './qms/rework.page';
 export * from './qms/rework-report.page';
 
 export * from './eqm/history-card.page';
+export * from './mld/repair-history.page';
