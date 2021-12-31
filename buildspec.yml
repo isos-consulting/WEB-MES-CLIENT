@@ -5,6 +5,7 @@ phases:
     runtime-versions:
       nodejs: latest
     commands:
+      - yarn add parcel-bundler@1.12.5
       - yarn install
   pre_build:
     commands:
