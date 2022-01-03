@@ -56,11 +56,11 @@ export const PgLogin = () => {
     // setUserId(id);
 
     // 공장 콤보박스 조회
-    if(sessionStorage.getItem('userInfo')){
+    if(localStorage.getItem('userInfo')){
       window.location.href = "/dashboard"
     } else {
-      if(JSON.parse(sessionStorage.getItem('state'))?.EXPIRED_REFRESH_TOKEN){
-        sessionStorage.removeItem('state');
+      if(JSON.parse(localStorage.getItem('state'))?.EXPIRED_REFRESH_TOKEN){
+        localStorage.removeItem('state');
         message.error('로그인이 만료되었습니다. 다시 로그인해주세요.')
       }
       getFactories();
@@ -101,9 +101,9 @@ export const PgLogin = () => {
       let strResult:object[];
       
       strResult=[{
-        uidPk: JSON.parse(sessionStorage.getItem("userInfo") as string)?.uid,
+        uidPk: JSON.parse(localStorage.getItem("userInfo") as string)?.uid,
         pwd: crypto.AES.encrypt(values['pwd'],'secret' ).toString(),
-        uid: JSON.parse(sessionStorage.getItem("userInfo") as  string)?.uid,
+        uid: JSON.parse(localStorage.getItem("userInfo") as  string)?.uid,
         pwdFg: 0
       }];
       
@@ -197,7 +197,7 @@ export const PgLogin = () => {
         const {success, datas} = res;
         const {raws} = datas;
         if (success === true) {
-          sessionStorage.setItem(
+          localStorage.setItem(
             'userInfo',
             JSON.stringify({
               uid: raws[0].uid,
@@ -209,7 +209,7 @@ export const PgLogin = () => {
             showUserModal();
           }else{
             message.success('로그인 성공');
-            sessionStorage.setItem(
+            localStorage.setItem(
               'userInfo',
               JSON.stringify({
                 uid: raws[0].uid,
@@ -220,7 +220,7 @@ export const PgLogin = () => {
                 super_admin_fg: raws[0].super_admin_fg
               })
             );
-            sessionStorage.setItem(
+            localStorage.setItem(
               'tokenInfo',
               JSON.stringify({
                 access_token: raws[0].access_token,
@@ -235,7 +235,7 @@ export const PgLogin = () => {
               localStorage.removeItem('iso-user-id')
             }
             window.location.href = "/dashboard"
-            // return setUser(JSON.parse(sessionStorage.getItem("userInfo") as string));
+            // return setUser(JSON.parse(localStorage.getItem("userInfo") as string));
           }
         }
       })

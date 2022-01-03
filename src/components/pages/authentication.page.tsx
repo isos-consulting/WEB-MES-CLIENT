@@ -12,7 +12,7 @@ export const PgAuthentication = (props: any) => {
     
     getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'http://admin.was.kisos.net:3000/').then((res)=>{
       if(res.length > 0) {
-        sessionStorage.setItem(
+        localStorage.setItem(
           'tenantInfo',
           JSON.stringify({
             tenantUuid: res[0]?.uuid

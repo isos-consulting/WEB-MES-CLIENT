@@ -362,7 +362,7 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
       },
     })
     
-    sessionStorage.setItem(
+    localStorage.setItem(
       'tokenInfo',
       JSON.stringify({
         access_token: refreshData.data.datas.raws[0].access_token,
@@ -374,7 +374,7 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
   } catch (error) {
     console.log(error)
     if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
-      sessionStorage.setItem('state',JSON.stringify({
+      localStorage.setItem('state',JSON.stringify({
         EXPIRED_REFRESH_TOKEN: true,
       }));
       await setLogout();
@@ -392,8 +392,8 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
  */
 export const setLogout = async () => {
   
-  sessionStorage.removeItem('userInfo');
-  sessionStorage.removeItem('tokenInfo');
+  localStorage.removeItem('userInfo');
+  localStorage.removeItem('tokenInfo');
   
   window.location.href = "/login";
 }

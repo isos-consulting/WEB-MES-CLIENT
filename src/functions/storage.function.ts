@@ -9,15 +9,15 @@ type TgetStorageValueParams = {
 
 /** 로그인 유저 정보를 session storage에서 가져옵니다. */
 export const getStorageValue = (props:TgetStorageValueParams ) => {
-  return JSON.parse(sessionStorage.getItem(props.storageName))?.[props.keyName]
+  return JSON.parse(localStorage.getItem(props.storageName))?.[props.keyName]
 }
 
 export const getUserInfo = () => {
-  return JSON.parse(sessionStorage.getItem('userInfo'));
+  return JSON.parse(localStorage.getItem('userInfo'));
 }
 
 export const getTokenInfo = () => {
-  return JSON.parse(sessionStorage.getItem('tokenInfo'));
+  return JSON.parse(localStorage.getItem('tokenInfo'));
 }
 
 /** 로그인 유저의 공장 고유아이디를 가져옵니다. */

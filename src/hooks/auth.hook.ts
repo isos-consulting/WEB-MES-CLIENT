@@ -15,7 +15,7 @@ class User {
   state = atom<undefined | IUser>({
     key: "user",
     //default: null,
-    default: JSON.parse(sessionStorage.getItem("userInfo")),
+    default: JSON.parse(localStorage.getItem("userInfo")),
   });
 }
 
