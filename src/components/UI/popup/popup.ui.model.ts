@@ -44,7 +44,9 @@ export type TPopupKey =
 | '판매단가관리' 
 | '수주품목관리' 
 | '출하지시품목관리' 
-| '품목관리2' 
+| '품목관리2'
+| '금형관리'
+| '금형문제점관리'
 | undefined;
 
 /**
@@ -92,6 +94,8 @@ export function getPopupForm(popupKey:TPopupKey, option?:IPopupItemOptionProps):
     case '판매단가관리': return getPI_StdCustomerPrice(option);
     case '수주품목관리': return getPI_SalOrderDetail(option);
     case '출하지시품목관리': return getPI_SalOutgoOrderDetail(option);
+    case '금형문제점관리': return getPI_MldProblem(option);
+    case '금형관리': return getPI_MldMold(option);
 
     default:
       break;
@@ -1066,6 +1070,61 @@ const getPI_SalOutgoOrderDetail = (option?:IPopupItemOptionProps):IPopupItemsRet
       gridMode: 'select',
     },
     uriPath:'/sal/outgo-order-details',
+    parentGridId: option?.parentGridId,
+  }
+
+  return result;
+}
+
+
+const getPI_MldMold = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
+  let result:IPopupItemsRetrunProps = {
+    modalProps:{
+      title:'금형관리',
+      visible: true,
+    },
+    datagridProps:{
+      gridId: option?.id,
+      columns:[
+        {header: '금형UUID', name:'mold_uuid', alias:'uuid', width:150, filter:'text', hidden:true},
+        {header: '금형코드', name:'mold_cd', width:150, filter:'text', editable:true, requiredField:true},
+        {header: '금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+        {header: '금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+        {header: 'cavity', name:'cavity', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
+        {header: '보증타수', name:'guarantee_cnt', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
+        {header: '기초타수', name:'basic_cnt', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
+        {header: '제조사', name:'manufacturer', width:ENUM_WIDTH.L, filter:'text', editable:true},
+        {header: '구매 일자', name:'purchase_date', width:ENUM_WIDTH.M, editable:true, format:'date'},
+        {header: '금형무게', name:'weight', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
+        {header: '금형크기', name:'size', width:ENUM_WIDTH.L, filter:'text', editable:true},
+        {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.S, format:'check', editable:true, requiredField:true},
+      ]
+    },
+    uriPath:'/mld/molds',
+    params: option?.params,
+    parentGridId: option?.parentGridId,
+  }
+
+  return result;
+}
+
+
+const getPI_MldProblem = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
+  let result:IPopupItemsRetrunProps = {
+    modalProps:{
+      title:'금형문제점관리',
+      visible: true,
+    },
+    datagridProps:{
+      gridId: option?.id,
+      columns:[
+        {header: '금형 문제점UUID',name:'problem_uuid', hidden:true},
+        {header: '금형 문제점코드',name:'problem_cd', width:ENUM_WIDTH.M, filter:'text'},
+        {header: '금형 문제점명',name:'problem_nm', width:ENUM_WIDTH.L, filter:'text'},
+      ]
+    },
+    uriPath:'/mld/problems',
+    params: option?.params,
     parentGridId: option?.parentGridId,
   }
 

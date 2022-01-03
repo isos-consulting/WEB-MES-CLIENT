@@ -1,17 +1,17 @@
 import React from 'react';
 import { useState } from "react";
-import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cloneObject, dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { TGridMode, useGrid, useSearchbox, getPopupForm } from "~/components/UI";
+import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
-import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 
 
 
-/** 사용자 관리 */
-export const PgAutUser = () => {
+/** 설비등록대장 */
+export const PgEqmHistoryCard = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,34 +20,31 @@ export const PgAutUser = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'delete';
-  const searchUriPath = '/aut/users';
-  const saveUriPath = '/aut/users';
+  const searchUriPath = '/std/equips';
+  const saveUriPath = '/std/equips';
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
-    {header: '사용자UUID', name:'user_uuid', alias:'uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '로그인ID', name:'id', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '성명', name:'user_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '권한그룹UUID', name:'group_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-    {header: '권한그룹', name:'group_nm', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'combo'},
-    {header: '이메일', name:'email', width:ENUM_WIDTH.XL, filter:'text', editable:true, requiredField:true},
-    {header: '비밀번호 변경여부', name:'pwd_fg', width:ENUM_WIDTH.L, format: 'check', filter:'text', editable:true, requiredField:true},
-    {header: '관리자 유무', name:'admin_fg', width:ENUM_WIDTH.M, format: 'check', filter:'text', editable:true, requiredField:true},
-  ],{
+    {header: '설비UUID', name:'equip_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+    {header: '설비유형UUID', name:'equip_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
+    {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
+    {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
+    {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
+    {header: '설비모델명', name:'equip_model', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '설비규격', name:'equip_std', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '설비제원', name:'equip_spec', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '제조사', name:'manufacturer', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '구매업체', name:'purchase_partner', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '구매일자', name:'purchase_date', width:ENUM_WIDTH.L, filter:'text', format:'date', editable:true},
+    {header: '구매업체연락처', name:'purchase_tel', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '구매금액', name:'purchase_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number', editable:true},    
+    {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true, hidden:true},
+    {header: '생산설비', name:'prd_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true, hidden:true},
+    {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text', editable:true},
+  ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
-    gridMode: defaultGridMode,
-    gridComboInfo: [
-      { // 투입단위 콤보박스
-        columnNames: [
-          {codeColName:{original:'group_uuid', popup:'group_uuid'}, textColName:{original:'group_nm', popup:'group_nm'}},
-        ],
-        dataApiSettings: {
-          uriPath: URL_PATH_AUT.GROUP.GET.GROUPS,
-          params: {}
-        }
-      }
-    ],
+    gridMode: defaultGridMode
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -55,23 +52,13 @@ export const PgAutUser = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridComboInfo: grid.gridInfo.gridComboInfo
     }
   );
-  
-  const popupColumns = cloneObject(grid.gridInfo.columns)?.map(el => {
-    if (['id', 'user_nm'].includes(el?.name)) {
-      el['editable'] = false;
-    }
-    return el;
-  });
-
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    popupColumns,
+    grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridComboInfo: grid.gridInfo.gridComboInfo
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -132,20 +119,20 @@ export const PgAutUser = () => {
     },
 
     /** 삭제 */
-    delete: () => {
-      if (getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows?.length === 0) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
-    },
+    // delete: () => {
+    //   if (getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows?.length === 0) {
+    //     message.warn('편집된 데이터가 없습니다.');
+    //     return;
+    //   }
+    //   onSave();
+    // },
     
     /** 신규 추가 */
-    create: () => {
-      newDataPopupInputInfo?.instance?.resetForm();
-      newDataPopupGrid?.setGridData([]);
-      setNewDataPopupGridVisible(true);
-    },
+    // create: () => {
+    //   newDataPopupInputInfo?.instance?.resetForm();
+    //   newDataPopupGrid?.setGridData([]);
+    //   setNewDataPopupGridVisible(true);
+    // },
 
     /** 저장 */
     save: () => {

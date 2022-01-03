@@ -5,7 +5,7 @@ import { cleanupKeyOfObject, convDataToSubTotal, dataGridEvents, getData, getPag
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 
 
 
@@ -20,7 +20,7 @@ export const PsSalOutgoOrderReport = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'view';
-  const searchUriPath = '/sal/outgo-order-details';
+  const searchUriPath = URL_PATH_SAL.OUTGO_ORDER.GET.REPORT;
   const saveUriPath = null;
   
   /** 그리드 상태를 관리 */
@@ -68,14 +68,6 @@ export const PsSalOutgoOrderReport = () => {
 		{code:'date', text:'일자별'},
 	  ]
 	},
-
-	{type:'radio', id:'complete_state', default:'all', label:'조회기준',
-	options: [
-	  {code:'all', text:'전체'},
-	  {code:'complete', text:'완료'},
-	  {code:'incomplete', text:'미완료'},
-	]
-  },
   ]);
 
   /** 입력상자 관리 */
@@ -100,9 +92,10 @@ export const PsSalOutgoOrderReport = () => {
       {header: '지시일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
 		  {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
 		  {header: '수주수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'order_qty', format:'number', filter:'number'},
+		  {header: '출하수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'outgo_qty', format:'number', filter:'number'},
       {header: '수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'qty', format:'number', filter:'number'},
 		  {header: '미납수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'balance', format:'number', filter:'number'},
-		  {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_state',  filter:'text', align:'center'},
+			{header: '완료여부', width:ENUM_WIDTH.S, name:'complete_state',  filter:'text', align:'center'},
 		  {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
 		];
 		break;
@@ -121,9 +114,10 @@ export const PsSalOutgoOrderReport = () => {
 		  {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text'},
 		  {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
 		  {header: '수주수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'order_qty', format:'number', filter:'number'},
+			{header: '출하수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'outgo_qty', format:'number', filter:'number'},
       {header: '수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'qty', format:'number', filter:'number'},
 		  {header: '미납수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'balance', format:'number', filter:'number'},
-		  {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_state',  filter:'text', align:'center'},
+			{header: '완료여부', width:ENUM_WIDTH.S, name:'complete_state',  filter:'text', align:'center'},
 		  {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
 		];
 		break;
@@ -144,9 +138,10 @@ export const PsSalOutgoOrderReport = () => {
 		  {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text'},
 		  {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text', align:'center'},
 		  {header: '수주수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'order_qty', format:'number', filter:'number'},
+			{header: '출하수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'outgo_qty', format:'number', filter:'number'},
       {header: '수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'qty', format:'number', filter:'number'},
 		  {header: '미납수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'balance', format:'number', filter:'number'},
-		  {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_state', filter:'text', align:'center'},
+			{header: '완료유무', width:ENUM_WIDTH.M, name:'complete_state', filter:'text', align:'center'},
 		  {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
 		];
 		break;
@@ -264,7 +259,7 @@ export const PsSalOutgoOrderReport = () => {
 
   /** 검색 */
   const onSearch = (values) => {
-		const searchKeys = ['start_date', 'end_date', 'sort_type', 'complete_state'];//Object.keys(searchInfo.values);
+		const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
 		const searchParams = cleanupKeyOfObject(values, searchKeys);
 
 		let data = [];

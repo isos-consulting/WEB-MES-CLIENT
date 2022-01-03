@@ -5,7 +5,7 @@ import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functio
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
 
 
@@ -30,6 +30,14 @@ export const PgStdEquipment = () => {
     {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '설비모델명', name:'equip_model', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '설비규격', name:'equip_std', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '설비제원', name:'equip_spec', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '제조사', name:'manufacturer', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '구매업체', name:'purchase_partner', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '구매일자', name:'purchase_date', width:ENUM_WIDTH.L, filter:'text', format:'date', editable:true, hidden:true},
+    {header: '구매업체연락처', name:'purchase_tel', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '구매금액', name:'purchase_price', width:ENUM_WIDTH.L, decimal:ENUM_DECIMAL.DEC_PRICE, format:'number', filter:'number', editable:true, hidden:true},  
     {header: '사용유무', name:'use_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true},
     {header: '생산설비', name:'prd_fg', width:ENUM_WIDTH.S, format: 'check', editable:true, requiredField:true, defaultValue: true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text', editable:true},

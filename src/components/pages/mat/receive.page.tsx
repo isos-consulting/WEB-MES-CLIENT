@@ -1,14 +1,15 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { Datagrid, useGrid, useSearchbox } from "~/components/UI";
+import { Datagrid, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 
 /** 완료상태 컬럼 renderer 조건 */
@@ -145,15 +146,55 @@ export const PgMatReceive = () => {
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'입하일', disabled:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params:{partner_fg:1}, required:true},
-    {type:'text', id:'supplier_nm', label:'공급처', disabled:true, usePopup:true, popupKey:'공급처관리', popupKeys:['supplier_uuid', 'supplier_nm']},
+    {
+      type:'text', 
+      id:'partner_nm', 
+      label:'거래처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKey:'거래처관리', 
+      popupKeys:['partner_uuid', 'partner_nm'], 
+      params:{partner_fg:1}, 
+      required:true
+    },
+    {
+      type:'text', 
+      id:'supplier_nm', 
+      label:'공급처', 
+      disabled:true, 
+      usePopup:true,
+      popupKeys:['supplier_uuid', 'supplier_nm'], 
+      popupButtonSettings: {
+        datagridSettings:{
+          gridId:null, 
+          columns:getPopupForm('공급처관리').datagridProps.columns
+        },
+        dataApiSettings: (el) => {
+          return {
+            uriPath: URL_PATH_STD.SUPPLIER.GET.SUPPLIERS,
+            params: {
+              partner_uuid: el?.values?.partner_uuid
+            },
+            onInterlock: ()=> {
+              if(el?.values?.partner_uuid) {
+                return true;
+              } else {
+                message.warning('거래처를 먼저 선택해주세요.')
+                return false;
+              }
+            }
+          }
+        },
+        modalSettings:{title:'공급처 조회'}
+      }
+    },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'remark', label:'비고', disabled:!(detailGrid.gridInfo.gridMode === 'update')},
-  ]);
+  ],);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    JSON.parse(JSON.stringify(detailInputInfo.props?.inputItems))?.map((el) => {
+    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
@@ -167,7 +208,7 @@ export const PgMatReceive = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    JSON.parse(JSON.stringify(detailInputInfo.props?.inputItems))?.map((el) => {
+  _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
@@ -382,7 +423,7 @@ export const PgMatReceive = () => {
             partner_uuid: inputValues?.partner_uuid,
             date: inputValues?.reg_date ? dayjs(inputValues?.reg_date).format('YYYY-MM-DD') : null,
           };
-        }
+        };
 
         return {
           uriPath: '/std/vendor-prices',
@@ -439,7 +480,7 @@ export const PgMatReceive = () => {
     if (!uuid) return;
 
     const uriPath = detailSearchUriPath.replace('{uuid}', uuid);
-    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res) => {
+    getData(detailSearchInfo?.values, uriPath, 'header-details').then((res:any) => {
       detailGrid.setGridData(res?.details || []);
     });
   };

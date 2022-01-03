@@ -5,13 +5,13 @@ import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functio
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { URL_PATH_MLD } from '~/enums';
 
 
 
-/** 검사항목관리 */
-export const PgStdInspItem = () => {
+/** 금형문제점 등록 */
+export const PgMldProblem = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,82 +20,18 @@ export const PgStdInspItem = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'delete';
-  const searchUriPath = '/std/insp-items';
-  const saveUriPath = '/std/insp-items';
+  const searchUriPath = URL_PATH_MLD.PROBLEM.GET.PROBLEMS;
+  const saveUriPath = URL_PATH_MLD.PROBLEM.PUT.PROBLEMS;
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
-    {header: '검사항목UUID', name:'insp_item_uuid', alias:'uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사항목 유형UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
-    {header: '검사항목코드', name:'insp_item_cd', width:ENUM_WIDTH.M, editable:true, requiredField:true},
-    {header: '검사항목명', name:'insp_item_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '검사구UUID', name:'insp_tool_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사구명', name:'insp_tool_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
-    {header: '검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
-    {header: '검사방법명', name:'insp_method_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
-    {header: '품질검사', name:'eqm_fg', width:ENUM_WIDTH.M, format:'check', editable:true},
-    {header: '설비검사', name:'qms_fg', width:ENUM_WIDTH.M, format:'check', editable:true},
+    {header: '금형문제점UUID', name:'problem_uuid', alias:'uuid', width:150,  filter:'text', hidden:true},
+    {header: '금형문제점코드', name:'problem_cd', width:150, filter:'text', editable:true, requiredField:true},
+    {header: '금형문제점명', name:'problem_nm', width:200, filter:'text', editable:true, requiredField:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
-    gridPopupInfo: [
-      { // 검사항목유형 팝업
-        columnNames: [
-          {original:'insp_item_type_uuid', popup:'insp_item_type_uuid'},
-          {original:'insp_item_type_cd', popup:'insp_item_type_cd'},
-          {original:'insp_item_type_nm', popup:'insp_item_type_nm'},
-        ],
-        columns: [
-          {header: '검사항목유형UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-          {header: '검사항목유형코드', name:'insp_item_type_cd', width:ENUM_WIDTH.M, filter:'text'},
-          {header: '검사항목유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/insp-item-types',
-          params: null
-        },
-        gridMode:'select',
-        
-      },
-      { // 검사구 팝업
-        columnNames: [
-          {original:'insp_tool_uuid', popup:'insp_tool_uuid'},
-          {original:'insp_tool_cd', popup:'insp_tool_cd'},
-          {original:'insp_tool_nm', popup:'insp_tool_nm'},
-        ],
-        columns: [
-          {header: '검사구UUID', name:'insp_tool_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-          {header: '검사구코드', name:'insp_tool_cd', width:ENUM_WIDTH.M, filter:'text'},
-          {header: '검사구명', name:'insp_tool_nm', width:ENUM_WIDTH.L, filter:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/insp-tools',
-          params: null
-        },
-        gridMode:'select',
-        
-      },
-      { // 검사방법 팝업
-        columnNames: [
-          {original:'insp_method_uuid', popup:'insp_method_uuid'},
-          {original:'insp_method_cd', popup:'insp_method_cd'},
-          {original:'insp_method_nm', popup:'insp_method_nm'},
-        ],
-        columns: [
-          {header: '검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-          {header: '검사방법코드', name:'insp_method_cd', width:ENUM_WIDTH.M, filter:'text'},
-          {header: '검사방법명', name:'insp_method_nm', width:ENUM_WIDTH.L, filter:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/insp-methods',
-          params: null
-        },
-        gridMode:'select',
-        
-      },
-    ],
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -103,7 +39,6 @@ export const PgStdInspItem = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
@@ -111,7 +46,6 @@ export const PgStdInspItem = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -131,9 +65,10 @@ export const PgStdInspItem = () => {
   /** 검색 */
   const onSearch = (values) => {
     // const searchKeys = Object.keys(values);
-    const searchParams = {type:'all'}; //cleanupKeyOfObject(values, searchKeys);
+    const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
 
     let data = [];
+
     getData(searchParams, searchUriPath).then((res) => {
       data = res;
 
