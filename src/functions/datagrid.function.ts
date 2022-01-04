@@ -9,7 +9,7 @@ import Grid from '@toast-ui/react-grid';
 import { COLUMN_CODE, EDIT_ACTION_CODE, IGridColumn, TGridMode } from '~/components/UI/datagrid-new';
 import dayjs from 'dayjs';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
-import { cloneObject } from '../functions';
+import _ from 'lodash';
 
 
 
@@ -33,7 +33,7 @@ export const saveGridData = async (
   
   let resultChk:boolean = true;
   let resultCount:number = 0;
-  let saveData = cloneObject(data);
+  let saveData = _.cloneDeep(data);
 
   const editType = ['createdRows', 'updatedRows', 'deletedRows'];
   const _methodType = [
@@ -91,7 +91,7 @@ export const saveGridData = async (
         // 다른 값 덧붙이기
         if (optionParams != null) {
           if (Object.keys(optionParams).length > 0) {
-            let tempData = cloneObject(saveData);
+            let tempData = _.cloneDeep(saveData);
             saveData = [];
 
             for (let z = 0; z < tempData.length; z++) {
@@ -166,8 +166,8 @@ export const checkGridData = async (
 ):Promise<boolean> => {
   let resultChk:boolean = true;
   let errorType:TGridErrorType;
-  let chkColumn = cloneObject(column);
-  let chkData:IGridModifiedRows = cloneObject(data);
+  let chkColumn = _.cloneDeep(column);
+  let chkData:IGridModifiedRows = _.cloneDeep(data);
   let errorColName = '';
   // let errorRow = -1;
 
@@ -318,7 +318,7 @@ export function createSubTotalColumns(
   deleteOption:string = 'filter'
 ) {
   try {
-    let subColumns = cloneObject(columns);
+    let subColumns = _.cloneDeep(columns);
 
     //합계 기준 컬럼과 합산된 데이터 컬럼만 나오게 정리
     subColumns = subColumns.filter(value =>
@@ -504,7 +504,8 @@ export const dataGridEvents = {
       saveUriPath: string,
       setGridMode?:React.Dispatch<React.SetStateAction<TGridMode>>,
       defaultGridMode?: TGridMode,
-      methodType?: 'post' | 'put' | 'patch' | 'delete'
+      methodType?: 'post' | 'put' | 'patch' | 'delete',
+      modifiedData?:object
     },
     optionParams:object={},
     modal: Omit<ModalStaticFunctions, "warn">,
@@ -532,8 +533,12 @@ export const dataGridEvents = {
 
         // 기본 저장 방식
         if (saveType == null || saveType === 'basic') {
-          modifiedRows = getModifiedRows(gridRef, columns);
-
+          if(gridObject.modifiedData){
+            modifiedRows = gridObject.modifiedData;
+          } else {
+            modifiedRows = getModifiedRows(gridRef, columns);
+          };
+          
           // 저장 가능한지 체크
           const chk:boolean = await checkGridData(columns, modifiedRows, false, ['emptyDatas']);
 
@@ -556,8 +561,13 @@ export const dataGridEvents = {
         } else if (saveType === 'headerInclude') {
           let _methodType:'delete' | 'post' | 'put' | 'patch' = 'post';
           let detailDatas = [];
-
-          const modifiedRows = await getModifiedRows(gridRef, columns);
+          let modifiedRows
+          if(gridObject.modifiedData){
+            modifiedRows = gridObject.modifiedData
+          } else {
+            modifiedRows = await getModifiedRows(gridRef, columns);
+          };
+          
 
           const {createdRows, updatedRows, deletedRows} = modifiedRows;
 
@@ -736,7 +746,7 @@ export const convDataToSubTotal = (data:any[]=[], options:TConvDataToSubTotalPro
   const {standardNames, curculations, sortby} = options;
 
   if (data?.length <= 1) {
-    const _data = cloneObject(data);
+    const _data = _.cloneDeep(data);
     standardNames?.forEach((stdName) => {
       delete _data[stdName];
     });
@@ -750,12 +760,12 @@ export const convDataToSubTotal = (data:any[]=[], options:TConvDataToSubTotalPro
     
     // 계산할 키 추출하기
     let curculationNames = [];
-    cloneObject(curculations).forEach((el) => {
+    _.cloneDeep(curculations).forEach((el) => {
       curculationNames = curculationNames.concat(el.names);
     });
     
     // 필요한 데이터만 추출
-    let tempData:any[] = cloneObject(data).map(el => {
+    let tempData:any[] = _.cloneDeep(data).map(el => {
       const keys = Object.keys(el);
       keys.forEach(key => {
         if ((standardNames.concat(curculationNames)).includes(key) === false) {
@@ -767,7 +777,7 @@ export const convDataToSubTotal = (data:any[]=[], options:TConvDataToSubTotalPro
     console.log('tempData', tempData)
 
     // 연산될 기준명의 키 그룹을 생성
-    const groupData:any[] = cloneObject(tempData).map(el => cleanupKeyOfObject(el, standardNames));
+    const groupData:any[] = _.cloneDeep(tempData).map(el => cleanupKeyOfObject(el, standardNames));
 
     // 기준 컬럼을 바탕으로 그룹핑
     let cnt = 0;
@@ -789,7 +799,7 @@ export const convDataToSubTotal = (data:any[]=[], options:TConvDataToSubTotalPro
     // 서브토탈 계산
     let sumData = {};
     let total = {};
-    let chkData:any[] = cloneObject(tempData.reverse());
+    let chkData:any[] = _.cloneDeep(tempData.reverse());
     tempData.forEach((raw, index) => {
       const value = cleanupKeyOfObject(raw, standardNames);
       let groupKey = groupInfos.find(el => el.originalValues.join('') === Object.values(value).join(''))?.groupKey;
