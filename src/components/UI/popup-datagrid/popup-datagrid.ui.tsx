@@ -182,7 +182,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   /** ⛔긍정 버튼 액션 처리 */
   const onOk = useMemo(() => {
     if (props.onOk) { // 사용자 지정 액션 적용
-      return props.onOk;
+      return () => props.onOk(gridRef);
 
     } else { // 기본 동작 액션
       switch (props.gridMode) {
