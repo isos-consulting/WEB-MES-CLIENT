@@ -6,7 +6,7 @@ import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.tem
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import Grid from '@toast-ui/react-grid';
@@ -538,9 +538,49 @@ export const PgSalOutgo = () => {
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params: {'partner_fg': 2}, required: true},
+    {
+      type:'text', 
+      id:'partner_nm', 
+      label:'거래처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKey:'거래처관리', 
+      popupKeys:['partner_uuid', 'partner_nm'], 
+      params: {'partner_fg': 2}, 
+      required: true
+    },
     {type:'text', id:'delivery_uuid', label:'납품처UUID', disabled:true, hidden:true},
-    {type:'text', id:'delivery_nm', label:'납품처', disabled:true, usePopup:true, popupKey:'납품처관리', popupKeys:['delivery_uuid', 'delivery_nm']},
+    {
+      type:'text', 
+      id:'delivery_nm', 
+      label:'납품처', 
+      disabled:true,
+      usePopup:true, 
+      popupKeys:['delivery_uuid', 'delivery_nm'],
+      popupButtonSettings: {
+        datagridSettings:{
+          gridId:null, 
+          columns:getPopupForm('납품처관리').datagridProps.columns
+        },
+        dataApiSettings: (el) => {
+          return {
+            uriPath: URL_PATH_STD.DELIVERY.GET.DELIVERIES,
+            params: {
+              partner_uuid: el?.values?.partner_uuid
+            },
+            onInterlock: ()=> {
+              if(el?.values?.partner_uuid) {
+                return true;
+              } else {
+                message.warning('거래처를 먼저 선택해주세요.')
+                return false;
+              }
+            }
+          }
+        },
+        modalSettings:{title:'납품처 조회'}
+      }
+    },
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);
 
