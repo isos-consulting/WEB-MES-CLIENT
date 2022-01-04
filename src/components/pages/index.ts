@@ -2,6 +2,8 @@ export * from './authentication.page';
 export * from './login.page';
 export * from './test-double-grid.page';
 
+export * from './adm/cycle-unit.page';
+
 export * from './aut/menu.page';
 export * from './aut/permission.page';
 export * from './aut/group.page';
