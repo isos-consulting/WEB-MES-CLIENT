@@ -1737,20 +1737,20 @@ const URL_PATH = {
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
-        REPAIR_HISTORY:'/eqm/REPAIR_HISTORY/{uuid}',
-        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES',
+        REPAIR_HISTORY:'/eqm/repair-histories/{uuid}',
+        REPAIR_HISTORIES:'/eqm/repair-histories',
       },
       POST:{
-        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES' 
+        REPAIR_HISTORIES:'/eqm/repair-histories' 
       },
       PUT:{
-        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+        REPAIR_HISTORIES:'/eqm/repair-histories'
       },
       PATCH:{
-        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+        REPAIR_HISTORIES:'/eqm/repair-histories'
       },
       DELETE:{
-        REPAIR_HISTORIES:'/eqm/REPAIR_HISTORIES'
+        REPAIR_HISTORIES:'/eqm/repair-histories'
       },
     },
   },
