@@ -1,4 +1,5 @@
 .cache
+.history
 build
 dist
 node_modules
