@@ -19,6 +19,25 @@ const URL_PATH = {
         CYCLE_UNITS:'/adm/cycle-units',
       },
     },
+    DAILY_INSP_CYCLE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        DAILY_INSP_CYCLE:'/adm/daily-insp-cycle/{uuid}',
+        DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
+      },
+      POST:{
+        DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
+      },
+      PUT:{
+        DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
+      },
+      PATCH:{
+        DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
+      },
+      DELETE:{
+        DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
+      },
+    }
   },
   INV:{
     STORE:{
