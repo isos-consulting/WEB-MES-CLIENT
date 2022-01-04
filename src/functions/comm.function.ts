@@ -232,6 +232,56 @@ export const getMenus = async () => {
   }).finally(() => {
     let result = {};
     
+    if (getStorageValue({storageName:'userInfo', keyName:'super_admin_fg'})) {
+    
+      rawData.unshift({
+        component_nm: null,
+        create_fg: null,
+        delete_fg: null,
+        first_menu_uuid: null,
+        icon: 'ico_nav_standard',
+        lv: 1,
+        menu_nm: '관리자 정보',
+        menu_type: 'menu',
+        menu_uri: 'aut',
+        menu_uuid: 'aut',
+        read_fg: null,
+        sub_menu: [
+          {
+            component_nm: 'PgAutMenu',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'aut',
+            icon: null,
+            lv: 2,
+            menu_nm: '메뉴 관리',
+            menu_type: 'page',
+            menu_uri: '/aut/menus',
+            menu_uuid: 'autMenus',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
+            component_nm: 'PgAdmCycleUnit',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'aut',
+            icon: null,
+            lv: 2,
+            menu_nm: '주기단위 관리',
+            menu_type: 'page',
+            menu_uri: '/aut/cycle-unit',
+            menu_uuid: 'autCycleUnit',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+        ],
+        update_fg: null
+      })
+    };
+    
     rawData?.forEach((level1:ILevel1Info) => {
     if (level1.menu_type === 'page') {
       result[level1.menu_nm] = {
@@ -292,35 +342,7 @@ export const getMenus = async () => {
 
     data = result;
   });
-  rawData.unshift({
-    component_nm: null,
-    create_fg: null,
-    delete_fg: null,
-    first_menu_uuid: null,
-    icon: 'ico_nav_standard',
-    lv: 1,
-    menu_nm: '관리자 정보',
-    menu_type: 'menu',
-    menu_uri: 'aut',
-    menu_uuid: 'aut',
-    read_fg: null,
-    sub_menu: [{
-      component_nm: 'PgAutMenu',
-      create_fg: true,
-      delete_fg: true,
-      first_menu_uuid: 'aut',
-      icon: null,
-      lv: 2,
-      menu_nm: '메뉴 관리',
-      menu_type: 'page',
-      menu_uri: '/aut/menus',
-      menu_uuid: 'autMenus',
-      read_fg: true,
-      sub_menu: [],
-      update_fg: true
-    }],
-    update_fg: null
-  })
+  
   return {data, rawData};
 }
 
