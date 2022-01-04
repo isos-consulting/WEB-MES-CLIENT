@@ -1,4 +1,25 @@
 const URL_PATH = {
+  ADM:{
+    CYCLE_UNIT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        CYCLE_UNIT:'/adm/cycle-unit/{uuid}',
+        CYCLE_UNITS:'/adm/cycle-units',
+      },
+      POST:{
+        CYCLE_UNITS:'/adm/cycle-units',
+      },
+      PUT:{
+        CYCLE_UNITS:'/adm/cycle-units',
+      },
+      PATCH:{
+        CYCLE_UNITS:'/adm/cycle-units',
+      },
+      DELETE:{
+        CYCLE_UNITS:'/adm/cycle-units',
+      },
+    },
+  },
   INV:{
     STORE:{
       GET:{
@@ -1815,6 +1836,7 @@ const URL_PATH = {
   },
 }
 
+export const URL_PATH_ADM = URL_PATH.ADM
 export const URL_PATH_INV = URL_PATH.INV
 export const URL_PATH_MAT = URL_PATH.MAT
 export const URL_PATH_OUT = URL_PATH.OUT
