@@ -144,6 +144,7 @@ export const PgMatReceive = () => {
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type: 'text', id: 'receive_uuid', alias:'uuid', label: '입하UUID', disabled:true, hidden:true},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
+    {type:'text', id:'supplier_uuid', label:'공급처UUID', disabled:true, hidden:true},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'입하일', disabled:true},
     {
@@ -226,7 +227,7 @@ export const PgMatReceive = () => {
 
   const extraButtons = [
     {
-      buttonProps:{text:'수주 불러오기'},
+      buttonProps:{text:'발주 불러오기'},
       buttonAction:(ev, props, options) => {
         const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
         const updateColumns:{original:string, popup:string}[] = props.rowAddPopupInfo.columnNames;
