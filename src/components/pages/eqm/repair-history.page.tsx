@@ -1,12 +1,15 @@
 import React from 'react';
 import { useState } from "react";
-import { getPopupForm, TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { getPopupForm, IGridModifiedRows, TGridMode, useGrid, useSearchbox } from "~/components/UI";
+import { dataGridEvents, getData, getModifiedRows, getNow, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_EQM, URL_PATH_STD } from '~/enums';
 import { message } from 'antd';
+import _ from 'lodash';
+import { onDefaultGridSave } from '../prd/work';
+import dayjs from 'dayjs';
 
 
 
@@ -22,6 +25,9 @@ export const PgEqmRepairHistory = () => {
   const defaultGridMode:TGridMode = 'delete';
   const searchUriPath = URL_PATH_EQM.REPAIR_HISTORY.GET.REPAIR_HISTORIES;
   const saveUriPath = URL_PATH_EQM.REPAIR_HISTORY.POST.REPAIR_HISTORIES;
+
+  const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
+  const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
@@ -90,24 +96,124 @@ export const PgEqmRepairHistory = () => {
       }
     ],
   });
-
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
     grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      onOk:(gridRef)=>{
+        const instance = gridRef.current.getInstance();
+
+        instance.blur();
+        const data = () => {
+          const getModifiedRows = instance.getModifiedRows()
+          
+          function  MixDateTime (el, dateString, timeString) {
+            console.log(el, dateString, timeString)
+            if (el[dateString] != null && el[timeString] != null) {
+              let time = el[timeString];
+      
+              if (String(time)?.length !== 5) {
+                time = dayjs(time).format('HH:mm');
+              }
+      
+              const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+            }
+          };
+          getModifiedRows.createdRows.forEach((el) =>{
+            MixDateTime(el, 'occur_start_date', 'occur_start_time');
+            MixDateTime(el, 'occur_end_date', 'occur_end_time');
+            MixDateTime(el, 'repair_start_date', 'repair_start_time');
+            MixDateTime(el, 'repair_end_date', 'repair_end_time');
+            MixDateTime(el, 'check_date', 'check_time');
+          });
+          
+          return getModifiedRows;
+        };
+        
+        dataGridEvents.onSave(
+          'basic',
+          {
+            gridRef,
+            columns:grid.gridInfo.columns,
+            saveUriPath:saveUriPath,
+            methodType:'post',
+            modifiedData:data()
+          },
+          null,
+          modal,
+          ({success})=>{
+            if(success){
+              setEditDataPopupGridVisible(false)
+              onSearch()
+            };
+          }
+        );
+      },
+      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo
     }
   );
+
+
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
     grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      onOk:(gridRef)=>{
+        const instance = gridRef.current.getInstance();
+
+        instance.blur();
+        const data = () => {
+          const getModifiedRows = instance.getModifiedRows()
+          
+          function  MixDateTime (el, dateString, timeString) {
+            console.log(el, dateString, timeString)
+            if (el[dateString] != null && el[timeString] != null) {
+              let time = el[timeString];
+      
+              if (String(time)?.length !== 5) {
+                time = dayjs(time).format('HH:mm');
+              }
+      
+              const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+            }
+          };
+          getModifiedRows.createdRows.forEach((el) =>{
+            MixDateTime(el, 'occur_start_date', 'occur_start_time');
+            MixDateTime(el, 'occur_end_date', 'occur_end_time');
+            MixDateTime(el, 'repair_start_date', 'repair_start_time');
+            MixDateTime(el, 'repair_end_date', 'repair_end_time');
+            MixDateTime(el, 'check_date', 'check_time');
+          });
+          
+          return getModifiedRows;
+        };
+        
+        dataGridEvents.onSave(
+          'basic',
+          {
+            gridRef,
+            columns:grid.gridInfo.columns,
+            saveUriPath:saveUriPath,
+            methodType:'post',
+            modifiedData:data()
+          },
+          null,
+          modal,
+          ({success})=>{
+            if(success){
+              setNewDataPopupGridVisible(false)
+              onSearch()
+            };
+          }
+        );
+      },
+      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo
     }
   );
-  const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
-  const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
-
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', null);
@@ -120,18 +226,27 @@ export const PgEqmRepairHistory = () => {
   /** 액션 관리 */
 
   /** 검색 */
-  const onSearch = (values) => {
+  const onSearch = () => {
     // const searchKeys = Object.keys(values);
     const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
 
     let data = [];
-
     getData(searchParams, searchUriPath).then((res) => {
       data = res;
 
     }).finally(() => {
+      const datas = data.map((el)=>{
+        let data = _.cloneDeep(el);
+        data.occur_start_time = data.occur_start_date
+        data.occur_end_time = data.occur_end_date
+        data.repair_start_time = data.repair_start_date
+        data.repair_end_time = data.repair_end_date
+        data.check_time = data.check_date
+        return data;
+      })
+
       inputInfo?.instance?.resetForm();
-      grid.setGridData(data);
+      grid.setGridData(datas);
     });
   };
 
