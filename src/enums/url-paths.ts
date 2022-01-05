@@ -1774,6 +1774,34 @@ const URL_PATH = {
     },
   },
   EQM:{
+    INSP:{
+      GET:{
+        INSP: '/eqm/insp/{uuid}',
+        INSPS: '/eqm/insps',
+        DETAILS: '/eqm/insp/{uuid}/details',
+        INCLUDE_DETAILS: '/eqm/insp/{uuid}/include-details',
+      },
+      POST:{
+        INSPS: '/eqm/insps'
+      },
+      PUT:{
+        APPLY: '/eqm/insps/apply',
+        CANCEL_APPLY: '/eqm/insps/cancel-apply',
+        INSPS: '/eqm/insps'
+      },
+      PATCH:{
+        INSPS: '/eqm/insps'
+      },
+      DELETE:{
+        INSPS: '/eqm/insps'
+      }
+    },
+    INSP_DETAIL:{
+      GET:{
+        INSP_DETAIL: '/qms/insp-detail/{uuid}',
+        INSP_DETAILS: '/qms/insp-details'
+      },
+    },
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
