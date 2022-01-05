@@ -117,7 +117,8 @@ export * from './qms/rework-report.page';
 
 export * from './eqm/repair-history.page';
 export * from './eqm/history-card.page';
-export * from './mld/repair-history.page';
+export * from './eqm/insp.page';
 
+export * from './mld/repair-history.page';
 export * from './mld/problem.page';
 export * from './mld/mold.page';
