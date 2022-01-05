@@ -241,7 +241,6 @@ export const PgAutMenu = () => {
   const onEditSave = () => {
     const {gridRef, setGridMode} = editDataPopupGrid;
     const {columns, saveUriPath} = editDataPopupGrid.gridInfo;
-    console.log(grid.gridInfo.data, grid.gridInstance.getData(), editDataPopupGrid.gridInfo.data)
     const saveDatas = gridRef.current.getInstance().getData().map((el) => {
       return({
         uuid:el.menu_uuid,
@@ -254,7 +253,6 @@ export const PgAutMenu = () => {
         use_fg:el.use_fg
       })
     })
-    console.log(saveDatas)
     modal.confirm({
       icon: null,
       title: '저장',
@@ -268,7 +266,8 @@ export const PgAutMenu = () => {
         if (chk === false) return;
 
         executeData(saveDatas, URL_PATH_AUT.MENU.PUT.MENUS,'put').then((res) => {
-          
+          setEditDataPopupGridVisible(false);
+          onSearch(searchInfo?.values);
         })
       },
       onCancel: () => {
