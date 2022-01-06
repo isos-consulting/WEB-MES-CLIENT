@@ -1006,7 +1006,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           // 전에 값과 다른 값이면 edit처리
           if (editChk && (prevValue !== value)) {
 
-            console.log("타냐?")
             instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.UPDATE);
             ev.stop();
           }
