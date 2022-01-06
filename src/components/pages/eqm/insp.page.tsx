@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { Button, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
+import { Button, getPopupForm, IGridModifiedRows, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified, onAsyncFunction } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
@@ -688,10 +688,21 @@ export const PgEqmInsp = () => {
     );
 
     const optionSaveParams = cloneDeep(inputInfo?.values);
+    
+    let modifiedData:any = {
+      createdRows:[], 
+      updatedRows:[], 
+      deletedRows:[]
+    }
 
     if (methodType === 'post') {
       // post로 저장할 경우 uuid키를 제거
       delete optionSaveParams['uuid'];
+      delete optionSaveParams['insp_no'];
+
+      modifiedData.createdRows = grid?.gridInstance.getData();
+    } else {
+      modifiedData = null;
     }
 
     dataGridEvents.onSave('headerInclude', {
@@ -700,6 +711,7 @@ export const PgEqmInsp = () => {
       columns: grid?.gridInfo?.columns,
       saveUriPath: grid?.gridInfo?.saveUriPath,
       methodType: methodType,
+      modifiedData
     }, optionSaveParams, modal,
       async ({success, datas}) => {
         if (success) {
