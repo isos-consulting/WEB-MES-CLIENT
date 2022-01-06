@@ -1785,8 +1785,8 @@ const URL_PATH = {
         INSPS: '/eqm/insps'
       },
       PUT:{
-        APPLY: '/eqm/insps/apply',
-        CANCEL_APPLY: '/eqm/insps/cancel-apply',
+        APPLY: '/eqm/insp/apply',
+        CANCEL_APPLY: '/eqm/insp/cancel-apply',
         INSPS: '/eqm/insps'
       },
       PATCH:{
