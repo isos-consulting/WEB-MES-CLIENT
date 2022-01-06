@@ -203,6 +203,7 @@ export const PgQmsInsp = () => {
     , {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
+    saveParams: {apply_fg:true},
     header: detailSubGrid?.gridInfo?.header,
     rowAddPopupInfo: {
       columnNames:[
@@ -214,7 +215,7 @@ export const PgQmsInsp = () => {
       columns: INSP_POPUP?.datagridProps?.columns,
       dataApiSettings: {
         uriPath: INSP_POPUP?.uriPath,
-        params: INSP_POPUP?.params
+        params: {type:'qms'}
       },
       gridMode:'multi-select'
     },
