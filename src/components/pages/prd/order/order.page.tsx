@@ -1,10 +1,10 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid'
-import { Divider, Space, Typography, Modal, Spin } from 'antd';
+import { Divider, Space, Typography, Modal, Spin, message } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
-import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridPopupInfo, IGridPopupProps, Searchbox, Tabs } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
+import { Button, Container, Datagrid, getPopupForm, GridPopup, IDatagridProps, IGridPopupInfo, IGridPopupProps, Searchbox, Tabs } from '~/components/UI';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneObject, getData, getModifiedRows, getPageName, getPermissions, getToday, saveGridData } from '~/functions';
 import { orderInput, orderRoute, TAB_CODE } from '../order';
 import { onDefaultGridSave } from './order.page.util';
@@ -113,6 +113,32 @@ export const PgPrdOrder = () => {
       },
       gridMode:'select'
     },
+    { // 금형관리 
+      columnNames: [
+        {original:'mold_uuid', popup:'mold_uuid'},
+        {original:'mold_nm', popup:'mold_nm'},
+        {original:'mold_no', popup:'mold_no'},
+        {original:'mold_cavity', popup:'cavity'},
+      ],
+      columns: getPopupForm('금형관리')?.datagridProps?.columns,
+      dataApiSettings: (el: any) => {
+        const rowKey = el.rowKey;
+        const rowData = el?.instance?.store?.data?.rawData.find((el) => el.rowKey === rowKey)
+        return {
+          uriPath: getPopupForm('금형관리')?.uriPath,
+          params: {},
+          onInterlock: () => {
+            let complete: boolean = rowData?.complete_fg;
+            console.log(complete);
+            if (complete){
+              message.warn('작업이 마감되어 금형을 수정할 수 없습니다.');
+            }
+            return !complete;
+            }
+          }
+      },
+      gridMode: 'select',  
+    }
   ];
 
   /** 메인 그리드 속성 */
@@ -142,6 +168,10 @@ export const PgPrdOrder = () => {
       {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
       {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.M, hidden:true},
       {header:'설비', name:'equip_nm', width:ENUM_WIDTH.L, editable:true, format:'popup', filter:'text'},
+      {header:'금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
+      {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+      {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
+      {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
       {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
       {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
@@ -181,6 +211,7 @@ export const PgPrdOrder = () => {
     rowAddPopupInfo: {
       ...ORDER_POPUP_INFO[0],
       gridMode:'multi-select',
+      
     },
     /** 수정팝업 */
     gridPopupInfo: ORDER_POPUP_INFO,
@@ -318,7 +349,7 @@ export const PgPrdOrder = () => {
 
   /** 항목 수정 팝업 속성 */
   const editGridColumns = cloneObject(gridInfo.columns)?.map((el) => {
-    if (!['order_no', 'workings_nm', 'equip_nm', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
+    if (!['order_no', 'workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
       el['editable'] = false;
     return el;
   })

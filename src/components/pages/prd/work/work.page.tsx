@@ -3,7 +3,7 @@ import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal, Col, Row, Input, Select, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
-import { Button, Container, Datagrid, IGridColumn, Label, Searchbox, Tabs, TGridMode, useSearchbox } from '~/components/UI';
+import { Button, Container, Datagrid, IGridColumn, Label, PopupButton, Searchbox, Tabs, Textbox, TGridMode, useSearchbox } from '~/components/UI';
 import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryUuid, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -18,7 +18,7 @@ import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ROUTING } from './work.page.route';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import Fonts from '~styles/font.style.scss';
 import { cloneDeep } from 'lodash';
 
@@ -420,7 +420,9 @@ export const PgPrdWork = () => {
           start_date: previousWorkInfo.start_date,
           end_date: previousWorkInfo.end_date || null,
           remark: previousWorkInfo.remark,
-          factory_uuid: getUserFactoryUuid()
+          factory_uuid: getUserFactoryUuid(),
+          mold_uuid:previousWorkInfo.mold_uuid,
+          mold_cavity:previousWorkInfo.mold_cavity
 
         }, SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
@@ -542,6 +544,23 @@ export const PgPrdWork = () => {
     const {value} = ev?.target;
     infoDispatch({type:'CHANGE_WORK_INFO', name:'remark', value});
   }
+
+  const onChangeCavity = (ev) => {
+    const {value} = ev?.target;
+    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_cavity', value});
+  }
+
+  const onChangeMold = (values: any) => {
+    let value = values.mold_nm;
+    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_nm', value});
+    
+    value = values.cavity;
+    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_cavity', value});
+    
+    value = values.mold_uuid;
+    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_uuid', value});      
+  }
+  
   //#endregion
   
   //#region ✅조회조건
@@ -640,6 +659,10 @@ export const PgPrdWork = () => {
     {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
     {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'설비', name:'equip_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    {header: '금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
+    {header: '금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header: '금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text'},
+    {header: 'cavity', name:'mold_cavity', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
@@ -748,6 +771,9 @@ export const PgPrdWork = () => {
                 reject_qty: row?.reject_qty, //부적합수량
                 lot_no: row?.lot_no,
                 remark: row?.remark,
+                mold_uuid: row?.mold_uuid, // 금형UUID
+                mold_nm: row?.mold_nm, // 금형명
+                mold_cavity: row?.mold_cavity, // 금형Cavity
               }
             }
           }
@@ -1040,6 +1066,38 @@ export const PgPrdWork = () => {
                   <Col span={6}>
                     <Label text='비고'/>
                     <Input value={workInfo.remark} onChange={onChangeRemark} disabled={!(permissions?.create_fg || permissions?.update_fg)} style={{fontSize:Fonts.fontSize_default}}/>
+                  </Col>
+                  <Col span={6}>
+                    <Label text='금형명'/>
+                    <div style={{display:'flex'}}>
+                      <Input
+                        size="small" 
+                        value={workInfo.mold_nm} 
+                        disabled={true}
+                        style={{fontSize:Fonts.fontSize_default}}/>
+                      <div style={{
+                        float:'right',
+                        marginLeft:-30}}>
+                        <PopupButton
+                          widthSize={'medium'}
+                          firstItemEmpty={true}
+                          popupKey={'금형관리'}
+                          popupKeys={['mold_nm', 'mold_uuid', 'cavity']}
+                          setValues={(values) => {
+                            onChangeMold(values);
+                          }}
+                          
+                        />
+                      </div>
+                    </div>                    
+                  </Col>
+                  <Col span={6}>
+                    <Label text='Cavity'/>
+                    <Input 
+                        type='number'
+                        value={workInfo.mold_cavity} 
+                        onChange={onChangeCavity}
+                        style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
                 </Row>
               </Container>
