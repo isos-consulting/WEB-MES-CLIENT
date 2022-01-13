@@ -312,7 +312,14 @@ export const PgMatOrder = () => {
 
   const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', detailInputInfo.props.inputItems);
 
-  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', detailInputInfo.props.inputItems);
+  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
+      if (el?.id === 'remark'){
+        el['disabled'] = false;
+      }
+      return el;
+    })
+  );
   //#endregion
   
 
