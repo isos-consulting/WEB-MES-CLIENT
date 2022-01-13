@@ -109,24 +109,7 @@ export const PgStdPartnerProd = () => {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: detailGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: [
-      { // FROM 단위
-        columnNames: [
-          {original:'from_unit_uuid', popup:'unit_uuid'},
-          {original:'from_unit_nm', popup:'unit_nm'},
-        ],
-        popupKey:'단위관리',
-        gridMode: 'select'
-      },
-      { // TO 단위
-        columnNames: [
-          {original:'to_unit_uuid', popup:'unit_uuid'},
-          {original:'to_unit_nm', popup:'unit_nm'},
-        ],
-        popupKey:'단위관리',
-        gridMode: 'select'
-      },
-    ],
+    gridPopupInfo: [],
     gridComboInfo: detailGrid.gridInfo.gridComboInfo,
   });
 
