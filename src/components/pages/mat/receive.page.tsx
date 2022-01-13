@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
 /** 완료상태 컬럼 renderer 조건 */
@@ -156,7 +156,8 @@ export const PgMatReceive = () => {
       popupKey:'거래처관리', 
       popupKeys:['partner_uuid', 'partner_nm'], 
       params:{partner_fg:1}, 
-      required:true
+      required:true,
+      handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {
       type:'text', 
@@ -195,7 +196,7 @@ export const PgMatReceive = () => {
   ],);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
@@ -209,8 +210,8 @@ export const PgMatReceive = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-  _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
+  cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
+        if (el?.id !== 'total_qty' && el?.id !== 'total_price' && el?.id !== 'partner_nm') {
           el['disabled'] = false;
         }
 
