@@ -61,7 +61,7 @@ export const PgPrdWorkReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'생산일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'생산일'},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
@@ -281,11 +281,6 @@ export const PgPrdWorkReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-
-    if (!values?.reg_date_chk) {
-      delete searchParams['start_date'];
-      delete searchParams['end_date'];
-    }
 
     let data = [];
 
