@@ -366,7 +366,7 @@ export const PgPrdOrder = () => {
     /** 팝업 아이디 */
     popupId: 'ORDER_EDIT_GRID_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '작업지시 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
     onOk: () => {
