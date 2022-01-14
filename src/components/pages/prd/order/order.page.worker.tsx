@@ -103,7 +103,7 @@ export const orderWorker = () => {
     /** 팝업 아이디 */
     popupId: TAB_CODE.투입인원관리+'_NEW_POPUP',
     /** 팝업 제목 */
-    title: '작업지시 등록',
+    title: '투입인원 등록',
     /** 포지티브 버튼 글자 */
     okText: '추가하기',
     onOk: () => {
