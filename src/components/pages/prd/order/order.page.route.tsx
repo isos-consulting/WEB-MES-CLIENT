@@ -110,7 +110,7 @@ export const orderRoute = () => {
     /** 팝업 아이디 */
     popupId: TAB_CODE.공정순서+'_EDIT_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '공정순서 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
     onOk: () => {
