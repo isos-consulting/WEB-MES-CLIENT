@@ -349,7 +349,7 @@ export const PgPrdOrder = () => {
 
   /** 항목 수정 팝업 속성 */
   const editGridColumns = cloneObject(gridInfo.columns)?.map((el) => {
-    if (!['order_no', 'workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
+    if (!['workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
       el['editable'] = false;
     return el;
   })
