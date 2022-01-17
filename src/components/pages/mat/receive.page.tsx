@@ -367,6 +367,7 @@ export const PgMatReceive = () => {
         {original:'to_location_nm', popup:'to_location_nm'},
         {original:'insp_fg', popup:'qms_receive_insp_fg'},
         {original:'qty', popup:'balance'},
+        {original:'exchange', popup:'exchange'},
       ],
       columns: [
         {header: '품목UUID', name:'prod_uuid', filter:'text', format:'text', hidden:true},
