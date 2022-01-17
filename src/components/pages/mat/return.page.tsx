@@ -9,6 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
 const URI_PATH_GET_MAT_RETURN = '/mat/return/{uuid}';
@@ -263,14 +264,23 @@ export const PgMatReturn = () => {
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'반출일', disabled:true},
     {type:'text', id:'partner_uuid', label:'거래처UUID', hidden:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
+    {
+      type:'text', 
+      id:'partner_nm', 
+      label:'거래처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKey:'거래처관리', 
+      popupKeys:['partner_uuid', 'partner_nm'],
+      handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
+    },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true},
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_qty', 'total_price'].includes(el?.id))
           el['disabled'] = false; 
 
@@ -283,7 +293,7 @@ export const PgMatReturn = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['partner_nm', 'reg_date', 'total_qty', 'total_price'].includes(el?.id))
           el['disabled'] = false;
 

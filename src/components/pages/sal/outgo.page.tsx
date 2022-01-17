@@ -8,7 +8,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import Grid from '@toast-ui/react-grid';
 
 
@@ -547,7 +547,8 @@ export const PgSalOutgo = () => {
       popupKey:'거래처관리', 
       popupKeys:['partner_uuid', 'partner_nm'], 
       params: {'partner_fg': 2}, 
-      required: true
+      required: true,
+      handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {type:'text', id:'delivery_uuid', label:'납품처UUID', disabled:true, hidden:true},
     {
@@ -585,7 +586,7 @@ export const PgSalOutgo = () => {
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_price'].includes(el?.id))
           el['disabled'] = false; 
 
@@ -598,7 +599,7 @@ export const PgSalOutgo = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    _.cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['partner_nm', 'reg_date', 'total_price'].includes(el?.id))
           el['disabled'] = false;
 

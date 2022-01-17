@@ -68,6 +68,8 @@ export interface IInputGroupboxItem {
   required?: boolean;
 
   useCheckbox?: boolean;
+  defaultChecked?: boolean;
+
   usePopup?: boolean;
   useCheckType?: boolean;
 
@@ -409,7 +411,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                 {item?.useCheckbox ?
                                   <Checkbox
                                     id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                    checked={values[(item.name || item.id) + '_chk']}
+                                    checked={item.defaultChecked === true ? true : false}
                                     onChange={async (e) => {
                                       await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
       
@@ -450,10 +452,10 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={values[(item.name || item.id) + '_chk']}
+                                  checked={item.defaultChecked === true ? true : false}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-
+                                    
                                     if (item?.onAfterChange)
                                       item?.onAfterChange(e);
                                   }}
@@ -539,7 +541,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={values[(item.name || item.id) + '_chk']}
+                                  checked={item.defaultChecked === true ? true : false}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
     
@@ -722,7 +724,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={values[(item.name || item.id) + '_chk']}
+                                  checked={item.defaultChecked === true ? true : false}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
     
@@ -763,7 +765,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={values[(item.name || item.id) + '_chk']}
+                                  checked={item.defaultChecked === true ? true : false}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
 
@@ -852,7 +854,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                             {item?.useCheckbox ?
                               <Checkbox
                                 id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                checked={values[(item.name || item.id) + '_chk']}
+                                checked={item.defaultChecked === true ? true : false}
                                 onChange={async (e) => {
                                   await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
   

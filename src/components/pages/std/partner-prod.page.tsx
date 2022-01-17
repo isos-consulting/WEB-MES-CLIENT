@@ -56,7 +56,7 @@ export const PgStdPartnerProd = () => {
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '거래처 품목UUID', name:'partner_prod_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true, requiredField:true},
+    {header: '거래처', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '거래처유형UUID', name:'partner_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '거래처유형', name:'partner_type_nm', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
@@ -109,24 +109,7 @@ export const PgStdPartnerProd = () => {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: detailGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: [
-      { // FROM 단위
-        columnNames: [
-          {original:'from_unit_uuid', popup:'unit_uuid'},
-          {original:'from_unit_nm', popup:'unit_nm'},
-        ],
-        popupKey:'단위관리',
-        gridMode: 'select'
-      },
-      { // TO 단위
-        columnNames: [
-          {original:'to_unit_uuid', popup:'unit_uuid'},
-          {original:'to_unit_nm', popup:'unit_nm'},
-        ],
-        popupKey:'단위관리',
-        gridMode: 'select'
-      },
-    ],
+    gridPopupInfo: [],
     gridComboInfo: detailGrid.gridInfo.gridComboInfo,
   });
 
@@ -412,9 +395,9 @@ export const PgStdPartnerProd = () => {
     ],
     popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
     popupGridInfos: [
-      {...newDataPopupGrid.gridInfo},
-      {...addDataPopupGrid.gridInfo},
-      {...editDataPopupGrid.gridInfo},
+      {...newDataPopupGrid.gridInfo, saveParams: newDataPopupInputInfo.values},
+      {...addDataPopupGrid.gridInfo, saveParams: addDataPopupInputInfo.values},
+      {...editDataPopupGrid.gridInfo, saveParams: editDataPopupInputInfo.values},
     ],
     searchProps: [
       {

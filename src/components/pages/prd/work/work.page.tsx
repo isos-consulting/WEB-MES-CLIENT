@@ -18,7 +18,7 @@ import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ROUTING } from './work.page.route';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
 import { cloneDeep } from 'lodash';
 
@@ -404,7 +404,6 @@ export const PgPrdWork = () => {
 
     const SAVE_URI_PATH = '/prd/works';
     const previousWorkInfo = cloneDeep(workInfo);
-    const previousWorkData = cloneDeep(workDatas);
 
     modal.confirm({
       title: '중간 저장',
@@ -428,19 +427,11 @@ export const PgPrdWork = () => {
           if (success === true) {
             message.info('정상적으로 저장되었습니다.');
             onSearch(searchInfo.values, () => {
-              const data = previousWorkData?.find(el => el?.work_uuid === previousWorkInfo?.work_uuid);
               
               onHeaderClick({
-                rowKey: data?.rowKey,
-                targetType: 'cell',
-                instance: {
-                  store: {
-                    data: {
-                      rawData: previousWorkData
-                    }
-                  }
-                }
-              }, previousWorkInfo?.work_uuid);
+                targetType: 'cell'
+              }
+              ,previousWorkInfo?.work_uuid);
             });
             // searchInfo?.onSearch(searchInfo.values);
 
@@ -699,7 +690,67 @@ export const PgPrdWork = () => {
   ];
   //#endregion
 
-  const onHeaderClick = (ev, _work_uuid?) => {
+  // infoDispatch 실행
+  const setInfoData = (data) => {
+  
+    infoDispatch(
+      {
+        type:'CHANGE_ALL', 
+        value:{
+          orderInfo: {
+            prod_uuid: data?.prod_uuid,
+            prod_no: data?.prod_no,
+            prod_nm: data?.prod_nm,
+            item_type_uuid: data?.item_type_uuid,
+            item_type_nm: data?.item_type_nm,
+            prod_type_uuid: data?.prod_type_uuid,
+            prod_type_nm: data?.prod_type_nm,
+            model_uuid: data?.model_uuid,
+            model_nm: data?.model_nm,
+            rev: data?.rev,
+            prod_std: data?.prod_std,
+            unit_uuid: data?.unit_uuid,
+            unit_nm: data?.unit_nm,
+            equip_uuid: data?.equip_uuid,
+            equip_nm: data?.equip_nm,
+            proc_uuid: data?.proc_uuid,
+            proc_nm: data?.proc_nm,
+            shift_uuid: data?.shift_uuid,
+            shift_nm: data?.shift_nm,
+            workings_uuid: data?.working_uuid,
+            workings_nm: data?.working_nm,
+            order_remark: data?.order_remark,
+          },
+
+          workInfo: {
+            work_uuid: data?.work_uuid,
+            complete_fg: data?.complete_fg,
+            start_date: [null, undefined, ''].includes(data?.start_date) ? null : dayjs(data?.start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+            end_date: [null, undefined, ''].includes(data?.end_date) ? null : dayjs(data?.end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+            _start_date: [null, undefined, ''].includes(data?.start_date) ? null : dayjs(data?.start_date).locale('ko'),
+            _end_date: [null, undefined, ''].includes(data?.end_date) ? null : dayjs(data?.end_date).locale('ko'),
+            _start_time: [null, undefined, ''].includes(data?.start_date) ? null : dayjs(data?.start_date).locale('ko'),
+            _end_time: [null, undefined, ''].includes(data?.end_date) ? null : dayjs(data?.end_date).locale('ko'),
+            to_store_uuid: data?.to_store_uuid,
+            to_store_nm: data?.to_store_nm,
+            to_location_uuid: data?.to_location_uuid,
+            to_location_nm: data?.to_location_nm,
+            order_qty: data?.order_qty, //지시수량
+            total_qty: data?.total_qty, //생산수량
+            qty: data?.qty, //양품수량
+            reject_qty: data?.reject_qty, //부적합수량
+            lot_no: data?.lot_no,
+            remark: data?.remark,
+            mold_uuid: data?.mold_uuid, // 금형UUID
+            mold_nm: data?.mold_nm, // 금형명
+            mold_cavity: data?.mold_cavity, // 금형Cavity
+          }
+        }
+      }
+    );
+  }
+
+  const onHeaderClick = async (ev, _work_uuid?) => {
     const {rowKey, targetType} = ev;
 
     if (targetType === 'cell' ) {
@@ -708,11 +759,15 @@ export const PgPrdWork = () => {
         const searchParams = searchInfo.values;
         let row:any = {};
         if (_work_uuid) {
-          row = ev?.instance?.store?.data?.rawData?.find(el => el?.work_uuid === _work_uuid);
-
+          // row = ev?.instance?.store?.data?.rawData?.find(el => el?.work_uuid === _work_uuid);
+          await getData(null, URL_PATH_PRD.WORK.GET.WORK.replace('{uuid}', _work_uuid)).then((res) => {
+            row = res[0];
+          });
         } else {
           row = ev?.instance?.store?.data?.rawData?.find(el => el?.rowKey === rowKey);
         }
+
+        setInfoData(row);
 
         const work_uuid = row?.work_uuid;
         const prod_uuid = row?.prod_uuid;
@@ -723,61 +778,7 @@ export const PgPrdWork = () => {
 
         //#region  공장정보 및 생산정보 값 세팅
         // 공장정보 및 생산정보 값 세팅
-        infoDispatch(
-          {
-            type:'CHANGE_ALL', 
-            value:{
-              orderInfo: {
-                prod_uuid: row?.prod_uuid,
-                prod_no: row?.prod_no,
-                prod_nm: row?.prod_nm,
-                item_type_uuid: row?.item_type_uuid,
-                item_type_nm: row?.item_type_nm,
-                prod_type_uuid: row?.prod_type_uuid,
-                prod_type_nm: row?.prod_type_nm,
-                model_uuid: row?.model_uuid,
-                model_nm: row?.model_nm,
-                rev: row?.rev,
-                prod_std: row?.prod_std,
-                unit_uuid: row?.unit_uuid,
-                unit_nm: row?.unit_nm,
-                equip_uuid: row?.equip_uuid,
-                equip_nm: row?.equip_nm,
-                proc_uuid: row?.proc_uuid,
-                proc_nm: row?.proc_nm,
-                shift_uuid: row?.shift_uuid,
-                shift_nm: row?.shift_nm,
-                workings_uuid: row?.working_uuid,
-                workings_nm: row?.working_nm,
-                order_remark: row?.order_remark,
-              },
-
-              workInfo: {
-                work_uuid: work_uuid,
-                complete_fg: complete_fg,
-                start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
-                end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
-                _start_date: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
-                _end_date: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
-                _start_time: [null, undefined, ''].includes(row?.start_date) ? null : dayjs(row?.start_date).locale('ko'),
-                _end_time: [null, undefined, ''].includes(row?.end_date) ? null : dayjs(row?.end_date).locale('ko'),
-                to_store_uuid: row?.to_store_uuid,
-                to_store_nm: row?.to_store_nm,
-                to_location_uuid: row?.to_location_uuid,
-                to_location_nm: row?.to_location_nm,
-                order_qty: row?.order_qty, //지시수량
-                total_qty: row?.total_qty, //생산수량
-                qty: row?.qty, //양품수량
-                reject_qty: row?.reject_qty, //부적합수량
-                lot_no: row?.lot_no,
-                remark: row?.remark,
-                mold_uuid: row?.mold_uuid, // 금형UUID
-                mold_nm: row?.mold_nm, // 금형명
-                mold_cavity: row?.mold_cavity, // 금형Cavity
-              }
-            }
-          }
-        );
+        
         //#endregion
 
         //#region 하위 데이터들 조회

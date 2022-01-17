@@ -10,6 +10,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -441,13 +442,22 @@ export const PgOutReceive = () => {
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm']},
+    {
+      type:'text', 
+      id:'partner_nm', 
+      label:'거래처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKey:'거래처관리', 
+      popupKeys:['partner_uuid', 'partner_nm'],
+      handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
+    },
     {type:'text', id:'supplier_nm', label:'공급처', disabled:true, usePopup:true, popupKey:'공급처관리', popupKeys:['supplier_uuid', 'supplier_nm']},
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_price'].includes(el?.id))
           el['disabled'] = false; 
 
@@ -460,7 +470,7 @@ export const PgOutReceive = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['partner_nm', 'reg_date', 'total_price'].includes(el?.id))
           el['disabled'] = false;
 

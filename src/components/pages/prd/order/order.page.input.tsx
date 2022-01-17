@@ -1,7 +1,7 @@
 import Grid from '@toast-ui/react-grid'
-import { Space, Modal, Spin } from 'antd';
+import { Space, Modal, Spin, message } from 'antd';
 import React, { useRef, useState } from 'react';
-import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridPopupProps, TGridPopupInfos } from '~/components/UI';
+import { Button, Container, Datagrid, getPopupForm, GridPopup, IDatagridProps, IGridPopupProps, TGridPopupInfos } from '~/components/UI';
 import { getData, getModifiedRows, getPageName, getPermissions, saveGridData } from '~/functions';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './order.page.util';
 
@@ -101,7 +101,57 @@ export const orderInput = () => {
         {header: '발주 ', name:'updated_nm', width:100, align:'center', filter:'text', format:'text'},
       ],
       gridMode:'multi-select'
-    }
+    },
+    { // 창고 팝업
+      columnNames: [
+        {original:'from_store_uuid', popup:'store_uuid'},
+        {original:'from_store_nm', popup:'store_nm'},
+      ],
+      columns: getPopupForm('창고관리').datagridProps?.columns,
+      dataApiSettings: (el: any) => {
+        const {rowKey, instance} = el;
+        const {rawData} = instance.store.data;
+        
+        return {
+          uriPath: getPopupForm('창고관리').uriPath,
+          params: { store_type: 'available' },
+          onAfterOk: () => {
+            rawData[rowKey].from_location_uuid = '';
+            rawData[rowKey].from_location_nm = '';
+          }
+        }
+      },
+      gridMode: 'select',
+    },
+    { // 위치 팝업
+      columnNames: [
+        {original:'from_location_uuid', popup:'location_uuid'},
+        {original:'from_location_nm', popup:'location_nm'},
+      ],
+      columns: getPopupForm('위치관리').datagridProps?.columns,
+      dataApiSettings:(el: any) => {
+        const {rowKey, instance} = el;
+        const {rawData} = instance.store.data;
+
+        const storeUuid = rawData[rowKey]?.from_store_uuid;
+
+        return {
+          uriPath: getPopupForm('위치관리').uriPath,
+          params: {
+            store_uuid: storeUuid,
+          },
+          onInterlock: ()=> {
+            if(storeUuid) {
+              return true;
+            } else {
+              message.warning('창고를 먼저 선택해주세요.')
+              return false;
+            }
+          }
+        }
+      },
+      gridMode: 'select',
+    },
   ];
 
   /** 메인 그리드 속성 */
@@ -144,7 +194,7 @@ export const orderInput = () => {
       {header:'소요량', name:'c_usage', width:80, hidden:false, editable:true, format:'number', requiredField:true},
       {header:'출고 창고UUID', name:'from_store_uuid', width:200, hidden:true, format:'text'},
       // {header:'출고 창고코드', name:'from_store_cd', width:200, hidden:true, format:'text'},
-      {header:'출고 창고명', name:'from_store_nm', width:150, hidden:false, editable:true, format:'combo', align:'center', requiredField:true},
+      {header:'출고 창고명', name:'from_store_nm', width:150, hidden:false, editable:true, format:'popup', align:'center', requiredField:true},
       // relations:[
       //   {
       //     targetNames:['from_location_nm'],
@@ -169,7 +219,7 @@ export const orderInput = () => {
       // ]},
       {header:'출고 위치UUID', name:'from_location_uuid', width:200, hidden:true, format:'text'},
       {header:'출고 위치코드', name:'from_location_cd', width:200, hidden:true, format:'text'},
-      {header:'출고 위치명', name:'from_location_nm', width:150, hidden:false, editable:true, format:'combo', align:'center', requiredField:true},
+      {header:'출고 위치명', name:'from_location_nm', width:150, hidden:false, editable:true, format:'popup', align:'center', requiredField:true},
       {header:'비고', name:'remark', width:150, hidden:false, editable:true, format:'text'},
     ],
     /** 그리드 데이터 */
@@ -186,28 +236,6 @@ export const orderInput = () => {
         dataApiSettings: {
           uriPath: '/std/units',
           params: {}
-        }
-      },
-      { // 출고창고 콤보박스
-        columnNames: [
-          {codeColName:{original:'from_store_uuid', popup:'store_uuid'}, textColName:{original:'from_store_nm', popup:'store_nm'}},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/stores',
-          params: {
-            store_type: 'available'
-          }
-        }
-      },
-      { // 출고위치 콤보박스
-        columnNames: [
-          {codeColName:{original:'from_location_uuid', popup:'location_uuid'}, textColName:{original:'from_location_nm', popup:'location_nm'}},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/locations',
-          params: {
-            // store_uuid: ''
-          }
         }
       },
     ],

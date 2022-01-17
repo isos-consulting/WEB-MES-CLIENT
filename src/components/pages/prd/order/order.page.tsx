@@ -349,7 +349,7 @@ export const PgPrdOrder = () => {
 
   /** 항목 수정 팝업 속성 */
   const editGridColumns = cloneObject(gridInfo.columns)?.map((el) => {
-    if (!['order_no', 'workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
+    if (!['workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
       el['editable'] = false;
     return el;
   })
@@ -366,7 +366,7 @@ export const PgPrdOrder = () => {
     /** 팝업 아이디 */
     popupId: 'ORDER_EDIT_GRID_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '작업지시 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
     onOk: () => {
