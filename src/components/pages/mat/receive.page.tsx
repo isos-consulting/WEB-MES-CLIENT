@@ -108,9 +108,18 @@ export const PgMatReceive = () => {
           {header: '창고코드', name:'store_cd', width:ENUM_WIDTH.M, filter:'text'},
           {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text'},
         ],
-        dataApiSettings: {
-          uriPath: '/std/stores',
-          params: {store_type:'available'}
+        dataApiSettings: (ev) => {
+          const {rowKey, instance} = ev;
+          const {rawData} = instance?.store?.data;
+
+          return {
+            uriPath: '/std/stores',
+            params: {store_type:'available'},
+            onAfterOk:() => {
+              rawData[rowKey].to_location_uuid = '';
+              rawData[rowKey].to_location_nm = '';
+            }
+          }
         },
         gridMode:'select'
       },
@@ -126,13 +135,13 @@ export const PgMatReceive = () => {
           {header: '위치명', name:'location_nm', width:ENUM_WIDTH.L, filter:'text'},
         ],
         dataApiSettings: (ev) => {
-          const {rowKey, instance} = ev;3
+          const {rowKey, instance} = ev;
           const {rawData} = instance?.store?.data;
       
           const storeUuid = rawData[rowKey]?.to_store_uuid
           return {
             uriPath: '/std/locations',
-            params: {store_uuid: storeUuid ?? ''}
+            params: {store_uuid: storeUuid ?? ''},
           }
         },
         gridMode:'select'
