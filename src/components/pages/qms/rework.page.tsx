@@ -170,10 +170,23 @@ export const PgQmsRework = () => {
           {header:'재작업유형코드', name:'rework_type_cd', hidden:true},
           {header:'재작업유형', name:'rework_type_nm', filter:'text'},
         ],
-        dataApiSettings: {
-          uriPath: '/adm/rework-types',
-          params: {}
+        dataApiSettings: (el: any) => {
+          const {rowKey, instance} = el;
+          const {rawData} = instance?.store.data;
+
+          const rowData = rawData[rowKey];
+          return {
+            uriPath: '/adm/rework-types',
+            params: {},
+            onAfterOk: () => {
+              rowData.to_store_uuid = '';
+              rowData.to_store_nm = '';
+              rowData.to_location_uuid = '';
+              rowData.to_location_nm = '';
+            },
+          }
         },
+      
         gridMode: 'select',
       },
     ],
