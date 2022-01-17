@@ -31,6 +31,21 @@ export const PgPrdWorkReport = () => {
     onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'생산일'},
+
+    {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+      options: [
+        {code:'none', text:'없음'},
+        {code:'proc', text:'공정별'},
+        {code:'prod', text:'품목별'},
+        {code:'date', text:'일자별'},
+      ]
+    },
+  ]);
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -50,7 +65,8 @@ export const PgPrdWorkReport = () => {
         }
 
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -59,18 +75,7 @@ export const PgPrdWorkReport = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
 
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'생산일'},
-
-    {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
-      options: [
-        {code:'proc', text:'공정별'},
-        {code:'prod', text:'품목별'},
-        {code:'date', text:'일자별'},
-      ]
-    },
-  ]);
+  
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -140,6 +145,7 @@ export const PgPrdWorkReport = () => {
         break;
 
       case 'date':
+      case 'none':
       default:
         _columns = [
             {header: '실적일자', width:ENUM_WIDTH.M,name:'reg_date',  filter:'date', format:'date'},
@@ -168,6 +174,8 @@ export const PgPrdWorkReport = () => {
         ];
         break;
     }
+
+    grid?.setGridColumns(_columns);
 
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
@@ -210,32 +218,18 @@ export const PgPrdWorkReport = () => {
         ];
         break;
 
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  // 서브토탈 컬럼 세팅
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  // 서브토탈 그리드 숨김 여부
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
 
   // 서브토탈 타이틀 세팅
   useLayoutEffect(() => {
@@ -281,6 +275,10 @@ export const PgPrdWorkReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
+
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
+    }
 
     let data = [];
 
