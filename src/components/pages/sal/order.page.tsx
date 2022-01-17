@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 /** 완료상태 컬럼 renderer 조건 */
 const completeCondition = [
@@ -302,14 +302,25 @@ export const PgSalOrder = () => {
     {type:'text', id:'partner_uuid', label:'거래처UUID', disabled:true, hidden:true},
     {type:'text', id:'stmt_no', label:'전표번호', disabled:true},
     {type:'date', id:'reg_date', label:'수주일', disabled:true},
-    {type:'text', id:'partner_nm', label:'거래처', disabled:true, usePopup:true, popupKey:'거래처관리', popupKeys:['partner_uuid', 'partner_nm'], params: {'partner_fg': 2}, required: true },
+    {
+      type:'text', 
+      id:'partner_nm', 
+      label:'거래처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKey:'거래처관리', 
+      popupKeys:['partner_uuid', 'partner_nm'], 
+      params: {'partner_fg': 2}, 
+      required: true,
+      handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
+     },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
     {type:'number', id:'total_price', label:'합계금액', disabled:true, decimal:ENUM_DECIMAL.DEC_PRICE},
     {type:'text', id:'remark', label:'비고', disabled:!(detailGrid.gridInfo.gridMode === 'update')},
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
@@ -323,7 +334,7 @@ export const PgSalOrder = () => {
   );
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
-    cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
+    cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
         if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
           el['disabled'] = false;
         }
