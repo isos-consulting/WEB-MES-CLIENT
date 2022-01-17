@@ -179,6 +179,12 @@ export const PgQmsRework = () => {
             uriPath: '/adm/rework-types',
             params: {},
             onAfterOk: () => {
+              if (rowData.rework_type_nm === '분해') {
+                message.warn('분해 판정은 분해이력 추가 버튼을 이용해 주세요');
+                rowData.rework_type_cd = '';
+                rowData.rework_type_nm = '';
+                return;
+              }
               rowData.to_store_uuid = '';
               rowData.to_store_nm = '';
               rowData.to_location_uuid = '';
