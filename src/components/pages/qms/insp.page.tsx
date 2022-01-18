@@ -429,6 +429,7 @@ export const PgQmsInsp = () => {
     {type:'date', id:'reg_date', label:'생성일자', disabled:true},
     {type:'text', id:'contents', label:'개정내역', disabled:true},
     {type:'text', id:'remark', label:'비고', disabled:true},
+    {type:'text', id:'apply_fg', label:'적용여부', disabled:true, hidden:true},
   ]);
 
 
@@ -438,6 +439,9 @@ export const PgQmsInsp = () => {
       (el) => {
         if ( !['insp_no'].includes(el?.id)){
           el['disabled'] = false;
+        }
+        if (['apply_fg'].includes(el?.id)){
+          el['default'] = true;
         }
         return el;
       }
