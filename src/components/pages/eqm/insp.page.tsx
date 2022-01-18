@@ -409,7 +409,11 @@ export const PgEqmInsp = () => {
     'NEW_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        el['disabled'] = false;
+        if ( ['insp_no'].includes(el?.id) ) {
+
+        } else {
+          el['disabled'] = false;
+        }
         return el;
       }
     ),
@@ -418,7 +422,7 @@ export const PgEqmInsp = () => {
     'ADD_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        if (['insp_no', 'contents', 'remark'].includes(el?.id))
+        if (['contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
         return el;
       }
@@ -428,7 +432,7 @@ export const PgEqmInsp = () => {
     'EDIT_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        if (['insp_no', 'contents', 'remark'].includes(el?.id))
+        if (['contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
         return el;
       }

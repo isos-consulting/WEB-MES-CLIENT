@@ -206,7 +206,7 @@ export const PgMatReceive = () => {
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
     cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (el?.id !== 'total_qty' && el?.id !== 'total_price') {
+        if (el?.id !== 'total_qty' && el?.id !== 'total_price' && el?.id !== 'stmt_no') {
           el['disabled'] = false;
         }
 
@@ -220,7 +220,7 @@ export const PgMatReceive = () => {
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
   cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (el?.id !== 'total_qty' && el?.id !== 'total_price' && el?.id !== 'partner_nm') {
+        if (el?.id !== 'total_qty' && el?.id !== 'total_price' && el?.id !== 'partner_nm' && el?.id !== 'stmt_no') {
           el['disabled'] = false;
         }
 

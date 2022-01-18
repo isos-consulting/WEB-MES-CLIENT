@@ -303,7 +303,7 @@ export const PgSalReturn = () => {
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
     cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (!['total_price'].includes(el?.id))
+        if (!['total_price', 'stmt_no'].includes(el?.id))
           el['disabled'] = false; 
 
         if (el?.id === 'reg_date')
@@ -316,7 +316,7 @@ export const PgSalReturn = () => {
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
     cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (!['partner_nm', 'reg_date', 'total_price'].includes(el?.id))
+        if (!['partner_nm', 'reg_date', 'total_price', 'stmt_no'].includes(el?.id))
           el['disabled'] = false;
 
         if (el?.id === 'reg_date')
