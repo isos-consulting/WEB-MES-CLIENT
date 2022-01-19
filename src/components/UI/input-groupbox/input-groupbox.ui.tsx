@@ -175,6 +175,12 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
         }
       });
 
+      inputItems?.filter((item) => {
+        return item?.useCheckbox === true;
+      }).map((item) => {
+        result[(item.name || item.id) + '_chk'] = item?.defaultChecked;
+      });
+
       return result;
 
     } else {
@@ -299,7 +305,6 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
     setValues(values);
   }
 
-
   return (
     <Container
       id={props.id}
@@ -411,10 +416,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                 {item?.useCheckbox ?
                                   <Checkbox
                                     id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                    checked={item.defaultChecked === true ? true : false}
+                                    checked={values[(item.name || item.id) + '_chk']}
                                     onChange={async (e) => {
                                       await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-      
                                       if (item?.onAfterChange)
                                         item?.onAfterChange(e);
                                     }}
@@ -452,10 +456,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={item.defaultChecked === true ? true : false}
+                                  checked={values[(item.name || item.id) + '_chk']}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-                                    
                                     if (item?.onAfterChange)
                                       item?.onAfterChange(e);
                                   }}
@@ -541,10 +544,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={item.defaultChecked === true ? true : false}
+                                  checked={values[(item.name || item.id) + '_chk']}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-    
                                     if (item?.onAfterChange)
                                       item?.onAfterChange(e);
                                   }}
@@ -724,10 +726,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={item.defaultChecked === true ? true : false}
+                                  checked={values[(item.name || item.id) + '_chk']}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-    
                                     if (item?.onAfterChange)
                                       item?.onAfterChange(e);
                                   }}
@@ -765,10 +766,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                               {item?.useCheckbox ?
                                 <Checkbox
                                   id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                  checked={item.defaultChecked === true ? true : false}
+                                  checked={values[(item.name || item.id) + '_chk']}
                                   onChange={async (e) => {
                                     await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-
                                     if (item?.onAfterChange)
                                       item?.onAfterChange(e);
                                   }}
@@ -854,10 +854,9 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                             {item?.useCheckbox ?
                               <Checkbox
                                 id={item.id + '_chk'} code={item.id + '_chk'} name={(item.name || item.id) + '_chk'} text={item.label}
-                                checked={item.defaultChecked === true ? true : false}
+                                checked={values[(item.name || item.id) + '_chk']}
                                 onChange={async (e) => {
                                   await setFieldValued((item.name || item.id) + '_chk', e.target.checked);
-  
                                   if (item?.onAfterChange)
                                     item?.onAfterChange(e);
                                 }}
