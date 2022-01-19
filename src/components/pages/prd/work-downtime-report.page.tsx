@@ -62,7 +62,7 @@ export const PgPrdWorkDowntimeReport = () => {
 
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['work_start_date', 'work_end_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
+    {type:'daterange', id:'reg_date', ids:['work_start_date', 'work_end_date'], defaults:[getToday(-7), getToday()], label:'작업일'},
 
     {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
       options: [
@@ -271,11 +271,6 @@ export const PgPrdWorkDowntimeReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['work_start_date', 'work_end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-    
-    if (!values?.reg_date_chk) {
-      delete searchParams['work_start_date'];
-      delete searchParams['work_end_date'];
-    }
 
     let data = [];
 
