@@ -31,6 +31,30 @@ export const PgSalOrdersReport = () => {
     onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'수주일', useCheckbox:true, defaultChecked:true},
+    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-7), getToday()], label:'납기일', useCheckbox:true},
+
+    {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+      options: [
+        {code:'none', text:'없음'},
+        {code:'partner', text:'거래처별'},
+        {code:'prod', text:'품목별'},
+        {code:'date', text:'일자별'},
+      ]
+    },
+
+    {type:'radio', id:'complete_state', default:'all', label:'완료구분',
+      options: [
+        {code:'all', text:'전체'},
+        {code:'complete', text:'완료'},
+        {code:'incomplete', text:'미완료'},
+      ]
+    }
+  ]);
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -50,6 +74,7 @@ export const PgSalOrdersReport = () => {
         },
       ]
     },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -57,28 +82,6 @@ export const PgSalOrdersReport = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
-
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'수주일', useCheckbox:true, defaultChecked:true},
-    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-7), getToday()], label:'납기일', useCheckbox:true},
-
-    {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
-      options: [
-        {code:'partner', text:'거래처별'},
-        {code:'prod', text:'품목별'},
-        {code:'date', text:'일자별'},
-      ]
-    },
-
-    {type:'radio', id:'complete_state', default:'all', label:'완료구분',
-      options: [
-        {code:'all', text:'전체'},
-        {code:'complete', text:'완료'},
-        {code:'incomplete', text:'미완료'},
-      ]
-    }
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -119,6 +122,7 @@ export const PgSalOrdersReport = () => {
         ];
         break;
 
+      case 'none':
       case 'date':
         _columns = [
           {header: '제품수주상세UUID', name:'order_detail_uuid', alias:'uuid', hidden:true},
@@ -182,6 +186,8 @@ export const PgSalOrdersReport = () => {
         ];
         break;
     }
+
+    grid?.setGridColumns(_columns);
 
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
@@ -234,31 +240,20 @@ export const PgSalOrdersReport = () => {
         ];
         break;
 
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+
+    subGrid?.setGridColumns(_columns);
+
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
-
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'prod' ? '품목별'
@@ -313,6 +308,10 @@ export const PgSalOrdersReport = () => {
     if (!values?.due_date_chk) {
       delete searchParams['start_due_date'];
       delete searchParams['end_due_date'];
+    }
+
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
     }
 
     let data = [];
