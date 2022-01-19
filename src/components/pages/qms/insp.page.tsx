@@ -485,7 +485,7 @@ export const PgQmsInsp = () => {
     'AMEND_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        if (['contents', 'remark'].includes(el?.id))
+        if (['reg_date', 'contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
         return el;
       }
