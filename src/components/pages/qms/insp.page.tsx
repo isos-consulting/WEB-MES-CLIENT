@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
 import { Button, getPopupForm, IGridPopupProps, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, isModified, onAsyncFunction } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified, onAsyncFunction } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
 import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
@@ -456,6 +456,11 @@ export const PgQmsInsp = () => {
         if (['apply_fg'].includes(el?.id)){
           el['default'] = true;
         }
+        el['disabled'] = false;
+        
+        if ( el.id === 'reg_date'){
+          el['default'] = getToday();
+        }
         return el;
       }
     ),
@@ -547,7 +552,11 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (amendDataPopupGridVisible === true) {
       // ❗ 개정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      amendDataPopupInputInfo?.setValues(detailSubInputInfo?.values);
+      // 개정 팝업 시 생성일자 항목을 오늘 날짜로 변경
+      const inputInfoValues = cloneDeep(detailSubInputInfo?.values);
+      inputInfoValues.reg_date = getToday();
+
+      amendDataPopupInputInfo?.setValues(inputInfoValues);
       amendDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
     } else {
       amendDataPopupInputInfo?.setValues({});
