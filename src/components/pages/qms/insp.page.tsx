@@ -1,10 +1,10 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { Button, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, isModified, onAsyncFunction } from "~/functions";
+import { Button, getPopupForm, IGridPopupProps, useGrid, useSearchbox } from "~/components/UI";
+import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified, onAsyncFunction } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
-import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
+import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
@@ -35,6 +35,7 @@ export const PgQmsInsp = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [addDataPopupGridVisible, setAddDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
+  const [amendDataPopupGridVisible, setAmendDataPopupGridVisible] = useState<boolean>(false);
 
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
@@ -255,6 +256,17 @@ export const PgQmsInsp = () => {
     gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
   });
 
+  const amendDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', [
+    {header:'행 삭제', name:'delete_row', width:ENUM_WIDTH.S, format:'check', editable: true},
+    ...newDataPopupGrid.gridInfo.columns
+    ], {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    header: detailSubGrid?.gridInfo?.header,
+    rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
+    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+  });
+
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {
 
@@ -326,6 +338,7 @@ export const PgQmsInsp = () => {
   const newDataPopupSearchInfo = null;
   const addDataPopupSearchInfo = null;
   const editDataPopupSearchInfo = null;
+  const amendDataPopupSearchInfo = null;
 
   /** 조회조건 Event */
   const onSearchHeader = async (values) => {
@@ -429,6 +442,7 @@ export const PgQmsInsp = () => {
     {type:'date', id:'reg_date', label:'생성일자', disabled:true},
     {type:'text', id:'contents', label:'개정내역', disabled:true},
     {type:'text', id:'remark', label:'비고', disabled:true},
+    {type:'text', id:'apply_fg', label:'적용여부', disabled:true, hidden:true},
   ]);
 
 
@@ -436,7 +450,17 @@ export const PgQmsInsp = () => {
     'NEW_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
+        if ( !['insp_no'].includes(el?.id)){
+          el['disabled'] = false;
+        }
+        if (['apply_fg'].includes(el?.id)){
+          el['default'] = true;
+        }
         el['disabled'] = false;
+        
+        if ( el.id === 'reg_date'){
+          el['default'] = getToday();
+        }
         return el;
       }
     ),
@@ -445,7 +469,7 @@ export const PgQmsInsp = () => {
     'ADD_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        if (['insp_no', 'contents', 'remark'].includes(el?.id))
+        if (['contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
         return el;
       }
@@ -455,7 +479,18 @@ export const PgQmsInsp = () => {
     'EDIT_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
       (el) => {
-        if (['insp_no', 'contents', 'remark'].includes(el?.id))
+        if (['contents', 'remark'].includes(el?.id))
+          el['disabled'] = false;
+        return el;
+      }
+    ),
+  );
+
+  const amendDataPopupInputInfo = useInputGroup(
+    'AMEND_DATA_POPUP_INPUTBOX',
+    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(
+      (el) => {
+        if (['reg_date', 'contents', 'remark'].includes(el?.id))
           el['disabled'] = false;
         return el;
       }
@@ -515,6 +550,22 @@ export const PgQmsInsp = () => {
   }, [editDataPopupGridVisible, detailSubInputInfo.values, detailSubGrid.gridInfo.data]);
 
   useLayoutEffect(() => {
+    if (amendDataPopupGridVisible === true) {
+      // ❗ 개정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
+      // 개정 팝업 시 생성일자 항목을 오늘 날짜로 변경
+      const inputInfoValues = cloneDeep(detailSubInputInfo?.values);
+      inputInfoValues.reg_date = getToday();
+
+      amendDataPopupInputInfo?.setValues(inputInfoValues);
+      amendDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
+    } else {
+      amendDataPopupInputInfo?.setValues({});
+      amendDataPopupGrid?.setGridData([]);
+    }
+
+  }, [amendDataPopupGridVisible, detailSubInputInfo.values, detailSubGrid.gridInfo.data]);
+
+  useLayoutEffect(() => {
     const grid = (
       newDataPopupGridVisible === true ?
         newDataPopupGrid
@@ -522,6 +573,8 @@ export const PgQmsInsp = () => {
         addDataPopupGrid
       : editDataPopupGridVisible === true ?
         editDataPopupGrid
+      : amendDataPopupGridVisible === true ?
+        amendDataPopupGrid
       : detailSubGrid
     );
     const inputInfo = (
@@ -531,11 +584,12 @@ export const PgQmsInsp = () => {
         addDataPopupInputInfo
       : editDataPopupGridVisible === true ?
         editDataPopupInputInfo
+      : amendDataPopupGridVisible === true ?
+        amendDataPopupInputInfo
       : detailSubInputInfo
     );
     const value = inputInfo?.values?.insp_type_cd;
     if (!value) return;
-
     const columns = cloneDeep(grid?.gridInfo?.columns)?.map(
       (el) => {
         if (['worker_sample_cnt', 'worker_insp_cycle'].includes(el?.name)) {
@@ -545,7 +599,7 @@ export const PgQmsInsp = () => {
       }
     );
     grid?.setGridColumns(columns);
-  }, [detailSubInputInfo?.values?.insp_type_cd, newDataPopupInputInfo?.values?.insp_type_cd, addDataPopupInputInfo?.values?.insp_type_cd, editDataPopupInputInfo?.values?.insp_type_cd]);
+  }, [detailSubInputInfo?.values?.insp_type_cd, newDataPopupInputInfo?.values?.insp_type_cd, addDataPopupInputInfo?.values?.insp_type_cd, editDataPopupInputInfo?.values?.insp_type_cd, amendDataPopupInputInfo?.values?.insp_type_cd]);
   //#endregion
 
   const onSave = () => {
@@ -706,7 +760,7 @@ export const PgQmsInsp = () => {
   }
 
   //#region 🔶 팝업 Footer 관련
-  type TPopup = 'new' | 'add' | 'edit' | null;
+  type TPopup = 'new' | 'add' | 'edit' | 'amend' | null;
 
   /** 기준서 개정 또는 수정 */
   const onAmendInsp = (type:'개정'|'수정', popupType:TPopup) => {
@@ -715,6 +769,8 @@ export const PgQmsInsp = () => {
         addDataPopupGrid
       : popupType === 'edit' ?
         editDataPopupGrid
+      : popupType === 'amend' ?
+        amendDataPopupGrid
       : null
     );
 
@@ -723,6 +779,8 @@ export const PgQmsInsp = () => {
         addDataPopupInputInfo
       : popupType === 'edit' ?
         editDataPopupInputInfo
+      : popupType === 'amend' ?
+        amendDataPopupInputInfo
       : null
     );
 
@@ -731,6 +789,8 @@ export const PgQmsInsp = () => {
         setAddDataPopupGridVisible
       : popupType === 'edit' ?
         setEditDataPopupGridVisible
+      : popupType === 'amend' ?
+        setAmendDataPopupGridVisible
       : null
     );
 
@@ -748,11 +808,24 @@ export const PgQmsInsp = () => {
 
     const optionSaveParams = cloneDeep(inputInfo?.values);
 
-    console.log('optionSaveParams', optionSaveParams)
+    let rawData = null;
+    let detailData = null;
 
-    if (methodType === 'post') {
+    if (methodType === 'post' && type === '개정') {
       // post로 저장할 경우 uuid키를 제거
       delete optionSaveParams['uuid'];
+      delete optionSaveParams['insp_no'];
+
+      // 바로 적용
+      optionSaveParams['apply_fg'] = true;
+
+      // 행 삭제 체크되어 있는 행은 제거
+      rawData = cloneDeep(grid?.gridRef.current.getInstance().store.data.rawData).filter((raw) => {
+        return raw['delete_row'] === false
+      });
+      detailData = {
+        createdRows: rawData,
+      };
     }
 
     dataGridEvents.onSave('headerInclude', {
@@ -761,6 +834,7 @@ export const PgQmsInsp = () => {
       columns: grid?.gridInfo?.columns,
       saveUriPath: grid?.gridInfo?.saveUriPath,
       methodType: methodType,
+      modifiedData: detailData ? detailData : null,
     }, optionSaveParams, modal,
       async ({success, datas}) => {
         if (success) {
@@ -802,9 +876,6 @@ export const PgQmsInsp = () => {
     const onCancel = () => {
       setVisible(false);
     }
-    const onAmend = () => {
-      onAmendInsp('개정', popupType);
-    }
     const onEdit = () => {
       onAmendInsp('수정', popupType);
     }
@@ -812,12 +883,53 @@ export const PgQmsInsp = () => {
     return (
       <div>
         <Button widthSize='small' heightSize='small' fontSize='small' onClick={onCancel}>취소</Button>
-        <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' colorType='delete' onClick={onAmend}>개정하기</Button>
         <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' colorType='basic' onClick={onEdit}>수정하기</Button>
       </div>
     );
   }
   //#endregion
+
+  // 개정 팝업 관련
+  // 그리드
+  const QMS_INSP_EXTRA_POPUP:IGridPopupProps = {
+    ...amendDataPopupGrid?.gridInfo,
+    title: '검사기준서 관리 - 개정',
+    gridId: 'EXTRA_GRID_QMS_INSP',
+    popupId: 'EXTRA_GRID_QMS_INSP_POPUP',
+    columns: amendDataPopupGrid?.gridInfo.columns,
+    defaultVisible: false,
+    visible: amendDataPopupGridVisible,
+    okText:'개정하기',
+    onOk:() => onAmendInsp('개정', 'amend'),
+    cancelText:'취소',
+    onCancel: () => setAmendDataPopupGridVisible(false),
+    ref: amendDataPopupGrid?.gridRef,
+    parentGridRef:detailGrid?.gridRef,
+    gridMode:'create',
+    defaultData:detailGrid?.gridInfo.data,
+    data: amendDataPopupGrid?.gridInfo.data,
+    saveType:'headerInclude',
+    searchUriPath:amendDataPopupGrid?.gridInfo.searchUriPath,
+    searchParams:amendDataPopupGrid?.gridInfo.searchParams,
+    saveUriPath:amendDataPopupGrid?.gridInfo.saveUriPath,
+    saveParams:amendDataPopupGrid?.gridInfo.saveParams,
+    searchProps:amendDataPopupSearchInfo?.props,
+    inputProps:amendDataPopupInputInfo?.props,
+    gridComboInfo:amendDataPopupGrid?.gridInfo.gridComboInfo,
+    gridPopupInfo:amendDataPopupGrid?.gridInfo.gridPopupInfo,
+    rowAddPopupInfo:amendDataPopupGrid?.gridInfo.rowAddPopupInfo,
+  }
+  // 버튼
+  const QMS_INSP_EXTRA_BUTTON: IExtraButton = {
+    text: '개정',
+    ImageType: 'edit',
+    onClick: () => {
+      if ( onCheckUuid() === false ) return;
+      setAmendDataPopupGridVisible(true);
+    },
+  };
+  const extraGridPopups:TExtraGridPopups = [QMS_INSP_EXTRA_POPUP];
+  const headerExtraButtons = [ QMS_INSP_EXTRA_BUTTON ];
 
   //#region 🔶템플릿에 값 전달
   const props:ITpTripleGridProps = {
@@ -883,10 +995,12 @@ export const PgQmsInsp = () => {
         text:'신규 기준서 등록',
       },
       edit: {
-        text: '수정/개정',
+        text: '수정',
         widthSize: 'auto'
       },
-    }
+    },
+    headerExtraButtons,
+    extraGridPopups,
   };
   //#endregion
 

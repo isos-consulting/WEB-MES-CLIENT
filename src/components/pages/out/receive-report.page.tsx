@@ -31,6 +31,22 @@ export const PgOutReceiveReport = () => {
     onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+
+    /** 조회조건 관리 */
+    const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+      {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'입하일', useCheckbox:true, defaultChecked:true},
+      {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-7), getToday()], label:'납기일', useCheckbox:true},
+  
+      {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+        options: [
+          {code:'none', text:'없음'},
+          {code:'partner', text:'거래처별'},
+          {code:'prod', text:'품목별'},
+          {code:'date', text:'일자별'},
+        ]
+      },
+    ]);
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -49,7 +65,8 @@ export const PgOutReceiveReport = () => {
           content: '합계',
         },
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -57,20 +74,6 @@ export const PgOutReceiveReport = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
-
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'입하일', useCheckbox:true},
-    {type:'daterange', id:'due_date', ids:['start_due_date', 'end_due_date'], defaults:[getToday(-7), getToday()], label:'납기일', useCheckbox:true},
-
-    {type:'radio', id:'sort_type', default:'partner', label:'조회기준',
-      options: [
-        {code:'partner', text:'거래처별'},
-        {code:'prod', text:'품목별'},
-        {code:'date', text:'일자별'},
-      ]
-    },
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -106,7 +109,8 @@ export const PgOutReceiveReport = () => {
           {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
         ];
         break;
-
+      
+      case 'none':
       case 'date':
         _columns = [
           {header: '외주입하상세UUID', name:'release_detail_uuid', alias:'uuid', hidden:true},
@@ -162,6 +166,8 @@ export const PgOutReceiveReport = () => {
         ];
         break;
     }
+    
+    grid?.setGridColumns(_columns);
 
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
@@ -208,31 +214,18 @@ export const PgOutReceiveReport = () => {
         ];
         break;
 
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
-
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'prod' ? '품목별'
@@ -288,6 +281,11 @@ export const PgOutReceiveReport = () => {
       delete searchParams['start_due_date'];
       delete searchParams['end_due_date'];
     }
+
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
+    }
+    
 
     let data = [];
 

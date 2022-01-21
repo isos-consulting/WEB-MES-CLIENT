@@ -129,10 +129,25 @@ export const PgQmsRework = () => {
           {original:'to_store_nm', popup:'store_nm'},
         ],
         columns: STORE_POPUP.datagridProps?.columns,
-        dataApiSettings: {
-          uriPath: STORE_POPUP.uriPath,
-          params: {
-            store_type: 'all',
+        dataApiSettings: (el: any) => {
+          const {rowKey, instance} = el;
+          const {rawData} = instance?.store.data;
+
+          const rowData = rawData[rowKey];
+          
+          return {
+            uriPath: STORE_POPUP.uriPath,
+            params: {
+              store_type: 'all',
+            },
+            onInterlock: ()=> {
+              if(rowData?.rework_type_nm === '재작업') {
+                return true;
+              } else {
+                message.warning('부적합판정이 재작업일 때 입력 가능합니다');
+                return false;
+              }
+            }
           }
         },
         gridMode: 'select',
@@ -155,9 +170,25 @@ export const PgQmsRework = () => {
           {original:'to_location_nm', popup:'location_nm'},
         ],
         columns: LOCATION_POPUP.datagridProps?.columns,
-        dataApiSettings: {
-          uriPath: LOCATION_POPUP.uriPath,
-          params: {}
+        dataApiSettings: (el) => {
+          const {rowKey, instance} = el;
+          const {rawData} = instance?.store.data;
+
+          const rowData = rawData[rowKey];
+
+          return {
+            uriPath: LOCATION_POPUP.uriPath,
+            params: {},
+            onInterlock: ()=> {
+              if(rowData?.rework_type_nm === '재작업') {
+                return true;
+              } else {
+                message.warning('부적합판정이 재작업일 때 입력 가능합니다');
+                return false;
+              }
+            }
+          }
+          
         },
         gridMode: 'select',
       },
@@ -170,10 +201,29 @@ export const PgQmsRework = () => {
           {header:'재작업유형코드', name:'rework_type_cd', hidden:true},
           {header:'재작업유형', name:'rework_type_nm', filter:'text'},
         ],
-        dataApiSettings: {
-          uriPath: '/adm/rework-types',
-          params: {}
+        dataApiSettings: (el: any) => {
+          const {rowKey, instance} = el;
+          const {rawData} = instance?.store.data;
+
+          const rowData = rawData[rowKey];
+          return {
+            uriPath: '/adm/rework-types',
+            params: {},
+            onAfterOk: () => {
+              if (rowData.rework_type_nm === '분해') {
+                message.warn('분해 판정은 분해이력 추가 버튼을 이용해 주세요');
+                rowData.rework_type_cd = '';
+                rowData.rework_type_nm = '';
+                return;
+              }
+              rowData.to_store_uuid = '';
+              rowData.to_store_nm = '';
+              rowData.to_location_uuid = '';
+              rowData.to_location_nm = '';
+            },
+          }
         },
+      
         gridMode: 'select',
       },
     ],

@@ -199,7 +199,7 @@ export const PgQmsReceiveInspResultReport = () => {
       <Typography.Title level={5} style={{marginBottom:-16, fontSize:14}}><CaretRightOutlined />수입검사 이력</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       <Container>
-        <div style={{maxWidth:700, marginTop:-20, marginLeft:-6}}>
+        <div>
           <Searchbox
             id='receive_insp_result_search'
             innerRef={searchRef}

@@ -32,6 +32,20 @@ export const PgPrdWorkRejectReport = () => {
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
 
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'작업일'},
+
+    {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+      options: [
+        {code:'none', text:'없음'},
+        {code:'proc', text:'공정별'},
+        {code:'prod', text:'품목별'},
+        {code:'reject', text:'불량항목별'},
+      ]
+    },
+  ]);
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -51,7 +65,8 @@ export const PgPrdWorkRejectReport = () => {
         }
 
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -60,18 +75,7 @@ export const PgPrdWorkRejectReport = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
 
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
-
-    {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
-      options: [
-        {code:'proc', text:'공정별'},
-        {code:'prod', text:'품목별'},
-        {code:'reject', text:'불량항목별'},
-      ]
-    },
-  ]);
+  
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -133,8 +137,9 @@ export const PgPrdWorkRejectReport = () => {
             {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
         ];
         break;
-
+      
       case 'proc':
+      case 'none':
       default:
         _columns = [
             {header: '작업일', width:ENUM_WIDTH.M,name:'reg_date',  filter:'text', format:'date'},
@@ -160,7 +165,7 @@ export const PgPrdWorkRejectReport = () => {
         ];
         break;
     }
-
+    grid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
@@ -195,32 +200,18 @@ export const PgPrdWorkRejectReport = () => {
           {header: '불량수량', width:ENUM_WIDTH.M, name:'reject_detail_qty', format:'number', filter:'number'},
         ];
         break;
-
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
-
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'proc' ? '공정별'
@@ -269,12 +260,11 @@ export const PgPrdWorkRejectReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-    
-    if (!values?.reg_date_chk) {
-      delete searchParams['start_date'];
-      delete searchParams['end_date'];
-    }
 
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'proc';
+    }
+    
     let data = [];
 
     getData(searchParams, searchUriPath, 'raws').then((res) => {

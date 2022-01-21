@@ -281,7 +281,7 @@ export const PgMatReturn = () => {
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 
     cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (!['total_qty', 'total_price'].includes(el?.id))
+        if (!['total_qty', 'total_price', 'stmt_no'].includes(el?.id))
           el['disabled'] = false; 
 
         if (el?.id === 'reg_date')
@@ -294,7 +294,7 @@ export const PgMatReturn = () => {
 
   const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', 
     cloneDeep(detailInputInfo.props?.inputItems)?.map((el) => {
-        if (!['partner_nm', 'reg_date', 'total_qty', 'total_price'].includes(el?.id))
+        if (!['partner_nm', 'reg_date', 'total_qty', 'total_price', 'stmt_no'].includes(el?.id))
           el['disabled'] = false;
 
         if (el?.id === 'reg_date')

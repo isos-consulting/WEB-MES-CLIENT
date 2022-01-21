@@ -32,6 +32,20 @@ export const PgPrdWorkDowntimeReport = () => {
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
 
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['work_start_date', 'work_end_date'], defaults:[getToday(-7), getToday()], label:'작업일'},
+
+    {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+      options: [
+        {code:'none', text:'없음'},
+        {code:'proc', text:'공정별'},
+        {code:'equip', text:'설비별'},
+        {code:'downtime', text:'비가동별'},
+      ]
+    },
+  ]);
+
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -51,7 +65,8 @@ export const PgPrdWorkDowntimeReport = () => {
         }
 
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -59,19 +74,6 @@ export const PgPrdWorkDowntimeReport = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
-
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['work_start_date', 'work_end_date'], defaults:[getToday(-7), getToday()], label:'작업일', useCheckbox:true},
-
-    {type:'radio', id:'sort_type', default:'proc', label:'조회기준',
-      options: [
-        {code:'proc', text:'공정별'},
-        {code:'equip', text:'설비별'},
-        {code:'downtime', text:'비가동별'},
-      ]
-    },
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -81,7 +83,7 @@ export const PgPrdWorkDowntimeReport = () => {
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
     switch (searchInfo.values?.sort_type) {
-
+      case 'none':
       case 'proc':
         _columns = [
             {header: '공정', width:ENUM_WIDTH.M, name:'proc_uuid', filter:'text',hidden :true},
@@ -171,6 +173,8 @@ export const PgPrdWorkDowntimeReport = () => {
         break;
     }
 
+    grid?.setGridColumns(_columns);
+
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
@@ -202,32 +206,18 @@ export const PgPrdWorkDowntimeReport = () => {
           {header: '비가동 시간(분)', width:ENUM_WIDTH.M,name:'downtime',  filter:'number', format:'number'},
         ];
         break;
-
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
-
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'proc' ? '공정별'
@@ -271,10 +261,9 @@ export const PgPrdWorkDowntimeReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['work_start_date', 'work_end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-    
-    if (!values?.reg_date_chk) {
-      delete searchParams['work_start_date'];
-      delete searchParams['work_end_date'];
+
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'proc';
     }
 
     let data = [];

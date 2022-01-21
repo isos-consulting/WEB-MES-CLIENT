@@ -161,7 +161,7 @@ export const PgPrdOrder = () => {
       {header:'지시일', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'date', filter:'date', requiredField:true},
       {header:'시작예정일', name:'start_date', width:ENUM_WIDTH.M, editable:true, format:'date'},
       {header:'종료예정일', name:'end_date', width:ENUM_WIDTH.M, editable:true, format:'date'},
-      {header:'지시번호', name:'order_no', width:ENUM_WIDTH.M, editable:true},
+      {header:'지시번호', name:'order_no', width:ENUM_WIDTH.M, editable:false},
       {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'공정', name:'proc_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
       {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
