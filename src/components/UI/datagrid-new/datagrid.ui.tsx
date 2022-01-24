@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { IGridComboColumnInfo, IGridComboInfo, IGridPopupInfo, TGridComboItems } from './datagrid.ui.type';
-import { getData, setGridFocus, setNumberToDigit } from '~/functions';
+import { executeData, getData, setGridFocus, setNumberToDigit } from '~/functions';
 import {message, Modal, Space} from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
@@ -21,11 +21,12 @@ import Colors from '~styles/color.style.scss';
 import { COLUMN_NAME } from '.';
 import { layoutStore } from '../layout/layout.ui.hook';
 import { useRecoilValue } from 'recoil';
-import { ENUM_DECIMAL, ENUM_FORMAT } from '~/enums';
+import { ENUM_DECIMAL, ENUM_FORMAT, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import dayjs from 'dayjs';
 import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
 import _ from 'lodash';
+import { DragDrop } from '../dragDrop';
 
 
 //#region 🔶Tui-Grid 설정 관련
@@ -168,13 +169,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   const [originData, setOriginData] = useState<any[]>([]);
 
+  const childFileGridRef = useRef<Grid>();
   const childGridRef = useRef<Grid>();
   const [modal, contextHolder] = Modal.useModal();
   const [columnComboState, setColumnComboState] = useState<IColumnComboState[]>([]);
   // const [loading, setLoading] = useLoadingState();
   let chkCreateAtColumn = false;
   let chkUpdateAtColumn = false;
-
 
   //#region 🔶컬럼 세팅
   const columns = useMemo(() => {
@@ -225,7 +226,121 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             el['align'] = 'center'; 
           } 
           break;
+        
+        case 'file':
+          // 렌더러
+          const fileUploadGridId = uuidv4();
 
+          if (el?.options?.ok_type == null) {
+            if(props.gridMode === 'delete'){
+              el['options']['ok_type'] = 'save'; 
+            } else if(props.gridMode === 'create') {
+              el['options']['ok_type'] = 'json'; 
+            } else {
+
+            }
+          } 
+          const okType:'save'|'json' = el.options.ok_type
+          const reference_col = el.options.reference_col
+
+          el['renderer'] = {
+            type: DatagridButtonRenderer,
+            options: {
+              gridId: props.gridId,
+              value: '파일첨부',
+              onClick: (ev, clickProps) => {
+                const rowData = clickProps.grid.getRow(clickProps.rowKey)
+                const addData = rowData[el.name]
+                modal.confirm({
+                  title: '파일첨부',
+                  width: '80%',
+                  content:
+                  <div>
+                    <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
+                      <DragDrop ref={childFileGridRef} />
+                    </Space>
+                    <Datagrid
+                      ref={childFileGridRef}
+                      gridId={fileUploadGridId}
+                      columns={
+                        [
+                          { header: "uuid", name: "uuid", hidden:true },
+                          { header: "save_type", name: "save_type" },
+                          { header: "삭제", name: "delete", width:ENUM_WIDTH.S, format:'button', options:{
+                            value:'삭제',
+                            onClick:async (subEv, subProps)=>{
+                              const fileData = subProps.grid.getRow(subProps.rowKey)
+                              if(okType==='json' || (okType==='save' && fileData.save_type === 'create')){
+                                const fileUuid = subProps.grid.getRow(subProps.rowKey).uuid
+                                const res = await executeData({},'/temp/file/{uuid}'.replace('{uuid}',fileUuid),'delete','data',false,'http://191.1.70.225:3002')
+                                
+                                subProps.grid.removeRow(subProps.rowKey)
+                              } else {
+                                if(fileData.save_type === 'DELETE'){
+                                  subProps.grid.setValue(subProps.rowKey, 'save_type', '');
+                                } else {
+                                  subProps.grid.setValue(subProps.rowKey, 'save_type', 'DELETE');
+                                };
+                              };
+                            }
+                          }},
+                          { header: "파일상세유형UUID", name: "file_mgmt_detail_type_uuid", width:ENUM_WIDTH.S },
+                          { header: "파일상세유형", name: "file_mgmt_detail_type_nm", format:'combo', width:ENUM_WIDTH.S, editable:true, requiredField:true },
+                          { header: "파일명", name: "file_nm", width:ENUM_WIDTH.L },
+                          { header: "파일확장자", name: "file_extension", width:ENUM_WIDTH.S },
+                          { header: "파일사이즈", name: "file_size", width:ENUM_WIDTH.M},
+                          { header: "비고", name: "remark", editable:true },
+                        ]
+                      }
+                      gridComboInfo={[
+                        { // 투입단위 콤보박스
+                          columnNames: [
+                            {
+                              codeColName:{original:'file_mgmt_detail_type_uuid', popup:'file_mgmt_detail_type_uuid'}, 
+                              textColName:{original:'file_mgmt_detail_type_nm', popup:'file_mgmt_detail_type_nm'}
+                            },
+                          ],
+                          dataApiSettings: {
+                            uriPath: URL_PATH_ADM.FILE_MGMT_DETAIL_TYPE.GET.FILE_MGMT_DETAIL_TYPES,
+                            params: {file_mgmt_type_cd:el?.options?.file_mgmt_type_cd}
+                          }
+                        },
+                      ]}
+                      gridMode='create'
+                      data={addData}
+                      disabledAutoDateColumn={true}
+                    />
+                  </div>,
+                  icon:null,
+                  okText: '확인',
+                  onOk:async (close) => {
+                    const fileData:object[] = childFileGridRef?.current?.getInstance()?.getData();
+                    if(okType==='json'){
+                      clickProps.grid.setValue(clickProps.rowKey, el.name, fileData);
+                    }else if (okType==='save'){
+                      const reference_uuid = rowData[reference_col];
+                      fileData.map((el)=>{
+                        el['reference_uuid'] = reference_uuid;
+                        if(!el['save_type']){el['save_type']='UPDATE'}
+                        return el;
+                      })
+                      await executeData(fileData,'/adm/file-mgmts', 'post', 'data')
+                      close()
+                    }
+                  },
+                  okCancel: false,
+                  cancelText:'취소',
+                  maskClosable:false,
+                })
+              }
+            }
+          }
+
+          // 정렬
+          if (el?.align == null) {
+            el['align'] = 'center'; 
+          } 
+          break;
 
         case 'combo': // 콤보박스 세팅
           if (el?.editable === true) {
