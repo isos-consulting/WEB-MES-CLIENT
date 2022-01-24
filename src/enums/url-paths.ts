@@ -37,7 +37,45 @@ const URL_PATH = {
       DELETE:{
         DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
       },
-    }
+    },
+    FILE_MGMT_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT_TYPE:'/adm/file-mgmt-type/{uuid}',
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      POST:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      PUT:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      PATCH:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      DELETE:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      }
+    },
+    FILE_MGMT_DETAIL_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT_DETAIL_TYPE:'/adm/file-mgmt-detail-type/{uuid}',
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      POST:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      PUT:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      PATCH:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      DELETE:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      }
+    },
   },
   INV:{
     STORE:{
