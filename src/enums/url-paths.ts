@@ -38,6 +38,25 @@ const URL_PATH = {
         DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
       },
     },
+    FILE_MGMT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT:'/adm/file-mgmt/{uuid}',
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      POST:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      PUT:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      PATCH:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      DELETE:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      }
+    },
     FILE_MGMT_TYPE:{
       GET:{
         /** UUID 문자열 변환 필요 */

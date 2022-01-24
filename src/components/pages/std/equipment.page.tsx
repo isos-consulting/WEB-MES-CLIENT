@@ -70,7 +70,13 @@ export const PgStdEquipment = () => {
     ]
   });
 
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',grid.gridInfo.columns,
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
+  cloneDeep(grid.gridInfo.columns).map((el) => {
+    if(el.name === 'file_data') {
+      el.options['ok_type'] = 'json';
+    }
+    return el;
+  }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
