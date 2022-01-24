@@ -4,6 +4,7 @@ import { Divider, Space, Typography, Modal, Spin, message } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, getPopupForm, GridPopup, IDatagridProps, IGridPopupInfo, IGridPopupProps, Searchbox, Tabs } from '~/components/UI';
+import { IInputGroupboxItem, InputGroupbox, useInputGroup } from '~/components/UI/input-groupbox';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneObject, getData, getModifiedRows, getPageName, getPermissions, getToday, saveGridData } from '~/functions';
 import { orderInput, orderRoute, TAB_CODE } from '../order';
@@ -31,6 +32,17 @@ export const PgPrdOrder = () => {
   const ORDER_WORKER = orderWorker();
   const ORDER_ROUTE = orderRoute();
 
+  const INPUT_ITEMS_RECIEVE:IInputGroupboxItem[] = [
+    {id:'order_no', label:'지시번호', type:'text', disabled:true},
+    {id:'reg_date', label:'지시일', type:'date', disabled:true},
+    {id:'prod_no', label:'품번', type:'text', disabled:true},
+    {id:'prod_nm', label:'품명', type:'text', disabled:true},
+    {id:'rev', label:'리비전', type:'text', disabled:true},
+    {id:'prod_std', label:'규격', type:'text', disabled:true},
+    {id:'qty', label:'입하수량', type:'number', disabled:true},
+  ];
+
+  const inputReceive = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_RECIEVE);
   
   //#region 🔶메인 그리드 관련
   const gridRef = useRef<Grid>();
@@ -244,6 +256,9 @@ export const PgPrdOrder = () => {
   
           const row = ev?.instance?.store?.data?.rawData[rowKey];
           const order_uuid = row?.order_uuid;
+
+          // 지시정보 그리드 셋팅
+          inputReceive.setValues({...row});
   
           // 자재투입 데이터 조회
           getData({
@@ -269,7 +284,6 @@ export const PgPrdOrder = () => {
             ORDER_ROUTE.setData(res);
             ORDER_ROUTE.setSaveOptionParams({order_uuid});
           });
-  
   
         } catch(e) {
           console.log(e);
@@ -414,6 +428,7 @@ export const PgPrdOrder = () => {
       order_state: 'all',
     }, gridInfo.searchUriPath).then((res) => {
       setData(res || []);
+      inputReceive.ref.current.resetForm();
       
     }).finally(() => {
       // 지시이력 조회되면서 하위 데이터 초기화
@@ -495,6 +510,12 @@ export const PgPrdOrder = () => {
         {/* <p/> */}
         {HeaderGridElement}
       </Container>
+      
+      {/* 지시정보 */}
+      <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />지시정보</Typography.Title>
+      <div style={{width:'100%', display:'inline-block', marginTop:-26}}> </div>
+      <Divider style={{marginTop:2, marginBottom:10}}/>
+      <InputGroupbox {...inputReceive.props} />
 
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />이력 항목관리</Typography.Title>
       <Divider style={{marginBottom:10}}/>
