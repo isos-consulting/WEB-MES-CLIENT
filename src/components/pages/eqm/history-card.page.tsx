@@ -30,9 +30,18 @@ export const PgEqmHistoryCard = () => {
     {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
+    {header: '작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '작업장명', name:'workings_nm', width:ENUM_WIDTH.L, format:'popup', editable: true},
+    {header: '관리자(정)UUID', name:'manager_emp_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(정) 사원명', name:'manager_emp_nm', width:ENUM_WIDTH.L, format:'popup', editable: true},
+    {header: '관리자(부)UUID', name:'sub_manager_emp_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(부) 사원명', name:'sub_manager_emp_nm', width:ENUM_WIDTH.L, format:'popup', editable: true},
+    {header: '설비관리번호', name:'equip_no', width:ENUM_WIDTH.M, filter:'text', editable:true},
+    {header: '설비등급', name:'equip_grade', width:ENUM_WIDTH.M, filter:'text', editable:true},
     {header: '설비모델명', name:'equip_model', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '설비규격', name:'equip_std', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '설비제원', name:'equip_spec', width:ENUM_WIDTH.L, filter:'text', editable:true},
+    {header: '전압', name:'voltage', width:ENUM_WIDTH.M, filter:'text', editable:true},
     {header: '제조사', name:'manufacturer', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '구매업체', name:'purchase_partner', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '구매일자', name:'purchase_date', width:ENUM_WIDTH.L, filter:'text', format:'date', editable:true},
@@ -44,7 +53,49 @@ export const PgEqmHistoryCard = () => {
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
-    gridMode: defaultGridMode
+    gridMode: defaultGridMode,
+    gridPopupInfo: [
+      { // 작업장
+        columnNames: [
+          {original:'workings_uuid', popup:'workings_uuid'},
+          {original:'workings_nm', popup:'workings_nm'},
+        ],
+        columns: getPopupForm('작업장관리').datagridProps?.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('작업장관리').uriPath,
+          params: {}
+        },
+        gridMode: 'select',
+      },
+      { // 관리자(정) 사원
+        columnNames: [
+          {original:'manager_emp_uuid', popup:'emp_uuid'},
+          {original:'manager_emp_nm', popup:'emp_nm'},
+        ],
+        columns: getPopupForm('사원관리').datagridProps?.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('사원관리').uriPath,
+          params: {
+            emp_status: 'incumbent'
+          }
+        },
+        gridMode: 'select',
+      },
+      { // 관리자(부) 사원
+        columnNames: [
+          {original:'sub_manager_emp_uuid', popup:'emp_uuid'},
+          {original:'sub_manager_emp_nm', popup:'emp_nm'},
+        ],
+        columns: getPopupForm('사원관리').datagridProps?.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('사원관리').uriPath,
+          params: {
+            emp_status: 'incumbent'
+          }
+        },
+        gridMode: 'select',
+      },
+    ],
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -59,6 +110,7 @@ export const PgEqmHistoryCard = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridPopupInfo: grid.gridInfo.gridPopupInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
