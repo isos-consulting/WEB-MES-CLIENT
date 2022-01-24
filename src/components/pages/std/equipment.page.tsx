@@ -28,7 +28,7 @@ export const PgStdEquipment = () => {
   const grid = useGrid('GRID', [
     {header: '설비UUID', name:'equip_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '설비유형UUID', name:'equip_type_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
-    {header: '파일첨부', name:'file_data', width:ENUM_WIDTH.M, format:'file', options:{
+    {header: '파일첨부', name:'files', width:ENUM_WIDTH.M, format:'file', options:{
       file_mgmt_type_cd:'FIL_STD_EQM', ok_type:'save', reference_col: 'equip_uuid'
     }},
     {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
@@ -72,7 +72,7 @@ export const PgStdEquipment = () => {
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
   cloneDeep(grid.gridInfo.columns).map((el) => {
-    if(el.name === 'file_data') {
+    if(el.name === 'files') {
       el.options['ok_type'] = 'json';
     }
     return el;
@@ -85,7 +85,7 @@ export const PgStdEquipment = () => {
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
   cloneDeep(grid.gridInfo.columns).map((el)=>{ 
-      if(el.name==='file_data'){
+      if(el.name==='files'){
         el.hidden = true;
       }
       return el

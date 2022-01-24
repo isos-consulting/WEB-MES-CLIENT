@@ -273,7 +273,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                       gridId={fileUploadGridId}
                       columns={
                         [
-                          { header: "file_mgmt_uuid", name: "file_mgmt_uuid", hidden:true },
+                          { header: "file_mgmt_uuid", name: "file_mgmt_uuid", hidden: true},
                           { header: "save_type", name: "save_type" },
                           { header: "삭제", name: "delete", width:ENUM_WIDTH.S, format:'button', options:{
                             value:'삭제',
@@ -327,7 +327,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     const fileData:object[] = childFileGridRef?.current?.getInstance()?.getData();
                     fileData.map((el) => {
                       el['uuid'] = cloneDeep(el['file_mgmt_uuid']);
-                      delete el['file_mgmt_uuid'];
                       return el;
                     });
                     if(okType==='json'){

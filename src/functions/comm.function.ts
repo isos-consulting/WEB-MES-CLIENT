@@ -160,6 +160,7 @@ export const executeData = async (
       url: uriPath,
       data: data,
       headers:{
+        'file-included': true,
         authorization:getUserAccessToken(),
         ...getTenantInfo(),
       }
