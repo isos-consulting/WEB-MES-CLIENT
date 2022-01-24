@@ -324,6 +324,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     okText: '확인',
                     onOk:async (close) => {
                       const fileData:object[] = childFileGridRef?.current?.getInstance()?.getData();
+                      fileData.map((el) => {
+                        el['uuid'] = cloneDeep(el['file_mgmt_uuid']);
+                        delete el['file_mgmt_uuid'];
+                        return el;
+                      });
                       if(okType==='json'){
                         clickProps.grid.setValue(clickProps.rowKey, el.name, fileData);
                       }else if (okType==='save'){
