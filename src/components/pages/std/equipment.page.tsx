@@ -7,6 +7,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -27,6 +28,9 @@ export const PgStdEquipment = () => {
   const grid = useGrid('GRID', [
     {header: '설비UUID', name:'equip_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '설비유형UUID', name:'equip_type_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
+    {header: '파일첨부', name:'file_data', width:ENUM_WIDTH.M, format:'file', options:{
+      file_mgmt_type_cd:'FIL_STD_EQM', ok_type:'save', reference_col: 'equip_uuid'
+    }},
     {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
@@ -66,8 +70,7 @@ export const PgStdEquipment = () => {
     ]
   });
 
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -75,7 +78,12 @@ export const PgStdEquipment = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    grid.gridInfo.columns,
+  cloneDeep(grid.gridInfo.columns).map((el)=>{ 
+      if(el.name==='file_data'){
+        el.hidden = true;
+      }
+      return el
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
