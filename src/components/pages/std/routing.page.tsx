@@ -36,7 +36,12 @@ export const PgStdRouting = () => {
   const grdRefRoutingResources = useRef<Grid>();
 
   const inputRefWorkings = useRef<FormikProps<FormikValues>>();
+  const inputRefCreateWorkings = useRef<FormikProps<FormikValues>>();
+  const inputRefUpdateWorkings = useRef<FormikProps<FormikValues>>();
+
   const inputRefResources = useRef<FormikProps<FormikValues>>();
+  const inputRefCreateResources = useRef<FormikProps<FormikValues>>();
+  const inputRefUpdateResources = useRef<FormikProps<FormikValues>>();
 
   /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -168,12 +173,26 @@ export const PgStdRouting = () => {
     if ((workingsGridPopupVisible && !workingsGridPopupCreateVisible) || workingsGridPopupUpdateVisible) {
       getWorkingsData();
     };
+
+    if (workingsGridPopupCreateVisible === true) {
+      inputRefCreateWorkings?.current?.setValues(inputRefWorkings?.current?.values);
+    } else if (workingsGridPopupUpdateVisible === true) {
+      inputRefUpdateWorkings?.current?.setValues(inputRefWorkings?.current?.values);
+    }
+
   }, [workingsGridPopupVisible, workingsGridPopupCreateVisible, workingsGridPopupUpdateVisible]);
 
   useLayoutEffect(() => {
     if ((resourcesGridPopupVisible && !resourcesGridPopupCreateVisible) || resourcesGridPopupUpdateVisible) {
       getResourcesData();
     };
+
+    if (resourcesGridPopupCreateVisible === true) {
+      inputRefCreateResources?.current?.setValues(inputRefWorkings?.current?.values);
+    } else if (resourcesGridPopupUpdateVisible === true) {
+      inputRefUpdateResources?.current?.setValues(inputRefWorkings?.current?.values);
+    }
+
   }, [resourcesGridPopupVisible, resourcesGridPopupCreateVisible, resourcesGridPopupUpdateVisible]);
 
   // 작업장등록 popup 띄우는거 까지만 함
@@ -254,7 +273,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_WORKINGS_GRID_CREATE_INPUT',
         inputItems:detailInputInfo.props.inputItems,
-        initialValues:prodInfo
+        innerRef: inputRefCreateWorkings
       },
       searchUriPath: null,
       searchParams: {},
@@ -309,7 +328,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_WORKINGS_GRID_UPDATE_INPUT',
         inputItems:detailInputInfo.props.inputItems,
-        initialValues:prodInfo
+        innerRef: inputRefUpdateWorkings
       },
       searchUriPath: null,
       searchParams: {},
@@ -471,7 +490,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_RESOURCES_GRID_CREATE_INPUT',
         inputItems:ROUTING_RESOURCES_INPUT_ITEMS,
-        initialValues:routingInfo
+        innerRef: inputRefCreateResources
       },
       searchUriPath: null,
       searchParams: {},
@@ -545,7 +564,7 @@ export const PgStdRouting = () => {
       inputProps: {
         id:'ROUTING_RESOURCES_GRID_UPDATE_INPUT',
         inputItems:ROUTING_RESOURCES_INPUT_ITEMS,
-        initialValues:routingInfo
+        innerRef: inputRefUpdateResources
       },
       searchUriPath: null,
       searchParams: {},
