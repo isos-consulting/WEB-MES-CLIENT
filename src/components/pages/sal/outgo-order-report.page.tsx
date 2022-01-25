@@ -31,6 +31,19 @@ export const PsSalOutgoOrderReport = () => {
 		onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
 		onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+	  /** 조회조건 관리 */
+		const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+			{type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'지시일'},
+	
+			{type:'radio', id:'sort_type', default:'none', label:'소계기준',
+				options: [
+					{code:'none', text:'없음'},
+					{code:'partner', text:'거래처별'},
+					{code:'prod', text:'품목별'},
+					{code:'date', text:'일자별'},
+				]
+			}
+		]);
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
 		summaryOptions: {
@@ -49,7 +62,8 @@ export const PsSalOutgoOrderReport = () => {
 				content: '합계',
 			},
 			]
-		}
+		},
+		hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -57,18 +71,7 @@ export const PsSalOutgoOrderReport = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-	{type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'지시일'},
 
-	{type:'radio', id:'sort_type', default:'partner', label:'조회기준',
-	  options: [
-		{code:'partner', text:'거래처별'},
-		{code:'prod', text:'품목별'},
-		{code:'date', text:'일자별'},
-	  ]
-	},
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -99,7 +102,7 @@ export const PsSalOutgoOrderReport = () => {
 		  {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
 		];
 		break;
-
+		case 'none':
 	  case 'date':
 		_columns = [
       {header: '지시일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
@@ -146,7 +149,7 @@ export const PsSalOutgoOrderReport = () => {
 		];
 		break;
 	}
-
+	grid?.setGridColumns(_columns);
 	return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
@@ -191,31 +194,18 @@ export const PsSalOutgoOrderReport = () => {
 		  {header: '미납수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'balance', format:'number', filter:'number'},
 		];
 		break;
-
+		case 'none':
 	  default:
-		_columns = null;
+		_columns = [];
 		break;
 	}
-	
+	subGrid?.setGridColumns(_columns);
 	return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
-
   /** 액션 관리 */
-  useLayoutEffect(() => {
-	grid?.setGridColumns(columns);
-  }, [columns]);
 
-  useLayoutEffect(() => {
-	if (subColumns) {
-	  subGrid?.setGridColumns(subColumns);
-	  subGrid?.setGridHidden(false);
-
-	} else {
-	  subGrid?.setGridHidden(true);
-	}
-  }, [subColumns]);
 
   useLayoutEffect(() => {
 		setSubTitle(
@@ -261,7 +251,9 @@ export const PsSalOutgoOrderReport = () => {
   const onSearch = (values) => {
 		const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
 		const searchParams = cleanupKeyOfObject(values, searchKeys);
-
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
+    }
 		let data = [];
 		let subTotalData = [];
 

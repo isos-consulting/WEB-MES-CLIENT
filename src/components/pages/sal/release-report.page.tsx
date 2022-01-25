@@ -8,7 +8,6 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 
-
 /** 제품출고현황 */
 export const PgSalReleaseReport = () => {
   /** 페이지 제목 */
@@ -31,6 +30,21 @@ export const PgSalReleaseReport = () => {
     onAfterFilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)},
     onAfterUnfilter:(ev) => {setSubTotalDatas(ev?.instance?.store?.data?.filteredRawData)}
   });
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'출고일'},
+
+    {type:'radio', id:'sort_type', default:'none', label:'소계기준',
+      options: [
+        {code:'none', text:'없음'},
+        {code:'store', text:'창고별'},
+        {code:'prod', text:'품목별'},
+        {code:'date', text:'일자별'},
+      ]
+    }
+
+   
+  ]);
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -49,7 +63,8 @@ export const PgSalReleaseReport = () => {
           content: '합계',
         },
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -57,18 +72,6 @@ export const PgSalReleaseReport = () => {
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'출고일'},
-
-    {type:'radio', id:'sort_type', default:'store', label:'조회기준',
-      options: [
-        {code:'store', text:'창고별'},
-        {code:'prod', text:'품목별'},
-        {code:'date', text:'일자별'},
-      ]
-    },
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -104,7 +107,7 @@ export const PgSalReleaseReport = () => {
           {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
         ];
         break;
-
+      case 'none':
       case 'date':
         _columns = [
           {header: '제품수주상세UUID', name:'order_detail_uuid', alias:'uuid', hidden:true},
@@ -160,7 +163,7 @@ export const PgSalReleaseReport = () => {
         ];
         break;
     }
-
+    grid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
@@ -196,31 +199,18 @@ export const PgSalReleaseReport = () => {
           {header: '출고수량', width:ENUM_WIDTH.M, decimal:ENUM_DECIMAL.DEC_STCOK, name:'qty', format:'number', filter:'number'},
         ];
         break;
-
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
 
   useLayoutEffect(() => {
     setSubTitle(
@@ -266,7 +256,9 @@ export const PgSalReleaseReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
+    }
     let data = [];
     let subTotalData = [];
 

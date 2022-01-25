@@ -27,6 +27,27 @@ export const PgPrdReturnReport = () => {
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
   });
+    /** 조회조건 관리 */
+    const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+      {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'납입일'},
+  
+      {type:'radio', id:'sort_type', default:'none', label:'조회기준',
+        options: [
+          {code:'none', text:'없음'},
+          {code:'store', text:'창고별'},
+          {code:'prod', text:'품목별'},
+          {code:'date', text:'일자별'},
+        ]
+      },
+  
+      {type: 'radio', id:'complete_state', default:'all', label:'완료구분',
+        options: [
+          {code: 'all', text:'전체'},
+          {code:'complete', text:'완료'},
+          {code:'incomplete', text:'미완료'},
+        ]}
+    ]);
+  
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
@@ -45,7 +66,8 @@ export const PgPrdReturnReport = () => {
           content: '합계',
         },
       ]
-    }
+    },
+    hidden: searchInfo.values?.sort_type === 'none' ? true : false
   });
 
   const newDataPopupGrid = null;
@@ -54,18 +76,6 @@ export const PgPrdReturnReport = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
 
 
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_reg_date', 'end_reg_date'], defaults:[getToday(-7), getToday()], label:'납입일'},
-
-    {type:'radio', id:'sort_type', default:'store', label:'조회기준',
-      options: [
-        {code:'store', text:'창고별'},
-        {code:'prod', text:'품목별'},
-        {code:'date', text:'일자별'},
-      ]
-    },
-  ]);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -96,7 +106,7 @@ export const PgPrdReturnReport = () => {
           {header: '비고', width:ENUM_WIDTH.XL, name:'remark', filter:'text'},
         ];
         break;
-
+      case 'none':
       case 'date':
         _columns = [
           {header: '반납일자', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', format:'date'},
@@ -142,7 +152,7 @@ export const PgPrdReturnReport = () => {
         ];
         break;
     }
-
+    grid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
@@ -177,35 +187,18 @@ export const PgPrdReturnReport = () => {
           {header: '반납수량', width:ENUM_WIDTH.M, name:'qty', format:'number', filter:'number'},
         ];
         break;
-
+      case 'none':
       default:
-        _columns = null;
+        _columns = [];
         break;
     }
-    
+    subGrid?.setGridColumns(_columns);
     return _columns;    
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
 
 
   /** 액션 관리 */
-  // 서브토탈 컬럼 세팅
-  useLayoutEffect(() => {
-    grid?.setGridColumns(columns);
-  }, [columns]);
-
-  // 서브토탈 그리드 숨김 여부
-  useLayoutEffect(() => {
-    if (subColumns) {
-      subGrid?.setGridColumns(subColumns);
-      subGrid?.setGridHidden(false);
-
-    } else {
-      subGrid?.setGridHidden(true);
-    }
-  }, [subColumns]);
-
-  // 서브토탈 타이틀 세팅
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'prod' ? '품목별'
@@ -244,7 +237,9 @@ export const PgPrdReturnReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['start_reg_date', 'end_reg_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-
+    if (values?.sort_type === 'none') {
+      searchParams['sort_type'] = 'date';
+    }
     let data = [];
 
     getData(searchParams, searchUriPath, 'raws').then((res) => {
