@@ -12,6 +12,10 @@ phases:
       - yarn build
   post_build:
     commands:
+      - echo $CODEBUILD_RESOLVED_SOURCE_VERSION
+      - echo $CODEBUILD_BUILD_ID
+      - aws s3 sync ./build s3://najs.isos.kr
+      - aws cloudfront create-invalidation --distribution-id ${CODEBUILD_RESOLVED_SOURCE_VERSION} --paths  "/*"
 artifacts:
   files:
     - '**/*'
