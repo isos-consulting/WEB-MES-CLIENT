@@ -121,7 +121,6 @@ export const PgEqmRepairHistory = () => {
           const getModifiedRows = instance.getModifiedRows()
           
           function  MixDateTime (el, dateString, timeString) {
-            console.log(el, dateString, timeString)
             if (el[dateString] != null && el[timeString] != null) {
               let time = el[timeString];
       
@@ -130,7 +129,7 @@ export const PgEqmRepairHistory = () => {
               }
       
               const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
-              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DDTHH:mm:ssZ');
             }
           };
           getModifiedRows.createdRows.forEach((el) =>{
@@ -143,7 +142,7 @@ export const PgEqmRepairHistory = () => {
           
           return getModifiedRows;
         };
-        
+        const modifiedRows = data();
         dataGridEvents.onSave(
           'basic',
           {
@@ -151,13 +150,13 @@ export const PgEqmRepairHistory = () => {
             columns:grid.gridInfo.columns,
             saveUriPath:saveUriPath,
             methodType:'post',
-            modifiedData:data()
+            modifiedData:modifiedRows
           },
           null,
           modal,
           ({success})=>{
             if(success){
-              setEditDataPopupGridVisible(false)
+              setNewDataPopupGridVisible(false)
               onSearch()
             };
           }
@@ -182,7 +181,6 @@ export const PgEqmRepairHistory = () => {
           const getModifiedRows = instance.getModifiedRows()
           
           function  MixDateTime (el, dateString, timeString) {
-            console.log(el, dateString, timeString)
             if (el[dateString] != null && el[timeString] != null) {
               let time = el[timeString];
       
@@ -191,34 +189,34 @@ export const PgEqmRepairHistory = () => {
               }
       
               const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
-              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DDTHH:mm:ssZ');
             }
           };
-          getModifiedRows.createdRows.forEach((el) =>{
+          getModifiedRows.updatedRows.forEach((el) =>{
             MixDateTime(el, 'occur_start_date', 'occur_start_time');
             MixDateTime(el, 'occur_end_date', 'occur_end_time');
             MixDateTime(el, 'repair_start_date', 'repair_start_time');
             MixDateTime(el, 'repair_end_date', 'repair_end_time');
             MixDateTime(el, 'check_date', 'check_time');
           });
-          
           return getModifiedRows;
         };
-        
+        const modifiedRows = data();
+
         dataGridEvents.onSave(
           'basic',
           {
             gridRef,
             columns:grid.gridInfo.columns,
             saveUriPath:saveUriPath,
-            methodType:'post',
-            modifiedData:data()
+            methodType:'put',
+            modifiedData:modifiedRows
           },
           null,
           modal,
           ({success})=>{
             if(success){
-              setNewDataPopupGridVisible(false)
+              setEditDataPopupGridVisible(false)
               onSearch()
             };
           }
@@ -243,7 +241,6 @@ export const PgEqmRepairHistory = () => {
   const onSearch = () => {
     // const searchKeys = Object.keys(values);
     const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
-
     let data = [];
     getData(searchParams, searchUriPath).then((res) => {
       data = res;
@@ -258,7 +255,6 @@ export const PgEqmRepairHistory = () => {
         data.check_time = data.check_date
         return data;
       })
-
       inputInfo?.instance?.resetForm();
       grid.setGridData(datas);
     });
