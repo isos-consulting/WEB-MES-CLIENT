@@ -1,25 +1,19 @@
-import Grid from "@toast-ui/react-grid";
 import React, {
   ChangeEvent,
   useCallback,
   useRef,
   useState,
   useEffect,
-  forwardRef,
-  useImperativeHandle
+  forwardRef
 } from "react";
 import { OptRow } from 'tui-grid/types/options';
-import { executeData } from "~/functions";
+import { executeData, getStorageValue } from "~/functions";
 import { Button } from "..";
 import "./dragDrop.ui.styled.scss";
 
 interface IFileTypes {
   id: number;
   object: File;
-}
-
-interface fileType {
-  datas: OptRow[]
 }
 
 function getFileNameType(filename:string, returnType?:'name'|'ext') {
@@ -52,7 +46,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
     let fileInfo: OptRow = {};
     
     const response = await executeData(requestHeader, '/temp/file', 'post', 'data', false, 'http://191.1.70.225:3002/');
-  
+    
     if (response.success) {
       fileInfo = response.datas.raws[0];
     }
@@ -78,7 +72,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   }
   
   const putUserFileInfo = async (userFile: File) => {
-    const requestHeader:Object = newForm({ file: userFile, file_nm:getFileNameType(userFile.name,'name'), file_extension:getFileNameType(userFile.name,'ext') });
+    const requestHeader:Object = newForm({ file: userFile, file_nm:getFileNameType(userFile.name,'name'), file_extension:getFileNameType(userFile.name,'ext'), tenant:getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}), });
     const rowInfo = await uploadUserFile(requestHeader);
     
     if(props?.onAppendRow) {

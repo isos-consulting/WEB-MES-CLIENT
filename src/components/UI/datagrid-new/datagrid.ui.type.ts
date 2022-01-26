@@ -92,7 +92,7 @@ export interface IGridSummaryOptions {
 
 export interface IGridColumn extends ColumnOptions {
   alias?: string;
-  format?: 'text' | 'number' | 'date' | 'datetime' | 'time' | 'check' | 'radio' | 'combo' | 'popup' | 'button' | 'tag';
+  format?: 'text' | 'number' | 'date' | 'datetime' | 'time' | 'check' | 'radio' | 'combo' | 'popup' | 'button' | 'tag' | 'file';
   editable?: boolean;
   noSave?: boolean;
   requiredField?: boolean;

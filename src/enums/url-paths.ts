@@ -37,7 +37,64 @@ const URL_PATH = {
       DELETE:{
         DAILY_INSP_CYCLES:'/adm/daily-insp-cycles',
       },
-    }
+    },
+    FILE_MGMT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT:'/adm/file-mgmt/{uuid}',
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      POST:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      PUT:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      PATCH:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      },
+      DELETE:{
+        FILE_MGMTS:'/adm/file-mgmts',
+      }
+    },
+    FILE_MGMT_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT_TYPE:'/adm/file-mgmt-type/{uuid}',
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      POST:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      PUT:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      PATCH:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      },
+      DELETE:{
+        FILE_MGMT_TYPES:'/adm/file-mgmt-types',
+      }
+    },
+    FILE_MGMT_DETAIL_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        FILE_MGMT_DETAIL_TYPE:'/adm/file-mgmt-detail-type/{uuid}',
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      POST:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      PUT:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      PATCH:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      },
+      DELETE:{
+        FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
+      }
+    },
   },
   INV:{
     STORE:{
@@ -1805,7 +1862,7 @@ const URL_PATH = {
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
-        REPAIR_HISTORY:'/eqm/repair-histories/{uuid}',
+        REPAIR_HISTORY:'/eqm/repair-history/{uuid}',
         REPAIR_HISTORIES:'/eqm/repair-histories',
       },
       POST:{
@@ -1819,6 +1876,26 @@ const URL_PATH = {
       },
       DELETE:{
         REPAIR_HISTORIES:'/eqm/repair-histories'
+      },
+    },
+    HISTORY:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        HISTORY:'/eqm/history/{uuid}',
+        HISTORY_CARD:'/eqm/history/card',
+        HISTORIES:'/eqm/histories',
+      },
+      POST:{
+        HISTORIES:'/eqm/histories',
+      },
+      PUT:{
+        HISTORIES:'/eqm/histories',
+      },
+      PATCH:{
+        HISTORIES:'/eqm/histories',
+      },
+      DELETE:{
+        HISTORIES:'/eqm/histories',
       },
     },
   },

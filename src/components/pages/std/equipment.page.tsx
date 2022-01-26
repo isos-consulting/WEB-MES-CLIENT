@@ -7,6 +7,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -27,12 +28,24 @@ export const PgStdEquipment = () => {
   const grid = useGrid('GRID', [
     {header: '설비UUID', name:'equip_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '설비유형UUID', name:'equip_type_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
+    {header: '파일첨부', name:'files', width:ENUM_WIDTH.M, format:'file', options:{
+      file_mgmt_type_cd:'FIL_STD_EQM', ok_type:'save', reference_col: 'equip_uuid'
+    }},
     {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '작업장명', name:'workings_nm', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(정)UUID', name:'manager_emp_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(정) 사원명', name:'manager_emp_nm', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(부)UUID', name:'sub_manager_emp_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '관리자(부) 사원명', name:'sub_manager_emp_nm', width:ENUM_WIDTH.L, format:'popup', hidden:true},
+    {header: '설비관리번호', name:'equip_no', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '설비등급', name:'equip_grade', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '설비모델명', name:'equip_model', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header: '설비규격', name:'equip_std', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header: '설비제원', name:'equip_spec', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header: '전압', name:'voltage', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '제조사', name:'manufacturer', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header: '구매업체', name:'purchase_partner', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header: '구매일자', name:'purchase_date', width:ENUM_WIDTH.L, filter:'text', format:'date', editable:true, hidden:true},
@@ -58,7 +71,12 @@ export const PgStdEquipment = () => {
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
+  cloneDeep(grid.gridInfo.columns).map((el) => {
+    if(el.name === 'files') {
+      el.options['ok_type'] = 'json';
+    }
+    return el;
+  }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -66,7 +84,12 @@ export const PgStdEquipment = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    grid.gridInfo.columns,
+  cloneDeep(grid.gridInfo.columns).map((el)=>{ 
+      if(el.name==='files'){
+        el.hidden = true;
+      }
+      return el
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,

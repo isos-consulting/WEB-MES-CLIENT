@@ -72,28 +72,40 @@ export const PgEqmRepairHistory = () => {
     gridPopupInfo: [
       {
         columnNames: [
-          {original:'work_routing_uuid', popup:'work_routing_uuid'},
-          {original:'proc_nm', popup:'proc_nm'},
-          {original:'proc_no', popup:'proc_no'},
+          {original:'equip_uuid', popup:'equip_uuid'},
           {original:'equip_nm', popup:'equip_nm'},
         ],
-        columns: [
-          {header:'공정순서UUID', name:'work_routing_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-          {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
-          {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-          {header:'공정순서', name:'proc_no', width:100, format:'text'},
-          {header:'공정', name:'proc_nm', width:120, format:'text'},
-          {header:'작업장UUID', name:'workings_uuid', width:200, hidden:true, format:'text'},
-          {header:'작업장', name:'workings_nm', width:120, format:'text'},
-          {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
-          {header:'설비', name:'equip_nm', width:120, format:'text'},
-        ],
+        columns: getPopupForm('설비관리').datagridProps.columns,
         dataApiSettings: {
-          uriPath: '/prd/work-routings',
+          uriPath: getPopupForm('설비관리').uriPath,
           params: {}
         },
         gridMode:'select'
-      }
+      },
+      {
+        columnNames: [
+          {original:'occur_emp_uuid', popup:'emp_uuid'},
+          {original:'occur_emp_nm', popup:'emp_nm'},
+        ],
+        columns: getPopupForm('사원관리').datagridProps?.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('사원관리').uriPath,
+          params: {emp_status: 'incumbent'}
+        },
+        gridMode: 'select',
+      },
+      {
+        columnNames: [
+          {original:'check_emp_uuid', popup:'emp_uuid'},
+          {original:'check_emp_nm', popup:'emp_nm'},
+        ],
+        columns: getPopupForm('사원관리').datagridProps?.columns,
+        dataApiSettings: {
+          uriPath: getPopupForm('사원관리').uriPath,
+          params: {emp_status: 'incumbent'}
+        },
+        gridMode: 'select',
+      },
     ],
   });
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -109,7 +121,6 @@ export const PgEqmRepairHistory = () => {
           const getModifiedRows = instance.getModifiedRows()
           
           function  MixDateTime (el, dateString, timeString) {
-            console.log(el, dateString, timeString)
             if (el[dateString] != null && el[timeString] != null) {
               let time = el[timeString];
       
@@ -118,7 +129,7 @@ export const PgEqmRepairHistory = () => {
               }
       
               const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
-              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DDTHH:mm:ssZ');
             }
           };
           getModifiedRows.createdRows.forEach((el) =>{
@@ -131,7 +142,7 @@ export const PgEqmRepairHistory = () => {
           
           return getModifiedRows;
         };
-        
+        const modifiedRows = data();
         dataGridEvents.onSave(
           'basic',
           {
@@ -139,19 +150,20 @@ export const PgEqmRepairHistory = () => {
             columns:grid.gridInfo.columns,
             saveUriPath:saveUriPath,
             methodType:'post',
-            modifiedData:data()
+            modifiedData:modifiedRows
           },
           null,
           modal,
           ({success})=>{
             if(success){
-              setEditDataPopupGridVisible(false)
+              setNewDataPopupGridVisible(false)
               onSearch()
             };
           }
         );
       },
-      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo
+      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: grid.gridInfo.gridPopupInfo
     }
   );
 
@@ -169,7 +181,6 @@ export const PgEqmRepairHistory = () => {
           const getModifiedRows = instance.getModifiedRows()
           
           function  MixDateTime (el, dateString, timeString) {
-            console.log(el, dateString, timeString)
             if (el[dateString] != null && el[timeString] != null) {
               let time = el[timeString];
       
@@ -178,40 +189,41 @@ export const PgEqmRepairHistory = () => {
               }
       
               const dateTime = dayjs(el[dateString]).format('YYYY-MM-DD') + ' ' + time;
-              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+              el[dateString] = dayjs(dateTime).locale('ko').format('YYYY-MM-DDTHH:mm:ssZ');
             }
           };
-          getModifiedRows.createdRows.forEach((el) =>{
+          getModifiedRows.updatedRows.forEach((el) =>{
             MixDateTime(el, 'occur_start_date', 'occur_start_time');
             MixDateTime(el, 'occur_end_date', 'occur_end_time');
             MixDateTime(el, 'repair_start_date', 'repair_start_time');
             MixDateTime(el, 'repair_end_date', 'repair_end_time');
             MixDateTime(el, 'check_date', 'check_time');
           });
-          
           return getModifiedRows;
         };
-        
+        const modifiedRows = data();
+
         dataGridEvents.onSave(
           'basic',
           {
             gridRef,
             columns:grid.gridInfo.columns,
             saveUriPath:saveUriPath,
-            methodType:'post',
-            modifiedData:data()
+            methodType:'put',
+            modifiedData:modifiedRows
           },
           null,
           modal,
           ({success})=>{
             if(success){
-              setNewDataPopupGridVisible(false)
+              setEditDataPopupGridVisible(false)
               onSearch()
             };
           }
         );
       },
-      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo
+      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: grid.gridInfo.gridPopupInfo
     }
   );
 
@@ -229,7 +241,6 @@ export const PgEqmRepairHistory = () => {
   const onSearch = () => {
     // const searchKeys = Object.keys(values);
     const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
-
     let data = [];
     getData(searchParams, searchUriPath).then((res) => {
       data = res;
@@ -244,7 +255,6 @@ export const PgEqmRepairHistory = () => {
         data.check_time = data.check_date
         return data;
       })
-
       inputInfo?.instance?.resetForm();
       grid.setGridData(datas);
     });
