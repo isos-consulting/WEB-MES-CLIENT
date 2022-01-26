@@ -21,7 +21,7 @@ const getTenantInfo = () => {
   return {
     'restrict-access-to-tenants':getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}),
     'service-type':'iso',
-    environment:'production',
+    environment:'development',
   }
 }
 
