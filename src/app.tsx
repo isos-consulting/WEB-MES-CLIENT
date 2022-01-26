@@ -6,7 +6,7 @@ import { PgAuthentication, PgLogin } from "./components/pages";
 import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
 import { Result, Container } from '~components/UI';
 import { useLoadingState, authStore } from "./hooks";
-import { getMenus, setLogout } from "./functions";
+import { getMenus, getStorageValue, setLogout } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
@@ -27,13 +27,13 @@ const App = () => {
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
-    if (!user) return;
+    if (! getStorageValue({storageName:'userInfo',keyName:'uid'})) return;
     setLoading(true);
     getMenus().then((menu) => {
       setMenuContent(menu.data);
       setMenuRawData(menu.rawData);
     }).finally(() => setLoading(false));
-  }, [user]);
+  },[])
 
   useLayoutEffect(() => {
     if (Array.isArray(menuRawData) && menuRawData?.length === 0) {
