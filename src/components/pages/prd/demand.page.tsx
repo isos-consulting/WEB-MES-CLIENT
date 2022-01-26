@@ -196,7 +196,7 @@ export const PgPrdDemand = () => {
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
     cloneObject(grid.gridInfo.columns)?.map((el) => {
-      if (!['qty', 'complete_fg', 'due_date', 'remark'].includes(el?.name))
+      if (!['qty', 'complete_fg', 'due_date', 'remark', 'equip_nm', 'proc_nm', 'to_store_nm', 'to_location_nm'].includes(el?.name))
         el['editable'] = false;
         
       return el;
