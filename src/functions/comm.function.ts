@@ -279,6 +279,21 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmInspType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '검사유형',
+            menu_type: 'page',
+            menu_uri: '/adm/insp-type',
+            menu_uuid: 'admInspType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmCycleUnit',
             create_fg: true,
             delete_fg: true,
