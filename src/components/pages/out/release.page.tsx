@@ -92,7 +92,7 @@ export const PgOutRelease = () => {
       }
     },
     {header: '발주량', name:'order_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-    {header: '수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', editable:true, requiredField:true, 
+    {header: '수량', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, editable:true, requiredField:true, 
       formula: {
         targetColumnNames:['price', 'exchange'], resultColumnName:'total_price',
         formula: priceFormula
@@ -109,7 +109,7 @@ export const PgOutRelease = () => {
     {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
     {header: '출고창고', name:'from_store_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', requiredField:true},
     {header: '출고위치아이디', name:'from_location_uuid', width:ENUM_WIDTH.L,format:'popup', filter:'text', hidden:true},
-    {header: '출고위치', name:'from_location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true, requiredField:true},
+    {header: '출고위치', name:'from_location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
     {header: '바코드', name:'barcode', width:ENUM_WIDTH.L, filter:'text'},
@@ -165,6 +165,7 @@ export const PgOutRelease = () => {
         {original:'price', popup:'price'},
         {original:'exchange', popup:'exchange'},
         {original:'lot_no', popup:'lot_no'},
+        {original:'qty', popup:'qty'},
       ],
       columns: [
         {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
@@ -190,7 +191,7 @@ export const PgOutRelease = () => {
         {header: '위치아이디', name:'location_uuid', width:ENUM_WIDTH.L,format:'popup', filter:'text', hidden:true, requiredField:true},
         {header: '위치', name:'location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true, requiredField:true},
         {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M},
-        {header: '재고', name:'qty', width:ENUM_WIDTH.M, format:'number'},
+        {header: '재고', name:'qty', width:ENUM_WIDTH.M, format:'number',decimal: ENUM_DECIMAL.DEC_STCOK},
         {header: '화폐단위UUID', name:'money_unit_uuid', format:'text', hidden:true},
         {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.M, format:'text'},
         {header: '단가유형UUID', name:'price_type_uuid', format:'text', hidden:true},
@@ -200,7 +201,7 @@ export const PgOutRelease = () => {
         // {header: '비고', name:'remark', width:ENUM_WIDTH.XL, format:'text'},
       ],
       dataApiSettings: () => {
-        type TParams = {reg_date?:string, stock_type?:string, grouped_type?:string, price_type?:string, partner_uuid?:string, uuid?:string};
+        type TParams = {reg_date?:string, stock_type?:string, exclude_zero_fg?:boolean, grouped_type?:string, price_type?:string, partner_uuid?:string, uuid?:string};
         let inputValues = null;
         let params:TParams = {};
 
@@ -215,7 +216,8 @@ export const PgOutRelease = () => {
           params = {
             stock_type: 'available',
             grouped_type: 'all',
-            price_type: 'purchase',
+            price_type: 'sales',
+            exclude_zero_fg: true,
             partner_uuid: inputValues?.partner_uuid,
             reg_date: inputValues?.reg_date ? dayjs(inputValues?.reg_date).format('YYYY-MM-DD') : null,
           };

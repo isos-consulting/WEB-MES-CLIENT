@@ -284,7 +284,7 @@ export const PgInvStore = () => {
       {header: '단위UUID', name:'unit_uuid', filter:'text', hidden:true},
       {header: '단위', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text'},
       {header: '외주거래처UUID', name:'partner_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-      {header: '외주거래처', name:'2partner_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:partnerHidden, editable:true, requiredField:!partnerHidden},
+      {header: '외주거래처', name:'partner_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', hidden:partnerHidden, editable:true, requiredField:!partnerHidden},
       {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
       {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
       {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
