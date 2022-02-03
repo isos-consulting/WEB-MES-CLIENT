@@ -384,6 +384,36 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmCycleUnit',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '주기단위 관리',
+            menu_type: 'page',
+            menu_uri: '/adm/cycle-unit',
+            menu_uuid: 'admCycleUnit',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
+            component_nm: 'PgAdmStoreType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '창고유형',
+            menu_type: 'page',
+            menu_uri: '/adm/store-type',
+            menu_uuid: 'admStoreType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmInspHandlingType',
             create_fg: true,
             delete_fg: true,
@@ -413,21 +443,7 @@ export const getMenus = async () => {
             sub_menu: [],
             update_fg: true
           },
-          {
-            component_nm: 'PgAdmCycleUnit',
-            create_fg: true,
-            delete_fg: true,
-            first_menu_uuid: 'adm',
-            icon: null,
-            lv: 2,
-            menu_nm: '주기단위 관리',
-            menu_type: 'page',
-            menu_uri: '/adm/cycle-unit',
-            menu_uuid: 'admCycleUnit',
-            read_fg: true,
-            sub_menu: [],
-            update_fg: true
-          },
+          
           
         ],
         update_fg: null
