@@ -444,6 +444,21 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmCompanyOpt',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '회사옵션',
+            menu_type: 'page',
+            menu_uri: '/adm/company-opt',
+            menu_uuid: 'admCompanyOpt',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmInspHandlingType',
             create_fg: true,
             delete_fg: true,
