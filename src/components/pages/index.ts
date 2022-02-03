@@ -14,6 +14,7 @@ export * from './adm/prd-plan-type.page';
 export * from './adm/pattern-opt.page';
 export * from './adm/rework-type.page';
 export * from './adm/store-type.page';
+export * from './adm/file-mgmt-type.page';
 
 export * from './aut/menu.page';
 export * from './aut/permission.page';
