@@ -1900,6 +1900,11 @@ const URL_PATH = {
     },
   },
   MLD:{
+    REPORT:{
+      GET:{
+        REPORT: '/mld/molds/report'
+      },
+    },
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
