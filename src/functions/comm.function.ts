@@ -369,6 +369,21 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmReworkType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '재작업유형',
+            menu_type: 'page',
+            menu_uri: '/adm/rework-type',
+            menu_uuid: 'admReworkType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmInspHandlingType',
             create_fg: true,
             delete_fg: true,
