@@ -6,6 +6,7 @@ export * from './adm/cycle-unit.page';
 export * from './adm/daily-insp-cycle.page';
 export * from './adm/bom-type.page';
 export * from './adm/insp-type.page';
+export * from './adm/insp-detail-type.page';
 export * from './adm/insp-handling-type.page';
 export * from './adm/prd-plan-type.page';
 
