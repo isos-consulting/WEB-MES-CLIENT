@@ -324,6 +324,21 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmDemandType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '요청유형',
+            menu_type: 'page',
+            menu_uri: '/adm/demand-type',
+            menu_uuid: 'admDemandType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmInspHandlingType',
             create_fg: true,
             delete_fg: true,
