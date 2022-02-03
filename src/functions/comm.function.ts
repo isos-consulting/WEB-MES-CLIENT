@@ -339,6 +339,36 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmDailyInspCycle',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '일상점검주기 관리',
+            menu_type: 'page',
+            menu_uri: '/adm/daily-insp-cycle',
+            menu_uuid: 'admCycleUnit',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
+            component_nm: 'PgAdmPatternOpt',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '번호자동발행 옵션',
+            menu_type: 'page',
+            menu_uri: '/adm/pattern-opt',
+            menu_uuid: 'admPatternOpt',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmInspHandlingType',
             create_fg: true,
             delete_fg: true,
@@ -383,21 +413,7 @@ export const getMenus = async () => {
             sub_menu: [],
             update_fg: true
           },
-          {
-            component_nm: 'PgAdmDailyInspCycle',
-            create_fg: true,
-            delete_fg: true,
-            first_menu_uuid: 'adm',
-            icon: null,
-            lv: 2,
-            menu_nm: '일상점검주기 관리',
-            menu_type: 'page',
-            menu_uri: '/adm/daily-insp-cycle',
-            menu_uuid: 'admCycleUnit',
-            read_fg: true,
-            sub_menu: [],
-            update_fg: true
-          },
+          
         ],
         update_fg: null
       })
