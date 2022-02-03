@@ -264,6 +264,21 @@ export const getMenus = async () => {
             update_fg: true
           },
           {
+            component_nm: 'PgAdmBomType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: 'BOM 구성유형',
+            menu_type: 'page',
+            menu_uri: '/adm/bom-type',
+            menu_uuid: 'admBomType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
             component_nm: 'PgAdmCycleUnit',
             create_fg: true,
             delete_fg: true,
