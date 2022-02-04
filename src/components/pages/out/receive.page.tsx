@@ -448,8 +448,9 @@ export const PgOutReceive = () => {
       label:'거래처', 
       disabled:true, 
       usePopup:true, 
-      popupKey:'거래처관리', 
+      popupKey:'거래처관리',
       popupKeys:['partner_uuid', 'partner_nm'],
+      params:{partner_fg: 1},
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {
