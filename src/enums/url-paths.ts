@@ -1196,6 +1196,24 @@ const URL_PATH = {
       },
       
     },
+    PROC_EQUIP:{
+      GET:{
+        PROC_EQUIP:'/std/proc-equip/{uuid}',
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      POST:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      PUT:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      PATCH:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      DELETE:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+    },
     PROC_REJECT:{
       GET:{
         PROC_REJECT:'/std/proc-reject/{uuid}',
