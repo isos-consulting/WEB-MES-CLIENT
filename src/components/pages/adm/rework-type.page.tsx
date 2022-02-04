@@ -1,17 +1,17 @@
 import React from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 
 
 
-/** 창고관리 */
-export const PgStdStore = () => {
+/** 주기단위 */
+export const PgAdmReworkType = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,20 +20,15 @@ export const PgStdStore = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'delete';
-  const searchUriPath = '/std/stores';
-  const saveUriPath = '/std/stores';
+  const searchUriPath = URL_PATH_ADM.REWORK_TYPE.GET.REWORK_TYPES;
+  const saveUriPath = URL_PATH_ADM.REWORK_TYPE.PUT.REWORK_TYPES;
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
-    {header: '창고UUID', name:'store_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-    {header: '창고코드', name:'store_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
-    {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '가용재고창고여부', name:'available_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
-    {header: '부적합창고여부', name:'reject_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
-    {header: '반출창고여부', name:'return_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
-    {header: '출하창고여부', name:'outgo_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
-    {header: '최종검사창고여부', name:'final_insp_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
-    {header: '외주창고여부', name:'outsourcing_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
+    {header: '재작업유형UUID', name:'rework_type_uuid', alias:'uuid', width:150, filter:'text', hidden:true},
+    {header: '재작업유형코드', name:'rework_type_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
+    {header: '재작업유형명', name:'rework_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '정렬', name:'sortby', width:ENUM_WIDTH.L, filter:'number', decimal: ENUM_DECIMAL.DEC_NOMAL, editable:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
@@ -59,9 +54,7 @@ export const PgStdStore = () => {
 
 
   /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'text', id:'store_type', default:'all', hidden:true},
-  ]);
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', null);
 
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
@@ -72,8 +65,8 @@ export const PgStdStore = () => {
 
   /** 검색 */
   const onSearch = (values) => {
-    const searchKeys = Object.keys(values);
-    const searchParams = cleanupKeyOfObject(values, searchKeys);
+    // const searchKeys = Object.keys(values);
+    const searchParams = {};//cleanupKeyOfObject(values, searchKeys);
 
     let data = [];
 

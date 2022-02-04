@@ -56,7 +56,7 @@ export const PgOutReceive = () => {
     {header: '거래처명', name:'partner_nm', width:ENUM_WIDTH.L},
     {header: '공급처UUID', name:'supplier_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '공급처명', name:'supplier_nm', width:ENUM_WIDTH.L, hidden:true},
-    {header: '합계금액', name:'total_qty', width:ENUM_WIDTH.L, format:'number'},
+    {header: '합계금액', name:'total_price', width:ENUM_WIDTH.L, format:'number'},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, hidden:true},
   ], {
     searchUriPath: headerSearchUriPath,
@@ -489,9 +489,12 @@ export const PgOutReceive = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
-    detailInputInfo.setValues(selectedHeaderRow);
-    onSearchDetail(selectedHeaderRow?.receive_uuid);
+    if (selectedHeaderRow == null){
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.receive_uuid);
+    }
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {

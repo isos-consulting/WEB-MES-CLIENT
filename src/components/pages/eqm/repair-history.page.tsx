@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState } from "react";
-import { getPopupForm, IGridModifiedRows, TGridMode, useGrid, useSearchbox } from "~/components/UI";
+import { Datagrid, getPopupForm, IGridModifiedRows, TGridMode, useGrid, useSearchbox } from "~/components/UI";
 import { dataGridEvents, getData, getModifiedRows, getNow, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_EQM, URL_PATH_STD } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_EQM, URL_PATH_PRD, URL_PATH_STD } from '~/enums';
 import { message } from 'antd';
 import _ from 'lodash';
 import { onDefaultGridSave } from '../prd/work';
@@ -163,7 +163,88 @@ export const PgEqmRepairHistory = () => {
         );
       },
       rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
-      gridPopupInfo: grid.gridInfo.gridPopupInfo
+      gridPopupInfo: grid.gridInfo.gridPopupInfo,
+      extraButtons: [
+        {
+          buttonProps:{ text: '비가동 이력'},
+          buttonAction:(ev, props, options) => {
+            const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
+            const updateColumns:{original:string, popup:string}[] = [
+              {original:'equip_uuid', popup:'equip_uuid'},
+              {original:'equip_nm', popup:'equip_nm'},
+              {original:'occur_start_date', popup:'start_date'},
+              {original:'occur_start_time', popup:'start_time'},
+              {original:'occur_end_date', popup:'end_date'},
+              {original:'occur_end_time', popup:'end_time'},
+            ];
+            
+            getData(
+              {},
+              URL_PATH_PRD.WORK_DOWNTIME.GET.DOWNTIMES
+            ).then((res) => {
+              modal.confirm({
+                title: '비가동 이력',
+                width: '80%',
+                content:
+                <>
+                  <Datagrid
+                    ref={childGridRef}
+                    gridId={'GRID_POPUP_DOWNTIMES'}
+                    columns={[
+                      {header:'생산부적합UUID', name:'work_downtime_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
+                      {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
+                      {header:'공정순서UUID', name:'work_routing_uuid', width:200, hidden:true, format:'text'},
+                      {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
+                      {header:'공정', name:'proc_nm', width:120, format:'popup', editable:true},
+                      {header:'공정순서', name:'proc_no', width:120, format:'popup', editable:true},
+                      {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
+                      {header:'설비', name:'equip_nm', width:120, format:'popup', editable:true},
+                      {header:'비가동 유형UUID', name:'downtime_type_uuid', width:200, hidden:true, format:'text'},
+                      {header:'비가동 유형', name:'downtime_type_nm', width:120, hidden:false, format:'text'},
+                      {header:'비가동UUID', name:'downtime_uuid', width:200, hidden:true, format:'text'},
+                      {header:'비가동', name:'downtime_nm', width:120, hidden:false, format:'text'},
+                      {header:'시작일자', name:'start_date', width:100, hidden:false, format:'date', editable:true},
+                      {header:'시작시간', name:'start_time', width:100, hidden:false, format:'time', editable:true},
+                      {header:'종료일자', name:'end_date', width:100, hidden:false, format:'date', editable:true},
+                      {header:'종료시간', name:'end_time', width:100, hidden:false, format:'time', editable:true},
+                      {header:'비가동 시간', name:'downtime', width:100, hidden:true, format:'time'},
+                      {header:'비고', name:'remark', width:150, hidden:false, format:'text', editable:true},
+                    ]}
+                    gridMode='multi-select'
+                    data={res}
+                  />
+                </>,
+                icon:null,
+                okText: '선택',
+                onOk: (close) => {
+                  const child = childGridRef.current;
+                  const rows = child.getInstance().getCheckedRows();
+                  
+                  rows?.forEach((row) => {
+                    let newRow = {};
+                    if (typeof row === 'object') {
+                      updateColumns.forEach((columnName) => {
+                        // 값 설정
+                        newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
+                      });
+          
+                      // 행 추가
+                      onAppendRow(newRow);
+                    }
+                  });
+                  close();
+                },
+                cancelText:'취소',
+                maskClosable:false,
+              })
+            });
+
+          },
+        
+
+
+        }
+      ]
     }
   );
 

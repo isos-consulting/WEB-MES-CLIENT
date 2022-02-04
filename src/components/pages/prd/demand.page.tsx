@@ -35,7 +35,7 @@ export const PgPrdDemand = () => {
     {header:'요청부서UUID', name:'dept_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'요청부서', name:'dept_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header:'요청유형UUID', name:'demand_type_cd', width:ENUM_WIDTH.M, hidden:true},
-    {header:'요청유형', name:'demand_type_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true, requiredField:true},
+    {header:'요청유형', name:'demand_type_nm', width:ENUM_WIDTH.M, format:'combo', filter:'text', editable:true, requiredField:true},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header:'품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
@@ -106,21 +106,6 @@ export const PgPrdDemand = () => {
         },
         gridMode: 'select',
       },
-      { // 유형유형 팝업
-        columnNames: [
-          {original:'demand_type_cd', popup:'demand_type_cd'},
-          {original:'demand_type_nm', popup:'demand_type_nm'},
-        ],
-        columns: [
-          {header:'요청유형코드', name:'demand_type_cd', hidden:true},
-          {header:'요청유형', name:'demand_type_nm', filter:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/adm/demand-types',
-          params: {}
-        },
-        gridMode: 'select',
-      },
       { // 투입설비 팝업
         columnNames: [
           {original:'equip_uuid', popup:'equip_uuid'},
@@ -151,6 +136,17 @@ export const PgPrdDemand = () => {
         },
         gridMode: 'select',
       },
+    ],
+    gridComboInfo: [
+      { // 요청유형 콤보박스
+        columnNames: [
+          {codeColName:{original:'demand_type_cd', popup:'demand_type_cd'}, textColName:  {original:'demand_type_nm', popup:'demand_type_nm'}},
+        ],
+        dataApiSettings: {
+          uriPath: '/adm/demand-types',
+          params: {}
+        }
+      }
     ],
     rowAddPopupInfo: {
       columnNames: [
@@ -191,6 +187,7 @@ export const PgPrdDemand = () => {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       gridPopupInfo: grid.gridInfo.gridPopupInfo,
+      gridComboInfo: grid.gridInfo.gridComboInfo,
       rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
     }
   );
@@ -205,6 +202,7 @@ export const PgPrdDemand = () => {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       gridPopupInfo: grid.gridInfo.gridPopupInfo,
+      gridComboInfo: grid.gridInfo.gridComboInfo,
       rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
     }
   );

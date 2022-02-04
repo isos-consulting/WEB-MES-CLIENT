@@ -1,5 +1,233 @@
 const URL_PATH = {
   ADM:{
+    BOM_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        BOM_TYPE:'/adm/bom-type/{uuid}',
+        BOM_TYPES:'/adm/bom-types',
+      },
+      POST:{
+        BOM_TYPES:'/adm/bom-types',
+      },
+      PUT:{
+        BOM_TYPES:'/adm/bom-types',
+      },
+      PATCH:{
+        BOM_TYPES:'/adm/bom-types',
+      },
+      DELETE:{
+        BOM_TYPES:'/adm/bom-types',
+      },
+    },
+    BOM_INPUT_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        BOM_INPUT_TYPE:'/adm/bom-input-type/{uuid}',
+        BOM_INPUT_TYPES:'/adm/bom-input-types',
+      },
+      POST:{
+        BOM_INPUT_TYPES:'/adm/bom-input-types',
+      },
+      PUT:{
+        BOM_INPUT_TYPES:'/adm/bom-input-types',
+      },
+      PATCH:{
+        BOM_INPUT_TYPES:'/adm/bom-input-types',
+      },
+      DELETE:{
+        BOM_INPUT_TYPES:'/adm/bom-input-types',
+      },
+    },
+    INSP_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        INSP_TYPE:'/adm/insp-type/{uuid}',
+        INSP_TYPES:'/adm/insp-types',
+      },
+      POST:{
+        INSP_TYPES:'/adm/insp-types',
+      },
+      PUT:{
+        INSP_TYPES:'/adm/insp-types',
+      },
+      PATCH:{
+        INSP_TYPES:'/adm/insp-types',
+      },
+      DELETE:{
+        INSP_TYPES:'/adm/insp-types',
+      },
+    },
+    INSP_HANDLING_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        INSP_HANDLING_TYPE:'/adm/insp-handling-type/{uuid}',
+        INSP_HANDLING_TYPES:'/adm/insp-handling-types',
+      },
+      POST:{
+        INSP_HANDLING_TYPES:'/adm/insp-handling-types',
+      },
+      PUT:{
+        INSP_HANDLING_TYPES:'/adm/insp-handling-types',
+      },
+      PATCH:{
+        INSP_HANDLING_TYPES:'/adm/insp-handling-types',
+      },
+      DELETE:{
+        INSP_HANDLING_TYPES:'/adm/insp-handling-types',
+      },
+    },
+    PRD_PLAN_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PRD_PLAN_TYPE:'/adm/prd-plan-type/{uuid}',
+        PRD_PLAN_TYPES:'/adm/prd-plan-types',
+      },
+      POST:{
+        PRD_PLAN_TYPES:'/adm/prd-plan-types',
+      },
+      PUT:{
+        PRD_PLAN_TYPES:'/adm/prd-plan-types',
+      },
+      PATCH:{
+        PRD_PLAN_TYPES:'/adm/prd-plan-types',
+      },
+      DELETE:{
+        PRD_PLAN_TYPES:'/adm/prd-plan-types',
+      },
+    },
+    INSP_DETAIL_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        INSP_DETAIL_TYPE:'/adm/insp-detail-type/{uuid}',
+        INSP_DETAIL_TYPES:'/adm/insp-detail-types',
+      },
+      POST:{
+        INSP_DETAIL_TYPES:'/adm/insp-detail-types',
+      },
+      PUT:{
+        INSP_DETAIL_TYPES:'/adm/insp-detail-types',
+      },
+      PATCH:{
+        INSP_DETAIL_TYPES:'/adm/insp-detail-types',
+      },
+      DELETE:{
+        INSP_DETAIL_TYPES:'/adm/insp-detail-types',
+      },
+    },
+    TRAN_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        TRAN_TYPE:'/adm/tran-type/{uuid}',
+        TRAN_TYPES:'/adm/tran-types',
+      },
+      POST:{
+        TRAN_TYPES:'/adm/tran-types',
+      },
+      PUT:{
+        TRAN_TYPES:'/adm/tran-types',
+      },
+      PATCH:{
+        TRAN_TYPES:'/adm/tran-types',
+      },
+      DELETE:{
+        TRAN_TYPES:'/adm/tran-types',
+      },
+    },
+    DEMAND_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        DEMAND_TYPE:'/adm/demand-type/{uuid}',
+        DEMAND_TYPES:'/adm/demand-types',
+      },
+      POST:{
+        DEMAND_TYPES:'/adm/demand-types',
+      },
+      PUT:{
+        DEMAND_TYPES:'/adm/demand-types',
+      },
+      PATCH:{
+        DEMAND_TYPES:'/adm/demand-types',
+      },
+      DELETE:{
+        DEMAND_TYPES:'/adm/demand-types',
+      },
+    },
+    PATTERN_OPT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PATTERN_OPT:'/adm/pattern-opt/{uuid}',
+        PATTERN_OPTS:'/adm/pattern-opts',
+      },
+      POST:{
+        PATTERN_OPTS:'/adm/pattern-opts',
+      },
+      PUT:{
+        PATTERN_OPTS:'/adm/pattern-opts',
+      },
+      PATCH:{
+        PATTERN_OPTS:'/adm/pattern-opts',
+      },
+      DELETE:{
+        PATTERN_OPTS:'/adm/pattern-opts',
+      },
+    },
+    REWORK_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        REWORK_TYPE:'/adm/rework-type/{uuid}',
+        REWORK_TYPES:'/adm/rework-types',
+      },
+      POST:{
+        REWORK_TYPES:'/adm/rework-types',
+      },
+      PUT:{
+        REWORK_TYPES:'/adm/rework-types',
+      },
+      PATCH:{
+        REWORK_TYPES:'/adm/rework-types',
+      },
+      DELETE:{
+        REWORK_TYPES:'/adm/rework-types',
+      },
+    },
+    STORE_TYPE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        STORE_TYPE:'/adm/store-type/{uuid}',
+        STORE_TYPES:'/adm/store-types',
+      },
+      POST:{
+        STORE_TYPES:'/adm/store-types',
+      },
+      PUT:{
+        STORE_TYPES:'/adm/store-types',
+      },
+      PATCH:{
+        STORE_TYPES:'/adm/store-types',
+      },
+      DELETE:{
+        STORE_TYPES:'/adm/store-types',
+      },
+    },
+    COMPANY_OPT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        COMPANY_OPT:'/adm/company-opt/{uuid}',
+        COMPANY_OPTS:'/adm/company-opts',
+      },
+      POST:{
+        COMPANY_OPTS:'/adm/company-opts',
+      },
+      PUT:{
+        COMPANY_OPTS:'/adm/company-opts',
+      },
+      PATCH:{
+        COMPANY_OPTS:'/adm/company-opts',
+      },
+      DELETE:{
+        COMPANY_OPTS:'/adm/company-opts',
+      },
+    },
     CYCLE_UNIT:{
       GET:{
         /** UUID 문자열 변환 필요 */
@@ -968,6 +1196,24 @@ const URL_PATH = {
       },
       
     },
+    PROC_EQUIP:{
+      GET:{
+        PROC_EQUIP:'/std/proc-equip/{uuid}',
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      POST:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      PUT:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      PATCH:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+      DELETE:{
+        PROC_EQUIPS:'/std/proc-equips',
+      },
+    },
     PROC_REJECT:{
       GET:{
         PROC_REJECT:'/std/proc-reject/{uuid}',
@@ -1900,6 +2146,11 @@ const URL_PATH = {
     },
   },
   MLD:{
+    REPORT:{
+      GET:{
+        REPORT: '/mld/molds/report'
+      },
+    },
     REPAIR_HISTORY:{
       GET:{
         /** UUID 문자열 변환 필요 */
@@ -1955,6 +2206,25 @@ const URL_PATH = {
       },
       DELETE:{
         PROBLEMS:'/mld/problems',
+      },
+    },
+    PROD_MOLD:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PROD_MOLD:'/mld/prod-mold/{uuid}',
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      POST:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      PUT:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      PATCH:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      DELETE:{
+        PROD_MOLDS:'/mld/prod-molds',
       },
     },
   },
