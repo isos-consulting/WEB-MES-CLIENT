@@ -343,6 +343,7 @@ export const PgOutRelease = () => {
       usePopup:true, 
       popupKey:'거래처관리', 
       popupKeys:['partner_uuid', 'partner_nm'],
+      params:{partner_fg: 2},
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {type:'text', id:'remark', label:'비고', disabled:true},
