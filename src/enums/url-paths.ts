@@ -2208,6 +2208,25 @@ const URL_PATH = {
         PROBLEMS:'/mld/problems',
       },
     },
+    PROD_MOLD:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        PROD_MOLD:'/mld/prod-mold/{uuid}',
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      POST:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      PUT:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      PATCH:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+      DELETE:{
+        PROD_MOLDS:'/mld/prod-molds',
+      },
+    },
   },
 }
 
