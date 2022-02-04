@@ -137,3 +137,4 @@ export * from './mld/repair-history.page';
 export * from './mld/problem.page';
 export * from './mld/mold.page';
 export * from './mld/mold-report.page';
+export * from './mld/prod-mold.page';
