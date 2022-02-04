@@ -130,7 +130,7 @@ export const PgPrdOrder = () => {
         {original:'mold_uuid', popup:'mold_uuid'},
         {original:'mold_nm', popup:'mold_nm'},
         {original:'mold_no', popup:'mold_no'},
-        {original:'mold_cavity', popup:'cavity'},
+        {original:'mold_cavity', popup:'mold_cavity'},
       ],
       columns: getPopupForm('금형관리')?.datagridProps?.columns,
       dataApiSettings: (el: any) => {
