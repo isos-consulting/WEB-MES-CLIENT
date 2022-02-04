@@ -7,7 +7,7 @@ import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.tem
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 /** 단위 변환값 관리 */
 export const PgStdUnitConvert = () => {
@@ -53,9 +53,9 @@ export const PgStdUnitConvert = () => {
     // {header: 'From 단위UUID', name:'from_unit_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
     // {header: 'From 단위명', name:'from_unit_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
     {header: 'To 단위UUID', name:'to_unit_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
-    {header: '변환단위', name:'to_unit_nm', width:ENUM_WIDTH.L, format:'popup'},
-    {header: 'from 값', name:'from_value', width:ENUM_WIDTH.L, format:'number', editable:true, requiredField:true},
-    {header: 'to 값', name:'to_value', width:ENUM_WIDTH.L, format:'number', editable:true, requiredField:true},
+    {header: '변환단위', name:'to_unit_nm', width:ENUM_WIDTH.L, format:'popup',editable:true, requiredField:true},
+    {header: 'from 값', name:'from_value', width:ENUM_WIDTH.L, format:'number', decimal:ENUM_DECIMAL.DEC_UNIT_CHANGE, editable:true, requiredField:true},
+    {header: 'to 값', name:'to_value', width:ENUM_WIDTH.L, format:'number', decimal:ENUM_DECIMAL.DEC_UNIT_CHANGE, editable:true, requiredField:true},
     {header: '변환값', name:'convert_value', width:ENUM_WIDTH.L, format:'number', editable:true, hidden: true},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},

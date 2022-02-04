@@ -103,7 +103,7 @@ export const PgStdVendorPrice = () => {
         ],
         columns: [
           {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
-          {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text'},
           {header: '품목', name:'prod_nm', width:ENUM_WIDTH.L, format:'text'},
           {header: '품목 유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
           {header: '품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},

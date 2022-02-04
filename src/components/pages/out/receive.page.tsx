@@ -113,7 +113,7 @@ export const PgOutReceive = () => {
     {header: '창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
     {header: '창고', name:'to_store_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', requiredField:true},
     {header: '위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.L,format:'popup', filter:'text', hidden:true},
-    {header: '위치', name:'to_location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true, requiredField:true},
+    {header: '위치', name:'to_location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
     {header: '바코드', name:'barcode', width:ENUM_WIDTH.L, filter:'text'},
