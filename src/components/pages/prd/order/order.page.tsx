@@ -5,8 +5,8 @@ import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import { Button, Container, Datagrid, getPopupForm, GridPopup, IDatagridProps, IGridPopupInfo, IGridPopupProps, Searchbox, Tabs } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox, useInputGroup } from '~/components/UI/input-groupbox';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { cloneObject, getData, getModifiedRows, getPageName, getPermissions, getToday, saveGridData } from '~/functions';
+import { ENUM_WIDTH } from '~/enums';
+import { getData, getModifiedRows, getPageName, getPermissions, getToday, saveGridData } from '~/functions';
 import { orderInput, orderRoute, TAB_CODE } from '../order';
 import { onDefaultGridSave } from './order.page.util';
 import { orderWorker } from './order.page.worker';
@@ -48,58 +48,58 @@ export const PgPrdOrder = () => {
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const ORDER_POPUP_INFO:IGridPopupInfo[] =[
-    { // 라우팅 팝업 불러오기
-      columnNames: [
-        {original:'routing_uuid', popup:'routing_uuid'},
-        {original:'proc_uuid', popup:'proc_uuid'},
-        {original:'proc_no', popup:'proc_no'},
-        {original:'proc_nm', popup:'proc_nm'},
-        {original:'workings_uuid', popup:'workings_uuid'},
-        {original:'workings_nm', popup:'workings_nm'},
-        {original:'item_type_uuid', popup:'item_type_uuid'},
-        {original:'item_type_nm', popup:'item_type_nm'},
-        {original:'prod_type_uuid', popup:'prod_type_uuid'},
-        {original:'prod_type_nm', popup:'prod_type_nm'},
-        {original:'prod_uuid', popup:'prod_uuid'},
-        {original:'prod_no', popup:'prod_no'},
-        {original:'prod_nm', popup:'prod_nm'},
-        {original:'model_uuid', popup:'model_uuid'},
-        {original:'model_nm', popup:'model_nm'},
-        {original:'rev', popup:'rev'},
-        {original:'prod_std', popup:'prod_std'},
-        {original:'unit_uuid', popup:'unit_uuid'},
-        {original:'unit_nm', popup:'unit_nm'},
-        {original:'auto_work_fg', popup:'auto_work_fg'},
-      ],
-      columns: [
-        {header:'라우팅UUID', name:'routing_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'공정순서', name:'proc_no', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'공정', name:'proc_nm', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, hidden:false, format:'text'},
-        {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, hidden:false, format:'text'},
-        {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'Rev', name:'rev', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-        {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-        {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, hidden:false, format:'text'},
-        {header:'자동 실적처리유무', name:'auto_work_fg', width:ENUM_WIDTH.M, hidden:true, format:'text'},
-      ],
-      dataApiSettings: {
-        uriPath:'/std/routings/actived-prod',
-        params: {}
-      },
-      gridMode:'select'
+  const ORDER_ADD_ROW_POPUP_INFO: IGridPopupInfo = { // 라우팅 팝업 불러오기
+    columnNames: [
+      {original:'routing_uuid', popup:'routing_uuid'},
+      {original:'proc_uuid', popup:'proc_uuid'},
+      {original:'proc_no', popup:'proc_no'},
+      {original:'proc_nm', popup:'proc_nm'},
+      {original:'workings_uuid', popup:'workings_uuid'},
+      {original:'workings_nm', popup:'workings_nm'},
+      {original:'item_type_uuid', popup:'item_type_uuid'},
+      {original:'item_type_nm', popup:'item_type_nm'},
+      {original:'prod_type_uuid', popup:'prod_type_uuid'},
+      {original:'prod_type_nm', popup:'prod_type_nm'},
+      {original:'prod_uuid', popup:'prod_uuid'},
+      {original:'prod_no', popup:'prod_no'},
+      {original:'prod_nm', popup:'prod_nm'},
+      {original:'model_uuid', popup:'model_uuid'},
+      {original:'model_nm', popup:'model_nm'},
+      {original:'rev', popup:'rev'},
+      {original:'prod_std', popup:'prod_std'},
+      {original:'unit_uuid', popup:'unit_uuid'},
+      {original:'unit_nm', popup:'unit_nm'},
+      {original:'auto_work_fg', popup:'auto_work_fg'},
+    ],
+    columns: [
+      {header:'라우팅UUID', name:'routing_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'공정순서', name:'proc_no', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'공정', name:'proc_nm', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, hidden:false, format:'text'},
+      {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, hidden:false, format:'text'},
+      {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'Rev', name:'rev', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+      {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+      {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, hidden:false, format:'text'},
+      {header:'자동 실적처리유무', name:'auto_work_fg', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+    ],
+    dataApiSettings: {
+      uriPath:'/std/routings/actived-prod',
+      params: {}
     },
+    gridMode:'select'
+  };
+  const ORDER_POPUP_INFO:IGridPopupInfo[] =[
     { // 생산자원정보 (리소스) 팝업 불러오기
       columnNames: [
         {original:'routing_resource_uuid', popup:'routing_resource_uuid'},
@@ -130,7 +130,7 @@ export const PgPrdOrder = () => {
         {original:'mold_uuid', popup:'mold_uuid'},
         {original:'mold_nm', popup:'mold_nm'},
         {original:'mold_no', popup:'mold_no'},
-        {original:'mold_cavity', popup:'cavity'},
+        {original:'mold_cavity', popup:'mold_cavity'},
       ],
       columns: getPopupForm('금형관리')?.datagridProps?.columns,
       dataApiSettings: (el: any) => {
@@ -148,6 +148,19 @@ export const PgPrdOrder = () => {
             return !complete;
             }
           }
+      },
+      gridMode: 'select',  
+    },
+    { // 작업장 관리 
+      columnNames: [
+        {original:'workings_uuid', popup:'workings_uuid'},
+        {original:'workings_cd', popup:'workings_cd'},
+        {original:'workings_nm', popup:'workings_nm'},
+      ],
+      columns: getPopupForm('작업장관리')?.datagridProps?.columns,
+      dataApiSettings: {
+        uriPath: getPopupForm('작업장관리')?.uriPath,
+        params: {},
       },
       gridMode: 'select',  
     }
@@ -171,19 +184,11 @@ export const PgPrdOrder = () => {
     columns: [
       {header:'작업지시UUID', name:'order_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
       {header:'지시일', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'date', filter:'date', requiredField:true},
-      {header:'시작예정일', name:'start_date', width:ENUM_WIDTH.M, editable:true, format:'date'},
-      {header:'종료예정일', name:'end_date', width:ENUM_WIDTH.M, editable:true, format:'date'},
       {header:'지시번호', name:'order_no', width:ENUM_WIDTH.M, editable:false},
       {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'공정', name:'proc_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
       {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
-      {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.M, hidden:true},
-      {header:'설비', name:'equip_nm', width:ENUM_WIDTH.L, editable:true, format:'popup', filter:'text'},
-      {header:'금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
-      {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-      {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-      {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
       {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
       {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
@@ -221,9 +226,8 @@ export const PgPrdOrder = () => {
     data: data,
     /** 행추가팝업 */
     rowAddPopupInfo: {
-      ...ORDER_POPUP_INFO[0],
+      ...ORDER_ADD_ROW_POPUP_INFO,
       gridMode:'multi-select',
-      
     },
     /** 수정팝업 */
     gridPopupInfo: ORDER_POPUP_INFO,
@@ -307,10 +311,34 @@ export const PgPrdOrder = () => {
     gridId: 'ORDER_NEW_GRID',
     ref: newPopupGridRef,
     gridMode: 'create',
+    columns: [
+      {header:'작업지시UUID', name:'order_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+      {header:'지시일', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'date', filter:'date', requiredField:true},
+      {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, editable:true, format:'popup', filter:'text', requiredField:true, noSave:true},
+      {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', requiredField:true, noSave:true},
+      {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true, noSave:true},
+      {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text', noSave:true},
+      {header:'계획수량', name:'plan_qty', width:ENUM_WIDTH.M, format:'number'},
+      {header:'지시수량', name:'qty', width:ENUM_WIDTH.M, editable:true, format:'number', requiredField:true},
+      {header:'지시순번', name:'seq', width:ENUM_WIDTH.M, hidden:true},
+      {header:'작업교대UUID', name:'shift_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'작업교대', name:'shift_nm', width:ENUM_WIDTH.M, editable:true, format:'combo', filter:'text', requiredField:true, noSave:true},
+      {header:'수주상세UUID', name:'sal_order_detail_uuid', width:ENUM_WIDTH.M, hidden:true},
+      {header:'비고', name:'remark', width:ENUM_WIDTH.XL, editable:true, filter:'text'},
+    ],
     defaultData: [],
     data: null,
     height: null,
     onAfterClick: null,
+    /** 등록/수정 일시 컬럼 제거 */
+    disabledAutoDateColumn: true,
     /** 팝업 아이디 */
     popupId: 'ORDER_NEW_GRID_POPUP',
     /** 팝업 제목 */
@@ -362,17 +390,34 @@ export const PgPrdOrder = () => {
   const [editPopupVisible, setEditPopupVisible] = useState(false);
 
   /** 항목 수정 팝업 속성 */
-  const editGridColumns = cloneObject(gridInfo.columns)?.map((el) => {
-    if (!['workings_nm', 'equip_nm', 'mold_nm', 'mold_no', 'qty', 'seq', 'shift_nm', 'start_date', 'end_date', 'remark'].includes(el?.name))
-      el['editable'] = false;
-    return el;
-  })
   const editGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
-    columns: editGridColumns,
     gridId: 'ORDER_EDIT_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
+    columns: [
+      {header:'작업지시UUID', name:'order_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+      {header:'지시일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'date', requiredField:true},
+      {header:'지시번호', name:'order_no', width:ENUM_WIDTH.M, editable:true},
+      {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, editable:true, format:'popup', filter:'text', requiredField:true, noSave:true},
+      {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'품번', name:'prod_no', width:ENUM_WIDTH.L, filter:'text', requiredField:true, noSave:true},
+      {header:'품목', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true, noSave:true},
+      {header:'제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'규격', name:'prod_std', width:ENUM_WIDTH.M, filter:'text', noSave:true},
+      {header:'단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text', noSave:true},
+      {header:'계획수량', name:'plan_qty', width:ENUM_WIDTH.M, format:'number'},
+      {header:'지시수량', name:'qty', width:ENUM_WIDTH.M, editable:true, format:'number', requiredField:true},
+      {header:'지시순번', name:'seq', width:ENUM_WIDTH.S, editable:true, format:'number', hidden:true},
+      {header:'작업교대UUID', name:'shift_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'작업교대', name:'shift_nm', width:ENUM_WIDTH.M, editable:true, format:'combo', filter:'text', requiredField:true, noSave:true},
+      {header:'수주상세UUID', name:'sal_order_detail_uuid', width:ENUM_WIDTH.M, hidden:true},
+      {header:'비고', name:'remark', width:ENUM_WIDTH.XL, editable:true, filter:'text'},
+    ],
     defaultData: data,
     data: null,
     height: null,
