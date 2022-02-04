@@ -489,9 +489,12 @@ export const PgOutReceive = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
-    detailInputInfo.setValues(selectedHeaderRow);
-    onSearchDetail(selectedHeaderRow?.receive_uuid);
+    if (selectedHeaderRow == null){
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.receive_uuid);
+    }
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {
