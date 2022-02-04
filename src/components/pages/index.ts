@@ -63,6 +63,7 @@ export * from './std/worker-group-worker.page';
 export * from './std/worker.page';
 export * from './std/shift.page';
 export * from './std/proc-reject.page';
+export * from './std/proc-equip.page';
 export * from './std/vendor-price.page';
 export * from './std/customer-price.page';
 export * from './std/routing.page';
