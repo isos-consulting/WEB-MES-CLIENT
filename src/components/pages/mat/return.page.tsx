@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { useGrid, useSearchbox } from "~/components/UI";
+import { Datagrid, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
@@ -60,11 +60,14 @@ export const PgMatReturn = () => {
     {header: 'Rev', name:'rev', width:100, filter:'text'},
     {header: '규격', name:'prod_std', width:150, filter:'text'},
     {header: '안전재고', name:'safe_stock', width:100, filter:'text', format:'number'},
-    {header: '단위아이디', name:'unit_uuid', width:80, filter:'text', hidden:true},
-    {header: '단위', name:'unit_nm', width:80, filter:'text'},
     {header: 'LOT NO', name:'lot_no', width:100, filter:'text', editable:true, requiredField:true},
-    {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', requiredField:true, editable:true,},
-    {header: '단위변환값', name:'convert_value', width:ENUM_WIDTH.S, format:'number', filter:'number', hidden:true},
+    {header: '반출수량', name:'return_qty', width:ENUM_WIDTH.M, filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', requiredField:true, editable:true,},
+    {header: '단위UUID', name:'return_unit_uuid', alias: 'unit_uuid', width:80, filter:'text', hidden:true},
+    {header: '단위', name:'return_unit_nm', width:80, filter:'text', align:'center'},
+    {header: '재고수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', hidden:true},
+    {header: '재고단위UUID', name:'unit_uuid', width:80, filter:'text', hidden:true},
+    {header: '재고단위', name:'unit_nm', width:80, filter:'text', align:'center',hidden:true},
+    {header: '단위변환값', name:'convert_value', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_UNIT_CHANGE, filter:'number', hidden:true},
     {header: '화폐단위아이디', name:'money_unit_uuid', filter:'text', format:'combo', editable:true, hidden:true, requiredField:true},
     {header: '화폐단위', name:'money_unit_nm', width:100, filter:'text', format:'combo', editable:true, requiredField:true},
     {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,},
@@ -79,10 +82,29 @@ export const PgMatReturn = () => {
     searchUriPath: URI_PATH_GET_MAT_RETURN_DETAILS,
     saveUriPath: URI_PATH_POST_MAT_RETURNS,
     gridMode: 'delete',
+    onAfterChange:(el)=>{
+      const changeDatas = el.changes;
+      const gridInstance = el.instance;
+      
+      changeDatas.forEach(el => {
+        const rowData = gridInstance.getRow(el?.rowKey)
+        const value:number = el.value;
+        const convert_value:number = rowData.convert_value;
+        console.log({rowData, value, convert_value})
+        if(el?.columnName === 'return_qty'){
+          gridInstance.setValue(el.rowKey, 'qty', value / convert_value)
+        }
+      });
+    }
   });
 
   /** 팝업 Grid View */
-  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', detailGrid.gridInfo.columns.filter((row) => !['total_price'].includes(row.name)), {
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', cloneDeep(detailGrid.gridInfo.columns).filter((row) => !['total_price'].includes(row.name)).map((el)=>{
+    if(el.name==='unit_nm' || el.name === 'qty'){
+      el.hidden = false
+    }
+    return el
+  }), {
     searchUriPath: URI_PATH_GET_MAT_RETURNS,
     saveUriPath: URI_PATH_POST_MAT_RETURNS,
     gridPopupInfo: detailGrid.gridInfo.gridPopupInfo,
@@ -96,10 +118,17 @@ export const PgMatReturn = () => {
         {original:'model_nm', popup:'model_nm'},
         {original:'rev', popup:'rev'},
         {original:'prod_std', popup:'prod_std'},
-        {original:'unit_uuid', popup:'price_unit_uuid'},
-        {original:'unit_nm', popup:'price_unit_nm'},
+        
         {original:'lot_no', popup:'lot_no'},
-        {original:'qty', popup:'return_qty'},
+      
+        {original:'qty', popup:'qty'},
+        {original:'unit_uuid', popup:'unit_uuid'},
+        {original:'unit_nm', popup:'unit_nm'},
+
+        {original:'return_qty', popup:'return_qty'},
+        {original:'return_unit_uuid', popup:'return_unit_uuid'},
+        {original:'return_unit_nm', popup:'return_unit_nm'},
+
         {original:'convert_value', popup:'convert_value'},
         {original:'from_store_uuid', popup:'store_uuid'},
         {original:'from_store_nm', popup:'store_nm'},
@@ -124,14 +153,21 @@ export const PgMatReturn = () => {
         {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '규격', name:'prod_std', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
         {header: '단위변환값', name:'convert_value', width:ENUM_WIDTH.S, format:'number', filter:'number', hidden:true},
-        {header: '단위UUID', name:'price_unit_uuid', width:ENUM_WIDTH.S, format:'text', filter:'text', hidden:true},
-        {header: '단위', name:'price_unit_nm', width:ENUM_WIDTH.S, format:'text', filter:'text'},
+        
         {header: '창고UUID', name:'store_uuid', width:ENUM_WIDTH.L, format:'text', filter:'text', hidden:true},
         {header: '창고', name:'store_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '위치UUID', name:'location_uuid', width:ENUM_WIDTH.L, format:'text', filter:'text', hidden:true},
         {header: '위치', name:'location_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, format:'text', filter:'text'},
-        {header: '재고', name:'return_qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
+        
+        {header: '재고', name:'qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
+        {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.S, format:'text', filter:'text', hidden:true},
+        {header: '재고단위', name:'unit_nm', width:ENUM_WIDTH.S, format:'text', filter:'text', align:'center'},
+
+        {header: '반출단위재고', name:'return_qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
+        {header: '단위UUID', name:'return_unit_uuid', width:ENUM_WIDTH.S, format:'text', filter:'text', hidden:true},
+        {header: '반출단위', name:'return_unit_nm', width:ENUM_WIDTH.S, format:'text', filter:'text', align:'center'},
+
         {header: '화폐단위UUID', name:'money_unit_uuid', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
         {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '단가유형UUID', name:'price_type_uuid', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
@@ -186,6 +222,7 @@ export const PgMatReturn = () => {
       },
       gridMode:'multi-select'
     },
+    onAfterChange: detailGrid.gridInfo.onAfterChange
   });
 
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
@@ -272,6 +309,7 @@ export const PgMatReturn = () => {
       usePopup:true, 
       popupKey:'거래처관리', 
       popupKeys:['partner_uuid', 'partner_nm'],
+      params:{}
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
@@ -312,9 +350,13 @@ export const PgMatReturn = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
-    detailInputInfo.setValues(selectedHeaderRow);
-    onSearchDetail(selectedHeaderRow?.return_uuid);
+    if (selectedHeaderRow == null) {
+      detailGrid.setGridData([]);
+    } else {
+      detailInputInfo.setValues(selectedHeaderRow);
+      onSearchDetail(selectedHeaderRow?.return_uuid);
+    }
+
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {
