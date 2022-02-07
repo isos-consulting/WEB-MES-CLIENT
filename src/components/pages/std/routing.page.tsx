@@ -188,9 +188,9 @@ export const PgStdRouting = () => {
     };
 
     if (resourcesGridPopupCreateVisible === true) {
-      inputRefCreateResources?.current?.setValues(inputRefWorkings?.current?.values);
+      inputRefCreateResources?.current?.setValues(inputRefResources?.current?.values);
     } else if (resourcesGridPopupUpdateVisible === true) {
-      inputRefUpdateResources?.current?.setValues(inputRefWorkings?.current?.values);
+      inputRefUpdateResources?.current?.setValues(inputRefResources?.current?.values);
     }
 
   }, [resourcesGridPopupVisible, resourcesGridPopupCreateVisible, resourcesGridPopupUpdateVisible]);
