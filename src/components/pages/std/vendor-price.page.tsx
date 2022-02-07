@@ -87,6 +87,22 @@ export const PgStdVendorPrice = () => {
     gridPopupInfo: [
       {
         columnNames: [
+          {original:'unit_uuid', popup:'unit_uuid'},
+          {original:'unit_nm', popup:'unit_nm'},
+        ],
+        columns: [
+          {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '단위', name:'unit_nm', width:ENUM_WIDTH.L, format:'text'},
+        ],
+        dataApiSettings: {
+          uriPath: '/std/units',
+          params: {}
+        },
+        gridMode:'select'
+      },
+      {
+        columnNames: [
           {original:'prod_uuid', popup:'prod_uuid'},
           {original:'prod_no', popup:'prod_no'},
           {original:'prod_nm', popup:'prod_nm'},
@@ -125,7 +141,7 @@ export const PgStdVendorPrice = () => {
           params: {}
         },
         gridMode:'select'
-      }
+      },
     ],
     gridComboInfo: [
       { // 화폐유형 콤보박스
@@ -154,7 +170,7 @@ export const PgStdVendorPrice = () => {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: {
-      ...detailGrid.gridInfo.gridPopupInfo[0],
+      ...detailGrid.gridInfo.gridPopupInfo[1],
       gridMode:'multi-select'
     },
     gridPopupInfo: detailGrid.gridInfo.gridPopupInfo,
