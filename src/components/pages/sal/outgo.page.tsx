@@ -62,8 +62,8 @@ export const PgSalOutgo = () => {
 
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '제품출하상세UUID', name:'outgo_detail_uuid', alias:'uuid', hidden:true},
-    {header: '수주상세UUID', name:'order_detail_uuid', alias:'uuid', hidden:true},
-    {header: '출하지시상세UUID', name:'outgo_order_detail_uuid', alias:'uuid', hidden:true},
+    {header: '수주상세UUID', name:'order_detail_uuid', hidden:true},
+    {header: '출하지시상세UUID', name:'outgo_order_detail_uuid', hidden:true},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
@@ -80,7 +80,7 @@ export const PgSalOutgo = () => {
     {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
     {header: '수주수량', name:'order_detail_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
     {header: '지시수량', name:'outgo_order_detail_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
-    {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
+    {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header: '화폐단위UUID', name:'money_unit_uuid', width:ENUM_WIDTH.S, hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text', requiredField:true},
     {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,
@@ -178,6 +178,8 @@ export const PgSalOutgo = () => {
           grouped_type?:string,
           price_type?:string,
           reg_date?:string,
+          exclude_zero_fg?:boolean,
+          exclude_minus_fg?:boolean,
         };
         let inputValues = null;
         let params:TParams = {};
@@ -195,6 +197,8 @@ export const PgSalOutgo = () => {
             stock_type: 'outgo',
             grouped_type: 'all',
             price_type: 'sales',
+            exclude_zero_fg: true,
+            exclude_minus_fg: true,
             reg_date: inputValues?.reg_date ? dayjs(inputValues?.reg_date).format('YYYY-MM-DD') : null,
           };
         }
