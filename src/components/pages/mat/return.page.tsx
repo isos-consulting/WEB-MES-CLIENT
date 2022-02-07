@@ -309,7 +309,7 @@ export const PgMatReturn = () => {
       usePopup:true, 
       popupKey:'거래처관리', 
       popupKeys:['partner_uuid', 'partner_nm'],
-      params:{}
+      params:{partner_fg: 1},
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
     {type:'number', id:'total_qty', label:'합계수량', disabled:true},
