@@ -74,8 +74,8 @@ export const PgStdBom = () => {
     {header:'투입방법UUID', name:'bom_input_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'투입방법', name:'bom_input_type_nm', width:ENUM_WIDTH.M, format:'combo', filter:'text', editable:true, requiredField:true},
     {header:'소요량', name:'c_usage', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, requiredField: true},
-    {header:'소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, requiredField:true},
-    {header:'소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
+    {header:'소모창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
+    {header:'소모창고', name:'from_store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup', requiredField:true},
     {header:'소모위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true},
     {header:'소모위치', name:'from_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
   ], {
