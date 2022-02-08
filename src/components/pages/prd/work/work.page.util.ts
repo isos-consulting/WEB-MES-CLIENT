@@ -1,18 +1,17 @@
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
-import { FormikValues } from 'formik';
 import { MutableRefObject } from 'react';
 import { checkGridData, executeData, getModifiedRows, getUserFactoryUuid, isModified, saveGridData } from '~/functions';
 
 
 
 export const TAB_CODE = {
-  공정검사: 'INSP',
-  투입품목관리: 'INPUT',
-  투입인원관리: 'WORKER',
-  부적합관리: 'REJECT',
-  비가동관리: 'DOWNTIME',
-  공정순서: 'ROUTING',
+  workInsp: 'INSP',
+  workInput: 'INPUT',
+  workWorker: 'WORKER',
+  workReject: 'REJECT',
+  workDowntime: 'DOWNTIME',
+  workRouting: 'ROUTING',
 }
 
 

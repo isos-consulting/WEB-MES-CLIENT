@@ -3,14 +3,13 @@ import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal, Row, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, IGridPopupInfo, TGridMode } from '~/components/UI';
+import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, TGridMode } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import { Modal as CustomModal } from '~/components/UI';
-import { cloneObject, executeData, getData, getModifiedRows, getPageName, getPermissions, getToday } from '~/functions';
+import { executeData, getData, getPageName, getPermissions, getToday } from '~/functions';
 import Colors from '~styles/color.style.scss';
-import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
+import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
 
 //#region 🔶🚫투입품목관리
 /** 투입품목관리 */
@@ -88,7 +87,12 @@ export const INPUT = () => {
 
     const work_uuid = (searchParams as any)?.work_uuid;
 
-    getData({work_uuid}, uriPath).then((res) => {
+    getData(
+      {work_uuid},
+      uriPath, 
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setData(res);
     });
   }
@@ -155,7 +159,7 @@ export const INPUT = () => {
   //#region 🚫렌더부
   const component = (
     <>
-      <Container>
+      <Container boxShadow={false}>
         {gridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
@@ -166,21 +170,15 @@ export const INPUT = () => {
             </Space>
           </div>
           : null
-          // <div style={{width:'100%', display:'inline-block'}}>
-          //   <Space size={[6,0]} style={{float:'right'}}>
-          //     <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-          //     <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-          //   </Space>
-          // </div>
         }
         <p/>
         <Datagrid
-          gridId={TAB_CODE.투입품목관리+'_GRID'}
+          gridId={TAB_CODE.workInput+'_GRID'}
           ref={gridRef}
           gridMode={gridMode}
           columns={INPUT_COLUMNS}
           data={data}
-          height={400}
+          height={420}
         />
       </Container>
 
@@ -275,25 +273,6 @@ export const INPUT_POPUP = (
       return 'view'
     } else return 'delete';
   }, [permissions]);
-  // const [workInputGridMode, setWorkInputGridMode] = useState<TGridMode>('delete');
-
-  // const newGridPopupRef = useRef<Grid>();
-
-  // // 기존 투입 목록 그리드 관련 설정값
-  // const gridRefWorkInput = useRef<Grid>();
-  
-  // const OLD_GRID_ONGOING_SEARCH_URI_PATH = '/prd/work-inputs/ongoing';
-  
-  
-  // //신규투입 행추가 관련 항목 세팅
-  // const inputRef = useRef<FormikProps<FormikValues>>();
-
-  // // 품목이력 그리드 관련 설정값
-  // const prodGridRef = useRef<Grid>();
-  // const [prodData, setProdData] = useState([]);
-  // const prodGridMode_Default = 'view';
-  // const [prodGridMode, setProdGridMode] = useState<TGridMode>(prodGridMode_Default);
-  // const PROD_GRID_SEARCH_URI_PATH = '/prd/work-inputs';
 
   const [searchParams, setSearchParams] = useState(props.searchParams || {});
   //#endregion
@@ -309,7 +288,7 @@ export const INPUT_POPUP = (
     if (searchParams?.work_uuid == null) return;
     onWorkStandardInputData_Search();
     onWorkInputData_Search();
-  }, [searchParams]);
+  }, [searchParams?.work_uuid]);
 
   useLayoutEffect(() => {
     if (searchParams?.work_uuid == null) return;
@@ -379,7 +358,12 @@ export const INPUT_POPUP = (
   const onWorkStandardInputData_Search = () => {
     const work_uuid = props.searchParams?.work_uuid;
 
-    getData({work_uuid}, URI_PATH_STANDARD_INPUT_WORK).then((res) => {
+    getData(
+      {work_uuid}, 
+      URI_PATH_STANDARD_INPUT_WORK,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setStandardInputData(res);
     });
     // setNewData([]);
@@ -388,14 +372,14 @@ export const INPUT_POPUP = (
 
   /** 기존 데이터 조회 함수 */
   const onWorkInputData_Search = () => {
-    // let uriPath = OLD_GRID_ONGOING_SEARCH_URI_PATH; // 진행중인 실적내역 조회 포인트
-
-    // if (searchParams.complete_fg === true) {
-    //   uriPath = OLD_GRID_SEARCH_URI_PATH; // 완료된 실적인 경우 조회 포인트 변경
-    // }
     const work_uuid = props.searchParams?.work_uuid;
 
-    getData({work_uuid}, URI_PATH_WORK_INPUT).then((res) => {
+    getData(
+      {work_uuid}, 
+      URI_PATH_WORK_INPUT,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setInputData(res);
     });
   }
@@ -465,19 +449,6 @@ export const INPUT_POPUP = (
           <Row gutter={[0,16]}>
             <Typography.Title level={5} style={{marginBottom:-16, color:Colors.palettes_primary}}><CaretRightOutlined />신규 투입</Typography.Title>
             <Divider style={{marginBottom:10}}/>
-            {/* <Col span={8}>
-              <Container>
-                <Datagrid
-                  gridId='투입품목등록_품번선택_그리드'
-                  ref={prodGridRef}
-                  columns={PROD_GRID_COLUMNS}
-                  data={prodData}
-                  gridMode={prodGridMode}
-                  height={380}
-                />
-              </Container>
-            </Col> */}
-            {/* <Col span={16}> */}
               <div>
                 <InputGroupbox
                   id='투입품목등록_입력상자'

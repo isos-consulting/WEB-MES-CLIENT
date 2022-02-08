@@ -5,9 +5,32 @@ import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridModifiedRo
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
+const DATA_PICKUP_INFO = {
+  create: [
+    'factory_uuid',
+    'work_uuid',
+    'work_routing_uuid',
+    'equip_uuid',
+    'downtime_uuid',
+    'start_date',
+    'end_date',
+    // 'downtime',
+    'remark',
+  ],
+  update: [
+    'work_downtime_uuid', //uuid
+    'start_date',
+    'end_date',
+    // 'downtime',
+    'remark',
+  ],
+  delete: [
+    'work_downtime_uuid', //uuid
+  ]
+}
 
 /** 생산관리 - 비가동관리 */
 export const DOWNTIME = () => {
@@ -29,7 +52,7 @@ export const DOWNTIME = () => {
   /** 비가동 그리드 속성 */
   const gridInfo:IDatagridProps = {
     /** 그리드 아이디 */
-    gridId: TAB_CODE.비가동관리+'_GRID'+'_POPUP_GRID',
+    gridId: TAB_CODE.workDowntime+'_GRID'+'_POPUP_GRID',
     /** 참조 */
     ref: gridRef,
     /** 그리드 높이 */
@@ -43,13 +66,6 @@ export const DOWNTIME = () => {
     /** 컬럼 */
     columns: [
       {header:'생산부적합UUID', name:'work_downtime_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-      {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
-      {header:'공정순서UUID', name:'work_routing_uuid', width:200, hidden:true, format:'text'},
-      // {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-      {header:'공정', name:'proc_nm', width:120, format:'popup', editable:true},
-      {header:'공정순서', name:'proc_no', width:120, format:'popup', editable:true},
-      // {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
-      {header:'설비', name:'equip_nm', width:120, format:'popup', editable:true},
       {header:'비가동 유형UUID', name:'downtime_type_uuid', width:200, hidden:true, format:'text'},
       {header:'비가동 유형', name:'downtime_type_nm', width:120, hidden:false, format:'text'},
       {header:'비가동UUID', name:'downtime_uuid', width:200, hidden:true, format:'text'},
@@ -83,35 +99,6 @@ export const DOWNTIME = () => {
       },
       gridMode:'multi-select'
     },
-    /** 수정팝업 */
-    gridPopupInfo: [
-      {
-        columnNames: [
-          {original:'work_routing_uuid', popup:'work_routing_uuid'},
-          {original:'proc_nm', popup:'proc_nm'},
-          {original:'proc_no', popup:'proc_no'},
-          {original:'equip_nm', popup:'equip_nm'},
-        ],
-        columns: [
-          {header:'공정순서UUID', name:'work_routing_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-          {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
-          {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-          {header:'공정순서', name:'proc_no', width:100, format:'text'},
-          {header:'공정', name:'proc_nm', width:120, format:'text'},
-          {header:'작업장UUID', name:'workings_uuid', width:200, hidden:true, format:'text'},
-          {header:'작업장', name:'workings_nm', width:120, format:'text'},
-          {header:'설비UUID', name:'equip_uuid', width:200, hidden:true, format:'text'},
-          {header:'설비', name:'equip_nm', width:120, format:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/prd/work-routings',
-          params: {
-            work_uuid: (searchParams as any)?.work_uuid
-          }
-        },
-        gridMode:'select'
-      }
-    ],
   };
   //#endregion
 
@@ -123,23 +110,19 @@ export const DOWNTIME = () => {
   /** 신규 항목 추가 팝업 속성 */
   const newGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
-    gridId: TAB_CODE.비가동관리+'_NEW_GRID',
+    gridId: TAB_CODE.workDowntime+'_NEW_GRID',
     ref: newPopupGridRef,
     gridMode: 'create',
     defaultData: [],
     data: null,
     height: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.비가동관리+'_GRID'+'_NEW_POPUP',
+    popupId: TAB_CODE.workDowntime+'_GRID'+'_NEW_POPUP',
     /** 팝업 제목 */
     title: '비가동 항목 추가',
     /** 포지티브 버튼 글자 */
     okText: '추가하기',
-    onOk: () => {
-      onSave(newPopupGridRef, 'create').then((res) => {
-        
-      });
-    },
+    onOk: () => onSave(newPopupGridRef, 'create'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -178,7 +161,7 @@ export const DOWNTIME = () => {
   /** 항목 수정 팝업 속성 */
   const editGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
-    gridId: TAB_CODE.비가동관리+'_EDIT_GRID',
+    gridId: TAB_CODE.workDowntime+'_EDIT_GRID',
     columns: editPopupGridColumns,
     ref: editPopupGridRef,
     gridMode: 'update',
@@ -186,7 +169,7 @@ export const DOWNTIME = () => {
     data: null,
     height: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.비가동관리+'_GRID'+'_EDIT_POPUP',
+    popupId: TAB_CODE.workDowntime+'_GRID'+'_EDIT_POPUP',
     /** 팝업 제목 */
     title: '비가동 항목 수정',
     /** 포지티브 버튼 글자 */
@@ -217,15 +200,24 @@ export const DOWNTIME = () => {
 
   //#region 🔶함수
   const onSearch = () => {
-    const work_uuid = (searchParams as any)?.work_uuid;
-    getData({work_uuid}, gridInfo.searchUriPath).then((res) => {
+    const work_uuid = searchParams?.['work_uuid'];
+    const work_routing_uuid = searchParams?.['work_routing_uuid'];
+    getData(
+      {
+        work_uuid,
+        work_routing_uuid
+      }, 
+      gridInfo.searchUriPath,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setData(res);
     });
   }
 
   /** 조작 가능 여부 판단 */
   const onCheckAccessAllow = ():boolean => {
-    if ((searchParams as any)?.work_uuid == null) {
+    if (searchParams?.['work_uuid'] == null || searchParams?.['work_routing_uuid'] == null) {
       onErrorMessage('하위이력작업시도');
       return false;
     }
@@ -340,7 +332,9 @@ export const DOWNTIME = () => {
         }
 
         const start_date = dayjs(el['start_date']).format('YYYY-MM-DD') + ' ' + time;
-        el['start_date'] = dayjs(start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        if (dayjs(start_date)?.isValid()) {
+          el['start_date'] = dayjs(start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        }
       }
       
 
@@ -352,11 +346,17 @@ export const DOWNTIME = () => {
         }
 
         const end_date = dayjs(el['end_date']).format('YYYY-MM-DD') + ' ' + time;
-        el['end_date'] = dayjs(end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        if (dayjs(end_date)?.isValid()) {
+          el['end_date'] = dayjs(end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        }
       }
 
       delete el['start_time'];
       delete el['end_time'];
+    });
+
+    saveData[_gridMode+'dRows'] = saveData[_gridMode+'dRows']?.map((row) => {
+      return _.pick(row, DATA_PICKUP_INFO?.[_gridMode]);
     });
 
     // 저장 가능한지 체크
@@ -377,7 +377,7 @@ export const DOWNTIME = () => {
   //#region 🔶렌더부
   const component = (
     <>
-      <Container>
+      <Container boxShadow={false}>
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
               <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={() => onOpenPopup('delete')} disabled={!permissions?.delete_fg}>삭제</Button>
@@ -386,7 +386,7 @@ export const DOWNTIME = () => {
             </Space>
           </div>
         <p/>
-        <Datagrid {...gridInfo} />
+        <Datagrid {...gridInfo} height={420} />
       </Container>
 
       {contextHolder}

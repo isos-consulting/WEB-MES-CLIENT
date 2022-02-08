@@ -3,11 +3,11 @@ import { Space, Col, Row, message, Spin, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
-import React, { MutableRefObject, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, TGridMode, useGrid } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber, saveGridData } from '~/functions';
+import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber } from '~/functions';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -240,13 +240,13 @@ export const INSP = () => {
     maxSampleCnt: number,
   }
   const getMaxSampleCnt = async (params:GetMaxSampleCntParams):Promise<GetMaxSampleCntResponse> => {
-    const datas = await getData(params, DETAIL_STD_SEARCH_URI_PATH, 'header-details');
-    const maxSampleCnt = datas?.header?.max_sample_cnt;
+    const datas = await getData(params, DETAIL_STD_SEARCH_URI_PATH, 'header-details', null, null, null, {disabledZeroMessage: true});
+    const maxSampleCnt = datas?.['header']?.max_sample_cnt;
 
     return {
       datas,
-      header: datas?.header,
-      details: datas?.details,
+      header: datas?.['header'],
+      details: datas?.['details'],
       maxSampleCnt,
     };
   }
@@ -367,10 +367,15 @@ export const INSP = () => {
   const onSearch = (headerSaveOptionParams:{work_uuid?:string,prod_uuid?:string,lot_no?:string}) => {
     const {work_uuid, prod_uuid, lot_no} = headerSaveOptionParams;
     if(work_uuid){
-      getData({
-        work_uuid: String(work_uuid),
-        insp_detail_type: 'all'
-      }, HEADER_SEARCH_URI_PATH).then((res) => {
+      getData(
+        {
+          work_uuid: String(work_uuid),
+          insp_detail_type: 'all'
+        }, 
+        HEADER_SEARCH_URI_PATH,
+        undefined, undefined, undefined, undefined,
+        {disabledZeroMessage: true}
+    ).then((res) => {
         setHeaderData(res);
         setHeaderSaveOptionParams({
           work_uuid, 
@@ -555,8 +560,15 @@ export const INSP = () => {
         const work_uuid = selectedRow?.work_uuid;
         const URI_PATH = DETAIL_SEARCH_URI_PATH.replace('$', insp_result_uuid);
         // 공정검사 상세 데이터 조회
-        getData({}, URI_PATH, 'header-details').then((res) => {
-          const {header, details} = res;
+        getData(
+          {}, 
+          URI_PATH, 
+          'header-details',
+          null, null, null,
+          {disabledZeroMessage: true}
+        ).then((res) => {
+          const header = res?.['header'];
+          const details = res?.['details'];
           const maxSampleCnt = header?.max_sample_cnt;
           const columns = createInspDetailColumns(maxSampleCnt);
 
@@ -592,7 +604,7 @@ export const INSP = () => {
       <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
     :
     <>
-      <Container>
+      <Container boxShadow={false}>
         <div style={{width:'100%', display:'inline-block'}}>
           <Space size={[6,0]} style={{float:'right'}}>
             <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} hidden={true} disabled={!permissions?.delete_fg}>삭제</Button>
@@ -601,15 +613,15 @@ export const INSP = () => {
           </Space>
         </div>
         <p/>
-        <Row gutter={[16,0]} style={{minHeight:440, maxHeight:440}}>
+        <Row gutter={[16,0]} style={{minHeight:452, maxHeight:452}}>
           <Col span={8}>
             <Datagrid
-              gridId={TAB_CODE.공정검사+'_GRID'}
+              gridId={TAB_CODE.workInsp+'_GRID'}
               ref={gridRef}
               gridMode={headerGridMode}
               columns={INSP_COLUMNS}
               data={headerData}
-              height={400}
+              height={420}
               onAfterChange={(ev) => onAfterChange(ev, {
                 gridInstance: gridRef?.current?.getInstance(),
                 inputInstance: inputRef?.current,
@@ -617,10 +629,10 @@ export const INSP = () => {
               onAfterClick={onClickHeader}
             />
           </Col>
-          <Col span={16} style={{minHeight:440, maxHeight:440, overflow:'auto'}}>
+          <Col span={16} style={{minHeight:452, maxHeight:452, overflow:'auto'}}>
             <InputGroupbox
               boxShadow={false}
-              id={TAB_CODE.공정검사+'_INPUT_GROUP_BOX'}
+              id={TAB_CODE.workInsp+'_INPUT_GROUP_BOX'}
               inputItems={INSP_INPUT_ITEMS}
               innerRef={inputRef}
             />
