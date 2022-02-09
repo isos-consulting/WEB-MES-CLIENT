@@ -47,6 +47,7 @@ export type TPopupKey =
 | '품목관리2'
 | '금형관리'
 | '금형문제점관리'
+| 'BOM투입유형관리'
 | undefined;
 
 /**
@@ -96,6 +97,7 @@ export function getPopupForm(popupKey:TPopupKey, option?:IPopupItemOptionProps):
     case '출하지시품목관리': return getPI_SalOutgoOrderDetail(option);
     case '금형문제점관리': return getPI_MldProblem(option);
     case '금형관리': return getPI_MldMold(option);
+    case 'BOM투입유형관리': return getPI_AdmBomInputType(option);
 
     default:
       break;
@@ -1124,6 +1126,28 @@ const getPI_MldProblem = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps 
       ]
     },
     uriPath:'/mld/problems',
+    params: option?.params,
+    parentGridId: option?.parentGridId,
+  }
+
+  return result;
+}
+
+const getPI_AdmBomInputType = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
+  let result:IPopupItemsRetrunProps = {
+    modalProps:{
+      title:'BOM투입유형관리',
+      visible: true,
+    },
+    datagridProps:{
+      gridId: option?.id,
+      columns:[
+        {header: 'BOM 투입유형UUID',name:'bom_input_type_uuid', hidden:true},
+        {header: 'BOM 투입유형코드',name:'bom_input_type_cd', width:ENUM_WIDTH.M, filter:'text'},
+        {header: 'BOM 투입유형',name:'bom_input_type_nm', width:ENUM_WIDTH.L, filter:'text'},
+      ]
+    },
+    uriPath:'/adm/bom-input-types',
     params: option?.params,
     parentGridId: option?.parentGridId,
   }
