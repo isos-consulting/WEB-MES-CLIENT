@@ -1,10 +1,10 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, message, Space, Typography, Modal, Col, Row, Input, Select, DatePicker } from 'antd';
+import { Divider, message, Space, Typography, Modal, Col, Row, Input } from 'antd';
 import dayjs from 'dayjs';
 import React, { useLayoutEffect, useReducer, useRef, useState, useMemo } from 'react';
-import { Button, Container, Datagrid, IGridColumn, Label, PopupButton, Searchbox, Tabs, Textbox, TGridMode, useSearchbox } from '~/components/UI';
-import { executeData, getData, getPageName, getPermissions, getToday, getUserFactoryUuid, saveGridData } from '~/functions';
+import { Button, Container, Datagrid, IGridColumn, Label, Searchbox, Tabs, TGridMode, useSearchbox } from '~/components/UI';
+import { executeData, getData, getPageName, getPermissions, getToday, saveGridData } from '~/functions';
 import { useLoadingState } from '~/hooks';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -17,10 +17,10 @@ import { INPUT } from './work.page.input';
 import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
-import { ROUTING } from './work.page.route';
-import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
+import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
+import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -35,11 +35,11 @@ dayjs.extend(weekYear);
 
 
 const TAB_CODE = {
-  공정검사: 'INSP',
-  투입품목관리: 'INPUT',
-  투입인원관리: 'WORKER',
-  부적합관리: 'REJECT',
-  비가동관리: 'DOWNTIME',
+  WORK_INSP: 'INSP',
+  WORK_INPUT: 'INPUT',
+  WORK_WORKER: 'WORKER',
+  WORK_REJECT: 'REJECT',
+  WORK_DOWNTIME: 'DOWNTIME',
   공정순서: 'ROUTING',
 }
 
@@ -48,6 +48,10 @@ const onErrorMessage = (type) => {
   switch (type) {
     case '하위이력작업시도':
       message.warn('작업이력을 선택한 후 다시 시도해주세요.');
+      break;
+
+    case '공정순서이력작업시도':
+      message.warn('공정순서를 선택한 후 다시 시도해주세요.');
       break;
 
     case '완료된작업시도':
@@ -86,7 +90,6 @@ const infoInit = {
     workings_nm: null,
     order_remark: null,
   },
-
   workInfo: {
     work_uuid: null,
     complete_fg: null,
@@ -106,15 +109,51 @@ const infoInit = {
     reject_qty: null, //부적합수량
     lot_no: null,
     remark: null,
+  },
+  routingInfo: {
+    work_routing_uuid: null,
+    factory_uuid: null,
+    factory_cd: null,
+    factory_nm: null,
+    work_uuid: null,
+    proc_uuid: null,
+    proc_cd: null,
+    proc_nm: null,
+    proc_no: null,
+    workings_uuid: null,
+    workings_cd: null,
+    workings_nm: null,
+    equip_uuid: null,
+    equip_cd: null,
+    equip_nm: null,
+    mold_uuid: null,
+    mold_cd: null,
+    mold_nm: null,
+    mold_cavity: null,
+    qty: null,
+    start_date: null,
+    end_date: null,
+    _start_date: null,
+    _end_date: null,
+    _start_time: null,
+    _end_time: null,
+    work_time: null,
+    ongoing_fg: null,
+    remark: null,
   }
 }
 
 type TAction =
 | {type:'CHANGE_ORDER_INFO', name:string, value:any}
 | {type:'CHANGE_WORK_INFO', name:string, value:any}
+| {type:'CHANGE_ROUTING_INFO', name:string, value:any}
 | {type:'CHANGE_ALL', name?:string, value?:any}
+| {type:'CHANGE_ALL_ORDER', name?:string, value?:any}
+| {type:'CHANGE_ALL_WORK', name?:string, value?:any}
+| {type:'CHANGE_ALL_ROUTING', name?:string, value?:any}
 | {type:'CLEAR_ORDER_INFO', name?:string, value?:any}
 | {type:'CLEAR_WORK_INFO', name?:string, value?:any}
+| {type:'CLEAR_ROUTING_INFO', name?:string, value?:any}
 | {type:'CLEAR_ALL', name?:string, value?:any}
 
 type TState = {
@@ -161,6 +200,37 @@ type TState = {
     reject_qty: string | number, //부적합수량
     lot_no: string,
     remark: string,
+  },
+  routingInfo: {
+    work_routing_uuid: string,
+    factory_uuid: string,
+    factory_cd: string,
+    factory_nm: string,
+    work_uuid: string,
+    proc_uuid: string,
+    proc_cd: string,
+    proc_nm: string,
+    proc_no: string | number,
+    workings_uuid: string,
+    workings_cd: string,
+    workings_nm: string,
+    equip_uuid: string,
+    equip_cd: string,
+    equip_nm: string,
+    mold_uuid: string,
+    mold_cd: string,
+    mold_nm: string,
+    mold_cavity: string | number,
+    qty: string | number,
+    start_date: string,
+    end_date: string,
+    _start_date: dayjs.Dayjs,
+    _end_date: dayjs.Dayjs,
+    _start_time: dayjs.Dayjs,
+    _end_time: dayjs.Dayjs,
+    work_time: string | number,
+    ongoing_fg: boolean,
+    remark: string,
   }
 }
 
@@ -186,8 +256,35 @@ const infoReducer = (state:TState, action:TAction) => {
         }
       };
 
+    case 'CHANGE_ROUTING_INFO':
+      return {
+        ...state,
+        routingInfo: {
+          ...state.routingInfo,
+          [action.name]: action.value
+        }
+      };
+
     case 'CHANGE_ALL':
       return action.value;
+
+    case 'CHANGE_ALL_ORDER':
+      return {
+        ...state,
+        orderInfo: action.value
+      };
+
+    case 'CHANGE_ALL_WORK':
+      return {
+        ...state,
+        workInfo: action.value
+      };
+
+    case 'CHANGE_ALL_ROUTING':
+      return {
+        ...state,
+        routingInfo: action.value
+      };
 
     case 'CLEAR_ORDER_INFO':
       return {
@@ -199,6 +296,12 @@ const infoReducer = (state:TState, action:TAction) => {
       return {
         ...state,
         workInfo: infoInit.workInfo
+      };
+
+    case 'CLEAR_ROUTING_INFO':
+      return {
+        ...state,
+        routingInfo: infoInit.routingInfo
       };
 
     case 'CLEAR_ALL':
@@ -233,70 +336,20 @@ export const PgPrdWork = () => {
 
   const SEARCH_URI_PATH = '/prd/works';
 
-  const 공정검사 = INSP();
-  const 투입품목관리 = INPUT();
-  const 투입인원관리 = WORKER();
-  const 부적합관리 = REJECT();
-  const 비가동관리 = DOWNTIME();
-  const 공정순서 = ROUTING();
+  const workInsp = INSP();
+  const workInput = INPUT();
+  const workWorker = WORKER();
+  const workReject = REJECT();
+  const workDowntime = DOWNTIME();
+  const workRouting = workRoutingStore();//ROUTING();
 
   // 팝업 관련
   const [prodOrderPopupVisible, setProdOrderPopupVisible] = useState(false);
 
   // 작업정보, 생산정보 관리
   const [infoState, infoDispatch] = useReducer(infoReducer, infoInit);
-  const {orderInfo, workInfo} = infoState;
-
-  const [cboWorkStoreOptions, setCboWorkStoreOptions] = useState([]);
-  const [cboWorkLocationOptions, setCboWorkLocationOptions] = useState([]);
+  const {orderInfo, workInfo, routingInfo} = infoState;
   //#endregion
-
-
-  //#region 🚫사이드 이펙트
-  useLayoutEffect(() => {
-    // 콤보박스 값 세팅 (입고창고/입고위치)
-
-    //입고창고 조회
-    getData(
-      {
-        store_type:'available'
-      },
-      '/std/stores'
-    ).then((res) => {
-      let cboItems = [];
-
-      res?.forEach((el) => {
-        cboItems.push({
-          value: el?.store_uuid,
-          label: el?.store_nm,
-        })
-      });
-
-      setCboWorkStoreOptions(cboItems);
-    });
-    
-
-    //입고위치 조회
-    getData(
-      {
-        //store_uuid: 
-      },
-      '/std/locations'
-    ).then((res) => {
-      let cboItems = [];
-
-      res?.forEach((el) => {
-        cboItems.push({
-          value: el?.location_uuid,
-          label: el?.location_nm,
-        })
-      });
-
-      setCboWorkLocationOptions(cboItems);
-    });
-  }, []);
-  //#endregion
-
 
   //#region 🚫함수
   const onProdOrder = () => {
@@ -314,7 +367,8 @@ export const PgPrdWork = () => {
       return;
     }
 
-    if (workInfo.complete_fg !== 'true') {
+    console.log('workInfo', workInfo);
+    if (workInfo.complete_fg !== true) {
       message.warn('완료된 실적만 취소 가능합니다.');
       return;
     }
@@ -328,10 +382,10 @@ export const PgPrdWork = () => {
       cancelText:'아니오',
       onOk: () => {
         //작업 취소처리
-        executeData({
+        executeData([{
           uuid: workInfo.work_uuid,
           
-        }, SAVE_URI_PATH, 'put', 'success').then((success) => {
+        }], SAVE_URI_PATH, 'put', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 취소되었습니다.');
             searchInfo.onSearch();
@@ -355,11 +409,6 @@ export const PgPrdWork = () => {
       return;
     }
 
-    // if (workInfo.complete_fg !== 'true') {
-    //   message.warn('완료된 실적만 삭제 가능합니다.');
-    //   return;
-    // }
-
     const SAVE_URI_PATH = '/prd/works';
 
     modal.confirm({
@@ -369,10 +418,10 @@ export const PgPrdWork = () => {
       cancelText:'아니오',
       onOk: () => {
         //실적 삭제처리
-        executeData({
+        executeData([{
           uuid: workInfo.work_uuid,
 
-        }, SAVE_URI_PATH, 'delete', 'success').then((success) => {
+        }], SAVE_URI_PATH, 'delete', 'success').then((success) => {
           if (success === true) {
             message.info('정상적으로 삭제되었습니다.');
             searchInfo?.onSearch();
@@ -389,21 +438,85 @@ export const PgPrdWork = () => {
     });
   }
 
+  const getLastWorkRouting = async () => {
+    return await getData(
+      {
+        work_uuid: workInfo?.['work_uuid']
+      },
+      '/prd/work-routings'
+    ).then((res) => {
+      const lastRoute = res.reduce((p, c) => Number(p?.proc_no) > Number(c?.proc_no) ? p : c);
+      console.log(lastRoute)
+      return lastRoute;
+    }).finally(() => {
+      return null;
+    })
+  }
+
+  const saveWorkRouting = async (workData, routingData) => {
+    const SAVE_URI_PATH = '/prd/work-routings';
+    
+    const result = await executeData([
+      {
+        'uuid': routingData?.['uuid'],
+        'workings_uuid': routingData?.['workings_uuid'],
+        'equip_uuid': routingData?.['equip_uuid'],
+        'mold_uuid': routingData?.['mold_uuid'],
+        'mold_cavity': Number(routingData?.['mold_cavity']),
+        'qty': Number(routingData?.['qty']),
+        'start_date': routingData?.['start_date'],
+        'end_date': routingData?.['end_date'],
+        'ongoing_fg': routingData?.['ongoing_fg'],
+        'remark': routingData?.['remark'],
+      }
+    ], SAVE_URI_PATH, 'put', 'success').then((success) => {
+      return true;
+
+    }).catch((e) => {
+      console.error(e);
+      message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
+    });
+
+    return !!result;
+  }
   
   /** 생산실적 중간저장 처리 */
-  const onSaveWork = () => {
+  const onSaveWork = async () => {
     if (workInfo.work_uuid == null) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if (workInfo.complete_fg === 'true') {
+    if (routingInfo.work_routing_uuid == null ) {
+      onErrorMessage('공정순서이력작업시도');
+      return;
+    }
+
+    if (workInfo.complete_fg === true) {
       onErrorMessage('완료된작업시도');
       return;
     }
 
-    const SAVE_URI_PATH = '/prd/works';
-    const previousWorkInfo = cloneDeep(workInfo);
+    // const SAVE_URI_PATH = '/prd/works';
+    const workData = cloneDeep(workInfo);
+    const routingData = cloneDeep(routingInfo);
+
+    if (!routingData?.['_start_date'] && routingData?.['_start_time']) {
+      message.warn('시작일자를 입력해주세요.');
+      return;
+    }
+    if (routingData?.['_start_date'] && !routingData?.['_start_time']) {
+      message.warn('시작시간을 입력해주세요.')
+      return;
+    }
+    if (!routingData?.['_end_date'] && routingData?.['_end_time']) {
+      message.warn('종료일자를 입력해주세요.');
+      return;
+    }
+    if (routingData?.['_end_date'] && !routingData?.['_end_time']) {
+      message.warn('종료시간을 입력해주세요.')
+      return;
+    }
 
     modal.confirm({
       title: '중간 저장',
@@ -411,37 +524,18 @@ export const PgPrdWork = () => {
       okText:'예',
       cancelText:'아니오',
       onOk: () => {
-          
-        //실적완료처리
-        executeData({
-          uuid: previousWorkInfo.work_uuid,
-          qty: previousWorkInfo.qty,
-          start_date: previousWorkInfo.start_date,
-          end_date: previousWorkInfo.end_date || null,
-          remark: previousWorkInfo.remark,
-          factory_uuid: getUserFactoryUuid(),
-          mold_uuid:previousWorkInfo.mold_uuid,
-          mold_cavity:previousWorkInfo.mold_cavity
-
-        }, SAVE_URI_PATH, 'put', 'success').then((success) => {
-          if (success === true) {
+        // 실적 중간 저장
+        saveWorkRouting(workData, routingData).then((result: boolean) => {
+          if (result === true) {
             message.info('정상적으로 저장되었습니다.');
             onSearch(searchInfo.values, () => {
-              
-              onHeaderClick({
-                targetType: 'cell'
-              }
-              ,previousWorkInfo?.work_uuid);
+              onHeaderClick({targetType: 'cell'}, workData?.work_uuid);
             });
             // searchInfo?.onSearch(searchInfo.values);
-
+    
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
           }
-
-        }).catch((e) => {
-          console.error(e);
-          message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
         });
       }
     });
@@ -449,18 +543,37 @@ export const PgPrdWork = () => {
 
 
   /** 생산실적 완료 처리 */
-  const onCompleteWork = () => {
+  const onCompleteWork = async () => {
     if (workInfo.work_uuid == null) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if (workInfo.complete_fg === 'true') {
+    if (workInfo.complete_fg === true) {
       onErrorMessage('완료된작업시도');
       return;
     }
 
     const SAVE_URI_PATH = '/prd/works/complete';
+    const workData = cloneDeep(workInfo);
+    const routingData = cloneDeep(routingInfo);
+
+    if (!routingData?.['_start_date'] && routingData?.['_start_time']) {
+      message.warn('시작일자를 입력해주세요.');
+      return;
+    }
+    if (routingData?.['_start_date'] && !routingData?.['_start_time']) {
+      message.warn('시작시간을 입력해주세요.')
+      return;
+    }
+    if (!routingData?.['_end_date'] && routingData?.['_end_time']) {
+      message.warn('종료일자를 입력해주세요.');
+      return;
+    }
+    if (routingData?.['_end_date'] && !routingData?.['_end_time']) {
+      message.warn('종료시간을 입력해주세요.')
+      return;
+    }
 
     modal.confirm({
       title: '작업 종료',
@@ -468,95 +581,33 @@ export const PgPrdWork = () => {
       okText:'예',
       cancelText:'아니오',
       onOk: () => {
-        //실적완료처리
-        executeData({
-          uuid: workInfo.work_uuid,
-          end_date: workInfo.end_date || null
+        saveWorkRouting(workData, routingData).then((result: boolean) => {
+          //실적완료처리
+          executeData([{
+            uuid: workInfo.work_uuid,
 
-        }, SAVE_URI_PATH, 'put', 'success').then((success) => {
-          if (success === true) {
-            message.info('정상적으로 종료되었습니다.');
-            searchInfo?.onSearch();
+          }], SAVE_URI_PATH, 'put', 'success').then((success) => {
+            if (success === true) {
+              message.info('정상적으로 종료되었습니다.');
+              searchInfo?.onSearch();
 
-          } else {
+            } else {
+              message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
+            }
+
+          }).catch((e) => {
+            console.error(e);
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
-          }
-
-        }).catch((e) => {
-          console.error(e);
-          message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
+          });
         });
       }
     });
   }
-
-  const onChangeStartDate = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'_start_date', value});
-
-    const datetime = dayjs(value).format('YYYY-MM-DD') + ' ' + dayjs(infoState._start_time).format('HH:mm:ss');
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'start_date', value:datetime});
-  }
-
-  const onChangeStartTime = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'_start_time', value});
-
-    const datetime = dayjs(infoState._start_date).format('YYYY-MM-DD') + ' ' + dayjs(value).format('HH:mm:ss');
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'start_date', value:datetime});
-  }
-
-  const onChangeEndDate = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'_end_date', value});
-
-    const datetime = dayjs(value).format('YYYY-MM-DD') + ' ' + dayjs(infoState._end_time).format('HH:mm:ss');
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'end_date', value:datetime});
-  }
-
-  const onChangeEndTime = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'_end_time', value});
-
-    const datetime = dayjs(infoState._end_date).format('YYYY-MM-DD') + ' ' + dayjs(value).format('HH:mm:ss');
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'end_date', value:datetime});
-  }
-
-  const onChangeCboStore = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'to_store_uuid', value});
-  }
-
-  const onChangeCboLocation = (value) => {
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'to_location_uuid', value});
-  }
-
-  const onChangeQty = (ev) => {
-    const {value} = ev?.target;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'qty', value});
-  }
-
-  const onChangeRemark = (ev) => {
-    const {value} = ev?.target;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'remark', value});
-  }
-
-  const onChangeCavity = (ev) => {
-    const {value} = ev?.target;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_cavity', value});
-  }
-
-  const onChangeMold = (values: any) => {
-    let value = values.mold_nm;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_nm', value});
-    
-    value = values.cavity;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_cavity', value});
-    
-    value = values.mold_uuid;
-    infoDispatch({type:'CHANGE_WORK_INFO', name:'mold_uuid', value});      
-  }
-  
   //#endregion
   
   //#region ✅조회조건
   const onSearch = (values, afterSearch:()=>void=()=>{}) => {
-    const dateParams = values?.complete_fg === 'true' ? {
+    const dateParams = !!values?.complete_fg ? {
       start_date: values?.start_date,
       end_date: values?.end_date,
     } : {};
@@ -572,30 +623,28 @@ export const PgPrdWork = () => {
       infoDispatch({type:'CLEAR_ALL'});
 
       // 실적이력 조회되면서 하위 데이터 초기화
-      공정검사.onReset();
+      workInsp.onReset();
       
-      투입품목관리.setGridMode('view');
+      workInput.setGridMode('view');
       
       // 실적이력 조회되면서 하위 데이터 초기화
-      투입품목관리.setSearchParams({});
-      투입품목관리.setSaveOptionParams({});
-      투입품목관리.setData([]);
+      workInput.setSearchParams({});
+      workInput.setSaveOptionParams({});
+      workInput.setData([]);
 
-      투입인원관리.setSearchParams({});
-      투입인원관리.setSaveOptionParams({});
-      투입인원관리.setData([]);
+      workWorker.setSearchParams({});
+      workWorker.setSaveOptionParams({});
+      workWorker.setData([]);
 
-      부적합관리.setSearchParams({});
-      부적합관리.setSaveOptionParams({});
-      부적합관리.setData([]);
+      workReject.setSearchParams({});
+      workReject.setSaveOptionParams({});
+      workReject.setData([]);
 
-      비가동관리.setSearchParams({});
-      비가동관리.setSaveOptionParams({});
-      비가동관리.setData([]);
+      workDowntime.setSearchParams({});
+      workDowntime.setSaveOptionParams({});
+      workDowntime.setData([]);
 
-      공정순서.setSearchParams({});
-      공정순서.setSaveOptionParams({});
-      공정순서.setData([]);
+      workRouting.setData([]);
     }).finally(afterSearch);
   }
 
@@ -648,12 +697,12 @@ export const PgPrdWork = () => {
     {header:'공정', name:'proc_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
     {header:'작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'작업장', name:'workings_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-    {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
-    {header:'설비', name:'equip_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-    {header: '금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
-    {header: '금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text'},
-    {header: '금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text'},
-    {header: 'cavity', name:'mold_cavity', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+    // {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
+    // {header:'설비', name:'equip_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
+    // {header: '금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
+    // {header: '금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text'},
+    // {header: '금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text'},
+    // {header: 'cavity', name:'mold_cavity', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
     {header:'품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
@@ -759,7 +808,6 @@ export const PgPrdWork = () => {
         const searchParams = searchInfo.values;
         let row:any = {};
         if (_work_uuid) {
-          // row = ev?.instance?.store?.data?.rawData?.find(el => el?.work_uuid === _work_uuid);
           await getData(null, URL_PATH_PRD.WORK.GET.WORK.replace('{uuid}', _work_uuid)).then((res) => {
             row = res[0];
           });
@@ -768,6 +816,7 @@ export const PgPrdWork = () => {
         }
 
         setInfoData(row);
+        infoDispatch({type: 'CHANGE_ALL_WORK', value:row}); //실적 디스플레이
 
         const work_uuid = row?.work_uuid;
         const prod_uuid = row?.prod_uuid;
@@ -775,15 +824,9 @@ export const PgPrdWork = () => {
         const order_qty = row?.order_qty;
         const complete_fg = searchParams?.complete_fg;
 
-
-        //#region  공장정보 및 생산정보 값 세팅
-        // 공장정보 및 생산정보 값 세팅
-        
-        //#endregion
-
         //#region 하위 데이터들 조회
         // 공정검사 데이터 조회
-        공정검사.onSearch({
+        workInsp.onSearch({
           work_uuid, 
           prod_uuid, 
           lot_no
@@ -791,66 +834,51 @@ export const PgPrdWork = () => {
         
         // 투입품목관리 데이터 조회
         if (searchParams?.complete_fg === 'true') {
-          getData({
-            work_uuid: String(work_uuid),
-          }, 투입품목관리.SEARCH_URI_PATH).then((res) => {
-            투입품목관리.setData(res);
-            투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
-            투입품목관리.setSaveOptionParams({work_uuid});
-            투입품목관리.setParentParams(searchParams);
-            투입품목관리.setGridMode('view');
+          getData(
+            {
+              work_uuid: String(work_uuid),
+            },
+            workInput.SEARCH_URI_PATH,
+            undefined, undefined, undefined, undefined, 
+            {disabledZeroMessage: true},
+          ).then((res) => {
+            workInput.setData(res);
+            workInput.setSearchParams({work_uuid, complete_fg, order_qty});
+            workInput.setSaveOptionParams({work_uuid});
+            workInput.setParentParams(searchParams);
+            workInput.setGridMode('view');
           });
 
         } else if (work_uuid != null) {
-          getData({
-            work_uuid: String(work_uuid),
-          }, 투입품목관리.GOING_SEARCH_URI_PATH).then((res) => {
-            투입품목관리.setData(res);
-            투입품목관리.setSearchParams({work_uuid, complete_fg, order_qty});
-            투입품목관리.setSaveOptionParams({work_uuid});
-            투입품목관리.setParentParams(searchParams);
-            투입품목관리.setGridMode('view');
+          getData(
+            {
+              work_uuid: String(work_uuid),
+            }, 
+            workInput.GOING_SEARCH_URI_PATH,
+            undefined, undefined, undefined, undefined, 
+            {disabledZeroMessage: true},
+          ).then((res) => {
+            workInput.setData(res);
+            workInput.setSearchParams({work_uuid, complete_fg, order_qty});
+            workInput.setSaveOptionParams({work_uuid});
+            workInput.setParentParams(searchParams);
+            workInput.setGridMode('view');
           });
         }
-          
 
-        // 투입인원관리 데이터 조회
-        getData({
-          work_uuid: String(work_uuid),
-        }, 투입인원관리.SEARCH_URI_PATH).then((res) => {
-          투입인원관리.setData(res);
-          투입인원관리.setSearchParams({work_uuid, complete_fg});
-          투입인원관리.setSaveOptionParams({work_uuid});
-        });
-
-
-        // 부적합관리 데이터 조회
-        getData({
-          work_uuid: String(work_uuid),
-        }, 부적합관리.SEARCH_URI_PATH).then((res) => {
-          부적합관리.setData(res);
-          부적합관리.setSearchParams({work_uuid, complete_fg});
-          부적합관리.setSaveOptionParams({work_uuid});
-        });
-
-        
-        // 비가동관리 데이터 조회
-        getData({
-          work_uuid: String(work_uuid),
-        }, 비가동관리.SEARCH_URI_PATH).then((res) => {
-          비가동관리.setData(res);
-          비가동관리.setSearchParams({work_uuid, complete_fg});
-          비가동관리.setSaveOptionParams({work_uuid});
-        });
-
-        
         // 공정순서 데이터 조회
         getData({
           work_uuid: String(work_uuid),
-        }, 공정순서.SEARCH_URI_PATH).then((res) => {
-          공정순서.setData(res);
-          공정순서.setSearchParams({work_uuid, complete_fg});
-          공정순서.setSaveOptionParams({work_uuid});
+        }, workRouting.uriPath).then((res) => {
+          workRouting.setData(res);
+          
+          let selectedRow = {};
+
+          if (res?.length > 0) {
+            selectedRow = res[0];
+          }
+
+          onSearchAfterRouting(row, selectedRow);
         });
         //#endregion
 
@@ -862,6 +890,85 @@ export const PgPrdWork = () => {
       }
     }
   }
+
+  const onSearchAfterRouting = (workRow, routingRow) => {
+    const startDatetime = dayjs(routingRow?.['start_date']);
+    const endDatetime = dayjs(routingRow?.['end_date']);
+    infoDispatch({
+      type: 'CHANGE_ALL_ROUTING', 
+      value:{
+        ...routingRow,
+        _start_date: startDatetime.isValid() ? startDatetime?.format('YYYY-MM-DD') : null,
+        _start_time: startDatetime.isValid() ? startDatetime?.format('HH:mm:ss') : null,
+        _end_date: endDatetime.isValid() ? endDatetime?.format('YYYY-MM-DD') : null,
+        _end_time: endDatetime.isValid() ? endDatetime?.format('HH:mm:ss') : null,
+      }
+    }); //실적 디스플레이
+
+    const work_uuid = workRow?.['work_uuid'];
+    const complete_fg = workRow?.['complete_fg'];
+    const work_routing_uuid = routingRow?.['work_routing_uuid'];
+    const equip_uuid = routingRow?.['equip_uuid'];
+          
+    // 투입인원관리 데이터 조회
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      }, workWorker.SEARCH_URI_PATH,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true},
+    ).then((res) => {
+      workWorker.setData(res);
+      workWorker.setSearchParams({work_uuid, work_routing_uuid, complete_fg});
+      workWorker.setSaveOptionParams({work_uuid, work_routing_uuid});
+    });
+
+    // 부적합관리 데이터 조회
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      }, 
+      workReject.SEARCH_URI_PATH,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true},
+    ).then((res) => {
+      workReject.setData(res);
+      workReject.setSearchParams({work_uuid, work_routing_uuid, complete_fg});
+      workReject.setSaveOptionParams({work_uuid, work_routing_uuid});
+    });
+
+    // 비가동관리 데이터 조회
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      }, 
+      workDowntime.SEARCH_URI_PATH,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true},
+    ).then((res) => {
+      workDowntime.setData(res);
+      workDowntime.setSearchParams({
+        work_uuid, 
+        work_routing_uuid, 
+        complete_fg
+      });
+      workDowntime.setSaveOptionParams({
+        work_uuid, 
+        work_routing_uuid,
+        equip_uuid
+      });
+    });
+  }
+
+  useLayoutEffect(() => {
+    const routingInfo = workRouting?.selectedRow;
+    if (_.isEmpty(routingInfo)) return;
+
+    onSearchAfterRouting(workInfo, routingInfo);
+  }, [workRouting?.selectedRow]);
 
   const HeaderGridElement = useMemo(() => {
     return (
@@ -877,7 +984,7 @@ export const PgPrdWork = () => {
     );
   }, [workDatas, gridRef, gridMode])
 
-  function tabChange(key) {
+  function changeTab(key) {
     setTabKey(key)
   }
 
@@ -885,30 +992,30 @@ export const PgPrdWork = () => {
     if(tabKey){
       switch (tabKey) {
         case 'INSP':
-          공정검사?.gridRef?.current?.getInstance()?.refreshLayout()
-          공정검사?.detailGrid?.gridRef?.current?.getInstance()?.refreshLayout()
+          workInsp?.gridRef?.current?.getInstance()?.refreshLayout()
+          workInsp?.detailGrid?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
         case 'INPUT':
-          투입품목관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          workInput?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
         case 'WORKER':
-          투입인원관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          workWorker?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
         case 'REJECT':
-          부적합관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          workReject?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
         case 'DOWNTIME':
-          비가동관리?.gridRef?.current?.getInstance()?.refreshLayout()
+          workDowntime?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
         case 'ROUTING':
-          공정순서?.gridRef?.current?.getInstance()?.refreshLayout()
+          workRouting?.gridRef?.current?.getInstance()?.refreshLayout()
           break;
       
         default:
           break;
       }
     }
-  }, [tabKey, 부적합관리?.gridRef])
+  }, [tabKey, workReject?.gridRef])
 
   //#region 🚫렌더부
   return (
@@ -929,7 +1036,7 @@ export const PgPrdWork = () => {
             {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
           </Space>
         </div>
-        <div style={{maxWidth:700, marginTop:-33, marginLeft:-6}}>
+        <div style={{maxWidth:700, marginTop:-33, marginLeft:0}}>
           <Searchbox
             {...searchInfo.props}
             onSearch={permissions?.read_fg ? onSearch : null}
@@ -958,35 +1065,35 @@ export const PgPrdWork = () => {
             <Col span={12} style={{paddingLeft:0}}>
               <Container>
                 <Row gutter={[16,16]}>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='품번'/>
                     <Input disabled={true} value={orderInfo.prod_no} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='품명'/>
                     <Input disabled={true} value={orderInfo.prod_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='품목유형'/>
                     <Input disabled={true} value={orderInfo.item_type_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='제품유형'/>
                     <Input disabled={true} value={orderInfo.prod_type_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6}>
+                  <Col span={6} style={{marginBottom:4}}>
                     <Label text='모델'/>
                     <Input disabled={true} value={orderInfo.model_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6}>
+                  <Col span={6} style={{marginBottom:4}}>
                     <Label text='REV'/>
                     <Input disabled={true} value={orderInfo.rev} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6}>
+                  <Col span={6} style={{marginBottom:4}}>
                     <Label text='규격'/>
                     <Input disabled={true} value={orderInfo.prod_std} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6}>
+                  <Col span={6} style={{marginBottom:4}}>
                     <Label text='단위'/>
                     <Input disabled={true} value={orderInfo.unit_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
@@ -996,23 +1103,23 @@ export const PgPrdWork = () => {
             <Col span={12} style={{paddingRight:0}}>
               <Container>
                 <Row gutter={[16,16]}>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='설비'/>
                     <Input disabled={true} value={orderInfo.equip_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='공정'/>
                     <Input disabled={true} value={orderInfo.proc_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='작업교대'/>
                     <Input disabled={true} value={orderInfo.shift_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={6} style={{marginBottom:16}}>
+                  <Col span={6} style={{marginBottom:8}}>
                     <Label text='작업장'/>
                     <Input disabled={true} value={orderInfo.workings_nm} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
-                  <Col span={24}>
+                  <Col span={24} style={{marginBottom:4}}>
                     <Label text='지시 비고'/>
                     <Input disabled={true} value={orderInfo.remark} style={{fontSize:Fonts.fontSize_default}}/>
                   </Col>
@@ -1023,104 +1130,66 @@ export const PgPrdWork = () => {
         </Col>
 
         {/* 실적 정보 */}
-        <Col span={24} style={{paddingLeft:0, paddingRight:0}}>
+        <Col span={24} style={{paddingLeft:0, paddingRight:0, marginTop:12}}>
           <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />실적 정보</Typography.Title>
           <div style={{width:'100%', display:'inline-block', marginTop:-26}}>
             <div style={{float:'right', paddingRight:4}}>
               <Space>
                 <Button btnType='buttonFill' colorType='blue' widthSize='large' heightSize='small' fontSize='small' ImageType='add' onClick={onSaveWork} disabled={!permissions?.update_fg}>실행 저장</Button>
-                <Button btnType='buttonFill' colorType='red' widthSize='large' heightSize='small' fontSize='small' ImageType='ok' onClick={onCompleteWork} disabled={!permissions?.update_fg}>작업 종료</Button>
+                <Button btnType='buttonFill' colorType='delete' widthSize='large' heightSize='small' fontSize='small' ImageType='check' onClick={onCompleteWork} disabled={!permissions?.update_fg}>작업 종료</Button>
               </Space>
             </div>
           </div>
           <Divider style={{marginTop:2, marginBottom:10}}/>
           <Row gutter={[16,16]}>
-            <Col span={12} style={{paddingLeft:0}}>
-              <Container>
-                <Row gutter={[16,16]}>
-                  <Col span={12} style={{marginBottom:16}}>
-                    <Label text='시작 일시'/>
-                    <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._start_date} onChange={onChangeStartDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                      <DatePicker picker='time' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._start_time} onChange={onChangeStartTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                    </div>
-                  </Col>
-                  <Col span={12} style={{marginBottom:16}}>
-                    <Label text='종료 일시'/>
-                    <div style={{width:'100%'}}>
-                      <DatePicker picker='date' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._end_date} onChange={onChangeEndDate} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                      <DatePicker picker='time' style={{width:'50%', fontSize:Fonts.fontSize_default}} value={workInfo._end_time} onChange={onChangeEndTime} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                    </div>
-                  </Col>
-                  <Col span={6}>
-                    <Label text='입고 창고'/>
-                    <Select options={cboWorkStoreOptions} style={{width:'100%', fontSize:Fonts.fontSize_default}} value={workInfo.to_store_uuid} onChange={onChangeCboStore} disabled={!(permissions?.create_fg || permissions?.update_fg)} />
-                  </Col>
-                  <Col span={6}>
-                    <Label text='입고 위치'/>
-                    <Select options={cboWorkLocationOptions} style={{width:'100%', fontSize:Fonts.fontSize_default}} value={workInfo.to_location_uuid} onChange={onChangeCboLocation} disabled={!(permissions?.create_fg || permissions?.update_fg)}/>
-                  </Col>
-                  <Col span={6}>
-                    <Label text='LOT NO'/>
-                    <Input disabled={true} value={workInfo.lot_no} style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                  <Col span={6}>
-                    <Label text='비고'/>
-                    <Input value={workInfo.remark} onChange={onChangeRemark} disabled={!(permissions?.create_fg || permissions?.update_fg)} style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                  <Col span={6}>
-                    <Label text='금형명'/>
-                    <div style={{display:'flex'}}>
-                      <Input
-                        size="small" 
-                        value={workInfo.mold_nm} 
-                        disabled={true}
-                        style={{fontSize:Fonts.fontSize_default}}/>
-                      <div style={{
-                        float:'right',
-                        marginLeft:-30}}>
-                        <PopupButton
-                          widthSize={'medium'}
-                          firstItemEmpty={true}
-                          popupKey={'금형관리'}
-                          popupKeys={['mold_nm', 'mold_uuid', 'cavity']}
-                          setValues={(values) => {
-                            onChangeMold(values);
-                          }}
-                          
-                        />
-                      </div>
-                    </div>                    
-                  </Col>
-                  <Col span={6}>
-                    <Label text='Cavity'/>
-                    <Input 
-                        type='number'
-                        value={workInfo.mold_cavity} 
-                        onChange={onChangeCavity}
-                        style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                </Row>
-              </Container>
+            <Col span={6} style={{paddingLeft:0}}>
+              {/* 공정순서 */}
+              <RoutingInfo permissions={permissions} height={709} {...workRouting} />
             </Col>
-            <Col span={12} style={{paddingRight:0}}>
+            <Col span={18} style={{paddingRight:0}}>
               <Container>
-                <Row gutter={[16,16]}>
-                  <Col span={12} style={{marginBottom:16}}>
-                    <Label text='지시 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.order_qty} style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                  <Col span={12} style={{marginBottom:16}}>
-                    <Label text='생산 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.total_qty} style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                  <Col span={12}>
-                    <Label text='양품 수량'/>
-                    <Input type='number' inputMode='numeric' value={workInfo.qty}  onChange={onChangeQty} disabled={!(permissions?.create_fg || permissions?.update_fg)} style={{fontSize:Fonts.fontSize_default}}/>
-                  </Col>
-                  <Col span={12}>
-                    <Label text='부적합 수량'/>
-                    <Input type='number' inputMode='numeric' disabled={true} value={workInfo.reject_qty} style={{fontSize:Fonts.fontSize_default}}/>
+                <Row>
+                  <WorkInfo permissions={permissions} values={routingInfo} infoState={infoState} infoDispatch={infoDispatch} />
+                </Row>
+                <Divider style={{marginTop:2}}/>
+                <Row>
+                  <Col span={24}>
+                    <Tabs
+                      type='card'        
+                      onChange={changeTab}
+                      panels={[
+                        {
+                          tab: '공정검사',
+                          tabKey: TAB_CODE.WORK_INSP,
+                          content: workInsp.component,
+                        },
+                        {
+                          tab: '투입품목 관리',
+                          tabKey: TAB_CODE.WORK_INPUT,
+                          content: workInput.component,
+                        },
+                        {
+                          tab: '투입인원 관리',
+                          tabKey: TAB_CODE.WORK_WORKER,
+                          content: workWorker.component,
+                        },
+                        {
+                          tab: '부적합 관리',
+                          tabKey: TAB_CODE.WORK_REJECT,
+                          content: workReject.component,
+                        },
+                        {
+                          tab: '비가동 관리',
+                          tabKey: TAB_CODE.WORK_DOWNTIME,
+                          content: workDowntime.component,
+                        },
+                        // {
+                        //   tab: '공정순서',
+                        //   tabKey: TAB_CODE.공정순서,
+                        //   content: 공정순서.component,
+                        // },
+                      ]}
+                    />
                   </Col>
                 </Row>
               </Container>
@@ -1128,45 +1197,6 @@ export const PgPrdWork = () => {
           </Row>
         </Col>
       </Row>
-
-      <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />이력 항목관리</Typography.Title>
-      <Divider style={{marginBottom:10}}/>
-      <Tabs
-        type='card'        
-        onChange={tabChange}
-        panels={[
-          {
-            tab: '공정검사',
-            tabKey: TAB_CODE.공정검사,
-            content: 공정검사.component,
-          },
-          {
-            tab: '투입품목 관리',
-            tabKey: TAB_CODE.투입품목관리,
-            content: 투입품목관리.component,
-          },
-          {
-            tab: '투입인원 관리',
-            tabKey: TAB_CODE.투입인원관리,
-            content: 투입인원관리.component,
-          },
-          {
-            tab: '부적합 관리',
-            tabKey: TAB_CODE.부적합관리,
-            content: 부적합관리.component,
-          },
-          {
-            tab: '비가동 관리',
-            tabKey: TAB_CODE.비가동관리,
-            content: 비가동관리.component,
-          },
-          {
-            tab: '공정순서',
-            tabKey: TAB_CODE.공정순서,
-            content: 공정순서.component,
-          },
-        ]}
-      />
 
       <ProdOrderModal visible={prodOrderPopupVisible} onClose={onProdOrderClose}/>
 
@@ -1306,26 +1336,34 @@ const ProdOrderModal = ({visible, onClose}) => {
   ];
   //#endregion
 
-
-
-
   const onSave = () => {
-    const updatedRows = gridRef?.current?.getInstance().getModifiedRows()?.updatedRows as any[];
+    let updatedRows = gridRef?.current?.getInstance().getModifiedRows()?.updatedRows as any[];
     const start_date = getToday();
     const lot_no = start_date?.replace(/[^0-9]/g, '');
     const qty = 0;
     const reject_qty = 0;
 
-
     // 작업시작 처리
     const workStartList =
-      updatedRows?.filter((el) => el?._work_start === true)?.map((el) => ({
-        ...el,
-        start_date,
-        lot_no,
-        qty,
-        reject_qty
-      }));
+      updatedRows?.filter((el) => el?._work_start === true)?.map((row) => {
+        let newRow = {
+          ...row,
+          lot_no,
+        }
+        newRow = _.pick(newRow, [
+          'factory_uuid',
+          'reg_date',
+          'order_uuid',
+          'workings_uuid',
+          'prod_uuid',
+          'lot_no',
+          'shift_uuid',
+          'to_store_uuid',
+          'to_location_uuid',
+          'remark',
+        ]);
+        return newRow;
+      });
 
     const workSaveData = {
       createdRows: workStartList,

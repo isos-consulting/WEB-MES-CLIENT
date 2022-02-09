@@ -176,6 +176,8 @@ export const PgMatRelease = () => {
         // 출고일 기준으로 재고조회
         const params = {
           reg_date: newDataPopupInputInfo?.values?.reg_date,
+          exclude_zero_fg: true,
+          exclude_minus_fg: true,
           stock_type: 'available',
           grouped_type: 'all',
           price_type: 'all',

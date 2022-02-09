@@ -37,7 +37,10 @@ export async function getData<T = any[]>(
   returnType: 'data' | 'datas' | 'raws' | 'header-details' | 'value' | 'message' | 'success' | 'report' | 'original' = 'raws',
   headersObj?: object,
   disabledErrorMessage: boolean = false,
-  optionBaseURL: string = baseURL
+  optionBaseURL: string = baseURL,
+  options?:{
+    disabledZeroMessage?: boolean,
+  }
 ):Promise<T> {
   loadProgressBar();
   
@@ -86,8 +89,7 @@ export async function getData<T = any[]>(
       }
     }
   } finally {
-    
-    if (datas?.data?.datas?.value?.count === 0 ) {
+    if (datas?.data?.datas?.value?.count === 0 && options?.disabledZeroMessage !== true) {
       message.warning('조회 할 데이터가 없습니다.')
     }
     switch (returnType) {

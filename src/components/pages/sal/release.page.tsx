@@ -235,7 +235,7 @@ export const PgSalRelease = () => {
   );
   const editDataPopupGridColumns = cloneObject(newDataPopupGrid?.gridInfo?.columns)?.map(
     (el) => {
-      if (!['qty', 'to_store_nm', 'to_location_nm', 'remark'].includes(el?.name))
+      if (!['qty', 'remark'].includes(el?.name))
         el['editable'] = false;
 
       return el;

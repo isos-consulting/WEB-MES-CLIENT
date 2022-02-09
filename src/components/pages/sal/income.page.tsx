@@ -159,6 +159,7 @@ export const PgSalIncome = () => {
             grouped_type: 'all',
             price_type: 'all',
             exclude_zero_fg:true,
+            exclude_minus_fg:true,
           };
 
           if (newDataPopupGridVisible) {

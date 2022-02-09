@@ -59,7 +59,7 @@ export const PgSalOutgoOrder = () => {
     {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
+    {header: '품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true, requiredField: true},
     {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text'},
     {header: 'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text'},
     {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text'},
@@ -69,7 +69,7 @@ export const PgSalOutgoOrder = () => {
     {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text'},
     {header: '수주수량', name:'order_qty', width:ENUM_WIDTH.M, filter:'text'},
-    {header: '지시수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', editable:true},
+    {header: '지시수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', editable:true, requiredField: true},
     {header: '미납수량', name:'balance', width:ENUM_WIDTH.M, filter:'text'},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
   ], {

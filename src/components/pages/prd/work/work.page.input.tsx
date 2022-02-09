@@ -3,20 +3,20 @@ import Grid from '@toast-ui/react-grid';
 import { Divider, message, Space, Typography, Modal, Row, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, IGridPopupInfo, TGridMode } from '~/components/UI';
+import { Button, Container, Datagrid, getPopupForm, GridPopup, IGridColumn, TGridMode } from '~/components/UI';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import { Modal as CustomModal } from '~/components/UI';
-import { cloneObject, executeData, getData, getModifiedRows, getPageName, getPermissions, getToday } from '~/functions';
+import { executeData, getData, getPageName, getPermissions, getToday } from '~/functions';
 import Colors from '~styles/color.style.scss';
-import { onDefaultGridCancel, onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
+import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
+import _ from 'lodash';
 
 //#region 🔶🚫투입품목관리
 /** 투입품목관리 */
 
 // URI PATH 설정
-const URI_PATH_STANDARD_INPUT_WORK = '/prd/work-inputs/ongoing-group';
+const URI_PATH_STANDARD_INPUT_WORK = '/prd/work-inputs/group';
 const URI_PATH_WORK_INPUT = '/prd/work-inputs';
 const URI_PATH_SAVE_INPUT = '/prd/work-inputs';
 
@@ -40,7 +40,7 @@ export const INPUT = () => {
   const [saveOptionParams, setSaveOptionParams] = useState({});
 
   const SEARCH_URI_PATH = '/prd/work-inputs';
-  const GOING_SEARCH_URI_PATH = '/prd/work-inputs/ongoing';
+  const GOING_SEARCH_URI_PATH = '/prd/work-inputs/group';
   const SAVE_URI_PATH = '/prd/work-inputs';
 
   const [inputPopupVisible, setInputPopupVisible] = useState(false);
@@ -49,31 +49,39 @@ export const INPUT = () => {
 
   //#region ✅컬럼
   const INPUT_COLUMNS:IGridColumn[] = [
-    {header:'투입이력UUID', name:'work_input_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-    {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true, format:'text'},
-    {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
-    {header:'품번', name:'prod_no', width:150, hidden:false, format:'text'},
-    {header:'품목', name:'prod_nm', width:150, hidden:false, format:'text'},
-    {header:'품목 유형UUID', name:'item_type_uuid', width:200, hidden:true, format:'text'},
-    {header:'품목 유형', name:'item_type_nm', width:120, hidden:false, format:'text'},
-    {header:'제품 유형UUID', name:'prod_type_uuid', width:200, hidden:true, format:'text'},
-    {header:'제품 유형', name:'prod_type_nm', width:120, hidden:false, format:'text'},
-    {header:'모델UUID', name:'model_uuid', width:200, hidden:true, format:'text'},
-    {header:'모델', name:'model_nm', width:120, hidden:false, format:'text'},
-    {header:'Rev', name:'rev', width:120, hidden:false, format:'text'},
-    {header:'규격', name:'prod_std', width:120, hidden:false, format:'text'},
-    {header:'단위UUID', name:'unit_uuid', width:200, hidden:true, format:'text'},
-    {header:'단위', name:'unit_nm', width:80, hidden:false, format:'text'},
-    {header:'LOT NO', name:'lot_no', width:100, hidden:false, format:'text'},
-    {header:'지시기준투입필요수량', name:'required_order_qty', width:100, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, editable:true},
-    {header:'실적기준투입필요수량', name:'required_work_qty', width:100, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, editable:true},
-    {header:'투입수량', name:'qty', width:100, hidden:false, format:'number', decimal:6, editable:true},
-    {header:'소요량', name:'c_usage', width:80, hidden:false, format:'number', decimal:6},
-    {header:'출고 창고UUID', name:'from_store_uuid', width:200, hidden:true, format:'text'},
-    {header:'출고 창고', name:'from_store_nm', width:120, hidden:false, format:'text'},
-    {header:'출고 위치UUID', name:'from_location_uuid', width:200, hidden:true, format:'text'},
-    {header:'출고 위치', name:'from_location_nm', width:120, hidden:false, format:'text'},
-    {header:'비고', name:'remark', width:150, hidden:false, format:'text', editable:true},
+    {header:'투입이력UUID', name:'work_input_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'생산실적UUID', name:'work_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M},
+    {header:'품목', name:'prod_nm', width:ENUM_WIDTH.M},
+    {header:'품목 유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'품목 유형', name:'item_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'제품 유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'제품 유형', name:'prod_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'모델코드', name:'model_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'리비전', name:'rev', width:ENUM_WIDTH.M},
+    {header:'규격', name:'prod_std', width:ENUM_WIDTH.M},
+    {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'단위코드', name:'unit_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'단위', name:'unit_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, editable:true},
+    {header:'투입 수량', name:'qty', width:ENUM_WIDTH.M, format:'number', editable:true},
+    {header:'실적기준 투입필요 수량', name:'required_work_qty', width:ENUM_WIDTH.L, format:'number'},
+    {header:'소요량', name:'c_usage', width:ENUM_WIDTH.M},
+    {header:'출고 창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'출고 창고코드', name:'from_store_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'출고 창고', name:'from_store_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'출고 위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'출고 위치코드', name:'from_location_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'출고 위치', name:'from_location_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'투입유형UUID', name:'bom_input_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'투입유형코드', name:'bom_input_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'투입유형', name:'bom_input_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'비고', name:'remark', width:ENUM_WIDTH.M, noSave:true},
   ];
   //#endregion
 
@@ -88,7 +96,12 @@ export const INPUT = () => {
 
     const work_uuid = (searchParams as any)?.work_uuid;
 
-    getData({work_uuid}, uriPath).then((res) => {
+    getData(
+      {work_uuid},
+      uriPath, 
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setData(res);
     });
   }
@@ -96,12 +109,12 @@ export const INPUT = () => {
 
   /** 투입 초기화 */
   const onReset = (ev) => {
-    if ((searchParams as any)?.work_uuid == null) {
+    if (searchParams?.['work_uuid'] == null) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if ((searchParams as any)?.complete_fg === 'true') {
+    if (searchParams?.['complete_fg'] === true) {
       message.info('완료된 작업은 투입이력을 초기화 할 수 없습니다.');
       return;
     }
@@ -138,12 +151,12 @@ export const INPUT = () => {
   }
 
   const onAppend = (ev) => {
-    if ((searchParams as any)?.work_uuid == null) {
+    if (searchParams?.['work_uuid'] == null) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if ((searchParams as any)?.complete_fg === 'true') {
+    if (searchParams?.['complete_fg'] === true) {
       onErrorMessage('완료된작업시도');
       return;
     }
@@ -152,10 +165,12 @@ export const INPUT = () => {
     setInputPopupVisible(true);
   }
 
+  const inputColumns = _.cloneDeep(INPUT_COLUMNS)?.filter(el => el?.name !== 'lot_no');
+
   //#region 🚫렌더부
   const component = (
     <>
-      <Container>
+      <Container boxShadow={false}>
         {gridMode === 'view' ?
           <div style={{width:'100%', display:'inline-block'}}>
             <Space size={[6,0]} style={{float:'right'}}>
@@ -166,21 +181,16 @@ export const INPUT = () => {
             </Space>
           </div>
           : null
-          // <div style={{width:'100%', display:'inline-block'}}>
-          //   <Space size={[6,0]} style={{float:'right'}}>
-          //     <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='cancel' colorType='blue' onClick={onCancel}>취소</Button>
-          //     <Button btnType='buttonFill' widthSize='small' heightSize='small' fontSize='small' ImageType='ok' colorType='blue' onClick={onSave}>저장</Button>
-          //   </Space>
-          // </div>
         }
         <p/>
         <Datagrid
-          gridId={TAB_CODE.투입품목관리+'_GRID'}
+          gridId={TAB_CODE.workInput+'_GRID'}
           ref={gridRef}
           gridMode={gridMode}
-          columns={INPUT_COLUMNS}
+          columns={inputColumns}
           data={data}
-          height={400}
+          height={420}
+          disabledAutoDateColumn={true}
         />
       </Container>
 
@@ -275,25 +285,6 @@ export const INPUT_POPUP = (
       return 'view'
     } else return 'delete';
   }, [permissions]);
-  // const [workInputGridMode, setWorkInputGridMode] = useState<TGridMode>('delete');
-
-  // const newGridPopupRef = useRef<Grid>();
-
-  // // 기존 투입 목록 그리드 관련 설정값
-  // const gridRefWorkInput = useRef<Grid>();
-  
-  // const OLD_GRID_ONGOING_SEARCH_URI_PATH = '/prd/work-inputs/ongoing';
-  
-  
-  // //신규투입 행추가 관련 항목 세팅
-  // const inputRef = useRef<FormikProps<FormikValues>>();
-
-  // // 품목이력 그리드 관련 설정값
-  // const prodGridRef = useRef<Grid>();
-  // const [prodData, setProdData] = useState([]);
-  // const prodGridMode_Default = 'view';
-  // const [prodGridMode, setProdGridMode] = useState<TGridMode>(prodGridMode_Default);
-  // const PROD_GRID_SEARCH_URI_PATH = '/prd/work-inputs';
 
   const [searchParams, setSearchParams] = useState(props.searchParams || {});
   //#endregion
@@ -309,7 +300,7 @@ export const INPUT_POPUP = (
     if (searchParams?.work_uuid == null) return;
     onWorkStandardInputData_Search();
     onWorkInputData_Search();
-  }, [searchParams]);
+  }, [searchParams?.['work_uuid']]);
 
   useLayoutEffect(() => {
     if (searchParams?.work_uuid == null) return;
@@ -341,8 +332,6 @@ export const INPUT_POPUP = (
     {header:'구분', name:'_work_input_btn', width:80, hidden:false, format:'button',
       options: {
         value: '투입',
-        // formatTrue:'투입',
-        // formatFalse:'투입',
         onClick: (ev, props) => {
           onSetInputInfo(props).then(() => {
             setInputCreatePopupVisible(true)
@@ -351,24 +340,38 @@ export const INPUT_POPUP = (
         disabled: !permissions?.create_fg,
       }
     },
-    {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
-    {header:'품번', name:'prod_no', width:150, hidden:false, format:'text'},
-    {header:'품목', name:'prod_nm', width:150, hidden:false, format:'text'},
-    {header:'품목 유형', name:'item_type_nm', width:120, hidden:false, format:'text'},
-    {header:'제품 유형', name:'prod_type_nm', width:120, hidden:false, format:'text'},
-    {header:'모델', name:'model_nm', width:120, hidden:false, format:'text'},
-    {header:'Rev', name:'rev', width:120, hidden:false, format:'text'},
-    {header:'규격', name:'prod_std', width:120, hidden:false, format:'text'},
-    {header:'단위UUID', name:'unit_uuid', width:80, hidden:true, format:'text'},
-    {header:'단위', name:'unit_nm', width:80, hidden:false, format:'text'},
-    {header:'지시기준투입필요수량', name:'required_order_qty', width:100, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
-    {header:'실적기준투입필요수량', name:'required_work_qty', width:100, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
-    {header:'투입수량', name:'qty', width:100, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, editable:true},
-    {header:'소요량', name:'c_usage', width:80, hidden:false, format:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK},
-    {header:'창고UUID', name:'from_store_uuid', width:200, hidden:true, format:'text'},
-    {header:'창고', name:'from_store_nm', width:120, hidden:false, format:'text'},
-    {header:'위치UUID', name:'from_location_uuid', width:200, hidden:true, format:'text'},
-    {header:'위치', name:'from_location_nm', width:120, hidden:false, format:'text'},
+    {header:'투입이력UUID', name:'work_input_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'생산실적UUID', name:'work_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품번', name:'prod_no', width:ENUM_WIDTH.M},
+    {header:'품목', name:'prod_nm', width:ENUM_WIDTH.M},
+    {header:'품목 유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'품목 유형', name:'item_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'제품 유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'제품 유형', name:'prod_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'모델코드', name:'model_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'모델', name:'model_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'리비전', name:'rev', width:ENUM_WIDTH.M},
+    {header:'규격', name:'prod_std', width:ENUM_WIDTH.M},
+    {header:'단위UUID', name:'unit_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'단위코드', name:'unit_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'단위', name:'unit_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'투입 수량', name:'qty', width:ENUM_WIDTH.M, format:'number'},
+    {header:'실적기준 투입필요 수량', name:'required_work_qty', width:ENUM_WIDTH.L, format:'number'},
+    {header:'소요량', name:'c_usage', width:ENUM_WIDTH.M},
+    {header:'출고 창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'출고 창고코드', name:'from_store_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'출고 창고', name:'from_store_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'출고 위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'출고 위치코드', name:'from_location_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'출고 위치', name:'from_location_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'투입유형UUID', name:'bom_input_type_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header:'투입유형코드', name:'bom_input_type_cd', width:ENUM_WIDTH.M, hidden:true, noSave:true},
+    {header:'투입유형', name:'bom_input_type_nm', width:ENUM_WIDTH.M, noSave:true},
+    {header:'비고', name:'remark', width:ENUM_WIDTH.M, noSave:true},
   ];
 
   //#endregion
@@ -377,9 +380,14 @@ export const INPUT_POPUP = (
   //#region 🚫함수
   /** 신규 데이터 조회 함수 (초기화용) */
   const onWorkStandardInputData_Search = () => {
-    const work_uuid = props.searchParams?.work_uuid;
+    const work_uuid = props.searchParams?.['work_uuid'];
 
-    getData({work_uuid}, URI_PATH_STANDARD_INPUT_WORK).then((res) => {
+    getData(
+      {work_uuid}, 
+      URI_PATH_STANDARD_INPUT_WORK,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setStandardInputData(res);
     });
     // setNewData([]);
@@ -388,14 +396,14 @@ export const INPUT_POPUP = (
 
   /** 기존 데이터 조회 함수 */
   const onWorkInputData_Search = () => {
-    // let uriPath = OLD_GRID_ONGOING_SEARCH_URI_PATH; // 진행중인 실적내역 조회 포인트
+    const work_uuid = props.searchParams?.['work_uuid'];
 
-    // if (searchParams.complete_fg === true) {
-    //   uriPath = OLD_GRID_SEARCH_URI_PATH; // 완료된 실적인 경우 조회 포인트 변경
-    // }
-    const work_uuid = props.searchParams?.work_uuid;
-
-    getData({work_uuid}, URI_PATH_WORK_INPUT).then((res) => {
+    getData(
+      {work_uuid}, 
+      URI_PATH_WORK_INPUT,
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}
+    ).then((res) => {
       setInputData(res);
     });
   }
@@ -411,7 +419,7 @@ export const INPUT_POPUP = (
       onOk: () => {
         // 투입이력 초기화
         let errorChk = false;
-        const work_uuid = (props.searchParams as any)?.work_uuid;
+        const work_uuid = props.searchParams?.['work_uuid'];
         executeData({work_uuid}, '/prd/work-inputs/by-work', 'delete', 'success').then((success) => {
           if (!success) {
             errorChk = true;
@@ -436,7 +444,6 @@ export const INPUT_POPUP = (
 
   /** 기존 데이터 삭제 이력 저장 함수 */
   const onDelete = (ev) => {
-
     onDefaultGridSave('basic', gridRefWorkInput, props.columns, URI_PATH_SAVE_INPUT, {}, modal,
       () => {
         onWorkStandardInputData_Search();
@@ -465,19 +472,6 @@ export const INPUT_POPUP = (
           <Row gutter={[0,16]}>
             <Typography.Title level={5} style={{marginBottom:-16, color:Colors.palettes_primary}}><CaretRightOutlined />신규 투입</Typography.Title>
             <Divider style={{marginBottom:10}}/>
-            {/* <Col span={8}>
-              <Container>
-                <Datagrid
-                  gridId='투입품목등록_품번선택_그리드'
-                  ref={prodGridRef}
-                  columns={PROD_GRID_COLUMNS}
-                  data={prodData}
-                  gridMode={prodGridMode}
-                  height={380}
-                />
-              </Container>
-            </Col> */}
-            {/* <Col span={16}> */}
               <div>
                 <InputGroupbox
                   id='투입품목등록_입력상자'
@@ -495,9 +489,9 @@ export const INPUT_POPUP = (
                   gridMode={'view'}
                   height={300}
                   hiddenActionButtons={true}
+                  disabledAutoDateColumn={true}
                 />
               </Container>
-            {/* </Col> */}
     
             <Typography.Title level={5} style={{marginBottom:-16}}><CaretRightOutlined />수정 / 삭제</Typography.Title>
             <Divider style={{marginBottom:10}}/>
@@ -516,6 +510,7 @@ export const INPUT_POPUP = (
                 data={inputData}
                 // gridMode={permissions?.delete_fg ? 'delete' : 'view'}
                 gridMode={workInputGridMode}
+                disabledAutoDateColumn={true}
               />
             </Container>
           </Row>
@@ -554,6 +549,8 @@ export const INPUT_POPUP = (
             searchUriPath={''}
             searchProps={null}
             inputProps={null}
+            disabledAutoDateColumn={true}
+            
           />
           {contextHolder}
         </div>
@@ -599,6 +596,8 @@ export const INPUT_POPUP_CREATE = (props:{
     {id:'prod_std', label:'규격', type:'text', hidden:false, disabled:true},
     {id:'unit_uuid', label:'단위UUID', type:'text', hidden:true, disabled:true},
     {id:'unit_nm', label:'단위', type:'text', hidden:false, disabled:true},
+    {id:'bom_input_type_uuid', label:'BOM 투입유형UUID', type:'text', hidden:true, disabled:true},
+    {id:'bom_input_type_nm', label:'BOM 투입유형', type:'text', hidden:false, disabled:true},
     {id:'c_usage', label:'소요량', type:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, disabled:true, hidden:true},
     {id:'qty', label:'이전투입량', type:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, disabled:true},
     {id:'required_work_qty', label:'실적기준투입량', type:'number', decimal:ENUM_DECIMAL.DEC_USE_STOCK, disabled:true},
@@ -609,23 +608,25 @@ export const INPUT_POPUP_CREATE = (props:{
   ];
 
   const INPUT_GRID_ITEMS:IGridColumn[]=[
-    {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
-    {header:'품목 유형', name:'item_type_nm', width:100, format:'text'},
-    {header:'제품 유형', name:'prod_type_nm', width:100, format:'text'},
-    {header:'품번', name:'prod_no', width:120, format:'text'},
-    {header:'품목', name:'prod_nm', width:120, format:'text'},
-    {header:'모델', name:'model_nm', width:120, format:'text'},
-    {header:'Rev', name:'rev', width:100, format:'text'},
-    {header:'규격', name:'prod_std', width:120, format:'text'},
-    {header:'단위UUID', name:'unit_uuid', width:80, hidden:true, format:'text'},
-    {header:'단위', name:'unit_nm', width:80, format:'text'},
-    {header:'LOT NO', name:'lot_no', width:100, format:'text'},
-    {header:'재고', name:'stock_qty', width:100, format:'number'},
-    {header:'투입수량', name:'qty', width:100, format:'number', editable:true},
-    {header:'창고UUID', name:'store_uuid', alias:'from_store_uuid', width:200, hidden:true, format:'text'},
-    {header:'창고', name:'store_nm', width:120, format:'text'},
-    {header:'위치UUID', name:'location_uuid', alias:'from_location_uuid', width:200, hidden:true, format:'text'},
-    {header:'위치', name:'location_nm', width:120, format:'text'}, 
+    // {header:'품목UUID', name:'prod_uuid', width:200, hidden:true, format:'text'},
+    // {header:'품목 유형', name:'item_type_nm', width:100, format:'text'},
+    // {header:'제품 유형', name:'prod_type_nm', width:100, format:'text'},
+    // {header:'품번', name:'prod_no', width:120, format:'text'},
+    // {header:'품목', name:'prod_nm', width:120, format:'text', requiredField:true},
+    // {header:'모델', name:'model_nm', width:120, format:'text'},
+    // {header:'Rev', name:'rev', width:100, format:'text'},
+    // {header:'규격', name:'prod_std', width:120, format:'text'},
+    // {header:'단위UUID', name:'unit_uuid', width:80, hidden:true, format:'text'},
+    // {header:'단위', name:'unit_nm', width:80, format:'text', requiredField:true},
+    // {header:'투입방법UUID', name:'bom_input_type_uuid', width:120, hidden:true, format:'text'},
+    // {header:'투입방법', name:'bom_input_type_nm', width:120, format:'popup', editable:true, requiredField:true},
+    {header:'LOT NO', name:'lot_no', width:ENUM_WIDTH.L, format:'text'},
+    {header:'재고', name:'stock_qty', width:ENUM_WIDTH.L, format:'number', noSave: true},
+    {header:'투입수량', name:'qty', width:ENUM_WIDTH.XL, format:'number', editable:true},
+    {header:'창고UUID', name:'store_uuid', alias:'from_store_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+    {header:'창고', name:'store_nm', width:ENUM_WIDTH.L, format:'text', requiredField:true},
+    {header:'위치UUID', name:'location_uuid', alias:'from_location_uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
+    {header:'위치', name:'location_nm', width:ENUM_WIDTH.L, format:'text', noSave: true}, 
   ]
 
   //#endregion
@@ -646,7 +647,9 @@ export const INPUT_POPUP_CREATE = (props:{
             {
               work_uuid:props.searchParams.workUuid,
               c_usage:inputRefStandardInput?.current?.values?.c_usage,
-              unit_uuid:inputRefStandardInput?.current?.values?.unit_uuid
+              prod_uuid:inputRefStandardInput?.current?.values?.prod_uuid,
+              unit_uuid:inputRefStandardInput?.current?.values?.unit_uuid,
+              bom_input_type_uuid:inputRefStandardInput?.current?.values?.bom_input_type_uuid,
             } , 
             modal,
             () => {props.setVisible(false);}
@@ -667,6 +670,7 @@ export const INPUT_POPUP_CREATE = (props:{
           ref={gridRefWorkInput}
           columns={INPUT_GRID_ITEMS}
           data={[]}
+          disabledAutoDateColumn={true}
           rowAddPopupInfo={{
             columnNames: [
               {original:'prod_uuid', popup:'prod_uuid'},

@@ -20,7 +20,7 @@ export const PgInvStoresTypeHistory = () => {
   /** INIT */
   const defaultGridMode:TGridMode = 'view';
   const searchUriPath = '/inv/stores/type-history';
-  const searchTransactionUriPath = '/adm/transactions';
+  const searchTransactionUriPath = '/adm/tran-types';
   const saveUriPath = null;
   
   /** 그리드 상태를 관리 */

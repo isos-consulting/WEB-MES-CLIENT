@@ -188,12 +188,21 @@ export const PgStdRouting = () => {
     };
 
     if (resourcesGridPopupCreateVisible === true) {
-      inputRefCreateResources?.current?.setValues(inputRefWorkings?.current?.values);
+      inputRefCreateResources?.current?.setValues(inputRefResources?.current?.values);
     } else if (resourcesGridPopupUpdateVisible === true) {
-      inputRefUpdateResources?.current?.setValues(inputRefWorkings?.current?.values);
+      inputRefUpdateResources?.current?.setValues(inputRefResources?.current?.values);
     }
 
   }, [resourcesGridPopupVisible, resourcesGridPopupCreateVisible, resourcesGridPopupUpdateVisible]);
+
+  // 라우팅리소스 컬럼
+  const resourceColumns: IGridColumn[] = [
+    {header:'생산자원uuid', name:'routing_resource_uuid', alias:'uuid', hidden: true},
+    {header:'라우팅uuid', name:'routing_uuid', hidden: true},
+    {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable: true, requiredField: true},
+    {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable: true, requiredField: true},
+    {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable: true},
+  ];
 
   // 작업장등록 popup 띄우는거 까지만 함
   const extraGridPopups:TExtraGridPopups = [
@@ -349,27 +358,7 @@ export const PgStdRouting = () => {
       title: '리소스 관리',
       popupId: 'ROUTING_RESOURCE_GRID_POPUP',
       gridId: 'ROUTING_RESOURCE_GRID_POPUP_GRID',
-      columns: [
-        {header:'라우팅리소스uuid', name:'routing_resource_uuid', alias:'uuid', hidden: true},
-        // {
-        //   header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M, format:'combo',
-        //   options: {            
-        //     listItems: [
-        //       {code:'설비', text:'설비'},
-        //       {code:'인원', text:'인원'},
-        //     ],
-        //   }
-        // },
-        {header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M},
-        {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L},
-        {header:'금형UUID', name:'mold_uuid', width:150, hidden:true},
-        {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L},
-        {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L},
-        {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-      ],
+      columns: resourceColumns,
       ref: grdRefRoutingResources,
       
       inputProps: {
@@ -401,18 +390,7 @@ export const PgStdRouting = () => {
               'basic',
               {
                 gridRef:grdRefRoutingResources,
-                columns:[
-                  {header:'라우팅리소스uuid', name:'routing_resource_uuid', alias:'uuid', hidden: true},
-                  {header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M},
-                  {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L},
-                  {header:'금형UUID', name:'mold_uuid', width:150, hidden:true},
-                  {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L},
-                  {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L},
-                  {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-                  {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-                  {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-                  {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-                ],
+                columns:resourceColumns,
                 saveUriPath:URI_PATH_SAVE_ROUTING_RESOURCE
               },
               {},
@@ -432,60 +410,7 @@ export const PgStdRouting = () => {
       title: '리소스 추가',
       popupId: 'ROUTING_RESOURCES_GRID_POPUP_CREATE',
       gridId: 'ROUTING_RESOURCES_GRID_POPUP_CREATE_GRID',
-      columns: [
-        {header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M, format:'combo', editable:true, disabled:false, requiredField:true},
-        {header:'설비UUID', name:'equip_uuid', width: ENUM_WIDTH.L, format:'popup', hidden: true},
-        {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L, format:'popup', editable:true},
-        {header:'금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
-        {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-        {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-        {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
-        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
-        {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true}
-      ],
-      gridComboInfo:[
-        {
-          columnNames:[
-            {
-              codeColName:{original:'resource_type', popup:'resource_type'},
-              textColName:{original:'resource_type', popup:'resource_type'},
-            }
-          ],
-          itemList:[
-            {code:'설비', text:'설비'},
-            {code:'인원', text:'인원'},
-            {code:'금형', text:'금형'}
-          ]
-        }
-      ],
-      gridPopupInfo:[
-        {
-          columnNames: [
-            {original:'equip_uuid', popup:'equip_uuid'},
-            {original:'equip_nm', popup:'equip_nm'}
-          ],
-          columns: getPopupForm('설비관리')?.datagridProps?.columns,
-          gridMode:'select',
-          dataApiSettings:{
-            uriPath: getPopupForm('설비관리')?.uriPath,
-          }
-        }, 
-        { // 금형관리
-          columnNames: [
-            {original:'mold_uuid', popup:'mold_uuid'},
-            {original:'mold_nm', popup:'mold_nm'},
-            {original:'mold_no', popup:'mold_no'},
-            {original:'mold_cavity', popup:'cavity'},
-          ],
-          columns: getPopupForm('금형관리')?.datagridProps?.columns,
-          dataApiSettings: {
-            uriPath: getPopupForm('금형관리')?.uriPath,
-            params: {}
-          },
-          gridMode: 'select',
-        },
-      ],
+      columns: resourceColumns,
       gridMode:'create',
       inputProps: {
         id:'ROUTING_RESOURCES_GRID_CREATE_INPUT',
@@ -508,57 +433,7 @@ export const PgStdRouting = () => {
       title: '리소스 수정',
       popupId: 'ROUTING_RESOURCES_GRID_POPUP_UPDATE',
       gridId: 'ROUTING_RESOURCES_GRID_POPUP_UPDATE_GRID',
-      columns: [
-        {header:'라우팅리소스uuid', name:'routing_resource_uuid', alias:'uuid', hidden: true},
-        {
-          header:'리소스유형', name:'resource_type', width: ENUM_WIDTH.M, format:'combo',
-          options: {            
-            listItems: [
-              {code:'설비', text:'설비'},
-              {code:'인원', text:'인원'},
-              {code:'금형', text:'금형'}
-            ],
-          },
-          editable:true,
-          requiredField:true
-        },
-        {header:'설비UUID', name:'equip_uuid', width: ENUM_WIDTH.L, format:'popup', hidden: true},
-        {header:'설비명', name:'equip_nm', width: ENUM_WIDTH.L, format:'popup', editable:true},
-        {header:'금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
-        {header:'금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-        {header:'금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
-        {header:'cavity', name:'mold_cavity', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header:'인원', name:'emp_cnt', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true},
-        {header:'C/T', name:'cycle_time', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true, requiredField:true},
-        {header:'UPH', name:'uph', width: ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, editable:true}
-      ],
-      gridPopupInfo:[
-        {
-          columnNames: [
-            {original:'equip_uuid', popup:'equip_uuid'},
-            {original:'equip_nm', popup:'equip_nm'}
-          ],
-          columns: getPopupForm('설비관리')?.datagridProps?.columns,
-          gridMode:'select',
-          dataApiSettings:{
-            uriPath: getPopupForm('설비관리')?.uriPath,
-          }
-        }, 
-        { // 금형관리
-          columnNames: [
-            {original:'mold_uuid', popup:'mold_uuid'},
-            {original:'mold_nm', popup:'mold_nm'},
-            {original:'mold_no', popup:'mold_no'},
-            {original:'mold_cavity', popup:'cavity'},
-          ],
-          columns: getPopupForm('금형관리')?.datagridProps?.columns,
-          dataApiSettings: {
-            uriPath: getPopupForm('금형관리')?.uriPath,
-            params: {}
-          },
-          gridMode: 'select',
-        },
-      ],
+      columns: resourceColumns,
       gridMode:'update',
       data:resourcesData,
       inputProps: {

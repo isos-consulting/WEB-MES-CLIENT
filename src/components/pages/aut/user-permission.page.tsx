@@ -70,7 +70,7 @@ export const PgAutUserPermission = () => {
     {header: '메뉴유형UUID', width:ENUM_WIDTH.M, name:'menu_type_uuid', hidden:true},
     {header: '메뉴유형', width:ENUM_WIDTH.M, name:'menu_type_nm', hidden:true},
     {header: '권한UUID', width:ENUM_WIDTH.M, name:'permission_uuid', hidden:true},
-    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup'},
+    {header: '권한명', width:ENUM_WIDTH.M, name:'permission_nm', editable:true, format:'popup', requiredField: true},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,

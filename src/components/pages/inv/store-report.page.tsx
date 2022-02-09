@@ -38,7 +38,7 @@ export const PgInvStoreReport = () => {
           }
       },
     },
-    {type:'text', id:'tran_type', label:'수불유형', default:'inventory', hidden:true},
+    {type:'text', id:'tran_type_cd', label:'수불유형', default:'INVENTORY', hidden:true},
   ]);
 
   /** 입력상자 관리 */

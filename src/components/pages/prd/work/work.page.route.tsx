@@ -1,9 +1,9 @@
 import Grid from '@toast-ui/react-grid';
-import { message, Space, Modal } from 'antd';
+import { Space, Modal } from 'antd';
 import React, {useRef, useState } from 'react';
-import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridModifiedRows, IGridPopupProps, TGridMode } from '~/components/UI';
-import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
-import { onDefaultGridCancel, onErrorMessage, TAB_CODE } from './work.page.util';
+import { Button, Container, Datagrid, GridPopup, IGridColumn, IGridModifiedRows, IGridPopupProps } from '~/components/UI';
+import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, saveGridData } from '~/functions';
+import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
 
 
@@ -62,16 +62,16 @@ export const ROUTING = () => {
   /** 항목 수정 팝업 속성 */
   const editGridPopupInfo:IGridPopupProps = {
     columns: ROUTING_COLUMNS,
-    gridId: TAB_CODE.공정순서+'_EDIT_GRID',
+    gridId: TAB_CODE.workRouting+'_EDIT_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
     data: null,
     height: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.공정순서+'_GRID'+'_EDIT_POPUP',
+    popupId: TAB_CODE.workRouting+'_GRID'+'_EDIT_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '공정순서 항목 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
     onOk: () => onSave(editPopupGridRef, 'update'),
@@ -213,7 +213,7 @@ export const ROUTING = () => {
         </div>
         <p/>
         <Datagrid
-          gridId={TAB_CODE.공정순서+'_GRID'}
+          gridId={TAB_CODE.workRouting+'_GRID'}
           ref={gridRef}
           gridMode={gridMode}
           columns={ROUTING_COLUMNS}

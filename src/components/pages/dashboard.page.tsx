@@ -13,28 +13,28 @@ export const Dashboard = () => {
   const [deliveredInWeekData, setDeliveredInWeekData] = useState<object>([]);
 
   const onSearchDashboardDatas = async ()  => {
-    await getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
-      if (res) {
-        [{"id": "id","value": 0},{"id": "make2","value": 1}]
-      };
-      setProductionData(res);
-    });
-    await getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
-      setQualityData(res);
-    });
-    await getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
-      setDelayedSalOrderData(res);
-    });
-    await getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
-      setOperatingeRateData(res);
-    });
-    await getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
-      const datas:object[] = res.map((el)=> {
-        el['date'] = dayjs(el.date).format('YYYY-MM-DD')
-        return el
-      });
-      setDeliveredInWeekData(res);
-    });
+    // await getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
+    //   if (res) {
+    //     [{"id": "id","value": 0},{"id": "make2","value": 1}]
+    //   };
+    //   setProductionData(res);
+    // });
+    // await getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
+    //   setQualityData(res);
+    // });
+    // await getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
+    //   setDelayedSalOrderData(res);
+    // });
+    // await getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
+    //   setOperatingeRateData(res);
+    // });
+    // await getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
+    //   const datas:object[] = res.map((el)=> {
+    //     el['date'] = dayjs(el.date).format('YYYY-MM-DD')
+    //     return el
+    //   });
+    //   setDeliveredInWeekData(res);
+    // });
 
   }
 

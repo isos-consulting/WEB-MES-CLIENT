@@ -90,7 +90,7 @@ export const PgSalOrder = () => {
     {header: '단위UUID', name:'unit_uuid', format:'popup', editable:true, hidden:true},
     {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', format:'popup', editable:true},
     {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true, format:'popup', editable:true},
-    {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm', format:'popup', editable:true, requiredField:true},
+    {header: '화폐단위', width:ENUM_WIDTH.S, name:'money_unit_nm', align:'center', format:'popup', editable:true, requiredField:true},
     {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', editable:true, requiredField:true,
       formula: {
         targetColumnNames:['qty', 'exchange'], resultColumnName:'total_price',
@@ -123,8 +123,6 @@ export const PgSalOrder = () => {
     if (['prod_type_nm', 'item_type_nm', 'prod_no', 'prod_nm', 'model_nm', 'rev', 'prod_std', 'safe_stock', 'unit_nm', 'money_unit_nm'].includes(el?.name))
       el['editable'] = false;
 
-    if (el?.formula)
-      console.log('el?.formula', el?.formula)
     return el;
   });
 
@@ -282,6 +280,7 @@ export const PgSalOrder = () => {
     await getData(searchParams, headerSearchUriPath).then((res) => {
       data = res;
     }).finally(() => {
+      detailInputInfo.ref.current.resetForm();
       setSelectedHeaderRow(null);
       headerGrid.setGridData(data);
     });
@@ -378,13 +377,14 @@ export const PgSalOrder = () => {
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
 
-  // useLayoutEffect(() => {
-  //   if (editDataPopupGridVisible === true) {
-  //     // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다
-  //     editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
-  //   }
+  useLayoutEffect(() => {
+    if (editDataPopupGridVisible === true) {
+      // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다
+      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
+    }
 
-  // }, [editDataPopupGridVisible, detailInputInfo.values, detailGrid.gridInfo.data]);
+  }, [editDataPopupGridVisible, detailInputInfo.values, detailGrid.gridInfo.data]);
   //#endregion
 
   const onSave = () => {

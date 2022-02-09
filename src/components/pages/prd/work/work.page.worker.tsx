@@ -1,13 +1,34 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Space, Modal } from 'antd';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import React, { useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridPopupProps, IDatagridProps } from '~/components/UI';
 import { IGridModifiedRows } from '~/components/UI/datagrid-new';
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
-
+const DATA_PICKUP_INFO = {
+  create: [
+    'factory_uuid',
+    'work_uuid',
+    'work_routing_uuid',
+    'worker_uuid',
+    'start_date',
+    'end_date',
+    'work_time',
+  ],
+  update: [
+    'work_worker_uuid', //uuid
+    'worker_uuid',
+    'start_date',
+    'end_date',
+    'work_time',
+  ],
+  delete: [
+    'work_worker_uuid', //uuid
+  ]
+}
 
 //#region 🔶✅투입인원관리
 /** 투입인원관리 */
@@ -27,10 +48,10 @@ export const WORKER = () => {
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  /** 비가동 그리드 속성 */
+  /** 투입인원 그리드 속성 */
   const gridInfo:IDatagridProps = {
     /** 그리드 아이디 */
-    gridId: TAB_CODE.투입인원관리+'_GRID'+'_POPUP_GRID',
+    gridId: TAB_CODE.workWorker+'_GRID'+'_POPUP_GRID',
     /** 참조 */
     ref: gridRef,
     /** 그리드 높이 */
@@ -87,23 +108,19 @@ export const WORKER = () => {
   /** 신규 항목 추가 팝업 속성 */
   const newGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
-    gridId: TAB_CODE.비가동관리+'_NEW_GRID',
+    gridId: TAB_CODE.workWorker+'_NEW_GRID',
     ref: newPopupGridRef,
     gridMode: 'create',
     defaultData: [],
     data: null,
     height: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.비가동관리+'_GRID'+'_NEW_POPUP',
+    popupId: TAB_CODE.workWorker+'_GRID'+'_NEW_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 추가',
+    title: '투입인원 항목 추가',
     /** 포지티브 버튼 글자 */
     okText: '추가하기',
-    onOk: () => {
-      onSave(newPopupGridRef, 'create').then((res) => {
-        console.log(res);
-      });
-    },
+    onOk: () => onSave(newPopupGridRef, 'create'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -134,16 +151,16 @@ export const WORKER = () => {
   /** 항목 수정 팝업 속성 */
   const editGridPopupInfo:IGridPopupProps = {
     ...gridInfo,
-    gridId: TAB_CODE.비가동관리+'_EDIT_GRID',
+    gridId: TAB_CODE.workWorker+'_EDIT_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
     data: null,
     height: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.비가동관리+'_GRID'+'_EDIT_POPUP',
+    popupId: TAB_CODE.workWorker+'_GRID'+'_EDIT_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '투입인원 항목 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
     onOk: () => onSave(editPopupGridRef, 'update'),
@@ -172,20 +189,28 @@ export const WORKER = () => {
 
   //#region ✅함수
   const onSearch = () => {
-    const work_uuid = (searchParams as any)?.work_uuid;
-    getData({work_uuid}, gridInfo.searchUriPath).then((res) => {
+    const work_uuid = searchParams?.['work_uuid'];
+    const work_routing_uuid = searchParams?.['work_routing_uuid'];
+    getData(
+      {
+        work_uuid, 
+        work_routing_uuid,
+      }, 
+      gridInfo.searchUriPath, 
+      undefined, undefined, undefined, undefined,
+      {disabledZeroMessage: true}).then((res) => {
       setData(res);
     });
   }
 
   /** 조작 가능 여부 판단 */
   const onCheckAccessAllow = ():boolean => {
-    if ((searchParams as any)?.work_uuid == null) {
+    if (searchParams?.['work_uuid'] == null || searchParams?.['work_routing_uuid'] == null) {
       onErrorMessage('하위이력작업시도');
       return false;
     }
 
-    if ((searchParams as any)?.complete_fg == 'true') {
+    if (searchParams?.['complete_fg'] == 'true') {
       onErrorMessage('완료된작업시도');
       return false;
     }
@@ -247,13 +272,6 @@ export const WORKER = () => {
   }
 
   const onSave = async (ref?, popupGridMode?) => {
-    // onDefaultGridSave('basic', gridRef, WORKER_COLUMNS, SAVE_URI_PATH, {}, modal,
-    //   () => {
-    //     setGridMode('view');
-    //     onSearch();
-    //   }
-    // );
-
     const modifedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
     const _gridMode = popupGridMode ?? gridInfo.gridMode; 
     
@@ -294,7 +312,9 @@ export const WORKER = () => {
         }
 
         const start_date = dayjs(el['start_date']).format('YYYY-MM-DD') + ' ' + time;
-        el['start_date'] = dayjs(start_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        if (dayjs(start_date)?.isValid()) {
+          el['start_date'] = dayjs(start_date).format('YYYY-MM-DD HH:mm:ss');
+        }
       }
       
 
@@ -306,11 +326,17 @@ export const WORKER = () => {
         }
 
         const end_date = dayjs(el['end_date']).format('YYYY-MM-DD') + ' ' + time;
-        el['end_date'] = dayjs(end_date).locale('ko').format('YYYY-MM-DD HH:mm:ss');
+        if (dayjs(end_date)?.isValid()) {
+          el['end_date'] = dayjs(end_date).format('YYYY-MM-DD HH:mm:ss');
+        }
       }
 
       delete el['start_time'];
       delete el['end_time'];
+    });
+
+    saveData[_gridMode+'dRows'] = saveData[_gridMode+'dRows']?.map((row) => {
+      return _.pick(row, DATA_PICKUP_INFO?.[_gridMode]);
     });
 
     // 저장 가능한지 체크
@@ -331,7 +357,7 @@ export const WORKER = () => {
   //#region ✅렌더부
   const component = (
     <>
-      <Container>
+      <Container boxShadow={false}>
         <div style={{width:'100%', display:'inline-block'}}>
           <Space size={[6,0]} style={{float:'right'}}>
               <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={() => onOpenPopup('delete')} disabled={!permissions?.delete_fg}>삭제</Button>
@@ -340,7 +366,7 @@ export const WORKER = () => {
           </Space>
         </div>
         <p/>
-        <Datagrid {...gridInfo} />
+        <Datagrid {...gridInfo} height={420} />
       </Container>
 
       {contextHolder}
@@ -356,7 +382,6 @@ export const WORKER = () => {
     component,
     
     gridRef,
-
     gridMode: gridInfo.gridMode,
 
     data,

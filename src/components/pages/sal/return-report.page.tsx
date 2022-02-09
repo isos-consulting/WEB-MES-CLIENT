@@ -272,6 +272,11 @@ export const PgSalReturnReport = () => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
 
+    if (!values?.reg_date_chk) {
+      delete searchParams['start_date'];
+      delete searchParams['end_date'];
+    }
+
     let data = [];
     let subTotalData = [];
 

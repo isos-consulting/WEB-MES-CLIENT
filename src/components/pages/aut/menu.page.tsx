@@ -63,7 +63,7 @@ export const PgAutMenu = () => {
     {header: '메뉴레벨', name:'lv', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '메뉴명', name:'menu_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '메뉴유형UUID', name:'menu_type_uuid', width:ENUM_WIDTH.L, filter:'text', editable:true, hidden:true, },
-    {header: '메뉴유형', name:'menu_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, },
+    {header: '메뉴유형', name:'menu_type_nm', width:ENUM_WIDTH.L, format:'combo', filter:'text', editable:true, },
     {header: '메뉴URL', name:'menu_uri', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '컴포넌트명', name:'component_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, },
     {header: '아이콘', name:'icon', width:ENUM_WIDTH.L, filter:'text', editable:true, },
@@ -76,7 +76,18 @@ export const PgAutMenu = () => {
       name: 'menu_nm',
       useIcon: true,
       useCascadingCheckbox: true
-    }
+    },
+    gridComboInfo: [
+      { // 투입단위 콤보박스
+        columnNames: [
+          {codeColName:{original:'menu_type_uuid', popup:'menu_type_uuid'}, textColName:{original:'menu_type_nm', popup:'menu_type_nm'}},
+        ],
+        dataApiSettings: {
+          uriPath: URL_PATH_AUT.MENU_TYPE.GET.MENU_TYPES ,
+          params: {}
+        }
+      }
+    ],
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -84,6 +95,7 @@ export const PgAutMenu = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridComboInfo: grid.gridInfo.gridComboInfo,
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
@@ -163,6 +175,7 @@ export const PgAutMenu = () => {
           },
         },
       ],
+      gridComboInfo: grid.gridInfo.gridComboInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -217,7 +230,7 @@ export const PgAutMenu = () => {
           }) 
         }
       })
-      
+      console.log(menuDatas)
       inputInfo?.instance?.resetForm();
       grid.setGridData(menuDatas);
     });
@@ -241,6 +254,7 @@ export const PgAutMenu = () => {
   const onEditSave = () => {
     const {gridRef, setGridMode} = editDataPopupGrid;
     const {columns, saveUriPath} = editDataPopupGrid.gridInfo;
+    console.log(gridRef.current.getInstance().getData())
     const saveDatas = gridRef.current.getInstance().getData().map((el) => {
       return({
         uuid:el.menu_uuid,

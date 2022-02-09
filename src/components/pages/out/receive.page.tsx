@@ -1,14 +1,14 @@
 
 import React, { useLayoutEffect } from 'react';
 import { useState } from "react";
-import { Datagrid, useGrid, useSearchbox } from "~/components/UI";
+import { Datagrid, getPopupForm, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday, isModified } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 
@@ -448,11 +448,42 @@ export const PgOutReceive = () => {
       label:'거래처', 
       disabled:true, 
       usePopup:true, 
-      popupKey:'거래처관리', 
+      popupKey:'거래처관리',
       popupKeys:['partner_uuid', 'partner_nm'],
+      params:{partner_fg: 1},
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },
-    {type:'text', id:'supplier_nm', label:'공급처', disabled:true, usePopup:true, popupKey:'공급처관리', popupKeys:['supplier_uuid', 'supplier_nm']},
+    {
+      type:'text', 
+      id:'supplier_nm', 
+      label:'공급처', 
+      disabled:true, 
+      usePopup:true, 
+      popupKeys:['supplier_uuid', 'supplier_nm'],
+      popupButtonSettings: {
+        datagridSettings:{
+          gridId:null, 
+          columns:getPopupForm('공급처관리').datagridProps.columns
+        },
+        dataApiSettings: (el) => {
+          return {
+            uriPath: URL_PATH_STD.SUPPLIER.GET.SUPPLIERS,
+            params: {
+              partner_uuid: el?.values?.partner_uuid
+            },
+            onInterlock: ()=> {
+              if(el?.values?.partner_uuid) {
+                return true;
+              } else {
+                message.warning('거래처를 먼저 선택해주세요.')
+                return false;
+              }
+            }
+          }
+        },
+        modalSettings:{title:'공급처 선택'}
+      }
+    },
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);
 

@@ -38,14 +38,7 @@ export const PgPrdReturnReport = () => {
           {code:'prod', text:'품목별'},
           {code:'date', text:'일자별'},
         ]
-      },
-  
-      {type: 'radio', id:'complete_state', default:'all', label:'완료구분',
-        options: [
-          {code: 'all', text:'전체'},
-          {code:'complete', text:'완료'},
-          {code:'incomplete', text:'미완료'},
-        ]}
+      }
     ]);
   
   const subGrid = useGrid('SUB_GRID', [], {
