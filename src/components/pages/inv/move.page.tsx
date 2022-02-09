@@ -41,17 +41,17 @@ export const PgInvMove = () => {
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', format:'text', requiredField:true},
     {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'text', format:'number', editable:true, requiredField:true},
 
-    {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '출고창고코드', name:'from_store_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '출고창고명', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup'},
+    {header: '출고창고명', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', requiredField:true},
 
     {header: '출고위치아이디', name:'from_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
     {header: '출고위치코드', name:'from_location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
     {header: '출고위치명', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
 
-    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '입고창고코드', name:'to_store_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '입고창고명', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', editable: true, format:'popup'},
+    {header: '입고창고명', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', editable: true, format:'popup', requiredField:true},
 
     {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'text',  hidden:true},
     {header: '입고위치코드', name:'to_location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
