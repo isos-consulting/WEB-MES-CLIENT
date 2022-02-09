@@ -303,7 +303,7 @@ export const PgSalOutgo = () => {
                         order_detail_uuid: row[0].order_detail_uuid,
                         order_detail_qty: row[0].qty,
                         carry_fg:false
-                      }, res, updateColumns
+                      }, res, updateColumns, onAppendRow
                     )
                   });
                 } else {
@@ -396,7 +396,7 @@ export const PgSalOutgo = () => {
                         outgo_order_detail_uuid: row[0].order_detail_uuid,
                         outgo_order_detail_qty: row[0].qty,
                         carry_fg:false
-                      }, res, updateColumns
+                      }, res, updateColumns, onAppendRow
                     )
                   });
                 } else {
@@ -412,7 +412,7 @@ export const PgSalOutgo = () => {
     ],
   });
   
-  const addStocks = (mainData, res, updateColumns) => {
+  const addStocks = (mainData, res, updateColumns, onAppendRow) => {
     return (
       modal.confirm({
         title: '재고관리 - 수주품목',
@@ -451,7 +451,7 @@ export const PgSalOutgo = () => {
                 });
   
                 // 행 추가
-                popupGridRef?.current?.getInstance()?.appendRow({...mainData, ...newRow});
+                onAppendRow({...mainData, ...newRow});
               }
             });
             close();
