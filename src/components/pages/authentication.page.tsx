@@ -10,7 +10,7 @@ export const PgAuthentication = (props: any) => {
     const webURL:string = ['localhost','191.1.70.201'].includes(window.location.hostname) ? 'najs.isos.kr' : window.location.hostname
     // const webURL:string = 'najs.i-so.kr'
     
-    getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'http://was.isos.kr:3002/').then((res)=>{
+    getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/').then((res)=>{
       if(res.length > 0) {
         localStorage.setItem(
           'tenantInfo',
