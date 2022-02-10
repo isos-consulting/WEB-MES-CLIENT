@@ -6,7 +6,7 @@ import {message, Modal, Space} from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
 import { useMemo } from 'react';
-import { DatagridComboboxEditor, DatagridNumberEditor, DatagridNumberRenderer, DatagridDateEditor, DatagridDateRenderer, DatagridCheckboxEditor, DatagridCheckboxRenderer, DatagridTagRenderer } from '~/components/UI/datagrid-ui';
+import { DatagridComboboxEditor, DatagridNumberEditor, DatagridNumberRenderer, DatagridDateEditor, DatagridDateRenderer, DatagridCheckboxEditor, DatagridCheckboxRenderer, DatagridTagRenderer, DatagridPercentEditor, DatagridPercentRenderer } from '~/components/UI/datagrid-ui';
 import '~styles/grid.style.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
@@ -429,6 +429,34 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           } 
           break;
 
+          
+        case 'percent': // 퍼센트 타입 세팅
+          if (el?.editable == true) {
+            // 에디터
+            el['editor'] = {
+              type:DatagridPercentEditor,
+              options: {
+                ...el?.options,
+                decimal: el?.decimal
+              }
+            }
+          }
+
+          // 렌더러
+          el['renderer'] = {
+            type:DatagridPercentRenderer,
+            options: {
+              ...el?.options,
+              unit: el?.unit, // 단위 설정
+              decimal: el?.decimal
+            }
+          }
+
+          // 정렬
+          if (el?.align == null) {
+            el['align'] = 'right'; 
+          } 
+          break;
 
         case 'date': // 날짜 타입 세팅
           if (el?.editable == true) {
