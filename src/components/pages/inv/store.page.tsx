@@ -221,7 +221,7 @@ export const PgInvStore = () => {
         }
       }
     },
-    {type:'text', id:'tran_type', label:'수불유형', default:'inventory', hidden:true},
+    {type:'text', id:'tran_type_cd', label:'수불유형', default:'inventory', hidden:true},
   ]);
   
 
@@ -401,6 +401,7 @@ export const PgInvStore = () => {
   const invStoreSearchItems:ISearchItem[] = [
     {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'기간'},
   ];
+
   const invStoreColumns:IGridColumn[] = [
     {header: '재고수불UUID', name:'inv_store_uuid', alias:'uuid', filter:'text', hidden:true},
     {header: '수불일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
@@ -430,7 +431,7 @@ export const PgInvStore = () => {
   const getInvStoreData = (searchParams) => {
     getData({
       ...searchParams,
-      tran_type: 'inventory',
+      tran_type_cd: 'INVENTORY',
     }, invStroeUriPath).then((res) => {
       setInvStoreData(res);
     });
