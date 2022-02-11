@@ -25,7 +25,6 @@ export const PgPrdDemand = () => {
   const LOCATION_POPUP = getPopupForm('위치관리');
   const PROD_POPUP = getPopupForm('품목관리2');
 
-
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
     {header:'자재출고요청UUID', name:'demand_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
@@ -34,7 +33,7 @@ export const PgPrdDemand = () => {
     {header:'완료', name:'complete_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', editable:true, hiddenCondition: (props) => props?.gridMode === 'delete'},
     {header:'요청부서UUID', name:'dept_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'요청부서', name:'dept_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
-    {header:'요청유형UUID', name:'demand_type_cd', width:ENUM_WIDTH.M, hidden:true},
+    {header:'요청유형UUID', name:'demand_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'요청유형', name:'demand_type_nm', width:ENUM_WIDTH.M, format:'combo', filter:'text', editable:true, requiredField:true},
     {header:'품목UUID', name:'prod_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
@@ -140,7 +139,8 @@ export const PgPrdDemand = () => {
     gridComboInfo: [
       { // 요청유형 콤보박스
         columnNames: [
-          {codeColName:{original:'demand_type_cd', popup:'demand_type_cd'}, textColName:  {original:'demand_type_nm', popup:'demand_type_nm'}},
+          {codeColName:{original:'demand_type_uuid', popup:'demand_type_uuid'}, textColName:  {original:'demand_type_nm', popup:'demand_type_nm'}},
+          
         ],
         dataApiSettings: {
           uriPath: '/adm/demand-types',
@@ -230,13 +230,11 @@ export const PgPrdDemand = () => {
     const searchParams = cleanupKeyOfObject(values, searchInfo.searchItemKeys);
 
     let data = [];
-
     getData({
       ...searchParams,
       complete_state: 'all',
     }, searchUriPath).then((res) => {
       data = res;
-
     }).finally(() => {
       inputInfo?.instance?.resetForm();
       grid.setGridData(data);
@@ -247,7 +245,6 @@ export const PgPrdDemand = () => {
   const onSave = () => {
     const {gridRef, setGridMode} = grid;
     const {columns, saveUriPath} = grid.gridInfo;
-    
     dataGridEvents.onSave('basic', {
         gridRef,
         setGridMode,
