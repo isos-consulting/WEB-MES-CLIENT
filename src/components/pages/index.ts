@@ -5,6 +5,7 @@ export * from './test-double-grid.page';
 export * from './adm/cycle-unit.page';
 export * from './adm/daily-insp-cycle.page';
 export * from './adm/bom-type.page';
+export * from './adm/bom-input-type.page';
 export * from './adm/insp-type.page';
 export * from './adm/insp-detail-type.page';
 export * from './adm/tran-type.page';
