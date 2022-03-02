@@ -648,7 +648,7 @@ export const INSP = () => {
         {...createPopupGrid.gridInfo}
         title='데이터 추가'
         onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
-        okText='추가하기'
+        okText='저장하기'
         cancelText='취소'
         onCancel={() => {
           // TUIP_PROD_onSearch();
@@ -684,7 +684,7 @@ export const INSP = () => {
         {...editPopupGrid.gridInfo}
         title='데이터 수정'
         onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
-        okText='수정하기'
+        okText='저장하기'
         cancelText='취소'
         onCancel={() => {
           // TUIP_PROD_onSearch();

@@ -249,7 +249,7 @@ export const orderInput = () => {
     /** 팝업 제목 */
     title: '투입품목 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
+    okText: '저장하기',
     onOk: () => {
       saveGridData(
         getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
@@ -309,7 +309,7 @@ export const orderInput = () => {
     /** 팝업 제목 */
     title: '비가동 항목 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
+    okText: '저장하기',
     onOk: () => {
       saveGridData(
         getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),

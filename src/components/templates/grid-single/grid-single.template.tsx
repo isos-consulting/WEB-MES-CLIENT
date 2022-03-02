@@ -248,7 +248,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - 신규 항목 추가'}
           visible={gridPopupVisible}
           
-          okText='추가하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (!isSuccess) return;
@@ -294,7 +294,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - 항목 수정'}
           visible={gridUpdatePopupVisible}
           
-          okText='수정하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (!isSuccess) return;

@@ -573,7 +573,7 @@ export const PgSalRelease = () => {
       saveType: 'basic',
       searchUriPath: '/sal/releases',
       saveUriPath: '/sal/releases',
-      okText: '추가하기',
+      okText: '저장하기',
       onCancel: (ev) => {
         const releaseRequestData = orderProdPopupGrid?.gridInstance?.getData();
 
@@ -622,7 +622,7 @@ export const PgSalRelease = () => {
       saveType: 'basic',
       searchUriPath: '/sal/releases',
       saveUriPath: '/sal/releases',
-      okText: '추가하기',
+      okText: '저장하기',
       onCancel: (ev) => {
         const releaseRequestData = outgoOrderPopupGrid?.gridInstance?.getData();
 

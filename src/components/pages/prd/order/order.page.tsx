@@ -344,7 +344,7 @@ export const PgPrdOrder = () => {
     /** 팝업 제목 */
     title: '작업지시 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
+    okText: '저장하기',
     onOk: () => {
       saveGridData(
         getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
@@ -427,7 +427,7 @@ export const PgPrdOrder = () => {
     /** 팝업 제목 */
     title: '작업지시 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
+    okText: '저장하기',
     onOk: () => {
       saveGridData(
         getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),

@@ -353,7 +353,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - ' + btnCreateText}
           visible={headerPopupVisible}
           
-          okText='추가하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => {
             if (props?.onAfterOkNewDataPopup) {
@@ -400,7 +400,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - ' + btnAddText}
           visible={detailPopupVisible}
 
-          okText='추가하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (props?.onAfterOkAddDataPopup) {
@@ -447,7 +447,7 @@ export const TpDoubleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - ' + btnEditText}
           visible={editPopupVisible}
 
-          okText='수정하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (props?.onAfterOkEditDataPopup) {

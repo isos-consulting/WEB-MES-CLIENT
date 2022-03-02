@@ -105,7 +105,7 @@ export const orderWorker = () => {
     /** 팝업 제목 */
     title: '투입인원 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
+    okText: '저장하기',
     onOk: () => {
       console.log('saveOptionParams', saveOptionParams);
       saveGridData(

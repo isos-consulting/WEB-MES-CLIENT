@@ -482,7 +482,7 @@ export const PgMatRelease = () => {
       saveType: 'basic',
       searchUriPath: '/mat/releases',
       saveUriPath: '/mat/releases',
-      okText: '추가하기',
+      okText: '저장하기',
       onCancel: (ev) => {
         const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 

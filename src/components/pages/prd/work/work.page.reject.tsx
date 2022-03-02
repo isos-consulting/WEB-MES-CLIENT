@@ -138,7 +138,7 @@ export const REJECT = () => {
     /** 팝업 제목 */
     title: '부적합 항목 추가',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
+    okText: '저장하기',
     onOk: () => onSave(newPopupGridRef, 'create'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
@@ -190,7 +190,7 @@ export const REJECT = () => {
     /** 팝업 제목 */
     title: '부적합 항목 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
+    okText: '저장하기',
     onOk: () => onSave(editPopupGridRef, 'update'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
