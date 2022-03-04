@@ -130,6 +130,7 @@ export * from './qms/final-insp-result-report.page';
 export * from './qms/rework.page';
 export * from './qms/rework-report.page';
 
+export * from './eqm/equip-insp-result.page';
 export * from './eqm/repair-history.page';
 export * from './eqm/history-card.page';
 export * from './eqm/insp.page';
