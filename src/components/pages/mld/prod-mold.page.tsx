@@ -184,8 +184,8 @@ export const PgMldProdMold = () => {
   //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type:'text', id:'prod_uuid', label: '품목UUID', disabled:true, hidden:true},
-    {type:'text', id:'prod_no', label: '품번', disabled:true, hidden:true},
-    {type:'text', id:'prod_nm', label: '품명', disabled:true, },
+    {type:'text', id:'prod_no', label: '품번', disabled:true, hidden:true, required:true},
+    {type:'text', id:'prod_nm', label: '품명', disabled:true, required:true},
     {type:'text', id:'item_type_uuid', label: '품목 유형UUID', disabled:true, hidden:true},
     {type:'text', id:'item_type_nm', label: '품목 유형명', disabled:true, },
     {type:'text', id:'prod_type_uuid', label: '제품 유형UUID', disabled:true, hidden:true},

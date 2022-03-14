@@ -305,7 +305,7 @@ export const PgInvStore = () => {
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
-    {type:'date', id:'reg_date', label:'수불일', default:getToday()},
+    {type:'date', id:'reg_date', label:'수불일', default:getToday(), required:true},
   ]);
   const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
 

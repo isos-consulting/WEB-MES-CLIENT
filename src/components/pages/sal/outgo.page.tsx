@@ -83,7 +83,7 @@ export const PgSalOutgo = () => {
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header: '화폐단위UUID', name:'money_unit_uuid', width:ENUM_WIDTH.S, hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text', requiredField:true},
-    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,
+    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, requiredField:true, editable:true,
       formula: {
         targetColumnNames:['qty', 'exchange'], resultColumnName:'total_price',
         formula: priceFormula
@@ -106,7 +106,7 @@ export const PgSalOutgo = () => {
     {header: '창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '창고', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
+    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'number', format:'number', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '바코드', name:'barcode', width:ENUM_WIDTH.L, filter:'text', editable:true},
@@ -464,7 +464,7 @@ export const PgSalOutgo = () => {
     )
   }
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -472,12 +472,22 @@ export const PgSalOutgo = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (['outgo_detail_uuid', 'qty'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {

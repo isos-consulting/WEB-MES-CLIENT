@@ -232,13 +232,23 @@ export const PgSalOrder = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (['order_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange', 'complete_fg'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+      extraButtons: newDataPopupGrid.gridInfo.extraButtons,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {

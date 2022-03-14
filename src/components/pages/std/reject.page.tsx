@@ -27,7 +27,7 @@ export const PgStdReject = () => {
   const grid = useGrid('GRID', [
     {header: '부적합유형UUID', name:'reject_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '부적합유형코드', name:'reject_type_cd', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '부적합유형명', name:'reject_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '부적합유형명', name:'reject_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'popup', editable:true},
     {header: '부적합UUID', name:'reject_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '부적합코드', name:'reject_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '부적합명', name:'reject_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},

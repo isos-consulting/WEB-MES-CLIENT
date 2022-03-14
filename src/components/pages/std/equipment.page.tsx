@@ -31,7 +31,7 @@ export const PgStdEquipment = () => {
     {header: '파일첨부', name:'files', width:ENUM_WIDTH.M, format:'file', options:{
       file_mgmt_type_cd:'FIL_STD_EQM', ok_type:'save', reference_col: 'equip_uuid'
     }},
-    {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true, requiredField:true},
+    {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},

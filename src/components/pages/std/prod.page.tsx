@@ -41,6 +41,7 @@ export const PgStdProd = () => {
     {header: 'LOT 사용여부', name:'lot_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '사용여부', name:'use_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '품목활성상태', name:'active_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
+    {header: 'BOM유형uuid', name:'bom_type_uuid', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'popup', hidden:true},
     {header: 'BOM유형코드', name:'bom_type_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'popup', hidden:true},
     {header: 'BOM유형명', name:'bom_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '구매주문가능여부', name:'mat_order_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
@@ -57,6 +58,7 @@ export const PgStdProd = () => {
     {header: '수입검사여부', name:'qms_receive_insp_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '공정검사여부', name:'qms_proc_insp_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
     {header: '최종검사여부', name:'qms_final_insp_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
+    {header: '계획유형UUID', name:'prd_plan_type_uuid', width:ENUM_WIDTH.M, filter:'text', editable:true, hidden:true},
     {header: '계획유형코드', name:'prd_plan_type_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'popup', hidden:true},
     {header: '계획유형명(MPS/MRP)', name:'prd_plan_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, format:'popup'},
     {header: '생산품여부', name:'prd_active_fg', width:ENUM_WIDTH.XS, editable:true, format:'check', requiredField:true},
@@ -178,10 +180,12 @@ export const PgStdProd = () => {
       },
       { // BOM유형팝업
         columnNames: [
+          {original:'bom_type_uuid', popup:'bom_type_uuid'},
           {original:'bom_type_cd', popup:'bom_type_cd'},
           {original:'bom_type_nm', popup:'bom_type_nm'},
         ],
         columns: [
+          {header: 'BOM유형UUID', name:'bom_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
           {header: 'BOM유형코드', name:'bom_type_cd', width:ENUM_WIDTH.M, filter:'text'},
           {header: 'BOM유형명', name:'bom_type_nm', width:ENUM_WIDTH.L, filter:'text'},
         ],
@@ -193,10 +197,12 @@ export const PgStdProd = () => {
       },
       { // 계획유형(MPS/MRP)팝업
         columnNames: [
+          {original:'prd_plan_type_uuid', popup:'prd_plan_type_uuid'},
           {original:'prd_plan_type_cd', popup:'prd_plan_type_cd'},
           {original:'prd_plan_type_nm', popup:'prd_plan_type_nm'},
         ],
         columns: [
+          {header: '계획유형UUID', name:'prd_plan_type_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
           {header: '계획유형코드', name:'prd_plan_type_cd', width:ENUM_WIDTH.M, filter:'text'},
           {header: '계획유형명(MPS/MRP)', name:'prd_plan_type_nm', width:ENUM_WIDTH.L, filter:'text'},
         ],

@@ -1,13 +1,14 @@
 import React from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { cleanupKeyOfObject, cloneObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
+import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import _ from 'lodash';
 
 /** 제품입고 */
 export const PgInvMove = () => {
@@ -26,9 +27,9 @@ export const PgInvMove = () => {
   const grid = useGrid('GRID', [
     {header: '창고이동아이디', name:'move_uuid', width:ENUM_WIDTH.M, alias: 'uuid', filter:'text', format:'text', hidden:true},
     {header: '이동일시', name:'reg_date', width:ENUM_WIDTH.L, filter:'text', format:'date', requiredField:true},
-    {header: '품목아이디', name:'prod_uuid', filter:'text', format:'popup', hidden:true, requiredField:true},
-    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:false},
+    {header: '품목아이디', name:'prod_uuid', filter:'text', format:'popup', hidden:true},
+    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:false, requiredField:true},
     {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup'},
@@ -65,7 +66,7 @@ export const PgInvMove = () => {
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    cloneObject(grid.gridInfo.columns)?.filter(el => {
+    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
       return el.name !== 'reg_date';
     }),
     {
@@ -179,9 +180,14 @@ export const PgInvMove = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    cloneObject(grid.gridInfo.columns)?.filter(el => {
+    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
       // 신규 추가했을 때, 수정 못하게 방지
       if (el?.name === 'to_store_nm') el['editable'] = false;
+      if (['move_uuid', 'qty'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
 
       return el.name !== 'reg_date';
     }),

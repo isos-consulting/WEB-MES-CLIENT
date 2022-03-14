@@ -59,7 +59,7 @@ export const PgEqmHistoryCard = () => {
     },
     {header: '설비UUID', name:'equip_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '설비유형UUID', name:'equip_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-    {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
+    {header: '설비유형명', name:'equip_type_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header: '설비코드', name:'equip_cd', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
     {header: '설비명', name:'equip_nm', width:ENUM_WIDTH.L, filter:'text', requiredField:true},
     {header: '작업장UUID', name:'workings_uuid', width:ENUM_WIDTH.L, format:'popup', hidden:true},

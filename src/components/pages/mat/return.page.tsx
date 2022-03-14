@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
 const URI_PATH_GET_MAT_RETURN = '/mat/return/{uuid}';
@@ -51,11 +51,11 @@ export const PgMatReturn = () => {
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '자재반출상세아이디', name:'return_detail_uuid', alias:'uuid', filter:'text', hidden:true},
     {header: '자재반출아이디', name:'return_uuid', filter:'text', hidden:true},
-    {header: '제품아이디', name:'prod_uuid', filter:'text', hidden:true, requiredField:true},
+    {header: '제품아이디', name:'prod_uuid', filter:'text', hidden:true},
     {header: '품목유형', name:'item_type_nm', width:150, filter:'text'},
     {header: '제품유형', name:'prod_type_nm', width:150, filter:'text'},
-    {header: '품번', name:'prod_no', width:150, filter:'text'},
-    {header: '품명', name:'prod_nm', width:150, filter:'text'},
+    {header: '품번', name:'prod_no', width:150, filter:'text', requiredField:true},
+    {header: '품명', name:'prod_nm', width:150, filter:'text', requiredField:true},
     {header: '모델', name:'model_nm', width:150, filter:'text'},
     {header: 'Rev', name:'rev', width:100, filter:'text'},
     {header: '규격', name:'prod_std', width:150, filter:'text'},
@@ -63,17 +63,17 @@ export const PgMatReturn = () => {
     {header: 'LOT NO', name:'lot_no', width:100, filter:'text', editable:true, requiredField:true},
     {header: '반출수량', name:'return_qty', width:ENUM_WIDTH.M, filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', requiredField:true, editable:true,},
     {header: '단위UUID', name:'return_unit_uuid', alias: 'unit_uuid', width:80, filter:'text', hidden:true},
-    {header: '단위', name:'return_unit_nm', width:80, filter:'text', align:'center'},
-    {header: '재고수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', hidden:true},
+    {header: '단위', name:'return_unit_nm', width:80, filter:'text', align:'center', requiredField:true},
+    {header: '재고수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, format:'number', hidden:true, requiredField:true},
     {header: '재고단위UUID', name:'unit_uuid', width:80, filter:'text', hidden:true},
     {header: '재고단위', name:'unit_nm', width:80, filter:'text', align:'center',hidden:true},
-    {header: '단위변환값', name:'convert_value', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_UNIT_CHANGE, filter:'number', hidden:true},
-    {header: '화폐단위아이디', name:'money_unit_uuid', filter:'text', format:'combo', editable:true, hidden:true, requiredField:true},
+    {header: '단위변환값', name:'convert_value', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_UNIT_CHANGE, filter:'number', hidden:true, requiredField:true},
+    {header: '화폐단위아이디', name:'money_unit_uuid', filter:'text', format:'combo', editable:true, hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:100, filter:'text', format:'combo', editable:true, requiredField:true},
-    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,},
+    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true, requiredField:true},
     {header: '환율', name:'exchange', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, requiredField:true, editable:true,},
     {header: '금액', name:'total_price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
-    {header: '출고창고아이디', name:'from_store_uuid', width:150, filter:'text', hidden:true, requiredField:true},
+    {header: '출고창고아이디', name:'from_store_uuid', width:150, filter:'text', hidden:true},
     {header: '출고창고', name:'from_store_nm', width:150, filter:'text', requiredField:true},
     {header: '출고위치아이디', name:'from_location_uuid', width:150, filter:'text',  hidden:true},
     {header: '출고위치', name:'from_location_nm', width:150, filter:'text'},
@@ -225,7 +225,7 @@ export const PgMatReturn = () => {
     onAfterChange: detailGrid.gridInfo.onAfterChange
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: URI_PATH_GET_MAT_RETURN_INCLUDE_DETAILS,
     saveUriPath: URI_PATH_POST_MAT_RETURNS,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -233,13 +233,23 @@ export const PgMatReturn = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
-    searchUriPath: URI_PATH_GET_MAT_RETURN_INCLUDE_DETAILS,
-    saveUriPath: URI_PATH_POST_MAT_RETURNS,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (['return_detail_uuid', 'qty', 'convert_value', 'price', 'money_unit_nm', 'exchange'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: URI_PATH_GET_MAT_RETURN_INCLUDE_DETAILS,
+      saveUriPath: URI_PATH_POST_MAT_RETURNS,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+      extraButtons: newDataPopupGrid.gridInfo.extraButtons,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {

@@ -28,7 +28,7 @@ export const PgStdDowntime = () => {
     {header: '비가동UUID', name:'downtime_uuid', alias:'uuid', width:ENUM_WIDTH.L, format:'text', editable:true, hidden:true},
     {header: '비가동 유형UUID', name:'downtime_type_uuid', width:ENUM_WIDTH.L, format:'text', editable:true, hidden:true},
     {header: '비가동 유형코드', name:'downtime_type_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, hidden:true},
-    {header: '비가동 유형명', name:'downtime_type_nm', width:ENUM_WIDTH.L, format:'popup', editable:true, requiredField:true},
+    {header: '비가동 유형명', name:'downtime_type_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
     {header: '비가동코드', name:'downtime_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '비가동명', name:'downtime_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
     {header: '설비고장여부', name:'eqm_failure_fg', width:ENUM_WIDTH.S, format:'check', editable:true, requiredField:true},

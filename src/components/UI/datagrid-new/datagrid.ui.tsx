@@ -281,7 +281,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                               const fileData = subProps.grid.getRow(subProps.rowKey)
                               if(okType==='json' || (okType==='save' && fileData.save_type === 'create')){
                                 const fileUuid = subProps.grid.getRow(subProps.rowKey).uuid
-                                const res = await executeData({},'/temp/file/{uuid}'.replace('{uuid}',fileUuid),'delete','data',false,'http://191.1.70.225:3002')
+                                const res = await executeData({},'/temp/file/{uuid}'.replace('{uuid}',fileUuid),'delete','data',false,'http://191.1.70.5:3104')
                                 
                                 subProps.grid.removeRow(subProps.rowKey)
                               } else {

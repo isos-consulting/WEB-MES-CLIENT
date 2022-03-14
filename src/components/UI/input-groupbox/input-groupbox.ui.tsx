@@ -42,7 +42,7 @@ export interface IInputGroupboxItem {
     onInterlock?: () => boolean;
   };
 
-  dataSettingOptions?: TDataSettingOpionsReturn | ((ev?) => TDataSettingOpionsReturn);
+  dataSettingOptions?: TDataSettingOpionsReturn | ((ev?) => TDataSettingOpionsReturn) | ((ev?) => Promise<TDataSettingOpionsReturn>);
 
   /** 팝업 버튼에 세팅될 옵션 */
   popupButtonSettings?: {
