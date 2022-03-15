@@ -559,21 +559,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
 
         case 'check': // 체크박스 세팅
-          if (el?.editable == true) {
-            // 에디터
-            el['editor'] = {
-              type:DatagridCheckboxEditor,
-              options: {
-                gridId: props.gridId
-              }
-            }
-          }
+          // if (el?.editable == true) {
+          //   // 에디터
+          //   el['editor'] = {
+          //     type:DatagridCheckboxEditor,
+          //     options: {
+          //       gridId: props.gridId
+          //     }
+          //   }
+          // }
 
-          // 렌더러
+          // 렌더러 (체크박스만 에디터 작업을 렌더러가 합니다.)
           el['renderer'] = {
             type:DatagridCheckboxRenderer,
             options: {
-              gridId: props.gridId
+              gridId: props.gridId,
+              gridMode: props.gridMode,
+              editable: el?.editable,
             }
           }
 
@@ -1235,7 +1237,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
       if (targetType === 'cell') {
         if (rowKey != null) {
-
           const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
           if (editValue == null || editValue === '') { // _edit 컬럼이 빈 값인 경우
             switch (props.gridMode) { // 현재 모드에 따라 _edit 값을 다르게 삽입
@@ -1763,12 +1764,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   const onKeyDown = useCallback(
     async (ev) => {
       const {columnName, rowKey, keyboardEvent} = ev;
+      const value = ev?.instance?.getValue(rowKey, columnName);
+      const column = props.columns.find(column => column.name === columnName);
+
       if (columnName === COLUMN_CODE.CHECK) return;
 
       if (keyboardEvent?.keyCode === 32 || keyboardEvent?.keyCode === 13) { // Space
         // 셀 값 수정 가능한 상태일 떼, popup타입의 셀에서 space를 누른 경우 팝업 호출
-        if (['create', 'update']?.includes(props.gridMode)) {
-          onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
+        if (['create', 'update']?.includes(props.gridMode) && column?.editable == true) {
+          switch (column?.format) {
+            case 'check':
+              ev?.instance?.setValue(rowKey, columnName, !!!value);
+              break;
+          
+            case 'popup':
+              onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
+              break;
+          }
           return;
         }
 

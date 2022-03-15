@@ -1,42 +1,42 @@
 /** 체크박스 에디터 */
 export class DatagridCheckboxEditor {
   constructor(props) {
-      // props 변수 선언
-      const { rowKey } = props;
-      const { name } = props.columnInfo;
-      const { gridId } = props.columnInfo.editor.options;
+    // props 변수 선언
+    const { rowKey } = props;
+    const { name } = props.columnInfo;
+    const { gridId } = props.columnInfo.editor.options;
 
-      this.state = {
-          gridId: gridId,
-          rowKey: rowKey,
-          colName: name,
-      }
+    this.state = {
+      gridId: gridId,
+      rowKey: rowKey,
+      colName: name,
+    }
 
-      // select 형식의 element 생성
-      const rootDiv = document.createElement('input');
-      rootDiv.className = 'tui-grid-content-check';
-      
-      rootDiv.type = 'checkbox';
-      rootDiv.name = name;
+    // select 형식의 element 생성
+    const rootDiv = document.createElement('input');
+    rootDiv.className = 'tui-grid-content-check';
 
-      // 넘겨받은 값으로 default value를 지정합니다.
-      rootDiv.checked = props.value || false;
-      rootDiv.value = props.checked;
+    rootDiv.type = 'checkbox';
+    rootDiv.name = name;
 
-      // 만들어진 sel element를 사용
-      this.el = rootDiv;
+    // 넘겨받은 값으로 default value를 지정합니다.
+    rootDiv.checked = props.value || false;
+    rootDiv.value = props.checked;
+
+    // 만들어진 sel element를 사용
+    this.el = rootDiv;
   }
 
   getElement() {
-      return this.el;
+    return this.el;
   }
 
   getValue() {
-      return this.el?.checked;
+    return this.el?.checked;
   }
 
   mounted() {
-      this.el.focus();
+    this.el.focus();
   }
 }
 
@@ -45,39 +45,50 @@ export class DatagridCheckboxEditor {
 /** 체크박스 렌더러 */
 export class DatagridCheckboxRenderer {
   constructor(props) {
-      const {rowKey} = props;
-      const {name} = props.columnInfo;
-      const {gridId} = props.columnInfo.renderer?.options;
-      const rootDiv = document.createElement('div');
-      const el = document.createElement('input');
-      
-      this.state = {
-          elementId: gridId + name + rowKey
-      }
+    const {rowKey, columnName} = props;
+    const {name} = props.columnInfo;
+    const {gridId, gridMode, editable} = props.columnInfo.renderer?.options;
+    const grid = props.grid;
+    const rootDiv = document.createElement('div');
+    const el = document.createElement('input');
 
-      el.type = 'checkbox';
-      el.disabled = true;
-      el.id = gridId + name + rowKey;
+    this.state = {
+      elementId: gridId + name + rowKey
+    }
 
-      rootDiv.className = 'tui-grid-cell-content';
+    el.type = 'checkbox';
+    el.id = gridId + name + rowKey;
+    el.style = "transform: scale(1.3);";
 
-      rootDiv.appendChild(el);
+    const isEditable = editable === true && ['create', 'update'].includes(gridMode) === true;
 
-      this.el = rootDiv;
-      this.render(props, el);
+    if (isEditable) {
+      el.addEventListener('change', (value) => {
+        grid.setValue(rowKey, columnName, value);
+      });
+
+    } else {
+      el.onclick = () => false;
+    }
+    
+    rootDiv.className = 'tui-grid-cell-content';
+    rootDiv.appendChild(el);
+
+    this.el = rootDiv;
+    this.render(props, el);
   }
 
   getElement() {
-      return this.el;
+    return this.el;
   }
 
   render(props, el) {
-      const element = document.getElementById(this.state?.elementId);
+    const element = document.getElementById(this.state?.elementId);
 
-      if (el != null) {
-          el.checked = props?.value;
-      } else if(element != null) {
-          element.checked = props?.value;
-      }
+    if (el != null) {
+      el.checked = props?.value;
+    } else if(element != null) {
+      element.checked = props?.value;
+    }
   }
 }
