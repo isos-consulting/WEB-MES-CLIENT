@@ -186,11 +186,11 @@ export const PgLogin = () => {
         return;
       }
 
-      let strResult:object[];
-      strResult=[{
+      let strResult:object;
+      strResult={
         id: userId,
         pwd: crypto.AES.encrypt(userPw,'secret').toString(),
-      }]
+      }
       
       executeData(strResult,uriPath,'post')
       .then(res => {
