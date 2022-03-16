@@ -59,7 +59,7 @@ export const PgEqmInsp = () => {
     }
 
     executeData(
-      {uuid},
+      [{uuid}],
       value ? cancelApplyUriPath : applyUriPath,
       'put',
       'success',
