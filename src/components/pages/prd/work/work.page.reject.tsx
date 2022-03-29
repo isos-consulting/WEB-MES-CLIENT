@@ -68,8 +68,8 @@ export const REJECT = () => {
       {header:'수량', name:'qty', width:100, format:'number', editable:true, requiredField:true},
       {header:'입고 창고UUID', name:'to_store_uuid', width:200, hidden:true, format:'text', requiredField:true},
       {header:'입고 창고', name:'to_store_nm', width:120, format:'combo', editable:true, requiredField:true},
-      {header:'입고 위치UUID', name:'to_location_uuid', width:200, hidden:true, format:'text', requiredField:true},
-      {header:'입고 위치', name:'to_location_nm', width:120, format:'combo', editable:true, requiredField:true},
+      {header:'입고 위치UUID', name:'to_location_uuid', width:200, hidden:true, format:'text'},
+      {header:'입고 위치', name:'to_location_nm', width:120, format:'combo', editable:true},
       {header:'비고', name:'remark', width:150, format:'text', editable:true},
     ],
     /** 그리드 데이터 */
