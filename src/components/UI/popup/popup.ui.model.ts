@@ -922,7 +922,7 @@ const getPI_InvStore = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps =>
         {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
         {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
-        {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
+        {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, format:'text', filter:'text'},
         {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: 'Rev', name:'rev', width:ENUM_WIDTH.M, format:'text', filter:'text'},
