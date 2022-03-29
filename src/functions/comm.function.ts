@@ -14,7 +14,7 @@ import { errorState } from '~/enums/response.enum';
 import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
-const baseURL = process.env.TEST_URL;
+const baseURL = process.env.TEST_URL_JO;
 
 // environment : production, development, test
 const getTenantInfo = () => {
@@ -43,7 +43,7 @@ export async function getData<T = any[]>(
   }
 ):Promise<T> {
   loadProgressBar();
-  
+  const _baseUrl = optionBaseURL ? optionBaseURL : baseURL
   let datas:any = null;
   // let FACTORY_INSERT_FLAG:boolean = true;
 
@@ -57,7 +57,7 @@ export async function getData<T = any[]>(
     }
     datas = await axios({
       method: 'get',
-      baseURL:optionBaseURL,
+      baseURL:_baseUrl,
       url: uriPath,
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
@@ -82,7 +82,6 @@ export async function getData<T = any[]>(
       
     } else {
       datas = null;
-      console.log('getData', error);
 
       if (!disabledErrorMessage) {
         message.error(error.response.data.message);
