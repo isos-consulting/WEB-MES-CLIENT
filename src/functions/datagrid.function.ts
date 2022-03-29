@@ -596,7 +596,16 @@ export const dataGridEvents = {
             
             // alias에 따라 키값 변경
             columns?.forEach((column) => {
-              if (column?.alias != null) {
+              if (column?.format === 'datetime') {
+                const temp = detailDatas[i][column?.name]
+                if (dayjs(temp).isValid) {
+                  detailDatas[i][column?.name] = dayjs(temp).format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                }
+              }
+
+              if ((column?.disableStringEmpty === true || column?.format !== 'text') && detailDatas[i][column?.name] === '') {
+                delete detailDatas[i][column?.name];
+              } else  if (column?.alias != null) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];
               }
