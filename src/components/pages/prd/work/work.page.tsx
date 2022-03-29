@@ -367,7 +367,6 @@ export const PgPrdWork = () => {
       return;
     }
 
-    console.log('workInfo', workInfo);
     if (workInfo.complete_fg !== true) {
       message.warn('완료된 실적만 취소 가능합니다.');
       return;
@@ -436,21 +435,6 @@ export const PgPrdWork = () => {
         });
       }
     });
-  }
-
-  const getLastWorkRouting = async () => {
-    return await getData(
-      {
-        work_uuid: workInfo?.['work_uuid']
-      },
-      '/prd/work-routings'
-    ).then((res) => {
-      const lastRoute = res.reduce((p, c) => Number(p?.proc_no) > Number(c?.proc_no) ? p : c);
-      console.log(lastRoute)
-      return lastRoute;
-    }).finally(() => {
-      return null;
-    })
   }
 
   const saveWorkRouting = async (workData, routingData) => {
@@ -607,7 +591,7 @@ export const PgPrdWork = () => {
   
   //#region ✅조회조건
   const onSearch = (values, afterSearch:()=>void=()=>{}) => {
-    const dateParams = !!values?.complete_fg ? {
+    const dateParams = !values?.complete_fg ? {
       start_date: values?.start_date,
       end_date: values?.end_date,
     } : {};
@@ -1340,8 +1324,6 @@ const ProdOrderModal = ({visible, onClose}) => {
     let updatedRows = gridRef?.current?.getInstance().getModifiedRows()?.updatedRows as any[];
     const start_date = getToday();
     const lot_no = start_date?.replace(/[^0-9]/g, '');
-    const qty = 0;
-    const reject_qty = 0;
 
     // 작업시작 처리
     const workStartList =
@@ -1398,7 +1380,7 @@ const ProdOrderModal = ({visible, onClose}) => {
       deletedRows: undefined,
     }
 
-    if (completeChkList?.length > 0)
+    if (completeChkList?.length > 0){
       saveGridData(
         completeSaveData as any, 
         PROD_ORDER_COLUMNS, 
@@ -1406,8 +1388,10 @@ const ProdOrderModal = ({visible, onClose}) => {
 
       ).then(() => {
         gridRef?.current?.getInstance()?.clearModifiedData();
-        onClose();
+        
       }).catch((e) => console.log(e));
+    }
+    onClose();
   }
   //#endregion
 
