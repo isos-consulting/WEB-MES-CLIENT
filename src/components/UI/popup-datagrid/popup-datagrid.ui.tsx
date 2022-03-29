@@ -12,6 +12,7 @@ import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 import { useCallback } from 'react';
 import { useLoadingState } from '~/hooks';
 import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 
 const gridPopupUuid = uuidv4();
@@ -31,7 +32,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       try {
         const instance = gridRef?.current?.getInstance();
         instance?.finishEditing();
-
         // 단순 수정 이력 배열을 저장
         if (props.saveType === 'basic') {
           const modifiedRows = await getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
@@ -87,11 +87,10 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           }
 
           const chk:boolean = await checkGridData(props.columns, modifiedRows);
-
+          
           if (chk !== true) {
             return;
           }
-
           // 옵션 데이터 추가
           setLoading(true);
           for (let i = 0; i < detailDatas.length; i++) {
@@ -99,13 +98,21 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
             // alias에 따라 키값 변경
             props.columns?.forEach((column) => {
-              if (column?.alias != null) {
+              if (column?.format === 'datetime') {
+                const temp = detailDatas[i][column?.name]
+                if (dayjs(temp).isValid) {
+                  detailDatas[i][column?.name] = dayjs(temp).format('YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+                }
+              }
+
+              if ((column?.disableStringEmpty === true || column?.format !== 'text') && detailDatas[i][column?.name] === '') {
+                delete detailDatas[i][column?.name];
+              } else  if (column?.alias != null) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];
               }
             });
           }
-
           let optionValues:object = {};
           // 헤더 데이터 추가
           if (props.inputProps) {
@@ -124,6 +131,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           const optionKeys = Object.keys(optionValues);
 
           let headerData = {}
+          
           optionKeys.forEach((optionKey) => {
             const alias = props.inputProps?.inputItems?.find(el => el?.id === optionKey)?.alias;
 
@@ -181,6 +189,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   //#region 🔶팝업 버튼 액션 처리
   /** ⛔긍정 버튼 액션 처리 */
   const onOk = useMemo(() => {
+    
     if (props.onOk) { // 사용자 지정 액션 적용
       return () => props.onOk(gridRef);
 
