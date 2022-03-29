@@ -90,7 +90,7 @@ export const PgStdProd = () => {
         {
           header: '재고',
           name: '_stock_group',
-          childNames: ['inv_use_fg', 'inv_safe_qty', 'inv_package_qty', 'inv_to_store_nm', 'location_nm']
+          childNames: ['inv_use_fg', 'inv_safe_qty', 'inv_package_qty', 'inv_to_store_nm', 'inv_to_location_nm']
         },
         {
           header: '영업',
