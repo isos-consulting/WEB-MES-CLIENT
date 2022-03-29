@@ -45,7 +45,7 @@ export class DatagridCheckboxEditor {
 /** 체크박스 렌더러 */
 export class DatagridCheckboxRenderer {
   constructor(props) {
-    const {rowKey, columnName} = props;
+    const {rowKey} = props;
     const {name} = props.columnInfo;
     const {gridId, gridMode, editable} = props.columnInfo.renderer?.options;
     const grid = props.grid;
@@ -63,8 +63,9 @@ export class DatagridCheckboxRenderer {
     const isEditable = editable === true && ['create', 'update'].includes(gridMode) === true;
 
     if (isEditable) {
-      el.addEventListener('change', (value) => {
-        grid.setValue(rowKey, columnName, value);
+      el.addEventListener('change', (e) => {
+        const {checked} = e.target;
+        grid.setValue(rowKey, name, checked);
       });
 
     } else {
