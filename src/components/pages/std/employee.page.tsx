@@ -44,6 +44,7 @@ export const PgStdEmployee = () => {
     {header: '입사일자', name:'enter_date', width:ENUM_WIDTH.M, format:'date', filter:'text', editable:true},
     {header: '퇴사일자', name:'leave_date', width:ENUM_WIDTH.M, format:'date', filter:'text', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.XL, filter:'text', editable:true},
+    {header: '작업자유무', name:'worker_fg', width:ENUM_WIDTH.M, format: 'check', filter:'text', editable:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
