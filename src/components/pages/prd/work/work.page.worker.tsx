@@ -13,14 +13,14 @@ const DATA_PICKUP_INFO = {
     'factory_uuid',
     'work_uuid',
     'work_routing_uuid',
-    'worker_uuid',
+    'emp_uuid',
     'start_date',
     'end_date',
     'work_time',
   ],
   update: [
     'work_worker_uuid', //uuid
-    'worker_uuid',
+    'emp_uuid',
     'start_date',
     'end_date',
     'work_time',
@@ -65,8 +65,8 @@ export const WORKER = () => {
     /** 컬럼 */
     columns: [
       {header:'작업자투입UUID', name:'work_worker_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자UUID', name:'worker_uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자', name:'worker_nm', width:100, hidden:false, format:'text'},
+      {header:'작업자UUID', name:'emp_uuid', width:200, hidden:true, format:'text'},
+      {header:'작업자', name:'emp_nm', width:100, hidden:false, format:'text'},
       {header:'시작일시', name:'start_date', width:120, hidden:false, format:'date', editable:true},
       {header:'시작시간', name:'start_time', width:100, hidden:false, format:'time', editable:true},
       {header:'종료일시', name:'end_date', width:120, hidden:false, format:'date', editable:true},
@@ -78,22 +78,18 @@ export const WORKER = () => {
     /** 행추가팝업 */
     rowAddPopupInfo: {
       columnNames: [
-        {original:'worker_uuid', popup:'worker_uuid'},
-        {original:'worker_nm', popup:'worker_nm'},
+        {original:'emp_uuid', popup:'emp_uuid'},
+        {original:'emp_nm', popup:'emp_nm'},
       ],
       columns: [
-        {header:'작업자UUID', name:'worker_uuid', width:200, hidden:true, format:'text'},
-        {header:'작업자명', name:'worker_nm', width:120, hidden:false, format:'text'},
-        {header:'공정UUID', name:'proc_uuid', width:200, hidden:true, format:'text'},
-        {header:'공정', name:'proc_nm', width:120, hidden:false, format:'text'},
-        {header:'작업장UUID', name:'workings_uuid', width:200, hidden:true, format:'text'},
-        {header:'작업장', name:'workings_nm', width:120, hidden:false, format:'text'},
-        {header:'사원UUID', name:'emp_uuid', width:200, hidden:true, format:'text'},
-        {header:'사원명', name:'emp_nm', width:120, hidden:false, format:'text'},
+        {header:'작업자UUID', name:'emp_uuid', width:200, hidden:true, format:'text'},
+        {header:'작업자명', name:'emp_nm', width:120, hidden:false, format:'text'},
+        {header:'부서', name:'dept_nm', width:200, hidden:false, format:'text'},
+        {header:'직급', name:'grade_nm', width:120, hidden:false, format:'text'},
       ],
       dataApiSettings: {
-        uriPath: '/std/workers',
-        params: {}
+        uriPath: '/std/emps',
+        params: {worker_fg: true, emp_status:'incumbent'}
       },
       gridMode: 'multi-select',
     },
@@ -154,8 +150,8 @@ export const WORKER = () => {
     gridId: TAB_CODE.workWorker+'_EDIT_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
-    defaultData: data,
-    data: null,
+    defaultData: [],
+    data: data,
     height: null,
     /** 팝업 아이디 */
     popupId: TAB_CODE.workWorker+'_GRID'+'_EDIT_POPUP',
