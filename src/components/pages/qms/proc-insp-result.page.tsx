@@ -100,7 +100,7 @@ type TGetQmsProcInspIncludeDetailsHeader = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
   insp_no?: string,
   prod_uuid?: string,
@@ -172,9 +172,9 @@ type TGetQmsProcInspResult  = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
-  insp_detail_type_cd?: string,
+  insp_detail_type_uuid?: string,
   insp_detail_type_nm?: string,
   work_uuid?: string,
   seq?: number,
@@ -215,9 +215,9 @@ type TGetQmsProcInspResultIncludeDetailsHeader = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
-  insp_detail_type_cd?: string,
+  insp_detail_type_uuid?: string,
   insp_detail_type_nm?: string,
   work_uuid?: string,
   seq?: number,
@@ -299,7 +299,8 @@ type TPostQmsProcInspResultsHeader = {
   uuid?: string,
   factory_uuid?: string,
   work_uuid?: string,
-  insp_detail_type_cd?: string,
+  insp_type_uuid?: string,
+  insp_detail_type_uuid?: string,
   insp_uuid?: string,
   prod_uuid?: string,
   lot_no?: string,
@@ -540,7 +541,8 @@ export const PgQmsProcInspResult = () => {
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />검사정보</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       {INSP_RESULT_DETAIL_GRID.component}
-      <INSP_RESULT_CREATE_POPUP workData={workData} popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} />
+      {createPopupVisible ? <INSP_RESULT_CREATE_POPUP workData={workData} popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} /> : null}
+      
 
       {contextHolder}
     </>
@@ -576,7 +578,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
   //#region 그리드 컬럼세팅
   const COLUMNS_INSP_RESULTS:IGridColumn[] = [
     {header:'검사성적서UUID', name:'insp_result_uuid', alias:'uuid', width:200, hidden:true},
-    {header:'검사유형코드', name:'insp_type_cd', width:200, hidden:true},
+    {header:'검사유형코드', name:'insp_type_uuid', width:200, hidden:true},
     {header:'검사유형명', name:'insp_type_nm', width:120, hidden:true},
     {header:'검사유형', name:'insp_detail_type_nm', width:120, hidden:false},
     {header:'생산실적UUID', name:'work_uuid', width:200, hidden:true},
@@ -597,6 +599,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     {header:'검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header:'검사항목UUID', name:'insp_item_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목명', name:'insp_item_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header:'상세검사내용', name:'insp_item_desc', width:ENUM_WIDTH.XL, filter:'text'},
     {header:'검사 기준', name:'spec_std', width:ENUM_WIDTH.L, filter:'text'},
     {header:'최소 값', name:'spec_min', width:ENUM_WIDTH.M, filter:'text'},
     {header:'최대 값', name:'spec_max', width:ENUM_WIDTH.M, filter:'text'},
@@ -667,7 +670,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
       content: '성적서를 삭제하시겠습니까?',
       onOk: async () => {
         await executeData(
-          { uuid: procInspResultIncludeDetails?.header?.insp_result_uuid }, 
+          [{ uuid: procInspResultIncludeDetails?.header?.insp_result_uuid }], 
           URI_PATH_DELETE_QMS_PROC_INSP_RESULTS, 
           'delete', 
           'success'
@@ -706,7 +709,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     if (workData.work_uuid) {
       getData(
         {
-          insp_detail_type: 'all',
           work_uuid: workData.work_uuid
         },
         URI_PATH_GET_QMS_PROC_INSP_RESULTS,
@@ -792,13 +794,16 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
           </Col>
         </Row>
       </Container>
-      <INSP_RESULT_EDIT_POPUP 
-        workData={workData} 
-        inspResultUuid={procInspResultIncludeDetails?.header?.insp_result_uuid} 
-        popupVisible={editPopupVisible} 
-        setPopupVisible={setEditPopupVisible} 
-        onAfterCloseSearch={onSesrchInspResultDetail}
-      />
+      {editPopupVisible ? 
+        <INSP_RESULT_EDIT_POPUP 
+          workData={workData} 
+          inspResultUuid={procInspResultIncludeDetails?.header?.insp_result_uuid} 
+          popupVisible={editPopupVisible} 
+          setPopupVisible={setEditPopupVisible} 
+          onAfterCloseSearch={onSesrchInspResultDetail}
+        />
+        : null
+      }
     </>
   );
 
@@ -839,6 +844,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     {header:'검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header:'검사항목UUID', name:'insp_item_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목명', name:'insp_item_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header:'상세검사내용', name:'insp_item_desc', width:ENUM_WIDTH.XL, filter:'text'},
     {header:'검사 기준', name:'spec_std', width:ENUM_WIDTH.L, filter:'text'},
     {header:'최소 값', name:'spec_min', width:ENUM_WIDTH.M, filter:'text'},
     {header:'최대 값', name:'spec_max', width:ENUM_WIDTH.M, filter:'text'},
@@ -889,9 +895,9 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     {id:'insp_uuid', label:'검사기준서UUID', type:'text', disabled:true, hidden:true},
     {id:'insp_result_fg', label:'최종판정', type:'text', disabled:true, hidden:true },
     {id:'insp_result_state', label:'최종판정', type:'text', disabled:true},
-    {id:'insp_detail_type_cd', label:'검사유형', type:'combo', 
+    {id:'insp_detail_type_uuid', label:'검사유형', type:'combo', 
       dataSettingOptions:{
-        codeName:'insp_detail_type_cd',
+        codeName:'insp_detail_type_uuid',
         textName:'insp_detail_type_nm',
         uriPath:'/adm/insp-detail-types',
         params: {
@@ -1016,11 +1022,12 @@ const INSP_RESULT_CREATE_POPUP = (props:{
       message.warn('검사자를 등록해주세요.')
       return;
     }
-
+    console.log(inputInspResultValues)
     headerData = {
       factory_uuid: getUserFactoryUuid(),
       work_uuid: props?.workData?.work_uuid,
-      insp_detail_type_cd: inputInspResultValues?.insp_detail_type_cd,
+      insp_type_uuid: inputInspResultValues?.insp_type_uuid,
+      insp_detail_type_uuid: inputInspResultValues?.insp_detail_type_uuid,
       insp_uuid: inspIncludeDetails?.header?.insp_uuid,
       prod_uuid: props?.workData?.prod_uuid,
       lot_no: props?.workData?.lot_no,
@@ -1085,20 +1092,17 @@ const INSP_RESULT_CREATE_POPUP = (props:{
   }, [props?.workData, props?.popupVisible]);
 
   useLayoutEffect(() => {
-    if (props?.workData && props.popupVisible && inputInspResult?.values?.insp_detail_type_cd) {
-      if (inputInspResult?.values?.insp_detail_type_cd != '-') {
-        const insp_detail_type:string = 
-          inputInspResult?.values?.insp_detail_type_cd === 'PATROL_PROC' ? 'patrolProc' :
-          inputInspResult?.values?.insp_detail_type_cd === 'SELF_PROC' ? 'selfProc' :
-          null
+    if (props?.workData && props.popupVisible && inputInspResult?.values?.insp_detail_type_uuid) {
+      if (inputInspResult?.values?.insp_detail_type_uuid != '-') {
         getData(
           {
             work_uuid: props?.workData?.work_uuid,
-            insp_detail_type: insp_detail_type
+            insp_detail_type_uuid: inputInspResult?.values?.insp_detail_type_uuid
           },
           URI_PATH_GET_QMS_PROC_INSP_INCLUDE_DETAILS,
           'header-details'
-        ).then((res) => {
+        ).then((res:any) => {
+          inputInspResult.setFieldValue('insp_type_uuid',res?.header?.insp_type_uuid)
           setInspIncludeDetails(res);
         }).catch((err) => {
           onClear();
@@ -1108,7 +1112,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
         setInspIncludeDetails({});
       }
     }
-  }, [props?.workData, props?.popupVisible, inputInspResult?.values?.insp_detail_type_cd]);
+  }, [props?.workData, props?.popupVisible, inputInspResult?.values?.insp_detail_type_uuid]);
   //#endregion
 
   //#region 컴포넌트 rander
@@ -1169,6 +1173,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     {header:'검사항목 유형명', name:'insp_item_type_nm', width:ENUM_WIDTH.L, filter:'text'},
     {header:'검사항목UUID', name:'insp_item_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header:'검사항목명', name:'insp_item_nm', width:ENUM_WIDTH.L, filter:'text'},
+    {header:'상세검사내용', name:'insp_item_desc', width:ENUM_WIDTH.XL, filter:'text'},
     {header:'검사 기준', name:'spec_std', width:ENUM_WIDTH.L, filter:'text'},
     {header:'최소 값', name:'spec_min', width:ENUM_WIDTH.M, filter:'text'},
     {header:'최대 값', name:'spec_max', width:ENUM_WIDTH.M, filter:'text'},
@@ -1220,7 +1225,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     {id:'insp_result_fg', label:'최종판정', type:'text', disabled:true, hidden:true },
     {id:'insp_result_state', label:'최종판정', type:'text', disabled:true},
     {id:'seq', label:'검사차수', type:'number', disabled:true},
-    {id:'insp_detail_type_cd', label:'검사유형', type:'text', disabled:true},
+    {id:'insp_detail_type_uuid', label:'검사유형', type:'text', disabled:true},
     {id:'reg_date', label:'검사일자', type:'date', default:getToday() },
     {id:'reg_date_time', label:'검사시간', type:'time'},
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},

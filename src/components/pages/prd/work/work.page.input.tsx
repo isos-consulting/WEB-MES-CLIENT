@@ -193,17 +193,20 @@ export const INPUT = () => {
           disabledAutoDateColumn={true}
         />
       </Container>
-
-      <INPUT_POPUP
-        visible={inputPopupVisible}
-        // oldGridData={data}
-        columns={INPUT_COLUMNS}
-        searchParams={{
-          work_uuid: (searchParams as any)?.work_uuid,
-          complete_fg: (searchParams as any)?.complete_fg,
-          order_qty: (searchParams as any)?.order_qty,
-        }}
-        setVisible={setInputPopupVisible}/>
+      {inputPopupVisible ? 
+        <INPUT_POPUP
+          visible={inputPopupVisible}
+          // oldGridData={data}
+          columns={INPUT_COLUMNS}
+          searchParams={{
+            work_uuid: (searchParams as any)?.work_uuid,
+            complete_fg: (searchParams as any)?.complete_fg,
+            order_qty: (searchParams as any)?.order_qty,
+          }}
+          setVisible={setInputPopupVisible}
+        />
+        : null
+      }
 
       {contextHolder}
     </>
@@ -514,44 +517,50 @@ export const INPUT_POPUP = (
               />
             </Container>
           </Row>
-          <INPUT_POPUP_CREATE
-            searchParams={{
-              regDate: inputRefStandardInput.current?.values?.reg_date,
-              workUuid: props.searchParams.work_uuid,
-              inputInfo: inputInfo
-            }}
-            visible={inputCreatePopupVisible}
-            setVisible={setInputCreatePopupVisible}/>
-          <GridPopup
-            popupId={'투입이력_수정_그리드'}
-            defaultVisible={false}
+          {setInputCreatePopupVisible ? 
+            <INPUT_POPUP_CREATE
+              searchParams={{
+                regDate: inputRefStandardInput.current?.values?.reg_date,
+                workUuid: props.searchParams.work_uuid,
+                inputInfo: inputInfo
+              }}
+              visible={inputCreatePopupVisible}
+              setVisible={setInputCreatePopupVisible}
+            />
+            : null
+          }
+          {inputUpdatePopupVisible ? 
+            <GridPopup
+              popupId={'투입이력_수정_그리드'}
+              defaultVisible={false}
 
-            title={'투입이력 - 항목 수정'}
-            visible={inputUpdatePopupVisible}
-            
-            okText='수정하기'
-            cancelText='취소'
-            onAfterOk={(isSuccess, savedData) => { 
-              if (!isSuccess) return;
-              setInputUpdatePopupVisible(false);
-            }}
-            onCancel={() => setInputUpdatePopupVisible(false)}
+              title={'투입이력 - 항목 수정'}
+              visible={inputUpdatePopupVisible}
+              
+              okText='수정하기'
+              cancelText='취소'
+              onAfterOk={(isSuccess, savedData) => { 
+                if (!isSuccess) return;
+                setInputUpdatePopupVisible(false);
+              }}
+              onCancel={() => setInputUpdatePopupVisible(false)}
 
-            ref={gridRefWorkInputUpdate}
-            parentGridRef={gridRefWorkInput}
+              ref={gridRefWorkInputUpdate}
+              parentGridRef={gridRefWorkInput}
 
-            gridId={'투입품목등록_투입이력_수정_그리드'}
-            gridMode='update'
-            defaultData={inputData}
-            columns={props.columns}
-            saveType={'basic'}
-            saveUriPath={URI_PATH_SAVE_INPUT}
-            searchUriPath={''}
-            searchProps={null}
-            inputProps={null}
-            disabledAutoDateColumn={true}
-            
-          />
+              gridId={'투입품목등록_투입이력_수정_그리드'}
+              gridMode='update'
+              defaultData={inputData}
+              columns={props.columns}
+              saveType={'basic'}
+              saveUriPath={URI_PATH_SAVE_INPUT}
+              searchUriPath={''}
+              searchProps={null}
+              inputProps={null}
+              disabledAutoDateColumn={true}
+            />
+            : null
+          }
           {contextHolder}
         </div>
       </CustomModal>

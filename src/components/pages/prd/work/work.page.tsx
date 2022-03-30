@@ -1182,7 +1182,7 @@ export const PgPrdWork = () => {
         </Col>
       </Row>
 
-      <ProdOrderModal visible={prodOrderPopupVisible} onClose={onProdOrderClose}/>
+      {prodOrderPopupVisible ? <ProdOrderModal visible={prodOrderPopupVisible} onClose={onProdOrderClose}/> : null }
 
       {contextHolder}
     </>

@@ -239,7 +239,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
       <div style={props.templateType === 'report' ? {marginTop:-8, width:'100%'} : {width:'100%'}}>{searchProps != null ? searchboxVisible ? <Searchbox {...searchProps}/> : null : null}</div>
       {gridElement}
 
-      {gridPopup == null ? null : 
+      {gridPopup == null || !gridPopupVisible ? null : 
         <GridPopup
           {...gridPopup}
           popupId={gridPopup.gridId+'_POPUP'}
@@ -285,7 +285,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
         />
       }
       
-      {gridUpdatePopup == null ? null : 
+      {gridUpdatePopup == null || !gridUpdatePopupVisible ? null : 
         <GridPopup
           {...gridUpdatePopup}
           popupId={gridUpdatePopup.gridId+'_POPUP'}

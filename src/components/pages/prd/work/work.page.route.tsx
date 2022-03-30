@@ -223,7 +223,7 @@ export const ROUTING = () => {
       </Container>
 
       {contextHolder}
-      <GridPopup {...editGridPopupInfo} />
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
     </>
   );
   //#endregion

@@ -368,8 +368,8 @@ export const REJECT = () => {
 
       {contextHolder}
       
-      <GridPopup {...newGridPopupInfo} />
-      <GridPopup {...editGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null }
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
     </>
   );
   //#endregion

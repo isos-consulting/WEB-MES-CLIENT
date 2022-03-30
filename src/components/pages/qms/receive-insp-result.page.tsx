@@ -179,6 +179,7 @@ export const PgQmsReceiveInspResult = () => {
 
   // 데이터 추가 팝업 관련
   const [createPopupVisible, setCreatePopupVisible] = useState(false);
+  const [inspHandlingType, setInspHandlingType] = useState([])
   //#endregion
 
   const INPUT_ITEMS_RECIEVE:IInputGroupboxItem[] = [
@@ -269,6 +270,15 @@ export const PgQmsReceiveInspResult = () => {
       })
       setInspDetailType(_inspDetailType)
     })
+
+    const _inspHandlingType:object[] = []
+    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,'raws').then(async (res)=>{
+      console.log(res)
+      res.map((item) => {
+        _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
+      })
+      setInspHandlingType(_inspHandlingType)
+    })
   },[])
 
   //#region 렌더부
@@ -331,8 +341,8 @@ export const PgQmsReceiveInspResult = () => {
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />검사정보</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       {/* {INSP_RESULT_DETAIL.component} */}
-      <INSP_RESULT_DETAIL_GRID inspResultUuid={inspResultUuid} onSearchResults={onSearch} />
-      <INSP_RESULT_CREATE_POPUP popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} onAfterCloseSearch={onSearch} />
+      <INSP_RESULT_DETAIL_GRID inspHandlingType={inspHandlingType} inspResultUuid={inspResultUuid} onSearchResults={onSearch} />
+      {createPopupVisible ? <INSP_RESULT_CREATE_POPUP inspHandlingType={inspHandlingType} popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} onAfterCloseSearch={onSearch} /> : null }
 
       {contextHolder}
     </>
@@ -344,6 +354,7 @@ export const PgQmsReceiveInspResult = () => {
 //#region 수입검사 결과
 const INSP_RESULT_DETAIL_GRID = (props:{
   inspResultUuid:string,
+  inspHandlingType:any,
   onSearchResults: () => void
 }) => {
   /** 페이지 제목 */
@@ -492,7 +503,7 @@ const INSP_RESULT_DETAIL_GRID = (props:{
       {},
       searchUriPath,
       'header-details'
-    ).then((res) => {
+    ).then((res:any) => {
       setReceiveInspHeaderData(res.header);
       setReceiveInspDetailData(res.details);
       inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});
@@ -542,12 +553,16 @@ const INSP_RESULT_DETAIL_GRID = (props:{
           </Col>
         </Row>
       </Container>
-      <INSP_RESULT_EDIT_POPUP 
-        inspResultUuid={props.inspResultUuid} 
-        popupVisible={editPopupVisible} 
-        setPopupVisible={setEditPopupVisible} 
-        onAfterCloseSearch={onSesrchInspResultDetail}
-      />
+      {editPopupVisible ? 
+        <INSP_RESULT_EDIT_POPUP 
+          inspHandlingType={props.inspHandlingType}
+          inspResultUuid={props.inspResultUuid} 
+          popupVisible={editPopupVisible} 
+          setPopupVisible={setEditPopupVisible} 
+          onAfterCloseSearch={onSesrchInspResultDetail}
+        />
+        : null
+      }
     </>
   );
   //#endregion
@@ -556,6 +571,7 @@ const INSP_RESULT_DETAIL_GRID = (props:{
 
 //#region 성적서 신규 팝업
 export const INSP_RESULT_CREATE_POPUP = (props:{
+  inspHandlingType:any,
   popupVisible:boolean,
   setPopupVisible: (value?) => void
   onAfterCloseSearch?: () => void
@@ -573,8 +589,6 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   const [receiveInputData, setReceiveInputData] = useState<TReceiveDetail>({});
   const [receiveInspHeaderData, setReceiveInspHeaderData] = useState<TReceiveInspHeader>({});
   const [receiveInspDetailData, setReceiveInspDetailData] = useState<TReceiveInspDetail[]>([]);
-
-  const [inspHandlingType, setInspHandlingType] = useState([])
   //#endregion
 
   //#region 그리드 컬럼세팅
@@ -686,7 +700,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     {id:'lot_no', label:'LOT NO', type:'text', disabled:true},
     {id:'qty', label:'입하수량', type:'number', disabled:true},
   ];
-
+  console.log(props.inspHandlingType)
   const INPUT_ITEMS_INSP_RESULT:IInputGroupboxItem[] = [
     {id:'insp_uuid', label:'검사기준서UUID', type:'text', disabled:true, hidden:true},
     {id:'insp_result_fg', label:'최종판정', type:'text', disabled:true, hidden:true },
@@ -700,7 +714,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      options:inspHandlingType,
+      options:props.inspHandlingType,
       disabled:false,
       onAfterChange: (ev) => {}
     },
@@ -935,11 +949,10 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       //inputInspResult.setFieldValue('insp_handling_type','')
       changeInspResult('');
     }
-    console.log(_inspHandlingCd, inspHandlingType, inputInspResult.values)
     if (_inspHandlingCd === ''){
       inputInspResult.setFieldValue('insp_handling_type','')
     } else {
-      inspHandlingType.forEach(el => {
+      props.inspHandlingType.forEach(el => {
         if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
           inputInspResult.setFieldValue('insp_handling_type',el.code)
           return ;
@@ -1019,8 +1032,6 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       })
     }
 
-    console.log('headerData detailDatas',headerData,detailDatas)
-
     const saveData:object = ({
       header:headerData,
       details:detailDatas
@@ -1041,23 +1052,6 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   //#endregion
 
   //#region Hook 함수
-
-  useLayoutEffect(()=>{
-    const _inspHandlingType:object[] = []
-    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPE,'raws').then(async (res)=>{
-      res.map((item) => {
-        _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
-      })
-      console.log(res,_inspHandlingType)
-
-      setInspHandlingType(_inspHandlingType)
-    })
-  },[])
-
-  useLayoutEffect(()=>{
-    // console.log(inspHandlingType)
-    inputInspResult.setInputItems(INPUT_ITEMS_INSP_RESULT);
-  },[inspHandlingType])
 
   useLayoutEffect(() => {
     const inspDetailTypeCd = receiveInputData.insp_detail_type_cd;
@@ -1156,6 +1150,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
 //#region 성적서 수정 팝업
 export const INSP_RESULT_EDIT_POPUP = (props:{
   inspResultUuid:string,
+  inspHandlingType:any,
   popupVisible:boolean,
   setPopupVisible: (value?) => void,
   onAfterCloseSearch?: (insp_result_uuid:string) => void
@@ -1172,8 +1167,6 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
   //#region 데이터 관리
   const [receiveInspHeaderData, setReceiveInspHeaderData] = useState<TReceiveInspHeader>({});
   const [receiveInspDetailData, setReceiveInspDetailData] = useState<TReceiveInspDetail[]>([]);
-
-  const [inspHandlingType, setInspHandlingType] = useState([])
   //#endregion
 
   //#region 그리드 컬럼세팅
@@ -1251,7 +1244,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      options:inspHandlingType,
+      options:props.inspHandlingType,
       disabled:false,
       onAfterChange: (ev) => {}
     },
@@ -1492,7 +1485,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
     if (_inspHandlingCd === ''){
       inputInspResult.setFieldValue('insp_handling_type','')
     } else {
-      inspHandlingType.forEach(el => {
+      props.inspHandlingType.forEach(el => {
         if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
           inputInspResult.setFieldValue('insp_handling_type',el.code)
           return ;
@@ -1527,10 +1520,11 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
 
     headerData = {
       uuid: inputInspResultValues?.insp_result_uuid,
+      insp_handling_type_uuid: JSON.parse(inputInspResultValues.insp_handling_type).insp_handling_type_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
       unit_uuid: inputInputItemsValues?.unit_uuid,
       insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_detail_type_cd: inputInputItemsValues?.insp_detail_type_cd,
+      insp_detail_type_uuid: inputInputItemsValues?.insp_detail_type_uuid,
       insp_qty: inputInputItemsValues?.qty,
       pass_qty: inputInspResultIncomeValues?.qty,
       reject_qty: inputInspResultRejectValues?.reject_qty,
@@ -1599,21 +1593,6 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
   //#endregion
 
   //#region Hook 함수
-
-  useLayoutEffect(()=>{
-    const _inspHandlingType:object[] = []
-    getData({},URL_PATH_ADM.INSP_TYPE.GET.INSP_TYPES,'raws').then(async (res)=>{
-      res.map((item) => {
-        _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
-      })
-      setInspHandlingType(_inspHandlingType)
-    })
-  },[])
-
-  useLayoutEffect(()=>{
-    inputInspResult.setInputItems(INPUT_ITEMS_INSP_RESULT);
-  },[inspHandlingType])
-
   useLayoutEffect(() => {
     const searchUriPath = URI_PATH_GET_QMS_RECEIVE_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
 
@@ -1622,11 +1601,11 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
         {},
         searchUriPath,
         'header-details'
-      ).then((res) => {
+      ).then((res:any) => {
         setReceiveInspHeaderData(res.header);
         setReceiveInspDetailData(res.details);
         inputInputItems.setValues({...res.header, receive_date:dayjs(res.header.receive_date).add(-6, 'day').format('YYYY-MM-DD'), qty:res.header.insp_qty});
-        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});
+        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date, insp_handling_type:JSON.stringify({insp_handling_type_uuid:res.header.insp_handling_type_uuid,insp_handling_type_cd:res.header.insp_handling_type_cd})});
         inputInspResultIncome.setValues({...res.header, qty:res.header.pass_qty});
         inputInspResultReject.setValues({...res.header});
 

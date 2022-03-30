@@ -647,77 +647,80 @@ export const INSP = () => {
           </Col>
         </Row>
       </Container>
-      
-      <GridPopup
-        {...createPopupGrid.gridInfo}
-        title='데이터 추가'
-        onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
-        okText='저장하기'
-        cancelText='취소'
-        onCancel={() => {
-          // TUIP_PROD_onSearch();
-          setCreatePopupVisible(false);
-        }}
-        gridMode='create'
-        popupId={'INSP_GRID_POPUP_POPUP'}
-        ref={createPopupGrid.gridRef}
-        parentGridRef={gridRef}
-        inputProps={{
-          id: 'INSP_DETAIL_GRID_POPUP_INPUT',
-          inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
-            if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
-              el['disabled'] = false;
-            }
-            return el;
-          }),
-          innerRef: createPopupInput.ref,
-        }}
-        onAfterChange={(ev) => onAfterChange(ev, {
-          gridInstance: createPopupGrid.gridInstance,
-          inputInstance: createPopupInput.instance,
-        })}
-        saveUriPath={SAVE_URI_PATH}
-        searchUriPath={DETAIL_SEARCH_URI_PATH}
-        saveType='basic'
-        defaultVisible={false}
-        visible={createPopupVisible}
-      />
-
-      
-      <GridPopup
-        {...editPopupGrid.gridInfo}
-        title='데이터 수정'
-        onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
-        okText='저장하기'
-        cancelText='취소'
-        onCancel={() => {
-          // TUIP_PROD_onSearch();
-          setEditPopupVisible(false);
-        }}
-        gridMode='update'
-        popupId={'INSP_EDIT_GRID_POPUP_POPUP'}
-        ref={editPopupGrid.gridRef}
-        parentGridRef={gridRef}
-        inputProps={{
-          id: 'INSP_DETAIL_EDIT_GRID_POPUP_INPUT',
-          inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
-            if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
-              el['disabled'] = false;
-            }
-            return el;
-          }),
-          innerRef: editPopupInput.ref,
-        }}
-        onAfterChange={(ev) => onAfterChange(ev, {
-          gridInstance: editPopupGrid.gridInstance,
-          inputInstance: editPopupInput.instance,
-        })}
-        saveUriPath={SAVE_URI_PATH}
-        searchUriPath={DETAIL_SEARCH_URI_PATH}
-        saveType='basic'
-        defaultVisible={false}
-        visible={editPopupVisible}
-      />
+      {createPopupVisible ? 
+        <GridPopup
+          {...createPopupGrid.gridInfo}
+          title='데이터 추가'
+          onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
+          okText='저장하기'
+          cancelText='취소'
+          onCancel={() => {
+            // TUIP_PROD_onSearch();
+            setCreatePopupVisible(false);
+          }}
+          gridMode='create'
+          popupId={'INSP_GRID_POPUP_POPUP'}
+          ref={createPopupGrid.gridRef}
+          parentGridRef={gridRef}
+          inputProps={{
+            id: 'INSP_DETAIL_GRID_POPUP_INPUT',
+            inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
+              if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
+                el['disabled'] = false;
+              }
+              return el;
+            }),
+            innerRef: createPopupInput.ref,
+          }}
+          onAfterChange={(ev) => onAfterChange(ev, {
+            gridInstance: createPopupGrid.gridInstance,
+            inputInstance: createPopupInput.instance,
+          })}
+          saveUriPath={SAVE_URI_PATH}
+          searchUriPath={DETAIL_SEARCH_URI_PATH}
+          saveType='basic'
+          defaultVisible={false}
+          visible={createPopupVisible}
+        />
+        : null
+      }
+      {editPopupVisible ? 
+        <GridPopup
+          {...editPopupGrid.gridInfo}
+          title='데이터 수정'
+          onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
+          okText='저장하기'
+          cancelText='취소'
+          onCancel={() => {
+            // TUIP_PROD_onSearch();
+            setEditPopupVisible(false);
+          }}
+          gridMode='update'
+          popupId={'INSP_EDIT_GRID_POPUP_POPUP'}
+          ref={editPopupGrid.gridRef}
+          parentGridRef={gridRef}
+          inputProps={{
+            id: 'INSP_DETAIL_EDIT_GRID_POPUP_INPUT',
+            inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
+              if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
+                el['disabled'] = false;
+              }
+              return el;
+            }),
+            innerRef: editPopupInput.ref,
+          }}
+          onAfterChange={(ev) => onAfterChange(ev, {
+            gridInstance: editPopupGrid.gridInstance,
+            inputInstance: editPopupInput.instance,
+          })}
+          saveUriPath={SAVE_URI_PATH}
+          searchUriPath={DETAIL_SEARCH_URI_PATH}
+          saveType='basic'
+          defaultVisible={false}
+          visible={editPopupVisible}
+        />
+        : null
+      }
 
       {modalContext}
     </>
