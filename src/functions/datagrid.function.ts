@@ -348,17 +348,20 @@ export function createSubTotalColumns(
  * @returns 수정 이력 object 반환
  */
 export const getModifiedRows = (ref:MutableRefObject<Grid>, columns, datas?) => {
+  const _columns = ref.current.props.columns
+  const _datas = ref.current.gridInst.getData()
   const instance = ref?.current?.getInstance()?.getModifiedRows();
+  console.log(_columns, _datas)
   const modifiedData = {
-    createdRows: datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.CREATE) ?? instance?.createdRows,
-    deletedRows: datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.DELETE) ?? instance?.deletedRows,
-    updatedRows: datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE) ?? instance?.updatedRows,
+    createdRows: _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.CREATE) ?? instance?.createdRows,
+    deletedRows: _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.DELETE) ?? instance?.deletedRows,
+    updatedRows: _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE) ?? instance?.updatedRows,
   }
   
   // 생성
   const createdRows = (modifiedData?.createdRows as any)?.filter(el => {
     let columnNames = [COLUMN_CODE.EDIT];
-    columns.forEach(column => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         (column.name === COLUMN_CODE.EDIT || column.name === COLUMN_CODE.ATTRIBUTE)
@@ -383,7 +386,7 @@ export const getModifiedRows = (ref:MutableRefObject<Grid>, columns, datas?) => 
   // 삭제
   const deletedRows = (modifiedData?.updatedRows as any)?.filter(el => {
     let columnNames = [COLUMN_CODE.EDIT];
-    columns.forEach(column => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         (column.name === COLUMN_CODE.EDIT || column.name === COLUMN_CODE.ATTRIBUTE)
@@ -406,7 +409,7 @@ export const getModifiedRows = (ref:MutableRefObject<Grid>, columns, datas?) => 
   // 수정
   const updatedRows = (modifiedData?.updatedRows as any)?.filter(el => {
     let columnNames = [COLUMN_CODE.EDIT];
-    columns.forEach(column => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         (column.name === COLUMN_CODE.EDIT || column.name === COLUMN_CODE.ATTRIBUTE)

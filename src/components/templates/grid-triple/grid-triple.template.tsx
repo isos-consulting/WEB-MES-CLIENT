@@ -469,7 +469,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
               title={props.title + ' - ' + btnCreateText}
               visible={headerPopupVisible}
               
-              okText='저장하기zz'
+              okText='저장하기'
               cancelText='취소'
               onAfterOk={(isSuccess, savedData) => { 
                 if (props?.onAfterOkNewDataPopup) {

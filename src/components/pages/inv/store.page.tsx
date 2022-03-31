@@ -464,8 +464,8 @@ export const PgInvStore = () => {
     cancelButtonProps: {hidden:true},
     onCancel: () => setInvStorePopupVisible(false),
     okText: '저장',
-    onOk: () => {
-      onDefaultGridSave('basic', invStoreGridRef, invStoreColumns, invStroeUriPath, {}, modal, onInvStroeOkAfterEvent);
+    onOk: (gridRef) => {
+      onDefaultGridSave('basic', gridRef, invStoreColumns, invStroeUriPath, {}, modal, onInvStroeOkAfterEvent);
     }
   };
   const INV_STORE_EXTRA_BUTTON:IExtraButton = {

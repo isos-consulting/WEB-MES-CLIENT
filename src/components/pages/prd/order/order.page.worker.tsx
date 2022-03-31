@@ -98,10 +98,10 @@ export const orderWorker = () => {
     title: '투입인원 등록',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: () => {
+    onOk: (gridRef) => {
       console.log('saveOptionParams', saveOptionParams);
       saveGridData(
-        getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
@@ -187,7 +187,7 @@ export const orderWorker = () => {
         <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
       </Container>
 
-      <GridPopup {...newGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

@@ -1406,7 +1406,6 @@ const ProdOrderModal = ({visible, onClose}) => {
       visible={visible}
       onCancel={onClose}
       onOk={onSave}
-      
       width='80%'
     >
       <>

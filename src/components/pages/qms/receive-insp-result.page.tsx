@@ -273,7 +273,6 @@ export const PgQmsReceiveInspResult = () => {
 
     const _inspHandlingType:object[] = []
     getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,'raws').then(async (res)=>{
-      console.log(res)
       res.map((item) => {
         _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
       })
@@ -700,7 +699,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     {id:'lot_no', label:'LOT NO', type:'text', disabled:true},
     {id:'qty', label:'입하수량', type:'number', disabled:true},
   ];
-  console.log(props.inspHandlingType)
+
   const INPUT_ITEMS_INSP_RESULT:IInputGroupboxItem[] = [
     {id:'insp_uuid', label:'검사기준서UUID', type:'text', disabled:true, hidden:true},
     {id:'insp_result_fg', label:'최종판정', type:'text', disabled:true, hidden:true },

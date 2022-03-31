@@ -250,9 +250,9 @@ export const orderInput = () => {
     title: '투입품목 등록',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: () => {
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
@@ -301,18 +301,18 @@ export const orderInput = () => {
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
-    data: null,
+    data: data,
     height: null,
     onAfterClick: null,
     /** 팝업 아이디 */
     popupId: TAB_CODE.투입품목관리+'_EDIT_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '투입품목 수정',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: () => {
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
+        getModifiedRows(gridRef, gridRef.current.props.columns, gridRef.current.gridInst.getData()),
         editGridPopupInfo.columns,
         editGridPopupInfo.saveUriPath,
         editGridPopupInfo.saveOptionParams,
@@ -404,9 +404,8 @@ export const orderInput = () => {
         {/* <p/> */}
         <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
       </Container>
-
-      <GridPopup {...newGridPopupInfo} />
-      <GridPopup {...editGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

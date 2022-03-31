@@ -298,6 +298,7 @@ export const PgMatOrder = () => {
       disabled:true, 
       usePopup:true, 
       popupKey:'거래처관리', 
+      params:{partner_fg:1},
       popupKeys:['partner_uuid', 'partner_nm'],
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },

@@ -227,7 +227,7 @@ export const PgQmsInsp = () => {
     return true;
   }
 
-  const handleAmendInsp = (type:'개정'|'수정', popupType:TPopup) => {
+  const handleAmendInsp = (gridRef:any, type:'개정'|'수정', popupType:TPopup) => {
     const grid = (
       popupType === 'add' ?
         addDataPopupGrid
@@ -283,7 +283,7 @@ export const PgQmsInsp = () => {
       optionSaveParams['apply_fg'] = true;
 
       // 행 삭제 체크되어 있는 행은 제거
-      rawData = cloneDeep(grid?.gridRef.current.getInstance().store.data.rawData).filter((raw) => {
+      rawData = cloneDeep(gridRef.current.getInstance().store.data.rawData).filter((raw) => {
         return raw['delete_row'] === false
       });
       detailData = {
@@ -297,7 +297,7 @@ export const PgQmsInsp = () => {
     }
     
     dataGridEvents.onSave('headerInclude', {  
-      gridRef: grid?.gridRef,
+      gridRef: gridRef,
       setGridMode: null,
       columns: grid?.gridInfo?.columns,
       saveUriPath: grid?.gridInfo?.saveUriPath,
@@ -369,6 +369,12 @@ export const PgQmsInsp = () => {
       : null
     );
 
+    const gridRef = popupType === 'add' ?
+      addDataPopupGrid.gridRef
+      : popupType === 'edit' ? 
+      editDataPopupGrid.gridRef
+      : null
+
     if (!setVisible) return null;
 
     const onCancel = () => {
@@ -376,7 +382,7 @@ export const PgQmsInsp = () => {
     }
 
     const onEdit = () => {
-      handleAmendInsp('수정', popupType);
+      handleAmendInsp(gridRef, '수정', popupType);
     }
 
     return (
@@ -668,7 +674,6 @@ export const PgQmsInsp = () => {
           if (['apply_fg'].includes(el?.id)){
             el['default'] = true;
           }
-          el['disabled'] = false;
           
           if ( el.id === 'reg_date'){
             el['default'] = getToday();
@@ -831,7 +836,7 @@ export const PgQmsInsp = () => {
     defaultVisible: false,
     visible: amendDataPopupGridVisible,
     okText:'개정하기',
-    onOk:() => handleAmendInsp('개정', 'amend'),
+    onOk:(gridRef) => handleAmendInsp(gridRef, '개정', 'amend'),
     cancelText:'취소',
     onCancel: () => setAmendDataPopupGridVisible(false),
     ref: amendDataPopupGrid?.gridRef,
@@ -888,12 +893,12 @@ export const PgQmsInsp = () => {
         saveParams: {
           p_prod_uuid: addDataPopupInputInfo?.values?.prod_uuid
         },
-        footer: popupFooter(), // << 얘가 범인
+        footer: popupFooter(),
       },
       {
         ...editDataPopupGrid?.gridInfo,
-        footer: popupFooter(), // << 얘가 범인
-      }
+        footer: popupFooter(),
+      },
     ],
     searchProps: [
       {

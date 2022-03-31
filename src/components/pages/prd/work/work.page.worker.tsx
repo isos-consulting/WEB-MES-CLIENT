@@ -116,7 +116,7 @@ export const WORKER = () => {
     title: '투입인원 항목 추가',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: () => onSave(newPopupGridRef, 'create'),
+    onOk: (gridRef) => onSave(gridRef, 'create'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -159,7 +159,7 @@ export const WORKER = () => {
     title: '투입인원 항목 수정',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: () => onSave(editPopupGridRef, 'update'),
+    onOk: (gridRef) => onSave(gridRef, 'update'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
