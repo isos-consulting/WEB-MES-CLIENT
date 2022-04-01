@@ -360,7 +360,6 @@ export const getModifiedRows = (ref:MutableRefObject<Grid>, columns, datas?) => 
   
   // 생성
   const createdRows = (modifiedData?.createdRows as any)?.filter(el => {
-    let columnNames = [COLUMN_CODE.EDIT];
     _columns.forEach(column => {
       if (
         column?.noSave === true ||
@@ -368,17 +367,8 @@ export const getModifiedRows = (ref:MutableRefObject<Grid>, columns, datas?) => 
       ) {
         delete el[column.name];
       }
-
-      columnNames.push(column.name);
     });
-
-    Object.keys(el).forEach(elName => {
-      if (columnNames.includes(elName) === false) {
-        delete el[elName];
-      }
-    });
-
-    return el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.CREATE;
+    return el;
   });
 
   
