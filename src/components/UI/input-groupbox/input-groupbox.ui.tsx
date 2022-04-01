@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo } from 'react';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import {Form, Formik, isNaN} from 'formik';
 import {FormikErrors, FormikValues, FormikHelpers, FormikProps} from 'formik/dist/types';
 import { atomFamily,  useRecoilState, useResetRecoilState } from 'recoil';
@@ -150,11 +150,7 @@ export const afInputGroupDefaultValues = atomFamily<FormikValues, string>({
 
 /** 인풋박스 */
 const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
-  const [,setValues] = useRecoilState(afInputGroupValues(props.id));
-  const resetRecoilValues = useResetRecoilState(afInputGroupValues(props.id));
-  const [defaultValues, setDefaultValues] = useRecoilState(afInputGroupDefaultValues(props.id));
-  const resetRecoilDefaultValues = useResetRecoilState(afInputGroupDefaultValues(props.id));
-  const [,setResult] = useRecoilState(afInputResult(props.id));
+  const [defaultValues, setDefaultValues] = useState({});
   const {initialValues, validate, inputItems, isNotCheckRequired, isNotCheckType, innerRef} = props;  
 
   const _initialValues = useMemo(() => {
@@ -190,101 +186,95 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
 
 
   useLayoutEffect(() => {
-    setValues(_initialValues);
     setDefaultValues(_initialValues);
-
-    return () => {
-      resetRecoilValues();
-      resetRecoilDefaultValues();
-    };
   }, []);
 
 
-  const preValidate = async (values?:any):Promise<FormikErrors<FormikValues>> => {
-    const errors = {};
+  // const preValidate = async (values?:any):Promise<FormikErrors<FormikValues>> => {
+  //   const errors = {};
 
-    // setValues(crr => crr !== values ? values : crr);
+  //   // setValues(crr => crr !== values ? values : crr);
     
-    if (inputItems?.length > 0) {
-      let typeErrorList:string[] = [];
-      let requireErrorList:string[] = [];
+  //   if (inputItems?.length > 0) {
+  //     let typeErrorList:string[] = [];
+  //     let requireErrorList:string[] = [];
 
-      inputItems.forEach((item) => {
-        const itemName = item.name || item.id;
-        const value = values[itemName];
+  //     inputItems.forEach((item) => {
+  //       const itemName = item.name || item.id;
+  //       const value = values[itemName];
 
-        // 타입 체크
-        if (isNotCheckType !== true && item?.useCheckType === true) {
-          let pattern = null;
-          switch (item.type) {
-            case 'number':
-              if (!isNaN(value)) {
-                typeErrorList.push(itemName);
-              }
-              break;
-
-
-            case 'date':
-              pattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
-
-              if (typeof value === 'string' && !pattern.test(value)) {
-                typeErrorList.push(itemName);
-              }
-              break;
+  //       // 타입 체크
+  //       if (isNotCheckType !== true && item?.useCheckType === true) {
+  //         let pattern = null;
+  //         switch (item.type) {
+  //           case 'number':
+  //             if (!isNaN(value)) {
+  //               typeErrorList.push(itemName);
+  //             }
+  //             break;
 
 
-            // case 'datetime':
-            //   pattern = /([0-2][0-9]{3})-([0-1][0-9])-([0-3][0-9]) ([0-5][0-9]):([0-5][0-9]):([0-5][0-9])(([\-\+]([0-1][0-9])\:00))?/;
+  //           case 'date':
+  //             pattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
 
-            //   if (typeof value === 'string' && !pattern.test(value)) {
-            //     typeErrorList.push(itemName);
-            //   }
-            //   break;
+  //             if (typeof value === 'string' && !pattern.test(value)) {
+  //               typeErrorList.push(itemName);
+  //             }
+  //             break;
 
 
-            case 'time':
-              pattern = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/;
+  //           // case 'datetime':
+  //           //   pattern = /([0-2][0-9]{3})-([0-1][0-9])-([0-3][0-9]) ([0-5][0-9]):([0-5][0-9]):([0-5][0-9])(([\-\+]([0-1][0-9])\:00))?/;
 
-              if (typeof value === 'string' && !pattern.test(value)) {
-                typeErrorList.push(itemName);
-              }
-              break;
+  //           //   if (typeof value === 'string' && !pattern.test(value)) {
+  //           //     typeErrorList.push(itemName);
+  //           //   }
+  //           //   break;
+
+
+  //           case 'time':
+  //             pattern = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/;
+
+  //             if (typeof value === 'string' && !pattern.test(value)) {
+  //               typeErrorList.push(itemName);
+  //             }
+  //             break;
           
-            default:
-              break;
-          }
+  //           default:
+  //             break;
+  //         }
 
-        }
+  //       }
 
-        // 필수 값 체크
-        if (isNotCheckRequired !== true && item?.required === true) {
-          if (!value) {
-            requireErrorList.push(itemName);
-          }
-        }
-      });
+  //       // 필수 값 체크
+  //       if (isNotCheckRequired !== true && item?.required === true) {
+  //         if (!value) {
+  //           requireErrorList.push(itemName);
+  //         }
+  //       }
+  //     });
 
       
-      // 에러 정리
-      typeErrorList.forEach(errorItem => {
-        errors[errorItem] = '형식이 일치하지 않습니다.';
-      });
+  //     // 에러 정리
+  //     typeErrorList.forEach(errorItem => {
+  //       errors[errorItem] = '형식이 일치하지 않습니다.';
+  //     });
 
-      requireErrorList.forEach(errorItem => {
-        errors[errorItem] = '필수 값 입니다.';
-      });
+  //     requireErrorList.forEach(errorItem => {
+  //       errors[errorItem] = '필수 값 입니다.';
+  //     });
 
 
-      if(typeErrorList.length > 0 || requireErrorList.length > 0)  {
-        setResult('ERROR');
-      } else {
-        setResult('');
-      }
+  //     // if(typeErrorList.length > 0 || requireErrorList.length > 0)  {
+  //     //   setResult('ERROR');
+  //     // } else {
+  //     //   setResult('');
+  //     // }
 
-    }
+  //   }
 
-    return errors;
-  }
+  //   return errors;
+  // }
 
 
   const onSubmit = useMemo(() => {
@@ -293,7 +283,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
 
     } else {
       return (values, {setSubmitting}) => {
-        setValues(crr => crr !== values ? values : crr);
+        // setValues(crr => crr !== values ? values : crr);
         setSubmitting(false);
       }
     }
@@ -302,7 +292,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
   const onReset = (values, header) => {
     // resetForm이 외부에서 실행되면 해당 함수로 callback됩니다.
     // 초기화되는 내용을 recoil상태값에 반영해야 값이 원활히 동기화 됩니다.
-    setValues(values);
+    setDefaultValues(values);
   }
 
   return (
@@ -318,7 +308,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
         validate={(values) => { // input이 발생될때 마다 호출됩니다.
 
           // 기본 역할 수행
-          setValues(crr => crr !== values ? values : crr);
+          // setValues(crr => crr !== values ? values : crr);
           // preValidate(values);
 
           // 사용자 액션 정의
@@ -943,7 +933,7 @@ const BaseInputGroupbox:React.FC<IInputGroupboxProps> = (props) => {
                                 await setFieldValued(item.name || item.id, e)
 
                                 if (item?.onAfterChange)
-                                  item?.onAfterChange(e);
+                                  item?.onAfterChange(e, setFieldValue);
                               }}
                               dataSettingOptions={
                                 typeof item?.dataSettingOptions === 'function' ?

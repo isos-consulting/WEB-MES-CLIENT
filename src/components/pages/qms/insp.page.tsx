@@ -7,7 +7,7 @@ import { Button, getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, useGri
 import { ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
 import {OptComplexColumnInfo} from 'tui-grid/types/options'
-import { cloneDeep } from 'lodash';
+import { add, cloneDeep } from 'lodash';
 import { IInputGroupboxItem, useInputGroup } from '~/components/UI/input-groupbox';
 
 /** 검사기준서관리 */
@@ -589,16 +589,27 @@ export const PgQmsInsp = () => {
   },[])
 
   useLayoutEffect(()=>{
-    detailSubGrid.setGridColumns(deatilSubGridColumns)
-    newDataPopupGrid.setGridColumns(newDataPopupGridColumns)
-    addDataPopupGrid.setGridColumns(newDataPopupGridColumns)
-    editDataPopupGrid.setGridColumns(newDataPopupGridColumns)
+    detailSubGrid.setGridColumns(deatilSubGridColumns);
+  },[inspectorInspFg, workerInspFg]);
+
+  useLayoutEffect(()=>{
+    newDataPopupGrid.setGridColumns(newDataPopupGridColumns);
+  },[newDataPopupInputInfo?.values?.insp_type]);
+
+  useLayoutEffect(()=>{
+    addDataPopupGrid.setGridColumns(newDataPopupGridColumns);
+  },[addDataPopupInputInfo?.values?.insp_type]);
+
+  useLayoutEffect(()=>{
+    editDataPopupGrid.setGridColumns(newDataPopupGridColumns);
+  },[editDataPopupInputInfo?.values?.insp_type]);
+
+  useLayoutEffect(()=>{
     amendDataPopupGrid.setGridColumns([
       {header:'행 삭제', name:'delete_row', width:ENUM_WIDTH.S, format:'check', editable: true},
-      ...newDataPopupGridColumns
-    ])
-
-  },[inspectorInspFg, workerInspFg])
+      ...cloneDeep(newDataPopupGridColumns)
+    ]);
+  },[amendDataPopupInputInfo?.values?.insp_type]);
 
   useLayoutEffect(()=>{
     if(!inspType) return;
@@ -657,9 +668,7 @@ export const PgQmsInsp = () => {
         popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
         popupButtonSettings: prodPopupButtonSettings,
       },
-      {
-        type:'combo', id:'insp_type', label:'기준서 유형', disabled:true, firstItemType:'none', options: inspType, default:_defaultInspType
-      },
+      {type:'combo', id:'insp_type', label:'기준서 유형', disabled:true, firstItemType:'none', options: inspType},
       {type:'text', id:'insp_no', label:'기준서 번호', disabled:true},
       {type:'date', id:'reg_date', label:'생성일자', disabled:true},
       {type:'text', id:'contents', label:'개정내역', disabled:true},
@@ -682,10 +691,20 @@ export const PgQmsInsp = () => {
           if ( el.id === 'reg_date'){
             el['default'] = getToday();
           }
-          if ( el.id === 'insp_type' ){
+          if ( el.id === 'insp_type' ) {
             el['onAfterChange'] = (ev) => {
-              const _inspType = JSON.parse(ev)
-              newDataPopupInputInfo.setFieldValue('insp_type_uuid',_inspType.insp_type_uuid)
+              const _inspType = JSON.parse(ev);
+              newDataPopupInputInfo.setFieldValue('insp_type_uuid',_inspType.insp_type_uuid);
+              newDataPopupInputInfo.setFieldValue('insp_type_cd',_inspType.insp_type_cd);
+              newDataPopupGrid.setGridColumns(cloneDeep(newDataPopupGridColumns).map((el) => {
+                if (el.name === 'worker_sample_cnt' || el.name === 'worker_insp_cycle') {
+                  el['hidden'] = _inspType.insp_type_cd !== 'PROC_INSP';
+                }
+                if (el.name === 'inspector_sample_cnt' || el.name === 'inspector_insp_cycle') {
+                  el['hidden'] = false;
+                }
+                return el;
+              }));
             }
           }
           return el;
@@ -776,7 +795,7 @@ export const PgQmsInsp = () => {
     },
 
     /** 수정 */
-    update: (ev) => {
+    update: () => {
       if (!handleCheckUuid()) return;
       setEditDataPopupGridVisible(true);
     },
