@@ -88,13 +88,15 @@ const App = () => {
 const LayoutRoute = () => {
   const [loading, setLoading] = useLoadingState(); // 이 녀석 때문에 콘솔에 state의 값이 2번씩 찍힘
   const [isLogin, setIsLogin] = useState(false);
-  const [menu, setMenu] = useState([]);
+  const [menu, setMenu] = useState({});
+  const [rawMenu, setRawMenu] = useState([]);
   
   useLayoutEffect(()=>{
     const setMenus = async () => {
       const menus = await getMenus();
-      console.log(`menu api 호출 결과: ${menus}`);
+      console.log(`menu api 호출 결과: ${menus}`, menus);
       setMenu(menus.data);
+      setRawMenu(menus.rawData);
     };
 
     if(isLogin) {
@@ -113,24 +115,24 @@ const LayoutRoute = () => {
       {console.log(`어라 왜 2번 불러와지지? 어라 왜 2번 불러와지지?`)}
       {console.log(`로딩 상태? : ${loading}`)}
       {console.log(`로그인 상태인가요? : ${isLogin}`)}
-      {console.log(`메뉴가 있나요? : ${menu}`)}
+      {console.log(`메뉴가 있나요? : ${menu}`, menu)}
       {isLogin ? 
         <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
           <Suspense fallback='...loading'>
             <BrowserRouter>
               <Switch>
                 <Redirect exact from="/" to='/dashboard' />
-                <Layout>
+                <Layout menu={menu} rawMenu={rawMenu}>
                   <Route
                     key={'dashboard'}
                     path={'/dashboard'}
                     component={Dashboard}
                   />
-                  {Object.keys(menu).map ((item, key) => {
+                  {/* {Object.keys(menu).map ((item, key) => {
                     console.log(`key: ${key}`);
                     console.log(`path: ${menu[item]?.path}`);
                     console.log(`component : ${menu[item]?.component ?? errorPage404}`);
-                  })}
+                  })} */}
                   {Object.keys(menu).map((item, key) => (
                     <Route
                       key={key}

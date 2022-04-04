@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Header } from "../header";
@@ -13,22 +13,32 @@ import Props from './layout.ui.type';
 
 
 /** 화면 레이아웃 */
-export const Layout: React.FC<Props> = ({ children }) => {
+export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
   const { pathname } = useLocation();
   const layoutState = useRecoilValue(layoutStore.state);
-  const [,setMenuState] = useRecoilState(layoutStore.menu.state);
+  // const [,setMenuState] = useRecoilState(layoutStore.menu.state);
+  const [menuState, setMenuState] = useState({});
   const [currentRouterType, setCurrentRouterType] = useState(undefined);
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
 
-  const getCrruentRouter = () => {
+  console.log('layout~', menu);
+  const getCrruentRouter = async () => {
     const menus = pathname.split("/");
     const menu1 = menus[1];
     const menu2 = menus[2];
-    setMenuState({
+    console.log('layout effect running1',{
       selectedLevel1: menu1 as string,
       selectedLevel2: [menu2],
     });
+    setMenuState((prevState) => {
+      return {
+        ...prevState,
+        selectedLevel1: menu1 as string,
+        selectedLevel2: [menu2],
+      }
+    });
+    console.log('layout effect running2', menuState);
 
     const router = Object.keys(menuContent).find((key) => menuContent[key].path === pathname);
     if (router) {
@@ -38,8 +48,10 @@ export const Layout: React.FC<Props> = ({ children }) => {
     setCurrentRouterType(menuContent[router]);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log('layout effect', menuState);
     getCrruentRouter();
+    console.log('layout effect after', menuState);
   }, [pathname, menuContent]);
 
   
@@ -51,7 +63,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
       <Header height={layoutState.topSpacing} title={currentRouterType?.description} description={currentRouterType?.title} />
 
-      <SideNavbar top={layoutState.topSpacing} width={layoutState.leftSpacing} />
+      <SideNavbar menu={menu} rawMenu={rawMenu} menuState={menuState} setMenuState={setMenuState} top={layoutState.topSpacing} width={layoutState.leftSpacing} />
 
       <ScMainBody
         id='main-body'
