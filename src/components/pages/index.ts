@@ -1,4 +1,3 @@
-export * from './authentication.page';
 export * from './login.page';
 export * from './test-double-grid.page';
 

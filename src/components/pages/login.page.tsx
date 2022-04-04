@@ -5,13 +5,14 @@ import { authStore } from "../../hooks/auth.hook";
 import { message, Form } from 'antd';
 import crypto from 'crypto-js'
 import { v4 as uuidv4 } from 'uuid';
-import {executeData, getData} from '../../functions';
+import {executeData, getAccessToken, getData} from '../../functions';
 import dotenv from 'dotenv';
 import { TpLogin } from "../templates/login/login.template";
 import { IComboboxItem } from "../UI/combobox";
 import IInputPopupProps from "../UI/input-popup/input-popup.ui.type";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useLayoutEffect } from "react";
+import { errorState } from '~/enums/response.enum';
 
 dotenv.config();
 
@@ -25,13 +26,12 @@ const getLocalStorageId = () => {
 
 
 /** 로그인 페이지 */
-export const PgLogin = () => {
+export const PgLogin = ({setIsLogin}) => {
 
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
   // const [formState, setFormState] = useRecoilState(formStore.findState);
-  const setUser = useSetRecoilState(authStore.user.state);
   
   const [visible, setVisible] = useState(false);
 
@@ -49,14 +49,15 @@ export const PgLogin = () => {
 
   const defaultValue = getLocalStorageId() || null;
 
-  // constructor
-  useLayoutEffect(() => {
-    // 이전에 저장된 아이디 불러오기
-    // const id = getLocalStorageId();
-    // setUserId(id);
+  const handleLoginCheck = async () => {
 
-    // 공장 콤보박스 조회
     if(localStorage.getItem('userInfo')){
+      console.log('?')
+      const refreshState = await getAccessToken();
+        
+      if(!refreshState || refreshState?.state_no === errorState.EXPIRED_REFRESH_TOKEN){
+        return ;
+      }
       window.location.href = "/dashboard"
     } else {
       if(JSON.parse(localStorage.getItem('state'))?.EXPIRED_REFRESH_TOKEN){
@@ -65,6 +66,18 @@ export const PgLogin = () => {
       }
       getFactories();
     }
+  }
+
+  // constructor
+  useLayoutEffect(() => {
+    // 이전에 저장된 아이디 불러오기
+    // const id = getLocalStorageId();
+    // setUserId(id);
+
+    // 공장 콤보박스 조회
+    
+
+    handleLoginCheck()
     
   }, []);
 
@@ -234,7 +247,8 @@ export const PgLogin = () => {
               localStorage.removeItem('iso-factory')
               localStorage.removeItem('iso-user-id')
             }
-            window.location.href = "/dashboard"
+            setIsLogin(true)
+            // window.location.href = "/dashboard"
             // return setUser(JSON.parse(localStorage.getItem("userInfo") as string));
           }
         }

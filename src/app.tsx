@@ -1,75 +1,104 @@
 import React, { lazy, Suspense, useLayoutEffect, useState, useCallback, useMemo } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { PgAuthentication, PgLogin } from "./components/pages";
-import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
+import { useRecoilValue } from "recoil";
+import { PgLogin } from "./components/pages";
 import { Result, Container } from '~components/UI';
-import { useLoadingState, authStore } from "./hooks";
-import { getMenus, getStorageValue, setLogout } from "./functions";
+import { useLoadingState } from "./hooks";
+import { getData, getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
-import { PgAutMenu } from '~components/pages';
 
 const Layout = lazy(() => import('./components/UI/layout').then(module=>({default:module.Layout})));
 
 
 const App = () => {
-  const [loading, setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
   
-  const [user] = useRecoilState(authStore.user.state);
-  const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
-  const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
-  const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
-  const [tenantUuid, setTenantUuid] = useState<string>('');
+  const [teneunt, setTeneunt] = useState('')
+
+  const handleGetTeneuntInfo = async () => {
+    let result:boolean = false;
+
+    const webURL:string = ['localhost','191.1.70.201'].includes(window.location.hostname) ? 'najs.isos.kr' : window.location.hostname
+    // const webURL:string = 'najs.i-so.kr'
+    
+    const tenantInfo = await getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/')
+    if(tenantInfo.length > 0) {
+      localStorage.setItem(
+        'tenantInfo',
+        JSON.stringify({
+          tenantUuid: tenantInfo[0]?.uuid
+        })
+      )
+      setTeneunt(tenantInfo[0]?.uuid)
+      result = true;
+    }
+    return result
+  }
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
-    if (! getStorageValue({storageName:'userInfo',keyName:'uid'})) return;
+    handleGetTeneuntInfo()
+  },[])
+
+  return (
+    <div>
+      {teneunt ? <LayoutRoute /> : <span>테넌트 정보를 받아오는 중...</span>}
+      {contextHolder}
+    </div>
+  )
+};
+
+const LayoutRoute = () => {
+  const [loading, setLoading] = useLoadingState();
+  const [isLogin, setIsLogin] = useState(false)
+  const [menu, setMenu] = useState([])
+  
+  useLayoutEffect(()=>{
     setLoading(true);
     getMenus().then((menu) => {
-      setMenuContent(menu.data);
-      setMenuRawData(menu.rawData);
+      setMenu(menu.data);
     }).finally(() => setLoading(false));
   },[])
 
-  useLayoutEffect(() => {
-    if (Array.isArray(menuRawData) && menuRawData?.length === 0) {
-      SET_NOT_PERMISSION(true);
-    } else {
-      SET_NOT_PERMISSION(false);
-    }
-  }, [menuRawData]);
+  useLayoutEffect(()=>{
 
-  useLayoutEffect(() => {
-    if (!NOT_PERMISSION) return;
-    modal.error({
-      content: <div>
-        권한 정보가 없습니다. <p/>
-        관리자에게 문의하신 후 다시 로그인해주세요. <br/>
-      </div>,
-      okText: '로그인 페이지로 돌아가기',
-      onOk: () => {
-        // 로그인 해제
-        setLogout();
-        SET_NOT_PERMISSION(false);
-      },
-      cancelButtonProps: {
-        hidden: true,
+  },[isLogin])
+
+  return (
+    <>
+      {isLogin ? 
+        <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
+          <Suspense fallback='...loading'>
+            <BrowserRouter>
+              <Switch>
+                <Redirect exact from="/" to='/dashboard' />
+                <Layout>
+                  <Route
+                    key={'dashboard'}
+                    path={'/dashboard'}
+                    component={Dashboard}
+                  />
+                  {Object.keys(menu).map((item, key) => (
+                    <Route
+                      key={key}
+                      path={menu[item]?.path}
+                      component={menu[item]?.component ?? errorPage404}
+                    />
+                    ))
+                  }
+                </Layout>
+              </Switch>
+            </BrowserRouter>
+          </Suspense>
+        </Spin>
+        : <PgLogin setIsLogin={setIsLogin} />
       }
-    });
-  }, [NOT_PERMISSION]);
-  
-  return <div>
-    <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {tenantUuid ? <LoggedIn menuContent={menuContent} /> : <PgAuthentication setTenantUuid={setTenantUuid}/>}
-      {contextHolder}
-    </Spin>
-  </div>;
-
-};
+    </>
+  )
+}
 
 const errorPage404 = () => {
   const layoutState = useRecoilValue(layoutStore.state);
@@ -96,46 +125,6 @@ const errorPage404 = () => {
     </Container>
   )
 }
-
-/** 인증완료시의 렌더링될 컴포넌트 */
-const LoggedIn = (props: any) => {
-
-  // if (Object.keys(props?.menuContent).length <= 0) return null;
-  return (
-    <Suspense fallback='...loading'>
-    <BrowserRouter>
-      <Switch>
-        <Redirect exact from="/" to='/login' />
-        <Route
-          key={'login'}
-          path={'/login'}
-          component={PgLogin}
-        />
-        <Layout>
-          <Route
-            key={'dashboard'}
-            path={'/dashboard'}
-            component={Dashboard}
-          />
-          <Route
-            key={'autMenu'}
-            path={'/aut/menus'}
-            component={PgAutMenu}
-          />
-          {Object.keys(props.menuContent).map((item, key) => (
-            <Route
-              key={key}
-              path={props.menuContent[item]?.path}
-              component={props.menuContent[item]?.component ?? errorPage404}
-            />
-            ))
-          }
-        </Layout>
-      </Switch>
-    </BrowserRouter>
-    </Suspense>
-  );
-};
 
 
 export default App;

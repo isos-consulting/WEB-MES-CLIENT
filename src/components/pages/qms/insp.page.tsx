@@ -196,11 +196,12 @@ export const PgQmsInsp = () => {
   }
   
   const handleSave = () => {
+    
     const {gridRef, setGridMode} = detailSubGrid;
     const {columns, saveUriPath} = detailSubGrid?.gridInfo;
     const _headerData = {uuid: detailSubInputInfo.values.insp_uuid}
     
-    if (!detailInputInfo.isModified && !isModified(detailSubGrid?.gridRef, detailSubGrid?.gridInfo?.columns)) {
+    if (!isModified(detailSubGrid?.gridRef, detailSubGrid?.gridInfo?.columns)) {
       message.warn('편집된 데이터가 없습니다.');
       return;
     }
@@ -273,7 +274,6 @@ export const PgQmsInsp = () => {
     
     let rawData = null;
     let detailData = null;
-
     if (methodType === 'post' && type === '개정') {
       // post로 저장할 경우 uuid키를 제거
       delete optionSaveParams['uuid'];
@@ -291,7 +291,7 @@ export const PgQmsInsp = () => {
       };
     } else {
       if (popupType === 'add') {
-        delete optionSaveParams.insp_no
+        // delete optionSaveParams.insp_no
       } else if (popupType === 'edit') {
         detailData = {
           updatedRows : cloneDeep(gridRef.current.getInstance().store.data.rawData);
@@ -653,6 +653,7 @@ export const PgQmsInsp = () => {
     ];
 
     headerSearchInfo.setSearchItems(_originSearchItems);
+    if(headerSearchInfo?.setValues) headerSearchInfo?.setValues({insp_type:_defaultInspType})
     
     const _originInputItems:IInputGroupboxItem[] = [
       {type:'text', id:'insp_uuid', alias:'uuid', label:'검사기준서UUID', disabled:true, hidden:true},
@@ -801,7 +802,7 @@ export const PgQmsInsp = () => {
     },
 
     /** 삭제 */
-    delete: () => {
+    delete: (ev) => {
       if (getModifiedRows(detailSubGrid?.gridRef, detailSubGrid?.gridInfo?.columns)?.deletedRows?.length === 0) {
         message.warn('편집된 데이터가 없습니다.');
         return;

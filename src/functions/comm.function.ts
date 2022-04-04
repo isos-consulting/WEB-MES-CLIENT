@@ -597,7 +597,7 @@ export const getPermissions = (pageName:string):TPermission => {
   return permissions;
 }
 
-const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type:string}> => {
+export const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type:string}> => {
   let refreshData:any = null;
   let refreshState:any = null;
   try {
@@ -624,13 +624,13 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
     refreshState = refreshData.data.state
   } catch (error) {
     console.log(error)
-    if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
+    // if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
       localStorage.setItem('state',JSON.stringify({
         EXPIRED_REFRESH_TOKEN: true,
       }));
       await setLogout();
       
-    }
+    // }
     refreshState = error.response.data.state
   }
   console.log(...refreshState)
@@ -644,7 +644,6 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
 export const setLogout = async () => {
   
   localStorage.removeItem('userInfo');
-  localStorage.removeItem('tokenInfo');
   
   window.location.href = "/login";
 }
