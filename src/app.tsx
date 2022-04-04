@@ -16,26 +16,59 @@ const Layout = lazy(() => import('./components/UI/layout').then(module=>({defaul
 const App = () => {
   const [modal, contextHolder] = Modal.useModal();
   
-  const [teneunt, setTeneunt] = useState('')
+  const [teneunt, setTeneunt] = useState('');
+
+  const checkLocalEnviroment = (url: string) => {
+    return url === 'localhost' || url === '191.1.70.201';
+  }
+
+  const getLocalUrl = () => {
+    return 'najs.isos.kr';
+  }
+
+  const getTenantCode = (url) => {
+    return url.split('.')[0];
+  }
+
+  const tenantIsNotEmpty = (tenants: any[]) => {
+    return tenants.length > 0;
+  }
+
+  const getSerialTenantUuid = (uuid: string) => {
+    return JSON.stringify({
+      tenantUuid: uuid
+    })
+  }
+
+  const tenantIsAllocated = (tenant) => {
+    return tenant !== '';
+  }
 
   const handleGetTeneuntInfo = async () => {
-    let result:boolean = false;
+    const hostName = window.location.hostname;
 
-    const webURL:string = ['localhost','191.1.70.201'].includes(window.location.hostname) ? 'najs.isos.kr' : window.location.hostname
-    // const webURL:string = 'najs.i-so.kr'
+    console.log(`접속 호스트 : ${hostName}`);
+    console.log(`접속 호스트가 로컬 환경인가요? : ${hostName}`);
+    console.log(`로컬 webURL 주소 : ${getLocalUrl()}`);
+
+    const webURL = checkLocalEnviroment(hostName)? getLocalUrl(): hostName;
     
-    const tenantInfo = await getData({tenant_cd: webURL.split('.')[0]},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/')
-    if(tenantInfo.length > 0) {
-      localStorage.setItem(
-        'tenantInfo',
-        JSON.stringify({
-          tenantUuid: tenantInfo[0]?.uuid
-        })
-      )
-      setTeneunt(tenantInfo[0]?.uuid)
-      result = true;
+    const tenantInfo = await getData({tenant_cd: getTenantCode(webURL)},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/')
+
+    console.log(`테넌트 정보가 존재 하나요? : ${tenantIsNotEmpty(tenantInfo)}`);
+
+    if(tenantIsNotEmpty(tenantInfo)) {
+
+      console.log(`직렬화 된 tenantUuid : ${getSerialTenantUuid(tenantInfo[0]?.uuid)}`);
+
+      localStorage.setItem('tenantInfo', getSerialTenantUuid(tenantInfo[0]?.uuid));
+
+      setTeneunt(tenantInfo[0]?.uuid);
     }
-    return result
+  }
+
+  const routeLayout = () => {
+    return (tenantIsAllocated(teneunt))? <LayoutRoute /> : <span>테넌트 정보를 받아오는 중...</span>
   }
 
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
@@ -45,30 +78,42 @@ const App = () => {
 
   return (
     <div>
-      {teneunt ? <LayoutRoute /> : <span>테넌트 정보를 받아오는 중...</span>}
+      {console.log(`tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`)}
+      {routeLayout()}
       {contextHolder}
     </div>
   )
 };
 
 const LayoutRoute = () => {
-  const [loading, setLoading] = useLoadingState();
-  const [isLogin, setIsLogin] = useState(false)
-  const [menu, setMenu] = useState([])
+  const [loading, setLoading] = useLoadingState(); // 이 녀석 때문에 콘솔에 state의 값이 2번씩 찍힘
+  const [isLogin, setIsLogin] = useState(false);
+  const [menu, setMenu] = useState([]);
   
   useLayoutEffect(()=>{
-    setLoading(true);
-    getMenus().then((menu) => {
-      setMenu(menu.data);
-    }).finally(() => setLoading(false));
-  },[])
+    const setMenus = async () => {
+      const menus = await getMenus();
+      console.log(`menu api 호출 결과: ${menus}`);
+      setMenu(menus.data);
+    };
 
-  useLayoutEffect(()=>{
+    if(isLogin) {
+      setLoading(true);
+      setMenus();
+      setLoading(false);
+    }
+  },[isLogin]);
 
-  },[isLogin])
+  // useLayoutEffect(()=>{
+
+  // },[isLogin])
 
   return (
     <>
+      {console.log(`어라 왜 2번 불러와지지? 어라 왜 2번 불러와지지?`)}
+      {console.log(`로딩 상태? : ${loading}`)}
+      {console.log(`로그인 상태인가요? : ${isLogin}`)}
+      {console.log(`메뉴가 있나요? : ${menu}`)}
       {isLogin ? 
         <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
           <Suspense fallback='...loading'>
@@ -81,6 +126,11 @@ const LayoutRoute = () => {
                     path={'/dashboard'}
                     component={Dashboard}
                   />
+                  {Object.keys(menu).map ((item, key) => {
+                    console.log(`key: ${key}`);
+                    console.log(`path: ${menu[item]?.path}`);
+                    console.log(`component : ${menu[item]?.component ?? errorPage404}`);
+                  })}
                   {Object.keys(menu).map((item, key) => (
                     <Route
                       key={key}
