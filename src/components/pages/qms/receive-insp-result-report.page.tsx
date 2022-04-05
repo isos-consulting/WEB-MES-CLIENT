@@ -13,8 +13,9 @@ import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import { cloneDeep } from 'lodash';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -112,6 +113,7 @@ export const PgQmsReceiveInspResultReport = () => {
 
   // 성적서 선택 시 선택한 성적서 UUID 값 관리
   const [inspResultUuid, setInspResultUuid] = useState('')
+  const [inspDetailType, setInspDetailType] = useState([]);
 
   // 데이터 추가 팝업 관련
   
@@ -135,12 +137,8 @@ export const PgQmsReceiveInspResultReport = () => {
   const SEARCH_ITEMS:ISearchItem[] = [
     {type:'date', id:'start_date', label:'검사일', default:getToday(-7)},
     {type:'date', id:'end_date', default:getToday()},
-    {type:'radio', id:'insp_detail_type', default:'all',
-      options:[
-        {code:'all', text:'전체'},
-        {code:'matReceive', text:'자재'},
-        {code:'outReceive', text:'외주'},
-      ]
+    {type:'combo', id:'insp_detail_type', firstItemType:'all', default:'all',
+      options:inspDetailType
     },
   ];
   //#endregion
@@ -183,7 +181,11 @@ export const PgQmsReceiveInspResultReport = () => {
   //#region 함수
   const onSearch = () => {
     const {values} = searchRef?.current;
-    const searchParams = values;
+    const searchParams = cloneDeep(values);
+    if (searchParams.insp_detail_type !== 'all'){
+      searchParams.insp_detail_type_uuid = searchParams.insp_detail_type
+    }
+    delete searchParams.insp_detail_type
     getData(searchParams, URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS).then((res) => {
       setWorkDatas(res || []);
       // 입하정보 및 실적정보 초기화
@@ -192,6 +194,16 @@ export const PgQmsReceiveInspResultReport = () => {
     });
   }
   //#endregion
+
+  useLayoutEffect(()=>{
+    const _inspDetailType:object[] = []
+    getData({insp_type_cd:'RECEIVE_INSP'},URL_PATH_ADM.INSP_DETAIL_TYPE.GET.INSP_DETAIL_TYPES,'raws').then(async (res)=>{
+      res.map((item) => {
+        _inspDetailType.push({code: item.insp_detail_type_uuid, text: item.insp_detail_type_nm})
+      })
+      setInspDetailType(_inspDetailType)
+    })
+  },[])
 
   //#region 렌더부
   return (
@@ -359,7 +371,7 @@ const INSP_RESULT_DETAIL_GRID = (props:{
       {},
       searchUriPath,
       'header-details'
-    ).then((res) => {
+    ).then((res:any) => {
       setReceiveInspHeaderData(res.header);
       setReceiveInspDetailData(res.details);
       inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});

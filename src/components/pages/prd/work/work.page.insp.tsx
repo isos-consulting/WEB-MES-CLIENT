@@ -1,13 +1,14 @@
+import { getDistance } from '@nivo/core';
 import Grid from '@toast-ui/react-grid';
 import { Space, Col, Row, message, Spin, Modal } from 'antd';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
 import React, { MutableRefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IGridColumn, TGridMode, useGrid } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { IInputGroupboxItem, InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getUserFactoryUuid, isNumber } from '~/functions';
+import { cloneObject, executeData, getData, getInspCheckResultInfo, getInspCheckResultTotal, getInspCheckResultValue, getPageName, getPermissions, getToday, getUserFactoryUuid, isNumber } from '~/functions';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -230,7 +231,7 @@ export const INSP = () => {
   //#endregion
 
   type GetMaxSampleCntParams = {
-    insp_detail_type: 'patrolProc' | 'selfProc' | unknown;
+    insp_detail_type_uuid: string;
     work_uuid: string;
   }
   type GetMaxSampleCntResponse = {
@@ -260,9 +261,9 @@ export const INSP = () => {
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', disabled:true, usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
     {id:'insp_type_nm', label:'검사유형', type:'text', disabled:true, hidden:true},
-    {id:'insp_detail_type_cd', label:'검사유형', type:'combo', disabled:true, 
+    {id:'insp_detail_type_uuid', label:'검사유형', type:'combo', disabled:true, 
       dataSettingOptions:{
-        codeName:'insp_detail_type_cd',
+        codeName:'insp_detail_type_uuid',
         textName:'insp_detail_type_nm',
         uriPath:'/adm/insp-detail-types',
         params: {
@@ -272,9 +273,7 @@ export const INSP = () => {
       onAfterChange: (ev) => {
         if (createPopupVisible && (ev != '-')) {
           getMaxSampleCnt({
-            insp_detail_type: 
-            ev === 'PATROL_PROC' ? 'patrolProc' :
-            ev === 'SELF_PROC' ? 'selfProc' : null,
+            insp_detail_type_uuid: ev,
             work_uuid: (headerSaveOptionParams as any)?.work_uuid
           }).then(({datas, maxSampleCnt, header, details}) => {
             // setMaxSampleCnt(res?.header?.max_sample_cnt);
@@ -284,6 +283,7 @@ export const INSP = () => {
             if (createPopupVisible) {
               createPopupGrid.setGridData(details);
               createPopupInput.setFieldValue('insp_uuid', header?.insp_uuid);
+              createPopupInput.setFieldValue('insp_type_uuid', header?.insp_type_uuid);
               createPopupGrid.setGridColumns(newColumns);
             }
           });
@@ -293,12 +293,12 @@ export const INSP = () => {
         };
       }
     },
-    {id:'reg_date', label:'검사일자', type:'date', disabled:true,},
+    {id:'reg_date', label:'검사일자', type:'date', disabled:true, default:getToday()},
     {id:'reg_date_time', label:'검사시간', type:'time', disabled:true, required:true, important:true},
     {id:'remark', label:'비고', type:'text', disabled:true,},
   ];
   //#endregion
-  
+  console.log()
   const createPopupInput = useInputGroup(
     'WORK_INSP_CREATE_POPUP_INPUTBOX',
     INSP_INPUT_ITEMS,
@@ -335,22 +335,25 @@ export const INSP = () => {
   useLayoutEffect(() => {
     if(createPopupVisible && createPopupInput){
       
+      // createPopupInput?.instance?.resetForm();
+      // getMaxSampleCnt({
+      //   insp_detail_type_uuid: 'selfProc',
+      //   work_uuid: (headerSaveOptionParams as any)?.work_uuid
+
+      // }).then(({
+      //   maxSampleCnt,
+      //   details
+      // }) => {
+      //   const columns = createInspDetailColumns(maxSampleCnt);
+      //   createPopupGrid.setGridColumns(columns);
+      //   createPopupGrid.setGridData(details);
+
+      // }).finally(() => {
+      //   onSearch(headerSaveOptionParams);
+      // })
+    } else {
       createPopupInput?.instance?.resetForm();
-      getMaxSampleCnt({
-        insp_detail_type: 'selfProc',
-        work_uuid: (headerSaveOptionParams as any)?.work_uuid
-
-      }).then(({
-        maxSampleCnt,
-        details
-      }) => {
-        const columns = createInspDetailColumns(maxSampleCnt);
-        createPopupGrid.setGridColumns(columns);
-        createPopupGrid.setGridData(details);
-
-      }).finally(() => {
-        onSearch(headerSaveOptionParams);
-      })
+      onSearch(headerSaveOptionParams);
     }
   }, [createPopupVisible]);
 
@@ -369,14 +372,14 @@ export const INSP = () => {
     if(work_uuid){
       getData(
         {
-          work_uuid: String(work_uuid),
-          insp_detail_type: 'all'
+          work_uuid: String(work_uuid)
         }, 
         HEADER_SEARCH_URI_PATH,
         undefined, undefined, undefined, undefined,
         {disabledZeroMessage: true}
     ).then((res) => {
         setHeaderData(res);
+
         setHeaderSaveOptionParams({
           work_uuid, 
           prod_uuid, 
@@ -483,12 +486,12 @@ export const INSP = () => {
     const regDate = dayjs(saveInputValues?.reg_date).isValid() ? dayjs(saveInputValues?.reg_date).format('YYYY-MM-DD') : saveInputValues?.reg_date;
     const regTime = dayjs(saveInputValues?.reg_date_time).isValid() ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss') : saveInputValues?.reg_date_time;
     const regDateTime = regDate + ' ' + regTime + ':00';
-
     headerData = {
       //uuid: saveInputValues?.insp_result_uuid,
       factory_uuid: getUserFactoryUuid(),
       work_uuid: (headerSaveOptionParams as any)?.work_uuid,
-      insp_detail_type_cd: saveInputValues?.insp_detail_type_cd,
+      insp_type_uuid: saveInputValues?.insp_type_uuid,
+      insp_detail_type_uuid: saveInputValues?.insp_detail_type_uuid,
       insp_uuid: saveInputValues?.insp_uuid,
       prod_uuid: (headerSaveOptionParams as any)?.prod_uuid,
       lot_no: (headerSaveOptionParams as any)?.lot_no,
@@ -525,10 +528,11 @@ export const INSP = () => {
         factory_uuid: getUserFactoryUuid(),
         //[uuidKey]: row?.insp_detail_uuid,
         insp_result_fg: row?.insp_result_fg,
+        insp_detail_uuid: row?.insp_detail_uuid,
         remark: row?.remark
       })
     }
-
+    
     const saveData:object = ({
       header:headerData,
       details:detailDatas
@@ -643,77 +647,80 @@ export const INSP = () => {
           </Col>
         </Row>
       </Container>
-      
-      <GridPopup
-        {...createPopupGrid.gridInfo}
-        title='데이터 추가'
-        onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
-        okText='추가하기'
-        cancelText='취소'
-        onCancel={() => {
-          // TUIP_PROD_onSearch();
-          setCreatePopupVisible(false);
-        }}
-        gridMode='create'
-        popupId={'INSP_GRID_POPUP_POPUP'}
-        ref={createPopupGrid.gridRef}
-        parentGridRef={gridRef}
-        inputProps={{
-          id: 'INSP_DETAIL_GRID_POPUP_INPUT',
-          inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
-            if (['emp_nm', 'insp_detail_type_cd', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
-              el['disabled'] = false;
-            }
-            return el;
-          }),
-          innerRef: createPopupInput.ref,
-        }}
-        onAfterChange={(ev) => onAfterChange(ev, {
-          gridInstance: createPopupGrid.gridInstance,
-          inputInstance: createPopupInput.instance,
-        })}
-        saveUriPath={SAVE_URI_PATH}
-        searchUriPath={DETAIL_SEARCH_URI_PATH}
-        saveType='basic'
-        defaultVisible={false}
-        visible={createPopupVisible}
-      />
-
-      
-      <GridPopup
-        {...editPopupGrid.gridInfo}
-        title='데이터 수정'
-        onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
-        okText='수정하기'
-        cancelText='취소'
-        onCancel={() => {
-          // TUIP_PROD_onSearch();
-          setEditPopupVisible(false);
-        }}
-        gridMode='update'
-        popupId={'INSP_EDIT_GRID_POPUP_POPUP'}
-        ref={editPopupGrid.gridRef}
-        parentGridRef={gridRef}
-        inputProps={{
-          id: 'INSP_DETAIL_EDIT_GRID_POPUP_INPUT',
-          inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
-            if (['emp_nm', 'insp_detail_type_cd', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
-              el['disabled'] = false;
-            }
-            return el;
-          }),
-          innerRef: editPopupInput.ref,
-        }}
-        onAfterChange={(ev) => onAfterChange(ev, {
-          gridInstance: editPopupGrid.gridInstance,
-          inputInstance: editPopupInput.instance,
-        })}
-        saveUriPath={SAVE_URI_PATH}
-        searchUriPath={DETAIL_SEARCH_URI_PATH}
-        saveType='basic'
-        defaultVisible={false}
-        visible={editPopupVisible}
-      />
+      {createPopupVisible ? 
+        <GridPopup
+          {...createPopupGrid.gridInfo}
+          title='데이터 추가'
+          onOk={()=>onSave(createPopupGrid.gridRef, createPopupInput.ref)}
+          okText='저장하기'
+          cancelText='취소'
+          onCancel={() => {
+            // TUIP_PROD_onSearch();
+            setCreatePopupVisible(false);
+          }}
+          gridMode='create'
+          popupId={'INSP_GRID_POPUP_POPUP'}
+          ref={createPopupGrid.gridRef}
+          parentGridRef={gridRef}
+          inputProps={{
+            id: 'INSP_DETAIL_GRID_POPUP_INPUT',
+            inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
+              if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
+                el['disabled'] = false;
+              }
+              return el;
+            }),
+            innerRef: createPopupInput.ref,
+          }}
+          onAfterChange={(ev) => onAfterChange(ev, {
+            gridInstance: createPopupGrid.gridInstance,
+            inputInstance: createPopupInput.instance,
+          })}
+          saveUriPath={SAVE_URI_PATH}
+          searchUriPath={DETAIL_SEARCH_URI_PATH}
+          saveType='basic'
+          defaultVisible={false}
+          visible={createPopupVisible}
+        />
+        : null
+      }
+      {editPopupVisible ? 
+        <GridPopup
+          {...editPopupGrid.gridInfo}
+          title='데이터 수정'
+          onOk={()=>onSave(editPopupGrid.gridRef, editPopupInput.ref)}
+          okText='저장하기'
+          cancelText='취소'
+          onCancel={() => {
+            // TUIP_PROD_onSearch();
+            setEditPopupVisible(false);
+          }}
+          gridMode='update'
+          popupId={'INSP_EDIT_GRID_POPUP_POPUP'}
+          ref={editPopupGrid.gridRef}
+          parentGridRef={gridRef}
+          inputProps={{
+            id: 'INSP_DETAIL_EDIT_GRID_POPUP_INPUT',
+            inputItems:cloneObject(INSP_INPUT_ITEMS)?.map((el) => {
+              if (['emp_nm', 'insp_detail_type_uuid', 'reg_date', 'reg_date_time', 'remark'].includes(el.id)) {
+                el['disabled'] = false;
+              }
+              return el;
+            }),
+            innerRef: editPopupInput.ref,
+          }}
+          onAfterChange={(ev) => onAfterChange(ev, {
+            gridInstance: editPopupGrid.gridInstance,
+            inputInstance: editPopupInput.instance,
+          })}
+          saveUriPath={SAVE_URI_PATH}
+          searchUriPath={DETAIL_SEARCH_URI_PATH}
+          saveType='basic'
+          defaultVisible={false}
+          visible={editPopupVisible}
+        />
+        : null
+      }
 
       {modalContext}
     </>

@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
 /** 완료상태 컬럼 renderer 조건 */
@@ -75,20 +75,20 @@ export const PgMatOrder = () => {
     {header: '발주UUID', name:'order_uuid', hidden:true},
     {header: '완료상태', width:ENUM_WIDTH.S, name:'complete_state', format:'tag', options:{conditions: completeCondition}, hiddenCondition: (props) => !['view', 'delete'].includes(props?.gridMode)},
     {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_fg', format:'check', editable:true, hiddenCondition: (props) => ['view', 'delete'].includes(props?.gridMode)},
-    {header: '품목UUID', name:'prod_uuid', hidden:true, requiredField:true},
+    {header: '품목UUID', name:'prod_uuid', hidden:true},
     {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
     {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
-    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format:'popup', editable:true},
-    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true},
+    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '모델', width:ENUM_WIDTH.M, name:'model_nm', filter:'text', format:'popup', editable:true},
     {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', format:'popup', editable:true},
     {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', format:'popup', editable:true},
     {header: '안전재고', width:ENUM_WIDTH.S, name:'safe_stock', format:'popup', editable:true},
     {header: '단위UUID', name:'unit_uuid', format:'popup', editable:true, hidden:true},
-    {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', format:'popup', editable:true},
-    {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true, format:'popup', editable:true, requiredField:true},
-    {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm', format:'popup', editable:true},
-    {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', editable:true},
+    {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm', format:'popup', editable:true, requiredField:true},
+    {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true, format:'popup', editable:true},
+    {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm', format:'popup', editable:true, requiredField:true},
+    {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', editable:true, requiredField:true},
     {header: '환율', width:ENUM_WIDTH.S, name:'exchange', format:'number', editable:true, requiredField:true},
     {header: '수량', width:ENUM_WIDTH.S, name:'qty', format:'number', editable:true, requiredField:true},
     {header: '금액', width:ENUM_WIDTH.S, name:'total_price', format:'number', editable:true},
@@ -204,17 +204,27 @@ export const PgMatOrder = () => {
 
   const popupColumns = detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name));
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', popupColumns, {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(popupColumns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', popupColumns, {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(popupColumns).map((el) => {
+      if (['order_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange', 'complete_fg'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {
@@ -288,6 +298,7 @@ export const PgMatOrder = () => {
       disabled:true, 
       usePopup:true, 
       popupKey:'거래처관리', 
+      params:{partner_fg:1},
       popupKeys:['partner_uuid', 'partner_nm'],
       handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
     },

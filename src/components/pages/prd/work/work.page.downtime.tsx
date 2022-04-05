@@ -121,8 +121,8 @@ export const DOWNTIME = () => {
     /** 팝업 제목 */
     title: '비가동 항목 추가',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
-    onOk: () => onSave(newPopupGridRef, 'create'),
+    okText: '저장하기',
+    onOk: (gridRef) => onSave(gridRef, 'create'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -173,8 +173,8 @@ export const DOWNTIME = () => {
     /** 팝업 제목 */
     title: '비가동 항목 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
-    onOk: () => onSave(editPopupGridRef, 'update'),
+    okText: '저장하기',
+    onOk: (gridRef) => onSave(gridRef, 'update'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -391,8 +391,8 @@ export const DOWNTIME = () => {
 
       {contextHolder}
       
-      <GridPopup {...newGridPopupInfo} />
-      <GridPopup {...editGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
     </>
   );
   //#endregion

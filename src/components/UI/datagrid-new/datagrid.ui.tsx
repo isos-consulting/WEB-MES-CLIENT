@@ -6,7 +6,7 @@ import {message, Modal, Space} from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
 import { useMemo } from 'react';
-import { DatagridComboboxEditor, DatagridNumberEditor, DatagridNumberRenderer, DatagridDateEditor, DatagridDateRenderer, DatagridCheckboxEditor, DatagridCheckboxRenderer, DatagridTagRenderer } from '~/components/UI/datagrid-ui';
+import { DatagridComboboxEditor, DatagridNumberEditor, DatagridNumberRenderer, DatagridDateEditor, DatagridDateRenderer, DatagridCheckboxEditor, DatagridCheckboxRenderer, DatagridTagRenderer, DatagridPercentEditor, DatagridPercentRenderer } from '~/components/UI/datagrid-ui';
 import '~styles/grid.style.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
@@ -281,7 +281,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                               const fileData = subProps.grid.getRow(subProps.rowKey)
                               if(okType==='json' || (okType==='save' && fileData.save_type === 'create')){
                                 const fileUuid = subProps.grid.getRow(subProps.rowKey).uuid
-                                const res = await executeData({},'/temp/file/{uuid}'.replace('{uuid}',fileUuid),'delete','data',false,'http://191.1.70.225:3002')
+                                const res = await executeData({},'/temp/file/{uuid}'.replace('{uuid}',fileUuid),'delete','data',false,'http://191.1.70.5:3104')
                                 
                                 subProps.grid.removeRow(subProps.rowKey)
                               } else {
@@ -429,6 +429,34 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           } 
           break;
 
+          
+        case 'percent': // 퍼센트 타입 세팅
+          if (el?.editable == true) {
+            // 에디터
+            el['editor'] = {
+              type:DatagridPercentEditor,
+              options: {
+                ...el?.options,
+                decimal: el?.decimal
+              }
+            }
+          }
+
+          // 렌더러
+          el['renderer'] = {
+            type:DatagridPercentRenderer,
+            options: {
+              ...el?.options,
+              unit: el?.unit, // 단위 설정
+              decimal: el?.decimal
+            }
+          }
+
+          // 정렬
+          if (el?.align == null) {
+            el['align'] = 'right'; 
+          } 
+          break;
 
         case 'date': // 날짜 타입 세팅
           if (el?.editable == true) {
@@ -531,21 +559,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
 
         case 'check': // 체크박스 세팅
-          if (el?.editable == true) {
-            // 에디터
-            el['editor'] = {
-              type:DatagridCheckboxEditor,
-              options: {
-                gridId: props.gridId
-              }
-            }
-          }
+          // if (el?.editable == true) {
+          //   // 에디터
+          //   el['editor'] = {
+          //     type:DatagridCheckboxEditor,
+          //     options: {
+          //       gridId: props.gridId
+          //     }
+          //   }
+          // }
 
-          // 렌더러
+          // 렌더러 (체크박스만 에디터 작업을 렌더러가 합니다.)
           el['renderer'] = {
             type:DatagridCheckboxRenderer,
             options: {
-              gridId: props.gridId
+              gridId: props.gridId,
+              gridMode: props.gridMode,
+              editable: el?.editable,
             }
           }
 
@@ -957,7 +987,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           newRow[column.name] = newRow[column.name] != null ? newRow[column.name] : typeof column?.defaultValue === 'function' ? column?.defaultValue(props) : column?.defaultValue;
         }
       });
-
       // 행 추가할때 코드 값과 클래스명 넣어주기
       gridRef.current.getInstance().prependRow(
         {
@@ -1207,7 +1236,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
       if (targetType === 'cell') {
         if (rowKey != null) {
-
           const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
           if (editValue == null || editValue === '') { // _edit 컬럼이 빈 값인 경우
             switch (props.gridMode) { // 현재 모드에 따라 _edit 값을 다르게 삽입
@@ -1383,7 +1411,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅멀티팝업 행추가 */
   const onAddPopupRow = () => {
     const { rowAddPopupInfo } = props;
-
     // 팝업 부르기
     let popupContent:IPopupItemsRetrunProps = {
       datagridProps: {
@@ -1405,7 +1432,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       popupContent = getPopupForm(rowAddPopupInfo.popupKey);
       popupContent['params'] = {};
     }
-
+    
     if (typeof rowAddPopupInfo.dataApiSettings === 'function') {
       const apiSettings = rowAddPopupInfo.dataApiSettings();
       popupContent = {...popupContent, ...rowAddPopupInfo, ...apiSettings};
@@ -1735,12 +1762,23 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   const onKeyDown = useCallback(
     async (ev) => {
       const {columnName, rowKey, keyboardEvent} = ev;
+      const value = ev?.instance?.getValue(rowKey, columnName);
+      const column = props.columns.find(column => column.name === columnName);
+
       if (columnName === COLUMN_CODE.CHECK) return;
 
       if (keyboardEvent?.keyCode === 32 || keyboardEvent?.keyCode === 13) { // Space
         // 셀 값 수정 가능한 상태일 떼, popup타입의 셀에서 space를 누른 경우 팝업 호출
-        if (['create', 'update']?.includes(props.gridMode)) {
-          onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
+        if (['create', 'update']?.includes(props.gridMode) && column?.editable == true) {
+          switch (column?.format) {
+            case 'check':
+              ev?.instance?.setValue(rowKey, columnName, !!!value);
+              break;
+          
+            case 'popup':
+              onLoadPopup({...ev, targetType:'cell'}, {rowKey, columnName});
+              break;
+          }
           return;
         }
 
@@ -2074,7 +2112,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           }
           <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
             {rightAlignExtraButtons}
-            {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onPrepentRow}>행 추가</Button>}
+            {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={()=>onPrepentRow()}>행 추가</Button>}
             <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelRow}>행 취소</Button>
           </Space>
         </div>

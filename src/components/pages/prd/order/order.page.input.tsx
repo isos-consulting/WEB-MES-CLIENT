@@ -79,7 +79,7 @@ export const orderInput = () => {
         {header: '공정검사유무', name:'qms_proc_insp_fg', width:120, filter:'text', format:'check'},
         {header: '출하검사유무', name:'qms_outgo_insp_fg', width:120, filter:'text', format:'check'},
         {header: '생산품유무', name:'prd_active_fg', width:100, filter:'text', format:'check'},
-        {header: '계획유형코드 (MPS/MRP)', name:'prd_plan_type_cd', width:180, align:'center', filter:'text'},
+        {header: '계획유형코드 (MPS/MRP)', name:'prd_plan_type_uuid', width:180, align:'center', filter:'text'},
         {header: '최소값', name:'prd_min', width:150, filter:'text', format:'number'},
         {header: '최대값', name:'prd_max', width:150, filter:'text', format:'number'},
         {header: '등록일자', name:'updated_at', width:100, filter:'text', format:'date'},
@@ -89,7 +89,7 @@ export const orderInput = () => {
         {header: 'LOT 사용유무', name:'lot_fg', width:120, filter:'text', format:'check'},
         {header: '사용유무', name:'use_fg', width:100, filter:'text', format:'check'},
         {header: '품목 활성 상태', name:'active_fg', width:120, filter:'text', format:'check'},
-        {header: 'BOM 유형 코드', name:'bom_type_cd', width:150, align:'center', filter:'text'},
+        {header: 'BOM 유형 코드', name:'bom_type_uuid', width:150, align:'center', filter:'text'},
         {header: '폭', name:'width', width:100, filter:'text', format:'number'},
         {header: '길이', name:'length', width:100, filter:'text', format:'number'},
         {header: '높이', name:'height', width:100, filter:'text', format:'number'},
@@ -249,10 +249,10 @@ export const orderInput = () => {
     /** 팝업 제목 */
     title: '투입품목 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
@@ -301,18 +301,18 @@ export const orderInput = () => {
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
-    data: null,
+    data: data,
     height: null,
     onAfterClick: null,
     /** 팝업 아이디 */
     popupId: TAB_CODE.투입품목관리+'_EDIT_POPUP',
     /** 팝업 제목 */
-    title: '비가동 항목 수정',
+    title: '투입품목 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
+        getModifiedRows(gridRef, gridRef.current.props.columns, gridRef.current.gridInst.getData()),
         editGridPopupInfo.columns,
         editGridPopupInfo.saveUriPath,
         editGridPopupInfo.saveOptionParams,
@@ -404,9 +404,8 @@ export const orderInput = () => {
         {/* <p/> */}
         <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
       </Container>
-
-      <GridPopup {...newGridPopupInfo} />
-      <GridPopup {...editGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

@@ -1,11 +1,9 @@
 import React from "react";
 import { useMemo, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import { authStore } from "../../hooks/auth.hook";
 import { message, Form } from 'antd';
 import crypto from 'crypto-js'
 import { v4 as uuidv4 } from 'uuid';
-import {executeData, getData} from '../../functions';
+import {consoleLogLocalEnv, executeData, getData} from '../../functions';
 import dotenv from 'dotenv';
 import { TpLogin } from "../templates/login/login.template";
 import { IComboboxItem } from "../UI/combobox";
@@ -22,32 +20,39 @@ const getLocalStorageId = () => {
   return localStorage.getItem('iso-user-id') || '';
 }
 
-
+const isSaveUserInfo = () => {
+  return localStorage.getItem('userInfo') != null;
+}
 
 /** 로그인 페이지 */
-export const PgLogin = () => {
-
+export const PgLogin = ({setIsLogin}) => {
+  consoleLogLocalEnv('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
-  // const [formState, setFormState] = useRecoilState(formStore.findState);
-  const setUser = useSetRecoilState(authStore.user.state);
   
   const [visible, setVisible] = useState(false);
 
-  const [userId, setUserId] = useState<string>(getLocalStorageId() || null);//useRecoilState(afStringState('userId'));
-  const [userPw, setUserPw] = useState<string>(null);//useRecoilValue(afStringState('userPw'));
-
-  // const inputPwd = useRecoilValue(afStringState('inputPwd'));
-  // const inputPwdChk = useRecoilValue(afStringState('inputPwdChk'));
+  const [userId, setUserId] = useState<string>(getLocalStorageId() || null);
+  const [userPw, setUserPw] = useState<string>(null);
 
   // 공장 콤보박스 세팅용
   const [cboFactory, setCboFactory] = useState<IComboboxItem[]>([]);
 
   // 공장 콤보박스 선택된 데이터
-  const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');//getItemState('combo',pageId+'factory');
+  const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');
 
-  const defaultValue = getLocalStorageId() || null;
+  consoleLogLocalEnv(`로컬 스토리지에 저장 되어 있는 사용자 ID : ${getLocalStorageId()}`);
+  const defaultValue = getLocalStorageId();
+
+  const handleLoginCheck = async () => {
+    consoleLogLocalEnv(`로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`);
+    if(isSaveUserInfo()){
+      setIsLogin(true);
+    } else {
+      getFactories();
+    }
+  }
 
   // constructor
   useLayoutEffect(() => {
@@ -56,15 +61,7 @@ export const PgLogin = () => {
     // setUserId(id);
 
     // 공장 콤보박스 조회
-    if(localStorage.getItem('userInfo')){
-      window.location.href = "/dashboard"
-    } else {
-      if(JSON.parse(localStorage.getItem('state'))?.EXPIRED_REFRESH_TOKEN){
-        localStorage.removeItem('state');
-        message.error('로그인이 만료되었습니다. 다시 로그인해주세요.')
-      }
-      getFactories();
-    }
+    handleLoginCheck()
     
   }, []);
 
@@ -187,46 +184,54 @@ export const PgLogin = () => {
       }
 
       let strResult:object;
-      strResult={
+      strResult=[{
         id: userId,
         pwd: crypto.AES.encrypt(userPw,'secret').toString(),
-      }
+      }]
       
       executeData(strResult,uriPath,'post')
       .then(res => {
+        const serialFactoryNUuid = (raws, factory) => {
+          return JSON.stringify({
+            uid: raws[0].uid,
+            factory_uuid:factory['factory_uuid'],
+          });
+        };
+
+        const serialUserInfo = (raws, userId, factory) => {
+          return JSON.stringify({
+            uid: raws[0].uid,
+            id: userId,
+            user_nm: raws[0].user_nm,
+            factory_uuid:factory['factory_uuid'],
+            super_admin_fg: raws[0].super_admin_fg
+          })
+        };
+
+        const serialTokenInfo = (raws) => {
+          return JSON.stringify({
+            access_token: raws[0].access_token,
+            refresh_token: raws[0].refresh_token
+          })
+        }
+
         const {success, datas} = res;
         const {raws} = datas;
         if (success === true) {
-          localStorage.setItem(
-            'userInfo',
-            JSON.stringify({
-              uid: raws[0].uid,
-              factory_uuid:factory['factory_uuid'],
-            })
-          );
+          consoleLogLocalEnv(`로그인 요청 이후 서버 응답 상태 : ${success}`);
+          consoleLogLocalEnv(`uuid와 factory uuid 정보 직렬화`, serialFactoryNUuid(raws, factory));
+          localStorage.setItem('userInfo',serialFactoryNUuid(raws, factory));
 
           if (raws[0].pwd_fg === 1){
             showUserModal();
           }else{
+            consoleLogLocalEnv('사용자 정보 직렬화', serialUserInfo(raws, userId, factory));
+            consoleLogLocalEnv('토큰 정보 직렬화', serialTokenInfo(raws));
+            
             message.success('로그인 성공');
-            localStorage.setItem(
-              'userInfo',
-              JSON.stringify({
-                uid: raws[0].uid,
-                // id:formState.id,
-                id: userId,
-                user_nm: raws[0].user_nm,
-                factory_uuid:factory['factory_uuid'],
-                super_admin_fg: raws[0].super_admin_fg
-              })
-            );
-            localStorage.setItem(
-              'tokenInfo',
-              JSON.stringify({
-                access_token: raws[0].access_token,
-                refresh_token: raws[0].refresh_token
-              })
-            );
+            localStorage.setItem('userInfo', serialUserInfo(raws, userId, factory));
+            localStorage.setItem('tokenInfo', serialTokenInfo(raws));
+
             if (checked) {
               localStorage.setItem('iso-factory',cboFactoryCode as string)
               localStorage.setItem('iso-user-id',userId)
@@ -234,7 +239,8 @@ export const PgLogin = () => {
               localStorage.removeItem('iso-factory')
               localStorage.removeItem('iso-user-id')
             }
-            window.location.href = "/dashboard"
+            setIsLogin(true)
+            // window.location.href = "/dashboard"
             // return setUser(JSON.parse(localStorage.getItem("userInfo") as string));
           }
         }
@@ -247,20 +253,33 @@ export const PgLogin = () => {
   }
 
   // 공장 콤보박스 세팅하는 함수
-  const getFactories = () => {
-    getData({}, 'std/factories/sign-in').then((value) => {
-      let data:object[] = value;
-      let cboData:IComboboxItem[] = [];
+  const getFactories = async () => {
+    const serialFactoryInfo = (factory: object) => {
+      return JSON.stringify({
+        factory_uuid: factory['factory_uuid'],
+        factory_id: factory['factory_id'],
+      })
+    };
+    const pushFactoryComboDatas = (factories) =>{
+      const comboBoxDatas = [];
 
-      data?.forEach((value) => {
-        cboData.push({
-          code: JSON.stringify({factory_uuid:value['factory_uuid'],factory_id:value['factory_id']}),
-          text: value['factory_nm']
+      factories.forEach((factory) => {
+        consoleLogLocalEnv(`공장 정보 직렬화: ${serialFactoryInfo(factory)}`);
+        comboBoxDatas.push({
+          code: serialFactoryInfo(factory),
+          text: factory['factory_nm']
         });
       });
-      
-      setCboFactory(cboData);
-    });
+
+      return comboBoxDatas;
+    };
+
+    const factories = await getData({}, 'std/factories/sign-in');
+    consoleLogLocalEnv(`콤보박스에 저장 된 공장 정보: ${pushFactoryComboDatas(factories)}`);
+    const cboData = pushFactoryComboDatas(factories);
+
+    setCboFactory(cboData);
+
   }
 
   const onChangeId = (ev) => {

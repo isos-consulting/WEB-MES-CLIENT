@@ -367,7 +367,6 @@ export const PgPrdWork = () => {
       return;
     }
 
-    console.log('workInfo', workInfo);
     if (workInfo.complete_fg !== true) {
       message.warn('완료된 실적만 취소 가능합니다.');
       return;
@@ -436,21 +435,6 @@ export const PgPrdWork = () => {
         });
       }
     });
-  }
-
-  const getLastWorkRouting = async () => {
-    return await getData(
-      {
-        work_uuid: workInfo?.['work_uuid']
-      },
-      '/prd/work-routings'
-    ).then((res) => {
-      const lastRoute = res.reduce((p, c) => Number(p?.proc_no) > Number(c?.proc_no) ? p : c);
-      console.log(lastRoute)
-      return lastRoute;
-    }).finally(() => {
-      return null;
-    })
   }
 
   const saveWorkRouting = async (workData, routingData) => {
@@ -589,7 +573,7 @@ export const PgPrdWork = () => {
           }], SAVE_URI_PATH, 'put', 'success').then((success) => {
             if (success === true) {
               message.info('정상적으로 종료되었습니다.');
-              searchInfo?.onSearch();
+              searchInfo?.onSearch(searchInfo.values);
 
             } else {
               message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
@@ -607,7 +591,7 @@ export const PgPrdWork = () => {
   
   //#region ✅조회조건
   const onSearch = (values, afterSearch:()=>void=()=>{}) => {
-    const dateParams = !!values?.complete_fg ? {
+    const dateParams = !values?.complete_fg ? {
       start_date: values?.start_date,
       end_date: values?.end_date,
     } : {};
@@ -1198,7 +1182,7 @@ export const PgPrdWork = () => {
         </Col>
       </Row>
 
-      <ProdOrderModal visible={prodOrderPopupVisible} onClose={onProdOrderClose}/>
+      {prodOrderPopupVisible ? <ProdOrderModal visible={prodOrderPopupVisible} onClose={onProdOrderClose}/> : null }
 
       {contextHolder}
     </>
@@ -1340,8 +1324,6 @@ const ProdOrderModal = ({visible, onClose}) => {
     let updatedRows = gridRef?.current?.getInstance().getModifiedRows()?.updatedRows as any[];
     const start_date = getToday();
     const lot_no = start_date?.replace(/[^0-9]/g, '');
-    const qty = 0;
-    const reject_qty = 0;
 
     // 작업시작 처리
     const workStartList =
@@ -1398,7 +1380,7 @@ const ProdOrderModal = ({visible, onClose}) => {
       deletedRows: undefined,
     }
 
-    if (completeChkList?.length > 0)
+    if (completeChkList?.length > 0){
       saveGridData(
         completeSaveData as any, 
         PROD_ORDER_COLUMNS, 
@@ -1406,8 +1388,10 @@ const ProdOrderModal = ({visible, onClose}) => {
 
       ).then(() => {
         gridRef?.current?.getInstance()?.clearModifiedData();
-        onClose();
+        
       }).catch((e) => console.log(e));
+    }
+    onClose();
   }
   //#endregion
 
@@ -1422,7 +1406,6 @@ const ProdOrderModal = ({visible, onClose}) => {
       visible={visible}
       onCancel={onClose}
       onOk={onSave}
-      
       width='80%'
     >
       <>

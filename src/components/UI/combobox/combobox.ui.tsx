@@ -158,16 +158,16 @@ const Combobox: React.FC<Props> = (props) => {
     }
   }, [props.defaultValue, options]);
 
-  useLayoutEffect(() => {
-    if ((options?.length > 0) === false) return;
-    onChangeValue(defaultValue, options[0]?.text);
-  }, [defaultValue, options]);
+  // useLayoutEffect(() => {
+  //   if ((options?.length > 0) === false) return;
+  //   onChangeValue(props.defaultValue, options[0]?.text);
+  // }, [props.defaultValue, options]);
 
   const value = useMemo(() => {
     if (props.value) {
       return props.value;
     } else {
-      return defaultValue;
+      return props.defaultValue;
     }
   }, [props.value, defaultValue]);
   
@@ -204,7 +204,7 @@ const Combobox: React.FC<Props> = (props) => {
     /** 라벨이 없는 버전 */
     return (
       <ScCombobox
-        defaultValue={defaultValue} 
+        defaultValue={defaultValue}
         value={value} 
         onChange={onChangeValue}
         disabled={props.disabled}

@@ -5,13 +5,13 @@ import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functio
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 
 
 
-/** 비가동관리 */
-export const PgStdDowntime = () => {
+/** 주기단위 */
+export const PgAdmBomInputType = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -20,41 +20,19 @@ export const PgStdDowntime = () => {
 
   /** INIT */
   const defaultGridMode:TGridMode = 'delete';
-  const searchUriPath = '/std/downtimes';
-  const saveUriPath = '/std/downtimes';
+  const searchUriPath = URL_PATH_ADM.BOM_INPUT_TYPE.GET.BOM_INPUT_TYPES;
+  const saveUriPath = URL_PATH_ADM.BOM_INPUT_TYPE.PUT.BOM_INPUT_TYPES;
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [
-    {header: '비가동UUID', name:'downtime_uuid', alias:'uuid', width:ENUM_WIDTH.L, format:'text', editable:true, hidden:true},
-    {header: '비가동 유형UUID', name:'downtime_type_uuid', width:ENUM_WIDTH.L, format:'text', editable:true, hidden:true},
-    {header: '비가동 유형코드', name:'downtime_type_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, hidden:true},
-    {header: '비가동 유형명', name:'downtime_type_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
-    {header: '비가동코드', name:'downtime_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
-    {header: '비가동명', name:'downtime_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '설비고장여부', name:'eqm_failure_fg', width:ENUM_WIDTH.S, format:'check', editable:true, requiredField:true},
+    {header: 'BOM 투입유형UUID', name:'bom_input_type_uuid', alias:'uuid', width:150, filter:'text', hidden:true},
+    {header: 'BOM 투입유형코드', name:'bom_input_type_cd', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: 'BOM 투입유형명', name:'bom_input_type_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '정렬', name:'sortby', width:ENUM_WIDTH.L, filter:'number', decimal: ENUM_DECIMAL.DEC_NOMAL, editable:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
-    gridPopupInfo: [
-      { // 비가동유형 팝업
-        columnNames: [
-          {original:'downtime_type_uuid', popup:'downtime_type_uuid'},
-          {original:'downtime_type_cd', popup:'downtime_type_cd'},
-          {original:'downtime_type_nm', popup:'downtime_type_nm'},
-        ],
-        columns: [
-          {header: '비가동유형UUID', name:'downtime_type_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-          {header: '비가동유형코드', name:'downtime_type_cd', width:ENUM_WIDTH.M, filter:'text'},
-          {header: '비가동유형명', name:'downtime_type_nm', width:ENUM_WIDTH.L, filter:'text'},
-        ],
-        dataApiSettings: {
-          uriPath: '/std/downtime-types',
-          params: null
-        },
-        gridMode:'select',
-      },
-    ],
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -62,16 +40,14 @@ export const PgStdDowntime = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
-    },
+    }
   );
-  const editDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID',
+  const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
     grid.gridInfo.columns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
-    },
+    }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);

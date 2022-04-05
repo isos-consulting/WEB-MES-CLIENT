@@ -2,74 +2,153 @@ import React, { lazy, Suspense, useLayoutEffect, useState, useCallback, useMemo 
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { PgAuthentication, PgLogin } from "./components/pages";
-import { atSideNavMenuContent, atSideNavMenuRawData } from "./components/UI/side-navbar";
-import { Result, Container } from '~components/UI';
-import { useLoadingState, authStore } from "./hooks";
-import { getMenus, getStorageValue, setLogout } from "./functions";
+import { PgLogin } from "./components/pages";
+import { Result, Container, atSideNavMenuContent, atSideNavMenuRawData } from '~components/UI';
+import { useLoadingState } from "./hooks";
+import { consoleLogLocalEnv, getData, getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
-import { PgAutMenu } from '~components/pages';
 
 const Layout = lazy(() => import('./components/UI/layout').then(module=>({default:module.Layout})));
 
 
 const App = () => {
-  const [loading, setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
-  
-  const [user] = useRecoilState(authStore.user.state);
-  const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
-  const [menuRawData, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
-  const [NOT_PERMISSION, SET_NOT_PERMISSION] = useState<boolean>(false);
-  const [tenantUuid, setTenantUuid] = useState<string>('');
+  const [teneunt, setTeneunt] = useState('');
 
+  const checkLocalEnviroment = (url: string) => {
+    return url === 'localhost' || url === '191.1.70.201';
+  }
+
+  const getLocalUrl = () => {
+    return 'najs.isos.kr';
+  }
+
+  const getTenantCode = (url) => {
+    return url.split('.')[0];
+  }
+
+  const tenantIsNotEmpty = (tenants: any[]) => {
+    return tenants.length > 0;
+  }
+
+  const getSerialTenantUuid = (uuid: string) => {
+    return JSON.stringify({
+      tenantUuid: uuid
+    })
+  }
+
+  const tenantIsAllocated = (tenant) => {
+    return tenant !== '';
+  }
+  
+  const handleGetTeneuntInfo = async () => {
+    {consoleLogLocalEnv('%cTenant 정보 부여 테스트 시작', 'color: green; font-size: 20px;')}
+    const hostName = window.location.hostname;
+
+    consoleLogLocalEnv(`접속 호스트 : ${hostName}`);
+    consoleLogLocalEnv(`로컬 호스트 일 경우 webURL 주소 : ${getLocalUrl()}`);
+
+    const webURL = checkLocalEnviroment(hostName)? getLocalUrl(): hostName;
+    
+    const tenantInfo = await getData({tenant_cd: getTenantCode(webURL)},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/')
+
+    consoleLogLocalEnv(`테넌트 정보가 존재 하나요? : ${tenantIsNotEmpty(tenantInfo)}`);
+
+    if(tenantIsNotEmpty(tenantInfo)) {
+
+      consoleLogLocalEnv(`직렬화 된 tenantUuid : ${getSerialTenantUuid(tenantInfo[0]?.uuid)}`);
+
+      localStorage.setItem('tenantInfo', getSerialTenantUuid(tenantInfo[0]?.uuid));
+
+      {consoleLogLocalEnv('%cTenant 정보 부여 테스트 끝', 'color: green; font-size: 20px;')}
+      setTeneunt(tenantInfo[0]?.uuid);
+    }
+  }
+  const routeLayout = () => {
+    return (tenantIsAllocated(teneunt))? <LayoutRoute /> : <span>테넌트 정보를 받아오는 중...</span>
+  }
+  
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
-    if (! getStorageValue({storageName:'userInfo',keyName:'uid'})) return;
-    setLoading(true);
-    getMenus().then((menu) => {
-      setMenuContent(menu.data);
-      setMenuRawData(menu.rawData);
-    }).finally(() => setLoading(false));
+    handleGetTeneuntInfo()
   },[])
-
-  useLayoutEffect(() => {
-    if (Array.isArray(menuRawData) && menuRawData?.length === 0) {
-      SET_NOT_PERMISSION(true);
-    } else {
-      SET_NOT_PERMISSION(false);
-    }
-  }, [menuRawData]);
-
-  useLayoutEffect(() => {
-    if (!NOT_PERMISSION) return;
-    modal.error({
-      content: <div>
-        권한 정보가 없습니다. <p/>
-        관리자에게 문의하신 후 다시 로그인해주세요. <br/>
-      </div>,
-      okText: '로그인 페이지로 돌아가기',
-      onOk: () => {
-        // 로그인 해제
-        setLogout();
-        SET_NOT_PERMISSION(false);
-      },
-      cancelButtonProps: {
-        hidden: true,
-      }
-    });
-  }, [NOT_PERMISSION]);
   
-  return <div>
-    <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
-      {tenantUuid ? <LoggedIn menuContent={menuContent} /> : <PgAuthentication setTenantUuid={setTenantUuid}/>}
+  return (
+    <div>
+      {consoleLogLocalEnv(`tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`)}
+      {routeLayout()}
       {contextHolder}
-    </Spin>
-  </div>;
-
+    </div>
+  )
 };
+
+const LayoutRoute = () => {
+  const [loading, setLoading] = useLoadingState(); // 이 녀석 때문에 콘솔에 state의 값이 2번씩 찍힘
+  const [isLogin, setIsLogin] = useState(false);
+  const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
+  const [, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
+  
+  useLayoutEffect(()=>{
+    const setMenus = async () => {
+      const menus = await getMenus();
+
+      consoleLogLocalEnv('menu api 호출 결과:', menus);
+      setMenuContent(menus.data)
+      setMenuRawData(menus.rawData);
+    };
+    
+    consoleLogLocalEnv('%cLayoutRoute 컴포넌트 useLayoutEffect 훅 동작',  'color: orange; font-size: 24px;');
+    consoleLogLocalEnv(`로딩 상태: ${loading}, 로그인 상태: ${isLogin}, 메뉴 정보: `, menuContent);
+    if(isLogin) {
+      setLoading(true);
+      setMenus();
+      setLoading(false);
+    }
+  },[isLogin]);
+  
+  // useLayoutEffect(()=>{
+    
+    // },[isLogin])
+    
+    return (
+      <>
+      {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 시작', 'color: green; font-size: 20px;')}
+      {consoleLogLocalEnv(`로딩 상태? : ${loading}`)}
+      {consoleLogLocalEnv(`로그인 상태인가요? : ${isLogin}`)}
+      {consoleLogLocalEnv(`메뉴가 있나요? : `, menuContent)}
+      {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 끝', 'color: green; font-size: 20px;')}
+      {isLogin ? 
+        <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
+          <Suspense fallback='...loading'>
+            <BrowserRouter>
+              <Switch>
+                <Redirect exact from="/" to='/dashboard' />
+                <Layout>
+                  <Route
+                    key={'dashboard'}
+                    path={'/dashboard'}
+                    component={Dashboard}
+                  />
+                  {Object.keys(menuContent).map((item, key) => (
+                    <Route
+                      key={key}
+                      path={menuContent[item]?.path}
+                      component={menuContent[item]?.component ?? errorPage404}
+                    />
+                    ))
+                  }
+                </Layout>
+              </Switch>
+            </BrowserRouter>
+          </Suspense>
+        </Spin>
+        : <PgLogin setIsLogin={setIsLogin} />
+      }
+    </>
+  )
+}
 
 const errorPage404 = () => {
   const layoutState = useRecoilValue(layoutStore.state);
@@ -96,46 +175,6 @@ const errorPage404 = () => {
     </Container>
   )
 }
-
-/** 인증완료시의 렌더링될 컴포넌트 */
-const LoggedIn = (props: any) => {
-
-  // if (Object.keys(props?.menuContent).length <= 0) return null;
-  return (
-    <Suspense fallback='...loading'>
-    <BrowserRouter>
-      <Switch>
-        <Redirect exact from="/" to='/login' />
-        <Route
-          key={'login'}
-          path={'/login'}
-          component={PgLogin}
-        />
-        <Layout>
-          <Route
-            key={'dashboard'}
-            path={'/dashboard'}
-            component={Dashboard}
-          />
-          <Route
-            key={'autMenu'}
-            path={'/aut/menus'}
-            component={PgAutMenu}
-          />
-          {Object.keys(props.menuContent).map((item, key) => (
-            <Route
-              key={key}
-              path={props.menuContent[item]?.path}
-              component={props.menuContent[item]?.component ?? errorPage404}
-            />
-            ))
-          }
-        </Layout>
-      </Switch>
-    </BrowserRouter>
-    </Suspense>
-  );
-};
 
 
 export default App;

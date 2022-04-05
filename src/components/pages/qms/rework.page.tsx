@@ -744,7 +744,7 @@ export const PgQmsRework = () => {
       saveType: 'headerInclude',
       searchUriPath: '/qms/rework-disassembles',
       saveUriPath: '/qms/reworks/disassembles',
-      okText: '추가하기',
+      okText: '저장하기',
       onCancel: () => {
         disassemblePopupInputInfo?.instance?.resetForm();
         setDisassemblePopupVisible(false);

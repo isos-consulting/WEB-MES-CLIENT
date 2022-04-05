@@ -13,7 +13,7 @@ import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 
 // 날짜 로케일 설정
@@ -87,7 +87,7 @@ type TGetQmsInsp = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
   insp_no?: string,
   prod_uuid?: string,
@@ -121,7 +121,7 @@ type TGetQmsInspIncludeDetails = {
     factory_uuid?: string,
     factory_cd?: string,
     factory_nm?: string,
-    insp_type_cd?: string,
+    insp_type_uuid?: string,
     insp_type_nm?: string,
     insp_no?: string,
     prod_uuid?: string,
@@ -188,9 +188,9 @@ type TGetQmsFinalInspResult = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
-  insp_handling_type_cd?: string,
+  insp_handling_type_uuid?: string,
   insp_handling_type_nm?: string,
   seq?: number,
   insp_uuid?: string,
@@ -254,8 +254,9 @@ type TGetQmsFinalInspResultIncludeDetailsHeader = {
   factory_uuid?: string,
   factory_cd?: string,
   factory_nm?: string,
-  insp_type_cd?: string,
+  insp_type_uuid?: string,
   insp_type_nm?: string,
+  insp_handling_type_uuid?: string,
   insp_handling_type_cd?: string,
   insp_handling_type_nm?: string,
   seq?: number,
@@ -363,7 +364,9 @@ type TGetQmsFinalInspResultIncludeDetails = {
 
 type TPostQmsFinalInspResultsHeader = {
   factory_uuid?: string,
-  insp_handling_type_cd?: string,
+  insp_handling_type_uuid?: string,
+  insp_type_uuid?: string,
+  insp_detail_type_uuid?: string,
   insp_uuid?: string,
   prod_uuid?: string,
   lot_no?: string,
@@ -406,6 +409,7 @@ type TPutQmsFinalInspResultsHeader = {
   uuid?: string,
   emp_uuid?: string,
   insp_result_fg?: boolean,
+  insp_handling_type_uuid?: string,
   insp_qty?: number,
   pass_qty?: number,
   reject_qty?: number,
@@ -464,6 +468,7 @@ export const PgQmsFinalInspResult = () => {
 
   //#region 데이터 관리
   const [finalInspResults, setFinalInspResults] = useState<TGetQmsFinalInspResult[]>([]);
+  const [inspHandlingType, setInspHandlingType] = useState([])
   //#endregion  
 
   //#region ✅조회조건
@@ -541,8 +546,18 @@ export const PgQmsFinalInspResult = () => {
   //#endregion
 
   //#region 추가 컴포넌트
-  const INSP_RESULT_DETAIL_GRID = INSP_RESULT_DETAIL_GRID_INFO({onAfterSave:onSearch}) //props:{onAftetSave={onSearch}});
+  const INSP_RESULT_DETAIL_GRID = INSP_RESULT_DETAIL_GRID_INFO({inspHandlingType:inspHandlingType, onAfterSave:onSearch}) //props:{onAftetSave={onSearch}});
   //#endregion
+
+  useLayoutEffect(()=>{
+    const _inspHandlingType:object[] = []
+    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,'raws').then(async (res)=>{
+      res.map((item) => {
+        _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
+      })
+      setInspHandlingType(_inspHandlingType)
+    })
+  },[])
 
   //#region 렌더부
   return (
@@ -603,11 +618,15 @@ export const PgQmsFinalInspResult = () => {
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />검사정보</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       {INSP_RESULT_DETAIL_GRID.component}
-      <INSP_RESULT_CREATE_POPUP 
-        popupVisible={createPopupVisible} 
-        setPopupVisible={setCreatePopupVisible} 
-        onAfterSave={onSearch}
-      />
+      {createPopupVisible ? 
+        <INSP_RESULT_CREATE_POPUP 
+          inspHandlingType={inspHandlingType}
+          popupVisible={createPopupVisible} 
+          setPopupVisible={setCreatePopupVisible} 
+          onAfterSave={onSearch}
+        />
+        : null
+      }
 
       {contextHolder}
     </>
@@ -619,6 +638,7 @@ export const PgQmsFinalInspResult = () => {
 //#region 최종검사 결과
 const INSP_RESULT_DETAIL_GRID_INFO = (
   props:{
+    inspHandlingType:any,
     onAfterSave:()=>void
   }
 ) => {
@@ -734,7 +754,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
       content: '성적서를 삭제하시겠습니까?',
       onOk: async () => {
         await executeData(
-          { uuid: finalInspResultIncludeDetails?.header?.insp_result_uuid }, 
+          [{ uuid: finalInspResultIncludeDetails?.header?.insp_result_uuid }], 
           URI_PATH_DELETE_QMS_FINAL_INSP_RESULTS, 
           'delete', 
           'success'
@@ -812,12 +832,16 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
           </Col>
         </Row>
       </Container>
-      <INSP_RESULT_EDIT_POPUP 
-        inspResultUuid={finalInspResultIncludeDetails?.header?.insp_result_uuid} 
-        popupVisible={editPopupVisible} 
-        setPopupVisible={setEditPopupVisible} 
-        onAfterCloseSearch={onSearch}
-      />
+      {editPopupVisible ?
+        <INSP_RESULT_EDIT_POPUP 
+          inspHandlingType={props.inspHandlingType}
+          inspResultUuid={finalInspResultIncludeDetails?.header?.insp_result_uuid} 
+          popupVisible={editPopupVisible} 
+          setPopupVisible={setEditPopupVisible} 
+          onAfterCloseSearch={onSearch}
+        />
+        : null
+      }
     </>
   );
   //#endregion
@@ -833,6 +857,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (
 //#region 성적서 신규 팝업
 const INSP_RESULT_CREATE_POPUP = (props:{
   popupVisible:boolean,
+  inspHandlingType:any,
   setPopupVisible: (value?) => void
   onAfterSave?: () => void
 }) =>{
@@ -957,15 +982,11 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
     {
-      id:'insp_handling_type_cd', 
+      id:'insp_handling_type', 
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      dataSettingOptions:{
-        codeName:'insp_handling_type_cd',
-        textName:'insp_handling_type_nm',
-        uriPath:'/adm/insp-handling-types',
-      },
+      options:props.inspHandlingType,
       disabled:true,
       onAfterChange: (ev) => {}
     },
@@ -1047,7 +1068,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     }
   ];
 
-  const inputInputItems = useInputGroup('INPUT_CREATE_POPUP_INFO', INFO_INPUT_ITEMS, {title:'검사대상 품목 정보',});
+  const inputInputItems = useInputGroup('INPUT_CREATE_POPUP_INFO', INFO_INPUT_ITEMS, {title:'검사대상 품목 정보'});
   const inputInspResult = useInputGroup('INPUT_CREATE_POPUP_INSP_RESULT', INPUT_ITEMS_INSP_RESULT, {title:'검사정보',});
   const inputInspResultIncome = useInputGroup('INPUT_CREATE_POPUP_INSP_RESULT_INCOME', INPUT_ITEMS_INSP_RESULT_INCOME, {title:'입고정보',});
   const inputInspResultReject = useInputGroup('INPUT_CREATE_POPUP_INSP_RESULT_REJECT', INPUT_ITEMS_INSP_RESULT_RETURN, {title:'부적합정보',});
@@ -1055,10 +1076,15 @@ const INSP_RESULT_CREATE_POPUP = (props:{
 
   //#region 함수 
   const onClear = () => {
-    inputInputItems.ref.current.resetForm();
-    inputInspResult.ref.current.resetForm();
-    inputInspResultIncome.ref.current.resetForm();
-    inputInspResultReject.ref.current.resetForm();
+    
+    inputInputItems?.setValues({});
+    inputInspResult?.instance?.setValues({});
+    inputInspResultIncome?.instance?.setValues({});
+    inputInspResultReject?.instance?.setValues({});
+    inputInputItems?.instance?.resetForm();
+    inputInspResult?.instance?.resetForm();
+    inputInspResultIncome?.instance?.resetForm();
+    inputInspResultReject?.instance?.resetForm();
     setStoresStocks({});
     setInsp({});
     setInspIncludeDetails({});
@@ -1078,6 +1104,8 @@ const INSP_RESULT_CREATE_POPUP = (props:{
       };
     }
     
+    console.log('?', inputInputItems?.ref?.current?.values?.qty)
+
     if(incomeDisabled){
       inputInspResultIncome.setFieldValue('qty',0)
     }
@@ -1086,10 +1114,10 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     }
 
     if(!incomeDisabled){
-      inputInspResultIncome.setFieldValue('qty',inputInputItems?.values?.qty)
+      inputInspResultIncome.setFieldValue('qty',inputInputItems?.ref?.current?.values?.qty)
       inputInspResultReject.setFieldValue('reject_qty',0)
     }else if(!rejectDisabled){
-      inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.values?.qty)
+      inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.ref?.current?.values?.qty)
     }
 
     if(inspResult==='SELECTION'){
@@ -1183,22 +1211,34 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
 
     if(emptyFg || nullFg){
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:true});
+      inputInspResult.setFieldDisabled({insp_handling_type:true});
     }else{
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:false});
+      inputInspResult.setFieldDisabled({insp_handling_type:false});
     }
 
+    let _inspHandlingCd:string
+    
     if (flagInputboxValue===true) {
-      inputInspResult.setFieldValue('insp_handling_type_cd','INCOME')
+      _inspHandlingCd = 'INCOME'
       changeInspResult('INCOME');
     }else if(flagInputboxValue===false){
-      inputInspResult.setFieldValue('insp_handling_type_cd','RETURN')
+      _inspHandlingCd = 'RETURN'
       changeInspResult('RETURN');
     }else {
-      inputInspResult.setFieldValue('insp_handling_type_cd','')
+      _inspHandlingCd = ''
+      //inputInspResult.setFieldValue('insp_handling_type','')
       changeInspResult('');
     }
-    
+    if (_inspHandlingCd === ''){
+      inputInspResult.setFieldValue('insp_handling_type','')
+    } else {
+      props.inspHandlingType.forEach(el => {
+        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
+          inputInspResult.setFieldValue('insp_handling_type',el.code)
+          return ;
+        }
+      })
+    }
     //#endregion
   };
 
@@ -1212,7 +1252,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     const inputInspResultRejectValues = inputInspResultReject?.ref?.current?.values
 
     const saveGridInstance = gridRef?.current?.getInstance();
-
+    console.log(inputInputItemsValues)
     if(!inputInspResultValues?.insp_result_fg){
       message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.')
       return;
@@ -1226,7 +1266,8 @@ const INSP_RESULT_CREATE_POPUP = (props:{
 
     headerData = {
       factory_uuid: getUserFactoryUuid(),
-      insp_handling_type_cd: inputInspResultValues?.insp_handling_type_cd,
+      insp_handling_type_uuid: JSON.parse(inputInspResultValues.insp_handling_type).insp_handling_type_uuid,
+      insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
       insp_uuid: insp?.insp_uuid,
       prod_uuid: storesStocks?.prod_uuid,
       lot_no: storesStocks?.lot_no,
@@ -1295,11 +1336,22 @@ const INSP_RESULT_CREATE_POPUP = (props:{
       getData(
         {
           prod_uuid:storesStocks.prod_uuid,
-          insp_type_cd:'FINAL_INSP'
+          insp_type_cd:'FINAL_INSP',
+          apply_fg: true,
         },
         URI_PATH_GET_QMS_INSPS
       ).then((res) => {
-        setInsp(res[0]);
+        if(res.length === 0){
+          message.error('적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.');  
+          onClear();
+          return ;
+        } else if(res[0].apply_fg === false){
+          message.error('적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.');  
+          onClear();
+          return ;
+        } else {
+          setInsp(res[0]);  
+        }
       }).catch((err) => {
         onClear();
         message.error('에러');
@@ -1310,13 +1362,12 @@ const INSP_RESULT_CREATE_POPUP = (props:{
   useLayoutEffect(() => {
     if (insp.insp_uuid) {
       getData(
-        {
-          uuid:insp.insp_uuid,
-          insp_detail_type:'finalInsp'
-        },
+        {insp_detail_type_cd: 'FINAL_INSP'},
         URI_PATH_GET_QMS_INSP_INCLUDE_DETAILS.replace('{uuid}',insp.insp_uuid),
         'header-details'
-      ).then((res) => {
+      ).then((res:any) => {
+        console.log(res)
+        inputInputItems.setFieldValue('insp_type_uuid', res.header.insp_type_uuid)
         setInspIncludeDetails(res);
       }).catch((err) => {
         onClear();
@@ -1326,21 +1377,23 @@ const INSP_RESULT_CREATE_POPUP = (props:{
   }, [insp]);
 
   useLayoutEffect(() => {
-    changeInspResult(inputInspResult?.values?.insp_handling_type_cd);
-  }, [inputInspResult?.values?.insp_handling_type_cd]);
+    if(inputInspResult?.ref?.current?.values?.insp_handling_type){
+      changeInspResult(JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type).insp_handling_type_uuid);
+    }
+  }, [inputInspResult?.ref?.current?.values?.insp_handling_type_uuid]);
 
   useLayoutEffect(() => {
     if(changeInspQtyFg===false) return;
-    changeInspResult(inputInspResult?.values?.insp_handling_type_cd)
+    changeInspResult(inputInspResult?.ref?.current?.values?.insp_handling_type_uuid)
     
     setChangeInspQtyFg(false)
   }, [changeInspQtyFg]);
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg===false) return;
-    let receiveQty:number = Number(inputInputItems?.values?.qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
 
     if (receiveQty - incomeQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1354,9 +1407,9 @@ const INSP_RESULT_CREATE_POPUP = (props:{
 
   useLayoutEffect(() => {
     if (!changeRejectQtyFg) return;
-    let receiveQty:number = Number(inputInputItems?.values?.qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
     
     if (receiveQty - rejectQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1366,6 +1419,10 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     }
     setChangeRejectQtyFg(false)
   }, [changeRejectQtyFg]);
+
+  useLayoutEffect(()=>{
+    onClear()
+  },[props.popupVisible])
   //#endregion
 
   //#region 컴포넌트 rander
@@ -1403,6 +1460,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
 //#region 성적서 수정 팝업
 const INSP_RESULT_EDIT_POPUP = (props:{
   inspResultUuid:string,
+  inspHandlingType:any,
   popupVisible:boolean,
   setPopupVisible: (value?) => void,
   onAfterCloseSearch?: (insp_result_uuid:string) => void
@@ -1488,21 +1546,17 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
     {
-      id:'insp_handling_type_cd', 
+      id:'insp_handling_type', 
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      dataSettingOptions:{
-        codeName:'insp_handling_type_cd',
-        textName:'insp_handling_type_nm',
-        uriPath:'/adm/insp-handling-types',
-      },
+      options:props.inspHandlingType,
       disabled:true,
       onAfterChange: (ev) => {}
     },
     {id:'remark', label:'비고', type:'text'},
   ];
-
+  
   const INPUT_ITEMS_INSP_RESULT_INCOME:IInputGroupboxItem[] = [
     {
       id:'qty', 
@@ -1616,10 +1670,10 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       }
 
       if(!incomeDisabled){
-        inputInspResultIncome.setFieldValue('qty',inputInputItems?.values?.insp_qty)
+        inputInspResultIncome.setFieldValue('qty',inputInputItems?.ref?.current?.values?.insp_qty)
         inputInspResultReject.setFieldValue('reject_qty',0)
       }else if(!rejectDisabled){
-        inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.values?.insp_qty)
+        inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.ref?.current?.values?.insp_qty)
       }
     }
 
@@ -1709,25 +1763,39 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       : nullFg ? '진행중'
       : '합격' ;
     
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-
-    if(emptyFg || nullFg){
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:true});
-    }else{
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:false});
-    }
-
-    if (flagInputboxValue===true) {
-      inputInspResult.setFieldValue('insp_handling_type_cd','INCOME')
-      changeInspResult('INCOME', false);
-    }else if(flagInputboxValue===false){
-      inputInspResult.setFieldValue('insp_handling_type_cd','RETURN')
-      changeInspResult('RETURN', false);
-    }else {
-      inputInspResult.setFieldValue('insp_handling_type_cd','')
-      changeInspResult('', false);
-    }
+      inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
+      inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
+  
+      if(emptyFg || nullFg){
+        inputInspResult.setFieldDisabled({insp_handling_type:true});
+      }else{
+        inputInspResult.setFieldDisabled({insp_handling_type:false});
+      }
+  
+      let _inspHandlingCd:string
+  
+      if (flagInputboxValue===true) {
+        _inspHandlingCd = 'INCOME'
+        changeInspResult('INCOME', false);
+      }else if(flagInputboxValue===false){
+        _inspHandlingCd = 'RETURN'
+        changeInspResult('RETURN', false);
+      }else {
+        _inspHandlingCd = ''
+        //inputInspResult.setFieldValue('insp_handling_type','')
+        changeInspResult('', false);
+      }
+      
+      if (_inspHandlingCd === ''){
+        inputInspResult.setFieldValue('insp_handling_type','')
+      } else {
+        props.inspHandlingType.forEach(el => {
+          if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
+            inputInspResult.setFieldValue('insp_handling_type',el.code)
+            return ;
+          }
+        })
+      }
     
     //#endregion
   };
@@ -1753,12 +1821,13 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       message.warn('검사시간을 등록해주세요.')
       return;
     }
-
+    console.log({inputInputItemsValues, inputInspResultValues, inputInspResultIncomeValues, inputInspResultRejectValues})
     headerData = {
       uuid: inputInspResultValues?.insp_result_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
       insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_qty: inputInputItemsValues?.qty,
+      insp_handling_type_uuid: JSON.parse(inputInspResultValues.insp_handling_type).insp_handling_type_uuid,
+      insp_qty: inputInputItemsValues?.insp_qty,
       pass_qty: inputInspResultIncomeValues?.qty,
       reject_qty: inputInspResultRejectValues?.reject_qty,
       reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
@@ -1805,7 +1874,7 @@ const INSP_RESULT_EDIT_POPUP = (props:{
         remark: row?.remark
       })
     }
-
+    
     const saveData:TPutQmsFinalInspResults = ({
       header:headerData,
       details:detailDatas
@@ -1823,49 +1892,86 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     onClear();
     props.setPopupVisible(false);
   };
+
+  const handleLoadData = () => {
+    const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
+
+    getData<TGetQmsFinalInspResultIncludeDetails>(
+      {},
+      searchUriPath,
+      'header-details'
+    ).then((res) => {
+      
+      setInspResult(res);
+
+      const {header, details} = res;
+
+      inputInputItems.setValues({
+        prod_uuid: header.prod_uuid,
+        prod_no: header.prod_no,
+        prod_nm: header.prod_nm,
+        prod_std: header.prod_std,
+        unit_nm: header.unit_nm,
+        store_uuid: header.from_store_uuid, 
+        store_nm: header.from_store_nm,
+        location_uuid: header.from_location_uuid,
+        location_nm: header.from_location_nm,
+        lot_no: header.lot_no,
+        insp_qty: header.insp_qty
+      });
+      inputInspResult.setValues({
+        insp_uuid:header.insp_uuid,
+        insp_result_uuid:header.insp_result_uuid,
+        insp_result_fg:header.insp_result_fg,
+        insp_result_state:header.insp_result_state,
+        reg_date:header.reg_date,
+        reg_date_time:header.reg_date, 
+        emp_uuid:header.emp_uuid,
+        emp_nm:header.emp_nm,
+        insp_handling_type:JSON.stringify({insp_handling_type_uuid:header.insp_handling_type_uuid,insp_handling_type_cd:header.insp_handling_type_cd}),
+        remark:header.remark,
+      });
+      inputInspResultIncome.setValues({
+        qty:header.pass_qty,
+        to_store_uuid:header.to_store_uuid,
+        to_location_uuid:header.to_location_uuid
+      });
+      inputInspResultReject.setValues({
+        reject_qty:header.reject_qty,
+        reject_uuid:header.reject_uuid,
+        reject_nm:header.reject_nm,
+        reject_store_uuid:header.reject_store_uuid,
+        reject_location_uuid:header.reject_location_uuid,
+      });
+      
+      console.log(inputInputItems.ref.current.values, inputInspResult.ref.current.values, inputInspResultIncome.ref.current.values, inputInspResultReject.ref.current.values)
+
+      changeInspResult(res.header.insp_handling_type_cd, true);
+    }).catch((err) => {
+      onClear();
+      message.error('에러');
+    });
+
+  }
   //#endregion
 
   //#region Hook 함수
-  useLayoutEffect(() => {
-    const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
-
-    if (props.inspResultUuid && props.popupVisible) {
-      getData<TGetQmsFinalInspResultIncludeDetails>(
-        {},
-        searchUriPath,
-        'header-details'
-      ).then((res:TGetQmsFinalInspResultIncludeDetails) => {
-        setInspResult(res);
-        inputInputItems.setValues({
-          ...res.header, 
-          store_uuid: res.header.from_store_uuid, 
-          store_nm: res.header.from_store_nm,
-          location_uuid: res.header.from_location_uuid,
-          location_nm: res.header.from_location_nm,
-        });
-        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});
-        inputInspResultIncome.setValues({...res.header, qty:res.header.pass_qty});
-        inputInspResultReject.setValues({...res.header});
-
-        changeInspResult(res.header.insp_handling_type_cd, true);
-      }).catch((err) => {
-        onClear();
-        message.error('에러');
-      });
-    } else {
-      onClear();
+  useLayoutEffect(()=>{
+    handleLoadData()
+    return () =>{
+      onClear()
     }
-  }, [props.popupVisible, props.inspResultUuid]);
+  },[])
 
   useLayoutEffect(() => {
-    changeInspResult(inputInspResult?.values?.insp_handling_type_cd, false);
-  }, [inputInspResult?.values?.insp_handling_type_cd]);
+    changeInspResult(inputInspResult?.ref?.current?.values?.insp_handling_type_uuid, false);
+  }, [inputInspResult?.ref?.current?.values?.insp_handling_type_uuid]);
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg===false) return;
-    let receiveQty:number = Number(inputInputItems?.values?.insp_qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.insp_qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
 
     if (receiveQty - incomeQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1879,9 +1985,9 @@ const INSP_RESULT_EDIT_POPUP = (props:{
 
   useLayoutEffect(() => {
     if (!changeRejectQtyFg) return;
-    let receiveQty:number = Number(inputInputItems?.values?.insp_qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.insp_qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
     
     if (receiveQty - rejectQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')

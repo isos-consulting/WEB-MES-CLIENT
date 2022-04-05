@@ -330,6 +330,8 @@ export const PgPrdOrder = () => {
       {header:'지시순번', name:'seq', width:ENUM_WIDTH.M, hidden:true},
       {header:'작업교대UUID', name:'shift_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
       {header:'작업교대', name:'shift_nm', width:ENUM_WIDTH.M, editable:true, format:'combo', filter:'text', requiredField:true, noSave:true},
+      {header:'작업조UUID', name:'worker_group_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
+      {header:'작업조', name:'worker_group_nm', width:ENUM_WIDTH.M, editable:true, format:'combo', filter:'text', noSave:true},
       {header:'수주상세UUID', name:'sal_order_detail_uuid', width:ENUM_WIDTH.M, hidden:true},
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, editable:true, filter:'text'},
     ],
@@ -344,10 +346,10 @@ export const PgPrdOrder = () => {
     /** 팝업 제목 */
     title: '작업지시 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
@@ -427,7 +429,7 @@ export const PgPrdOrder = () => {
     /** 팝업 제목 */
     title: '작업지시 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
+    okText: '저장하기',
     onOk: () => {
       saveGridData(
         getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
@@ -606,8 +608,8 @@ export const PgPrdOrder = () => {
         ]}
       />
       
-      <GridPopup {...newGridPopupInfo} />
-      <GridPopup {...editGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

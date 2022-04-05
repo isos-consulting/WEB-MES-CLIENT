@@ -34,8 +34,8 @@ export const PgStdInspItem = () => {
     {header: '검사구명', name:'insp_tool_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
     {header: '검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.L, editable:true, hidden:true},
     {header: '검사방법명', name:'insp_method_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', editable:true},
-    {header: '품질검사', name:'qms_fg', width:ENUM_WIDTH.M, format:'check', editable:true},
-    {header: '설비검사', name:'eqm_fg', width:ENUM_WIDTH.M, format:'check', editable:true},
+    {header: '품질검사', name:'qms_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
+    {header: '설비검사', name:'eqm_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,

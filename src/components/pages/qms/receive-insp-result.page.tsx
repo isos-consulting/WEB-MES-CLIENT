@@ -13,8 +13,9 @@ import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import { cloneDeep } from 'lodash';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -173,11 +174,12 @@ export const PgQmsReceiveInspResult = () => {
   const searchRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();
 
-  // 성적서 선택 시 선택한 성적서 UUID 값 관리
-  const [inspResultUuid, setInspResultUuid] = useState('')
+  const [inspResultUuid, setInspResultUuid] = useState('');
+  const [inspDetailType, setInspDetailType] = useState([]);
 
   // 데이터 추가 팝업 관련
-  const [createPopupVisible, setCreatePopupVisible] = useState(false)
+  const [createPopupVisible, setCreatePopupVisible] = useState(false);
+  const [inspHandlingType, setInspHandlingType] = useState([])
   //#endregion
 
   const INPUT_ITEMS_RECIEVE:IInputGroupboxItem[] = [
@@ -198,12 +200,8 @@ export const PgQmsReceiveInspResult = () => {
   const SEARCH_ITEMS:ISearchItem[] = [
     {type:'date', id:'start_date', label:'검사일', default:getToday(-7)},
     {type:'date', id:'end_date', default:getToday()},
-    {type:'radio', id:'insp_detail_type', default:'all',
-      options:[
-        {code:'all', text:'전체'},
-        {code:'matReceive', text:'자재'},
-        {code:'outReceive', text:'외주'},
-      ]
+    {type:'combo', id:'insp_detail_type', firstItemType:'all', default:'all',
+      options:inspDetailType
     },
   ];
   //#endregion
@@ -246,7 +244,11 @@ export const PgQmsReceiveInspResult = () => {
   //#region 함수
   const onSearch = () => {
     const {values} = searchRef?.current;
-    const searchParams = values;
+    const searchParams = cloneDeep(values);
+    if (searchParams.insp_detail_type !== 'all'){
+      searchParams.insp_detail_type_uuid = searchParams.insp_detail_type
+    }
+    delete searchParams.insp_detail_type
     getData(searchParams, URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS).then((res) => {
       setWorkDatas(res || []);
       // 입하정보 및 실적정보 초기화
@@ -256,9 +258,27 @@ export const PgQmsReceiveInspResult = () => {
   }
 
   const onCreate = (ev) => {
-    setCreatePopupVisible(true);
+    setCreatePopupVisible(true); 
   }
   //#endregion
+
+  useLayoutEffect(()=>{
+    const _inspDetailType:object[] = []
+    getData({insp_type_cd:'RECEIVE_INSP'},URL_PATH_ADM.INSP_DETAIL_TYPE.GET.INSP_DETAIL_TYPES,'raws').then(async (res)=>{
+      res.map((item) => {
+        _inspDetailType.push({code: item.insp_detail_type_uuid, text: item.insp_detail_type_nm})
+      })
+      setInspDetailType(_inspDetailType)
+    })
+
+    const _inspHandlingType:object[] = []
+    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,'raws').then(async (res)=>{
+      res.map((item) => {
+        _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
+      })
+      setInspHandlingType(_inspHandlingType)
+    })
+  },[])
 
   //#region 렌더부
   return (
@@ -320,8 +340,8 @@ export const PgQmsReceiveInspResult = () => {
       <Typography.Title level={5} style={{marginTop:30, marginBottom:-16, fontSize:14}}><CaretRightOutlined />검사정보</Typography.Title>
       <Divider style={{marginBottom:10}}/>
       {/* {INSP_RESULT_DETAIL.component} */}
-      <INSP_RESULT_DETAIL_GRID inspResultUuid={inspResultUuid} onSearchResults={onSearch} />
-      <INSP_RESULT_CREATE_POPUP popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} onAfterCloseSearch={onSearch} />
+      <INSP_RESULT_DETAIL_GRID inspHandlingType={inspHandlingType} inspResultUuid={inspResultUuid} onSearchResults={onSearch} />
+      {createPopupVisible ? <INSP_RESULT_CREATE_POPUP inspHandlingType={inspHandlingType} popupVisible={createPopupVisible} setPopupVisible={setCreatePopupVisible} onAfterCloseSearch={onSearch} /> : null }
 
       {contextHolder}
     </>
@@ -333,6 +353,7 @@ export const PgQmsReceiveInspResult = () => {
 //#region 수입검사 결과
 const INSP_RESULT_DETAIL_GRID = (props:{
   inspResultUuid:string,
+  inspHandlingType:any,
   onSearchResults: () => void
 }) => {
   /** 페이지 제목 */
@@ -447,10 +468,10 @@ const INSP_RESULT_DETAIL_GRID = (props:{
       content: '성적서를 삭제하시겠습니까?',
       onOk: async () => {
         await executeData(
-          {
+          [{
             uuid: props.inspResultUuid,
-            insp_detail_type_cd: (receiveInspHeaderData as any)?.insp_detail_type_cd,
-          }, 
+            insp_detail_type_uuid: (receiveInspHeaderData as any)?.insp_detail_type_uuid,
+          }], 
           URI_PATH_DELETE_QMS_RECEIVE_INSP_RESULT, 
           'delete', 
           'success'
@@ -481,7 +502,7 @@ const INSP_RESULT_DETAIL_GRID = (props:{
       {},
       searchUriPath,
       'header-details'
-    ).then((res) => {
+    ).then((res:any) => {
       setReceiveInspHeaderData(res.header);
       setReceiveInspDetailData(res.details);
       inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});
@@ -531,12 +552,16 @@ const INSP_RESULT_DETAIL_GRID = (props:{
           </Col>
         </Row>
       </Container>
-      <INSP_RESULT_EDIT_POPUP 
-        inspResultUuid={props.inspResultUuid} 
-        popupVisible={editPopupVisible} 
-        setPopupVisible={setEditPopupVisible} 
-        onAfterCloseSearch={onSesrchInspResultDetail}
-      />
+      {editPopupVisible ? 
+        <INSP_RESULT_EDIT_POPUP 
+          inspHandlingType={props.inspHandlingType}
+          inspResultUuid={props.inspResultUuid} 
+          popupVisible={editPopupVisible} 
+          setPopupVisible={setEditPopupVisible} 
+          onAfterCloseSearch={onSesrchInspResultDetail}
+        />
+        : null
+      }
     </>
   );
   //#endregion
@@ -545,6 +570,7 @@ const INSP_RESULT_DETAIL_GRID = (props:{
 
 //#region 성적서 신규 팝업
 export const INSP_RESULT_CREATE_POPUP = (props:{
+  inspHandlingType:any,
   popupVisible:boolean,
   setPopupVisible: (value?) => void
   onAfterCloseSearch?: () => void
@@ -568,7 +594,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   const RECEIVE_POPUP_COLUMNS:IGridColumn[] = [
     {header:'세부입하UUID', name:'receive_detail_uuid', width:ENUM_WIDTH.L, hidden:true},
     {header:'세부입하전표번호', name:'stmt_no_sub', width:ENUM_WIDTH.L, hidden:true},
-    {header:'입하구분코드', name:'insp_detail_type_cd', width:ENUM_WIDTH.M, hidden:true},
+    {header:'입하구분코드', name:'insp_detail_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'입하구분', name:'insp_detail_type_nm', width:ENUM_WIDTH.M},
     {header:'입하일자', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
     {header:'거래처명', name:'partner_nm', width:ENUM_WIDTH.L, filter:'text'},
@@ -641,6 +667,8 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
         'partner_nm', 
         'reg_date', 
         'to_store_uuid',
+        'insp_type_uuid', 
+        'insp_detail_type_uuid', 
         'insp_detail_type_cd', 
         'insp_detail_type_nm', 
         'prod_uuid', 
@@ -652,7 +680,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
         'lot_no', 
         'qty'],
       popupButtonSettings:{
-        dataApiSettings:{uriPath:URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING, params:{insp_detail_type:'all'}}, 
+        dataApiSettings:{uriPath:URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING}, 
         datagridSettings:{gridId:null, columns:RECEIVE_POPUP_COLUMNS},
         modalSettings:{title:'입하전표 선택'}
       },
@@ -681,16 +709,12 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
     {
-      id:'insp_handling_type_cd', 
+      id:'insp_handling_type', 
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      dataSettingOptions:{
-        codeName:'insp_handling_type_cd',
-        textName:'insp_handling_type_nm',
-        uriPath:'/adm/insp-handling-types',
-      },
-      disabled:true,
+      options:props.inspHandlingType,
+      disabled:false,
       onAfterChange: (ev) => {}
     },
     {id:'remark', label:'비고', type:'text'},
@@ -906,22 +930,34 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
     inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
 
     if(emptyFg || nullFg){
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:true});
+      inputInspResult.setFieldDisabled({insp_handling_type:true});
     }else{
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:false});
+      inputInspResult.setFieldDisabled({insp_handling_type:false});
     }
 
+    let _inspHandlingCd:string
+    
     if (flagInputboxValue===true) {
-      inputInspResult.setFieldValue('insp_handling_type_cd','INCOME')
+      _inspHandlingCd = 'INCOME'
       changeInspResult('INCOME');
     }else if(flagInputboxValue===false){
-      inputInspResult.setFieldValue('insp_handling_type_cd','RETURN')
+      _inspHandlingCd = 'RETURN'
       changeInspResult('RETURN');
     }else {
-      inputInspResult.setFieldValue('insp_handling_type_cd','')
+      _inspHandlingCd = ''
+      //inputInspResult.setFieldValue('insp_handling_type','')
       changeInspResult('');
     }
-    
+    if (_inspHandlingCd === ''){
+      inputInspResult.setFieldValue('insp_handling_type','')
+    } else {
+      props.inspHandlingType.forEach(el => {
+        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
+          inputInspResult.setFieldValue('insp_handling_type',el.code)
+          return ;
+        }
+      })
+    }
     //#endregion
   };
 
@@ -946,12 +982,13 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
       message.warn('검사시간을 등록해주세요.')
       return;
     }
-
+    
     headerData = {
       factory_uuid: getUserFactoryUuid(),
       receive_detail_uuid: inputInputItemsValues?.receive_detail_uuid,
-      insp_detail_type_cd: inputInputItemsValues?.insp_detail_type_cd,
-      insp_handling_type_cd: inputInspResultValues?.insp_handling_type_cd,
+      insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
+      insp_detail_type_uuid: inputInputItemsValues?.insp_detail_type_uuid,
+      insp_handling_type_uuid: JSON.parse(inputInspResultValues.insp_handling_type).insp_handling_type_uuid,
       insp_uuid: receiveInspHeaderData?.insp_uuid,
       unit_uuid: inputInputItemsValues?.unit_uuid,
       prod_uuid: receiveInspHeaderData?.prod_uuid,
@@ -1014,16 +1051,17 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   //#endregion
 
   //#region Hook 함수
+
   useLayoutEffect(() => {
     const inspDetailTypeCd = receiveInputData.insp_detail_type_cd;
     const inspDetailType = inspDetailTypeCd === 'MAT_RECEIVE' ? 'matReceive' : inspDetailTypeCd === 'OUT_RECEIVE' ? 'outReceive' : '';
     
     inputInspResultIncome.setFieldValue('to_store_uuid',receiveInputData.to_store_uuid)
-
+    
     if (inspDetailType && receiveInputData.receive_detail_uuid) {
       getData(
         {
-          insp_detail_type: inspDetailType,
+          insp_detail_type_uuid: receiveInputData.insp_detail_type_uuid,
           receive_detail_uuid: receiveInputData.receive_detail_uuid
         },
         '/qms/receive/insp/include-details',
@@ -1039,8 +1077,10 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
   }, [receiveInputData]);
 
   useLayoutEffect(() => {
-    changeInspResult(inputInspResult?.values?.insp_handling_type_cd);
-  }, [inputInspResult?.values?.insp_handling_type_cd]);
+    if(inputInspResult?.values?.insp_handling_type){
+      changeInspResult(JSON.parse(inputInspResult?.values?.insp_handling_type).insp_handling_type_uuid);
+    }
+  }, [inputInspResult?.values?.insp_handling_type]);
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg===false) return;
@@ -1109,6 +1149,7 @@ export const INSP_RESULT_CREATE_POPUP = (props:{
 //#region 성적서 수정 팝업
 export const INSP_RESULT_EDIT_POPUP = (props:{
   inspResultUuid:string,
+  inspHandlingType:any,
   popupVisible:boolean,
   setPopupVisible: (value?) => void,
   onAfterCloseSearch?: (insp_result_uuid:string) => void
@@ -1176,7 +1217,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
     {id:'stmt_no_sub', label:'세부입하전표번호', type:'text', disabled:true},
     {id:'partner_nm', label:'거래처', type:'text', disabled:true},
     {id:'receive_date', label:'입하일', type:'text', disabled:true},
-    {id:'insp_detail_type_cd', label:'입하구분코드', type:'text', hidden:true},
+    {id:'insp_detail_type_uuid', label:'입하구분코드', type:'text', hidden:true},
     {id:'insp_detail_type_nm', label:'입하구분', type:'text', disabled:true},
     {id:'prod_uuid', label:'품목UUID', type:'text', hidden:true},
     {id:'prod_no', label:'품번', type:'text', disabled:true},
@@ -1198,16 +1239,12 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
     {id:'emp_uuid', label:'검사자UUID', type:'text', hidden:true},
     {id:'emp_nm', label:'검사자', type:'text', usePopup:true, popupKey:'사원관리', popupKeys:['emp_nm', 'emp_uuid'], params:{emp_status:'incumbent'}}, 
     {
-      id:'insp_handling_type_cd', 
+      id:'insp_handling_type', 
       label:'처리결과', 
       type:'combo', 
       firstItemType:'empty',
-      dataSettingOptions:{
-        codeName:'insp_handling_type_cd',
-        textName:'insp_handling_type_nm',
-        uriPath:'/adm/insp-handling-types',
-      },
-      disabled:true,
+      options:props.inspHandlingType,
+      disabled:false,
       onAfterChange: (ev) => {}
     },
     {id:'remark', label:'비고', type:'text'},
@@ -1294,6 +1331,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
   const inputInspResult = useInputGroup('INPUT_EDIT_POPUP_INSP_RESULT', INPUT_ITEMS_INSP_RESULT, {title:'검사정보',});
   const inputInspResultIncome = useInputGroup('INPUT_EDIT_POPUP_INSP_RESULT_INCOME', INPUT_ITEMS_INSP_RESULT_INCOME, {title:'입고정보',});
   const inputInspResultReject = useInputGroup('INPUT_EDIT_POPUP_INSP_RESULT_REJECT', INPUT_ITEMS_INSP_RESULT_RETURN, {title:'부적합정보',});
+
   //#endregion
 
   //#region 함수 
@@ -1424,22 +1462,36 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
     inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
 
     if(emptyFg || nullFg){
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:true});
+      inputInspResult.setFieldDisabled({insp_handling_type:true});
     }else{
-      inputInspResult.setFieldDisabled({insp_handling_type_cd:false});
+      inputInspResult.setFieldDisabled({insp_handling_type:false});
     }
 
+    let _inspHandlingCd:string
+
     if (flagInputboxValue===true) {
-      inputInspResult.setFieldValue('insp_handling_type_cd','INCOME')
+      _inspHandlingCd = 'INCOME'
       changeInspResult('INCOME', false);
     }else if(flagInputboxValue===false){
-      inputInspResult.setFieldValue('insp_handling_type_cd','RETURN')
+      _inspHandlingCd = 'RETURN'
       changeInspResult('RETURN', false);
     }else {
-      inputInspResult.setFieldValue('insp_handling_type_cd','')
+      _inspHandlingCd = ''
+      //inputInspResult.setFieldValue('insp_handling_type','')
       changeInspResult('', false);
     }
     
+    if (_inspHandlingCd === ''){
+      inputInspResult.setFieldValue('insp_handling_type','')
+    } else {
+      props.inspHandlingType.forEach(el => {
+        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd){
+          inputInspResult.setFieldValue('insp_handling_type',el.code)
+          return ;
+        }
+      })
+    }
+
     //#endregion
   };
 
@@ -1467,10 +1519,11 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
 
     headerData = {
       uuid: inputInspResultValues?.insp_result_uuid,
+      insp_handling_type_uuid: JSON.parse(inputInspResultValues.insp_handling_type).insp_handling_type_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
       unit_uuid: inputInputItemsValues?.unit_uuid,
       insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_detail_type_cd: inputInputItemsValues?.insp_detail_type_cd,
+      insp_detail_type_uuid: inputInputItemsValues?.insp_detail_type_uuid,
       insp_qty: inputInputItemsValues?.qty,
       pass_qty: inputInspResultIncomeValues?.qty,
       reject_qty: inputInspResultRejectValues?.reject_qty,
@@ -1489,7 +1542,7 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
       for (let k = 1; k <= row.sample_cnt; k++) {
         const value:any = row?.['x'+k+'_insp_value'];
         const uuid:any = row?.['x'+k+'_insp_result_uuid'];
-        console.log(uuid)
+        
         if(value){
           values.push({
             uuid: uuid,
@@ -1547,12 +1600,11 @@ export const INSP_RESULT_EDIT_POPUP = (props:{
         {},
         searchUriPath,
         'header-details'
-      ).then((res) => {
-        console.log(res)
+      ).then((res:any) => {
         setReceiveInspHeaderData(res.header);
         setReceiveInspDetailData(res.details);
         inputInputItems.setValues({...res.header, receive_date:dayjs(res.header.receive_date).add(-6, 'day').format('YYYY-MM-DD'), qty:res.header.insp_qty});
-        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date});
+        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date, insp_handling_type:JSON.stringify({insp_handling_type_uuid:res.header.insp_handling_type_uuid,insp_handling_type_cd:res.header.insp_handling_type_cd})});
         inputInspResultIncome.setValues({...res.header, qty:res.header.pass_qty});
         inputInspResultReject.setValues({...res.header});
 

@@ -9,6 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -91,7 +92,7 @@ export const PgSalReturn = () => {
     },
     {header: '화폐단위UUID', name:'money_unit_uuid', width:ENUM_WIDTH.S, hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text', requiredField:true},
-    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true,
+    {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, requiredField:true, editable:true,
       formula: {
         targetColumnNames:['qty', 'exchange'], resultColumnName:'total_price',
         formula: priceFormula
@@ -219,7 +220,7 @@ export const PgSalReturn = () => {
     },
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -227,13 +228,23 @@ export const PgSalReturn = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (['return_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+      extraButtons: newDataPopupGrid.gridInfo.extraButtons,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {

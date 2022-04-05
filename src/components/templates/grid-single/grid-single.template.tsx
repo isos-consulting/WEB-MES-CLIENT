@@ -5,11 +5,13 @@ import { InputGroupbox} from "~/components/UI/input-groupbox/input-groupbox.ui";
 import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-single.template.type';
-import { getPermissions } from '~/functions';
+import { consoleLogLocalEnv, getPermissions } from '~/functions';
 
 
 export const TpSingleGrid:React.FC<Props> = (props) => {
   /** 🔶권한 */
+  consoleLogLocalEnv('%c단일 그리드 테스트 시작', 'color: green; font-size: 20px;');
+  consoleLogLocalEnv('권한 정보 조회:', getPermissions(props.title));
   const permissions = getPermissions(props.title);
 
   //#region 🔶그리드 관련
@@ -239,7 +241,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
       <div style={props.templateType === 'report' ? {marginTop:-8, width:'100%'} : {width:'100%'}}>{searchProps != null ? searchboxVisible ? <Searchbox {...searchProps}/> : null : null}</div>
       {gridElement}
 
-      {gridPopup == null ? null : 
+      {gridPopup == null || !gridPopupVisible ? null : 
         <GridPopup
           {...gridPopup}
           popupId={gridPopup.gridId+'_POPUP'}
@@ -248,7 +250,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - 신규 항목 추가'}
           visible={gridPopupVisible}
           
-          okText='추가하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (!isSuccess) return;
@@ -285,7 +287,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
         />
       }
       
-      {gridUpdatePopup == null ? null : 
+      {gridUpdatePopup == null || !gridUpdatePopupVisible ? null : 
         <GridPopup
           {...gridUpdatePopup}
           popupId={gridUpdatePopup.gridId+'_POPUP'}
@@ -294,7 +296,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
           title={props.title + ' - 항목 수정'}
           visible={gridUpdatePopupVisible}
           
-          okText='수정하기'
+          okText='저장하기'
           cancelText='취소'
           onAfterOk={(isSuccess, savedData) => { 
             if (!isSuccess) return;
@@ -314,7 +316,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
 
           gridId={gridUpdatePopup.gridId}
           gridMode='update'
-          defaultData={grid.data}
+          data={grid.data}
           columns={gridUpdatePopup.columns}
           saveType={props.dataSaveType || 'basic'}
           searchUriPath={gridUpdatePopup.searchUriPath}

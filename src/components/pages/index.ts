@@ -1,10 +1,10 @@
-export * from './authentication.page';
 export * from './login.page';
 export * from './test-double-grid.page';
 
 export * from './adm/cycle-unit.page';
 export * from './adm/daily-insp-cycle.page';
 export * from './adm/bom-type.page';
+export * from './adm/bom-input-type.page';
 export * from './adm/insp-type.page';
 export * from './adm/insp-detail-type.page';
 export * from './adm/tran-type.page';
@@ -129,6 +129,7 @@ export * from './qms/final-insp-result-report.page';
 export * from './qms/rework.page';
 export * from './qms/rework-report.page';
 
+export * from './eqm/equip-insp-result.page';
 export * from './eqm/repair-history.page';
 export * from './eqm/history-card.page';
 export * from './eqm/insp.page';

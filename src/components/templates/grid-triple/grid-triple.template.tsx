@@ -460,7 +460,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
               </Col>
             </>
           }
-          {headerPopup == null ? null :
+          {headerPopup == null || !headerPopupVisible ? null :
             <GridPopup
               {...headerPopup}
               popupId={headerPopup.gridId+'_POPUP'}
@@ -469,7 +469,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
               title={props.title + ' - ' + btnCreateText}
               visible={headerPopupVisible}
               
-              okText='추가하기'
+              okText='저장하기'
               cancelText='취소'
               onAfterOk={(isSuccess, savedData) => { 
                 if (props?.onAfterOkNewDataPopup) {
@@ -507,7 +507,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
             />
           }
 
-          {detailPopup == null ? null :
+          {detailPopup == null || !detailPopupVisible ? null :
             <GridPopup
             {...detailPopup}
               popupId={detailPopup.gridId+'_POPUP'}
@@ -516,7 +516,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
               title={props.title + ' - ' + btnAddText}
               visible={detailPopupVisible}
 
-              okText='추가하기'
+              okText='저장하기'
               cancelText='취소'
               onAfterOk={(isSuccess, savedData) => { 
                 if (props?.onAfterOkAddDataPopup) {
@@ -554,7 +554,7 @@ export const TpTripleGrid:React.FC<Props> = (props) => {
             />
           }
 
-          {editPopup == null ? null :
+          {editPopup == null || !editPopupVisible ? null :
             <GridPopup
             {...editPopup}
               popupId={editPopup.gridId+'_POPUP'}

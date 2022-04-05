@@ -1,8 +1,7 @@
 import { FormikProps, FormikValues } from "formik";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { SetterOrUpdater, useRecoilState, useRecoilValue } from "recoil";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { SetterOrUpdater, useRecoilValue } from "recoil";
 import { cloneObject } from "~/functions";
-import { afInputGroupDefaultValues } from ".";
 import { afInputGroupValues, IInputGroupboxItem, IInputGroupboxProps } from "./input-groupbox.ui";
 
 
@@ -64,8 +63,8 @@ export const useInputGroup = (id: string, inputItems:IInputGroupboxItem[], input
   
   const ref = useRef<FormikProps<FormikValues>>();
 
-  const [,setValues] = useRecoilState(afInputGroupValues(id));
-  const [defaultValues, setDefaultValues] = useRecoilState(afInputGroupDefaultValues(id));
+  const [values, setValues] = useState<FormikValues>({});
+  const defaultValues = useRef({});
   const [_inputItems, setInputItems] = useState<IInputGroupboxItem[]>(inputItems);
   const [_inputGroupOptions, setInputGroupOptions] = useState<Omit<IInputGroupboxProps, 'id' | 'inputItems' | 'innerRef'>>(inputGroupOptions);
 
@@ -99,10 +98,11 @@ export const useInputGroup = (id: string, inputItems:IInputGroupboxItem[], input
       setValues(crr => ({...crr, [id]:value}));
     }
   }
- 
-  const [aaa, setAAAA] = useState({});
 
-  const modifiedValues = getModifiedInputGroupValues(id, aaa);
+  const modifiedValues = useMemo(() => {
+    return getModifiedInputGroupValues(id, defaultValues, values);
+  }, [id, values, defaultValues]);
+  
   const isModified = useMemo(() => {
     return Object.keys(modifiedValues).length > 0;
   }, [modifiedValues]);
@@ -128,26 +128,19 @@ export const useInputGroup = (id: string, inputItems:IInputGroupboxItem[], input
   }, [inputGroupOptions]);
 
   useLayoutEffect(() => {
-    if (ref?.current?.values != defaultValues) {
-      const includeAliasValues = onIncludeAliasValues(inputItems, defaultValues);
-      setValues(includeAliasValues);
+    if (ref?.current) {
+      const includeAliasValues = onIncludeAliasValues(inputItems, values);
+      defaultValues.current = ref?.current?.values;
       ref?.current?.setValues(includeAliasValues);
     }
-  }, [defaultValues]);
-
-  const setInputValues = (values) => {
-    const includeAliasValues = onIncludeAliasValues(inputItems, values);
-    setValues(includeAliasValues);
-    setAAAA(includeAliasValues);
-    ref?.current?.setValues(includeAliasValues);
-  }
+  }, [values]);
 
   const model = inputGroupModel({
     ref,
     instance: ref?.current,
     props,
-    values: ref?.current?.values || defaultValues || {},
-    setValues: ref?.current ? setInputValues : setDefaultValues,
+    values: values,
+    setValues: setValues,
     modifiedValues,
     isModified,
     inputItemKeys,
@@ -193,26 +186,23 @@ const onIncludeAliasValues = (inputItems, values) => {
 }
 
 /** 그룹입력상자의 수정된 항목만 반환합니다. */
-const getModifiedInputGroupValues = (id:string, values):FormikValues => {
-  // const values = useRecoilValue(afInputGroupValues(id));
-  const editValues = useRecoilValue(afInputGroupValues(id));
-
+const getModifiedInputGroupValues = (id:string, oldValues, newValues):FormikValues => {
   let result = {};
 
   // 초기값과 비교해서 달라진 항목만 출력합니다.
-  const nowKeys = values == null ? [] : Object.keys(values);
-  const editKeys = editValues == null ? [] : Object.keys(editValues);
+  const oldKeys = oldValues == null ? [] : Object.keys(oldValues);
+  const newKeys = newValues == null ? [] : Object.keys(newValues);
 
-  let keys = editKeys.concat(nowKeys)
+  let keys = oldKeys.concat(newKeys)
   keys = keys?.filter((value, index) => keys?.indexOf(value) === index);
 
   keys?.forEach((key) => {
-    if (editKeys?.includes(key) === false && nowKeys?.includes(key)) { // 새로 신규 키가 삽입되어 있는 경우
-      result[key] = values[key];
+    if (oldKeys?.includes(key) === false && newKeys?.includes(key)) { // 새로 신규 키가 삽입되어 있는 경우
+      result[key] = newValues[key];
 
-    } else if (editKeys?.includes(key) && nowKeys?.includes(key)) { // 둘다 키를 가지고 있지만 값이 다른 경우
-      if (editValues[key] !== values[key]) {
-        result[key] = values[key];
+    } else if (oldKeys?.includes(key) && newKeys?.includes(key)) { // 둘다 키를 가지고 있지만 값이 다른 경우
+      if (oldValues[key] !== newValues[key]) {
+        result[key] = newValues[key];
       }
     } 
   });

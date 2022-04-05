@@ -2144,6 +2144,25 @@ const URL_PATH = {
         HISTORIES:'/eqm/histories',
       },
     },
+    INSP_RESULT:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        INSP_RESULT:'/eqm/insp-result/{uuid}',
+        INSP_RESULTS:'/eqm/insp-results',
+      },
+      POST:{
+        INSP_RESULTS:'/eqm/insp-results',
+      },
+      PUT:{
+        INSP_RESULTS:'/eqm/insp-results',
+      },
+      PATCH:{
+        INSP_RESULTS:'/eqm/insp-results',
+      },
+      DELETE:{
+        INSP_RESULTS:'/eqm/insp-results',
+      },
+    },
   },
   MLD:{
     REPORT:{

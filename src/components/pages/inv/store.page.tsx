@@ -221,7 +221,7 @@ export const PgInvStore = () => {
         }
       }
     },
-    {type:'text', id:'tran_type', label:'수불유형', default:'inventory', hidden:true},
+    {type:'text', id:'tran_type_cd', label:'수불유형', default:'inventory', hidden:true},
   ]);
   
 
@@ -305,7 +305,7 @@ export const PgInvStore = () => {
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
-    {type:'date', id:'reg_date', label:'수불일', default:getToday()},
+    {type:'date', id:'reg_date', label:'수불일', default:getToday(), required:true},
   ]);
   const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
 
@@ -401,6 +401,7 @@ export const PgInvStore = () => {
   const invStoreSearchItems:ISearchItem[] = [
     {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'기간'},
   ];
+
   const invStoreColumns:IGridColumn[] = [
     {header: '재고수불UUID', name:'inv_store_uuid', alias:'uuid', filter:'text', hidden:true},
     {header: '수불일', name:'reg_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
@@ -430,7 +431,7 @@ export const PgInvStore = () => {
   const getInvStoreData = (searchParams) => {
     getData({
       ...searchParams,
-      tran_type: 'inventory',
+      tran_type_cd: 'INVENTORY',
     }, invStroeUriPath).then((res) => {
       setInvStoreData(res);
     });
@@ -463,8 +464,8 @@ export const PgInvStore = () => {
     cancelButtonProps: {hidden:true},
     onCancel: () => setInvStorePopupVisible(false),
     okText: '저장',
-    onOk: () => {
-      onDefaultGridSave('basic', invStoreGridRef, invStoreColumns, invStroeUriPath, {}, modal, onInvStroeOkAfterEvent);
+    onOk: (gridRef) => {
+      onDefaultGridSave('basic', gridRef, invStoreColumns, invStroeUriPath, {}, modal, onInvStroeOkAfterEvent);
     }
   };
   const INV_STORE_EXTRA_BUTTON:IExtraButton = {
@@ -495,7 +496,7 @@ export const PgInvStore = () => {
     popupGridInfo: [
       {
         ...newDataPopupGrid?.gridInfo,
-        saveParams: newDataPopupInputInfo?.values,
+        saveParams: newDataPopupInputInfo?.ref?.current?.values,
       },
       editDataPopupGrid?.gridInfo
     ],

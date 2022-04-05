@@ -26,25 +26,17 @@ export const orderWorker = () => {
   const gridPopupInfo:TGridPopupInfos = [
     {
       columnNames: [
-        // {original:'order_worker_uuid', popup:'order_worker_uuid'},
-        {original:'worker_uuid', popup:'worker_uuid'},
-        {original:'worker_nm', popup:'worker_nm'},
+        {original:'emp_uuid', popup:'emp_uuid'},
+        {original:'emp_nm', popup:'emp_nm'},
       ],
-      // popupKey:'',
       dataApiSettings: {
-        uriPath:'/std/workers',
-        params: {}
+        uriPath:'/std/emps',
+        params: {
+          emp_status: 'incumbent',
+          worker_fg: true,
+        },
       },
       columns: [
-        {header: '작업자투입UUID', name:'order_worker_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '작업자UUID', name:'worker_uuid', width:200, format:'text', editable:true, requiredField:true, hidden:true},
-        {header: '작업자명', name:'worker_nm', width:200, format:'text', editable:true, requiredField:true},
-        {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '공정코드', name:'proc_cd', width:150, format:'text', hidden:true},
-        {header: '공정명', name:'proc_nm', width:150, format:'popup', editable:true},
-        {header: '작업장UUID', name:'workings_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '작업장코드', name:'workings_cd', width:150, format:'text', hidden:true},
-        {header: '작업장명', name:'workings_nm', width:120, format:'combo', editable:true},
         {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:150, format:'text', hidden:true},
         {header: '사번', name:'emp_cd', width:150, format:'popup', editable:true},
         {header: '사원명', name:'emp_nm', width:120, format:'popup', editable:true},
@@ -72,8 +64,8 @@ export const orderWorker = () => {
     columns: [
       {header:'작업자투입UUID', name:'order_worker_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
       {header:'작업지시UUID', name:'order_uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자UUID', name:'worker_uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자명', name:'worker_nm', width:200, hidden:false, format:'text'},
+      {header:'작업자UUID', name:'emp_uuid', width:200, hidden:true, format:'text'},
+      {header:'작업자명', name:'emp_nm', width:200, hidden:false, format:'text'},
     ],
     /** 그리드 데이터 */
     data: data,
@@ -105,11 +97,11 @@ export const orderWorker = () => {
     /** 팝업 제목 */
     title: '투입인원 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       console.log('saveOptionParams', saveOptionParams);
       saveGridData(
-        getModifiedRows(newPopupGridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
@@ -195,7 +187,7 @@ export const orderWorker = () => {
         <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
       </Container>
 
-      <GridPopup {...newGridPopupInfo} />
+      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

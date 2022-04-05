@@ -59,7 +59,7 @@ export const PgEqmInsp = () => {
     }
 
     executeData(
-      {uuid},
+      [{uuid}],
       value ? cancelApplyUriPath : applyUriPath,
       'put',
       'success',
@@ -147,7 +147,7 @@ export const PgEqmInsp = () => {
   const detailSubGrid = useGrid('DETAIL_SUB_GRID', [
     {header:'세부기준서UUID', name:'insp_detail_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'세부기준서번호', name:'insp_no_sub', width:ENUM_WIDTH.M, hidden:true},
-    {header:'정기점검 ', name:'periodicity_fg', width:ENUM_WIDTH.M, format:'check', editable: true},
+    {header:'정기점검', name:'periodicity_fg', width:ENUM_WIDTH.M, format:'check', editable: true, requiredField:true},
     {header:'검사기준UUID', name:'insp_item_type_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'검사항목UUID', name:'insp_item_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header:'검사유형', name:'insp_item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
@@ -399,7 +399,7 @@ export const PgEqmInsp = () => {
     },
     {type:'text', id:'equip_cd', label:'설비', disabled:true},
     {type:'text', id:'insp_no', label:'기준서 번호', disabled:true},
-    {type:'date', id:'reg_date', label:'생성일자', disabled:true, default:getToday(0,{format:'YYYY-MM-DD'})},
+    {type:'date', id:'reg_date', label:'생성일자', disabled:true, default:getToday(0,{format:'YYYY-MM-DD'}), required:true},
     {type:'text', id:'contents', label:'개정내역', disabled:true},
     {type:'text', id:'remark', label:'비고', disabled:true},
   ]);

@@ -74,7 +74,7 @@ export const ROUTING = () => {
     title: '공정순서 항목 수정',
     /** 포지티브 버튼 글자 */
     okText: '수정하기',
-    onOk: () => onSave(editPopupGridRef, 'update'),
+    onOk: (gridRef) => onSave(gridRef, 'update'),
     /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
@@ -223,7 +223,7 @@ export const ROUTING = () => {
       </Container>
 
       {contextHolder}
-      <GridPopup {...editGridPopupInfo} />
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
     </>
   );
   //#endregion

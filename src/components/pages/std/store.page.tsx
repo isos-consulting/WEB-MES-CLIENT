@@ -28,6 +28,7 @@ export const PgStdStore = () => {
     {header: '창고UUID', name:'store_uuid', alias:'uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
     {header: '창고코드', name:'store_cd', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
     {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
+    {header: '창고 위치 유형(사내/사외)', name:'position_type', width:ENUM_WIDTH.XL, format:'combo', editable:true, requiredField:true},
     {header: '가용재고창고여부', name:'available_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
     {header: '부적합창고여부', name:'reject_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
     {header: '반출창고여부', name:'return_store_fg', width:ENUM_WIDTH.M, format:'check', editable:true, requiredField:true},
@@ -38,6 +39,17 @@ export const PgStdStore = () => {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
+    gridComboInfo: [
+      { // 투입단위 콤보박스
+        columnNames: [
+          {codeColName:{original:'position_type', popup:'position_type'}, textColName:{original:'position_type_nm', popup:'position_type_nm'}},
+        ],
+        itemList: [
+          {code: '사내', text: '사내'},
+          {code: '사외', text: '사외'}
+        ]
+      }
+    ]
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
@@ -45,6 +57,7 @@ export const PgStdStore = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridComboInfo: grid.gridInfo.gridComboInfo,
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
@@ -52,6 +65,7 @@ export const PgStdStore = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridComboInfo: grid.gridInfo.gridComboInfo,
     }
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);

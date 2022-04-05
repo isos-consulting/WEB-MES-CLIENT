@@ -40,7 +40,7 @@ export const PgMldMoldReport = () => {
     {header: '기초수량 [H=A*C]', name:'basic_qty', width:ENUM_WIDTH.M,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header: '생산수량 [I]', name:'work_qty', width:ENUM_WIDTH.M,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header: '잔여수량 [J=G-(H+I)]', name:'remained_qty', width:ENUM_WIDTH.M,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-    {header: '타수율 [(H+I)/G]', name:'mold_rate', width:ENUM_WIDTH.M,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+    {header: '타수율 [(H+I)/G]', name:'mold_rate', width:ENUM_WIDTH.M,  format:'percent', decimal:ENUM_DECIMAL.DEC_NOMAL},
   ], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,

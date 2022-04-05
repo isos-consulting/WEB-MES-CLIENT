@@ -25,8 +25,8 @@ export const PgStdWorkerGroupWorker = () => {
   const headerSearchUriPath = '/std/worker-groups';
   const headerSaveUriPath = '/std/worker-groups';
   const detailDefaultGridMode = 'delete';
-  const detailSearchUriPath = '/std/worker-group-workers';
-  const detailSaveUriPath = '/std/worker-group-workers';
+  const detailSearchUriPath = '/std/worker-group-emps';
+  const detailSaveUriPath = '/std/worker-group-emps';
 
   /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
@@ -62,10 +62,10 @@ export const PgStdWorkerGroupWorker = () => {
   });
 
   const detailGrid = useGrid('DETAIL_GRID', [
-    {header: '작업조-작업자UUID', name:'worker_group_worker_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '작업조-작업자UUID', name:'worker_group_emp_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
     {header: '작업조UUID', name:'worker_group_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '작업자UUID', name:'worker_uuid', width:ENUM_WIDTH.M, hidden:true},
-    {header: '작업자명', name:'worker_nm', width:ENUM_WIDTH.L, format:'popup', editable:true, requiredField:true},
+    {header: '작업자UUID', name:'emp_uuid', width:ENUM_WIDTH.M, hidden:true},
+    {header: '사원명', name:'emp_nm', width:ENUM_WIDTH.L, format:'popup', requiredField:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, editable:true},
   ], {
     searchUriPath: detailSearchUriPath,
@@ -74,24 +74,20 @@ export const PgStdWorkerGroupWorker = () => {
     gridPopupInfo: [
       {
         columnNames: [
-          {original:'worker_uuid', popup:'worker_uuid'},
-          {original:'worker_cd', popup:'worker_cd'},
-          {original:'worker_nm', popup:'worker_nm'},
+          {original:'emp_uuid', popup:'emp_uuid'},
+          {original:'emp_nm', popup:'emp_nm'},
         ],
         columns: [
-          {header: '작업자UUID', name:'worker_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
-          {header: '공정UUID', name:'proc_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
-          {header: '공정명', name:'proc_nm', width:ENUM_WIDTH.L},
-          {header: '작업장UUID', name:'workings_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
-          {header: '작업장명', name:'workings_nm', width:ENUM_WIDTH.L},
-          {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+          {header: '사원UUID', name:'emp_uuid', width:ENUM_WIDTH.M, hidden:true},
           {header: '사번', name:'emp_cd', width:ENUM_WIDTH.M},
           {header: '사원명', name:'emp_nm', width:ENUM_WIDTH.L},
-          {header: '작업자명', name:'worker_nm', width:ENUM_WIDTH.L},
         ],
         dataApiSettings: {
-          uriPath: '/std/workers',
-          params: {}
+          uriPath: '/std/emps',
+          params: {
+            emp_status: 'incumbent',
+            worker_fg: true
+          }
         },
         gridMode:'select'
       }

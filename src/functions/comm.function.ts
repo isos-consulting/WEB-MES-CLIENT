@@ -43,7 +43,7 @@ export async function getData<T = any[]>(
   }
 ):Promise<T> {
   loadProgressBar();
-  
+  const _baseUrl = optionBaseURL ? optionBaseURL : baseURL
   let datas:any = null;
   // let FACTORY_INSERT_FLAG:boolean = true;
 
@@ -57,7 +57,7 @@ export async function getData<T = any[]>(
     }
     datas = await axios({
       method: 'get',
-      baseURL:optionBaseURL,
+      baseURL:_baseUrl,
       url: uriPath,
       params: {...params, factory_uuid:getUserFactoryUuid()},
       headers: {
@@ -82,7 +82,6 @@ export async function getData<T = any[]>(
       
     } else {
       datas = null;
-      console.log('getData', error);
 
       if (!disabledErrorMessage) {
         message.error(error.response.data.message);
@@ -276,6 +275,21 @@ export const getMenus = async () => {
             menu_type: 'page',
             menu_uri: '/adm/bom-type',
             menu_uuid: 'admBomType',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
+          {
+            component_nm: 'PgAdmBomInputType',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: 'BOM 투입유형',
+            menu_type: 'page',
+            menu_uri: '/adm/bom-input-type',
+            menu_uuid: 'admBomInputType',
             read_fg: true,
             sub_menu: [],
             update_fg: true
@@ -583,7 +597,7 @@ export const getPermissions = (pageName:string):TPermission => {
   return permissions;
 }
 
-const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type:string}> => {
+export const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type:string}> => {
   let refreshData:any = null;
   let refreshState:any = null;
   try {
@@ -610,13 +624,13 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
     refreshState = refreshData.data.state
   } catch (error) {
     console.log(error)
-    if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
+    // if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
       localStorage.setItem('state',JSON.stringify({
         EXPIRED_REFRESH_TOKEN: true,
       }));
       await setLogout();
       
-    }
+    // }
     refreshState = error.response.data.state
   }
   console.log(...refreshState)
@@ -630,7 +644,6 @@ const getAccessToken = async ():Promise<{state_no:string, state_tag:string, type
 export const setLogout = async () => {
   
   localStorage.removeItem('userInfo');
-  localStorage.removeItem('tokenInfo');
   
-  window.location.href = "/login";
+  window.location.href = "/";
 }

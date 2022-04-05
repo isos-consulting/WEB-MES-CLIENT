@@ -10,7 +10,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -72,16 +72,16 @@ export const PgOutReceive = () => {
     {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
-    {header: 'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: 'Rev', name:'rev', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '모델UUID', name:'model_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '규격', name:'prod_std', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '안전재고', name:'safe_stock', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
-    {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.S, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '단위UUID', name:'unit_uuid', width:ENUM_WIDTH.S, filter:'text', format:'popup', hidden:true},
     {header: '단위', name:'unit_nm', width:ENUM_WIDTH.S, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.L, filter:'text', editable:true, requiredField:true},
-    {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true, requiredField:true},
+    {header: '화폐단위아이디', name:'money_unit_uuid', hidden:true},
     {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.S, filter:'text', requiredField:true},
     {header: '단가', name:'price', width:ENUM_WIDTH.M, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE, editable:true, requiredField:true,
       formula: {
@@ -363,7 +363,7 @@ export const PgOutReceive = () => {
     ],
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -371,13 +371,23 @@ export const PgOutReceive = () => {
     extraButtons: newDataPopupGrid.gridInfo.extraButtons,
   });
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', newDataPopupGrid.gridInfo.columns, {
-    searchUriPath: detailSearchUriPath,
-    saveUriPath: detailSaveUriPath,
-    rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
-    extraButtons: newDataPopupGrid.gridInfo.extraButtons,
-  });
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
+    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+      if (['qty', 'price', 'money_unit_nm', 'exchange', 'carry_fg'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }), 
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
+      gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
+      extraButtons: newDataPopupGrid.gridInfo.extraButtons,
+    }
+  );
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = (ev) => {

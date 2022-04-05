@@ -22,6 +22,7 @@ export type TPopupKey =
 | '불량유형관리' 
 | '부적합관리' 
 | '창고관리' 
+| '창고유형' 
 | '단위관리' 
 | '직급관리' 
 | '사원관리' 
@@ -73,6 +74,7 @@ export function getPopupForm(popupKey:TPopupKey, option?:IPopupItemOptionProps):
     case '불량유형관리': return getPI_StdRejectType(option);
     case '부적합관리': return getPI_StdReject(option);
     case '창고관리': return getPI_StdStore(option);
+    case '창고관리': return getPI_AdmStoreType(option);
     case '단위관리': return getPI_StdUnit(option);
     case '직급관리': return getPI_StdGrade(option);
     case '사원관리': return getPI_StdEmp(option);
@@ -479,6 +481,28 @@ const getPI_StdStore = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps =>
   return result;
 }
 
+const getPI_AdmStoreType = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
+  let result:IPopupItemsRetrunProps = {
+    modalProps:{
+      title:'창고유형',
+      visible: true,
+    },
+    datagridProps:{
+      gridId: option?.id,
+      columns:[
+        {header: '창고유형아이디',name:'store_type_uuid', hidden:true},
+        {header: '창고유형코드',name:'store_type_cd', width:200, filter:'text'},
+        {header: '창고유형명칭',name:'store_type_nm', width:200, filter:'text'},
+      ],
+      gridMode: 'select',
+    },
+    uriPath:'/adm/store-types',
+    parentGridId: option?.parentGridId,
+  }
+
+  return result;
+}
+
 const getPI_StdUnit = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
   let result:IPopupItemsRetrunProps = {
     modalProps:{
@@ -776,6 +800,7 @@ const getPI_StdInspType = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps
     datagridProps:{
       gridId: option?.id,
       columns:[
+        {header: '검사유형UUID',name:'insp_type_uuid', width:200, filter:'text', hidden:true},
         {header: '검사유형코드',name:'insp_type_cd', width:200, filter:'text'},
         {header: '검사유형명',name:'insp_type_nm', width:200, filter:'text'},
       ],
@@ -897,7 +922,7 @@ const getPI_InvStore = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps =>
         {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '제품유형UUID', name:'prod_type_uuid', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
         {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
-        {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', filter:'text', hidden:true},
+        {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, format:'text', filter:'text'},
         {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, format:'text', filter:'text'},
         {header: 'Rev', name:'rev', width:ENUM_WIDTH.M, format:'text', filter:'text'},

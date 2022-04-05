@@ -29,9 +29,9 @@ export const PgSalIncome = () => {
   const grid = useGrid('GRID', [
     {header: '제품입고아이디', name:'income_uuid', width:ENUM_WIDTH.M, alias: 'uuid', filter:'text', format:'text', hidden:true},
     {header: '입고일시', name:'reg_date', width:ENUM_WIDTH.L, filter:'text', format:'date', requiredField:true},
-    {header: '품목아이디', name:'prod_uuid', filter:'text', format:'popup', hidden:true, requiredField:true},
-    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:false},
+    {header: '품목아이디', name:'prod_uuid', filter:'text', format:'popup', hidden:true},
+    {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '품명', name:'prod_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:false, requiredField:true},
     {header: '모델아이디', name:'model_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup'},
@@ -44,15 +44,15 @@ export const PgSalIncome = () => {
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', format:'text', requiredField:true},
     {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'text', format:'number', editable:true, requiredField:true},
 
-    {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true, requiredField:true},
+    {header: '출고창고아이디', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
     {header: '출고창고코드', name:'from_store_cd', width:ENUM_WIDTH.M, filter:'text', format:'popup', hidden:true},
-    {header: '출고창고명', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup'},
+    {header: '출고창고명', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', requiredField:true},
 
     {header: '출고위치아이디', name:'from_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
     {header: '출고위치코드', name:'from_location_cd', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
     {header: '출고위치명', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'text', hidden:true},
 
-    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
+    {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true},
     {header: '입고창고명', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
 
     {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', format:'popup',  hidden:true},
@@ -185,6 +185,13 @@ export const PgSalIncome = () => {
       if (el.name === 'to_location_nm' || el.name === 'to_store_nm') {
         el.editable = false
       }
+      
+      if (['income_uuid', 'qty'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+
       return el.name !== 'reg_date';
     }),
     {

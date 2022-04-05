@@ -166,10 +166,10 @@ export const orderRoute = () => {
     /** 팝업 제목 */
     title: '공정순서 수정',
     /** 포지티브 버튼 글자 */
-    okText: '수정하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(editPopupGridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
+        getModifiedRows(gridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
         editGridPopupInfo.columns,
         editGridPopupInfo.saveUriPath,
         editGridPopupInfo.saveOptionParams,
@@ -228,10 +228,10 @@ export const orderRoute = () => {
     /** 팝업 제목 */
     title: '공정순서 등록',
     /** 포지티브 버튼 글자 */
-    okText: '추가하기',
-    onOk: () => {
+    okText: '저장하기',
+    onOk: (gridRef) => {
       saveGridData(
-        getModifiedRows(appendPopupGridRef, appendGridPopupInfo.columns, appendGridPopupInfo.data),
+        getModifiedRows(gridRef, appendGridPopupInfo.columns, appendGridPopupInfo.data),
         appendGridPopupInfo.columns,
         appendGridPopupInfo.saveUriPath,
         appendGridPopupInfo.saveOptionParams,
@@ -327,8 +327,8 @@ export const orderRoute = () => {
         <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
       </Container>
 
-      <GridPopup {...editGridPopupInfo} />
-      <GridPopup {...appendGridPopupInfo} />
+      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
+      {appendPopupVisible ? <GridPopup {...appendGridPopupInfo} /> : null}
 
       {contextHolder}
     </>

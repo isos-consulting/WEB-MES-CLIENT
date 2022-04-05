@@ -68,8 +68,8 @@ export const PgInvStoresTypeHistory = () => {
     ];
 
     for (let i = 0; i <= tranTypes.length - 1 ; i++) {
-      _columns.push({header:'입고', name:tranTypes[i]?.tran_cd +'_in_qty', width:ENUM_WIDTH.M, format:'number' });
-      _columns.push({header:'출고', name:tranTypes[i]?.tran_cd +'_out_qty', width:ENUM_WIDTH.M, format:'number' });
+      _columns.push({header:'입고', name:tranTypes[i]?.tran_type_cd +'_in_qty', width:ENUM_WIDTH.M, format:'number' });
+      _columns.push({header:'출고', name:tranTypes[i]?.tran_type_cd +'_out_qty', width:ENUM_WIDTH.M, format:'number' });
     }
     return _columns;    
   }, [tranTypes]);
@@ -80,9 +80,9 @@ export const PgInvStoresTypeHistory = () => {
     for (let i = 0; i <= tranTypes.length - 1 ; i++) {
       _complexColumns.push(
         {
-          header:tranTypes[i]?.tran_nm, 
-          name:'_'+tranTypes[i]?.tran_cd , 
-          childNames:[tranTypes[i]?.tran_cd +'_in_qty', tranTypes[i]?.tran_cd +'_out_qty']
+          header:tranTypes[i]?.tran_type_nm, 
+          name:'_'+tranTypes[i]?.tran_type_cd , 
+          childNames:[tranTypes[i]?.tran_type_cd +'_in_qty', tranTypes[i]?.tran_type_cd +'_out_qty']
         }
       );
     }

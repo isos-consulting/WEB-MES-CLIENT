@@ -10,6 +10,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 
 
 
@@ -56,17 +57,17 @@ export const PgMatRelease = () => {
   const grid = useGrid('GRID', [
     {header: '출고UUID', name:'release_uuid', alias:'uuid', hidden:true},
     {header: '출고일', name:'reg_date', width:ENUM_WIDTH.M, filter:'text', editable:true, format:'date', requiredField:true},
-    {header: '품목UUID', name:'prod_uuid', hidden:true, requiredField:true},
+    {header: '품목UUID', name:'prod_uuid', hidden:true},
     {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
     {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text', format:'popup', editable:true, align:'center'},
-    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format: 'popup', editable: true},
-    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true},
+    {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text', format: 'popup', editable: true, requiredField:true},
+    {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '모델', width:ENUM_WIDTH.M, name:'model_nm', filter:'text', format:'popup', editable:true},
     {header: 'Rev', width:ENUM_WIDTH.S, name:'rev', filter:'text', format:'popup', editable:true},
     {header: '규격', width:ENUM_WIDTH.L, name:'prod_std', filter:'text', format:'popup', editable:true},
     {header: '안전재고', width:ENUM_WIDTH.S, name:'safe_stock', format:'popup', editable:true},
-    {header: '단위UUID', name:'unit_uuid', format:'popup', editable:true, hidden:true, requiredField:true},
-    {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text', format:'popup', editable:true},
+    {header: '단위UUID', name:'unit_uuid', format:'popup', editable:true, hidden:true},
+    {header: '단위', width:ENUM_WIDTH.S, name:'unit_nm', filter:'text', format:'popup', editable:true, requiredField:true},
     {header: 'LOT NO', width:ENUM_WIDTH.M, name:'lot_no', filter:'text', editable:true, requiredField:true},
     {header: '수량', width:ENUM_WIDTH.S, name:'qty', format:'number', editable:true, requiredField:true},
     {header: '출고창고UUID', name:'from_store_uuid', hidden:true, format:'popup', editable:true},
@@ -227,7 +228,14 @@ export const PgMatRelease = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    editDataPopupGridColumns,
+    _.cloneDeep(editDataPopupGridColumns).map((el) => {
+      if (['release_uuid', 'qty'].includes(el?.name)) {
+        el['requiredField'] = true;
+      } else {
+        el['requiredField'] = false;
+      }
+      return el;
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -482,7 +490,7 @@ export const PgMatRelease = () => {
       saveType: 'basic',
       searchUriPath: '/mat/releases',
       saveUriPath: '/mat/releases',
-      okText: '추가하기',
+      okText: '저장하기',
       onCancel: (ev) => {
         const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 
