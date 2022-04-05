@@ -23,7 +23,7 @@ const SideNavbar: React.FC<Props> = (props) => {
   const { menu, rawMenu, menuState, setMenuState } = props;
   const [layoutState, setLayoutState] = useRecoilState(layoutStore.state);
 
-  console.log('sidenav-menuState', menuState);
+  console.log('사이드 네비게이션 바 메뉴 정보 : ', menuState);
 
   // 1level메뉴 클릭 이벤트
   const onChangeLevel1State = (selectedLevel1: string, route?:boolean) => {

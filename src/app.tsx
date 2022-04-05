@@ -43,13 +43,13 @@ const App = () => {
   const tenantIsAllocated = (tenant) => {
     return tenant !== '';
   }
-
+  
   const handleGetTeneuntInfo = async () => {
+    {console.log('%cTenant 정보 부여 테스트 시작', 'color: green; font-size: 20px;')}
     const hostName = window.location.hostname;
 
     console.log(`접속 호스트 : ${hostName}`);
-    console.log(`접속 호스트가 로컬 환경인가요? : ${hostName}`);
-    console.log(`로컬 webURL 주소 : ${getLocalUrl()}`);
+    console.log(`로컬 호스트 일 경우 webURL 주소 : ${getLocalUrl()}`);
 
     const webURL = checkLocalEnviroment(hostName)? getLocalUrl(): hostName;
     
@@ -63,19 +63,19 @@ const App = () => {
 
       localStorage.setItem('tenantInfo', getSerialTenantUuid(tenantInfo[0]?.uuid));
 
+      {console.log('%cTenant 정보 부여 테스트 끝', 'color: green; font-size: 20px;')}
       setTeneunt(tenantInfo[0]?.uuid);
     }
   }
-
   const routeLayout = () => {
     return (tenantIsAllocated(teneunt))? <LayoutRoute /> : <span>테넌트 정보를 받아오는 중...</span>
   }
-
+  
   /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
     handleGetTeneuntInfo()
   },[])
-
+  
   return (
     <div>
       {console.log(`tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`)}
@@ -98,24 +98,25 @@ const LayoutRoute = () => {
       setMenu(menus.data);
       setRawMenu(menus.rawData);
     };
-
+    
     if(isLogin) {
       setLoading(true);
       setMenus();
       setLoading(false);
     }
   },[isLogin]);
-
+  
   // useLayoutEffect(()=>{
-
-  // },[isLogin])
-
-  return (
-    <>
-      {console.log(`어라 왜 2번 불러와지지? 어라 왜 2번 불러와지지?`)}
+    
+    // },[isLogin])
+    
+    return (
+      <>
+      {console.log('%cLayoutRoute 컴포넌트 테스트 시작', 'color: green; font-size: 20px;')}
       {console.log(`로딩 상태? : ${loading}`)}
       {console.log(`로그인 상태인가요? : ${isLogin}`)}
-      {console.log(`메뉴가 있나요? : ${menu}`, menu)}
+      {console.log(`메뉴가 있나요? : `, menu)}
+      {console.log('%cLayoutRoute 컴포넌트 테스트 끝', 'color: green; font-size: 20px;')}
       {isLogin ? 
         <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
           <Suspense fallback='...loading'>
@@ -128,11 +129,6 @@ const LayoutRoute = () => {
                     path={'/dashboard'}
                     component={Dashboard}
                   />
-                  {/* {Object.keys(menu).map ((item, key) => {
-                    console.log(`key: ${key}`);
-                    console.log(`path: ${menu[item]?.path}`);
-                    console.log(`component : ${menu[item]?.component ?? errorPage404}`);
-                  })} */}
                   {Object.keys(menu).map((item, key) => (
                     <Route
                       key={key}

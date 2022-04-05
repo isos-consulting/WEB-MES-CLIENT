@@ -22,15 +22,13 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
 
-  console.log('layout~', menu);
+  console.log('%c레이아웃 테스트 시작', 'color: green; font-size: 20px;');
+  console.log('메뉴 정보', menu);
   const getCrruentRouter = async () => {
     const menus = pathname.split("/");
     const menu1 = menus[1];
     const menu2 = menus[2];
-    console.log('layout effect running1',{
-      selectedLevel1: menu1 as string,
-      selectedLevel2: [menu2],
-    });
+    console.log('선택된 메뉴 정보 : ',{ selectedLevel1: menu1 as string, selectedLevel2: [menu2] });
     setMenuState((prevState) => {
       return {
         ...prevState,
@@ -49,9 +47,8 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
   }
 
   useLayoutEffect(() => {
-    console.log('layout effect', menuState);
+    console.log('메뉴 스테이트 정보: ', menuState);
     getCrruentRouter();
-    console.log('layout effect after', menuState);
   }, [pathname, menuContent]);
 
   

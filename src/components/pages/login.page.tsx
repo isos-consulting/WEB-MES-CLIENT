@@ -43,6 +43,7 @@ const processExpiredRefreshToken = () => {
 
 /** 로그인 페이지 */
 export const PgLogin = ({setIsLogin}) => {
+  console.log('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
@@ -62,21 +63,10 @@ export const PgLogin = ({setIsLogin}) => {
   const defaultValue = getLocalStorageId();
 
   const handleLoginCheck = async () => {
-
+    console.log(`로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`);
     if(isSaveUserInfo()){
-      const refreshState = await getAccessToken();
-        
-      if(!refreshState || refreshState?.state_no === errorState.EXPIRED_REFRESH_TOKEN){
-        return ;
-      }
-      window.location.href = "/dashboard"
+      setIsLogin(true);
     } else {
-      console.log(`로컬 스토리지에 저장되어 있던 state 정보 : ${toJson(localStorage.getItem('state'))}`);
-      const state = toJson(localStorage.getItem('state'));
-
-      if(state?.EXPIRED_REFRESH_TOKEN){
-        processExpiredRefreshToken();
-      }
       getFactories();
     }
   }
@@ -88,8 +78,6 @@ export const PgLogin = ({setIsLogin}) => {
     // setUserId(id);
 
     // 공장 콤보박스 조회
-    
-    console.log('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
     handleLoginCheck()
     
   }, []);
@@ -220,39 +208,47 @@ export const PgLogin = ({setIsLogin}) => {
       
       executeData(strResult,uriPath,'post')
       .then(res => {
+        const serialFactoryNUuid = (raws, factory) => {
+          return JSON.stringify({
+            uid: raws[0].uid,
+            factory_uuid:factory['factory_uuid'],
+          });
+        };
+
+        const serialUserInfo = (raws, userId, factory) => {
+          return JSON.stringify({
+            uid: raws[0].uid,
+            id: userId,
+            user_nm: raws[0].user_nm,
+            factory_uuid:factory['factory_uuid'],
+            super_admin_fg: raws[0].super_admin_fg
+          })
+        };
+
+        const serialTokenInfo = (raws) => {
+          return JSON.stringify({
+            access_token: raws[0].access_token,
+            refresh_token: raws[0].refresh_token
+          })
+        }
+
         const {success, datas} = res;
         const {raws} = datas;
         if (success === true) {
-          localStorage.setItem(
-            'userInfo',
-            JSON.stringify({
-              uid: raws[0].uid,
-              factory_uuid:factory['factory_uuid'],
-            })
-          );
+          console.log(`로그인 요청 이후 서버 응답 상태 : ${success}`);
+          console.log(`uuid와 factory uuid 정보 직렬화`, serialFactoryNUuid(raws, factory));
+          localStorage.setItem('userInfo',serialFactoryNUuid(raws, factory));
 
           if (raws[0].pwd_fg === 1){
             showUserModal();
           }else{
+            console.log('사용자 정보 직렬화', serialUserInfo(raws, userId, factory));
+            console.log('토큰 정보 직렬화', serialTokenInfo(raws));
+            
             message.success('로그인 성공');
-            localStorage.setItem(
-              'userInfo',
-              JSON.stringify({
-                uid: raws[0].uid,
-                // id:formState.id,
-                id: userId,
-                user_nm: raws[0].user_nm,
-                factory_uuid:factory['factory_uuid'],
-                super_admin_fg: raws[0].super_admin_fg
-              })
-            );
-            localStorage.setItem(
-              'tokenInfo',
-              JSON.stringify({
-                access_token: raws[0].access_token,
-                refresh_token: raws[0].refresh_token
-              })
-            );
+            localStorage.setItem('userInfo', serialUserInfo(raws, userId, factory));
+            localStorage.setItem('tokenInfo', serialTokenInfo(raws));
+
             if (checked) {
               localStorage.setItem('iso-factory',cboFactoryCode as string)
               localStorage.setItem('iso-user-id',userId)

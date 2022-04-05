@@ -645,5 +645,5 @@ export const setLogout = async () => {
   
   localStorage.removeItem('userInfo');
   
-  window.location.href = "/login";
+  window.location.href = "/";
 }
