@@ -3,14 +3,13 @@ import { useMemo, useState } from "react";
 import { message, Form } from 'antd';
 import crypto from 'crypto-js'
 import { v4 as uuidv4 } from 'uuid';
-import {executeData, getAccessToken, getData} from '../../functions';
+import {consoleLogLocalEnv, executeData, getData} from '../../functions';
 import dotenv from 'dotenv';
 import { TpLogin } from "../templates/login/login.template";
 import { IComboboxItem } from "../UI/combobox";
 import IInputPopupProps from "../UI/input-popup/input-popup.ui.type";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useLayoutEffect } from "react";
-import { errorState } from '~/enums/response.enum';
 
 dotenv.config();
 
@@ -25,25 +24,9 @@ const isSaveUserInfo = () => {
   return localStorage.getItem('userInfo') != null;
 }
 
-const toJson = (state: string) => {
-  return JSON.parse(state);
-}
-
-const removeStateAtStorage = () => {
-  localStorage.removeItem('state');
-}
-
-const processExpiredRefreshToken = () => {
-  console.log(`로컬 스토리지에서 state 정보를 삭제하기 전: ${localStorage.getItem('state')}`);
-  removeStateAtStorage();
-  console.log(`로컬 스토리지에서 state 정보를 삭제한 후: ${localStorage.getItem('state')}`);
-  
-  message.error('로그인이 만료되었습니다. 다시 로그인해주세요.')
-}
-
 /** 로그인 페이지 */
 export const PgLogin = ({setIsLogin}) => {
-  console.log('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
+  consoleLogLocalEnv('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
@@ -59,11 +42,11 @@ export const PgLogin = ({setIsLogin}) => {
   // 공장 콤보박스 선택된 데이터
   const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');
 
-  console.log(`로컬 스토리지에 저장 되어 있는 사용자 ID : ${getLocalStorageId()}`);
+  consoleLogLocalEnv(`로컬 스토리지에 저장 되어 있는 사용자 ID : ${getLocalStorageId()}`);
   const defaultValue = getLocalStorageId();
 
   const handleLoginCheck = async () => {
-    console.log(`로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`);
+    consoleLogLocalEnv(`로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`);
     if(isSaveUserInfo()){
       setIsLogin(true);
     } else {
@@ -235,15 +218,15 @@ export const PgLogin = ({setIsLogin}) => {
         const {success, datas} = res;
         const {raws} = datas;
         if (success === true) {
-          console.log(`로그인 요청 이후 서버 응답 상태 : ${success}`);
-          console.log(`uuid와 factory uuid 정보 직렬화`, serialFactoryNUuid(raws, factory));
+          consoleLogLocalEnv(`로그인 요청 이후 서버 응답 상태 : ${success}`);
+          consoleLogLocalEnv(`uuid와 factory uuid 정보 직렬화`, serialFactoryNUuid(raws, factory));
           localStorage.setItem('userInfo',serialFactoryNUuid(raws, factory));
 
           if (raws[0].pwd_fg === 1){
             showUserModal();
           }else{
-            console.log('사용자 정보 직렬화', serialUserInfo(raws, userId, factory));
-            console.log('토큰 정보 직렬화', serialTokenInfo(raws));
+            consoleLogLocalEnv('사용자 정보 직렬화', serialUserInfo(raws, userId, factory));
+            consoleLogLocalEnv('토큰 정보 직렬화', serialTokenInfo(raws));
             
             message.success('로그인 성공');
             localStorage.setItem('userInfo', serialUserInfo(raws, userId, factory));
@@ -281,7 +264,7 @@ export const PgLogin = ({setIsLogin}) => {
       const comboBoxDatas = [];
 
       factories.forEach((factory) => {
-        console.log(`공장 정보 직렬화: ${serialFactoryInfo(factory)}`);
+        consoleLogLocalEnv(`공장 정보 직렬화: ${serialFactoryInfo(factory)}`);
         comboBoxDatas.push({
           code: serialFactoryInfo(factory),
           text: factory['factory_nm']
@@ -292,7 +275,7 @@ export const PgLogin = ({setIsLogin}) => {
     };
 
     const factories = await getData({}, 'std/factories/sign-in');
-    console.log(`콤보박스에 공장 정보가 형태: ${pushFactoryComboDatas(factories)}`);
+    consoleLogLocalEnv(`콤보박스에 저장 된 공장 정보: ${pushFactoryComboDatas(factories)}`);
     const cboData = pushFactoryComboDatas(factories);
 
     setCboFactory(cboData);

@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { PgLogin } from "./components/pages";
 import { Result, Container } from '~components/UI';
 import { useLoadingState } from "./hooks";
-import { getData, getMenus } from "./functions";
+import { consoleLogLocalEnv, getData, getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from "./components/pages/dashboard.page";
@@ -45,25 +45,25 @@ const App = () => {
   }
   
   const handleGetTeneuntInfo = async () => {
-    {console.log('%cTenant 정보 부여 테스트 시작', 'color: green; font-size: 20px;')}
+    {consoleLogLocalEnv('%cTenant 정보 부여 테스트 시작', 'color: green; font-size: 20px;')}
     const hostName = window.location.hostname;
 
-    console.log(`접속 호스트 : ${hostName}`);
-    console.log(`로컬 호스트 일 경우 webURL 주소 : ${getLocalUrl()}`);
+    consoleLogLocalEnv(`접속 호스트 : ${hostName}`);
+    consoleLogLocalEnv(`로컬 호스트 일 경우 webURL 주소 : ${getLocalUrl()}`);
 
     const webURL = checkLocalEnviroment(hostName)? getLocalUrl(): hostName;
     
     const tenantInfo = await getData({tenant_cd: getTenantCode(webURL)},'/tenant/auth','raws',null, true, 'https://was.isos.kr:3002/')
 
-    console.log(`테넌트 정보가 존재 하나요? : ${tenantIsNotEmpty(tenantInfo)}`);
+    consoleLogLocalEnv(`테넌트 정보가 존재 하나요? : ${tenantIsNotEmpty(tenantInfo)}`);
 
     if(tenantIsNotEmpty(tenantInfo)) {
 
-      console.log(`직렬화 된 tenantUuid : ${getSerialTenantUuid(tenantInfo[0]?.uuid)}`);
+      consoleLogLocalEnv(`직렬화 된 tenantUuid : ${getSerialTenantUuid(tenantInfo[0]?.uuid)}`);
 
       localStorage.setItem('tenantInfo', getSerialTenantUuid(tenantInfo[0]?.uuid));
 
-      {console.log('%cTenant 정보 부여 테스트 끝', 'color: green; font-size: 20px;')}
+      {consoleLogLocalEnv('%cTenant 정보 부여 테스트 끝', 'color: green; font-size: 20px;')}
       setTeneunt(tenantInfo[0]?.uuid);
     }
   }
@@ -78,7 +78,7 @@ const App = () => {
   
   return (
     <div>
-      {console.log(`tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`)}
+      {consoleLogLocalEnv(`tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`)}
       {routeLayout()}
       {contextHolder}
     </div>
@@ -94,11 +94,13 @@ const LayoutRoute = () => {
   useLayoutEffect(()=>{
     const setMenus = async () => {
       const menus = await getMenus();
-      console.log(`menu api 호출 결과: ${menus}`, menus);
+      consoleLogLocalEnv(`menu api 호출 결과: ${menus}`, menus);
       setMenu(menus.data);
       setRawMenu(menus.rawData);
     };
     
+    consoleLogLocalEnv('%cLayoutRoute 컴포넌트 useLayoutEffect 훅 동작',  'color: orange; font-size: 24px;');
+    consoleLogLocalEnv(`로딩 상태: ${loading}, 로그인 상태: ${isLogin}, 메뉴 정보: `, menu);
     if(isLogin) {
       setLoading(true);
       setMenus();
@@ -112,11 +114,11 @@ const LayoutRoute = () => {
     
     return (
       <>
-      {console.log('%cLayoutRoute 컴포넌트 테스트 시작', 'color: green; font-size: 20px;')}
-      {console.log(`로딩 상태? : ${loading}`)}
-      {console.log(`로그인 상태인가요? : ${isLogin}`)}
-      {console.log(`메뉴가 있나요? : `, menu)}
-      {console.log('%cLayoutRoute 컴포넌트 테스트 끝', 'color: green; font-size: 20px;')}
+      {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 시작', 'color: green; font-size: 20px;')}
+      {consoleLogLocalEnv(`로딩 상태? : ${loading}`)}
+      {consoleLogLocalEnv(`로그인 상태인가요? : ${isLogin}`)}
+      {consoleLogLocalEnv(`메뉴가 있나요? : `, menu)}
+      {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 끝', 'color: green; font-size: 20px;')}
       {isLogin ? 
         <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
           <Suspense fallback='...loading'>

@@ -9,6 +9,7 @@ import { atSideNavMenuRawData } from './side-navbar.ui.recoil';
 import * as Images from '~images/nav.index';
 import Props, {ILevel1Info, ILevel2Info, ILevel2Props, ILevel3Info} from './side-navbar.ui.type';
 import {ScContainer, ScExtendedLink, ScLevel1Menu, ScLevel2Menu, ScMenuItem, ScMenuTitle, ScResizeButton} from './side-navbar.ui.styled';
+import { consoleLogLocalEnv } from '~/functions';
 
 
 const { SubMenu } = Menu;
@@ -23,11 +24,16 @@ const SideNavbar: React.FC<Props> = (props) => {
   const { menu, rawMenu, menuState, setMenuState } = props;
   const [layoutState, setLayoutState] = useRecoilState(layoutStore.state);
 
-  console.log('사이드 네비게이션 바 메뉴 정보 : ', menuState);
-
+  consoleLogLocalEnv('%c사이드 네비게이션 바 테스트 시작', 'color: green; font-size: 20px;');
+  consoleLogLocalEnv('사이드 네비게이션 바 메뉴 정보 : ', menuState);
+  consoleLogLocalEnv('%c사이드 네비게이션 바 테스트 종료', 'color: green; font-size: 20px;');
+  
   // 1level메뉴 클릭 이벤트
   const onChangeLevel1State = (selectedLevel1: string, route?:boolean) => {
+    consoleLogLocalEnv('%c1레벨 메뉴 클릭 이벤트 테스트 시작', 'color: green; font-size: 20px;');
+    consoleLogLocalEnv(`인자 값 테스트 selectedLevel1: ${selectedLevel1}, route: ${route}`);
     setMenuState((prevState) => {
+      consoleLogLocalEnv(`변경 전 스테이트 :`, prevState);
       return { //선택한 Level1에 따른 Level2메뉴 세팅
         ...prevState,
         selectedLevel1,

@@ -9,6 +9,7 @@ import { layoutStore } from "./layout.ui.hook";
 import { atSideNavMenuContent } from "../side-navbar";
 import { ScContainer, ScContent, ScMainBody } from './layout.ui.styled';
 import Props from './layout.ui.type';
+import { consoleLogLocalEnv } from '~/functions';
 
 
 
@@ -21,14 +22,15 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
   const [currentRouterType, setCurrentRouterType] = useState(undefined);
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
-
-  console.log('%c레이아웃 테스트 시작', 'color: green; font-size: 20px;');
-  console.log('메뉴 정보', menu);
+  
+  consoleLogLocalEnv('%c레이아웃 테스트 시작', 'color: green; font-size: 20px;');
+  consoleLogLocalEnv('Recoil에 저장되어 있는 메뉴 정보 조회:,', useRecoilState(atSideNavMenuContent));
+  consoleLogLocalEnv('메뉴 정보', menu);
   const getCrruentRouter = async () => {
     const menus = pathname.split("/");
     const menu1 = menus[1];
     const menu2 = menus[2];
-    console.log('선택된 메뉴 정보 : ',{ selectedLevel1: menu1 as string, selectedLevel2: [menu2] });
+    consoleLogLocalEnv('선택된 메뉴 정보 : ',{ selectedLevel1: menu1 as string, selectedLevel2: [menu2] });
     setMenuState((prevState) => {
       return {
         ...prevState,
@@ -36,9 +38,9 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
         selectedLevel2: [menu2],
       }
     });
-    console.log('layout effect running2', menuState);
 
     const router = Object.keys(menuContent).find((key) => menuContent[key].path === pathname);
+    consoleLogLocalEnv(`메뉴 타이틀 조회: ${router}`);
     if (router) {
       window.document.title = `ISOS | ` + router;
     }
@@ -47,7 +49,8 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
   }
 
   useLayoutEffect(() => {
-    console.log('메뉴 스테이트 정보: ', menuState);
+    consoleLogLocalEnv('%c레이아웃 컴포넌트 useLayoutEffect 훅 시작', 'color: green; font-size: 20px;');
+    consoleLogLocalEnv('메뉴 스테이트 정보: ', menuState);
     getCrruentRouter();
   }, [pathname, menuContent]);
 

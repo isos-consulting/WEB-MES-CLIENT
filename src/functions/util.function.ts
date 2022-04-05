@@ -6,8 +6,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { afBooleanState, afStringState, afDateState } from '../recoils/recoil.atom-family';
 import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
+import dotenv from 'dotenv';
 
-
+dotenv.config();
 /**
  * xlsx => json으로 convert하는 함수입니다.
  * @param bufferData 엑셀파일 버퍼데이터
@@ -409,6 +410,9 @@ export const getObjectKeyDuplicateCheck = (keys:string[], targetKeys:string[]):b
  * @returns 현재 라우트 페이지명
  */
 export const getPageName = () => {
+  console.log('%c페이지 이름 조회 테스트 시작', 'color: green; font-size: 20px;');
+  console.log(`Recoil에 저장되어 있는 메뉴 정보 조회`, useRecoilValue(atSideNavMenuContent));
+  console.log(`path 정보 조회`, useLocation());
   const menuContent = useRecoilValue(atSideNavMenuContent);
   const { pathname } = useLocation();
   const pageName = Object.keys(menuContent).find((key) => menuContent[key].path === pathname);
@@ -686,4 +690,13 @@ export const getInspCheckResultTotal = (rawData, maxRowCnt) => {
     /** emptyFg */
     emptyFg
   ];
+}
+
+export const consoleLogLocalEnv = (message?: any, ...optionalParams: any[]):void => {
+  const host = window.location.hostname;
+  if((host === 'localhost' || host === '191.1.70.201') && process.env.LOG_LEVEL==='debug') {
+    if(message != null){
+      console.log(message, ...optionalParams);
+    }
+  }
 }

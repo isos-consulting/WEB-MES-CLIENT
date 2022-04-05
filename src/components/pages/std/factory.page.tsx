@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
-import { dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
+import { consoleLogLocalEnv, dataGridEvents, getData, getModifiedRows, getPageName } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -11,6 +11,8 @@ import { message } from 'antd';
 
 /** 공장관리 */
 export const PgStdFactory = () => {
+  consoleLogLocalEnv('%c공장 관리 테스트 시작', 'color: green; font-size: 20px;');
+  consoleLogLocalEnv(`페이지 제목 조회: ${getPageName()}`);
   /** 페이지 제목 */
   const title = getPageName();
 
