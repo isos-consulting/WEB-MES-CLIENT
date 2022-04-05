@@ -726,11 +726,11 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
 
   const onSesrchInspResultDetail = (insp_result_uuid) => {
     const searchUriPath = URI_PATH_GET_QMS_PROC_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', insp_result_uuid)
-    getData(
+    getData<TGetQmsProcInspResultIncludeDetails>(
       {},
       searchUriPath,
       'header-details'
-    ).then((res:TGetQmsProcInspResultIncludeDetails) => {
+    ).then((res) => {
       setProcInspResultIncludeDetails(res);
       inputInspResult.setValues({
         ...res.header, 
@@ -904,7 +904,7 @@ const INSP_RESULT_CREATE_POPUP = (props:{
           insp_type_cd: 'PROC_INSP'
         }
       },
-      onAfterChange: (ev) => {}
+      onAfterChange: (inspTypeDetailUuid) => {handleInspTypeChange(inspTypeDetailUuid)}
     },
     {id:'reg_date', label:'검사일자', type:'date', default:getToday() },
     {id:'reg_date_time', label:'검사시간', type:'time'},
@@ -1072,32 +1072,24 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     await executeData(saveData, URI_PATH_POST_QMS_PROC_INSP_RESULTS, 'post', 'success').then((value) => {
       if (!value) return;
       message.info('저장되었습니다.')
+      onClear();
       props.setPopupVisible(false);
     }).catch(e => {console.log(e)});
-    onClear();
-    props.setPopupVisible(false);
+    
   };
 
   const onCancel = (ev) => {
     onClear();
     props.setPopupVisible(false);
   };
-  //#endregion
 
-  //#region Hook 함수
-  useLayoutEffect(() => {
-    if (props?.workData && props.popupVisible) {
-      inputWork.setValues(props.workData)
-    }
-  }, [props?.workData, props?.popupVisible]);
-
-  useLayoutEffect(() => {
-    if (props?.workData && props.popupVisible && inputInspResult?.values?.insp_detail_type_uuid) {
-      if (inputInspResult?.values?.insp_detail_type_uuid != '-') {
+  const handleInspTypeChange = (inspTypeDetailUuid) => {
+    if (props?.workData && props.popupVisible && inspTypeDetailUuid) {
+      if (inspTypeDetailUuid !== '-') {
         getData(
           {
             work_uuid: props?.workData?.work_uuid,
-            insp_detail_type_uuid: inputInspResult?.values?.insp_detail_type_uuid
+            insp_detail_type_uuid: inspTypeDetailUuid
           },
           URI_PATH_GET_QMS_PROC_INSP_INCLUDE_DETAILS,
           'header-details'
@@ -1112,7 +1104,15 @@ const INSP_RESULT_CREATE_POPUP = (props:{
         setInspIncludeDetails({});
       }
     }
-  }, [props?.workData, props?.popupVisible, inputInspResult?.values?.insp_detail_type_uuid]);
+  }
+  //#endregion
+
+  //#region Hook 함수
+  useLayoutEffect(() => {
+    if (props?.workData && props.popupVisible) {
+      inputWork.setValues(props.workData)
+    }
+  }, [props?.workData, props?.popupVisible]);
   //#endregion
 
   //#region 컴포넌트 rander

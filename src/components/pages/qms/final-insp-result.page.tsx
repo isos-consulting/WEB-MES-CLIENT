@@ -551,7 +551,7 @@ export const PgQmsFinalInspResult = () => {
 
   useLayoutEffect(()=>{
     const _inspHandlingType:object[] = []
-    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPE,'raws').then(async (res)=>{
+    getData({},URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,'raws').then(async (res)=>{
       res.map((item) => {
         _inspHandlingType.push({code: JSON.stringify({insp_handling_type_uuid:item.insp_handling_type_uuid,insp_handling_type_cd:item.insp_handling_type_cd}), text: item.insp_handling_type_nm})
       })
@@ -1104,6 +1104,8 @@ const INSP_RESULT_CREATE_POPUP = (props:{
       };
     }
     
+    console.log('?', inputInputItems?.ref?.current?.values?.qty)
+
     if(incomeDisabled){
       inputInspResultIncome.setFieldValue('qty',0)
     }
@@ -1112,10 +1114,10 @@ const INSP_RESULT_CREATE_POPUP = (props:{
     }
 
     if(!incomeDisabled){
-      inputInspResultIncome.setFieldValue('qty',inputInputItems?.values?.qty)
+      inputInspResultIncome.setFieldValue('qty',inputInputItems?.ref?.current?.values?.qty)
       inputInspResultReject.setFieldValue('reject_qty',0)
     }else if(!rejectDisabled){
-      inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.values?.qty)
+      inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.ref?.current?.values?.qty)
     }
 
     if(inspResult==='SELECTION'){
@@ -1375,23 +1377,23 @@ const INSP_RESULT_CREATE_POPUP = (props:{
   }, [insp]);
 
   useLayoutEffect(() => {
-    if(inputInspResult?.values?.insp_handling_type){
-      changeInspResult(JSON.parse(inputInspResult?.values?.insp_handling_type).insp_handling_type_uuid);
+    if(inputInspResult?.ref?.current?.values?.insp_handling_type){
+      changeInspResult(JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type).insp_handling_type_uuid);
     }
-  }, [inputInspResult?.values?.insp_handling_type_uuid]);
+  }, [inputInspResult?.ref?.current?.values?.insp_handling_type_uuid]);
 
   useLayoutEffect(() => {
     if(changeInspQtyFg===false) return;
-    changeInspResult(inputInspResult?.values?.insp_handling_type_uuid)
+    changeInspResult(inputInspResult?.ref?.current?.values?.insp_handling_type_uuid)
     
     setChangeInspQtyFg(false)
   }, [changeInspQtyFg]);
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg===false) return;
-    let receiveQty:number = Number(inputInputItems?.values?.qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
 
     if (receiveQty - incomeQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1405,9 +1407,9 @@ const INSP_RESULT_CREATE_POPUP = (props:{
 
   useLayoutEffect(() => {
     if (!changeRejectQtyFg) return;
-    let receiveQty:number = Number(inputInputItems?.values?.qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
     
     if (receiveQty - rejectQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1668,10 +1670,10 @@ const INSP_RESULT_EDIT_POPUP = (props:{
       }
 
       if(!incomeDisabled){
-        inputInspResultIncome.setFieldValue('qty',inputInputItems?.values?.insp_qty)
+        inputInspResultIncome.setFieldValue('qty',inputInputItems?.ref?.current?.values?.insp_qty)
         inputInspResultReject.setFieldValue('reject_qty',0)
       }else if(!rejectDisabled){
-        inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.values?.insp_qty)
+        inputInspResultReject.setFieldValue('reject_qty',inputInputItems?.ref?.current?.values?.insp_qty)
       }
     }
 
@@ -1890,50 +1892,86 @@ const INSP_RESULT_EDIT_POPUP = (props:{
     onClear();
     props.setPopupVisible(false);
   };
+
+  const handleLoadData = () => {
+    const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
+
+    getData<TGetQmsFinalInspResultIncludeDetails>(
+      {},
+      searchUriPath,
+      'header-details'
+    ).then((res) => {
+      
+      setInspResult(res);
+
+      const {header, details} = res;
+
+      inputInputItems.setValues({
+        prod_uuid: header.prod_uuid,
+        prod_no: header.prod_no,
+        prod_nm: header.prod_nm,
+        prod_std: header.prod_std,
+        unit_nm: header.unit_nm,
+        store_uuid: header.from_store_uuid, 
+        store_nm: header.from_store_nm,
+        location_uuid: header.from_location_uuid,
+        location_nm: header.from_location_nm,
+        lot_no: header.lot_no,
+        insp_qty: header.insp_qty
+      });
+      inputInspResult.setValues({
+        insp_uuid:header.insp_uuid,
+        insp_result_uuid:header.insp_result_uuid,
+        insp_result_fg:header.insp_result_fg,
+        insp_result_state:header.insp_result_state,
+        reg_date:header.reg_date,
+        reg_date_time:header.reg_date, 
+        emp_uuid:header.emp_uuid,
+        emp_nm:header.emp_nm,
+        insp_handling_type:JSON.stringify({insp_handling_type_uuid:header.insp_handling_type_uuid,insp_handling_type_cd:header.insp_handling_type_cd}),
+        remark:header.remark,
+      });
+      inputInspResultIncome.setValues({
+        qty:header.pass_qty,
+        to_store_uuid:header.to_store_uuid,
+        to_location_uuid:header.to_location_uuid
+      });
+      inputInspResultReject.setValues({
+        reject_qty:header.reject_qty,
+        reject_uuid:header.reject_uuid,
+        reject_nm:header.reject_nm,
+        reject_store_uuid:header.reject_store_uuid,
+        reject_location_uuid:header.reject_location_uuid,
+      });
+      
+      console.log(inputInputItems.ref.current.values, inputInspResult.ref.current.values, inputInspResultIncome.ref.current.values, inputInspResultReject.ref.current.values)
+
+      changeInspResult(res.header.insp_handling_type_cd, true);
+    }).catch((err) => {
+      onClear();
+      message.error('에러');
+    });
+
+  }
   //#endregion
 
   //#region Hook 함수
-  useLayoutEffect(() => {
-    const searchUriPath = URI_PATH_GET_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS.replace('{uuid}', props.inspResultUuid)
-    
-    if (props.inspResultUuid && props.popupVisible) {
-      getData<TGetQmsFinalInspResultIncludeDetails>(
-        {},
-        searchUriPath,
-        'header-details'
-      ).then((res:TGetQmsFinalInspResultIncludeDetails) => {
-        setInspResult(res);
-        inputInputItems.setValues({
-          ...res.header, 
-          store_uuid: res.header.from_store_uuid, 
-          store_nm: res.header.from_store_nm,
-          location_uuid: res.header.from_location_uuid,
-          location_nm: res.header.from_location_nm,
-        });
-        inputInspResult.setValues({...res.header, reg_date_time:res.header.reg_date, insp_handling_type:JSON.stringify({insp_handling_type_uuid:res.header.insp_handling_type_uuid,insp_handling_type_cd:res.header.insp_handling_type_cd})});
-        inputInspResultIncome.setValues({...res.header, qty:res.header.pass_qty});
-        inputInspResultReject.setValues({...res.header});
-
-        changeInspResult(res.header.insp_handling_type_cd, true);
-      }).catch((err) => {
-        onClear();
-        message.error('에러');
-      });
-    } else {
-      
-      onClear();
+  useLayoutEffect(()=>{
+    handleLoadData()
+    return () =>{
+      onClear()
     }
-  }, [props.popupVisible, props.inspResultUuid]);
+  },[])
 
   useLayoutEffect(() => {
-    changeInspResult(inputInspResult?.values?.insp_handling_type_uuid, false);
-  }, [inputInspResult?.values?.insp_handling_type_uuid]);
+    changeInspResult(inputInspResult?.ref?.current?.values?.insp_handling_type_uuid, false);
+  }, [inputInspResult?.ref?.current?.values?.insp_handling_type_uuid]);
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg===false) return;
-    let receiveQty:number = Number(inputInputItems?.values?.insp_qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.insp_qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
 
     if (receiveQty - incomeQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')
@@ -1947,9 +1985,9 @@ const INSP_RESULT_EDIT_POPUP = (props:{
 
   useLayoutEffect(() => {
     if (!changeRejectQtyFg) return;
-    let receiveQty:number = Number(inputInputItems?.values?.insp_qty)
-    let incomeQty:number = Number(inputInspResultIncome?.values?.qty)
-    let rejectQty:number = Number(inputInspResultReject?.values?.reject_qty)
+    let receiveQty:number = Number(inputInputItems?.ref?.current?.values?.insp_qty)
+    let incomeQty:number = Number(inputInspResultIncome?.ref?.current?.values?.qty)
+    let rejectQty:number = Number(inputInspResultReject?.ref?.current?.values?.reject_qty)
     
     if (receiveQty - rejectQty < 0 ){
       message.warn('입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.')

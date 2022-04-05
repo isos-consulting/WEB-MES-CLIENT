@@ -35,7 +35,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
         // 단순 수정 이력 배열을 저장
         if (props.saveType === 'basic') {
           const modifiedRows = await getModifiedRows(gridRef, props.columns, gridRef?.current?.getInstance()?.getData());
-
+          console.log(modifiedRows)
           // 저장 가능한지 체크
           const chk:boolean = await checkGridData(props.columns, modifiedRows);
 
@@ -43,6 +43,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
           // 신규 추가된 데이터들을 api에 전송
           setLoading(true);
+          console.log('props.saveParams',props.saveParams)
           saveGridData(modifiedRows, props.columns, props.saveUriPath, props.saveParams).then((result) => {
             const {success, count, savedData} = result;
             if (success === false) return;

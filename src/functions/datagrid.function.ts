@@ -395,7 +395,6 @@ export const getModifiedRows = (
         (el) => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE
       ) ?? instance?.updatedRows,
   };
-  console.log(modifiedData);
   // 생성
   const createdRows = (modifiedData?.createdRows as any)?.filter((el) => {
     _columns.forEach((column) => {

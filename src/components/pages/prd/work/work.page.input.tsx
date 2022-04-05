@@ -11,6 +11,7 @@ import Colors from '~styles/color.style.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import _ from 'lodash';
+import { selector } from 'recoil';
 
 //#region 🔶🚫투입품목관리
 /** 투입품목관리 */
@@ -336,9 +337,15 @@ export const INPUT_POPUP = (
       options: {
         value: '투입',
         onClick: (ev, props) => {
-          onSetInputInfo(props).then(() => {
-            setInputCreatePopupVisible(true)
-          })
+          const selectRow = props.grid.getRow(props.rowKey)
+          if(selectRow.bom_input_type_cd === 'PULL'){
+            message.error('선입선출 항목입니다. 선입선출 항목은 투입이 불가능합니다.');
+          } else {
+            onSetInputInfo(props).then(() => {
+              setInputCreatePopupVisible(true)
+            })  
+          }
+          
         },
         disabled: !permissions?.create_fg,
       }
@@ -550,7 +557,7 @@ export const INPUT_POPUP = (
 
               gridId={'투입품목등록_투입이력_수정_그리드'}
               gridMode='update'
-              defaultData={inputData}
+              data={inputData}
               columns={props.columns}
               saveType={'basic'}
               saveUriPath={URI_PATH_SAVE_INPUT}

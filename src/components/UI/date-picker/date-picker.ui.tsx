@@ -29,7 +29,7 @@ dayjs.extend(timezone);
 
 /** 날짜 선택기 */
 const BaseDatePicker: React.FC<Props> = (props) => {
-
+  
   const picker = useMemo(() => {
     return (
       props.picker === 'datetime' ? 
@@ -37,8 +37,9 @@ const BaseDatePicker: React.FC<Props> = (props) => {
       : props.picker ?? null);
   }, [props.picker]);
 
-  const values = useMemo(() => {
-    if (props?.value == null) {
+  const values:object = useMemo(() => {
+    
+    if (!props?.value) {
       return props?.defaultValue ? {value: props.defaultValue} : {};
 
     } else if (dayjs(props?.value).isValid()) {
@@ -97,7 +98,7 @@ const BaseDatePicker: React.FC<Props> = (props) => {
           format={format}
           showTime={showTime}
           // defaultValue={props.defaultValue}
-          // value={value}
+          // value={...value}
           {...values}
           onChange={onChange}
           placeholder={props.placeholder}
@@ -115,7 +116,7 @@ const BaseDatePicker: React.FC<Props> = (props) => {
         format={format}
         showTime={showTime}
         // defaultValue={props.defaultValue}
-        // value={value}
+        // value={values}
         {...values}
         onChange={onChange}
         placeholder={props.placeholder} 

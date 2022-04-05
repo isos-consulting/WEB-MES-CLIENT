@@ -8,8 +8,6 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import dayjs from 'dayjs';
-
 
 
 /** 자재반납 */
@@ -64,39 +62,6 @@ export const PgPrdReturn = () => {
     saveUriPath: saveUriPath,
     gridMode: defaultGridMode,
     gridPopupInfo: [
-      // { // 가용창고재고 팝업
-      //   columnNames: [
-      //     {original:'prod_uuid', popup:'prod_uuid'},
-      //     {original:'prod_no', popup:'prod_no'},
-      //     {original:'prod_nm', popup:'prod_nm'},
-      //     {original:'model_nm', popup:'model_nm'},
-      //     {original:'rev', popup:'rev'},
-      //     {original:'prod_std', popup:'prod_std'},
-      //     {original:'unit_uuid', popup:'unit_uuid'},
-      //     {original:'unit_nm', popup:'unit_nm'},
-      //     {original:'lot_no', popup:'lot_no'},
-      //     {original:'qty', popup:'qty'},
-      //     {original:'from_store_uuid', popup:'store_uuid'},
-      //     {original:'from_store_nm', popup:'store_nm'},
-      //     {original:'from_location_uuid', popup:'location_uuid'},
-      //     {original:'from_location_nm', popup:'location_nm'},
-      //   ],
-      //   columns: STORE_POPUP.datagridProps.columns,
-      //   dataApiSettings: () => {
-      //     const reg_date = searchInfo?.values;
-          
-      //     return {
-      //       uriPath: STORE_POPUP.uriPath,
-      //       params: {
-      //         stock_type: 'available',
-      //         grouped_type: 'all',
-      //         price_type: 'all',
-      //         reg_date,
-      //       }
-      //     };
-      //   },
-      //   gridMode:'select',
-      // },
       { // 입고창고 팝업
         columnNames: [
           {original:'to_store_uuid', popup:'store_uuid'},
@@ -152,12 +117,12 @@ export const PgPrdReturn = () => {
       dataApiSettings: () => {
         let reg_date = null;
         if (newDataPopupGridVisible) {
-          reg_date = newDataPopupInputInfo?.values?.reg_date;
-
+          reg_date = newDataPopupInputInfo.values?.reg_date ?? newDataPopupInputInfo?.ref.current.values?.reg_date;
+    
         } else if (editDataPopupGridVisible) {
-          reg_date = editDataPopupInputInfo?.values?.reg_date;
+          reg_date = editDataPopupInputInfo.values?.reg_date ??  editDataPopupInputInfo?.ref.current.values?.reg_date;
         }
-
+    
         return {
           uriPath: STOCK_POPUP.uriPath,
           params: {
@@ -172,11 +137,11 @@ export const PgPrdReturn = () => {
               message.warn('기준일을 선택한 후 다시 시도해주세요.');
               return false;
             }
-
+    
             return true;
           }
         }
-      }
+      },
     }
   });
 
@@ -200,15 +165,7 @@ export const PgPrdReturn = () => {
   );
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] = useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] = useState<boolean>(false);
-
-
-  /** 조회조건 관리 */
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'출고일'},
-  ]);
-
-  /** 입력상자 관리 */
-  const inputInfo = null;
+  
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', [
     {type:'date', id:'reg_date', default:getToday(), label:'기준일'},
     {
@@ -224,6 +181,15 @@ export const PgPrdReturn = () => {
     }
   ]);
   const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', newDataPopupInputInfo?.inputItems);
+
+
+  /** 조회조건 관리 */
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
+    {type:'daterange', id:'reg_date', ids:['start_date', 'end_date'], defaults:[getToday(-7), getToday()], label:'출고일'},
+  ]);
+
+  /** 입력상자 관리 */
+  const inputInfo = null;
 
   /** 액션 관리 */
 

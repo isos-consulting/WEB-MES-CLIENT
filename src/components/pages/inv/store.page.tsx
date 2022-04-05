@@ -496,7 +496,7 @@ export const PgInvStore = () => {
     popupGridInfo: [
       {
         ...newDataPopupGrid?.gridInfo,
-        saveParams: newDataPopupInputInfo?.values,
+        saveParams: newDataPopupInputInfo?.ref?.current?.values,
       },
       editDataPopupGrid?.gridInfo
     ],

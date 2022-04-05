@@ -987,7 +987,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           newRow[column.name] = newRow[column.name] != null ? newRow[column.name] : typeof column?.defaultValue === 'function' ? column?.defaultValue(props) : column?.defaultValue;
         }
       });
-
       // 행 추가할때 코드 값과 클래스명 넣어주기
       gridRef.current.getInstance().prependRow(
         {
@@ -1412,7 +1411,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅멀티팝업 행추가 */
   const onAddPopupRow = () => {
     const { rowAddPopupInfo } = props;
-
     // 팝업 부르기
     let popupContent:IPopupItemsRetrunProps = {
       datagridProps: {
@@ -1434,7 +1432,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       popupContent = getPopupForm(rowAddPopupInfo.popupKey);
       popupContent['params'] = {};
     }
-
+    
     if (typeof rowAddPopupInfo.dataApiSettings === 'function') {
       const apiSettings = rowAddPopupInfo.dataApiSettings();
       popupContent = {...popupContent, ...rowAddPopupInfo, ...apiSettings};
@@ -2114,7 +2112,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           }
           <Space size={[5,null]} style={{width: props.extraButtons?.filter(el => el?.align !== 'right')?.length > 0 ? '50%' : '100%', justifyContent:'right'}}>
             {rightAlignExtraButtons}
-            {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onPrepentRow}>행 추가</Button>}
+            {props?.rowAddPopupInfo ? <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={onAddPopupRow}>행 추가</Button> : <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='plus' onClick={()=>onPrepentRow()}>행 추가</Button>}
             <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='cancel' onClick={onCancelRow}>행 취소</Button>
           </Space>
         </div>

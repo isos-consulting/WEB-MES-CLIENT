@@ -316,7 +316,7 @@ export const TpSingleGrid:React.FC<Props> = (props) => {
 
           gridId={gridUpdatePopup.gridId}
           gridMode='update'
-          defaultData={grid.data}
+          data={grid.data}
           columns={gridUpdatePopup.columns}
           saveType={props.dataSaveType || 'basic'}
           searchUriPath={gridUpdatePopup.searchUriPath}

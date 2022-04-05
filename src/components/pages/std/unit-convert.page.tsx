@@ -458,9 +458,9 @@ export const PgStdUnitConvert = () => {
     ],
     popupGridRefs: [newDataPopupGrid.gridRef, addDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
     popupGridInfos: [
-      {...newDataPopupGrid.gridInfo, saveParams: {...newDataPopupInputInfo.values}},
-      {...addDataPopupGrid.gridInfo, saveParams: {...addDataPopupInputInfo.values}},
-      {...editDataPopupGrid.gridInfo, saveParams: {...editDataPopupInputInfo.values}},
+      {...newDataPopupGrid.gridInfo, saveParams: {from_unit_uuid: newDataPopupInputInfo.values.unit_uuid}},
+      {...addDataPopupGrid.gridInfo, saveParams: {from_unit_uuid: addDataPopupInputInfo.values.unit_uuid}},
+      {...editDataPopupGrid.gridInfo, saveParams: {from_unit_uuid: editDataPopupInputInfo.values.unit_uuid}},
     ],
     searchProps: [
       {
