@@ -1,9 +1,9 @@
 import React, { lazy, Suspense, useLayoutEffect, useState, useCallback, useMemo } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { PgLogin } from "./components/pages";
-import { Result, Container } from '~components/UI';
+import { Result, Container, atSideNavMenuContent, atSideNavMenuRawData } from '~components/UI';
 import { useLoadingState } from "./hooks";
 import { consoleLogLocalEnv, getData, getMenus } from "./functions";
 import { layoutStore } from '~/components/UI/layout';
@@ -15,7 +15,6 @@ const Layout = lazy(() => import('./components/UI/layout').then(module=>({defaul
 
 const App = () => {
   const [modal, contextHolder] = Modal.useModal();
-  
   const [teneunt, setTeneunt] = useState('');
 
   const checkLocalEnviroment = (url: string) => {
@@ -88,19 +87,20 @@ const App = () => {
 const LayoutRoute = () => {
   const [loading, setLoading] = useLoadingState(); // 이 녀석 때문에 콘솔에 state의 값이 2번씩 찍힘
   const [isLogin, setIsLogin] = useState(false);
-  const [menu, setMenu] = useState({});
-  const [rawMenu, setRawMenu] = useState([]);
+  const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
+  const [, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
   
   useLayoutEffect(()=>{
     const setMenus = async () => {
       const menus = await getMenus();
-      consoleLogLocalEnv(`menu api 호출 결과: ${menus}`, menus);
-      setMenu(menus.data);
-      setRawMenu(menus.rawData);
+
+      consoleLogLocalEnv('menu api 호출 결과:', menus);
+      setMenuContent(menus.data)
+      setMenuRawData(menus.rawData);
     };
     
     consoleLogLocalEnv('%cLayoutRoute 컴포넌트 useLayoutEffect 훅 동작',  'color: orange; font-size: 24px;');
-    consoleLogLocalEnv(`로딩 상태: ${loading}, 로그인 상태: ${isLogin}, 메뉴 정보: `, menu);
+    consoleLogLocalEnv(`로딩 상태: ${loading}, 로그인 상태: ${isLogin}, 메뉴 정보: `, menuContent);
     if(isLogin) {
       setLoading(true);
       setMenus();
@@ -117,7 +117,7 @@ const LayoutRoute = () => {
       {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 시작', 'color: green; font-size: 20px;')}
       {consoleLogLocalEnv(`로딩 상태? : ${loading}`)}
       {consoleLogLocalEnv(`로그인 상태인가요? : ${isLogin}`)}
-      {consoleLogLocalEnv(`메뉴가 있나요? : `, menu)}
+      {consoleLogLocalEnv(`메뉴가 있나요? : `, menuContent)}
       {consoleLogLocalEnv('%cLayoutRoute 컴포넌트 테스트 끝', 'color: green; font-size: 20px;')}
       {isLogin ? 
         <Spin spinning={loading} style={{zIndex:999999}} tip='Loading...'>
@@ -125,17 +125,17 @@ const LayoutRoute = () => {
             <BrowserRouter>
               <Switch>
                 <Redirect exact from="/" to='/dashboard' />
-                <Layout menu={menu} rawMenu={rawMenu}>
+                <Layout>
                   <Route
                     key={'dashboard'}
                     path={'/dashboard'}
                     component={Dashboard}
                   />
-                  {Object.keys(menu).map((item, key) => (
+                  {Object.keys(menuContent).map((item, key) => (
                     <Route
                       key={key}
-                      path={menu[item]?.path}
-                      component={menu[item]?.component ?? errorPage404}
+                      path={menuContent[item]?.path}
+                      component={menuContent[item]?.component ?? errorPage404}
                     />
                     ))
                   }

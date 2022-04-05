@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import { useLayoutEffect, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Header } from "../header";
@@ -14,29 +14,24 @@ import { consoleLogLocalEnv } from '~/functions';
 
 
 /** 화면 레이아웃 */
-export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
+export const Layout: React.FC<Props> = ({ children }) => {
   const { pathname } = useLocation();
   const layoutState = useRecoilValue(layoutStore.state);
-  // const [,setMenuState] = useRecoilState(layoutStore.menu.state);
-  const [menuState, setMenuState] = useState({});
+  const [,setMenuState] = useRecoilState(layoutStore.menu.state);
   const [currentRouterType, setCurrentRouterType] = useState(undefined);
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
   
   consoleLogLocalEnv('%c레이아웃 테스트 시작', 'color: green; font-size: 20px;');
   consoleLogLocalEnv('Recoil에 저장되어 있는 메뉴 정보 조회:,', useRecoilState(atSideNavMenuContent));
-  consoleLogLocalEnv('메뉴 정보', menu);
   const getCrruentRouter = async () => {
     const menus = pathname.split("/");
     const menu1 = menus[1];
     const menu2 = menus[2];
     consoleLogLocalEnv('선택된 메뉴 정보 : ',{ selectedLevel1: menu1 as string, selectedLevel2: [menu2] });
-    setMenuState((prevState) => {
-      return {
-        ...prevState,
-        selectedLevel1: menu1 as string,
-        selectedLevel2: [menu2],
-      }
+    setMenuState({
+      selectedLevel1: menu1 as string,
+      selectedLevel2: [menu2],
     });
 
     const router = Object.keys(menuContent).find((key) => menuContent[key].path === pathname);
@@ -48,9 +43,7 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
     setCurrentRouterType(menuContent[router]);
   }
 
-  useLayoutEffect(() => {
-    consoleLogLocalEnv('%c레이아웃 컴포넌트 useLayoutEffect 훅 시작', 'color: green; font-size: 20px;');
-    consoleLogLocalEnv('메뉴 스테이트 정보: ', menuState);
+  useEffect(() => {
     getCrruentRouter();
   }, [pathname, menuContent]);
 
@@ -63,7 +56,7 @@ export const Layout: React.FC<Props> = ({ menu, rawMenu, children }) => {
 
       <Header height={layoutState.topSpacing} title={currentRouterType?.description} description={currentRouterType?.title} />
 
-      <SideNavbar menu={menu} rawMenu={rawMenu} menuState={menuState} setMenuState={setMenuState} top={layoutState.topSpacing} width={layoutState.leftSpacing} />
+      <SideNavbar top={layoutState.topSpacing} width={layoutState.leftSpacing} />
 
       <ScMainBody
         id='main-body'

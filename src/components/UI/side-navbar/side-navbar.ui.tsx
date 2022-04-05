@@ -20,8 +20,7 @@ const LEVEL1_Expanded_Width = 270;
 
 /** 사이드 네비게이션 바 */
 const SideNavbar: React.FC<Props> = (props) => {
-  // const [menuState, setMenuState] = useRecoilState(layoutStore.menu.state);
-  const { menu, rawMenu, menuState, setMenuState } = props;
+  const [menuState, setMenuState] = useRecoilState(layoutStore.menu.state);
   const [layoutState, setLayoutState] = useRecoilState(layoutStore.state);
 
   consoleLogLocalEnv('%c사이드 네비게이션 바 테스트 시작', 'color: green; font-size: 20px;');
@@ -59,11 +58,10 @@ const SideNavbar: React.FC<Props> = (props) => {
     <ScContainer {...props}>
       <Flexbox>
         <Level1
-          rawMenu={rawMenu}
           selectedLevel1={menuState.selectedLevel1 as string}
           onChangeLevel1State={onChangeLevel1State}
         />
-        <Level2 menuState={menuState} rawMenu={rawMenu} active={layoutState.leftSpacing === LEVEL1_Width}/>
+        <Level2 menuState={menuState} active={layoutState.leftSpacing === LEVEL1_Width}/>
       </Flexbox>
       {layoutState.showResizeBtn === false ?
         ''
@@ -87,9 +85,8 @@ const SideNavbar: React.FC<Props> = (props) => {
 const Level1: React.FC<{
   selectedLevel1: string;
   onChangeLevel1State: (newLevel: string, newRoute: boolean) => void;
-}> = ({ rawMenu, selectedLevel1, onChangeLevel1State }) => {
-  // const [menuRawData] = useRecoilState(atSideNavMenuRawData);
-  const menuRawData = rawMenu;
+}> = ({ selectedLevel1, onChangeLevel1State }) => {
+  const [menuRawData] = useRecoilState(atSideNavMenuRawData);
 
   return (
     <ScLevel1Menu
@@ -126,13 +123,10 @@ const Level1: React.FC<{
 //--- [2레벨 메뉴 세팅] ----------------------------------------------------------------------
 const Level2: React.FC<ILevel2Props> = ({
   active,
-  menuState,
-  rawMenu,
 }) => {
   const { pathname } = useLocation();
-  // const [menuState] = useRecoilState(layoutStore.menu.state);
-  // const [menuRawData] = useRecoilState(atSideNavMenuRawData);
-  const menuRawData = rawMenu;
+  const [menuState] = useRecoilState(layoutStore.menu.state);
+  const [menuRawData] = useRecoilState(atSideNavMenuRawData);
   
   if (!menuRawData) return null;
 
