@@ -694,7 +694,7 @@ export const getInspCheckResultTotal = (rawData, maxRowCnt) => {
 
 export const consoleLogLocalEnv = (message?: any, ...optionalParams: any[]):void => {
   const host = window.location.hostname;
-  if((host === 'localhost' || host === '191.1.70.201') && process.env.LOG_LEVEL==='debug') {
+  if((host === 'localhost' || host === '191.1.70.201') && process.env.LOG_LEVEL==='production') {
     if(message != null){
       console.debug(message, ...optionalParams);
     }
