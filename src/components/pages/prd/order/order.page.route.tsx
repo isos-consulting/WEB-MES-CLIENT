@@ -272,6 +272,11 @@ export const orderRoute = () => {
     getData(
       saveOptionParams,
       gridInfo.searchUriPath,
+      'raws',
+      null,
+      false,
+      null,
+      {title:'라우트 조회'}
     ).then((res) => {
       setData(res);
     });

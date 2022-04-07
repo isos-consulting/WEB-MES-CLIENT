@@ -265,26 +265,50 @@ export const PgPrdOrder = () => {
           inputReceive.setValues({...row});
   
           // 자재투입 데이터 조회
-          getData({
-            order_uuid: String(order_uuid)
-          }, ORDER_INPUT.searchUriPath).then((res) => {
+          getData(
+            {
+              order_uuid: String(order_uuid)
+            }, 
+            ORDER_INPUT.searchUriPath,
+            'raws',
+            null,
+            false,
+            null,
+            {title:'투입품목 조회'}
+          ).then((res) => {
             ORDER_INPUT.setData(res);
             ORDER_INPUT.setSaveOptionParams({order_uuid});
           });
           
           // 작업자투입 데이터 조회
-          getData({
-            order_uuid: String(order_uuid)
-          }, ORDER_WORKER.searchUriPath).then((res) => {
+          getData(
+            {
+              order_uuid: String(order_uuid)
+            }, 
+            ORDER_WORKER.searchUriPath,
+            'raws',
+            null,
+            false,
+            null,
+            {title:'투입인원 관리'}
+          ).then((res) => {
             ORDER_WORKER.setData(res);
             ORDER_WORKER.setSaveOptionParams({order_uuid});
           });
   
           
           // 공정순서 데이터 조회
-          getData({
-            order_uuid: String(order_uuid)
-          }, ORDER_ROUTE.searchUriPath).then((res) => {
+          getData(
+            {
+              order_uuid: String(order_uuid)
+            }, 
+            ORDER_ROUTE.searchUriPath,
+            'raws',
+            null,
+            false,
+            null,
+            {title:'공정순서 관리'}
+          ).then((res) => {
             ORDER_ROUTE.setData(res);
             ORDER_ROUTE.setSaveOptionParams({order_uuid});
           });
@@ -421,7 +445,7 @@ export const PgPrdOrder = () => {
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, editable:true, filter:'text'},
     ],
     defaultData: data,
-    data: null,
+    data: data,
     height: null,
     onAfterClick: null,
     /** 팝업 아이디 */

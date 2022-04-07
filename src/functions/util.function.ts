@@ -7,6 +7,7 @@ import { afBooleanState, afStringState, afDateState } from '../recoils/recoil.at
 import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
 import dotenv from 'dotenv';
+import { isArguments } from 'lodash';
 
 dotenv.config();
 /**
@@ -694,7 +695,7 @@ export const getInspCheckResultTotal = (rawData, maxRowCnt) => {
 
 export const consoleLogLocalEnv = (message?: any, ...optionalParams: any[]):void => {
   const host = window.location.hostname;
-  if((host === 'localhost' || host === '191.1.70.201') && process.env.LOG_LEVEL==='debug') {
+  if((host === 'localhost' || host === '191.1.70.201') && process.env.LOG_LEVEL==='none') {
     if(message != null){
       console.debug(message, ...optionalParams);
     }

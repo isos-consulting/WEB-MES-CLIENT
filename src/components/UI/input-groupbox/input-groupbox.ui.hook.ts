@@ -59,10 +59,13 @@ export const inputGroupModel = (props:{
   return props;
 };
 
-export const useInputGroup = (id: string, inputItems:IInputGroupboxItem[], inputGroupOptions?:Omit<IInputGroupboxProps, 'id' | 'inputItems' | 'innerRef'>) => {
+export const useInputGroup = (
+  id: string, 
+  inputItems:IInputGroupboxItem[], 
+  inputGroupOptions?:Omit<IInputGroupboxProps, 'id' | 'inputItems' | 'innerRef'>
+) => {
   
   const ref = useRef<FormikProps<FormikValues>>();
-
   const [values, setValues] = useState<FormikValues>({});
   const defaultValues = useRef({});
   const [_inputItems, setInputItems] = useState<IInputGroupboxItem[]>(inputItems);

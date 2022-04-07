@@ -141,7 +141,12 @@ export const orderWorker = () => {
   const onSearch = () => {
     getData(
       saveOptionParams,
-      gridInfo.searchUriPath
+      gridInfo.searchUriPath,
+      'raws',
+      null,
+      false,
+      null,
+      {title:'투입인원 관리'}
     ).then((res) => {
       setData(res);
     });
