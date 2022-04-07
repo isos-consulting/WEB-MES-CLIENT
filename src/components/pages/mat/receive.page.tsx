@@ -248,13 +248,13 @@ export const PgMatReceive = () => {
         };
         
         if (newDataPopupGridVisible) {
-          params['partner_uuid'] = newDataPopupInputInfo.values?.partner_uuid;
+          params['partner_uuid'] = newDataPopupInputInfo.ref.current.values?.partner_uuid;
 
         } else if (editDataPopupGridVisible) {
-          params['partner_uuid'] = editDataPopupInputInfo.values?.partner_uuid;
+          params['partner_uuid'] = editDataPopupInputInfo.ref.current.values?.partner_uuid;
 
         } else if (addDataPopupGridVisible) {
-          params['partner_uuid'] = addDataPopupInputInfo.values?.partner_uuid;
+          params['partner_uuid'] = addDataPopupInputInfo.ref.current.values?.partner_uuid;
         }
 
         if (params?.partner_uuid == null) {
@@ -423,10 +423,10 @@ export const PgMatReceive = () => {
         let params:TParams = {};
 
         if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
+          inputValues = newDataPopupInputInfo.ref.current.values;
 
         } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
+          inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
         if (inputValues != null) {

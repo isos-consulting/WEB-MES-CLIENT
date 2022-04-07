@@ -39,6 +39,7 @@ export async function getData<T = any[]>(
   disabledErrorMessage: boolean = false,
   optionBaseURL: string = baseURL,
   options?:{
+    title?: string,
     disabledZeroMessage?: boolean,
   }
 ):Promise<T> {
@@ -89,7 +90,7 @@ export async function getData<T = any[]>(
     }
   } finally {
     if (datas?.data?.datas?.value?.count === 0 && options?.disabledZeroMessage !== true) {
-      message.warning('조회 할 데이터가 없습니다.')
+      message.warning(`${options?.title ? options?.title + ' - ' : '' }조회 할 데이터가 없습니다.`)
     }
     switch (returnType) {
       case 'datas':

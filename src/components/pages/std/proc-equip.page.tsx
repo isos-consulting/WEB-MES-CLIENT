@@ -172,7 +172,7 @@ export const PgStdProcEquip = () => {
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {type:'text', id:'proc_uuid', label:'공정UUID', disabled:true, hidden:true},
     {type:'text', id:'proc_cd', label:'공정코드', disabled:true, hidden:true},
-    {type:'text', id:'proc_nm', label:'공정명', disabled:true, usePopup:true, popupKey:'공정관리', popupKeys:['proc_uuid', 'proc_cd', 'proc_nm']},
+    {type:'text', id:'proc_nm', label:'공정명', disabled:true, },
   ]);
 
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', 

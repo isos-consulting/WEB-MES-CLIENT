@@ -186,9 +186,9 @@ export const PgMatReturn = () => {
         let params:TParams = {};
 
         if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
+          inputValues = newDataPopupInputInfo.ref.current.values;
         } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
+          inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
         if (inputValues != null) {

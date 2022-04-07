@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import { TGridMode, useGrid, useSearchbox } from "~/components/UI";
 import { cleanupKeyOfObject, dataGridEvents, getData, getModifiedRows, getPageName, getToday } from "~/functions";
 import Modal from 'antd/lib/modal/Modal';
@@ -124,11 +124,11 @@ export const PgInvStockReject = () => {
 
           if (newDataPopupGridVisible) {
             // params['stock_type'] = newDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = newDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = newDataPopupInputInfo.ref.current.values?.reg_date;
 
           } else if (setEditDataPopupGridVisible) {
             // params['stock_type'] = editDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = editDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = editDataPopupInputInfo.ref.current.values?.reg_date;
           }
 
           return {
