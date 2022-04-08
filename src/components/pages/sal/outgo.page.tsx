@@ -106,7 +106,7 @@ export const PgSalOutgo = () => {
     {header: '창고UUID', name:'from_store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '창고', name:'from_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '위치UUID', name:'from_location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '위치', name:'from_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'number', format:'number', editable:true},
     {header: '비고', name:'remark', width:ENUM_WIDTH.L, filter:'text', editable:true},
     {header: '바코드', name:'barcode', width:ENUM_WIDTH.L, filter:'text', editable:true},
@@ -185,10 +185,10 @@ export const PgSalOutgo = () => {
         let params:TParams = {};
 
         if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
+          inputValues = newDataPopupInputInfo.ref.current.values;
 
         } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
+          inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
         if (inputValues != null) {
@@ -238,13 +238,13 @@ export const PgSalOutgo = () => {
           };
           
           if (newDataPopupGridVisible) {
-            params['partner_uuid'] = newDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = newDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (editDataPopupGridVisible) {
-            params['partner_uuid'] = editDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = editDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (addDataPopupGridVisible) {
-            params['partner_uuid'] = addDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = addDataPopupInputInfo.ref.current.values?.partner_uuid;
           }
 
           if (params?.partner_uuid == null) {
@@ -277,9 +277,9 @@ export const PgSalOutgo = () => {
                 const row = child.getInstance().getCheckedRows();
                 let inputValues = null;
                 if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-                  inputValues = newDataPopupInputInfo.values;
+                  inputValues = newDataPopupInputInfo.ref.current.values;
                 } else { // 세부 항목 등록 팝업일 경우
-                  inputValues = addDataPopupInputInfo.values;
+                  inputValues = addDataPopupInputInfo.ref.current.values;
                 }
                 if (row.length > 0) {
                   close();
@@ -328,13 +328,13 @@ export const PgSalOutgo = () => {
           };
           
           if (newDataPopupGridVisible) {
-            params['partner_uuid'] = newDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = newDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (editDataPopupGridVisible) {
-            params['partner_uuid'] = editDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = editDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (addDataPopupGridVisible) {
-            params['partner_uuid'] = addDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = addDataPopupInputInfo.ref.current.values?.partner_uuid;
           }
 
           if (params?.partner_uuid == null) {
@@ -367,9 +367,9 @@ export const PgSalOutgo = () => {
                 const row = child.getInstance().getCheckedRows();
                 let inputValues = null;
                 if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-                  inputValues = newDataPopupInputInfo.values;
+                  inputValues = newDataPopupInputInfo.ref.current.values;
                 } else { // 세부 항목 등록 팝업일 경우
-                  inputValues = addDataPopupInputInfo.values;
+                  inputValues = addDataPopupInputInfo.ref.current.values;
                 }
                 console.log(row)
                 if (row.length > 0) {
@@ -648,7 +648,7 @@ export const PgSalOutgo = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
+      addDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
@@ -656,7 +656,7 @@ export const PgSalOutgo = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 
@@ -677,7 +677,7 @@ export const PgSalOutgo = () => {
       setGridMode,
       columns,
       saveUriPath,
-    }, detailInputInfo.values, modal,
+    }, detailInputInfo.ref.current.values, modal,
       (res) => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo.values).then((searchResult) => {

@@ -138,7 +138,6 @@ export const orderRoute = () => {
     gridId: TAB_CODE.공정순서+'_EDIT_POPUP_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
-    defaultData: data,
     columns: [
       {header:'공정순서UUID', name:'order_routing_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true, format:'text'},
       {header:'공정순서', name:'proc_no', width:ENUM_WIDTH.M, hidden:false, editable:true, format:'number', align:'center', requiredField:true},
@@ -158,7 +157,8 @@ export const orderRoute = () => {
       {header:'설비명', name:'equip_nm', width:ENUM_WIDTH.XL, editable:true, format:'popup', noSave:true},
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, hidden:false, editable:true, format:'text'},
     ],
-    data: null,
+    defaultData: data,
+    data: data,
     height: null,
     onAfterClick: null,
     /** 팝업 아이디 */

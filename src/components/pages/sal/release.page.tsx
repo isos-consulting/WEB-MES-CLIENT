@@ -192,7 +192,7 @@ export const PgSalRelease = () => {
       dataApiSettings: () => {
         // 출고일 기준으로 재고조회
         const params = {
-          reg_date: newDataPopupInputInfo?.values?.reg_date,
+          reg_date: newDataPopupInputInfo?.ref?.cureent?.values?.reg_date,
           stock_type: 'available',
           grouped_type: 'all',
           price_type: 'all',
@@ -212,7 +212,7 @@ export const PgSalRelease = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      saveParams: newDataPopupInputInfo?.values,
+      saveParams: newDataPopupInputInfo?.ref?.current?.values,
       gridPopupInfo: grid.gridInfo.gridPopupInfo,
       rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
       extraButtons: [

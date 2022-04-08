@@ -166,7 +166,7 @@ export const DOWNTIME = () => {
     ref: editPopupGridRef,
     gridMode: 'update',
     defaultData: data,
-    data: null,
+    data: data,
     height: null,
     /** 팝업 아이디 */
     popupId: TAB_CODE.workDowntime+'_GRID'+'_EDIT_POPUP',

@@ -524,7 +524,7 @@ export const PgTestDoubleGrid = () => {
       setGridMode,
       columns,
       saveUriPath,
-    }, detailInputInfo.values, modal,
+    }, detailInputInfo.ref.current.values, modal,
       (res) => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo.values).then((searchResult) => {

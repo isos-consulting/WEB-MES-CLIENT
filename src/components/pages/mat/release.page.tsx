@@ -49,7 +49,7 @@ export const PgMatRelease = () => {
   /** 입력상자 관리 */
   const inputInfo = null; //useInputGroup('INPUTBOX', []);
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
-    {type:'date', id:'reg_date', label:'출고일', default:getToday()},
+    {type:'date', id:'reg_date', label:'출고일', default:getToday(), required:true},
   ]);
   const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', newDataPopupInputInfo?.props?.inputItems);
 
@@ -125,71 +125,7 @@ export const PgMatRelease = () => {
         gridMode:'select'
       },
     ],
-    rowAddPopupInfo: {
-      columnNames: [
-        {original:'prod_uuid', popup:'prod_uuid'},
-        {original:'item_type_nm', popup:'item_type_nm'},
-        {original:'prod_type_nm', popup:'prod_type_nm'},
-        {original:'prod_no', popup:'prod_no'},
-        {original:'prod_nm', popup:'prod_nm'},
-        {original:'model_nm', popup:'model_nm'},
-        {original:'rev', popup:'rev'},
-        {original:'prod_std', popup:'prod_std'},
-        {original:'safe_stock', popup:'safe_stock'},
-        {original:'unit_uuid', popup:'unit_uuid'},
-        {original:'unit_nm', popup:'unit_nm'},
-        {original:'money_unit_uuid', popup:'money_unit_uuid'},
-        {original:'money_unit_nm', popup:'money_unit_nm'},
-        {original:'price', popup:'price'},
-        {original:'unit_qty', popup:'unit_qty'},
-        {original:'from_store_uuid', popup:'store_uuid'},
-        {original:'from_store_cd', popup:'store_cd'},
-        {original:'from_store_nm', popup:'store_nm'},
-        {original:'from_location_uuid', popup:'location_uuid'},
-        {original:'from_location_cd', popup:'location_cd'},
-        {original:'from_location_nm', popup:'location_nm'},
-        {original:'lot_no', popup:'lot_no'},
-        {original:'qty', popup:'qty'},
-      ],
-      columns: [
-        {header: '창고UUID', name:'store_uuid', filter:'text', format:'text', hidden:true},
-        {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '위치UUID', name:'location_uuid', filter:'text', format:'text', hidden:true},
-        {header: '위치명', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '품목UUID', name:'prod_uuid', filter:'text', format:'text', hidden:true},
-        {header: '품목 유형UUID', name:'item_type_uuid', filter:'text', format:'text', hidden:true},
-        {header: '품목 유형명', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '제품 유형UUID', name:'prod_type_uuid', filter:'text', format:'text', hidden:true},
-        {header: '제품 유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
-        {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '모델UUID', name:'model_uuid', filter:'text', format:'text', hidden:true},
-        {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
-        {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text', format:'text'},
-        {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text', format:'text'},
-        {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-        {header: '단위UUID', name:'unit_uuid', filter:'text', format:'text', hidden:true},
-        {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
-        {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
-        {header: '재고', name:'qty', width:ENUM_WIDTH.S, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
-      ],
-      dataApiSettings: () => {
-        // 출고일 기준으로 재고조회
-        const params = {
-          reg_date: newDataPopupInputInfo?.ref.current.values?.reg_date,
-          exclude_zero_fg: true,
-          exclude_minus_fg: true,
-          stock_type: 'available',
-          grouped_type: 'all',
-          price_type: 'all',
-        }
-        return {
-          uriPath: STOCK_POPUP?.uriPath,
-          params,
-        };
-      },
-      gridMode:'multi-select'
-    },
+    
   });
 
   const newDataPopupGridColumns = cloneObject(grid.gridInfo.columns)?.filter(
@@ -205,9 +141,72 @@ export const PgMatRelease = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      saveParams: newDataPopupInputInfo?.ref?.current?.values,
       gridPopupInfo: grid.gridInfo.gridPopupInfo,
-      rowAddPopupInfo: grid.gridInfo.rowAddPopupInfo,
+      rowAddPopupInfo: {
+        columnNames: [
+          {original:'prod_uuid', popup:'prod_uuid'},
+          {original:'item_type_nm', popup:'item_type_nm'},
+          {original:'prod_type_nm', popup:'prod_type_nm'},
+          {original:'prod_no', popup:'prod_no'},
+          {original:'prod_nm', popup:'prod_nm'},
+          {original:'model_nm', popup:'model_nm'},
+          {original:'rev', popup:'rev'},
+          {original:'prod_std', popup:'prod_std'},
+          {original:'safe_stock', popup:'safe_stock'},
+          {original:'unit_uuid', popup:'unit_uuid'},
+          {original:'unit_nm', popup:'unit_nm'},
+          {original:'money_unit_uuid', popup:'money_unit_uuid'},
+          {original:'money_unit_nm', popup:'money_unit_nm'},
+          {original:'price', popup:'price'},
+          {original:'unit_qty', popup:'unit_qty'},
+          {original:'from_store_uuid', popup:'store_uuid'},
+          {original:'from_store_cd', popup:'store_cd'},
+          {original:'from_store_nm', popup:'store_nm'},
+          {original:'from_location_uuid', popup:'location_uuid'},
+          {original:'from_location_cd', popup:'location_cd'},
+          {original:'from_location_nm', popup:'location_nm'},
+          {original:'lot_no', popup:'lot_no'},
+          {original:'qty', popup:'qty'},
+        ],
+        columns: [
+          {header: '창고UUID', name:'store_uuid', filter:'text', format:'text', hidden:true},
+          {header: '창고명', name:'store_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '위치UUID', name:'location_uuid', filter:'text', format:'text', hidden:true},
+          {header: '위치명', name:'location_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '품목UUID', name:'prod_uuid', filter:'text', format:'text', hidden:true},
+          {header: '품목 유형UUID', name:'item_type_uuid', filter:'text', format:'text', hidden:true},
+          {header: '품목 유형명', name:'item_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '제품 유형UUID', name:'prod_type_uuid', filter:'text', format:'text', hidden:true},
+          {header: '제품 유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
+          {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '모델UUID', name:'model_uuid', filter:'text', format:'text', hidden:true},
+          {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
+          {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, filter:'text', format:'text'},
+          {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, filter:'text', format:'text'},
+          {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+          {header: '단위UUID', name:'unit_uuid', filter:'text', format:'text', hidden:true},
+          {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, filter:'text', format:'text'},
+          {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', format:'text'},
+          {header: '재고', name:'qty', width:ENUM_WIDTH.S, filter:'text', format:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
+        ],
+        dataApiSettings: () => {
+          // 출고일 기준으로 재고조회
+          const params = {
+            reg_date: newDataPopupInputInfo?.ref?.current?.values?.reg_date,
+            exclude_zero_fg: true,
+            exclude_minus_fg: true,
+            stock_type: 'available',
+            grouped_type: 'all',
+            price_type: 'all',
+          }
+          return {
+            uriPath: STOCK_POPUP?.uriPath,
+            params,
+          };
+        },
+        gridMode:'multi-select'
+      },
       extraButtons: [
         {
           buttonProps: {text: '출고요청 불러오기'},
@@ -362,31 +361,15 @@ export const PgMatRelease = () => {
           stock_type: 'available',
           grouped_type: 'all',
           price_type: 'all',
-          reg_date: dayjs(releaseRequestPopupInputInfo?.values?.reg_date)?.format('YYYY-MM-DD'),
+          reg_date: dayjs(releaseRequestPopupInputInfo?.ref?.current?.values?.reg_date)?.format('YYYY-MM-DD'),
           // zero_except_fg: true,
           // minus_except_fg: true,
-          prod_uuid: releaseRequestPopupInputInfo?.values?.prod_uuid,
+          prod_uuid: releaseRequestPopupInputInfo?.ref?.current?.values?.prod_uuid,
         };
 
         return {
           uriPath: STOCK_POPUP?.uriPath,
-          params,
-          onInterlock: () => {
-            const regDate = releaseRequestPopupInputInfo?.values?.reg_date;
-            const prodUuid = releaseRequestPopupInputInfo?.values?.prod_uuid;
-
-            if (!regDate) {
-              message.error('기준일을 선택하신 후 다시 시도해주세요.');
-              return false;
-            }
-            
-            if (!prodUuid) {
-              message.error('품목을 선택하신 후 다시 시도해주세요.');
-              return false;
-            }
-
-            return true;
-          }
+          params
         };
       },
       gridMode: 'multi-select',
@@ -451,15 +434,7 @@ export const PgMatRelease = () => {
     },
     {type:'text', id:'prod_nm', label:'품명', disabled:true},
     {type:'text', id:'prod_std', label:'규격', disabled:true},
-    {type:'text', id:'reject_uuid', label:'부적합UUID', disabled:true, hidden:true},
-    {type:'text', id:'reject_nm', label:'부적합', disabled:true},
-    {type:'text', id:'store_uuid', alias:'from_store_uuid', label:'창고UUID', disabled:true, hidden:true},
-    {type:'text', id:'store_nm', alias:'from_store_nm', label:'창고', disabled:true},
-    {type:'text', id:'location_uuid', alias:'from_location_uuid', label:'위치UUID', disabled:true, hidden:true},
-    {type:'text', id:'location_nm', alias:'from_location_nm', label:'위치', disabled:true},
-    {type:'text', id:'lot_no', label:'LOT NO', disabled:true},
     {type:'number', id:'stock_qty', label:'재고', disabled:true, decimal:ENUM_DECIMAL.DEC_STCOK},
-    {type:'number', id:'qty', label:'부적합품 판정 수량', decimal:ENUM_DECIMAL.DEC_STCOK},
     {type:'text', id:'remark', label:'비고'},
   ], {
     title: '출고요청 지정 품목정보',
@@ -473,7 +448,7 @@ export const PgMatRelease = () => {
       releaseRequestPopupGrid?.setGridData([]);
 
     } else {
-      releaseRequestPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo?.values?.reg_date);
+      releaseRequestPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo?.ref?.current?.values?.reg_date);
     }
   }, [releaseRequestPopupVisible]);
   //#endregion
@@ -490,7 +465,7 @@ export const PgMatRelease = () => {
       saveType: 'basic',
       searchUriPath: '/mat/releases',
       saveUriPath: '/mat/releases',
-      okText: '저장하기',
+      okText: '추가하기',
       onCancel: (ev) => {
         const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
 
@@ -512,8 +487,7 @@ export const PgMatRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData = releaseRequestPopupGrid?.gridInstance?.getData();
-
+        const releaseRequestData = releaseRequestPopupGrid?.gridRef.current.gridInst?.getData();
         if (releaseRequestData?.length > 0) {
           newDataPopupGrid?.gridInstance?.appendRows(releaseRequestData);
           setReleaseRequestPopupVisible(false);
@@ -541,7 +515,11 @@ export const PgMatRelease = () => {
     inputProps: null,  
     
     popupGridRef: [newDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfo: [newDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridInfo: [
+      {
+        ...newDataPopupGrid.gridInfo,
+        saveParams: newDataPopupInputInfo?.ref?.current?.values
+      }, editDataPopupGrid.gridInfo],
     popupVisible: [newDataPopupGridVisible, editDataPopupGridVisible],
     setPopupVisible: [setNewDataPopupGridVisible, setEditDataPopupGridVisible],
     popupInputProps: [newDataPopupInputInfo?.props, editDataPopupInputInfo?.props],

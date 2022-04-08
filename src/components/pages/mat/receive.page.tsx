@@ -566,7 +566,7 @@ export const PgMatReceive = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
+      addDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
@@ -574,7 +574,7 @@ export const PgMatReceive = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 
@@ -595,7 +595,7 @@ export const PgMatReceive = () => {
       setGridMode,
       columns,
       saveUriPath,
-    }, detailInputInfo.values, modal,
+    }, detailInputInfo.ref.current.values, modal,
       ({success, datas}) => {
         if (!success) return;
 
