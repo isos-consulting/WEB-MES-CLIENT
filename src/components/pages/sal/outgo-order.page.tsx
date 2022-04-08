@@ -54,6 +54,7 @@ export const PgSalOutgoOrder = () => {
 
   const detailGrid = useGrid('DETAIL_GRID', [
     {header: '출하지시상세UUID', name:'outgo_order_detail_uuid', alias:'uuid', hidden:true},
+    {header: '세부수주UUID', name:'order_detail_uuid', hidden:true},
     {header: '완료여부', name:'complete_state', width:ENUM_WIDTH.S, filter:'text', format:'check'},
     {header: '품목유형UUID', name:'item_type_uuid', width:ENUM_WIDTH.S, filter:'text', hidden:true},
     {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text'},
@@ -84,6 +85,7 @@ export const PgSalOutgoOrder = () => {
     saveUriPath: headerSaveUriPath,
     rowAddPopupInfo: {
       columnNames:[
+        {original:'order_detail_uuid', popup:'order_detail_uuid'},
         {original:'prod_uuid', popup:'prod_uuid'},
         {original:'item_type_nm', popup:'item_type_nm'},
         {original:'prod_type_nm', popup:'prod_type_nm'},
@@ -98,6 +100,8 @@ export const PgSalOutgoOrder = () => {
         {original:'money_unit_uuid', popup:'money_unit_uuid'},
         {original:'money_unit_nm', popup:'money_unit_nm'},
         {original:'price', popup:'price'},
+        {original:'qty', popup:'qty'},
+        {original:'order_qty', popup:'qty'},
         {original:'exchange', popup:'exchange'},
       ],
       columns: getPopupForm('판매단가관리')?.datagridProps?.columns,
@@ -107,10 +111,10 @@ export const PgSalOutgoOrder = () => {
         let params:TParams = {};
 
         if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
+          inputValues = newDataPopupInputInfo.ref.current.values;
 
         } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
+          inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
         if (inputValues != null) {
@@ -156,13 +160,13 @@ export const PgSalOutgoOrder = () => {
           };
           
           if (newDataPopupGridVisible) {
-            params['partner_uuid'] = newDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = newDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (editDataPopupGridVisible) {
-            params['partner_uuid'] = editDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = editDataPopupInputInfo.ref.current.values?.partner_uuid;
 
           } else if (addDataPopupGridVisible) {
-            params['partner_uuid'] = addDataPopupInputInfo.values?.partner_uuid;
+            params['partner_uuid'] = addDataPopupInputInfo.ref.current.values?.partner_uuid;
           }
 
           if (params?.partner_uuid == null) {
@@ -186,28 +190,28 @@ export const PgSalOutgoOrder = () => {
                     columns={[
                       {header: '수주UUID', name:'order_uuid', hidden:true},
                       {header: '세부수주UUID', name:'order_detail_uuid', hidden:true},
-                      {header: '완료구분', width:ENUM_WIDTH.S, name:'complete_state', align:'center'},
-                      {header: '전표번호', width:ENUM_WIDTH.M, name:'stmt_no'},
-                      {header: '납기일', width:ENUM_WIDTH.M, name:'due_date', format:'date', filter:'text'},
+                      {header: '완료구분', name:'complete_state', width:ENUM_WIDTH.S, align:'center'},
+                      {header: '전표번호', name:'stmt_no', width:ENUM_WIDTH.M},
+                      {header: '납기일', name:'due_date', width:ENUM_WIDTH.M, format:'date', filter:'text'},
                       {header: '품목UUID', name:'prod_uuid', hidden:true},
-                      {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text', align:'center'},
-                      {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text', align:'center'},
-                      {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text'},
-                      {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
-                      {header: '모델', width:ENUM_WIDTH.M, name:'model_nm', filter:'text'},
-                      {header: 'Rev', width:ENUM_WIDTH.S, name:'rev'},
-                      {header: '규격', width:ENUM_WIDTH.L, name:'prod_std'},
-                      {header: '안전재고', width:ENUM_WIDTH.S, name:'safe_stock', decimal:ENUM_DECIMAL.DEC_STCOK},
+                      {header: '품목유형', name:'item_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+                      {header: '제품유형', name:'prod_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
+                      {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, filter:'text'},
+                      {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, filter:'text'},
+                      {header: '모델', name:'model_nm', width:ENUM_WIDTH.M, filter:'text'},
+                      {header: 'Rev', name:'rev', width:ENUM_WIDTH.S},
+                      {header: '규격', name:'prod_std', width:ENUM_WIDTH.L},
+                      {header: '안전재고', name:'safe_stock', width:ENUM_WIDTH.S, decimal:ENUM_DECIMAL.DEC_STCOK},
                       {header: '단위UUID', name:'unit_uuid', hidden:true},
-                      {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm'},
-                      {header: '수주량', width:ENUM_WIDTH.S, name:'qty', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-                      {header: '미납량', width:ENUM_WIDTH.S, name:'balance', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+                      {header: '단위', name:'unit_nm', width:ENUM_WIDTH.XS},
+                      {header: '수주량', name:'qty', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+                      {header: '미납량', name:'balance', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
                       {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true},
-                      {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm'},
+                      {header: '화폐단위', name:'money_unit_nm', width:ENUM_WIDTH.M},
                       {header: '단가유형UUID', name:'price_type_uuid', hidden:true},
-                      {header: '단가유형', width:ENUM_WIDTH.M, name:'price_type_nm'},
-                      {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
-                      {header: '환율', width:ENUM_WIDTH.S, name:'exchange', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
+                      {header: '단가유형', name:'price_type_nm', width:ENUM_WIDTH.M},
+                      {header: '단가', name:'price', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
+                      {header: '환율', name:'exchange', width:ENUM_WIDTH.S, format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
                     ]}
                     gridMode='multi-select'
                     data={res}
@@ -218,7 +222,7 @@ export const PgSalOutgoOrder = () => {
               onOk: () => {
                 const child = childGridRef.current;
                 const rows = child.getInstance().getCheckedRows();
-      
+                
                 rows?.forEach((row) => {
                   let newRow = {};
                   if (typeof row === 'object') {
@@ -226,7 +230,6 @@ export const PgSalOutgoOrder = () => {
                       // 값 설정
                       newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
                     });
-        
                     // 행 추가
                     onAppendRow(newRow);
                   }
@@ -384,7 +387,7 @@ export const PgSalOutgoOrder = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
+      addDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
@@ -392,7 +395,7 @@ export const PgSalOutgoOrder = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 
@@ -413,7 +416,7 @@ export const PgSalOutgoOrder = () => {
       setGridMode,
       columns,
       saveUriPath,
-    }, detailInputInfo.values, modal,
+    }, detailInputInfo.ref.current.values, modal,
       (res) => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo.values).then((searchResult) => {
@@ -505,7 +508,6 @@ export const PgSalOutgoOrder = () => {
 
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
-    console.log(isSuccess, savedData)
     if (!isSuccess) return;
     const savedUuid = savedData[0]?.outgo_order?.header[0]?.uuid;
 

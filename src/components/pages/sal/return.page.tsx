@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -361,7 +361,7 @@ export const PgSalReturn = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
+      addDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
@@ -369,7 +369,7 @@ export const PgSalReturn = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 
@@ -390,7 +390,7 @@ export const PgSalReturn = () => {
       setGridMode,
       columns,
       saveUriPath,
-    }, detailInputInfo.values, modal,
+    }, detailInputInfo.ref.current.values, modal,
       (res) => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo.values).then((searchResult) => {

@@ -755,7 +755,7 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo?.setValues(detailSubInputInfo?.values);
+      addDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
     } else {
       addDataPopupInputInfo?.setValues({});
     }
@@ -765,7 +765,7 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo?.setValues(detailSubInputInfo?.values);
+      editDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
     } else {
       editDataPopupInputInfo?.setValues({});

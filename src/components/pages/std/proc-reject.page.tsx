@@ -8,6 +8,7 @@ import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.t
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -207,7 +208,7 @@ export const PgStdProcReject = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo.setValues(detailInputInfo.values);
+      addDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
     }
 
   }, [addDataPopupGridVisible, detailInputInfo.values]);
@@ -215,7 +216,7 @@ export const PgStdProcReject = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 

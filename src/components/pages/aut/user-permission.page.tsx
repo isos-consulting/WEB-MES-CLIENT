@@ -227,7 +227,7 @@ export const PgAutUserPermission = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo.setValues(detailInputInfo.values);
+      editDataPopupInputInfo.setValues(cloneDeep(detailInputInfo.ref.current.values));
       editDataPopupGrid.setGridData(detailGrid.gridInfo.data);
     }
 

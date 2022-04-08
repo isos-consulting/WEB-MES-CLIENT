@@ -81,6 +81,12 @@ export async function getData<T = any[]>(
         datas = res;
       });
       
+    } else if (error?.response?.data?.state?.state_no === errorState.NOT_FOUND_USER) {
+
+      await setLogout();
+      
+      return ;
+      
     } else {
       datas = null;
 
