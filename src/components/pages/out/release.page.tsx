@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)

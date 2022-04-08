@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
@@ -220,7 +220,7 @@ export const PgSalReturn = () => {
     },
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -229,7 +229,7 @@ export const PgSalReturn = () => {
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
-    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+    cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
       if (['return_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

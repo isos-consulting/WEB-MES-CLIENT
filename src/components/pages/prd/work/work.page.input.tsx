@@ -166,7 +166,7 @@ export const INPUT = () => {
     setInputPopupVisible(true);
   }
 
-  const inputColumns = _.cloneDeep(INPUT_COLUMNS)?.filter(el => el?.name !== 'lot_no');
+  const inputColumns = cloneDeep(INPUT_COLUMNS)?.filter(el => el?.name !== 'lot_no');
 
   //#region 🚫렌더부
   const component = (

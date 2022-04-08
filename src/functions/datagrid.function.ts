@@ -19,7 +19,7 @@ import {
 } from '~/components/UI/datagrid-new';
 import dayjs from 'dayjs';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 /**
  * ✅그리드에서 조작한 데이터를 저장합니다.
@@ -39,7 +39,7 @@ export const saveGridData = async (
 ): Promise<{ success: boolean; count: number; savedData: any[] }> => {
   let resultChk: boolean = true;
   let resultCount: number = 0;
-  let saveData = _.cloneDeep(data);
+  let saveData = cloneDeep(data);
 
   const editType = ['createdRows', 'updatedRows', 'deletedRows'];
   const _methodType = [
@@ -108,7 +108,7 @@ export const saveGridData = async (
         // 다른 값 덧붙이기
         if (optionParams != null) {
           if (Object.keys(optionParams).length > 0) {
-            let tempData = _.cloneDeep(saveData);
+            let tempData = cloneDeep(saveData);
             saveData = [];
 
             for (let z = 0; z < tempData.length; z++) {
@@ -191,8 +191,8 @@ export const checkGridData = async (
 ): Promise<boolean> => {
   let resultChk: boolean = true;
   let errorType: TGridErrorType;
-  let chkColumn = _.cloneDeep(column);
-  let chkData: IGridModifiedRows = _.cloneDeep(data);
+  let chkColumn = cloneDeep(column);
+  let chkData: IGridModifiedRows = cloneDeep(data);
   let errorColName = '';
   // let errorRow = -1;
 
@@ -346,7 +346,7 @@ export function createSubTotalColumns(
   deleteOption: string = 'filter'
 ) {
   try {
-    let subColumns = _.cloneDeep(columns);
+    let subColumns = cloneDeep(columns);
 
     //합계 기준 컬럼과 합산된 데이터 컬럼만 나오게 정리
     subColumns = subColumns.filter(
@@ -794,7 +794,7 @@ export const convDataToSubTotal = (
   const { standardNames, curculations, sortby } = options;
 
   if (data?.length <= 1) {
-    const _data = _.cloneDeep(data);
+    const _data = cloneDeep(data);
     standardNames?.forEach((stdName) => {
       delete _data[stdName];
     });
@@ -807,12 +807,12 @@ export const convDataToSubTotal = (
   try {
     // 계산할 키 추출하기
     let curculationNames = [];
-    _.cloneDeep(curculations).forEach((el) => {
+    cloneDeep(curculations).forEach((el) => {
       curculationNames = curculationNames.concat(el.names);
     });
 
     // 필요한 데이터만 추출
-    let tempData: any[] = _.cloneDeep(data).map((el) => {
+    let tempData: any[] = cloneDeep(data).map((el) => {
       const keys = Object.keys(el);
       keys.forEach((key) => {
         if (standardNames.concat(curculationNames).includes(key) === false) {
@@ -824,7 +824,7 @@ export const convDataToSubTotal = (
     console.log('tempData', tempData);
 
     // 연산될 기준명의 키 그룹을 생성
-    const groupData: any[] = _.cloneDeep(tempData).map((el) =>
+    const groupData: any[] = cloneDeep(tempData).map((el) =>
       cleanupKeyOfObject(el, standardNames)
     );
 
@@ -853,7 +853,7 @@ export const convDataToSubTotal = (
     // 서브토탈 계산
     let sumData = {};
     let total = {};
-    let chkData: any[] = _.cloneDeep(tempData.reverse());
+    let chkData: any[] = cloneDeep(tempData.reverse());
     tempData.forEach((raw, index) => {
       const value = cleanupKeyOfObject(raw, standardNames);
       let groupKey = groupInfos.find(

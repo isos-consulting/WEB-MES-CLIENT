@@ -8,7 +8,7 @@ import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.t
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -44,11 +44,11 @@ export const PgAutGroupPermission = () => {
     {type:'text', id:'group_uuid', label:'그룹UUID', disabled:true, hidden:true},
   ]);
 
-  const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
+  const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUTBOX', cloneDeep(detailInputInfo?.inputItems));
 
-  const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
+  const addDataPopupInputInfo = useInputGroup('ADD_DATA_POPUP_INPUTBOX', cloneDeep(detailInputInfo?.inputItems));
 
-  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', _.cloneDeep(detailInputInfo?.inputItems));
+  const editDataPopupInputInfo = useInputGroup('EDIT_DATA_POPUP_INPUTBOX', cloneDeep(detailInputInfo?.inputItems));
   //#endregion
 
 
@@ -88,7 +88,7 @@ export const PgAutGroupPermission = () => {
   const newDataPopupGrid = null;
   const addDataPopupGrid = null;
 
-  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', _.cloneDeep(detailGrid.gridInfo.columns), {
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', cloneDeep(detailGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     disabledAutoDateColumn: true,

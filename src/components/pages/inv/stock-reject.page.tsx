@@ -8,7 +8,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 /** 제품입고 */
 export const PgInvStockReject = () => {
@@ -69,7 +69,7 @@ export const PgInvStockReject = () => {
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+    cloneDeep(grid.gridInfo.columns)?.filter(el => {
       return el.name !== 'reg_date';
     }),
     {
@@ -205,7 +205,7 @@ export const PgInvStockReject = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+    cloneDeep(grid.gridInfo.columns)?.filter(el => {
       // 신규 추가했을 때, 수정 못하게 방지
       if (el?.name === 'to_store_nm') el['editable'] = false;
       if (el?.name === 'reject_type_nm') el['editable'] = false;

@@ -19,7 +19,7 @@ import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 
 // 날짜 로케일 설정

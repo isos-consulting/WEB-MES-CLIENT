@@ -7,7 +7,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH, URL_PATH_EQM } from '~/enums';
 import { message } from 'antd';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 
 // 검사값 판정
@@ -184,7 +184,7 @@ export const PgEqmInspResult = () => {
     ]
   });
 
-  const newDataPopupGridColumns = _.cloneDeep(grid.gridInfo.columns)?.map(column => {
+  const newDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.map(column => {
     if (SAVE_DATA.post.includes(column?.name)) {
       column['noSave'] = false;
       column['editable'] = true;
@@ -226,7 +226,7 @@ export const PgEqmInspResult = () => {
     }
   );
 
-  const editDataPopupGridColumns = _.cloneDeep(grid.gridInfo.columns)?.map(column => {
+  const editDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.map(column => {
     if (SAVE_DATA.put.includes(column?.name)) {
       column['noSave'] = false;
       column['editable'] = true;
@@ -359,7 +359,7 @@ export const PgEqmInspResult = () => {
 
   /** 검색 */
   const onSearch = (values) => {
-    let temp = _.cloneDeep(values);
+    let temp = cloneDeep(values);
     if (temp?.['equip_uuid'] === 'all') {
       temp['equip_uuid'] = null;
     }

@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 /** 완료상태 컬럼 renderer 조건 */
 const completeCondition = [
@@ -119,7 +119,7 @@ export const PgSalOrder = () => {
     gridMode: detailDefaultGridMode,
   });
 
-  const gridPopupColumns = _.cloneDeep(detailGrid.gridInfo.columns)?.map((el) => {
+  const gridPopupColumns = cloneDeep(detailGrid.gridInfo.columns)?.map((el) => {
     if (['prod_type_nm', 'item_type_nm', 'prod_no', 'prod_nm', 'model_nm', 'rev', 'prod_std', 'safe_stock', 'unit_nm', 'money_unit_nm'].includes(el?.name))
       el['editable'] = false;
 
@@ -233,7 +233,7 @@ export const PgSalOrder = () => {
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
-    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+    cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
       if (['order_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange', 'complete_fg'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

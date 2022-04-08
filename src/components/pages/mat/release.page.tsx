@@ -10,7 +10,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -227,7 +227,7 @@ export const PgMatRelease = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    _.cloneDeep(editDataPopupGridColumns).map((el) => {
+    cloneDeep(editDataPopupGridColumns).map((el) => {
       if (['release_uuid', 'qty'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

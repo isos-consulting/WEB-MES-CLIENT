@@ -8,7 +8,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 
@@ -108,7 +108,7 @@ export const PgSalIncome = () => {
   const [multiPopupDatas, setMultiPopupDatas] = useState<any[]>([]);
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => el.name !== 'reg_date'),
+    cloneDeep(grid.gridInfo.columns)?.filter(el => el.name !== 'reg_date'),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -181,7 +181,7 @@ export const PgSalIncome = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+    cloneDeep(grid.gridInfo.columns)?.filter(el => {
       if (el.name === 'to_location_nm' || el.name === 'to_store_nm') {
         el.editable = false
       }

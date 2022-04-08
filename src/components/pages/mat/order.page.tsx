@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 /** 완료상태 컬럼 renderer 조건 */
@@ -204,14 +204,14 @@ export const PgMatOrder = () => {
 
   const popupColumns = detailGrid.gridInfo.columns.filter((value) => !['total_price'].includes(value.name));
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(popupColumns), {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneDeep(popupColumns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
-    _.cloneDeep(popupColumns).map((el) => {
+    cloneDeep(popupColumns).map((el) => {
       if (['order_detail_uuid', 'qty', 'price', 'money_unit_nm', 'exchange', 'complete_fg'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

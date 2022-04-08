@@ -25,7 +25,7 @@ import { ENUM_DECIMAL, ENUM_FORMAT, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import dayjs from 'dayjs';
 import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
 
 
@@ -179,7 +179,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   //#region 🔶컬럼 세팅
   const columns = useMemo(() => {
-    let newColumns = _.cloneDeep(props.columns);
+    let newColumns = cloneDeep(props.columns);
 
     newColumns.forEach((el, colIndex) => {
       if (el?.name === 'created_at') {
@@ -924,7 +924,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   const data = useMemo(() => {
     const data = props?.data?.length > 0 ? props?.data : [];
     if (data) {
-      const newData = data?.length > 0 ? _.cloneDeep(data) : [];
+      const newData = data?.length > 0 ? cloneDeep(data) : [];
       // create모드나 update모드일 때, 클래스명 넣기 (입력 가능한 컬럼/ 불가능한 컬럼을 구분하기 위함)
       if (['create', 'update'].includes(props.gridMode)) {
         defaultDataSetting(newData, columns)

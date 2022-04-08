@@ -5,7 +5,7 @@ import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridModifiedRo
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 const DATA_PICKUP_INFO = {
