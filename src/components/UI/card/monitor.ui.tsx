@@ -65,14 +65,21 @@ interface ICardStyle {
   footer: IFooterStyle;
 }
 
-export interface IMonitorProps {
+export interface IDefineMonitorProps {
+  title: string;
+  content: string;
+  footer: string;
+  status: string;
+}
+export interface ICreateMonitorProps {
+  key: string;
   title: string;
   content: string;
   footer: string;
   status: string;
 }
 
-const MonitorCard: React.FC<IMonitorProps> = (props) => {
+const MonitorCard: React.FC<ICreateMonitorProps> = (props) => {
   const cardStyle: ICardStyle = {
     frame: {
       width: "300px",
