@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  ITpMonitorProps,
-  TpMonitor,
-} from "~/components/templates/monitoring/monitoring.template";
-import { IMonitorProps } from "~/components/UI/card/monitor.ui";
+import { IDefineMonitorProps } from "~/components/UI/card/monitor.ui";
+import { MonitorCards, ITpMonitorCardsProps } from "~/components/UI/card/monitors.ui";
 
-const dummyEquips: IMonitorProps[] = [
+const dummyEquips: IDefineMonitorProps[] = [
   {
     title: "설비1",
     content: "55%",
@@ -26,7 +23,7 @@ const dummyEquips: IMonitorProps[] = [
   },
 ];
 
-const searchNewEquips: IMonitorProps[] = [
+const searchNewEquips: IDefineMonitorProps[] = [
   {
     title: "설비1",
     content: "55%",
@@ -54,9 +51,9 @@ const searchNewEquips: IMonitorProps[] = [
 ];
 
 export const PgEquiInterfaceMonitor = () => {
-  const [equipStatus, setEquipStatus] = useState<IMonitorProps[]>([]);
+  const [equipStatus, setEquipStatus] = useState<IDefineMonitorProps[]>([]);
 
-  const monitorProps: ITpMonitorProps = {
+  const monitorProps: ITpMonitorCardsProps = {
     equips: equipStatus,
   };
 
@@ -71,7 +68,7 @@ export const PgEquiInterfaceMonitor = () => {
   return (
     <>
       <button onClick={handleSearchButtonClick}> 조회하기 </button>
-      <TpMonitor {...monitorProps} />
+      <MonitorCards {...monitorProps} />
     </>
   );
 };
