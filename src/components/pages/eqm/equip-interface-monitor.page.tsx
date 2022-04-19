@@ -3,22 +3,39 @@ import React from 'react';
 export const PgEquiInterfaceMonitor = () => {
     return (
         <>
-            <div>
-                <span>설비1</span>
-                <div> 대기 </div>
-                <span>설비1</span>
+            <div style={{width: '300px', backgroundColor: '#ffffff', border: 'none'}}>
+                <div style={{display:'flex', justifyContent:'flex-start', height:'60px'}}>
+                <span style={{fontSize: '15px', marginLeft:'15px', marginTop:'20px'}}>설비1</span>
+                </div>
+                <div style={{display: 'flex', justifyContent:'space-around'}}>
+                <div style={{display: 'flex', justifyContent:'center', alignItems:'center', width: '70px', height:'70px', border: '1px solid #6ad198', borderRadius: '50%', backgroundColor: '#00af4e', color: '#ffffff'}}>55%</div>
+                </div>
+                <div style={{height:'70px',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <span>가동 8.5h | 목표 12h</span>
+                </div>
             </div>
-            <div>
-                <span>설비1</span>
-                <div> 작업중 </div>
-                <span>설비1</span>
+            <div style={{width: '300px', backgroundColor: '#ffffff', border: 'none'}}>
+                <div style={{display:'flex', justifyContent:'flex-start', height:'60px'}}>
+                <span style={{fontSize: '15px', marginLeft:'15px', marginTop:'20px'}}>설비1</span>
+                </div>
+                <div style={{display: 'flex', justifyContent:'space-around'}}>
+                <div style={{display: 'flex', justifyContent:'center', alignItems:'center', width: '70px', height:'70px', border: '1px solid #fee491', borderRadius: '50%', backgroundColor: '#fcc002', color: '#ffffff'}}>55%</div>
+                </div>
+                <div style={{height:'70px',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <span>가동 8.5h | 목표 12h</span>
+                </div>
             </div>
-            <div>
-                <span>설비1</span>
-                <div> 비가동 </div>
-                <span>설비1</span>
+            <div style={{width: '300px', backgroundColor: '#ffffff', border: 'none'}}>
+                <div style={{display:'flex', justifyContent:'flex-start', height:'60px'}}>
+                <span style={{fontSize: '15px', marginLeft:'15px', marginTop:'20px'}}>설비1</span>
+                </div>
+                <div style={{display: 'flex', justifyContent:'space-around'}}>
+                <div style={{display: 'flex', justifyContent:'center', alignItems:'center', width: '70px', height:'70px', border: '1px solid #fe9292', borderRadius: '50%', backgroundColor: '#fe0201', color: '#ffffff'}}>55%</div>
+                </div>
+                <div style={{height:'70px',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                <span>가동 8.5h | 목표 12h</span>
+                </div>
             </div>
-            설비 가동 현황 페이지
         </>
     )
 }
