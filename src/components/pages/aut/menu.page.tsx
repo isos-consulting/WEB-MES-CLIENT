@@ -1,23 +1,31 @@
-import React from "react";
-import { Button, Container, Datagrid, useGrid } from "~/components/UI";
+import React, { useState } from "react";
+import { Button, Container, Datagrid, Modal, useGrid } from "~/components/UI";
+import { InputGroupbox, useInputGroup } from "~/components/UI/input-groupbox";
 import { URL_PATH_AUT } from "~/enums";
 import {
   detailModalButtonProps,
+  detailModalProps,
   menuGridColumns,
   menuGridOptions,
+  menuInputGroupBoxs,
   menuSearchButtonProps,
 } from "./menu/constant/constant";
 import MenuService from "./menu/MenuService";
 
 export const PgAutMenu = () => {
+  const [menuModalVisible, setMenuModalVisible] = useState<boolean>(true);
   const grid = useGrid("GRID", menuGridColumns, menuGridOptions);
-  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid);
+  const inputGroups = useInputGroup("MENU_INPUTBOX", menuInputGroupBoxs);
+  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, inputGroups);
 
   const gridProps = menuService.getGridProps();
+  const inputGroupProps = menuService.getInputGroupProps();
 
   const handleDetailModalButtonClick = () => {
 
   };
+
+  detailModalProps.visible = menuModalVisible;
 
   detailModalButtonProps.onClick = handleDetailModalButtonClick;
   menuSearchButtonProps.onClick = menuService.searchMenuList;
@@ -29,6 +37,9 @@ export const PgAutMenu = () => {
       <Container>
         <Datagrid {...gridProps} />
       </Container>
+      <Modal {...detailModalProps}>
+        <InputGroupbox {...inputGroupProps} />
+      </Modal>
     </>
   );
 };

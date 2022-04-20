@@ -39,12 +39,14 @@ type TGetMenuData = {
 class MenuService {
   private searchUriPath: string;
   private grid: any;
+  private inputGroup: any;
 
-  constructor(searchUriPath: string, grid: any) {
+  constructor(searchUriPath: string, grid: any, inputGroup: any) {
     this.searchUriPath = searchUriPath;
     this.grid = grid;
+    this.inputGroup = inputGroup;
   }
-  searchMenuList = () => {
+  searchMenuList = (): void => {
     const searchParams = {};
 
     let data = [];
@@ -92,6 +94,12 @@ class MenuService {
     return {
       ref: this.grid.gridRef,
       ...this.grid.gridInfo,
+    };
+  };
+
+  getInputGroupProps = () => {
+    return {
+      inputItems: this.inputGroup.inputItems,
     };
   };
 }

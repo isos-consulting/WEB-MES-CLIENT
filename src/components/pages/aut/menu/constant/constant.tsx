@@ -1,4 +1,4 @@
-import { IButtonProps, IGridColumn } from "~/components/UI";
+import { IButtonProps, IGridColumn, IModalProps } from "~/components/UI";
 import { IInputGroupboxItem } from "~/components/UI/input-groupbox";
 import { ENUM_WIDTH, URL_PATH_AUT } from "~/enums";
 
@@ -118,7 +118,6 @@ export const menuInputGroupBoxs:IInputGroupboxItem[] = [
     popupKey: "거래처관리",
     params: { partner_fg: 1 },
     popupKeys: ["partner_uuid", "partner_nm"],
-    // handleChange:(values)=>{newDataPopupGrid?.setGridData([]);}
   },
   { type: "text", id: "menu_name", label: "메뉴명" },
   {
@@ -153,4 +152,15 @@ export const detailModalButtonProps:IButtonProps = {
   colorType: 'basic',
   onClick: null,
   disabled: false
+}
+
+export const detailModalProps:IModalProps = {
+  title:"메뉴 관리",
+  okText: null,
+  cancelText: null,
+  maskClosable: false,
+  visible: false,
+  onCancel: null,
+  onOk: null,
+  width: "80%"
 }
