@@ -1,4 +1,4 @@
-import { IGridColumn } from "~/components/UI";
+import { IButtonProps, IGridColumn } from "~/components/UI";
 import { IInputGroupboxItem } from "~/components/UI/input-groupbox";
 import { ENUM_WIDTH, URL_PATH_AUT } from "~/enums";
 
@@ -134,23 +134,23 @@ export const menuInputGroupBoxs:IInputGroupboxItem[] = [
   { type: "text", id: "icon", label: "아이콘" },
 ]
 
-export const menuSearchButtonProps = {
+export const menuSearchButtonProps:IButtonProps = {
   btnType: 'buttonFill',
   widthSize: 'medium',
   heightSize: 'small',
   fontSize: 'small',
   ImageType: 'search',
-  colorType: 'blue',
+  colorType: 'basic',
   disabled: false,
   onClick: null,
 }
 
-export const detailModalButtonProps = {
+export const detailModalButtonProps:IButtonProps = {
   btnType: 'buttonFill',
   widthSize: 'large',
   heightSize: 'small',
   fontSize: 'small',
-  colorType: 'blue',
+  colorType: 'basic',
   onClick: null,
   disabled: false
 }
