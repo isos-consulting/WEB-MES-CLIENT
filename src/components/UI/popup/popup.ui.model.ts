@@ -1,4 +1,4 @@
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 import { IPopupItemOptionProps, IPopupItemsRetrunProps } from './popup.ui.type';
 
 
@@ -49,6 +49,7 @@ export type TPopupKey =
 | '금형관리'
 | '금형문제점관리'
 | 'BOM투입유형관리'
+| '메뉴관리'
 | undefined;
 
 /**
@@ -100,6 +101,7 @@ export function getPopupForm(popupKey:TPopupKey, option?:IPopupItemOptionProps):
     case '금형문제점관리': return getPI_MldProblem(option);
     case '금형관리': return getPI_MldMold(option);
     case 'BOM투입유형관리': return getPI_AdmBomInputType(option);
+    case '메뉴관리': return getPI_AdmMenuInputType(option);
 
     default:
       break;
@@ -1173,6 +1175,32 @@ const getPI_AdmBomInputType = (option?:IPopupItemOptionProps):IPopupItemsRetrunP
       ]
     },
     uriPath:'/adm/bom-input-types',
+    params: option?.params,
+    parentGridId: option?.parentGridId,
+  }
+
+  return result;
+}
+
+const getPI_AdmMenuInputType = (option?:IPopupItemOptionProps):IPopupItemsRetrunProps => {
+  let result:IPopupItemsRetrunProps = {
+    modalProps:{
+      title:'메뉴관리',
+      visible: true,
+    },
+    datagridProps:{
+      gridId: option?.id,
+      columns:[
+        {header: "메뉴UUID", name: "menu_uuid", alias: "uuid", width: ENUM_WIDTH.M, filter: "text", hidden: true},
+        {header: "메뉴레벨", name: "lv", width: ENUM_WIDTH.M, filter: "text"},
+        {header: "메뉴명", name: "menu_nm", alias: "upper_menu_nm", width: ENUM_WIDTH.L, filter: "text"},
+        {header: "메뉴유형UUID", name: "menu_type_uuid", width: ENUM_WIDTH.L, filter: "text", hidden: true},
+        {header: "메뉴유형", name: "menu_type", width: ENUM_WIDTH.L, format: "text", filter: "text"},
+        {header: "메뉴URL", name: "menu_uri", width: ENUM_WIDTH.L, filter: "text"},
+      ],
+      gridMode: 'select',
+    },
+    uriPath: URL_PATH_AUT.MENU.GET.MENUS_PERMISSION,
     params: option?.params,
     parentGridId: option?.parentGridId,
   }

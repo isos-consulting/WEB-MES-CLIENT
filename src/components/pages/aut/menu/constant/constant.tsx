@@ -74,7 +74,7 @@ export const menuGridColumns: IGridColumn[] = [
   },
 ];
 
-export const menuGridOptions= {
+export const menuGridOptions = {
   treeColumnOptions: {
     name: "menu_nm",
     useIcon: true,
@@ -98,9 +98,9 @@ export const menuGridOptions= {
       },
     },
   ],
-}
+};
 
-export const menuInputGroupBoxs:IInputGroupboxItem[] = [
+export const menuInputGroupBoxs: IInputGroupboxItem[] = [
   {
     type: "text",
     id: "menu_uuid",
@@ -109,17 +109,27 @@ export const menuInputGroupBoxs:IInputGroupboxItem[] = [
     disabled: true,
     hidden: true,
   },
-  { type: "text", id: "lv", label: "메뉴레벨", disabled: true, hidden: true },
   {
     type: "text",
-    id: "upper_menu_name",
+    id: "lv",
+    label: "메뉴레벨",
+    disabled: true,
+    hidden: true,
+  },
+  {
+    type: "text",
+    id: "menu_nm",
     label: "상위 메뉴",
     usePopup: true,
-    popupKey: "거래처관리",
-    params: { partner_fg: 1 },
-    popupKeys: ["partner_uuid", "partner_nm"],
+    popupKey: "메뉴관리",
+    popupKeys: ["menu_uuid", "menu_nm"],
+    handleChange: (values)=>{console.log(values);}
   },
-  { type: "text", id: "menu_name", label: "메뉴명" },
+  {
+    type: "text",
+    id: "menu_nm",
+    label: "메뉴명",
+  },
   {
     type: "text",
     id: "menu_type_uuid",
@@ -127,40 +137,56 @@ export const menuInputGroupBoxs:IInputGroupboxItem[] = [
     disabled: true,
     hidden: true,
   },
-  { type: "text", id: "menu_type_nm", label: "메뉴유형" },
-  { type: "text", id: "menu_uri", label: "메뉴URL" },
-  { type: "text", id: "component_nm", label: "컴포넌트명" },
-  { type: "text", id: "icon", label: "아이콘" },
-]
+  {
+    type: "text",
+    id: "menu_type_nm",
+    label: "메뉴유형",
+  },
+  {
+    type: "text",
+    id: "menu_uri",
+    label: "메뉴URL",
+  },
+  {
+    type: "text",
+    id: "component_nm",
+    label: "컴포넌트명",
+  },
+  {
+    type: "text",
+    id: "icon",
+    label: "아이콘",
+  },
+];
 
-export const menuSearchButtonProps:IButtonProps = {
-  btnType: 'buttonFill',
-  widthSize: 'medium',
-  heightSize: 'small',
-  fontSize: 'small',
-  ImageType: 'search',
-  colorType: 'basic',
+export const menuSearchButtonProps: IButtonProps = {
+  btnType: "buttonFill",
+  widthSize: "medium",
+  heightSize: "small",
+  fontSize: "small",
+  ImageType: "search",
+  colorType: "basic",
   disabled: false,
   onClick: null,
-}
+};
 
-export const detailModalButtonProps:IButtonProps = {
-  btnType: 'buttonFill',
-  widthSize: 'large',
-  heightSize: 'small',
-  fontSize: 'small',
-  colorType: 'basic',
+export const detailModalButtonProps: IButtonProps = {
+  btnType: "buttonFill",
+  widthSize: "large",
+  heightSize: "small",
+  fontSize: "small",
+  colorType: "basic",
   onClick: null,
-  disabled: false
-}
+  disabled: false,
+};
 
-export const detailModalProps:IModalProps = {
-  title:"메뉴 관리",
+export const detailModalProps: IModalProps = {
+  title: "메뉴 관리",
   okText: null,
   cancelText: null,
   maskClosable: false,
   visible: false,
   onCancel: null,
   onOk: null,
-  width: "80%"
-}
+  width: "80%",
+};
