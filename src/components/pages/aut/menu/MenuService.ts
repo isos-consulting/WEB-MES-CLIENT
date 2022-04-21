@@ -1,4 +1,5 @@
 import { IDatagridProps } from "~/components/UI";
+import { IInputGroupboxProps } from "~/components/UI/input-groupbox";
 import { getData } from "~/functions";
 
 type TGridAttributes = {
@@ -40,11 +41,13 @@ class MenuService {
   private searchUriPath: string;
   private grid: any;
   private inputGroup: any;
+  private modalHook: any;
 
-  constructor(searchUriPath: string, grid: any, inputGroup: any) {
+  constructor(searchUriPath: string, grid: any, inputGroup: any, modalHook: any) {
     this.searchUriPath = searchUriPath;
     this.grid = grid;
     this.inputGroup = inputGroup;
+    this.modalHook = modalHook;
   }
   searchMenuList = (): void => {
     const searchParams = {};
@@ -97,11 +100,20 @@ class MenuService {
     };
   };
 
-  getInputGroupProps = () => {
+  getInputGroupProps = (): IInputGroupboxProps => {
     return {
+      id: 'INPUT_GROUP_BOX',
       inputItems: this.inputGroup.inputItems,
     };
   };
+
+  openMenuModal = (): void => {
+    this.modalHook(true);
+  }
+
+  afterCloseMenuModal = (): void => {
+    this.modalHook(false);
+  }
 }
 
 export default MenuService;

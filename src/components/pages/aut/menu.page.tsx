@@ -13,21 +13,18 @@ import {
 import MenuService from "./menu/MenuService";
 
 export const PgAutMenu = () => {
-  const [menuModalVisible, setMenuModalVisible] = useState<boolean>(true);
+  const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const grid = useGrid("GRID", menuGridColumns, menuGridOptions);
   const inputGroups = useInputGroup("MENU_INPUTBOX", menuInputGroupBoxs);
-  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, inputGroups);
+  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, inputGroups, setMenuModalVisible);
 
   const gridProps = menuService.getGridProps();
   const inputGroupProps = menuService.getInputGroupProps();
 
-  const handleDetailModalButtonClick = () => {
-
-  };
-
   detailModalProps.visible = menuModalVisible;
+  detailModalProps.onCancel = menuService.afterCloseMenuModal;
 
-  detailModalButtonProps.onClick = handleDetailModalButtonClick;
+  detailModalButtonProps.onClick = menuService.openMenuModal;
   menuSearchButtonProps.onClick = menuService.searchMenuList;
 
   return (
