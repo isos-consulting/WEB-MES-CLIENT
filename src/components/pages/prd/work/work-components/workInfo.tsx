@@ -75,6 +75,11 @@ const BaseWorkInfo = ({
     infoDispatch({type:'CHANGE_ROUTING_INFO', name:'qty', value});
   }
 
+  const changePrdSignalCnt = (ev) => {
+    const {value} = ev?.target;
+    infoDispatch({type:'CHANGE_ROUTING_INFO', name:'prd_signal_cnt', value});
+  }
+
   const changeRemark = (ev) => {
     const {value} = ev?.target;
     infoDispatch({type:'CHANGE_ROUTING_INFO', name:'remark', value});
@@ -208,7 +213,11 @@ const BaseWorkInfo = ({
           <Label text='양품 수량' width={100} />
           <Textbox {...textboxDefaultSettings} type='number' id='qty' value={values?.qty} widthSize='flex' onChange={changeQty} />
         </Col>
-        <Col span={12} style={{marginBottom:16, paddingRight: 4}}>
+        <Col span={3}>
+          <Label text='설비 카운트' width={100} />
+          <Textbox {...textboxDefaultSettings} type='number' id='prd_signal_cnt' value={values?.prd_signal_cnt} widthSize='flex' onChange={changePrdSignalCnt} />
+        </Col>
+        <Col span={9} style={{marginBottom:16, paddingRight: 4}}>
           <Label text='비고' width={100} />
           <Textbox {...textboxDefaultSettings} id='remark' value={values?.remark} widthSize='flex' onChange={changeRemark} />
         </Col>
