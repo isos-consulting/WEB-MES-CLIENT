@@ -451,6 +451,7 @@ export const PgPrdWork = () => {
         'start_date': routingData?.['start_date'],
         'end_date': routingData?.['end_date'],
         'ongoing_fg': routingData?.['ongoing_fg'],
+        'prd_signal_cnt': routingData?.['prd_signal_cnt'],
         'remark': routingData?.['remark'],
       }
     ], SAVE_URI_PATH, 'put', 'success').then((success) => {
