@@ -268,19 +268,19 @@ const tempAPI = async() => {
           {
             reg_date: "2022-04-25 10:00:00",
             data_map_id: 1,
-            data_map_nm: '',
+            data_map_nm: '온도1',
             value: 83
           },
           {
             reg_date: "2022-04-25 11:00:00",
             data_map_id: 1,
-            data_map_nm: '',
+            data_map_nm: '온도2',
             value: 14
           },
           {
             reg_date: "2022-04-25 12:00:00",
             data_map_id: 1,
-            data_map_nm: '',
+            data_map_nm: '온도1',
             value: 26
           },
         ]
@@ -288,6 +288,16 @@ const tempAPI = async() => {
   }
   return apiResponse;
 };
+
+const convertToAxis = (datas:RawDatas) => {
+  return datas.raws.map(raw => {
+    return {
+      x: raw.reg_date,
+      y: raw.value,
+      id: raw.data_map_nm,
+    }
+  });
+}
 
 interface EqmTempSearchCondition {
     reg_date: string;
@@ -301,8 +311,10 @@ export const PgEqmTempInterface = () => {
   const handleSearchButtonClick = async (searchPayLoads: EqmTempSearchCondition)=>{
     // console.log(getData(searchPayLoads, 'url'));
     const { datas } = await tempAPI();
+    const axis = convertToAxis(datas);
 
     console.log(datas);
+    console.log(axis);
     setFlag(!flag)
   };
 
