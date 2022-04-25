@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, LineGraph, Searchbox, useSearchbox } from "~/components/UI";
-import { getData, getNow } from "~/functions";
+import { getNow } from "~/functions";
 
 enum SensorColorPalette {
     TEMP1 = '#3c608b',
@@ -229,6 +229,66 @@ const dummyData = [
     },
   ];
 
+interface InterfaceApiResponse {
+  success: boolean;
+  state_cd: string;
+  state: object;
+  message: string;
+  datas: RawDatas;
+}
+
+interface RawDatas {
+  raws: EquipApiDataType[],
+  value: object
+}
+
+interface EquipApiDataType {
+  reg_date: string;
+  data_map_id: number;
+  data_map_nm: string;
+  value: number;
+}
+
+const tempAPI = async() => {
+  const apiResponse: InterfaceApiResponse = {
+    "success": true,
+    "state_cd": "gatDataHistory-S-0000",
+    "state": {
+        "state_tag": "gatDataHistory",
+        "type": "SUCCESS",
+        "state_no": "0000"
+    },
+    "message": "데이터 조회 성공",
+    "datas": {
+        "value": {
+            "count": 0
+        },
+        "raws":
+        [
+          {
+            reg_date: "2022-04-25 10:00:00",
+            data_map_id: 1,
+            data_map_nm: '',
+            value: 83
+          },
+          {
+            reg_date: "2022-04-25 11:00:00",
+            data_map_id: 1,
+            data_map_nm: '',
+            value: 14
+          },
+          {
+            reg_date: "2022-04-25 12:00:00",
+            data_map_id: 1,
+            data_map_nm: '',
+            value: 26
+          },
+        ]
+    }
+  }
+  return apiResponse;
+};
+
 interface EqmTempSearchCondition {
     reg_date: string;
     end_date: string;
@@ -238,8 +298,11 @@ interface EqmTempSearchCondition {
 export const PgEqmTempInterface = () => {
   const [flag, setFlag] = useState(false);
 
-  const handleSearchButtonClick = (searchPayLoads: EqmTempSearchCondition)=>{
-    console.log(getData(searchPayLoads, 'url'));
+  const handleSearchButtonClick = async (searchPayLoads: EqmTempSearchCondition)=>{
+    // console.log(getData(searchPayLoads, 'url'));
+    const { datas } = await tempAPI();
+
+    console.log(datas);
     setFlag(!flag)
   };
 
