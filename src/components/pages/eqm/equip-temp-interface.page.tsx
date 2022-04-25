@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, LineGraph, Searchbox, useSearchbox } from "~/components/UI";
-import { getNow } from "~/functions";
+import { getData, getNow } from "~/functions";
 
 enum SensorColorPalette {
     TEMP1 = '#3c608b',
@@ -229,8 +229,19 @@ const dummyData = [
     },
   ];
 
+interface EqmTempSearchCondition {
+    reg_date: string;
+    end_date: string;
+    temperature: string;
+}
+
 export const PgEqmTempInterface = () => {
   const [flag, setFlag] = useState(false);
+
+  const handleSearchButtonClick = (searchPayLoads: EqmTempSearchCondition)=>{
+    console.log(getData(searchPayLoads, 'url'));
+    setFlag(!flag)
+  };
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
     {type: "datetime", id: "reg_date", label: "조회일시", disabled: false, default: getNow()},
@@ -238,7 +249,7 @@ export const PgEqmTempInterface = () => {
     {type: "text", id: "temperature", label: "온도", disabled: false, default: "",}
   ]);
 
-  props.onSearch = _=>{ setFlag(!flag) };
+  props.onSearch = handleSearchButtonClick;
 
   return (
     <>
