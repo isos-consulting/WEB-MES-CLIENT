@@ -1,15 +1,16 @@
+import { chain } from "lodash";
 import React, { useState } from "react";
 import { Container, LineGraph, Searchbox, useSearchbox } from "~/components/UI";
-import { getNow } from "~/functions";
+import { getData, getNow } from "~/functions";
 
 enum SensorColorPalette {
-    TEMP1 = '#3c608b',
-    TEMP2 = '#e0483e'
+    TEMP1 = 'hsl(336, 70%, 50%)',
+    TEMP2 = 'hsl(26, 70%, 50%)'
 }
 
 const dummyData = [
     {
-      id: "설비1",
+      id: "TEMP1",
       color: SensorColorPalette.TEMP1,
       data: [
         {
@@ -63,7 +64,7 @@ const dummyData = [
       ],
     },
     {
-      id: "설비2",
+      id: "TEMP2",
       color: SensorColorPalette.TEMP2,
       data: [
         {
@@ -118,9 +119,9 @@ const dummyData = [
     },
   ];
   
-  const searchData = [
+  let searchData = [
     {
-      id: "설비1",
+      id: "TEMP1",
       color: SensorColorPalette.TEMP1,
       data: [
         {
@@ -174,7 +175,7 @@ const dummyData = [
       ],
     },
     {
-      id: "설비2",
+      id: "TEMP2",
       color: SensorColorPalette.TEMP2,
       data: [
         {
@@ -249,6 +250,20 @@ interface EquipApiDataType {
   value: number;
 }
 
+interface AxisDataType {
+  id: string;
+  x: string;
+  y: number;
+}
+
+interface GraphProps {
+  id: string;
+  color: string;
+  data: AxisDataType[]
+}
+
+
+
 const tempAPI = async() => {
   const apiResponse: InterfaceApiResponse = {
     "success": true,
@@ -268,20 +283,38 @@ const tempAPI = async() => {
           {
             reg_date: "2022-04-25 10:00:00",
             data_map_id: 1,
-            data_map_nm: '온도1',
+            data_map_nm: 'TEMP1',
             value: 83
-          },
-          {
-            reg_date: "2022-04-25 11:00:00",
-            data_map_id: 1,
-            data_map_nm: '온도2',
-            value: 14
           },
           {
             reg_date: "2022-04-25 12:00:00",
             data_map_id: 1,
-            data_map_nm: '온도1',
+            data_map_nm: 'TEMP1',
             value: 26
+          },
+          {
+            reg_date: "2022-04-25 14:00:00",
+            data_map_id: 1,
+            data_map_nm: 'TEMP1',
+            value: 26
+          },
+          {
+            reg_date: "2022-04-25 10:00:00",
+            data_map_id: 2,
+            data_map_nm: 'TEMP2',
+            value: 14
+          },
+          {
+            reg_date: "2022-04-25 12:00:00",
+            data_map_id: 2,
+            data_map_nm: 'TEMP2',
+            value: 40
+          },
+          {
+            reg_date: "2022-04-25 13:00:00",
+            data_map_id: 2,
+            data_map_nm: 'TEMP2',
+            value: 40
           },
         ]
     }
@@ -299,6 +332,12 @@ const convertToAxis = (datas:RawDatas) => {
   });
 }
 
+const groupingRaws = (raws: AxisDataType[], key: string) => {
+  return chain(raws).groupBy("id")
+                    .map((data, key) => ({id: key, color: SensorColorPalette[key], data}))
+                    .value();
+}
+
 interface EqmTempSearchCondition {
     reg_date: string;
     end_date: string;
@@ -306,16 +345,18 @@ interface EqmTempSearchCondition {
 }
 
 export const PgEqmTempInterface = () => {
-  const [flag, setFlag] = useState(false);
+  const initialData:GraphProps[] = [];
+
+  const [graph, setGraph] = useState(initialData);
 
   const handleSearchButtonClick = async (searchPayLoads: EqmTempSearchCondition)=>{
-    // console.log(getData(searchPayLoads, 'url'));
+    console.log(getData(searchPayLoads, 'gat/data-history/report'));
     const { datas } = await tempAPI();
     const axis = convertToAxis(datas);
+    const group = groupingRaws(axis, "id");
 
-    console.log(datas);
-    console.log(axis);
-    setFlag(!flag)
+    setGraph(group);
+    console.log(group);
   };
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
@@ -331,7 +372,7 @@ export const PgEqmTempInterface = () => {
       <Searchbox {...props} />
       <Container>
         <div style={{ width: "100%", height: "80vh"}}>
-            <LineGraph data={flag? dummyData: searchData} />
+            <LineGraph data={graph} />
         </div>
       </Container>
     </>
