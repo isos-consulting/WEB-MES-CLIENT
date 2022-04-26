@@ -3,11 +3,6 @@ import React, { useState } from "react";
 import { Container, LineGraph, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getNow } from "~/functions";
 
-enum SensorColorPalette {
-    TEMP1 = 'hsl(336, 70%, 50%)',
-    TEMP2 = 'hsl(26, 70%, 50%)'
-}
-  
 interface EquipApiDataType {
   created_at: string;
   data_map_id: number;
@@ -23,7 +18,6 @@ interface AxisDataType {
 
 interface GraphProps {
   id: string;
-  color: string;
   data: AxisDataType[]
 }
 
@@ -39,7 +33,7 @@ const convertToAxis = (raws:EquipApiDataType[]) => {
 
 const groupingRaws = (raws: AxisDataType[], key: string) => {
   return chain(raws).groupBy("id")
-                    .map((data, key) => ({id: key, color: SensorColorPalette[key], data}))
+                    .map((data, key) => ({id: key, data}))
                     .value();
 }
 
