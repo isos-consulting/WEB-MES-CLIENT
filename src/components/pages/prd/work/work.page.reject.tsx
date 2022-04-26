@@ -4,7 +4,7 @@ import React, {useRef, useState } from 'react';
 import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridModifiedRows, IGridPopupProps } from '~/components/UI';
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 const DATA_PICKUP_INFO = {

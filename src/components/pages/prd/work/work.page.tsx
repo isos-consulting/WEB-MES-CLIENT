@@ -19,7 +19,7 @@ import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty, pick } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 
 // 날짜 로케일 설정
@@ -451,6 +451,7 @@ export const PgPrdWork = () => {
         'start_date': routingData?.['start_date'],
         'end_date': routingData?.['end_date'],
         'ongoing_fg': routingData?.['ongoing_fg'],
+        'prd_signal_cnt': routingData?.['prd_signal_cnt'],
         'remark': routingData?.['remark'],
       }
     ], SAVE_URI_PATH, 'put', 'success').then((success) => {
@@ -949,7 +950,7 @@ export const PgPrdWork = () => {
 
   useLayoutEffect(() => {
     const routingInfo = workRouting?.selectedRow;
-    if (_.isEmpty(routingInfo)) return;
+    if (isEmpty(routingInfo)) return;
 
     onSearchAfterRouting(workInfo, routingInfo);
   }, [workRouting?.selectedRow]);
@@ -1332,7 +1333,7 @@ const ProdOrderModal = ({visible, onClose}) => {
           ...row,
           lot_no,
         }
-        newRow = _.pick(newRow, [
+        newRow = pick(newRow, [
           'factory_uuid',
           'reg_date',
           'order_uuid',

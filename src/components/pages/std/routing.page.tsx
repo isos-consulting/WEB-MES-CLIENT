@@ -152,6 +152,7 @@ export const PgStdRouting = () => {
     {header:'자동실적처리', name:'auto_work_fg', width:ENUM_WIDTH.L, format:'check', editable:true, requiredField:true},
     {header:'C/T', name:'cycle_time', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     {header:'UPH', name:'uph', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+    {header:'신호 카운트', name:'prd_signal_cnt', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
   ], {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
@@ -476,21 +477,7 @@ export const PgStdRouting = () => {
           {header: '공정명', name:'proc_nm', width:ENUM_WIDTH.L, format:'text'},
         ],
         dataApiSettings: () => {
-          type TParams = {};
-          let inputValues = null;
-          let params:TParams = {};
-
-          if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-            inputValues = newDataPopupInputInfo.values;
-
-          } else { // 세부 항목 등록 팝업일 경우
-            inputValues = addDataPopupInputInfo.values;
-          }
-
-          if (inputValues != null) {
-            params = {};
-          }
-
+          
           return {
             uriPath: '/std/procs',
           }

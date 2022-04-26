@@ -8,7 +8,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import Grid from '@toast-ui/react-grid';
 
 
@@ -464,7 +464,7 @@ export const PgSalOutgo = () => {
     )
   }
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -473,7 +473,7 @@ export const PgSalOutgo = () => {
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
-    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+    cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
       if (['outgo_detail_uuid', 'qty'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

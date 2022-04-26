@@ -9,12 +9,12 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import ITpDoubleGridProps, { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import { FormikValues } from 'formik';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 
 
 const changeNameToAlias = (data:object, items:any[]) => {
-  let newData = _.cloneDeep(data);
+  let newData = cloneDeep(data);
   
   Object.keys(newData)?.forEach(key => {
     const item = items?.find(el => el?.id === key);
@@ -70,7 +70,7 @@ export const PgQmsRework = () => {
       ]
     },
   ]);
-  const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', _.cloneDeep(newDataPopupInputInfo?.props?.inputItems)?.filter(el => el?.id !== 'rework_type_cd'));
+  const editDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', cloneDeep(newDataPopupInputInfo?.props?.inputItems)?.filter(el => el?.id !== 'rework_type_cd'));
 
   /** 그리드 상태를 관리 */
   const grid = useGrid('HEADER_GRID', [
@@ -256,10 +256,10 @@ export const PgQmsRework = () => {
         let params:FormikValues = {};
 
         if (newDataPopupGridVisible) {
-          params = newDataPopupInputInfo?.values;
+          params = newDataPopupInputInfo.ref.current?.values;
 
         } else if (editDataPopupGridVisible) {
-          params = editDataPopupInputInfo?.values;
+          params = editDataPopupInputInfo.ref.current?.values;
         }
 
         return {
@@ -320,7 +320,7 @@ export const PgQmsRework = () => {
     title: '분해이력'
   });
 
-  const newDataPopupGridColumns = _.cloneDeep(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
+  const newDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.filter((el) => el?.name !== 'reg_date');
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
     newDataPopupGridColumns,
     {
@@ -383,7 +383,7 @@ export const PgQmsRework = () => {
       ],
     }
   );
-  const editDataPopupGridColumns = _.cloneDeep(newDataPopupGrid?.gridInfo?.columns)?.map(
+  const editDataPopupGridColumns = cloneDeep(newDataPopupGrid?.gridInfo?.columns)?.map(
     (el) => {
       if (el?.name !== 'remark')
         el['editable'] = false;

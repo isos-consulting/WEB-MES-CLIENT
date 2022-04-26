@@ -10,7 +10,7 @@ import { executeData, getData, getPageName, getPermissions, getToday } from '~/f
 import Colors from '~styles/color.style.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import { selector } from 'recoil';
 
 //#region 🔶🚫투입품목관리
@@ -166,7 +166,7 @@ export const INPUT = () => {
     setInputPopupVisible(true);
   }
 
-  const inputColumns = _.cloneDeep(INPUT_COLUMNS)?.filter(el => el?.name !== 'lot_no');
+  const inputColumns = cloneDeep(INPUT_COLUMNS)?.filter(el => el?.name !== 'lot_no');
 
   //#region 🚫렌더부
   const component = (

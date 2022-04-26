@@ -9,7 +9,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
 const URI_PATH_GET_MAT_RETURN = '/mat/return/{uuid}';
@@ -225,7 +225,7 @@ export const PgMatReturn = () => {
     onAfterChange: detailGrid.gridInfo.onAfterChange
   });
 
-  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', _.cloneDeep(newDataPopupGrid.gridInfo.columns), {
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', cloneDeep(newDataPopupGrid.gridInfo.columns), {
     searchUriPath: URI_PATH_GET_MAT_RETURN_INCLUDE_DETAILS,
     saveUriPath: URI_PATH_POST_MAT_RETURNS,
     rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
@@ -234,7 +234,7 @@ export const PgMatReturn = () => {
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', 
-    _.cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
+    cloneDeep(newDataPopupGrid.gridInfo.columns).map((el) => {
       if (['return_detail_uuid', 'qty', 'convert_value', 'price', 'money_unit_nm', 'exchange'].includes(el?.name)) {
         el['requiredField'] = true;
       } else {

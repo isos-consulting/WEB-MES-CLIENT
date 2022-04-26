@@ -5,7 +5,7 @@ import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridModifiedRo
 import { checkGridData, getData, getModifiedRows, getPageName, getPermissions, isModified, saveGridData } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
-import _, { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
 
 const DATA_PICKUP_INFO = {
@@ -356,7 +356,7 @@ export const DOWNTIME = () => {
     });
 
     saveData[_gridMode+'dRows'] = saveData[_gridMode+'dRows']?.map((row) => {
-      return _.pick(row, DATA_PICKUP_INFO?.[_gridMode]);
+      return pick(row, DATA_PICKUP_INFO?.[_gridMode]);
     });
 
     // 저장 가능한지 체크

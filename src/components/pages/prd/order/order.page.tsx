@@ -183,6 +183,7 @@ export const PgPrdOrder = () => {
     /** 컬럼 */
     columns: [
       {header:'작업지시UUID', name:'order_uuid', alias:'uuid', width:ENUM_WIDTH.M, hidden:true},
+      {header:'상태', name:'order_state', width:ENUM_WIDTH.S, align:'center', editable:false, format:'text', filter:'text'},
       {header:'지시일', name:'reg_date', width:ENUM_WIDTH.M, editable:true, format:'date', filter:'date', requiredField:true},
       {header:'지시번호', name:'order_no', width:ENUM_WIDTH.M, editable:false},
       {header:'공정UUID', name:'proc_uuid', width:ENUM_WIDTH.M, hidden:true, requiredField:true},
@@ -218,7 +219,6 @@ export const PgPrdOrder = () => {
       {header:'수주상세UUID', name:'sal_order_detail_uuid', width:ENUM_WIDTH.M, hidden:true},
       {header:'생산 진행여부', name:'work_fg', width:ENUM_WIDTH.M, hidden:true, format:'check'},
       {header:'마감여부', name:'complete_fg', width:ENUM_WIDTH.M, hidden:true, format:'check'},
-      {header:'작업지시 진행상태', name:'order_state', width:ENUM_WIDTH.L, hidden:true, format:'check'},
       {header:'마감일시', name:'complete_date', width:ENUM_WIDTH.M, hidden:true, format:'datetime'},
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, editable:true, filter:'text'},
     ],

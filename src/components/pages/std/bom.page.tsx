@@ -166,21 +166,11 @@ export const PgStdBom = () => {
       ],
       dataApiSettings: () => {
         type TParams = {use_fg?:boolean};
-        let inputValues = null;
         let params:TParams = {};
 
-        if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
-
-        } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
-        }
-
-        if (inputValues != null) {
-          params = {
-            use_fg: true,
-          };
-        }
+        params = {
+          use_fg: true,
+        };
 
         return {
           uriPath: '/std/prods',

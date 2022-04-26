@@ -2,7 +2,7 @@ import Grid from '@toast-ui/react-grid'
 import { Space, Modal, Spin } from 'antd';
 import React, { useRef, useState } from 'react';
 import { Button, Container, Datagrid, getPopupForm, GridPopup, IDatagridProps, IGridPopupProps, TGridPopupInfos } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { getData, getModifiedRows, getPageName, getPermissions, saveGridData } from '~/functions';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './order.page.util';
@@ -118,6 +118,7 @@ export const orderRoute = () => {
       {header:'설비코드', name:'equip_cd', width:ENUM_WIDTH.M, hidden:true, format:'text', noSave:true},
       {header:'설비명', name:'equip_nm', width:ENUM_WIDTH.XL, hidden:false, editable:true, format:'popup', noSave:true},
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, hidden:false, editable:true, format:'text'},
+      {header:'신호카운트', name:'prd_signal_cnt', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
     ],
     /** 그리드 데이터 */
     data: data,
@@ -156,6 +157,7 @@ export const orderRoute = () => {
       {header:'설비코드', name:'equip_cd', width:ENUM_WIDTH.M, hidden:true, format:'text', noSave:true},
       {header:'설비명', name:'equip_nm', width:ENUM_WIDTH.XL, editable:true, format:'popup', noSave:true},
       {header:'비고', name:'remark', width:ENUM_WIDTH.XL, hidden:false, editable:true, format:'text'},
+      {header:'신호카운트', name:'prd_signal_cnt', width:ENUM_WIDTH.M, editable:true, filter:'number', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL, disableStringEmpty: true},
     ],
     defaultData: data,
     data: data,

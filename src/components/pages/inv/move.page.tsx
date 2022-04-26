@@ -8,7 +8,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 
 /** 제품입고 */
 export const PgInvMove = () => {
@@ -66,7 +66,7 @@ export const PgInvMove = () => {
   });
 
   const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+    cloneDeep(grid.gridInfo.columns)?.filter(el => {
       return el.name !== 'reg_date';
     }),
     {
@@ -121,11 +121,11 @@ export const PgInvMove = () => {
 
           if (newDataPopupGridVisible) {
             // params['stock_type'] = newDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = newDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = newDataPopupInputInfo.ref.current.values?.reg_date;
 
           } else if (setEditDataPopupGridVisible) {
             // params['stock_type'] = editDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = editDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = editDataPopupInputInfo.ref.current.values?.reg_date;
           }
 
           return {
@@ -180,7 +180,7 @@ export const PgInvMove = () => {
     }
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID',
-    _.cloneDeep(grid.gridInfo.columns)?.filter(el => {
+    cloneDeep(grid.gridInfo.columns)?.filter(el => {
       // 신규 추가했을 때, 수정 못하게 방지
       if (el?.name === 'to_store_nm') el['editable'] = false;
       if (['move_uuid', 'qty'].includes(el?.name)) {

@@ -7,8 +7,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_EQM, URL_PATH_PRD, URL_PATH_STD } from '~/enums';
 import { message } from 'antd';
-import _ from 'lodash';
-import { onDefaultGridSave } from '../prd/work';
+import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 
 
@@ -328,7 +327,7 @@ export const PgEqmRepairHistory = () => {
 
     }).finally(() => {
       const datas = data.map((el)=>{
-        let data = _.cloneDeep(el);
+        let data = cloneDeep(el);
         data.occur_start_time = data.occur_start_date
         data.occur_end_time = data.occur_end_date
         data.repair_start_time = data.repair_start_date
