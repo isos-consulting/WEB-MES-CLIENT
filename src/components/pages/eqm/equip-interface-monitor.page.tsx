@@ -50,7 +50,7 @@ const searchNewEquips: IDefineMonitorProps[] = [
   },
 ];
 
-export const PgEquiInterfaceMonitor = () => {
+export const PgEqmInterfaceMonitor = () => {
   const [equipStatus, setEquipStatus] = useState<IDefineMonitorProps[]>([]);
 
   const monitorProps: ITpMonitorCardsProps = {
