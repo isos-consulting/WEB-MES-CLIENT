@@ -19,7 +19,7 @@ import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
 import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
-import { cloneDeep, isEmpty } from 'lodash';
+import { cloneDeep, isEmpty, pick } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 
 // 날짜 로케일 설정
@@ -1333,7 +1333,7 @@ const ProdOrderModal = ({visible, onClose}) => {
           ...row,
           lot_no,
         }
-        newRow = _.pick(newRow, [
+        newRow = pick(newRow, [
           'factory_uuid',
           'reg_date',
           'order_uuid',
