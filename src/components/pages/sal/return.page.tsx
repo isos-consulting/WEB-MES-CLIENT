@@ -81,9 +81,8 @@ export const PgSalReturn = () => {
     {header: '입고창고UUID', name:'to_store_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
     {header: '입고위치UUID', name:'to_location_uuid', width:ENUM_WIDTH.M, filter:'text', hidden:true},
-    {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true, requiredField:true},
+    {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.M, filter:'text', format:'popup', editable:true},
     {header: 'LOT NO', name:'lot_no', width:ENUM_WIDTH.M, filter:'text', editable:true, requiredField:true},
-    {header: '출하수량', name:'outgo_qty', width:ENUM_WIDTH.M, filter:'number', format:'number'},
     {header: '수량', name:'qty', width:ENUM_WIDTH.M, filter:'number', format:'number', requiredField:true, editable:true,
       formula: {
         targetColumnNames:['price', 'exchange'], resultColumnName:'total_price',
@@ -180,10 +179,10 @@ export const PgSalReturn = () => {
         let params:TParams = {};
 
         if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-          inputValues = newDataPopupInputInfo.values;
+          inputValues = newDataPopupInputInfo.ref.current.values;
 
         } else { // 세부 항목 등록 팝업일 경우
-          inputValues = addDataPopupInputInfo.values;
+          inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
         if (inputValues != null) {
@@ -287,7 +286,7 @@ export const PgSalReturn = () => {
 
   const onSearchDetail = (uuid) => {
     if (uuid) {
-      const uriPath = URL_PATH_SAL.RETURN.GET.DETAILS.replace('$', uuid);
+      const uriPath = URL_PATH_SAL.RETURN.GET.DETAILS.replace('{uuid}', uuid);
       
       getData(detailSearchInfo?.values, uriPath, 'raws').then((res) => {
         detailGrid.setGridData(res || []);
@@ -295,7 +294,6 @@ export const PgSalReturn = () => {
     } else {
       detailGrid.setGridData([]);
     }
-
     
   }
   //#endregion
@@ -316,10 +314,8 @@ export const PgSalReturn = () => {
     cloneObject(detailInputInfo.props?.inputItems)?.map((el) => {
         if (!['total_price', 'stmt_no'].includes(el?.id))
           el['disabled'] = false; 
-
         if (el?.id === 'reg_date')
           el['default'] = getToday();
-          
         return el;
       }
     )

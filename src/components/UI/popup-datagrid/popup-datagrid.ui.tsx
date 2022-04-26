@@ -26,8 +26,8 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   const [visible, setVisible] = useRecoilState(afPopupVisible(props.popupId));
   const [data, setData] = useState(props.data ?? props.defaultData);
 
-  const onSave = useMemo(() =>
-    async function() {
+  const onSave = useMemo(() =>{
+    return async function() {
       try {
         const instance = gridRef?.current?.getInstance();
         instance?.finishEditing();
@@ -42,7 +42,38 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           // 신규 추가된 데이터들을 api에 전송
           setLoading(true);
           
-          saveGridData(modifiedRows, props.columns, props.saveUriPath, props.saveParams).then((result) => {
+          let optionValues:object = {};
+
+          if (props.inputProps) {
+            if (Array.isArray(props.inputProps)) {
+              props.inputProps?.forEach(el => {
+                optionValues = {...optionValues, ...el};
+              });
+
+            } else {
+              optionValues = props.inputProps?.innerRef?.current?.values;
+            }
+          } else {
+            optionValues = props.saveOptionParams;
+          }
+          
+          // const optionValues = props.inputProps?.innerRef?.current?.values || props.saveOptionParams;
+          
+          let inputDatas = {}
+
+          if(optionValues) {
+            const optionKeys = Object.keys(optionValues);
+
+            optionKeys.forEach((optionKey) => {
+              const alias = props.inputProps?.inputItems?.find(el => el?.id === optionKey)?.alias;
+              if (alias)
+                inputDatas[alias] = optionValues[optionKey];
+              else
+                inputDatas[optionKey] = optionValues[optionKey];
+            });
+          }
+          
+          saveGridData(modifiedRows, props.columns, props.saveUriPath, inputDatas).then((result) => {
             const {success, count, savedData} = result;
             if (success === false) return;
             
@@ -177,13 +208,13 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
               props.onAfterOk(false, response);
           });
         }
-      } catch {
-
+      } catch(error) {
+        console.log('error',error)
       } finally {
         setLoading(false);
       }
-    }
-  , [props.onOk, props.gridMode, gridRef, props.columns, props.saveUriPath, props.searchParams, props.saveOptionParams, props?.setParentData, props.parentGridRef, props.inputProps]);
+    }}
+  , [props.saveParams, props.onOk, props.gridMode, gridRef, props.columns, props.saveUriPath, props.searchParams, props.saveOptionParams, props?.setParentData, props.parentGridRef, props.inputProps]);
 
   //#region 🔶팝업 버튼 액션 처리
   /** ⛔긍정 버튼 액션 처리 */

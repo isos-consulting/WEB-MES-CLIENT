@@ -10,7 +10,7 @@ import { executeData, getData, getPageName, getPermissions, getToday } from '~/f
 import Colors from '~styles/color.style.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import _ from 'lodash';
+import _, { cloneDeep } from 'lodash';
 import { selector } from 'recoil';
 
 //#region 🔶🚫투입품목관리

@@ -440,6 +440,13 @@ export const PgMatRelease = () => {
     title: '출고요청 지정 품목정보',
   });
 
+  useLayoutEffect(() => {
+    if (newDataPopupGridVisible === true) {
+      newDataPopupInputInfo.ref.current.setFieldValue('reg_date',getToday())
+    } else {
+      newDataPopupInputInfo?.instance?.resetForm();
+    }
+  }, [newDataPopupGridVisible]);
 
   /** 출고요청 팝업을 닫을때 그리드와 그룹입력상자 데이터를 초기화 합니다. */
   useLayoutEffect(() => {

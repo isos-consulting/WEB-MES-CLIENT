@@ -476,21 +476,7 @@ export const PgStdRouting = () => {
           {header: '공정명', name:'proc_nm', width:ENUM_WIDTH.L, format:'text'},
         ],
         dataApiSettings: () => {
-          type TParams = {};
-          let inputValues = null;
-          let params:TParams = {};
-
-          if (newDataPopupGridVisible) { // 신규 등록 팝업일 경우
-            inputValues = newDataPopupInputInfo.values;
-
-          } else { // 세부 항목 등록 팝업일 경우
-            inputValues = addDataPopupInputInfo.values;
-          }
-
-          if (inputValues != null) {
-            params = {};
-          }
-
+          
           return {
             uriPath: '/std/procs',
           }

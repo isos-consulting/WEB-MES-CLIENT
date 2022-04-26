@@ -256,10 +256,10 @@ export const PgQmsRework = () => {
         let params:FormikValues = {};
 
         if (newDataPopupGridVisible) {
-          params = newDataPopupInputInfo?.values;
+          params = newDataPopupInputInfo.ref.current?.values;
 
         } else if (editDataPopupGridVisible) {
-          params = editDataPopupInputInfo?.values;
+          params = editDataPopupInputInfo.ref.current?.values;
         }
 
         return {

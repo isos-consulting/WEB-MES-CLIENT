@@ -376,18 +376,18 @@ export const PgSalRelease = () => {
           stock_type: 'available',
           grouped_type: 'all',
           price_type: 'all',
-          reg_date: dayjs(orderProdPopupInputInfo?.values?.reg_date)?.format('YYYY-MM-DD'),
+          reg_date: dayjs(orderProdPopupInputInfo.ref.current?.values?.reg_date)?.format('YYYY-MM-DD'),
           zero_except_fg: true,
           minus_except_fg: true,
-          prod_uuid: orderProdPopupInputInfo?.values?.prod_uuid,
+          prod_uuid: orderProdPopupInputInfo.ref.current?.values?.prod_uuid,
         };
 
         return {
           uriPath: STOCK_POPUP?.uriPath,
           params,
           onInterlock: () => {
-            const regDate = orderProdPopupInputInfo?.values?.reg_date;
-            const prodUuid = orderProdPopupInputInfo?.values?.prod_uuid;
+            const regDate = orderProdPopupInputInfo.ref.current?.values?.reg_date;
+            const prodUuid = orderProdPopupInputInfo.ref.current?.values?.prod_uuid;
 
             if (!regDate) {
               message.error('기준일을 선택하신 후 다시 시도해주세요.');
@@ -448,7 +448,7 @@ export const PgSalRelease = () => {
       orderProdPopupGrid?.setGridData([]);
 
     } else {
-      orderProdPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo?.values?.reg_date);
+      orderProdPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo.ref.current?.values?.reg_date);
     }
   }, [orderProdPopupVisible]);
   //#endregion
@@ -490,18 +490,18 @@ export const PgSalRelease = () => {
           stock_type: 'available',
           grouped_type: 'all',
           price_type: 'all',
-          reg_date: dayjs(outgoOrderPopupInputInfo?.values?.reg_date)?.format('YYYY-MM-DD'),
+          reg_date: dayjs(outgoOrderPopupInputInfo.ref.current?.values?.reg_date)?.format('YYYY-MM-DD'),
           zero_except_fg: true,
           minus_except_fg: true,
-          prod_uuid: outgoOrderPopupInputInfo?.values?.prod_uuid,
+          prod_uuid: outgoOrderPopupInputInfo.ref.current?.values?.prod_uuid,
         };
 
         return {
           uriPath: STOCK_POPUP?.uriPath,
           params,
           onInterlock: () => {
-            const regDate = outgoOrderPopupInputInfo?.values?.reg_date;
-            const prodUuid = outgoOrderPopupInputInfo?.values?.prod_uuid;
+            const regDate = outgoOrderPopupInputInfo.ref.current?.values?.reg_date;
+            const prodUuid = outgoOrderPopupInputInfo.ref.current?.values?.prod_uuid;
 
             if (!regDate) {
               message.error('기준일을 선택하신 후 다시 시도해주세요.');
@@ -562,7 +562,7 @@ export const PgSalRelease = () => {
       outgoOrderPopupGrid?.setGridData([]);
 
     } else {
-      outgoOrderPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo?.values?.reg_date);
+      outgoOrderPopupInputInfo?.setFieldValue('reg_date', newDataPopupInputInfo.ref.current?.values?.reg_date);
     }
   }, [outgoOrderPopupVisible]);
   //#endregion
@@ -582,7 +582,7 @@ export const PgSalRelease = () => {
       saveUriPath: '/sal/releases',
       okText: '저장하기',
       onCancel: (ev) => {
-        const releaseRequestData = orderProdPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = orderProdPopupGrid?.gridRef.current.gridInst?.getData();
 
         if (releaseRequestData?.length > 0) {
           modal.warning({
@@ -596,13 +596,13 @@ export const PgSalRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData = orderProdPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = orderProdPopupGrid?.gridRef.current.gridInst?.getData();
 
         if (releaseRequestData?.length > 0) {
           // inputbox에 있는 항목 추가로 셀에 넣은 후 append
           releaseRequestData?.map((el) => {
-            const uuid = orderProdPopupInputInfo?.values?.order_detail_uuid;
-            const qty = orderProdPopupInputInfo?.values?.qty;
+            const uuid = orderProdPopupInputInfo.ref.current?.values?.order_detail_uuid;
+            const qty = orderProdPopupInputInfo.ref.current?.values?.qty;
             el['order_detail_uuid'] = uuid;
             el['order_qty'] = qty;
             return el;
@@ -631,7 +631,7 @@ export const PgSalRelease = () => {
       saveUriPath: '/sal/releases',
       okText: '저장하기',
       onCancel: (ev) => {
-        const releaseRequestData = outgoOrderPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = outgoOrderPopupGrid?.gridRef.current.gridInst?.getData();
 
         if (releaseRequestData?.length > 0) {
           modal.warning({
@@ -645,13 +645,13 @@ export const PgSalRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData = outgoOrderPopupGrid?.gridInstance?.getData();
+        const releaseRequestData = outgoOrderPopupGrid?.gridRef.current.gridInst?.getData();
 
         if (releaseRequestData?.length > 0) {
           // inputbox에 있는 항목 추가로 셀에 넣은 후 append
           releaseRequestData?.map((el) => {
-            const uuid = outgoOrderPopupInputInfo?.values?.outgo_order_detail_uuid;
-            const qty = outgoOrderPopupInputInfo?.values?.qty;
+            const uuid = outgoOrderPopupInputInfo.ref.current?.values?.outgo_order_detail_uuid;
+            const qty = outgoOrderPopupInputInfo.ref.current?.values?.qty;
             el['outgo_order_detail_uuid'] = uuid;
             el['outgo_order_qty'] = qty;
             return el;

@@ -121,11 +121,11 @@ export const PgInvMove = () => {
 
           if (newDataPopupGridVisible) {
             // params['stock_type'] = newDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = newDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = newDataPopupInputInfo.ref.current.values?.reg_date;
 
           } else if (setEditDataPopupGridVisible) {
             // params['stock_type'] = editDataPopupInputInfo.values?.stock_type;
-            params['reg_date'] = editDataPopupInputInfo.values?.reg_date;
+            params['reg_date'] = editDataPopupInputInfo.ref.current.values?.reg_date;
           }
 
           return {
