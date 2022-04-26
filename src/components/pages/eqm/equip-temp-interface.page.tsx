@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { chain } from "lodash";
 import React, { useState } from "react";
 import { Container, LineGraph, Searchbox, useSearchbox } from "~/components/UI";
@@ -9,19 +8,6 @@ enum SensorColorPalette {
     TEMP2 = 'hsl(26, 70%, 50%)'
 }
   
-interface InterfaceApiResponse {
-  success: boolean;
-  state_cd: string;
-  state: object;
-  message: string;
-  datas: RawDatas;
-}
-
-interface RawDatas {
-  raws: EquipApiDataType[],
-  value: object
-}
-
 interface EquipApiDataType {
   created_at: string;
   data_map_id: number;
@@ -69,23 +55,15 @@ export const PgEqmTempInterface = () => {
   const [graph, setGraph] = useState(initialData);
 
   const handleSearchButtonClick = async (searchPayLoads: EqmTempSearchCondition)=>{
-    const value = dayjs(searchPayLoads.end_date);
-    const endDate = value.format();
-    const startDate = value.subtract(1, 'hour').format();
-
-    const datas = await getData({
-      start_date: startDate,
-      end_date: endDate,
-    }, 'gat/data-history/report');
+    const datas = await getData(searchPayLoads, 'gat/data-history/report');
     const axis = convertToAxis(datas);
     const group = groupingRaws(axis, "id");
 
     setGraph(group);
-    console.log(group);
   };
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
-    // {type: "datetime", id: "start_date", label: "조회일시", disabled: false, default: getNow()},
+    {type: "datetime", id: "start_date", label: "조회일시", disabled: false, default: getNow(), hidden:true},
     {type: "datetime", id: "end_date", label: "조회일시", disabled: false, default: getNow() },
     {type: "text", id: "temperature", label: "온도", disabled: false, default: "",}
   ]);
