@@ -1,17 +1,17 @@
 import React from "react";
 
 enum MonitorStatusBackgroundColors {
-  Run = "#00af4e",
-  Stop = "#fe0201",
-  Downtime = "#fcc002",
-  Disconnect = "#222529",
+  run = "#00af4e",
+  stop = "#fe0201",
+  downtime = "#fcc002",
+  disconnect = "#222529",
 }
 
 enum MonitorStatusBorderColors {
-  Run = "#6ad198",
-  Stop = "#fe9292",
-  Downtime = "#fee491",
-  Disconnect = "#1a1d21",
+  run = "#6ad198",
+  stop = "#fe9292",
+  downtime = "#fee491",
+  disconnect = "#1a1d21",
 }
 
 interface IFrameStyle {
@@ -106,9 +106,9 @@ const MonitorCard: React.FC<ICreateMonitorProps> = (props) => {
       alignItems: "center",
       width: "70px",
       height: "70px",
-      border: `1px solid ${MonitorStatusBorderColors[props.status]}`,
+      border: `1px solid ${MonitorStatusBorderColors[props.status_cd]}`,
       borderRadius: "50%",
-      backgroundColor: `${MonitorStatusBackgroundColors[props.status]}`,
+      backgroundColor: `${MonitorStatusBackgroundColors[props.status_cd]}`,
       color: "#ffffff",
     },
     footer: {
@@ -122,13 +122,13 @@ const MonitorCard: React.FC<ICreateMonitorProps> = (props) => {
   return (
     <div style={cardStyle.frame}>
       <div style={cardStyle.header}>
-        <span style={cardStyle.title}>{props.title}</span>
+        <span style={cardStyle.title}>{props.equip}</span>
       </div>
       <div style={cardStyle.body}>
-        <div style={cardStyle.content}>{props.content}</div>
+        <div style={cardStyle.content}>{props.value}</div>
       </div>
       <div style={cardStyle.footer}>
-        <span>{props.footer}</span>
+        <span>{props.content}</span>
       </div>
     </div>
   );
