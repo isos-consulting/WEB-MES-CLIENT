@@ -21,5 +21,5 @@ export const MonitorCards: React.FC<ITpMonitorCardsProps> = (
     <MonitorCard {...createEquipProps} />
   ));
 
-  return <div>{setEquipCards}</div>;
+  return <div style={{display:'flex', flexWrap:'wrap' }}>{setEquipCards}</div>;
 };

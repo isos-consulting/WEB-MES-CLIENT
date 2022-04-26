@@ -14,7 +14,7 @@ import { errorState } from '~/enums/response.enum';
 import { getStorageValue, getUserRefreshToken } from '.';
 
 dotenv.config();
-const baseURL = process.env.TEST_URL_WON;
+const baseURL = process.env.BASE_URL;
 
 // environment : production, development, test
 const getTenantInfo = () => {

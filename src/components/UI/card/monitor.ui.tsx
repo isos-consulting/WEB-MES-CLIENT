@@ -18,6 +18,7 @@ interface IFrameStyle {
   width: string;
   backgroundColor: string;
   border: string;
+  margin: string;
 }
 
 interface IHeaderStyle {
@@ -85,6 +86,7 @@ const MonitorCard: React.FC<ICreateMonitorProps> = (props) => {
       width: "300px",
       backgroundColor: "#ffffff",
       border: "none",
+      margin: '10px'
     },
     header: {
       display: "flex",
