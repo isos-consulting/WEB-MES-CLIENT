@@ -19,10 +19,12 @@ export const PgAutMenu = () => {
   const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, inputGroups, setMenuModalVisible);
 
   const gridProps = menuService.getGridProps();
-  const inputGroupProps = menuService.getInputGroupProps();
 
   detailModalProps.visible = menuModalVisible;
   detailModalProps.onCancel = menuService.afterCloseMenuModal;
+  detailModalProps.onOk = _ => {
+    console.log(inputGroups);
+  }
 
   detailModalButtonProps.onClick = menuService.openMenuModal;
   menuSearchButtonProps.onClick = menuService.searchMenuList;
@@ -35,7 +37,7 @@ export const PgAutMenu = () => {
         <Datagrid {...gridProps} />
       </Container>
       <Modal {...detailModalProps}>
-        <InputGroupbox {...inputGroupProps} />
+        <InputGroupbox {...inputGroups.props} />
       </Modal>
     </>
   );
