@@ -45,7 +45,7 @@ export const menuInputGroupBoxs: IInputGroupboxItem[] = [
   {type: "text", id: "menu_uuid", alias: "uuid", label: "메뉴UUID", disabled: true, hidden: true},
   {type: "text", id: "lv", label: "메뉴레벨", disabled: true, hidden: true},
   {type: "text", id: "upper_menu_nm", label: "상위 메뉴", usePopup: true, popupKey: "메뉴관리", popupKeys: ["upper_menu_uuid", "upper_menu_nm"], popupButtonSettings: menuGridPopupButtonSettings},
-  {type: "text", id: "menu_nm", label: "메뉴명"},
+  {type: "text", id: "menu_nm", label: "메뉴명", usePopup: true, popupKey: "메뉴관리", popupKeys: ["menu_uuid", "menu_nm"]},
   {type: "text", id: "menu_type_uuid", label: "메뉴유형UUID", disabled: true, hidden: true},
   {type: "text", id: "menu_type_nm", label: "메뉴유형"},
   {type: "text", id: "menu_uri", label: "메뉴URL"},
