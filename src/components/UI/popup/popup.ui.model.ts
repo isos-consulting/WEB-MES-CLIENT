@@ -1200,7 +1200,7 @@ const getPI_AdmMenuInputType = (option?:IPopupItemOptionProps):IPopupItemsRetrun
       ],
       gridMode: 'select',
     },
-    uriPath: URL_PATH_AUT.MENU.GET.MENUS_PERMISSION,
+    uriPath: URL_PATH_AUT.MENU.GET.MENUS,
     params: option?.params,
     parentGridId: option?.parentGridId,
   }
