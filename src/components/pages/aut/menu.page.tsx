@@ -16,7 +16,7 @@ export const PgAutMenu = () => {
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const grid = useGrid("GRID", menuGridColumns, menuGridOptions);
   const inputGroups = useInputGroup("MENU_INPUTBOX", menuInputGroupBoxs);
-  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, inputGroups, setMenuModalVisible);
+  const menuService = new MenuService(URL_PATH_AUT.MENU.GET.MENUS, grid, setMenuModalVisible);
 
   const gridProps = menuService.getGridProps();
 
