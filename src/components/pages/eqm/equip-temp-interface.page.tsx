@@ -5,9 +5,9 @@ import { getData, getNow } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
 
 enum TemperatureColors {
-  "온도1" = "#00e396",
-  "온도2" = "#008ffb",
-  "온도3" = "#ff8b0a",
+  "가열로 1" = "#00e396",
+  "가열로 2" = "#008ffb",
+  "수조온도" = "#ff8b0a",
   "온도4" = "#fe4762",
 }
 
@@ -80,7 +80,7 @@ export const PgEqmTempInterface = () => {
       label: "조회일시",
       disabled: false,
       default: getNow(),
-      // hidden: true,
+      hidden: true,
     },
     {
       type: "datetime",
@@ -106,7 +106,7 @@ export const PgEqmTempInterface = () => {
       x: {
         type: 'time',
         time: {
-          unit: 'day'
+          unit: 'minute'
         }
       }
     }
@@ -120,8 +120,6 @@ export const PgEqmTempInterface = () => {
     options,
     data,
   };
-
-  console.log(graph);
   return (
     <>
       <Searchbox {...props} />
