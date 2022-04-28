@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { getPopupForm } from '~components/UI/popup/popup.ui.model';
-import { cleanupKeyOfObject, getData } from '~/functions';
+import { cleanupKeyOfObject, addKeyOfObject, getData } from '~/functions';
 import { IPopupItemsRetrunProps } from '~components/UI/popup/popup.ui.type';
 import { Button } from'~components/UI/button';
 import Props from './popup-button.ui.type';
@@ -138,14 +138,16 @@ const PopupButton: React.FC<Props> = (props) => {
               let row:object = child.getInstance().getCheckedRows()[0];
 
               if (typeof row === 'object') {
+                row = addKeyOfObject(row, props?.datagridSettings?.rowAddPopupInfo?.columnNames);
                 row = cleanupKeyOfObject(row, props?.popupKeys);
+
                 setSelectedRow(row);
                 
                 // 부모 grid? 선택한 Row 데이터를 준다.
                 if (props?.handleChange) {
                   props.handleChange(row);
                 }
-                  
+                
                 if (props?.setValues) {
                   //props.setValues(crr => {return {...crr, ...row}});
                   props.setValues(row);

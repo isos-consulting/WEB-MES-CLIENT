@@ -1,5 +1,5 @@
 import '../styles/axios-progress.style.scss';
-import { IGridColumn } from '../components/UI/datagrid-new/datagrid.ui.type';
+import { IGridColumn, IGridPopupColumnInfo } from '../components/UI/datagrid-new/datagrid.ui.type';
 import dayjs, { Dayjs } from 'dayjs';
 import Excel from 'exceljs';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -700,4 +700,12 @@ export const consoleLogLocalEnv = (message?: any, ...optionalParams: any[]):void
       console.debug(message, ...optionalParams);
     }
   }
+}
+
+export const addKeyOfObject = (target:object={} ,keys:IGridPopupColumnInfo[]) => {
+  const result = cloneObject(target);
+
+  keys?.forEach(({original, popup}) => (result[original] = target[popup]));
+
+  return result;
 }
