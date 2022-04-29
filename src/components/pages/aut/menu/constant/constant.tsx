@@ -33,6 +33,7 @@ export const menuGridOptions = {treeColumnOptions: menuGridTreeColumnOptions, gr
 const menuGridRowColumnNames = [
   {original:'upper_menu_uuid', popup:'menu_uuid'},
   {original:'upper_menu_nm', popup:'menu_nm'}
+  {original:'upper_level', popup:'lv'}
 ];
 const menuGridRowAddPopupInfo:IGridPopupInfo = {gridMode: 'select', columnNames:menuGridRowColumnNames};
 
@@ -44,7 +45,7 @@ const menuGridPopupButtonSettings = {datagridSettings: menuGridSettings};
 export const menuInputGroupBoxs: IInputGroupboxItem[] = [
   {type: "text", id: "menu_uuid", alias: "uuid", label: "메뉴UUID", usePopup: true, popupKey: "메뉴관리", popupKeys: ["menu_uuid", "menu_nm"]},
   {type: "text", id: "lv", label: "메뉴레벨", disabled: true, hidden: true},
-  {type: "text", id: "upper_menu_nm", label: "상위 메뉴", usePopup: true, popupKey: "메뉴관리", popupKeys: ["upper_menu_uuid", "upper_menu_nm"], popupButtonSettings: menuGridPopupButtonSettings},
+  {type: "text", id: "upper_menu_nm", label: "상위 메뉴", usePopup: true, popupKey: "메뉴관리", popupKeys: ["upper_menu_uuid", "upper_menu_nm", "upper_level"], popupButtonSettings: menuGridPopupButtonSettings},
   {type: "text", id: "menu_nm", label: "메뉴명"},
   {type: "text", id: "menu_type_uuid", label: "메뉴유형UUID", disabled: true, hidden: true},
   {type: "combo", id: "menu_type_nm", label: "메뉴유형", dataSettingOptions:{ codeName:'menu_type_uuid', textName:'menu_type_nm', uriPath: URL_PATH_AUT.MENU_TYPE.GET.MENU_TYPES, params: {store_type: 'all'}}},
