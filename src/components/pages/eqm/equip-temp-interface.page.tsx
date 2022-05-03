@@ -1,7 +1,7 @@
 import { chain } from "lodash";
 import React, { useState } from "react";
 import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
-import { getData, getNow } from "~/functions";
+import { getData, getToday } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
 
 enum TemperatureColors {
@@ -95,13 +95,13 @@ export const PgEqmTempInterface = () => {
       id: "start_date",
       label: "조회일자",
       disabled: false,
-      default: getNow(),
+      default: getToday(),
     },
     {
       type: "date",
       id: "end_date",
       disabled: false,
-      default: getNow(),
+      default: getToday(),
     },
     {
       type: "text",
