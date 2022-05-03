@@ -96,7 +96,6 @@ export const PgEqmTempInterface = () => {
       label: "조회일시",
       disabled: false,
       default: getNow(),
-      hidden: true,
     },
     {
       type: "datetime",
