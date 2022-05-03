@@ -92,9 +92,7 @@ export const PgEqmTempInterface = () => {
   const diffDay = ({startDate, endDate}) => endDate.diff(startDate, 'd');
 
   const validateSearchDate = searchConditions => {
-    console.log(diffDay(getDayjs(searchConditions)));
-
-    return false;
+    return diffDay(getDayjs(searchConditions)) < 8;
   };
 
   const handleSearchButtonClick = async (
