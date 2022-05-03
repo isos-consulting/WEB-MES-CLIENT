@@ -91,14 +91,14 @@ export const PgEqmTempInterface = () => {
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
     {
-      type: "datetime",
+      type: "date",
       id: "start_date",
       label: "조회일시",
       disabled: false,
       default: getNow(),
     },
     {
-      type: "datetime",
+      type: "date",
       id: "end_date",
       disabled: false,
       default: getNow(),
