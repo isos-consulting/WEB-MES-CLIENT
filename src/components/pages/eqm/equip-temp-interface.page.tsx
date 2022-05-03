@@ -1,6 +1,6 @@
 import { chain } from "lodash";
 import React, { useState } from "react";
-import { Container, Searchbox, useSearchbox } from "~/components/UI";
+import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getNow } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
 
@@ -124,6 +124,7 @@ export const PgEqmTempInterface = () => {
     <>
       <Searchbox {...props} />
       <Container>
+        <Combobox firstItemType={'none'} options={[{code:"year", text:"년"}, {code:'month', text:'월'}, {code:'day', text:'일'}, {code:'minute', text:'분'}]}/>
         <LineChart {...lineChartPorps} />
       </Container>
     </>
