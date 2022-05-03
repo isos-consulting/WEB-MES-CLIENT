@@ -75,8 +75,8 @@ export const PgEqmTempInterface = () => {
   const initialData: GraphProps[] = [];
   const timeAixsComboLists = getTimeAxisComboBoxDatas();
 
-
   const [graph, setGraph] = useState(initialData);
+  const [timeAxis, setTimeAxis] = useState('minute');
 
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition
@@ -139,7 +139,7 @@ export const PgEqmTempInterface = () => {
     <>
       <Searchbox {...props} />
       <Container>
-        <Combobox firstItemType={'none'} options={timeAixsComboLists}/>
+        <Combobox firstItemType={'none'} options={timeAixsComboLists} value={timeAxis} onChange={_=>{setTimeAxis(_)}}/>
         <LineChart {...lineChartPorps} />
       </Container>
     </>
