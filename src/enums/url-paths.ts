@@ -323,6 +323,25 @@ const URL_PATH = {
         FILE_MGMT_DETAIL_TYPES:'/adm/file-mgmt-detail-types',
       }
     },
+    INTERFACE_STATE:{
+      GET:{
+        /** UUID 문자열 변환 필요 */
+        INTERFACE_STATE:'/adm/interface-state/{uuid}',
+        INTERFACE_STATES:'/adm/interface-states'
+      },
+      POST:{
+        INTERFACE_STATES:'/adm/interface-states'
+      },
+      PUT:{
+        INTERFACE_STATES:'/adm/interface-states'
+      },
+      PATCH:{
+        INTERFACE_STATES:'/adm/interface-states'
+      },
+      DELETE:{
+        INTERFACE_STATES:'/adm/interface-states'
+      }
+    }
   },
   INV:{
     STORE:{
@@ -387,7 +406,7 @@ const URL_PATH = {
       DELETE:{
         MOVES:'/inv/moves'
       }
-    }
+    },
   },
   MAT:{
     RELEASE:{

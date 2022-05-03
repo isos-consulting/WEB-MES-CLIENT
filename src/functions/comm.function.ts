@@ -511,8 +511,21 @@ export const getMenus = async () => {
             sub_menu: [],
             update_fg: true
           },
-          
-          
+          {
+            component_nm: 'PgAdmInterfaceState',
+            create_fg: true,
+            delete_fg: true,
+            first_menu_uuid: 'adm',
+            icon: null,
+            lv: 2,
+            menu_nm: '인터페이스 가동상태',
+            menu_type: 'page',
+            menu_uri: '/adm/interface-state',
+            menu_uuid: 'admInterfaceState',
+            read_fg: true,
+            sub_menu: [],
+            update_fg: true
+          },
         ],
         update_fg: null
       })
