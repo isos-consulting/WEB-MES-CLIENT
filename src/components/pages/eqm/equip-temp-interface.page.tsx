@@ -93,7 +93,7 @@ export const PgEqmTempInterface = () => {
     {
       type: "date",
       id: "start_date",
-      label: "조회일시",
+      label: "조회일자",
       disabled: false,
       default: getNow(),
     },
