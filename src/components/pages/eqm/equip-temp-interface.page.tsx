@@ -3,12 +3,21 @@ import React, { useState } from "react";
 import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getNow } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
+import { x64 } from "crypto-js";
 
 enum TemperatureColors {
   "가열로 1" = "#00e396",
   "가열로 2" = "#008ffb",
   "수조온도" = "#ff8b0a",
   "온도4" = "#fe4762",
+}
+
+enum TimeAxisScale {
+  "year" = "연",
+  "month" = "월",
+  "day" = "일",
+  "hour" = "시",
+  "minute"= "분",
 }
 
 interface EquipApiDataType {
@@ -58,8 +67,14 @@ interface EqmTempSearchCondition {
   temperature: string;
 }
 
+const getTimeAxisComboBoxDatas = () => {
+  return Object.keys(TimeAxisScale).map(x => ({code: x, text: TimeAxisScale[x]}));
+}
+
 export const PgEqmTempInterface = () => {
   const initialData: GraphProps[] = [];
+  const timeAixsComboLists = getTimeAxisComboBoxDatas();
+
 
   const [graph, setGraph] = useState(initialData);
 
@@ -124,7 +139,7 @@ export const PgEqmTempInterface = () => {
     <>
       <Searchbox {...props} />
       <Container>
-        <Combobox firstItemType={'none'} options={[{code:"year", text:"년"}, {code:'month', text:'월'}, {code:'day', text:'일'}, {code:'minute', text:'분'}]}/>
+        <Combobox firstItemType={'none'} options={timeAixsComboLists}/>
         <LineChart {...lineChartPorps} />
       </Container>
     </>
