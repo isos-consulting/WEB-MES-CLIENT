@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getToday } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
+import { message } from "antd";
 
 enum TemperatureColors {
   "가열로 1" = "#00e396",
@@ -89,11 +90,16 @@ export const PgEqmTempInterface = () => {
     ) => {
       const dataIsValid = validateSearchDate(searchPayLoads);
 
-      const datas = await getData(searchPayLoads, "gat/data-history/report");
-      const axis = convertToAxis(datas);
-      const group = groupingRaws(axis);
+      if(dataIsValid){
+        const datas = await getData(searchPayLoads, "gat/data-history/report");
+        const axis = convertToAxis(datas);
+        const group = groupingRaws(axis);
 
-      setGraph(group);
+        setGraph(group);
+      } else {
+        message.warn('8일 이상의 데이터는 조회 할 수 없습니다');
+      }
+
   };
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
