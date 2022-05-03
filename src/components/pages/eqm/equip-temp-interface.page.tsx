@@ -79,14 +79,21 @@ export const PgEqmTempInterface = () => {
   const [timeAxis, setTimeAxis] = useState('minute');
   
   const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);
+
+  const validateSearchDate = _ => {
+    return false;
+  };
+
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition
     ) => {
+      const dataIsValid = validateSearchDate(searchPayLoads);
+
       const datas = await getData(searchPayLoads, "gat/data-history/report");
       const axis = convertToAxis(datas);
       const group = groupingRaws(axis);
 
-    setGraph(group);
+      setGraph(group);
   };
 
   const { props } = useSearchbox("SEARCH_INPUTBOX", [
