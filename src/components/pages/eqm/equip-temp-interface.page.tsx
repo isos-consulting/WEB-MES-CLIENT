@@ -4,6 +4,7 @@ import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getToday } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
 import { message } from "antd";
+import dayjs from "dayjs";
 
 enum TemperatureColors {
   "가열로 1" = "#00e396",
@@ -81,7 +82,14 @@ export const PgEqmTempInterface = () => {
   
   const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);
 
+  const getDayjs = ({start_date, end_date}:{start_date: string, end_date: string}) => ({
+    startDate: dayjs(start_date),
+    endDate: dayjs(end_date)
+  });
+
   const validateSearchDate = _ => {
+    const {startDate, endDate} = getDayjs(_);
+
     return false;
   };
 
