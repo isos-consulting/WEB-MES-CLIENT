@@ -40,6 +40,11 @@ interface GraphProps {
   borderColor: string;
 }
 
+interface DueDate {
+  start_date: string;
+  end_date: string;
+}
+
 const convertToAxis = (raws: EquipApiDataType[]) => {
   return raws.map((raw) => {
     return {
@@ -82,13 +87,10 @@ export const PgEqmTempInterface = () => {
   
   const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);
 
-  const getDayjs = ({start_date, end_date}:{start_date: string, end_date: string}) => ({
-    startDate: dayjs(start_date),
-    endDate: dayjs(end_date)
-  });
+  const getDayjs = ({start_date, end_date}:DueDate) => ({startDate: dayjs(start_date), endDate: dayjs(end_date)});
+
 
   const validateSearchDate = _ => {
-    const {startDate, endDate} = getDayjs(_);
 
     return false;
   };
