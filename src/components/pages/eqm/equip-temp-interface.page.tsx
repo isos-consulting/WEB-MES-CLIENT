@@ -136,11 +136,20 @@ export const PgEqmTempInterface = () => {
     options,
     data,
   };
+
+  const comboBoxProps = {
+    firstItemType: 'none',
+    options: timeAixsComboLists,
+    value: timeAxis,
+    onChange: handleChangeComboData,
+    label: '시간 축 단위 선택'
+  };
+
   return (
     <>
       <Searchbox {...props} />
       <Container>
-        <Combobox firstItemType={'none'} options={timeAixsComboLists} value={timeAxis} onChange={handleChangeComboData} label={'시간 축 단위 선택'} />
+        <Combobox {...comboBoxProps} />
         <LineChart {...lineChartPorps} />
       </Container>
     </>
