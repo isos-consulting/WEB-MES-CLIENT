@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getNow } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
-import { x64 } from "crypto-js";
 
 enum TemperatureColors {
   "가열로 1" = "#00e396",
@@ -71,19 +70,21 @@ const getTimeAxisComboBoxDatas = () => {
   return Object.keys(TimeAxisScale).map(x => ({code: x, text: TimeAxisScale[x]}));
 }
 
+
 export const PgEqmTempInterface = () => {
   const initialData: GraphProps[] = [];
   const timeAixsComboLists = getTimeAxisComboBoxDatas();
-
+  
   const [graph, setGraph] = useState(initialData);
   const [timeAxis, setTimeAxis] = useState('minute');
-
+  
+  const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition
-  ) => {
-    const datas = await getData(searchPayLoads, "gat/data-history/report");
-    const axis = convertToAxis(datas);
-    const group = groupingRaws(axis);
+    ) => {
+      const datas = await getData(searchPayLoads, "gat/data-history/report");
+      const axis = convertToAxis(datas);
+      const group = groupingRaws(axis);
 
     setGraph(group);
   };
@@ -121,7 +122,7 @@ export const PgEqmTempInterface = () => {
       x: {
         type: 'time',
         time: {
-          unit: 'minute'
+          unit: timeAxis
         }
       }
     }
@@ -139,7 +140,7 @@ export const PgEqmTempInterface = () => {
     <>
       <Searchbox {...props} />
       <Container>
-        <Combobox firstItemType={'none'} options={timeAixsComboLists} value={timeAxis} onChange={_=>{setTimeAxis(_)}}/>
+        <Combobox firstItemType={'none'} options={timeAixsComboLists} value={timeAxis} onChange={handleChangeComboData} />
         <LineChart {...lineChartPorps} />
       </Container>
     </>
