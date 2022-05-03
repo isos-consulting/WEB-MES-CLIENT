@@ -89,8 +89,10 @@ export const PgEqmTempInterface = () => {
 
   const getDayjs = ({start_date, end_date}:DueDate) => ({startDate: dayjs(start_date), endDate: dayjs(end_date)});
 
+  const diffDay = ({startDate, endDate}) => endDate.diff(startDate, 'd');
 
   const validateSearchDate = _ => {
+    console.log(diffDay(getDayjs(_)));
 
     return false;
   };
