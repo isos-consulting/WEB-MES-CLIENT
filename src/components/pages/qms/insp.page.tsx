@@ -653,7 +653,11 @@ export const PgQmsInsp = () => {
     ];
 
     headerSearchInfo.setSearchItems(_originSearchItems);
-    if(headerSearchInfo?.setValues) headerSearchInfo?.setValues({insp_type:_defaultInspType})
+    if(headerSearchInfo?.setValues) {
+      const value= {insp_type:_defaultInspType}
+      handleAfterChangeInspType(JSON.stringify(value))
+      headerSearchInfo?.setValues(value)
+    }
     
     const _originInputItems:IInputGroupboxItem[] = [
       {type:'text', id:'insp_uuid', alias:'uuid', label:'검사기준서UUID', disabled:true, hidden:true},
@@ -755,7 +759,7 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
+      addDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo?.ref?.current?.values));
     } else {
       addDataPopupInputInfo?.setValues({});
     }
@@ -765,7 +769,8 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
+      const inputInfoValues = cloneDeep(detailSubInputInfo?.values);
+      editDataPopupInputInfo?.setValues(inputInfoValues);
       editDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
     } else {
       editDataPopupInputInfo?.setValues({});
