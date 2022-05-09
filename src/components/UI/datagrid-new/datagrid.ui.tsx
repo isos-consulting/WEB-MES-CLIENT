@@ -663,6 +663,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           default:
             break;
         }
+      } else {
+        el['filter'] = {
+          type: 'text',
+          showClearBtn: true,
+        }
       }
 
       // 기본 값 세팅
