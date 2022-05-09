@@ -331,7 +331,7 @@ export const PgStdBom = () => {
 
   //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
-    {type:'text', id:'prod_uuid', label:'품목UUID', disabled:true, hidden:true},
+    {type:'text', id:'prod_uuid', label:'품목UUID', alias:'p_prod_uuid', disabled:true, hidden:true},
     {type:'text', id:'prod_no', label:'품번', disabled:true},
     {type:'text', id:'prod_nm', label:'품명', disabled:true},
     {type:'text', id:'prod_std', label:'규격', disabled:true},
@@ -526,9 +526,6 @@ export const PgStdBom = () => {
       null,
       {
         ...addDataPopupGrid.gridInfo,
-        saveParams: {
-          p_prod_uuid: addDataPopupInputInfo?.values?.prod_uuid
-        }
       },
       {
         ...editDataPopupGrid.gridInfo,
