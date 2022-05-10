@@ -229,6 +229,7 @@ export const PgQmsInsp = () => {
   }
 
   const handleAmendInsp = (gridRef:any, type:'개정'|'수정', popupType:TPopup) => {
+    gridRef.current.getInstance().finishEditing();
     const grid = (
       popupType === 'add' ?
         addDataPopupGrid
