@@ -4,7 +4,7 @@ import React, { useState, useLayoutEffect } from 'react';
 import { TpTripleGrid } from '~/components/templates/grid-triple';
 import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, useGrid, useSearchbox } from '~/components/UI';
-import { ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
 import {OptComplexColumnInfo} from 'tui-grid/types/options'
 import { add, cloneDeep } from 'lodash';
@@ -437,8 +437,8 @@ export const PgQmsInsp = () => {
     {header:'상세검사내용', name:'insp_item_desc', width:ENUM_WIDTH.XL, filter:'text'},
     {header:'위치번호', name:'position_no', width:ENUM_WIDTH.M, format:'number', filter:'number'},
     {header:'기준', name:'spec_std', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
-    {header:'MIN', name:'spec_min', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-    {header:'MAX', name:'spec_max', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'MIN', name:'spec_min', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal: ENUM_DECIMAL.DEC_STCOK},
+    {header:'MAX', name:'spec_max', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal: ENUM_DECIMAL.DEC_STCOK},
     {header:'검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'검사방법', name:'insp_method_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header:'검사구UUID', name:'insp_tool_uuid', width:ENUM_WIDTH.M, hidden:true},
