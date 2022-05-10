@@ -759,7 +759,7 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo?.ref?.current?.values));
+      addDataPopupInputInfo?.setValues(cloneDeep(detailSubInputInfo?.values));
     } else {
       addDataPopupInputInfo?.setValues({});
     }
