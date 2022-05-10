@@ -6,6 +6,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
+import { message } from 'antd';
 
 
 
@@ -261,6 +262,15 @@ export const PgPrdWorkDowntimeReport = () => {
   const onSearch = (values) => {
     const searchKeys = ['work_start_date', 'work_end_date', 'sort_type'];//Object.keys(searchInfo.values);
     const searchParams = cleanupKeyOfObject(values, searchKeys);
+
+    //입력된 두 개의 날짜 전후 비교
+    const firstDate = new Date(searchParams.work_start_date)
+    const secondDate = new Date(searchParams.work_end_date)
+    
+    if (firstDate > secondDate) {
+      message.error("조회 기간의 순서가 올바른지 확인하세요.")
+      return
+    } 
 
     if (values?.sort_type === 'none') {
       searchParams['sort_type'] = 'proc';
