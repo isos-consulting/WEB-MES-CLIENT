@@ -198,6 +198,16 @@ export const PgPrdReturn = () => {
     // const searchKeys = Object.keys(values);
     const searchParams = cleanupKeyOfObject(values, searchInfo.searchItemKeys);
 
+    //입력된 두 개의 날짜 전후 비교
+    const firstDate = new Date(values.start_date)
+    const secondDate = new Date(values.end_date)
+
+    if (firstDate > secondDate) {
+      message.error("조회 기간의 순서가 올바른지 확인하세요.")
+      return
+    } 
+
+
     let data = [];
 
     getData(searchParams, searchUriPath).then((res) => {
