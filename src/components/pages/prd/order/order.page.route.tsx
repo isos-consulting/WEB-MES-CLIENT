@@ -170,6 +170,7 @@ export const orderRoute = () => {
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
     onOk: (gridRef) => {
+      gridRef.current.getInstance().finishEditing();
       saveGridData(
         getModifiedRows(gridRef, editGridPopupInfo.columns, editGridPopupInfo.data),
         editGridPopupInfo.columns,
@@ -232,6 +233,7 @@ export const orderRoute = () => {
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
     onOk: (gridRef) => {
+      gridRef.current.getInstance().finishEditing();
       saveGridData(
         getModifiedRows(gridRef, appendGridPopupInfo.columns, appendGridPopupInfo.data),
         appendGridPopupInfo.columns,
