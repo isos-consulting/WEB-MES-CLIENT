@@ -91,7 +91,7 @@ export async function getData<T = any[]>(
       datas = null;
 
       if (!disabledErrorMessage) {
-        message.error(error.response.data.message);
+        message.error(error.response.data.message.user_message);
       }
     }
   } finally {
@@ -116,7 +116,7 @@ export async function getData<T = any[]>(
         break;
 
       case 'message':
-        datas = datas?.data?.message;
+        datas = datas?.data?.message.user_message;
         break;
 
       case 'success':
@@ -186,7 +186,7 @@ export const executeData = async (
       });
       
     } else {
-      if (!disableErrorMessage) message.error(error.response.data.message);
+      if (!disableErrorMessage) message.error(error.response.data.message.user_message);
       console.log(error);
       datas = null;
     }
@@ -206,7 +206,7 @@ export const executeData = async (
       break;
 
     case 'message':
-      datas = datas?.data?.message;
+      datas = datas?.data?.message.user_message;
       break;
 
     case 'success':
