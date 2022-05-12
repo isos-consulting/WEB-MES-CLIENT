@@ -111,7 +111,7 @@ export const PgOutReceive = () => {
     {header: '수입검사', name:'insp_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', requiredField:true},
     {header: '이월', name:'carry_fg', width:ENUM_WIDTH.S, format:'check', filter:'text', editable:true, requiredField:true},
     {header: '창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.L, format:'popup', filter:'text', hidden:true},
-    {header: '창고', name:'to_store_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', requiredField:true},
+    {header: '창고', name:'to_store_nm', width:ENUM_WIDTH.L, format:'popup', filter:'text', requiredField:true, editable:true},
     {header: '위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.L,format:'popup', filter:'text', hidden:true},
     {header: '위치', name:'to_location_nm', width:ENUM_WIDTH.L,format:'popup', filter:'text', editable:true},
     {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, format:'number', filter:'number'},

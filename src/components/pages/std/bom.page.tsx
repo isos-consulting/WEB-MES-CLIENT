@@ -233,7 +233,54 @@ export const PgStdBom = () => {
           }
         },
         gridMode:'select'
-      }
+      },
+      { // 품목
+        columnNames: [
+          {original:'c_prod_uuid', popup:'prod_uuid'},
+          {original:'c_item_type_nm', popup:'item_type_nm'},
+          {original:'c_prod_type_nm', popup:'prod_type_nm'},
+          {original:'c_prod_no', popup:'prod_no'},
+          {original:'c_prod_nm', popup:'prod_nm'},
+          {original:'c_model_nm', popup:'model_nm'},
+          {original:'c_rev', popup:'rev'},
+          {original:'c_prod_std', popup:'prod_std'},
+          {original:'c_unit_uuid', popup:'unit_uuid'},
+          {original:'c_unit_nm', popup:'unit_nm'},
+          {original:'from_store_nm', popup:'inv_to_store_nm'},
+          {original:'from_location_uuid', popup:'inv_to_location_uuid'},
+          {original:'from_location_nm', popup:'inv_to_location_nm'},
+        ],
+        columns: [
+          {header: '품목UUID', name:'prod_uuid', format:'text', hidden:true},
+          {header: '품목 유형UUID', name:'item_type_uuid', format:'text', hidden:true},
+          {header: '품목 유형코드', name:'item_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '품목 유형명', name:'item_type_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '제품 유형UUID', name:'prod_type_uuid', format:'text', hidden:true},
+          {header: '제품 유형코드', name:'prod_type_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '제품 유형명', name:'prod_type_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '품번', name:'prod_no', width:ENUM_WIDTH.M, format:'text'},
+          {header: '품명', name:'prod_nm', width:ENUM_WIDTH.L, format:'text'},
+          {header: '모델UUID', name:'model_uuid', format:'text', hidden:true},
+          {header: '모델코드', name:'model_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '모델명', name:'model_nm', width:ENUM_WIDTH.M, format:'text'},
+          {header: 'Rev', name:'rev', width:ENUM_WIDTH.S, format:'text'},
+          {header: '규격', name:'prod_std', width:ENUM_WIDTH.L, format:'text'},
+          {header: '안전재고', name:'safe_stock', width:ENUM_WIDTH.M, format:'text'},
+          {header: '단위수량', name:'unit_qty', width:ENUM_WIDTH.M, format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
+          {header: '단위UUID', name:'unit_uuid', format:'text', hidden:true},
+          {header: '단위코드', name:'unit_cd', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '단위명', name:'unit_nm', width:ENUM_WIDTH.M, format:'text'},
+          {header: '창고UUID', name:'inv_to_store_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '창고', name:'inv_to_store_nm', width:ENUM_WIDTH.M, format:'text'},
+          {header: '위치UUID', name:'inv_to_location_uuid', width:ENUM_WIDTH.M, format:'text', hidden:true},
+          {header: '위치', name:'inv_to_location_nm', width:ENUM_WIDTH.M, format:'text'},
+        ],
+        dataApiSettings: {
+          uriPath: '/std/prods',
+          params: {use_fg: true}
+        },
+        gridMode:'select'
+      },
     ],
     gridComboInfo: [
       { // 화폐유형 콤보박스
