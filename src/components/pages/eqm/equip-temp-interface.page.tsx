@@ -1,17 +1,10 @@
-import { chain } from "lodash";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Combobox, Container, Searchbox, useSearchbox } from "~/components/UI";
 import { getData, getToday } from "~/functions";
 import LineChart from "~/components/UI/graph/chart-line.ui";
 import { message } from "antd";
 import dayjs from "dayjs";
 
-enum TemperatureColors {
-  "가열로 1" = "#00e396",
-  "가열로 2" = "#008ffb",
-  "수조온도" = "#ff8b0a",
-  "온도4" = "#fe4762",
-}
 
 enum TimeAxisScale {
   "year" = "연",
@@ -21,69 +14,30 @@ enum TimeAxisScale {
   "minute"= "분",
 }
 
-interface EquipApiDataType {
-  created_at: string;
-  data_map_id: number;
-  data_map_nm: string;
-  value: number;
-}
-
-interface AxisDataType {
-  label: string;
-  x: string;
-  y: number;
-}
-
-interface GraphProps {
-  label: string;
-  data: AxisDataType[];
-  borderColor: string;
-}
-
 interface DueDate {
   start_date: string;
   end_date: string;
 }
 
-const convertToAxis = (raws: EquipApiDataType[]) => {
-  return raws.map((raw) => {
-    return {
-      x: raw.created_at,
-      y: raw.value,
-      label: raw.data_map_nm,
-    };
-  });
-};
-
-const getAxis = ({ label, ...axis }) => (axis);
-
-const getDataSets = (data, key) => ({
-  label: key,
-  data: data.map(getAxis),
-  backgroundColor: TemperatureColors[key],
-});
-
-const groupingRaws = (raws: AxisDataType[]) => {
-  return chain(raws).groupBy("label").map(getDataSets).value();
-};
-
 interface EqmTempSearchCondition {
-  created_at: string;
+  start_date: string;
   end_date: string;
-  temperature: string;
+  data_item_uuid: string;
+  equip_uuid: string;
 }
 
 const getTimeAxisComboBoxDatas = () => {
   return Object.keys(TimeAxisScale).map(x => ({code: x, text: TimeAxisScale[x]}));
 }
 
-
 export const PgEqmTempInterface = () => {
-  const initialData: GraphProps[] = [];
   const timeAixsComboLists = getTimeAxisComboBoxDatas();
   
-  const [graph, setGraph] = useState(initialData);
+  const [graph, setGraph] = useState([]);
   const [timeAxis, setTimeAxis] = useState('minute');
+
+  const [interfaceItem, setInterfaceItem] = useState([]);
+  const [equipmentItem, setEquipmentItem] = useState([]);
   
   const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);
 
@@ -98,21 +52,30 @@ export const PgEqmTempInterface = () => {
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition
     ) => {
+      //입력된 두 개의 날짜 전후 비교
+      const firstDate = new Date(searchPayLoads.start_date)
+      const secondDate = new Date(searchPayLoads.end_date)
+      
+      if (firstDate > secondDate) {
+        message.error("조회 기간의 순서가 올바른지 확인하세요.")
+        return
+      } 
+      
       const dataIsValid = validateSearchDate(searchPayLoads);
-
+      
       if(dataIsValid){
-        const datas = await getData(searchPayLoads, "gat/data-history/report");
-        const axis = convertToAxis(datas);
-        const group = groupingRaws(axis);
 
-        setGraph(group);
+        const datas = await getData(searchPayLoads, "gat/data-history/graph");
+        
+        setGraph(datas);
       } else {
         message.warn('8일 이상의 데이터는 조회 할 수 없습니다');
       }
 
   };
 
-  const { props } = useSearchbox("SEARCH_INPUTBOX", [
+  
+  const { props, setSearchItems } = useSearchbox("SEARCH_INPUTBOX", [
     {
       type: "date",
       id: "start_date",
@@ -127,13 +90,58 @@ export const PgEqmTempInterface = () => {
       default: getToday(),
     },
     {
-      type: "text",
-      id: "temperature",
-      label: "온도",
-      disabled: false,
-      default: "",
+      type:'combo', id:'data_item_uuid', label:'인터페이스 항목', firstItemType:'none',
+      dataSettingOptions: {
+        uriPath: '/gat/data-items',
+        params: {},
+        codeName: 'data_item_uuid',
+        textName: 'data_item_nm',
+      },
+      onAfterChange: (ev) => {
+        const interfaceItem = ev; // 인터페이스 항목 data_item_uuid 넘어옴
+        getData(
+          {data_item_uuid: interfaceItem
+            ,use_fg: "true"
+          },
+          'gat/data-items/equip'    
+        ).then(res => {
+
+          if (!res) {
+            setInterfaceItem(interfaceItem);
+            return;
+          }
+          
+          const equipmentItem = res.map((row) => {
+            return {
+              code: row.equip_uuid,
+              text: row.equip_nm,
+            }
+          });
+          setEquipmentItem(equipmentItem);
+          
+        });
+      },
+    },
+    {
+      type:'combo', id:'equip_uuid', label:'설비', default:'all', firstItemType:'all'
     },
   ]);
+
+  useEffect(()=>{
+    if(setSearchItems){
+      setSearchItems((crr) => {
+        return crr?.map((el) => {
+          if (el?.id === 'equip_uuid') {
+            return {
+              ...el, 
+              options: equipmentItem, 
+              default: 'all',
+            };
+          } else return el;
+        });
+      })
+    }
+  },[equipmentItem])
 
   props.onSearch = handleSearchButtonClick;
 
@@ -144,18 +152,18 @@ export const PgEqmTempInterface = () => {
         type: 'time',
         time: {
           unit: timeAxis
-        }
+        },
       }
     }
   };
-
+  
   const data = {
     datasets: graph,
   };
 
   const lineChartPorps = {
     options,
-    data,
+    data
   };
 
   const comboBoxProps = {
