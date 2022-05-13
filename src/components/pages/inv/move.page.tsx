@@ -57,6 +57,7 @@ export const PgInvMove = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -162,6 +163,7 @@ export const PgInvMove = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고코드',
@@ -212,6 +214,7 @@ export const PgInvMove = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고창고코드',

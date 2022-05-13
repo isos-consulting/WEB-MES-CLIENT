@@ -52,8 +52,16 @@ export const PgMatReturn = () => {
   const headerGrid = useGrid(
     'HEADER_GRID',
     [
-      { header: '자재반출UUID', name: 'return_uuid', hidden: true },
-      { header: '전표번호', name: 'stmt_no', width: 150 },
+      {
+        header: '자재반출UUID',
+        name: 'return_uuid',
+        hidden: true,
+      },
+      {
+        header: '전표번호',
+        name: 'stmt_no',
+        width: 150,
+      },
       {
         header: '기준일',
         name: 'reg_date',
@@ -68,7 +76,13 @@ export const PgMatReturn = () => {
         hidden: true,
         requiredField: true,
       },
-      { header: '거래처명', name: 'partner_nm', width: 150, editable: true },
+      {
+        header: '거래처명',
+        name: 'partner_nm',
+        width: 150,
+        editable: true,
+        requiredField: true,
+      },
       {
         header: '합계금액',
         name: 'total_price',
@@ -98,9 +112,25 @@ export const PgMatReturn = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '제품아이디', name: 'prod_uuid', filter: 'text', hidden: true },
-      { header: '품목유형', name: 'item_type_nm', width: 150, filter: 'text' },
-      { header: '제품유형', name: 'prod_type_nm', width: 150, filter: 'text' },
+      {
+        header: '제품아이디',
+        name: 'prod_uuid',
+        filter: 'text',
+        hidden: true,
+        requiredField: true,
+      },
+      {
+        header: '품목유형',
+        name: 'item_type_nm',
+        width: 150,
+        filter: 'text',
+      },
+      {
+        header: '제품유형',
+        name: 'prod_type_nm',
+        width: 150,
+        filter: 'text',
+      },
       {
         header: '품번',
         name: 'prod_no',
@@ -115,9 +145,24 @@ export const PgMatReturn = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: '모델', name: 'model_nm', width: 150, filter: 'text' },
-      { header: 'Rev', name: 'rev', width: 100, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: 150, filter: 'text' },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: 150,
+        filter: 'text',
+      },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: 100,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: 150,
+        filter: 'text',
+      },
       {
         header: '안전재고',
         name: 'safe_stock',
@@ -175,6 +220,7 @@ export const PgMatReturn = () => {
         width: 80,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '재고단위',
@@ -183,6 +229,7 @@ export const PgMatReturn = () => {
         filter: 'text',
         align: 'center',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단위변환값',
@@ -201,6 +248,7 @@ export const PgMatReturn = () => {
         format: 'combo',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '화폐단위',
@@ -245,6 +293,7 @@ export const PgMatReturn = () => {
         width: 150,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고',
@@ -259,12 +308,14 @@ export const PgMatReturn = () => {
         width: 150,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고위치',
         name: 'from_location_nm',
         width: 150,
         filter: 'text',
+        requiredField: true,
       },
       {
         header: '비고',
@@ -320,17 +371,13 @@ export const PgMatReturn = () => {
           { original: 'model_nm', popup: 'model_nm' },
           { original: 'rev', popup: 'rev' },
           { original: 'prod_std', popup: 'prod_std' },
-
           { original: 'lot_no', popup: 'lot_no' },
-
           { original: 'qty', popup: 'qty' },
           { original: 'unit_uuid', popup: 'unit_uuid' },
           { original: 'unit_nm', popup: 'unit_nm' },
-
           { original: 'return_qty', popup: 'return_qty' },
           { original: 'return_unit_uuid', popup: 'return_unit_uuid' },
           { original: 'return_unit_nm', popup: 'return_unit_nm' },
-
           { original: 'convert_value', popup: 'convert_value' },
           { original: 'from_store_uuid', popup: 'store_uuid' },
           { original: 'from_store_nm', popup: 'store_nm' },
@@ -728,9 +775,24 @@ export const PgMatReturn = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'stmt_no', label: '전표번호', disabled: true },
-    { type: 'date', id: 'reg_date', label: '반출일', disabled: true },
-    { type: 'text', id: 'partner_uuid', label: '거래처UUID', hidden: true },
+    {
+      type: 'text',
+      id: 'stmt_no',
+      label: '전표번호',
+      disabled: true,
+    },
+    {
+      type: 'date',
+      id: 'reg_date',
+      label: '반출일',
+      disabled: true,
+    },
+    {
+      type: 'text',
+      id: 'partner_uuid',
+      label: '거래처UUID',
+      hidden: true,
+    },
     {
       type: 'text',
       id: 'partner_nm',
@@ -744,9 +806,24 @@ export const PgMatReturn = () => {
         newDataPopupGrid?.setGridData([]);
       },
     },
-    { type: 'number', id: 'total_qty', label: '합계수량', disabled: true },
-    { type: 'number', id: 'total_price', label: '합계금액', disabled: true },
-    { type: 'text', id: 'remark', label: '비고', disabled: true },
+    {
+      type: 'number',
+      id: 'total_qty',
+      label: '합계수량',
+      disabled: true,
+    },
+    {
+      type: 'number',
+      id: 'total_price',
+      label: '합계금액',
+      disabled: true,
+    },
+    {
+      type: 'text',
+      id: 'remark',
+      label: '비고',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(

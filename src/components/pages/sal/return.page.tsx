@@ -80,14 +80,21 @@ export const PgSalReturn = () => {
         name: 'reg_date',
         width: ENUM_WIDTH.M,
         format: 'date',
+        requiredField: true,
       },
       {
         header: '거래처UUID',
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
-      { header: '거래처명', name: 'partner_nm', width: ENUM_WIDTH.L },
+      {
+        header: '거래처명',
+        name: 'partner_nm',
+        width: ENUM_WIDTH.L,
+        requiredField: true,
+      },
       {
         header: '합계금액(￦)',
         name: 'total_price',
@@ -144,6 +151,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -152,7 +160,12 @@ export const PgSalReturn = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: 'Rev', name: 'rev', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '품명',
         name: 'prod_nm',
@@ -167,8 +180,18 @@ export const PgSalReturn = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '안전재고',
         name: 'safe_stock',
@@ -184,7 +207,12 @@ export const PgSalReturn = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.S, filter: 'text' },
+      {
+        header: '단위',
+        name: 'unit_nm',
+        width: ENUM_WIDTH.S,
+        filter: 'text',
+      },
       {
         header: '부적합UUID',
         name: 'reject_uuid',
@@ -206,6 +234,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고창고',
@@ -222,6 +251,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고위치',
@@ -230,6 +260,7 @@ export const PgSalReturn = () => {
         filter: 'text',
         format: 'popup',
         editable: true,
+        requiredField: true,
       },
       {
         header: 'LOT NO',
@@ -258,6 +289,7 @@ export const PgSalReturn = () => {
         name: 'money_unit_uuid',
         width: ENUM_WIDTH.S,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '화폐단위',
@@ -550,7 +582,12 @@ export const PgSalReturn = () => {
       disabled: true,
       default: getToday(),
     },
-    { type: 'text', id: 'stmt_no', label: '전표번호', disabled: true },
+    {
+      type: 'text',
+      id: 'stmt_no',
+      label: '전표번호',
+      disabled: true,
+    },
     {
       type: 'number',
       id: 'total_price',
@@ -574,7 +611,12 @@ export const PgSalReturn = () => {
       popupKey: '거래처관리',
       popupKeys: ['partner_uuid', 'partner_nm'],
     },
-    { type: 'text', id: 'remark', label: '비고', disabled: true },
+    {
+      type: 'text',
+      id: 'remark',
+      label: '비고',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(

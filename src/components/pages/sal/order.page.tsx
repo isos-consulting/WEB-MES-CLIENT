@@ -76,8 +76,17 @@ export const PgSalOrder = () => {
   const headerGrid = useGrid(
     'HEADER_GRID',
     [
-      { header: '수주UUID', name: 'order_uuid', alias: 'uuid', hidden: true },
-      { header: '전표번호', name: 'stmt_no', width: ENUM_WIDTH.M },
+      {
+        header: '수주UUID',
+        name: 'order_uuid',
+        alias: 'uuid',
+        hidden: true,
+      },
+      {
+        header: '전표번호',
+        name: 'stmt_no',
+        width: ENUM_WIDTH.M,
+      },
       {
         header: '수주일',
         name: 'reg_date',
@@ -92,12 +101,18 @@ export const PgSalOrder = () => {
         hidden: true,
         requiredField: true,
       },
-      { header: '거래처코드', name: 'partner_cd', hidden: true },
+      {
+        header: '거래처코드',
+        name: 'partner_cd',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '거래처명',
         name: 'partner_nm',
         width: ENUM_WIDTH.M,
         editable: true,
+        requiredField: true,
       },
       {
         header: '합계금액',
@@ -123,7 +138,11 @@ export const PgSalOrder = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '수주UUID', name: 'order_uuid', hidden: true },
+      {
+        header: '수주UUID',
+        name: 'order_uuid',
+        hidden: true,
+      },
       {
         header: '완료상태',
         width: ENUM_WIDTH.S,
@@ -140,7 +159,12 @@ export const PgSalOrder = () => {
         editable: true,
         hiddenCondition: props => ['view', 'delete'].includes(props?.gridMode),
       },
-      { header: '품목UUID', name: 'prod_uuid', hidden: true },
+      {
+        header: '품목UUID',
+        name: 'prod_uuid',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '품목유형',
         width: ENUM_WIDTH.M,
@@ -226,6 +250,7 @@ export const PgSalOrder = () => {
         hidden: true,
         format: 'popup',
         editable: true,
+        requiredField: true,
       },
       {
         header: '화폐단위',
@@ -296,7 +321,12 @@ export const PgSalOrder = () => {
         format: 'date',
         editable: true,
       },
-      { header: '비고', width: ENUM_WIDTH.XL, name: 'remark', editable: true },
+      {
+        header: '비고',
+        width: ENUM_WIDTH.XL,
+        name: 'remark',
+        editable: true,
+      },
     ],
     {
       searchUriPath: detailSearchUriPath,
@@ -349,7 +379,12 @@ export const PgSalOrder = () => {
         { original: 'unit_qty', popup: 'unit_qty' },
       ],
       columns: [
-        { header: '품목UUID', name: 'prod_uuid', format: 'text', hidden: true },
+        {
+          header: '품목UUID',
+          name: 'prod_uuid',
+          format: 'text',
+          hidden: true,
+        },
         {
           header: '품목 유형UUID',
           name: 'item_type_uuid',
@@ -419,7 +454,12 @@ export const PgSalOrder = () => {
           width: ENUM_WIDTH.M,
           format: 'text',
         },
-        { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, format: 'text' },
+        {
+          header: 'Rev',
+          name: 'rev',
+          width: ENUM_WIDTH.S,
+          format: 'text',
+        },
         {
           header: '규격',
           name: 'prod_std',
@@ -439,7 +479,12 @@ export const PgSalOrder = () => {
           format: 'number',
           decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
-        { header: '단위UUID', name: 'unit_uuid', format: 'text', hidden: true },
+        {
+          header: '단위UUID',
+          name: 'unit_uuid',
+          format: 'text',
+          hidden: true,
+        },
         {
           header: '단위코드',
           name: 'unit_cd',
@@ -679,8 +724,18 @@ export const PgSalOrder = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'stmt_no', label: '전표번호', disabled: true },
-    { type: 'date', id: 'reg_date', label: '수주일', disabled: true },
+    {
+      type: 'text',
+      id: 'stmt_no',
+      label: '전표번호',
+      disabled: true,
+    },
+    {
+      type: 'date',
+      id: 'reg_date',
+      label: '수주일',
+      disabled: true,
+    },
     {
       type: 'text',
       id: 'partner_nm',
@@ -695,7 +750,12 @@ export const PgSalOrder = () => {
         newDataPopupGrid?.setGridData([]);
       },
     },
-    { type: 'number', id: 'total_qty', label: '합계수량', disabled: true },
+    {
+      type: 'number',
+      id: 'total_qty',
+      label: '합계수량',
+      disabled: true,
+    },
     {
       type: 'number',
       id: 'total_price',

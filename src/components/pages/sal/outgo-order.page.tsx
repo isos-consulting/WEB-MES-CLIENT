@@ -65,18 +65,21 @@ export const PgSalOutgoOrder = () => {
         width: ENUM_WIDTH.M,
         format: 'date',
         filter: 'text',
+        requiredField: true,
       },
       {
         header: '거래처UUID',
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처명',
         name: 'partner_nm',
         width: ENUM_WIDTH.L,
         filter: 'text',
+        requiredField: true,
       },
     ],
     {
@@ -95,7 +98,11 @@ export const PgSalOutgoOrder = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '세부수주UUID', name: 'order_detail_uuid', hidden: true },
+      {
+        header: '세부수주UUID',
+        name: 'order_detail_uuid',
+        hidden: true,
+      },
       {
         header: '완료여부',
         name: 'complete_state',
@@ -135,6 +142,7 @@ export const PgSalOutgoOrder = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -143,7 +151,12 @@ export const PgSalOutgoOrder = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: 'Rev', name: 'rev', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '품명',
         name: 'prod_nm',
@@ -158,8 +171,18 @@ export const PgSalOutgoOrder = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '단위UUID',
         name: 'unit_uuid',
@@ -167,7 +190,12 @@ export const PgSalOutgoOrder = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.S, filter: 'text' },
+      {
+        header: '단위',
+        name: 'unit_nm',
+        width: ENUM_WIDTH.S,
+        filter: 'text',
+      },
       {
         header: '수주수량',
         name: 'order_qty',
@@ -189,7 +217,12 @@ export const PgSalOutgoOrder = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
       },
-      { header: '비고', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
+      {
+        header: '비고',
+        name: 'remark',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
     ],
     {
       searchUriPath: detailSearchUriPath,
@@ -626,7 +659,12 @@ export const PgSalOutgoOrder = () => {
       popupKey: '납품처관리',
       popupKeys: ['delivery_uuid', 'delivery_nm'],
     },
-    { type: 'text', id: 'remark', label: '비고', disabled: true },
+    {
+      type: 'text',
+      id: 'remark',
+      label: '비고',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(

@@ -85,6 +85,7 @@ export const PgEqmHistoryCard = () => {
         width: ENUM_WIDTH.L,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '설비유형UUID',
