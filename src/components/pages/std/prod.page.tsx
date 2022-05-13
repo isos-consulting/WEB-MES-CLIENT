@@ -500,6 +500,7 @@ export const PgStdProd = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '품목유형코드',
@@ -602,6 +603,7 @@ export const PgStdProd = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '단위코드',

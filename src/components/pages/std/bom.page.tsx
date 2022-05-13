@@ -203,6 +203,7 @@ export const PgStdBom = () => {
         name: 'bom_input_type_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '투입방법',
@@ -230,6 +231,7 @@ export const PgStdBom = () => {
         filter: 'text',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '소모창고',
@@ -332,6 +334,7 @@ export const PgStdBom = () => {
         filter: 'number',
         format: 'number',
         decimal: ENUM_DECIMAL.DEC_USE_STOCK,
+        requiredField: true,
       },
       {
         header: '소요량',
@@ -350,6 +353,7 @@ export const PgStdBom = () => {
         filter: 'text',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '소모창고',
@@ -512,6 +516,7 @@ export const PgStdBom = () => {
             name: 'unit_uuid',
             format: 'text',
             hidden: true,
+            requiredField: true,
           },
           {
             header: '단위코드',
@@ -582,6 +587,7 @@ export const PgStdBom = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '단위코드',
@@ -792,6 +798,7 @@ export const PgStdBom = () => {
               name: 'unit_uuid',
               format: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '단위코드',
