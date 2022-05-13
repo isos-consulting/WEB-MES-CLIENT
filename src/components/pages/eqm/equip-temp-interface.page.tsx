@@ -52,11 +52,8 @@ export const PgEqmTempInterface = () => {
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition
     ) => {
-      //입력된 두 개의 날짜 전후 비교
-      const firstDate = new Date(searchPayLoads.start_date)
-      const secondDate = new Date(searchPayLoads.end_date)
-      
-      if (firstDate > secondDate) {
+      //입력된 두 개의 날짜 전후 비교     
+      if (searchPayLoads.start_date > searchPayLoads.end_date) {
         message.error("조회 기간의 순서가 올바른지 확인하세요.")
         return
       } 
@@ -97,30 +94,24 @@ export const PgEqmTempInterface = () => {
         codeName: 'data_item_uuid',
         textName: 'data_item_nm',
       },
-      onAfterChange: (ev) => {
-        const interfaceItem = ev; // 인터페이스 항목 data_item_uuid 넘어옴
-        getData(
-          {data_item_uuid: interfaceItem
-            ,use_fg: "true"
-          },
-          'gat/data-items/equip'    
-        ).then(res => {
+      onAfterChange: async (event) => {
+            // event 에 인터페이스 항목 data_item_uuid 넘어옴
 
-          if (!res) {
-            setInterfaceItem(interfaceItem);
-            return;
-          }
-          
+        const res = await getData({data_item_uuid: event,
+                                   use_fg: "true"},
+                                  'gat/data-items/equip')
+        if (!res) {
+          setInterfaceItem(event);
+          return;
+        } else {
           const equipmentItem = res.map((row) => {
-            return {
-              code: row.equip_uuid,
-              text: row.equip_nm,
-            }
-          });
+          return {
+            code: row.equip_uuid,
+            text: row.equip_nm,
+          }})
           setEquipmentItem(equipmentItem);
-          
-        });
-      },
+        }
+      }
     },
     {
       type:'combo', id:'equip_uuid', label:'설비', default:'all', firstItemType:'all'
@@ -137,8 +128,7 @@ export const PgEqmTempInterface = () => {
               options: equipmentItem, 
               default: 'all',
             };
-          } else return el;
-        });
+          } else return el;});
       })
     }
   },[equipmentItem])
