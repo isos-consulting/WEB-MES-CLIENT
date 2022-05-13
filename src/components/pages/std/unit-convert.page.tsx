@@ -136,6 +136,7 @@ export const PgStdUnitConvert = () => {
         format: 'number',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품목UUID',

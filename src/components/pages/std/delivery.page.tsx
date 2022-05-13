@@ -59,6 +59,7 @@ export const PgStdDelivery = () => {
         width: ENUM_WIDTH.L,
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처코드',
@@ -163,6 +164,7 @@ export const PgStdDelivery = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '거래처코드',

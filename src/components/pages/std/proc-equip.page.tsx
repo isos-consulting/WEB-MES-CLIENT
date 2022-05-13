@@ -57,6 +57,7 @@ export const PgStdProcEquip = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '공정코드',
@@ -94,6 +95,7 @@ export const PgStdProcEquip = () => {
         name: 'proc_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '공정코드',
@@ -126,6 +128,7 @@ export const PgStdProcEquip = () => {
         name: 'equip_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '설비코드',
@@ -186,6 +189,7 @@ export const PgStdProcEquip = () => {
         width: ENUM_WIDTH.M,
         format: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '설비코드',

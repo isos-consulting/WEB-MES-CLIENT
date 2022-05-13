@@ -36,6 +36,7 @@ export const PgStdPartner = () => {
         width: ENUM_WIDTH.L,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처유형코드',

@@ -60,6 +60,7 @@ export const PgStdSupplier = () => {
         width: ENUM_WIDTH.L,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처코드',
@@ -162,6 +163,7 @@ export const PgStdSupplier = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '거래처코드',

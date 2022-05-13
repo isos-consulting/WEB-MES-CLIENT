@@ -59,6 +59,7 @@ export const PgStdVendorPrice = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처 유형UUID',
@@ -105,6 +106,7 @@ export const PgStdVendorPrice = () => {
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처',
@@ -179,6 +181,7 @@ export const PgStdVendorPrice = () => {
         name: 'unit_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단위',
@@ -224,6 +227,7 @@ export const PgStdVendorPrice = () => {
         name: 'money_unit_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '화폐 단위',
@@ -239,6 +243,7 @@ export const PgStdVendorPrice = () => {
         name: 'price_type_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단가 유형',
@@ -307,6 +312,7 @@ export const PgStdVendorPrice = () => {
               width: ENUM_WIDTH.M,
               format: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '단위코드',
@@ -351,6 +357,7 @@ export const PgStdVendorPrice = () => {
               width: ENUM_WIDTH.M,
               format: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '품번',
@@ -437,6 +444,7 @@ export const PgStdVendorPrice = () => {
               width: ENUM_WIDTH.M,
               format: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '단위코드',

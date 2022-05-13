@@ -57,6 +57,7 @@ export const PgStdPartnerProd = () => {
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '거래처유형UUID',

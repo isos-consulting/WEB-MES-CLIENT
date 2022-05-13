@@ -37,6 +37,7 @@ export const PgStdLocation = () => {
         filter: 'text',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '창고코드',
@@ -98,6 +99,7 @@ export const PgStdLocation = () => {
               width: ENUM_WIDTH.L,
               filter: 'text',
               hidden: true,
+              requiredField: true,
             },
             {
               header: '창고코드',
