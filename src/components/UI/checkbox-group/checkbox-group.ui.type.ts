@@ -2,7 +2,6 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import ICheckboxProps from '../checkbox/checkbox.ui.type';
 
-
 /** 그룹 체크박스 컴포넌트 속성 인터페이스 */
 export default interface ICheckboxGroupProps {
   /** 체크박스 그룹 아이디 */
@@ -11,7 +10,7 @@ export default interface ICheckboxGroupProps {
   name?: string;
 
   defaultValue?: any;
-  
+
   /** 체크박스 라벨 */
   label?: string;
 
@@ -26,11 +25,14 @@ export default interface ICheckboxGroupProps {
 
   /** 비허용(잠금) */
   disabled?: boolean;
-  
+
   /** 체크박스 값 변경 이벤트 */
   onChange?: (e?: CheckboxValueType[]) => void;
 }
 
-
 /** 그룹 체크박스 아이템 속성 인터페이스 */
-export interface ICheckboxItem extends Omit<ICheckboxProps<CheckboxChangeEvent>,'checked' | 'onChange' | 'indeterminate'> {}
+export interface ICheckboxItem
+  extends Omit<
+    ICheckboxProps<CheckboxChangeEvent>,
+    'checked' | 'onChange' | 'indeterminate'
+  > {}

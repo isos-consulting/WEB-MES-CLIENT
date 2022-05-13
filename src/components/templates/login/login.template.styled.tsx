@@ -1,18 +1,16 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import Colors from '~styles/color.style.scss';
 import Fonts from '~styles/font.style.scss';
 import Sizes from '~styles/size.style.scss';
 
-
 export const ScContainer = styled.div`
-  
-  //로그인 비밀번호 label 밑 
-  .ant-col.ant-form-item-label { 
+  //로그인 비밀번호 label 밑
+  .ant-col.ant-form-item-label {
     padding: 0;
     padding-bottom: 8px;
   }
 
-  .ant-typography{
+  .ant-typography {
     font-size: ${Fonts.fontSize_loginLabel} !important;
   }
 
@@ -28,24 +26,24 @@ export const ScContainer = styled.div`
   .ant-checkbox-checked .ant-checkbox-inner {
     background-color: ${Colors.bg_chkeckBox_selectedInner};
   }
-  .ant-checkbox-input{
+  .ant-checkbox-input {
     border: none;
   }
-  a:hover{
+  a:hover {
     color: ${Colors.bg_chkeckBox_selectedInner};
   }
 
   .ant-checkbox-checked::after {
     border: none;
   }
-  
-  //아이디 비밀번호 label 
+
+  //아이디 비밀번호 label
   .ant-form-vertical .ant-form-item-label > label {
     font-size: ${Fonts.fontSize_loginLabel};
     color: ${Colors.fg_loginLabel_default};
     margin-left: 5px;
   }
-  
+
   & {
     .ant-input-affix-wrapper {
       background-color: ${Colors.bg_loginInput_wrapper};
@@ -60,7 +58,6 @@ export const ScImg = styled.img`
   width: 100%;
 `;
 
-
 export const ScFooter = styled.p`
   position: absolute;
   font-size: ${Fonts.fontSize_loginFooter};
@@ -70,7 +67,6 @@ export const ScFooter = styled.p`
   transform: translateX(-50%);
 `;
 
-
 export const ScFindAccountText = styled.a`
   margin-left: 120px;
   text-align: right;
@@ -78,6 +74,3 @@ export const ScFindAccountText = styled.a`
   color: inherit;
   font-size: ${Fonts.fontSize_loginLabel};
 `;
-
-
-

@@ -2,15 +2,16 @@
 @import 'axios-progress-bar/dist/nprogress.css';
 
 #nprogress {
-    &.bar{
-        background: $bg_progress_bar !important;
-        height: 3px !important;
-    }
-    &.peg{
-        box-shadow: 0 0 10px $bg_progress_bar, 0 0 5px $bg_progress_bar !important;
-    }
+  &.bar {
+    background: $bg_progress_bar !important;
+    height: 3px !important;
+  }
+  &.peg {
+    box-shadow: 0 0 10px $bg_progress_bar, 0 0 5px $bg_progress_bar !important;
+  }
 
-    &.spinner,.spinner-icon {
-        display: none !important;
-    }
+  &.spinner,
+  .spinner-icon {
+    display: none !important;
+  }
 }

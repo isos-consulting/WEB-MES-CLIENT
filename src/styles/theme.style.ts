@@ -1,4 +1,4 @@
-import { createGlobalStyle, css } from "styled-components";
+import { createGlobalStyle, css } from 'styled-components';
 import Colors from '~styles/color.style.scss';
 import Sizes from '~styles/size.style.scss';
 import Fonts from '~styles/font.style.scss';
@@ -8,13 +8,14 @@ import '../index.css';
 // CHECKBOX
 const checkboxSize = css`
   width: ${Sizes.width_checkbox_sm};
-  height: ${Sizes.width_checkbox_sm};  
+  height: ${Sizes.width_checkbox_sm};
 `;
 
 // FONT
 const font = css`
-  font-family: 'Noto Sans CJK KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Noto Sans CJK KR', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
   font-size: ${Fonts.fontSize_default};
 `;
 //#endregion
@@ -578,4 +579,3 @@ div.ant-card.container {
   background-color: #C2EEA0; // ❗색상 아무거나 한거라서 변경해야해요!
 }
 `;
-

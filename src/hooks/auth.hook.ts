@@ -1,5 +1,4 @@
-import { atom } from "recoil";
-
+import { atom } from 'recoil';
 
 /** 유저 정보 인터페이스 */
 export interface IUser {
@@ -9,16 +8,14 @@ export interface IUser {
   token: string;
 }
 
-
 /** 유저 클래스 */
 class User {
   state = atom<undefined | IUser>({
-    key: "user",
+    key: 'user',
     //default: null,
-    default: JSON.parse(localStorage.getItem("userInfo")),
+    default: JSON.parse(localStorage.getItem('userInfo')),
   });
 }
-
 
 /** 유저 클래스 */
 class AuthStore {

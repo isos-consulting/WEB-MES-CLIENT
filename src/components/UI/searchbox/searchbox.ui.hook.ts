@@ -1,65 +1,58 @@
-import { FormikErrors, FormikProps, FormikValues } from "formik";
-import React, { useMemo, useRef, useState } from "react";
-import ISearchboxProps, { ISearchItem } from "./searchbox.ui.type";
+import { FormikErrors, FormikProps, FormikValues } from 'formik';
+import React, { useMemo, useRef, useState } from 'react';
+import ISearchboxProps, { ISearchItem } from './searchbox.ui.type';
 
-
-export const searchboxModel = (props:{
+export const searchboxModel = (props: {
   /** 그룹입력상자 컴포넌트의 레퍼런스, 컴포넌트 DOM에 접근 가능 */
-  ref
-  : React.MutableRefObject<FormikProps<FormikValues>>,
+  ref: React.MutableRefObject<FormikProps<FormikValues>>;
 
   /** 컴포넌트 DOM에 접근 가능 */
-  instance
-  : FormikProps<FormikValues>,
+  instance: FormikProps<FormikValues>;
 
   /** 그룹입력상자에 property를 설정하기 위한 변수 */
-  props
-  : ISearchboxProps,
+  props: ISearchboxProps;
 
   /** 그룹입력상자의 값을 가지고 있는 객체 변수 */
-  values
-  : FormikValues,
+  values: FormikValues;
 
-  setValues
-  : (values: React.SetStateAction<FormikValues>, shouldValidate?: boolean) => void,
+  setValues: (
+    values: React.SetStateAction<FormikValues>,
+    shouldValidate?: boolean,
+  ) => void;
 
-  onSearch?
-  : (values?) => void,
-  
-  searchItemKeys
-  : string[],
+  onSearch?: (values?) => void;
 
-  searchItems
-  : ISearchItem[],
+  searchItemKeys: string[];
 
-  setSearchItems
-  : React.Dispatch<React.SetStateAction<ISearchItem[]>>,
+  searchItems: ISearchItem[];
 
-  options?
-  : {
+  setSearchItems: React.Dispatch<React.SetStateAction<ISearchItem[]>>;
+
+  options?: {
     validate: (values?: any) => Promise<FormikErrors<FormikValues>>;
-  }
+  };
 }) => {
-  
   return props;
 };
 
-
 export const useSearchbox = (
   id: string,
-  searchItems:ISearchItem[],
-  onSearch?:(values?) => void,
-  options?:{
+  searchItems: ISearchItem[],
+  onSearch?: (values?) => void,
+  options?: {
     validate: (values?: any) => Promise<FormikErrors<FormikValues>>;
-  }
+  },
 ) => {
   const ref = useRef<FormikProps<FormikValues>>();
   const [_searchItems, setSearchItems] = useState<ISearchItem[]>(searchItems);
-  const initValues = useMemo(() => createInitialValues(_searchItems), _searchItems);
-  
+  const initValues = useMemo(
+    () => createInitialValues(_searchItems),
+    _searchItems,
+  );
+
   const searchItemKeys = useMemo(() => {
-    let result:string[] = [];
-    _searchItems?.forEach((el) => {
+    let result: string[] = [];
+    _searchItems?.forEach(el => {
       if (el?.ids) {
         el?.ids.forEach((id, index) => {
           result.push(id ?? el?.names[index]);
@@ -72,11 +65,11 @@ export const useSearchbox = (
     return result;
   }, [_searchItems]);
 
-  const props:ISearchboxProps = {
+  const props: ISearchboxProps = {
     id,
     innerRef: ref,
     searchItems: _searchItems,
-    ...options
+    ...options,
   };
 
   const model = searchboxModel({
@@ -92,27 +85,22 @@ export const useSearchbox = (
   });
 
   return model;
-}
-
-
+};
 
 /** 초기값 object를 만들어주는 함수 */
-const createInitialValues = (inputItems) => {
+const createInitialValues = inputItems => {
   let result = {};
 
-  inputItems?.forEach((item) => {
+  inputItems?.forEach(item => {
     if (item.ids != null) {
       item?.ids?.forEach((subItem, index) => {
-        if (item?.names)
-          result[item?.names[index]] = item?.defaults[index];
-        else
-          result[item?.ids[index]] = item?.defaults[index];
+        if (item?.names) result[item?.names[index]] = item?.defaults[index];
+        else result[item?.ids[index]] = item?.defaults[index];
       });
-      
     } else {
       result[item.name || item.id] = item?.default;
     }
   });
 
   return result;
-}
+};

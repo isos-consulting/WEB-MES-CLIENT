@@ -1,10 +1,23 @@
-import Grid from '@toast-ui/react-grid'
+import Grid from '@toast-ui/react-grid';
 import { Space, Modal, Spin } from 'antd';
 import React, { useRef, useState } from 'react';
-import { Button, Container, Datagrid, GridPopup, IDatagridProps, IGridPopupProps, TGridPopupInfos } from '~/components/UI';
-import { getData, getModifiedRows, getPageName, getPermissions, saveGridData } from '~/functions';
+import {
+  Button,
+  Container,
+  Datagrid,
+  GridPopup,
+  IDatagridProps,
+  IGridPopupProps,
+  TGridPopupInfos,
+} from '~/components/UI';
+import {
+  getData,
+  getModifiedRows,
+  getPageName,
+  getPermissions,
+  saveGridData,
+} from '~/functions';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './order.page.util';
-
 
 /** 작업지시 - 투입인원관리 */
 export const orderWorker = () => {
@@ -13,42 +26,60 @@ export const orderWorker = () => {
 
   /** 권한 관련 */
   const permissions = getPermissions(title);
-  
+
   const [modal, contextHolder] = Modal.useModal();
 
   const [saveOptionParams, setSaveOptionParams] = useState({});
 
-  
   //#region 🔶 메인 그리드 관련
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const gridPopupInfo:TGridPopupInfos = [
+  const gridPopupInfo: TGridPopupInfos = [
     {
       columnNames: [
-        {original:'emp_uuid', popup:'emp_uuid'},
-        {original:'emp_nm', popup:'emp_nm'},
+        { original: 'emp_uuid', popup: 'emp_uuid' },
+        { original: 'emp_nm', popup: 'emp_nm' },
       ],
       dataApiSettings: {
-        uriPath:'/std/emps',
+        uriPath: '/std/emps',
         params: {
           emp_status: 'incumbent',
           worker_fg: true,
         },
       },
       columns: [
-        {header: '사원UUID', name:'emp_uuid', alias:'uuid', width:150, format:'text', hidden:true},
-        {header: '사번', name:'emp_cd', width:150, format:'popup', editable:true},
-        {header: '사원명', name:'emp_nm', width:120, format:'popup', editable:true},
+        {
+          header: '사원UUID',
+          name: 'emp_uuid',
+          alias: 'uuid',
+          width: 150,
+          format: 'text',
+          hidden: true,
+        },
+        {
+          header: '사번',
+          name: 'emp_cd',
+          width: 150,
+          format: 'popup',
+          editable: true,
+        },
+        {
+          header: '사원명',
+          name: 'emp_nm',
+          width: 120,
+          format: 'popup',
+          editable: true,
+        },
       ],
-      gridMode:'multi-select'
-    }
+      gridMode: 'multi-select',
+    },
   ];
 
   /** 메인 그리드 속성 */
-  const gridInfo:IDatagridProps = {
+  const gridInfo: IDatagridProps = {
     /** 그리드 아이디 */
-    gridId: TAB_CODE.투입인원관리+'_GRID',
+    gridId: TAB_CODE.투입인원관리 + '_GRID',
     /** 참조 */
     ref: gridRef,
     /** 그리드 높이 */
@@ -62,10 +93,35 @@ export const orderWorker = () => {
     saveOptionParams: saveOptionParams,
     /** 컬럼 */
     columns: [
-      {header:'작업자투입UUID', name:'order_worker_uuid', alias:'uuid', width:200, hidden:true, format:'text'},
-      {header:'작업지시UUID', name:'order_uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자UUID', name:'emp_uuid', width:200, hidden:true, format:'text'},
-      {header:'작업자명', name:'emp_nm', width:200, hidden:false, format:'text'},
+      {
+        header: '작업자투입UUID',
+        name: 'order_worker_uuid',
+        alias: 'uuid',
+        width: 200,
+        hidden: true,
+        format: 'text',
+      },
+      {
+        header: '작업지시UUID',
+        name: 'order_uuid',
+        width: 200,
+        hidden: true,
+        format: 'text',
+      },
+      {
+        header: '작업자UUID',
+        name: 'emp_uuid',
+        width: 200,
+        hidden: true,
+        format: 'text',
+      },
+      {
+        header: '작업자명',
+        name: 'emp_nm',
+        width: 200,
+        hidden: false,
+        format: 'text',
+      },
     ],
     /** 그리드 데이터 */
     data: data,
@@ -77,15 +133,14 @@ export const orderWorker = () => {
   };
   //#endregion
 
-  
   //#region 🔶신규 팝업 관련
   const newPopupGridRef = useRef<Grid>();
   const [newPopupVisible, setNewPopupVisible] = useState(false);
 
   /** 신규 항목 추가 팝업 속성 */
-  const newGridPopupInfo:IGridPopupProps = {
+  const newGridPopupInfo: IGridPopupProps = {
     ...gridInfo,
-    gridId: TAB_CODE.투입인원관리+'_NEW_POPUP_GRID',
+    gridId: TAB_CODE.투입인원관리 + '_NEW_POPUP_GRID',
     ref: newPopupGridRef,
     gridMode: 'create',
     defaultData: [],
@@ -93,19 +148,23 @@ export const orderWorker = () => {
     height: null,
     onAfterClick: null,
     /** 팝업 아이디 */
-    popupId: TAB_CODE.투입인원관리+'_NEW_POPUP',
+    popupId: TAB_CODE.투입인원관리 + '_NEW_POPUP',
     /** 팝업 제목 */
     title: '투입인원 등록',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: (gridRef) => {
+    onOk: gridRef => {
       console.log('saveOptionParams', saveOptionParams);
       saveGridData(
-        getModifiedRows(gridRef, newGridPopupInfo.columns, newGridPopupInfo.data),
+        getModifiedRows(
+          gridRef,
+          newGridPopupInfo.columns,
+          newGridPopupInfo.data,
+        ),
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,
-      ).then(({success}) => {
+      ).then(({ success }) => {
         if (!success) return;
         onSearch();
         setNewPopupVisible(false);
@@ -130,7 +189,7 @@ export const orderWorker = () => {
     defaultVisible: false,
     /** visible 상태값 */
     visible: newPopupVisible,
-    onAfterOk: (isSuccess, savedData) => { 
+    onAfterOk: (isSuccess, savedData) => {
       if (!isSuccess) return;
       onSearch();
       setNewPopupVisible(false);
@@ -146,50 +205,79 @@ export const orderWorker = () => {
       null,
       false,
       null,
-      {title:'투입인원 관리'}
-    ).then((res) => {
+      { title: '투입인원 관리' },
+    ).then(res => {
       setData(res);
     });
-  }
+  };
 
-  const onAppend = (ev) => {
+  const onAppend = ev => {
     if (saveOptionParams?.order_uuid == null) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
     setNewPopupVisible(true);
-  }
+  };
 
   const onDelete = () => {
     if (saveOptionParams?.order_uuid == null) {
       onErrorMessage('하위이력작업시도');
       return;
-    };
+    }
 
-    onDefaultGridSave('basic', gridRef, gridInfo.columns, gridInfo.saveUriPath, {}, modal,
-      ({success}) => {
+    onDefaultGridSave(
+      'basic',
+      gridRef,
+      gridInfo.columns,
+      gridInfo.saveUriPath,
+      {},
+      modal,
+      ({ success }) => {
         if (!success) return;
         onSearch();
-      }
+      },
     );
-  }
-  
+  };
 
-  const element = (
-    !permissions ?
-      <Spin spinning={true} tip='권한 정보를 가져오고 있습니다.' />
-    :
+  const element = !permissions ? (
+    <Spin spinning={true} tip="권한 정보를 가져오고 있습니다." />
+  ) : (
     <>
       <Container>
-        <div style={{width:'100%', display:'inline-block'}}>
-          <Space size={[6,0]} style={{float:'right'}}>
-            <Button btnType='buttonFill' widthSize='medium' heightSize='small' fontSize='small' ImageType='delete' colorType='blue' onClick={onDelete} disabled={!permissions?.delete_fg}>삭제</Button>
-            <Button btnType='buttonFill' widthSize='large'  heightSize='small' fontSize='small' ImageType='add' colorType='blue' onClick={onAppend} disabled={!permissions?.create_fg}>항목 추가</Button>
+        <div style={{ width: '100%', display: 'inline-block' }}>
+          <Space size={[6, 0]} style={{ float: 'right' }}>
+            <Button
+              btnType="buttonFill"
+              widthSize="medium"
+              heightSize="small"
+              fontSize="small"
+              ImageType="delete"
+              colorType="blue"
+              onClick={onDelete}
+              disabled={!permissions?.delete_fg}
+            >
+              삭제
+            </Button>
+            <Button
+              btnType="buttonFill"
+              widthSize="large"
+              heightSize="small"
+              fontSize="small"
+              ImageType="add"
+              colorType="blue"
+              onClick={onAppend}
+              disabled={!permissions?.create_fg}
+            >
+              항목 추가
+            </Button>
           </Space>
         </div>
         {/* <p/> */}
-        <Datagrid {...gridInfo} gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode} />
+        <Datagrid
+          {...gridInfo}
+          gridMode={!permissions?.delete_fg ? 'view' : gridInfo.gridMode}
+        />
       </Container>
 
       {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
@@ -197,7 +285,7 @@ export const orderWorker = () => {
       {contextHolder}
     </>
   );
-  
+
   return {
     element,
     setData: setData,
@@ -206,4 +294,4 @@ export const orderWorker = () => {
     searchUriPath: gridInfo.searchUriPath,
     onSearch,
   };
-}
+};

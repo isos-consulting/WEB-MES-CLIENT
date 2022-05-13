@@ -35,7 +35,7 @@ export const saveGridData = async (
   uriPath: string,
   optionParams?: object,
   disableResultMessage: boolean = false,
-  methodType?: { create?: string; update?: string; delete?: string }
+  methodType?: { create?: string; update?: string; delete?: string },
 ): Promise<{ success: boolean; count: number; savedData: any[] }> => {
   let resultChk: boolean = true;
   let resultCount: number = 0;
@@ -79,7 +79,7 @@ export const saveGridData = async (
               const temp = saveData[editType[i][z][columns[y].name]];
               if (dayjs(temp).isValid) {
                 saveData[editType[i][z][columns[y].name]] = dayjs(temp).format(
-                  'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]'
+                  'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]',
                 );
               }
             }
@@ -87,7 +87,7 @@ export const saveGridData = async (
         }
 
         // 필수값 삽입
-        await saveData[editType[i]]?.forEach((value) => {
+        await saveData[editType[i]]?.forEach(value => {
           // value['uid'] = getUserUid();
 
           // session 유저 정보의 키와 params로 넘길 키가 중복되는게 있는지 확인 (중복이면 유저 정보에 있는 키는 사용안함)
@@ -95,7 +95,7 @@ export const saveGridData = async (
             if (
               getObjectKeyDuplicateCheck(
                 Object.keys(saveData[editType[i]]),
-                getUserInfoKeys()
+                getUserInfoKeys(),
               ) === false
             ) {
               value['factory_uuid'] = getUserFactoryUuid();
@@ -121,16 +121,16 @@ export const saveGridData = async (
         await executeData(
           saveData,
           uriPath,
-          _methodType[i] as 'post' | 'put' | 'patch' | 'delete'
+          _methodType[i] as 'post' | 'put' | 'patch' | 'delete',
         )
-          .then((res) => {
+          .then(res => {
             const { datas, success } = res;
             const { value } = datas;
             if (!success) resultChk = false;
 
             resultCount += value?.count || 0;
           })
-          .catch((e) => {
+          .catch(e => {
             console.log(e);
             resultChk = false;
           });
@@ -162,7 +162,7 @@ export const saveGridData = async (
     if (!disableResultMessage)
       message.info(
         (resultCount !== 0 ? resultCount + '건의 데이터 ' : '') +
-          '저장이 완료되었습니다.'
+          '저장이 완료되었습니다.',
       );
 
     // 초기화 후 결과 개수 반환
@@ -187,7 +187,7 @@ export const checkGridData = async (
   column: IGridColumn[],
   data: IGridModifiedRows,
   disableResultMessage: boolean = false,
-  disabledErrorType: TGridErrorType[] = []
+  disabledErrorType: TGridErrorType[] = [],
 ): Promise<boolean> => {
   let resultChk: boolean = true;
   let errorType: TGridErrorType;
@@ -300,33 +300,33 @@ export const checkGridData = async (
 export function createSubTotal(
   datas: object[] = [],
   key: any = { key: '', name: '' },
-  values: string[] = []
+  values: string[] = [],
 ) {
   let sortOrder = [],
     resultArray = [];
 
   // Key Data To Array (기준컬럼 정리)
-  datas.forEach((el) => {
+  datas.forEach(el => {
     sortOrder.push(el[key.key]);
     sortOrder.push(el[key.name]);
   });
 
   // JSON Data Loop
-  datas.forEach((el) => {
+  datas.forEach(el => {
     let resultObject = {};
 
     // JSON Array Check Key Data
-    let objFilter = resultArray.filter((obj) => obj[key.key] === el[key.key])
+    let objFilter = resultArray.filter(obj => obj[key.key] === el[key.key])
       .length
-      ? resultArray.filter((obj) => obj[key.key] === el[key.key])[0]
+      ? resultArray.filter(obj => obj[key.key] === el[key.key])[0]
       : null;
 
     if (!objFilter) {
       resultObject[key.key] = el[key.key];
       resultObject[key.name] = el[key.name];
-      values.forEach((v) => (resultObject[v] = el[v]));
+      values.forEach(v => (resultObject[v] = el[v]));
       resultArray.push(resultObject);
-    } else values.forEach((v) => (objFilter[v] += el[v]));
+    } else values.forEach(v => (objFilter[v] += el[v]));
   });
 
   return resultArray.slice(0, 10);
@@ -343,21 +343,21 @@ export function createSubTotalColumns(
   columns: any[],
   subTotalItems: any[],
   subTotalKey: any,
-  deleteOption: string = 'filter'
+  deleteOption: string = 'filter',
 ) {
   try {
     let subColumns = cloneDeep(columns);
 
     //합계 기준 컬럼과 합산된 데이터 컬럼만 나오게 정리
     subColumns = subColumns.filter(
-      (value) =>
+      value =>
         value.name ===
-        (subTotalItems.find((subValue) => subValue === value.name) ||
-          subTotalKey.name)
+        (subTotalItems.find(subValue => subValue === value.name) ||
+          subTotalKey.name),
     );
 
     //불필요한 필터 제거
-    subColumns.forEach((element) => {
+    subColumns.forEach(element => {
       delete element[deleteOption];
     });
 
@@ -376,28 +376,25 @@ export function createSubTotalColumns(
 export const getModifiedRows = (
   ref: MutableRefObject<Grid>,
   columns,
-  datas?
+  datas?,
 ) => {
   const _columns = cloneDeep(ref.current.props.columns);
   const _datas = cloneDeep(ref.current.gridInst.getData());
   const instance = ref?.current?.getInstance()?.getModifiedRows();
   const modifiedData = {
     createdRows:
-      _datas?.filter(
-        (el) => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.CREATE
-      ) ?? instance?.createdRows,
+      _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.CREATE) ??
+      instance?.createdRows,
     deletedRows:
-      _datas?.filter(
-        (el) => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.DELETE
-      ) ?? instance?.deletedRows,
+      _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.DELETE) ??
+      instance?.deletedRows,
     updatedRows:
-      _datas?.filter(
-        (el) => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE
-      ) ?? instance?.updatedRows,
+      _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE) ??
+      instance?.updatedRows,
   };
   // 생성
-  const createdRows = (modifiedData?.createdRows as any)?.filter((el) => {
-    _columns.forEach((column) => {
+  const createdRows = (modifiedData?.createdRows as any)?.filter(el => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
@@ -410,8 +407,8 @@ export const getModifiedRows = (
   });
 
   // 삭제
-  const deletedRows = (modifiedData?.deletedRows as any)?.filter((el) => {
-    _columns.forEach((column) => {
+  const deletedRows = (modifiedData?.deletedRows as any)?.filter(el => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
@@ -424,8 +421,8 @@ export const getModifiedRows = (
   });
 
   // 수정
-  const updatedRows = (modifiedData?.updatedRows as any)?.filter((el) => {
-    _columns.forEach((column) => {
+  const updatedRows = (modifiedData?.updatedRows as any)?.filter(el => {
+    _columns.forEach(column => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
@@ -468,14 +465,14 @@ export const isModified = (ref: MutableRefObject<Grid>, columns) => {
 export const dataGridEvents = {
   /** 삭제 모드로 전환 */
   onDeleteMode: (
-    setGridMode: React.Dispatch<React.SetStateAction<TGridMode>>
+    setGridMode: React.Dispatch<React.SetStateAction<TGridMode>>,
   ) => {
     setGridMode('delete');
   },
 
   /** 수정 모드로 전환 */
   onUpdateMode: (
-    setGridMode: React.Dispatch<React.SetStateAction<TGridMode>>
+    setGridMode: React.Dispatch<React.SetStateAction<TGridMode>>,
   ) => {
     setGridMode('update');
   },
@@ -486,7 +483,7 @@ export const dataGridEvents = {
     setGridMode: React.Dispatch<React.SetStateAction<TGridMode>>,
     columns,
     modal,
-    defaultGridMode: TGridMode = 'view'
+    defaultGridMode: TGridMode = 'view',
   ) => {
     // 그리드의 데이터를 편집한 이력이 있는지 체크
     if (isModified(ref, columns)) {
@@ -524,7 +521,7 @@ export const dataGridEvents = {
     optionParams: object = {},
     modal: Omit<ModalStaticFunctions, 'warn'>,
     onAfterSave?: (values?) => void,
-    disableEditCheck?: boolean
+    disableEditCheck?: boolean,
   ) => {
     const { gridRef, columns, saveUriPath, setGridMode, methodType } =
       gridObject;
@@ -560,14 +557,14 @@ export const dataGridEvents = {
             columns,
             modifiedRows,
             false,
-            ['emptyDatas']
+            ['emptyDatas'],
           );
 
           if (chk === false) return;
 
           let result;
           saveGridData(modifiedRows, columns, saveUriPath, optionParams)
-            .then((res) => {
+            .then(res => {
               // message.info('저장이 완료되었습니다.');
               if (setGridMode) setGridMode(defaultGridMode);
               result = res;
@@ -606,7 +603,7 @@ export const dataGridEvents = {
             columns,
             modifiedRows,
             false,
-            ['emptyDatas']
+            ['emptyDatas'],
           );
 
           if (chk !== true) {
@@ -618,12 +615,12 @@ export const dataGridEvents = {
             detailDatas[i]['factory_uuid'] = getUserFactoryUuid();
 
             // alias에 따라 키값 변경
-            columns?.forEach((column) => {
+            columns?.forEach(column => {
               if (column?.format === 'datetime') {
                 const temp = detailDatas[i][column?.name];
                 if (dayjs(temp).isValid) {
                   detailDatas[i][column?.name] = dayjs(temp).format(
-                    'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]'
+                    'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]',
                   );
                 }
               }
@@ -650,7 +647,7 @@ export const dataGridEvents = {
           const optionKeys = Object.keys(optionParams);
 
           let headerData = {};
-          optionKeys.forEach((optionKey) => {
+          optionKeys.forEach(optionKey => {
             headerData[optionKey] = optionParams[optionKey];
           });
 
@@ -675,7 +672,7 @@ export const dataGridEvents = {
           // 저장
           let result;
           await executeData(saveData, saveUriPath, methodType || _methodType)
-            .then((res) => {
+            .then(res => {
               const { datas, success } = res;
               const { value } = datas;
               result = res;
@@ -684,7 +681,7 @@ export const dataGridEvents = {
                 if (setGridMode) setGridMode(defaultGridMode);
               }
             })
-            .catch((e) => {
+            .catch(e => {
               console.log('Error', e);
             })
             .finally(() => {
@@ -708,11 +705,11 @@ export const dataGridEvents = {
     searchParams: object,
     columns,
     setLoading,
-    options: { dataReturnType?: 'basic' | 'report' } = {}
+    options: { dataReturnType?: 'basic' | 'report' } = {},
   ) => {
     setLoading(true);
 
-    getData(searchParams, searchUriPath).then((res) => {
+    getData(searchParams, searchUriPath).then(res => {
       // 데이터 적용
       if (options.dataReturnType === 'report') {
         setData(res[0]?.datas);
@@ -734,7 +731,7 @@ export const dataGridEvents = {
 
   /** 신규 데이터 생성 팝업 */
   onShowCreatePopup: (
-    setCreatePopupVisible: React.Dispatch<React.SetStateAction<boolean>>
+    setCreatePopupVisible: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
     setCreatePopupVisible(true);
   },
@@ -746,7 +743,7 @@ export const dataGridEvents = {
 /** 그리드 포커스 잡는 용도 */
 export const setGridFocus = (
   gridRef,
-  info?: { columnName: string; rowKey: number }
+  info?: { columnName: string; rowKey: number },
 ) => {
   if (!gridRef) return;
 
@@ -784,7 +781,7 @@ type TConvDataToSubTotalProps = {
 };
 export const convDataToSubTotal = (
   data: any[] = [],
-  options: TConvDataToSubTotalProps
+  options: TConvDataToSubTotalProps,
 ): TSubTotal => {
   let result: TSubTotal = {
     subTotals: [],
@@ -795,7 +792,7 @@ export const convDataToSubTotal = (
 
   if (data?.length <= 1) {
     const _data = cloneDeep(data);
-    standardNames?.forEach((stdName) => {
+    standardNames?.forEach(stdName => {
       delete _data[stdName];
     });
     return {
@@ -807,14 +804,14 @@ export const convDataToSubTotal = (
   try {
     // 계산할 키 추출하기
     let curculationNames = [];
-    cloneDeep(curculations).forEach((el) => {
+    cloneDeep(curculations).forEach(el => {
       curculationNames = curculationNames.concat(el.names);
     });
 
     // 필요한 데이터만 추출
-    let tempData: any[] = cloneDeep(data).map((el) => {
+    let tempData: any[] = cloneDeep(data).map(el => {
       const keys = Object.keys(el);
-      keys.forEach((key) => {
+      keys.forEach(key => {
         if (standardNames.concat(curculationNames).includes(key) === false) {
           delete el[key];
         }
@@ -824,19 +821,19 @@ export const convDataToSubTotal = (
     console.log('tempData', tempData);
 
     // 연산될 기준명의 키 그룹을 생성
-    const groupData: any[] = cloneDeep(tempData).map((el) =>
-      cleanupKeyOfObject(el, standardNames)
+    const groupData: any[] = cloneDeep(tempData).map(el =>
+      cleanupKeyOfObject(el, standardNames),
     );
 
     // 기준 컬럼을 바탕으로 그룹핑
     let cnt = 0;
-    groupData.forEach((data) => {
+    groupData.forEach(data => {
       const values = Object.values(data);
 
       if (values == null) return;
       if (
         groupInfos.findIndex(
-          (el) => el.originalValues.join('') === values.join('')
+          el => el.originalValues.join('') === values.join(''),
         ) !== -1
       )
         return;
@@ -857,17 +854,17 @@ export const convDataToSubTotal = (
     tempData.forEach((raw, index) => {
       const value = cleanupKeyOfObject(raw, standardNames);
       let groupKey = groupInfos.find(
-        (el) => el.originalValues.join('') === Object.values(value).join('')
+        el => el.originalValues.join('') === Object.values(value).join(''),
       )?.groupKey;
       let count: { groupKey: string; cnt: number }[] = [];
 
-      curculationNames.forEach((curlName) => {
+      curculationNames.forEach(curlName => {
         if (!sumData[groupKey]) {
           sumData[groupKey] = { [curlName]: null };
         }
 
-        const curlType = curculations.find((el) =>
-          el.names.includes(curlName)
+        const curlType = curculations.find(el =>
+          el.names.includes(curlName),
         )?.type;
         const previousValue: number = Number(sumData[groupKey][curlName] || 0);
         const currentValue: number = Number(raw[curlName]);
@@ -908,7 +905,7 @@ export const convDataToSubTotal = (
           case 'avg':
           case 'sum':
           default:
-            let countInfo = count.find((el) => el.groupKey === groupKey);
+            let countInfo = count.find(el => el.groupKey === groupKey);
             if (countInfo) {
               countInfo.cnt += 1;
             } else {
@@ -920,19 +917,17 @@ export const convDataToSubTotal = (
         }
 
         if (
-          !chkData.find((el) => {
+          !chkData.find(el => {
             const stdObj = cleanupKeyOfObject(el, standardNames);
             const values = Object.values(stdObj);
             return (
               JSON.stringify(values) ===
-              JSON.stringify(groupInfos?.find((el) => el.groupKey === groupKey))
+              JSON.stringify(groupInfos?.find(el => el.groupKey === groupKey))
             );
           })
         ) {
           if (curlType === 'avg') {
-            const cnt: number = count.find(
-              (el) => el.groupKey === groupKey
-            ).cnt;
+            const cnt: number = count.find(el => el.groupKey === groupKey).cnt;
             sumData[groupKey][curlName] = sumData[groupKey][curlName] / cnt; //(Object.keys(sumData).length || 1);
             total[curlName] =
               (total[curlName] || 0) / Object.keys(sumData).length;
@@ -947,7 +942,7 @@ export const convDataToSubTotal = (
     result.total = total;
 
     // 계산 값 정형화
-    groupInfos.forEach((groupInfo) => {
+    groupInfos.forEach(groupInfo => {
       let row = {};
       standardNames.forEach((value, index) => {
         const _key = groupInfo.originalNames[index];
@@ -961,7 +956,7 @@ export const convDataToSubTotal = (
 
     // 정렬 작업
     if (sortby?.names) {
-      standardNames.forEach((stdName) => {
+      standardNames.forEach(stdName => {
         result.subTotals.sort((a, b) => {
           let x = a[stdName].toLowerCase();
           let y = b[stdName].toLowerCase();
@@ -1018,13 +1013,13 @@ export const getTestData = (count: number = 10) => {
 
   let result: any[] = [];
   for (let i = 1; i <= count; i++) {
-    result[i - 1] = [testData]?.map((el) => {
+    result[i - 1] = [testData]?.map(el => {
       const keys = Object.keys(el);
       const price = Math.floor(Math.random() * (100000 - 0)) + 0;
       const index = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
       const index2 = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
       let result = {};
-      keys.forEach((key) => {
+      keys.forEach(key => {
         if (typeof el[key] === 'number') {
           if (key === 'qty')
             result[key] = Math.floor(Math.random() * (1000 - 0)) + 0;

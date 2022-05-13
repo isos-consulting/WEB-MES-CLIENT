@@ -1,9 +1,4 @@
-import {
-  atom,
-  AtomOptions,
-  RecoilState,
-  SetterOrUpdater,
-} from "recoil";
+import { atom, AtomOptions, RecoilState, SetterOrUpdater } from 'recoil';
 
 export class FormStore<T = undefined> {
   private state: RecoilState<T>;
@@ -17,6 +12,6 @@ export class FormStore<T = undefined> {
   }
 
   onUpdate(setFormState: SetterOrUpdater<T>, option: Partial<T>) {
-    setFormState((prevState) => ({ ...prevState, ...option }));
+    setFormState(prevState => ({ ...prevState, ...option }));
   }
 }

@@ -1,9 +1,13 @@
-
-import Grid from "@toast-ui/react-grid";
-import { IButtonProps, IDatagridProps, IGridPopupProps, IModalProps, ISearchboxProps } from "~/components/UI";
-import { IInputGroupboxProps } from "~/components/UI/input-groupbox/input-groupbox.ui";
+import Grid from '@toast-ui/react-grid';
+import {
+  IButtonProps,
+  IDatagridProps,
+  IGridPopupProps,
+  IModalProps,
+  ISearchboxProps,
+} from '~/components/UI';
+import { IInputGroupboxProps } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import React from 'react';
-
 
 export default interface ITpSingleGridProps {
   /** 페이지 제목 */
@@ -32,12 +36,15 @@ export default interface ITpSingleGridProps {
   popupInputProps?: IInputGroupboxProps[];
 
   /** 모달 콘텍스트 */
-  modalContext: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  modalContext: React.ReactElement<
+    any,
+    string | React.JSXElementConstructor<any>
+  >;
 
   /** 모달 visible */
   popupVisible: boolean[];
   setPopupVisible: React.Dispatch<React.SetStateAction<boolean>>[];
-  
+
   /** 기타 버튼 */
   extraButtons?: TExtraButtons;
 
@@ -58,10 +65,10 @@ export default interface ITpSingleGridProps {
     printExcel: () => void | null;
   };
 
-  onPopupAfterOk?: ((isSuccess:boolean, savedData?:any[]) => void)[];
-};
+  onPopupAfterOk?: ((isSuccess: boolean, savedData?: any[]) => void)[];
+}
 
-export interface IExtraButton extends IButtonProps {};
+export interface IExtraButton extends IButtonProps {}
 export type TExtraButtons = IExtraButton[];
 export type TExtraModals = IModalProps[];
 export type TExtraGridPopups = IGridPopupProps[];

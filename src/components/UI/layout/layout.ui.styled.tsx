@@ -3,7 +3,6 @@ import { IContentProps, ILayoutSpacing } from './layout.ui.type';
 import Colors from '~styles/color.style.scss';
 import Sizes from '~styles/size.style.scss';
 
-
 /** 페이지 Container 영역의 스타일 */
 export const ScContainer = styled.div<ILayoutSpacing>`
   position: relative;
@@ -11,15 +10,13 @@ export const ScContainer = styled.div<ILayoutSpacing>`
   height: 100vh;
   overflow: hidden;
   /* .ant-card.ant-card-bordered{ */
-    /* margin-bottom: 8px; */
+  /* margin-bottom: 8px; */
   /* } */
   // searchbox 높이 지정하려고 했었음 (대시보드까지 적용돼서 일단 주석)
   /* .ant-card-body{
     height: 57px;
   } */
-  
 `;
-
 
 /** 페이지 메인 바디 영역의 스타일 */
 export const ScMainBody = styled.div<ILayoutSpacing>`
@@ -53,11 +50,11 @@ export const ScMainBody = styled.div<ILayoutSpacing>`
   } */
 `;
 
-
 /** Content 영역의 스타일 */
 export const ScContent = styled.div<IContentProps>`
   min-height: 88%;
-  min-height: ${({ topSpacing, bottomSpacing, wrapperSpacing }) => `calc(100vh - ${topSpacing + wrapperSpacing + bottomSpacing  * 0.68 }px)`};  
+  min-height: ${({ topSpacing, bottomSpacing, wrapperSpacing }) =>
+    `calc(100vh - ${topSpacing + wrapperSpacing + bottomSpacing * 0.68}px)`};
   background-color: ${Colors.bg_background};
   border-radius: ${Sizes.borderRadius};
   /* overflow: hidden; */

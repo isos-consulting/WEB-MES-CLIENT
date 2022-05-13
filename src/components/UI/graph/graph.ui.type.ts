@@ -4,13 +4,7 @@ export default interface IGraphProps {
   id?: string;
 
   /** 그래프 유형 */
-  graphType: 
-  | "Bar" 
-  | "Bubble" 
-  | "Line" 
-  | "Pie" 
-  | "Calendar" 
-  | "Bump";
+  graphType: 'Bar' | 'Bubble' | 'Line' | 'Pie' | 'Calendar' | 'Bump';
 
   /** 그래프 표현 유형 (그룹 | 간트) */
   groupMode?: 'grouped' | 'stacked';
@@ -34,7 +28,7 @@ export default interface IGraphProps {
   axisBottom?: string;
 
   /** x축 범례 기울기 */
-  axisBottomRotation?:number;
+  axisBottomRotation?: number;
 
   /** y축 범례 */
   axisLeft?: string;

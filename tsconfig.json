@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": "./src", //기준이 되는 위치
-    "paths": { //import alias 정의
+    "paths": {
+      //import alias 정의
       "~/*": ["./*"],
       "~components/*": ["./components/*"],
       "~recoils/*": ["./recoils/*"],
@@ -13,7 +14,8 @@
     "outDir": "build/dist", // 컴파일시 build 경로
     "module": "commonjs", // 빌드 결과의 모듈 방식을 지정합니다.
     "target": "es5", // ECMAScript 대상 버전을 지정합니다.
-    "lib": [ // 컴파일에 포함될 라이브러리 파일 목록입니다.
+    "lib": [
+      // 컴파일에 포함될 라이브러리 파일 목록입니다.
       "es6",
       "dom",
       "esnext.asynciterable"
@@ -35,14 +37,16 @@
     "noUnusedLocals": true, //사용하지 않는 지역 변수에 대한 오류를 보고합니다.
     "skipLibCheck": true //선언 타입(.d.ts) 파일의 타입 검사를 생략합니다.
   },
-  "exclude": [ // 해당 항목들을 컴파일에서 제외시킵니다.
+  "exclude": [
+    // 해당 항목들을 컴파일에서 제외시킵니다.
     "node_modules",
     "scripts",
     "webpack",
     "jest",
     "snippets"
   ],
-  "include": [ // 컴파일할 항목들을 지정합니다.
+  "include": [
+    // 컴파일할 항목들을 지정합니다.
     "src/typings",
     "src/**/*"
   ]

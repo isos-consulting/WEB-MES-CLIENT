@@ -1,17 +1,17 @@
-import React from "react";
+import React from 'react';
 
 enum MonitorStatusBackgroundColors {
-  run = "#00af4e",
-  stop = "#fe0201",
-  downtime = "#fcc002",
-  disconnect = "#222529",
+  run = '#00af4e',
+  stop = '#fe0201',
+  downtime = '#fcc002',
+  disconnect = '#222529',
 }
 
 enum MonitorStatusBorderColors {
-  run = "#6ad198",
-  stop = "#fe9292",
-  downtime = "#fee491",
-  disconnect = "#1a1d21",
+  run = '#6ad198',
+  stop = '#fe9292',
+  downtime = '#fee491',
+  disconnect = '#1a1d21',
 }
 
 interface IFrameStyle {
@@ -80,44 +80,44 @@ export interface ICreateMonitorProps {
   status: string;
 }
 
-const MonitorCard: React.FC<ICreateMonitorProps> = (props) => {
+const MonitorCard: React.FC<ICreateMonitorProps> = props => {
   const cardStyle: ICardStyle = {
     frame: {
-      width: "300px",
-      backgroundColor: "#ffffff",
-      border: "none",
-      margin: '10px'
+      width: '300px',
+      backgroundColor: '#ffffff',
+      border: 'none',
+      margin: '10px',
     },
     header: {
-      display: "flex",
-      justifyContent: "flex-start",
-      height: "60px",
+      display: 'flex',
+      justifyContent: 'flex-start',
+      height: '60px',
     },
     title: {
-      fontSize: "15px",
-      marginLeft: "15px",
-      marginTop: "20px",
+      fontSize: '15px',
+      marginLeft: '15px',
+      marginTop: '20px',
     },
     body: {
-      display: "flex",
-      justifyContent: "space-around",
+      display: 'flex',
+      justifyContent: 'space-around',
     },
     content: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      width: "70px",
-      height: "70px",
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '70px',
+      height: '70px',
       border: `1px solid ${MonitorStatusBorderColors[props.status_cd]}`,
-      borderRadius: "50%",
+      borderRadius: '50%',
       backgroundColor: `${MonitorStatusBackgroundColors[props.status_cd]}`,
-      color: "#ffffff",
+      color: '#ffffff',
     },
     footer: {
-      height: "70px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
+      height: '70px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   };
 

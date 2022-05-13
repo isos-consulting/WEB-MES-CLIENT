@@ -1,5 +1,4 @@
-import { RadioChangeEvent } from "antd";
-
+import { RadioChangeEvent } from 'antd';
 
 /** 라디오 버튼 속성 인터페이스 */
 export default interface IRadioProps {

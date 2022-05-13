@@ -91,8 +91,7 @@ $fontSize_tab_md: 13px;
 $fontSize_tab_lg: 14px;
 $fontSize_tab: $fontSize_tab_sm;
 
-
-:export{
+:export {
   fontFamily_default: $fontFamily_default;
 
   fontSize_default: $fontSize_default;
@@ -169,5 +168,4 @@ $fontSize_tab: $fontSize_tab_sm;
   fontSize_tab_md: $fontSize_tab_md;
   fontSize_tab_lg: $fontSize_tab_lg;
   fontSize_tab: $fontSize_tab;
-}    
-
+}

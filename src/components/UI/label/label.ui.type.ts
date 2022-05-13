@@ -1,6 +1,6 @@
 /** 라벨 속성 인터페이스 */
- export default interface ILabelProps {
-   /** 라벨 아이디 */
+export default interface ILabelProps {
+  /** 라벨 아이디 */
   id?: string;
 
   /** 라벨 글자 */

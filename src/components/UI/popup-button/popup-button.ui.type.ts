@@ -4,10 +4,9 @@ import { IDatagridProps, TApiSettings } from '../datagrid-new';
 import { IModalProps } from '../modal';
 import { TPopupKey } from '../popup/popup.ui.model';
 
-
 /** 팝업 호출 버튼 속성 인터페이스 */
 export default interface IPopupButtonProps {
-   /** 버튼 아이디 */
+  /** 버튼 아이디 */
   id?: string;
 
   /** 호출될 팝업 폼의 키 값 */
@@ -35,7 +34,7 @@ export default interface IPopupButtonProps {
   /** 첫줄에 빈칸 생성 */
   firstItemEmpty?: boolean;
 
-  setValues?: (values: any, shouldValidate?: boolean) => void
+  setValues?: (values: any, shouldValidate?: boolean) => void;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
   handleChange?: (value) => void;
 }

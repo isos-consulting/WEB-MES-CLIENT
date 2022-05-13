@@ -7,16 +7,16 @@ export default interface IBarGraphProps {
   layout?: 'vertical' | 'horizontal';
 
   /** 그래프 데이터 */
-  data?:object[];
+  data?: object[];
 
   /** ❗ */
-  dataKeys:string[];
+  dataKeys: string[];
 
   /** x축 범례 */
   axisBottom?: string;
 
   /** x축 범례 기울기 */
-  axisBottomRotation?:number;
+  axisBottomRotation?: number;
 
   /** y축 범례 */
   axisLeft?: string;

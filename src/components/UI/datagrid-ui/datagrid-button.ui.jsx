@@ -10,12 +10,12 @@ export class DatagridButtonEditor {
       gridId: gridId,
       rowKey: rowKey,
       colName: name,
-    }
+    };
 
     // select 형식의 element 생성
     const rootDiv = document.createElement('input');
     rootDiv.className = 'tui-grid-content-number';
-    
+
     rootDiv.type = 'button';
     rootDiv.name = name;
 
@@ -39,30 +39,27 @@ export class DatagridButtonEditor {
   }
 }
 
-
-
 /** 버튼 렌더러 */
 export class DatagridButtonRenderer {
   constructor(props) {
-    const {rowKey, grid} = props;
-    const {name} = props.columnInfo;
-    const {gridId, onClick, disabled} = props.columnInfo.renderer?.options;
+    const { rowKey, grid } = props;
+    const { name } = props.columnInfo;
+    const { gridId, onClick, disabled } = props.columnInfo.renderer?.options;
     const value = props.columnInfo.renderer?.options?.value;
     const formatter = props.columnInfo.renderer?.options?.formatter;
 
     this.state = {
       elementId: gridId + name + rowKey,
       value,
-    }
-    
+    };
+
     const rootDiv = document.createElement('div');
     const el = document.createElement('button');
-    
+
     // el.type = 'button';
     el.disabled = disabled;
     el.id = gridId + name + rowKey;
-    if (onClick) el.addEventListener('click', (ev) => onClick(ev, props));
-
+    if (onClick) el.addEventListener('click', ev => onClick(ev, props));
 
     if (value != null) {
       el.innerText = value;
@@ -73,7 +70,7 @@ export class DatagridButtonRenderer {
     }
 
     rootDiv.className = 'tui-grid-cell-content';
-    
+
     rootDiv.appendChild(el);
 
     this.el = rootDiv;
@@ -96,7 +93,7 @@ export class DatagridButtonRenderer {
     //   }
 
     // } else if(element != null) {
-      
+
     //   if (props.columnInfo.renderer?.options?.value != null) {
     //     element.innerText = props.columnInfo.renderer?.options?.value;
     //   } else {

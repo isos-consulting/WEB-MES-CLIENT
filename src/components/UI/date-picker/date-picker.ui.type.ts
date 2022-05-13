@@ -1,4 +1,4 @@
-import { Dayjs } from "dayjs";
+import { Dayjs } from 'dayjs';
 
 /** 날짜선택기 속성 인터페이스 */
 export default interface IDatePickerProps extends IDatepickerStyles {
@@ -33,11 +33,10 @@ export default interface IDatePickerProps extends IDatepickerStyles {
 
   /** 데이터 저장 타입 지정 */
   returnType?: 'date' | 'dateString';
-  
-  /** 날짜 변경 이벤트 */
-  onChange?: (date:Dayjs, dateString?:string) => void;//(value: any | null, dateString: string) => void;
-}
 
+  /** 날짜 변경 이벤트 */
+  onChange?: (date: Dayjs, dateString?: string) => void; //(value: any | null, dateString: string) => void;
+}
 
 /** 날짜선택기 스타일 인터페이스 */
 export interface IDatepickerStyles {

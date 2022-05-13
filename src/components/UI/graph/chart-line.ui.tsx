@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,10 +8,10 @@ import {
   TimeScale,
   Title,
   Tooltip,
-  Legend
-} from "chart.js";
-import { Line } from "react-chartjs-2";
-import "chartjs-adapter-moment";
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+import 'chartjs-adapter-moment';
 
 export interface ILineChartProps {
   options: any;
@@ -28,8 +28,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
-const LineChart: React.FC<ILineChartProps> = (props) => (<Line {...props} />);
+const LineChart: React.FC<ILineChartProps> = props => <Line {...props} />;
 
 export default LineChart;
