@@ -469,7 +469,13 @@ export const orderInput = () => {
         hidden: true,
         noSave: true,
       },
-      { header: '품목UUID', name: 'prod_uuid', width: 200, hidden: true },
+      {
+        header: '품목UUID',
+        name: 'prod_uuid',
+        width: 200,
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '품번',
         name: 'prod_no',
@@ -477,6 +483,7 @@ export const orderInput = () => {
         hidden: false,
         format: 'popup',
         noSave: true,
+        requiredField: true,
       },
       {
         header: '품목',
@@ -540,7 +547,13 @@ export const orderInput = () => {
         format: 'popup',
         noSave: true,
       },
-      { header: '단위UUID', name: 'unit_uuid', width: 200, hidden: true },
+      {
+        header: '단위UUID',
+        name: 'unit_uuid',
+        width: 200,
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '투입단위',
         name: 'unit_nm',
@@ -556,6 +569,7 @@ export const orderInput = () => {
         name: 'bom_input_type_uuid',
         width: 200,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '투입 유형',
@@ -581,6 +595,7 @@ export const orderInput = () => {
         name: 'from_store_uuid',
         width: 200,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고 창고',

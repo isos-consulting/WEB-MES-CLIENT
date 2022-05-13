@@ -505,7 +505,6 @@ export const INSP = () => {
     { id: 'remark', label: '비고', type: 'text', disabled: true },
   ];
   //#endregion
-  console.log();
   const createPopupInput = useInputGroup(
     'WORK_INSP_CREATE_POPUP_INPUTBOX',
     INSP_INPUT_ITEMS,
@@ -671,91 +670,118 @@ export const INSP = () => {
     setCreatePopupVisible(true);
   };
 
-  const onCancel = ev => {};
+  const compareRequiredData = (compareDatas, requiredFileds) => {
+    try {
+      requiredFileds.map(requiredFiled => {
+        if (!compareDatas[requiredFiled.key])
+          throw `${requiredFiled.name} 정보를 확인해주세요.`;
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
 
   const onSave = async (gridRef, inputRef) => {
-    const saveGridRef: MutableRefObject<Grid> = gridRef;
-    const saveInputRef: MutableRefObject<FormikProps<FormikValues>> = inputRef;
+    try {
+      const saveGridRef: MutableRefObject<Grid> = gridRef;
+      const saveInputRef: MutableRefObject<FormikProps<FormikValues>> =
+        inputRef;
 
-    const methodType: 'delete' | 'post' | 'put' | 'patch' = createPopupVisible
-      ? 'post'
-      : 'put';
-    let headerData: object;
-    let detailDatas: object[] = [];
+      const methodType: 'delete' | 'post' | 'put' | 'patch' = createPopupVisible
+        ? 'post'
+        : 'put';
+      let headerData: object;
+      let detailDatas: object[] = [];
 
-    const saveGridInstance = saveGridRef?.current?.getInstance();
-    // const popupGridInstance = saveInputRef?.current;
+      const saveGridInstance = saveGridRef?.current?.getInstance();
+      // const popupGridInstance = saveInputRef?.current;
 
-    const saveInputValues = saveInputRef?.current?.values;
-    const regDate = dayjs(saveInputValues?.reg_date).isValid()
-      ? dayjs(saveInputValues?.reg_date).format('YYYY-MM-DD')
-      : saveInputValues?.reg_date;
-    const regTime = dayjs(saveInputValues?.reg_date_time).isValid()
-      ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss')
-      : saveInputValues?.reg_date_time;
-    const regDateTime = regDate + ' ' + regTime + ':00';
-    headerData = {
-      //uuid: saveInputValues?.insp_result_uuid,
-      factory_uuid: getUserFactoryUuid(),
-      work_uuid: (headerSaveOptionParams as any)?.work_uuid,
-      insp_type_uuid: saveInputValues?.insp_type_uuid,
-      insp_detail_type_uuid: saveInputValues?.insp_detail_type_uuid,
-      insp_uuid: saveInputValues?.insp_uuid,
-      prod_uuid: (headerSaveOptionParams as any)?.prod_uuid,
-      lot_no: (headerSaveOptionParams as any)?.lot_no,
-      emp_uuid: saveInputValues?.emp_uuid,
-      reg_date: regDateTime,
-      insp_result_fg: saveInputValues?.insp_result_fg,
-      insp_qty: 0,
-      pass_qty: 0,
-      reject_qty: 0,
-      remark: saveInputValues?.remark,
-    };
+      const saveInputValues = saveInputRef?.current?.values;
+      const regDate = dayjs(saveInputValues?.reg_date).isValid()
+        ? dayjs(saveInputValues?.reg_date).format('YYYY-MM-DD')
+        : saveInputValues?.reg_date;
+      const regTime = dayjs(saveInputValues?.reg_date_time).isValid()
+        ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss')
+        : saveInputValues?.reg_date_time;
+      const regDateTime = regDate + ' ' + regTime + ':00';
+      headerData = {
+        //uuid: saveInputValues?.insp_result_uuid,
+        factory_uuid: getUserFactoryUuid(),
+        work_uuid: (headerSaveOptionParams as any)?.work_uuid,
+        insp_type_uuid: saveInputValues?.insp_type_uuid,
+        insp_detail_type_uuid: saveInputValues?.insp_detail_type_uuid,
+        insp_uuid: saveInputValues?.insp_uuid,
+        prod_uuid: (headerSaveOptionParams as any)?.prod_uuid,
+        lot_no: (headerSaveOptionParams as any)?.lot_no,
+        emp_uuid: saveInputValues?.emp_uuid,
+        reg_date: regDateTime,
+        insp_result_fg: saveInputValues?.insp_result_fg,
+        insp_qty: 0,
+        pass_qty: 0,
+        reject_qty: 0,
+        remark: saveInputValues?.remark,
+      };
 
-    for (let i = 0; i <= saveGridInstance.getRowCount() - 1; i++) {
-      const values: object[] = [];
-      const row = saveGridInstance?.getRow(i);
-      const inspResultDetailInfoUuid =
-        methodType === 'post' ? null : row?.insp_result_detail_info_uuid;
+      const requiredFileds = [
+        { key: 'factory_uuid', name: '공장' },
+        { key: 'work_uuid', name: '생산실적' },
+        { key: 'insp_detail_type_uuid', name: '검사유형' },
+        { key: 'insp_uuid', name: '검사기준서' },
+        { key: 'prod_uuid', name: '품목' },
+        { key: 'lot_no', name: 'LOT NO' },
+        { key: 'emp_uuid', name: '검사자' },
+        { key: 'reg_date', name: '검사일시' },
+      ];
 
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        if (value) {
-          values.push({
-            uuid: inspResultDetailInfoUuid,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
+      compareRequiredData(headerData, requiredFileds);
+
+      for (let i = 0; i <= saveGridInstance.getRowCount() - 1; i++) {
+        const values: object[] = [];
+        const row = saveGridInstance?.getRow(i);
+        const inspResultDetailInfoUuid =
+          methodType === 'post' ? null : row?.insp_result_detail_info_uuid;
+
+        for (let k = 1; k <= row.sample_cnt; k++) {
+          const value: any = row?.['x' + k + '_insp_value'];
+          if (value) {
+            values.push({
+              uuid: inspResultDetailInfoUuid,
+              sample_no: k,
+              insp_result_fg: row?.['x' + k + '_insp_result_fg'],
+              insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
+            });
+          }
         }
+
+        //const uuidKey = methodType === 'post' ? 'insp_detail_uuid' : 'uuid';
+
+        detailDatas.push({
+          values,
+          factory_uuid: getUserFactoryUuid(),
+          //[uuidKey]: row?.insp_detail_uuid,
+          insp_result_fg: row?.insp_result_fg,
+          insp_detail_uuid: row?.insp_detail_uuid,
+          remark: row?.remark,
+        });
       }
 
-      //const uuidKey = methodType === 'post' ? 'insp_detail_uuid' : 'uuid';
-
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        //[uuidKey]: row?.insp_detail_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        insp_detail_uuid: row?.insp_detail_uuid,
-        remark: row?.remark,
-      });
+      const saveData: object = {
+        header: headerData,
+        details: detailDatas,
+      };
+      await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
+        .then(value => {
+          if (!value) return;
+          message.info('저장되었습니다.');
+          setCreatePopupVisible(false);
+          setEditPopupVisible(false);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } catch (e) {
+      message.warn(e);
     }
-
-    const saveData: object = {
-      header: headerData,
-      details: detailDatas,
-    };
-    await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
-      .then(value => {
-        if (!value) return;
-        message.info('저장되었습니다.');
-        setCreatePopupVisible(false);
-        setEditPopupVisible(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
   };
   //#endregion
 

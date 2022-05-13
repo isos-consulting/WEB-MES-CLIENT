@@ -107,6 +107,7 @@ export const orderWorker = () => {
         width: 200,
         hidden: true,
         format: 'text',
+        requiredField: true,
       },
       {
         header: '작업자UUID',
@@ -114,6 +115,7 @@ export const orderWorker = () => {
         width: 200,
         hidden: true,
         format: 'text',
+        requiredField: true,
       },
       {
         header: '작업자명',
@@ -121,6 +123,7 @@ export const orderWorker = () => {
         width: 200,
         hidden: false,
         format: 'text',
+        requiredField: true,
       },
     ],
     /** 그리드 데이터 */
