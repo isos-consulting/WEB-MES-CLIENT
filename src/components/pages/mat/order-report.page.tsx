@@ -97,7 +97,6 @@ export const PgMatOrderReport = () => {
       label: '납기일',
       useCheckbox: true,
     },
-
     {
       type: 'radio',
       id: 'sort_type',
@@ -109,7 +108,6 @@ export const PgMatOrderReport = () => {
         { code: 'date', text: '일자별' },
       ],
     },
-
     {
       type: 'radio',
       id: 'complete_state',
@@ -140,7 +138,11 @@ export const PgMatOrderReport = () => {
             align: 'center',
             hidden: true,
           },
-          { header: '자재공정출고아이디', name: 'release_uuid', hidden: true },
+          {
+            header: '자재공정출고아이디',
+            name: 'release_uuid',
+            hidden: true,
+          },
           {
             header: '품목유형',
             name: 'item_type_nm',
@@ -155,7 +157,11 @@ export const PgMatOrderReport = () => {
             filter: 'text',
             align: 'center',
           },
-          { header: '품목아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '품목아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품번',
             name: 'prod_no',
@@ -260,7 +266,11 @@ export const PgMatOrderReport = () => {
             filter: 'number',
           },
 
-          { header: '화폐단위아이디', name: 'money_unit_uuid', hidden: true },
+          {
+            header: '화폐단위아이디',
+            name: 'money_unit_uuid',
+            hidden: true,
+          },
           {
             header: '화폐단위',
             name: 'money_unit_nm',
@@ -325,7 +335,11 @@ export const PgMatOrderReport = () => {
             align: 'center',
             hidden: true,
           },
-          { header: '자재공정출고아이디', name: 'release_uuid', hidden: true },
+          {
+            header: '자재공정출고아이디',
+            name: 'release_uuid',
+            hidden: true,
+          },
           {
             header: '발주일자',
             name: 'reg_date',
@@ -359,7 +373,11 @@ export const PgMatOrderReport = () => {
             filter: 'text',
             align: 'center',
           },
-          { header: '품목아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '품목아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품번',
             name: 'prod_no',
@@ -367,7 +385,12 @@ export const PgMatOrderReport = () => {
             filter: 'text',
             hidden: true,
           },
-          { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
+          {
+            header: 'Rev',
+            name: 'rev',
+            width: ENUM_WIDTH.S,
+            filter: 'text',
+          },
           {
             header: '품명',
             name: 'prod_nm',
@@ -511,7 +534,11 @@ export const PgMatOrderReport = () => {
             align: 'center',
             hidden: true,
           },
-          { header: '자재공정출고아이디', name: 'release_uuid', hidden: true },
+          {
+            header: '자재공정출고아이디',
+            name: 'release_uuid',
+            hidden: true,
+          },
           {
             header: '거래처아이디',
             name: 'partner_uuid',
@@ -545,7 +572,11 @@ export const PgMatOrderReport = () => {
             filter: 'text',
             align: 'center',
           },
-          { header: '품목아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '품목아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품번',
             name: 'prod_no',
@@ -630,8 +661,11 @@ export const PgMatOrderReport = () => {
             format: 'number',
             filter: 'number',
           },
-
-          { header: '화폐단위아이디', name: 'money_unit_uuid', hidden: true },
+          {
+            header: '화폐단위아이디',
+            name: 'money_unit_uuid',
+            hidden: true,
+          },
           {
             header: '화폐단위',
             name: 'money_unit_nm',
@@ -725,7 +759,12 @@ export const PgMatOrderReport = () => {
             filter: 'text',
             hidden: true,
           },
-          { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
+          {
+            header: 'Rev',
+            name: 'rev',
+            width: ENUM_WIDTH.S,
+            filter: 'text',
+          },
           {
             header: '품명',
             name: 'prod_nm',

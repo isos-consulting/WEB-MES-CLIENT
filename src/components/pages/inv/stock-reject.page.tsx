@@ -57,6 +57,7 @@ export const PgInvStockReject = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -170,6 +171,7 @@ export const PgInvStockReject = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '불량코드',
@@ -196,6 +198,7 @@ export const PgInvStockReject = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고명',
@@ -238,6 +241,7 @@ export const PgInvStockReject = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고창고명',

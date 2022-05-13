@@ -57,6 +57,7 @@ export const PgSalIncome = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -136,7 +137,6 @@ export const PgSalIncome = () => {
         filter: 'text',
         format: 'popup',
       },
-
       {
         header: 'LOT NO',
         name: 'lot_no',
@@ -154,7 +154,6 @@ export const PgSalIncome = () => {
         editable: true,
         requiredField: true,
       },
-
       {
         header: '출고창고아이디',
         name: 'from_store_uuid',
@@ -162,6 +161,7 @@ export const PgSalIncome = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고코드',
@@ -170,6 +170,7 @@ export const PgSalIncome = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고명',
@@ -204,13 +205,13 @@ export const PgSalIncome = () => {
         format: 'text',
         hidden: true,
       },
-
       {
         header: '입고창고아이디',
         name: 'to_store_uuid',
         width: ENUM_WIDTH.M,
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고창고명',
@@ -221,7 +222,6 @@ export const PgSalIncome = () => {
         editable: true,
         requiredField: true,
       },
-
       {
         header: '입고위치아이디',
         name: 'to_location_uuid',

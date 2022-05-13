@@ -59,7 +59,12 @@ export const PgMatReceive = () => {
   const headerGrid = useGrid(
     'HEADER_GRID',
     [
-      { header: '입하UUID', name: 'receive_uuid', alias: 'uuid', hidden: true },
+      {
+        header: '입하UUID',
+        name: 'receive_uuid',
+        alias: 'uuid',
+        hidden: true,
+      },
       {
         header: '전표번호',
         name: 'stmt_no',
@@ -75,7 +80,12 @@ export const PgMatReceive = () => {
         format: 'date',
         requiredField: true,
       },
-      { header: '거래처UUID', name: 'partner_uuid', hidden: true },
+      {
+        header: '거래처UUID',
+        name: 'partner_uuid',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '거래처명',
         name: 'partner_nm',
@@ -84,7 +94,11 @@ export const PgMatReceive = () => {
         editable: true,
         requiredField: true,
       },
-      { header: '공급처UUID', name: 'supplier_uuid', hidden: true },
+      {
+        header: '공급처UUID',
+        name: 'supplier_uuid',
+        hidden: true,
+      },
       {
         header: '공급처명',
         name: 'supplier_nm',
@@ -115,10 +129,27 @@ export const PgMatReceive = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '입하UUID', name: 'receive_uuid', hidden: true },
-      { header: '발주UUID', name: 'order_detail_uuid', hidden: true },
-      { header: '입고UUID', name: 'income_uuid', hidden: true },
-      { header: '품목UUID', name: 'prod_uuid', hidden: true },
+      {
+        header: '입하UUID',
+        name: 'receive_uuid',
+        hidden: true,
+      },
+      {
+        header: '발주UUID',
+        name: 'order_detail_uuid',
+        hidden: true,
+      },
+      {
+        header: '입고UUID',
+        name: 'income_uuid',
+        hidden: true,
+      },
+      {
+        header: '품목UUID',
+        name: 'prod_uuid',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '품목유형',
         width: ENUM_WIDTH.M,
@@ -192,6 +223,7 @@ export const PgMatReceive = () => {
         format: 'popup',
         editable: true,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단위',
@@ -216,6 +248,7 @@ export const PgMatReceive = () => {
         hidden: true,
         format: 'popup',
         editable: true,
+        requiredField: true,
       },
       {
         header: '화폐단위',
@@ -329,7 +362,12 @@ export const PgMatReceive = () => {
         format: 'number',
         editable: true,
       },
-      { header: '비고', width: ENUM_WIDTH.XL, name: 'remark', editable: true },
+      {
+        header: '비고',
+        width: ENUM_WIDTH.XL,
+        name: 'remark',
+        editable: true,
+      },
     ],
     {
       searchUriPath: detailSearchUriPath,
@@ -447,8 +485,18 @@ export const PgMatReceive = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'stmt_no', label: '전표번호', disabled: true },
-    { type: 'date', id: 'reg_date', label: '입하일', disabled: true },
+    {
+      type: 'text',
+      id: 'stmt_no',
+      label: '전표번호',
+      disabled: true,
+    },
+    {
+      type: 'date',
+      id: 'reg_date',
+      label: '입하일',
+      disabled: true,
+    },
     {
       type: 'text',
       id: 'partner_nm',
@@ -494,7 +542,12 @@ export const PgMatReceive = () => {
         modalSettings: { title: '공급처 조회' },
       },
     },
-    { type: 'number', id: 'total_qty', label: '합계수량', disabled: true },
+    {
+      type: 'number',
+      id: 'total_qty',
+      label: '합계수량',
+      disabled: true,
+    },
     {
       type: 'number',
       id: 'total_price',
@@ -638,15 +691,31 @@ export const PgMatReceive = () => {
                       name: 'model_nm',
                       filter: 'text',
                     },
-                    { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev' },
-                    { header: '규격', width: ENUM_WIDTH.L, name: 'prod_std' },
+                    {
+                      header: 'Rev',
+                      width: ENUM_WIDTH.S,
+                      name: 'rev',
+                    },
+                    {
+                      header: '규격',
+                      width: ENUM_WIDTH.L,
+                      name: 'prod_std',
+                    },
                     {
                       header: '안전재고',
                       width: ENUM_WIDTH.S,
                       name: 'safe_stock',
                     },
-                    { header: '단위UUID', name: 'unit_uuid', hidden: true },
-                    { header: '단위', width: ENUM_WIDTH.XS, name: 'unit_nm' },
+                    {
+                      header: '단위UUID',
+                      name: 'unit_uuid',
+                      hidden: true,
+                    },
+                    {
+                      header: '단위',
+                      width: ENUM_WIDTH.XS,
+                      name: 'unit_nm',
+                    },
                     {
                       header: '화폐단위UUID',
                       name: 'money_unit_uuid',
@@ -693,7 +762,11 @@ export const PgMatReceive = () => {
                       name: 'due_date',
                       format: 'date',
                     },
-                    { header: '비고', width: ENUM_WIDTH.XL, name: 'remark' },
+                    {
+                      header: '비고',
+                      width: ENUM_WIDTH.XL,
+                      name: 'remark',
+                    },
                   ]}
                   gridMode="multi-select"
                   data={res}

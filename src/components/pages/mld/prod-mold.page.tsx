@@ -64,20 +64,29 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
-      { header: '품명', name: 'prod_nm', width: ENUM_WIDTH.L, filter: 'text' },
+      {
+        header: '품명',
+        name: 'prod_nm',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+        requiredField: true,
+      },
       {
         header: '품목 유형UUID',
         name: 'item_type_uuid',
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품목 유형명',
         name: 'item_type_nm',
         width: ENUM_WIDTH.L,
         filter: 'text',
+        requiredField: true,
       },
       {
         header: '제품 유형UUID',
@@ -113,12 +122,14 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.L,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단위명',
         name: 'unit_nm',
         width: ENUM_WIDTH.L,
         filter: 'text',
+        requiredField: true,
       },
     ],
     {
@@ -145,6 +156,7 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -152,6 +164,7 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품명',
@@ -159,6 +172,7 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.L,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품목 유형UUID',
@@ -235,6 +249,7 @@ export const PgMldProdMold = () => {
         name: 'mold_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '금형코드',
@@ -242,6 +257,7 @@ export const PgMldProdMold = () => {
         width: ENUM_WIDTH.M,
         format: 'popup',
         editable: true,
+        requiredField: true,
       },
       {
         header: '금형명',
@@ -414,7 +430,12 @@ export const PgMldProdMold = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'item_type_nm', label: '품목 유형명', disabled: true },
+    {
+      type: 'text',
+      id: 'item_type_nm',
+      label: '품목 유형명',
+      disabled: true,
+    },
     {
       type: 'text',
       id: 'prod_type_uuid',
@@ -422,7 +443,12 @@ export const PgMldProdMold = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'prod_type_nm', label: '제품 유형명', disabled: true },
+    {
+      type: 'text',
+      id: 'prod_type_nm',
+      label: '제품 유형명',
+      disabled: true,
+    },
     {
       type: 'text',
       id: 'model_uuid',
@@ -430,9 +456,24 @@ export const PgMldProdMold = () => {
       disabled: true,
       hidden: true,
     },
-    { type: 'text', id: 'model_nm', label: '모델명', disabled: true },
-    { type: 'text', id: 'rev', label: '리비전', disabled: true },
-    { type: 'text', id: 'prod_std', label: '규격', disabled: true },
+    {
+      type: 'text',
+      id: 'model_nm',
+      label: '모델명',
+      disabled: true,
+    },
+    {
+      type: 'text',
+      id: 'rev',
+      label: '리비전',
+      disabled: true,
+    },
+    {
+      type: 'text',
+      id: 'prod_std',
+      label: '규격',
+      disabled: true,
+    },
     {
       type: 'text',
       id: 'unit_uuid',

@@ -81,14 +81,21 @@ export const PgSalOutgo = () => {
         name: 'reg_date',
         width: ENUM_WIDTH.M,
         format: 'date',
+        requiredField: true,
       },
       {
         header: '거래처UUID',
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
-      { header: '거래처명', name: 'partner_nm', width: ENUM_WIDTH.L },
+      {
+        header: '거래처명',
+        name: 'partner_nm',
+        width: ENUM_WIDTH.L,
+        requiredField: true,
+      },
       {
         header: '합계금액(￦)',
         name: 'total_price',
@@ -113,7 +120,11 @@ export const PgSalOutgo = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '수주상세UUID', name: 'order_detail_uuid', hidden: true },
+      {
+        header: '수주상세UUID',
+        name: 'order_detail_uuid',
+        hidden: true,
+      },
       {
         header: '출하지시상세UUID',
         name: 'outgo_order_detail_uuid',
@@ -151,6 +162,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -159,7 +171,12 @@ export const PgSalOutgo = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: 'Rev', name: 'rev', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '품명',
         name: 'prod_nm',
@@ -174,8 +191,18 @@ export const PgSalOutgo = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '안전재고',
         name: 'safe_stock',
@@ -191,7 +218,12 @@ export const PgSalOutgo = () => {
         filter: 'text',
         hidden: true,
       },
-      { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.S, filter: 'text' },
+      {
+        header: '단위',
+        name: 'unit_nm',
+        width: ENUM_WIDTH.S,
+        filter: 'text',
+      },
       {
         header: '수주수량',
         name: 'order_detail_qty',
@@ -218,6 +250,7 @@ export const PgSalOutgo = () => {
         name: 'money_unit_uuid',
         width: ENUM_WIDTH.S,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '화폐단위',
@@ -293,6 +326,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '창고',
@@ -309,6 +343,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '위치',
@@ -317,6 +352,7 @@ export const PgSalOutgo = () => {
         filter: 'text',
         format: 'popup',
         editable: true,
+        requiredField: true,
       },
       {
         header: '단위수량',

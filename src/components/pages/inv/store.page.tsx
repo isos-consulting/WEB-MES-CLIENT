@@ -57,7 +57,13 @@ export const PgInvStore = () => {
   const grid = useGrid(
     'GRID',
     [
-      { header: '품목UUID', name: 'prod_uuid', filter: 'text', hidden: true },
+      {
+        header: '품목UUID',
+        name: 'prod_uuid',
+        filter: 'text',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '품목유형UUID',
         name: 'item_type_uuid',
@@ -96,12 +102,42 @@ export const PgInvStore = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: '모델UUID', name: 'model_uuid', filter: 'text', hidden: true },
-      { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-      { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: ENUM_WIDTH.L, filter: 'text' },
-      { header: '단위UUID', name: 'unit_uuid', filter: 'text', hidden: true },
-      { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: '모델UUID',
+        name: 'model_uuid',
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: ENUM_WIDTH.S,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
+      {
+        header: '단위UUID',
+        name: 'unit_uuid',
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '단위',
+        name: 'unit_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '외주거래처UUID',
         name: 'partner_uuid',
@@ -124,6 +160,7 @@ export const PgInvStore = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '창고',
@@ -183,8 +220,6 @@ export const PgInvStore = () => {
         requiredField: true,
         decimal: ENUM_DECIMAL.DEC_STCOK,
       },
-      // {header: '실사수량', name:'inv_qty', width:ENUM_WIDTH.M, alias:'qty', format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, editable:true},
-      // {header: '조정수량', name:'adjusted_qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK},
       {
         header: '비고',
         name: 'remark',
@@ -451,12 +486,42 @@ export const PgInvStore = () => {
         filter: 'text',
         requiredField: true,
       },
-      { header: '모델UUID', name: 'model_uuid', filter: 'text', hidden: true },
-      { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-      { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
-      { header: '규격', name: 'prod_std', width: ENUM_WIDTH.L, filter: 'text' },
-      { header: '단위UUID', name: 'unit_uuid', filter: 'text', hidden: true },
-      { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.M, filter: 'text' },
+      {
+        header: '모델UUID',
+        name: 'model_uuid',
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '모델',
+        name: 'model_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: 'Rev',
+        name: 'rev',
+        width: ENUM_WIDTH.S,
+        filter: 'text',
+      },
+      {
+        header: '규격',
+        name: 'prod_std',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
+      {
+        header: '단위UUID',
+        name: 'unit_uuid',
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '단위',
+        name: 'unit_nm',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
       {
         header: '외주거래처UUID',
         name: 'partner_uuid',
@@ -627,19 +692,9 @@ export const PgInvStore = () => {
 
     /** 수정 */
     update: null,
-    // update: () => {
-    //   setEditDataPopupGridVisible(true);
-    // },
 
     /** 삭제 */
     delete: null,
-    // delete: () => {
-    //   if (getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows?.length === 0) {
-    //     message.warn('편집된 데이터가 없습니다.');
-    //     return;
-    //   }
-    //   onSave();
-    // },
 
     /** 신규 추가 */
     create: () => {
@@ -701,8 +756,18 @@ export const PgInvStore = () => {
       filter: 'text',
       hidden: true,
     },
-    { header: '품번', name: 'prod_no', width: ENUM_WIDTH.L, filter: 'text' },
-    { header: '품명', name: 'prod_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    {
+      header: '품번',
+      name: 'prod_no',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '품명',
+      name: 'prod_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
     {
       header: '품목 유형UUID',
       name: 'item_type_uuid',
@@ -736,8 +801,18 @@ export const PgInvStore = () => {
       filter: 'text',
       hidden: true,
     },
-    { header: '모델', name: 'model_nm', width: ENUM_WIDTH.M, filter: 'text' },
-    { header: 'Rev', name: 'rev', width: ENUM_WIDTH.M, filter: 'text' },
+    {
+      header: '모델',
+      name: 'model_nm',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: 'Rev',
+      name: 'rev',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
     {
       header: '단위UUID',
       name: 'unit_uuid',
@@ -745,7 +820,12 @@ export const PgInvStore = () => {
       filter: 'text',
       hidden: true,
     },
-    { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.S, filter: 'text' },
+    {
+      header: '단위',
+      name: 'unit_nm',
+      width: ENUM_WIDTH.S,
+      filter: 'text',
+    },
     {
       header: '부적합UUID',
       name: 'reject_uuid',
@@ -759,7 +839,12 @@ export const PgInvStore = () => {
       width: ENUM_WIDTH.M,
       filter: 'text',
     },
-    { header: 'LOT NO', name: 'lot_no', width: ENUM_WIDTH.M, filter: 'text' },
+    {
+      header: 'LOT NO',
+      name: 'lot_no',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
     {
       header: '수량',
       name: 'qty',
@@ -780,7 +865,12 @@ export const PgInvStore = () => {
       filter: 'text',
       hidden: true,
     },
-    { header: '창고', name: 'store_nm', width: ENUM_WIDTH.M, filter: 'text' },
+    {
+      header: '창고',
+      name: 'store_nm',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
     {
       header: '위치UUID',
       name: 'location_uuid',

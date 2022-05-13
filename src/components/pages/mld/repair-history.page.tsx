@@ -53,6 +53,7 @@ export const PgMldRepairHistory = () => {
         width: 150,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '금형명',
@@ -140,6 +141,7 @@ export const PgMldRepairHistory = () => {
         width: 150,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '금형 문제점명',

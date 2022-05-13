@@ -69,20 +69,31 @@ export const PgOutReceive = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '전표번호', name: 'stmt_no', width: ENUM_WIDTH.L },
+      {
+        header: '전표번호',
+        name: 'stmt_no',
+        width: ENUM_WIDTH.L,
+      },
       {
         header: '입하일',
         name: 'reg_date',
         width: ENUM_WIDTH.M,
         format: 'date',
+        requiredField: true,
       },
       {
         header: '거래처UUID',
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
-      { header: '거래처명', name: 'partner_nm', width: ENUM_WIDTH.L },
+      {
+        header: '거래처명',
+        name: 'partner_nm',
+        width: ENUM_WIDTH.L,
+        requiredField: true,
+      },
       {
         header: '공급처UUID',
         name: 'supplier_uuid',
@@ -101,7 +112,12 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.L,
         format: 'number',
       },
-      { header: '비고', name: 'remark', width: ENUM_WIDTH.L, hidden: true },
+      {
+        header: '비고',
+        name: 'remark',
+        width: ENUM_WIDTH.L,
+        hidden: true,
+      },
     ],
     {
       searchUriPath: headerSearchUriPath,
@@ -126,6 +142,7 @@ export const PgOutReceive = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품목유형UUID',
@@ -224,6 +241,7 @@ export const PgOutReceive = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '단위',
@@ -242,7 +260,12 @@ export const PgOutReceive = () => {
         editable: true,
         requiredField: true,
       },
-      { header: '화폐단위아이디', name: 'money_unit_uuid', hidden: true },
+      {
+        header: '화폐단위아이디',
+        name: 'money_unit_uuid',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '화폐단위',
         name: 'money_unit_nm',
@@ -336,6 +359,7 @@ export const PgOutReceive = () => {
         format: 'popup',
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '창고',
@@ -369,7 +393,12 @@ export const PgOutReceive = () => {
         format: 'number',
         filter: 'number',
       },
-      { header: '비고', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
+      {
+        header: '비고',
+        name: 'remark',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
       {
         header: '바코드',
         name: 'barcode',
@@ -521,7 +550,12 @@ export const PgOutReceive = () => {
             width: ENUM_WIDTH.M,
             format: 'text',
           },
-          { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, format: 'text' },
+          {
+            header: 'Rev',
+            name: 'rev',
+            width: ENUM_WIDTH.S,
+            format: 'text',
+          },
           {
             header: '규격',
             name: 'prod_std',
@@ -625,14 +659,22 @@ export const PgOutReceive = () => {
             width: ENUM_WIDTH.M,
             hidden: true,
           },
-          { header: '입고창고', name: 'to_store_nm', width: ENUM_WIDTH.M },
+          {
+            header: '입고창고',
+            name: 'to_store_nm',
+            width: ENUM_WIDTH.M,
+          },
           {
             header: '입고위치UUID',
             name: 'to_location_uuid',
             width: ENUM_WIDTH.M,
             hidden: true,
           },
-          { header: '입고위치', name: 'to_location_nm', width: ENUM_WIDTH.M },
+          {
+            header: '입고위치',
+            name: 'to_location_nm',
+            width: ENUM_WIDTH.M,
+          },
           {
             header: '발주최소수량',
             name: 'mat_order_min_qty',
@@ -697,108 +739,6 @@ export const PgOutReceive = () => {
         gridMode: 'multi-select',
       },
       gridPopupInfo: detailGrid.gridInfo.gridPopupInfo,
-      // extraButtons: [
-      //   {
-      //     buttonProps:{text:'발주 불러오기'},
-      //     buttonAction:(ev, props, options) => {
-      //       const {gridRef, childGridRef, childGridId, columns, data, modal, onAppendRow} = options;
-      //       const updateColumns:{original:string, popup:string}[] = props.rowAddPopupInfo.columnNames;
-
-      //       let params = {
-      //         complete_state: 'all',
-      //         partner_uuid: null,
-      //       };
-
-      //       if (newDataPopupGridVisible) {
-      //         params['partner_uuid'] = newDataPopupInputInfo.values?.partner_uuid;
-
-      //       } else if (editDataPopupGridVisible) {
-      //         params['partner_uuid'] = editDataPopupInputInfo.values?.partner_uuid;
-
-      //       } else if (addDataPopupGridVisible) {
-      //         params['partner_uuid'] = addDataPopupInputInfo.values?.partner_uuid;
-      //       }
-
-      //       if (params?.partner_uuid == null) {
-      //         message.warn('거래처를 선택하신 후 다시 시도해주세요.');
-      //         return;
-      //       }
-
-      //       getData(
-      //         params,
-      //         '/mat/order-details'
-
-      //       ).then((res) => {
-      //         modal.confirm({
-      //           title: '발주품목 - 다중선택',
-      //           width: '80%',
-      //           content:
-      //             <>
-      //               <Datagrid
-      //                 ref={childGridRef}
-      //                 gridId={'GRID_POPUP_ORDER'}
-      //                 columns={[
-      //                   {header: '세부발주UUID', name:'order_detail_uuid', alias:'uuid', hidden:true},
-      //                   {header: '발주UUID', name:'order_uuid', hidden:true},
-      //                   {header: '납기일', width:ENUM_WIDTH.M, name:'due_date', format:'date', filter:'text'},
-      //                   {header: '완료상태', width:ENUM_WIDTH.S, name:'complete_state', align:'center'},
-      //                   // {header: '완료여부', width:ENUM_WIDTH.S, name:'complete_fg', format:'check'},
-      //                   {header: '품목UUID', name:'prod_uuid', hidden:true},
-      //                   {header: '품목유형', width:ENUM_WIDTH.M, name:'item_type_nm', filter:'text', align:'center'},
-      //                   {header: '제품유형', width:ENUM_WIDTH.M, name:'prod_type_nm', filter:'text', align:'center'},
-      //                   {header: '품번', width:ENUM_WIDTH.M, name:'prod_no', filter:'text'},
-      //                   {header: '품명', width:ENUM_WIDTH.L, name:'prod_nm', filter:'text'},
-      //                   {header: '모델', width:ENUM_WIDTH.M, name:'model_nm', filter:'text'},
-      //                   {header: 'Rev', width:ENUM_WIDTH.S, name:'rev'},
-      //                   {header: '규격', width:ENUM_WIDTH.L, name:'prod_std'},
-      //                   {header: '안전재고', width:ENUM_WIDTH.S, name:'safe_stock', decimal:ENUM_DECIMAL.DEC_STCOK},
-      //                   {header: '단위UUID', name:'unit_uuid', hidden:true},
-      //                   {header: '단위', width:ENUM_WIDTH.XS, name:'unit_nm'},
-      //                   {header: '발주량', width:ENUM_WIDTH.S, name:'qty', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-      //                   {header: '미납량', width:ENUM_WIDTH.S, name:'balance', format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-      //                   {header: '화폐단위UUID', name:'money_unit_uuid', hidden:true},
-      //                   {header: '화폐단위', width:ENUM_WIDTH.M, name:'money_unit_nm'},
-      //                   {header: '단가유형UUID', name:'price_type_uuid', hidden:true},
-      //                   {header: '단가유형', width:ENUM_WIDTH.M, name:'price_type_nm'},
-      //                   {header: '단가', width:ENUM_WIDTH.S, name:'price', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
-      //                   {header: '환율', width:ENUM_WIDTH.S, name:'exchange', format:'number', decimal:ENUM_DECIMAL.DEC_PRICE},
-      //                   {header: '수입검사', width:ENUM_WIDTH.S, name:'qms_receive_insp_fg', format:'check'},
-      //                   {header: '입고창고아이디', name:'to_store_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-      //                   {header: '입고창고', name:'to_store_nm', width:ENUM_WIDTH.L, filter:'text'},
-      //                   {header: '입고위치아이디', name:'to_location_uuid', width:ENUM_WIDTH.L, filter:'text', hidden:true},
-      //                   {header: '입고위치', name:'to_location_nm', width:ENUM_WIDTH.L, filter:'text', editable:true},
-      //                   {header: 'LOT_NO', name:'lot_no', width:ENUM_WIDTH.M, hidden:false, defaultValue: getToday(0, {format:'YYYYMMDD'})},
-      //                 ]}
-      //                 gridMode='multi-select'
-      //                 data={res}
-      //               />
-      //             </>,
-      //           icon:null,
-      //           okText: '선택',
-      //           onOk: () => {
-      //             const child = childGridRef.current;
-      //             const rows = child.getInstance().getCheckedRows();
-
-      //             rows?.forEach((row) => {
-      //               let newRow = {};
-      //               if (typeof row === 'object') {
-      //                 updateColumns.forEach((columnName) => {
-      //                   // 값 설정
-      //                   newRow[columnName.original] = row[columnName.popup] != null ? row[columnName.popup] : null;
-      //                 });
-
-      //                 // 행 추가
-      //                 onAppendRow(newRow);
-      //               }
-      //             })
-      //           },
-      //           cancelText:'취소',
-      //           maskClosable:false,
-      //         });
-      //       });
-      //     },
-      //   }
-      // ],
     },
   );
 

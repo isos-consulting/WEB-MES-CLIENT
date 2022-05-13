@@ -46,7 +46,6 @@ export const PgEqmRepairHistory = () => {
     useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
-
   /** 그리드 상태를 관리 */
   const grid = useGrid(
     'GRID',
@@ -65,6 +64,7 @@ export const PgEqmRepairHistory = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '설비',

@@ -97,6 +97,7 @@ export const PgSalRelease = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -164,7 +165,6 @@ export const PgSalRelease = () => {
         editable: true,
         requiredField: true,
       },
-
       {
         header: '제품수주상세UUID',
         name: 'order_detail_uuid',
@@ -195,7 +195,6 @@ export const PgSalRelease = () => {
         filter: 'text',
         format: 'number',
       },
-
       {
         header: '출고창고UUID',
         name: 'from_store_uuid',
@@ -203,6 +202,7 @@ export const PgSalRelease = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고명',
@@ -212,7 +212,6 @@ export const PgSalRelease = () => {
         format: 'popup',
         requiredField: true,
       },
-
       {
         header: '출고위치UUID',
         name: 'from_location_uuid',
@@ -229,7 +228,6 @@ export const PgSalRelease = () => {
         format: 'popup',
         hidden: true,
       },
-
       {
         header: '입고창고UUID',
         name: 'to_store_uuid',
@@ -237,6 +235,7 @@ export const PgSalRelease = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고창고명',
@@ -247,7 +246,6 @@ export const PgSalRelease = () => {
         editable: true,
         requiredField: true,
       },
-
       {
         header: '입고위치UUID',
         name: 'to_location_uuid',
@@ -264,7 +262,6 @@ export const PgSalRelease = () => {
         format: 'popup',
         editable: true,
       },
-
       {
         header: '비고',
         name: 'remark',
@@ -403,7 +400,6 @@ export const PgSalRelease = () => {
             filter: 'text',
             format: 'text',
           },
-
           {
             header: '위치UUID',
             name: 'location_uuid',
@@ -426,7 +422,6 @@ export const PgSalRelease = () => {
             filter: 'text',
             format: 'text',
           },
-
           {
             header: '품목UUID',
             name: 'prod_uuid',
@@ -883,8 +878,18 @@ export const PgSalRelease = () => {
           'qty',
         ],
       },
-      { type: 'text', id: 'prod_nm', label: '품명', disabled: true },
-      { type: 'text', id: 'prod_std', label: '규격', disabled: true },
+      {
+        type: 'text',
+        id: 'prod_nm',
+        label: '품명',
+        disabled: true,
+      },
+      {
+        type: 'text',
+        id: 'prod_std',
+        label: '규격',
+        disabled: true,
+      },
       {
         type: 'text',
         id: 'unit_uuid',
@@ -892,7 +897,12 @@ export const PgSalRelease = () => {
         disabled: true,
         hidden: true,
       },
-      { type: 'text', id: 'unit_nm', label: '단위', disabled: true },
+      {
+        type: 'text',
+        id: 'unit_nm',
+        label: '단위',
+        disabled: true,
+      },
       {
         type: 'number',
         id: 'qty',
@@ -1059,8 +1069,18 @@ export const PgSalRelease = () => {
           'qty',
         ],
       },
-      { type: 'text', id: 'prod_nm', label: '품명', disabled: true },
-      { type: 'text', id: 'prod_std', label: '규격', disabled: true },
+      {
+        type: 'text',
+        id: 'prod_nm',
+        label: '품명',
+        disabled: true,
+      },
+      {
+        type: 'text',
+        id: 'prod_std',
+        label: '규격',
+        disabled: true,
+      },
       {
         type: 'text',
         id: 'unit_uuid',
@@ -1068,7 +1088,12 @@ export const PgSalRelease = () => {
         disabled: true,
         hidden: true,
       },
-      { type: 'text', id: 'unit_nm', label: '단위', disabled: true },
+      {
+        type: 'text',
+        id: 'unit_nm',
+        label: '단위',
+        disabled: true,
+      },
       {
         type: 'number',
         id: 'qty',

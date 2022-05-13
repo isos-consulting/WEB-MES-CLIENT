@@ -68,20 +68,31 @@ export const PgOutRelease = () => {
         alias: 'uuid',
         hidden: true,
       },
-      { header: '전표번호', name: 'stmt_no', width: ENUM_WIDTH.L },
+      {
+        header: '전표번호',
+        name: 'stmt_no',
+        width: ENUM_WIDTH.L,
+      },
       {
         header: '출고일',
         name: 'reg_date',
         width: ENUM_WIDTH.M,
         format: 'date',
+        requiredField: true,
       },
       {
         header: '거래처UUID',
         name: 'partner_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
-      { header: '거래처명', name: 'partner_nm', width: ENUM_WIDTH.L },
+      {
+        header: '거래처명',
+        name: 'partner_nm',
+        width: ENUM_WIDTH.L,
+        requiredField: true,
+      },
       {
         header: '합계금액',
         name: 'total_qty',
@@ -112,6 +123,7 @@ export const PgOutRelease = () => {
         filter: 'text',
         format: 'popup',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품목유형UUID',
@@ -228,7 +240,12 @@ export const PgOutRelease = () => {
         editable: true,
         requiredField: true,
       },
-      { header: '화폐단위아이디', name: 'money_unit_uuid', hidden: true },
+      {
+        header: '화폐단위아이디',
+        name: 'money_unit_uuid',
+        hidden: true,
+        requiredField: true,
+      },
       {
         header: '화폐단위',
         name: 'money_unit_nm',
@@ -313,6 +330,7 @@ export const PgOutRelease = () => {
         format: 'popup',
         filter: 'text',
         hidden: true,
+        requiredField: true,
       },
       {
         header: '출고창고',
@@ -345,7 +363,12 @@ export const PgOutRelease = () => {
         format: 'number',
         filter: 'number',
       },
-      { header: '비고', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
+      {
+        header: '비고',
+        name: 'remark',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
       {
         header: '바코드',
         name: 'barcode',
@@ -489,7 +512,12 @@ export const PgOutRelease = () => {
             width: ENUM_WIDTH.M,
             format: 'text',
           },
-          { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, format: 'text' },
+          {
+            header: 'Rev',
+            name: 'rev',
+            width: ENUM_WIDTH.S,
+            format: 'text',
+          },
           {
             header: '규격',
             name: 'prod_std',
@@ -557,7 +585,11 @@ export const PgOutRelease = () => {
             editable: true,
             requiredField: true,
           },
-          { header: 'LOT_NO', name: 'lot_no', width: ENUM_WIDTH.M },
+          {
+            header: 'LOT_NO',
+            name: 'lot_no',
+            width: ENUM_WIDTH.M,
+          },
           {
             header: '재고',
             name: 'qty',
@@ -603,7 +635,6 @@ export const PgOutRelease = () => {
             format: 'number',
             decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
-          // {header: '비고', name:'remark', width:ENUM_WIDTH.XL, format:'text'},
         ],
         dataApiSettings: () => {
           type TParams = {
@@ -785,7 +816,12 @@ export const PgOutRelease = () => {
       disabled: true,
       default: getToday(),
     },
-    { type: 'text', id: 'stmt_no', label: '전표번호', disabled: true },
+    {
+      type: 'text',
+      id: 'stmt_no',
+      label: '전표번호',
+      disabled: true,
+    },
     {
       type: 'number',
       id: 'total_price',
@@ -813,7 +849,12 @@ export const PgOutRelease = () => {
         newDataPopupGrid?.setGridData([]);
       },
     },
-    { type: 'text', id: 'remark', label: '비고', disabled: true },
+    {
+      type: 'text',
+      id: 'remark',
+      label: '비고',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(
