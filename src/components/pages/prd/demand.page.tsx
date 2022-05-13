@@ -57,6 +57,7 @@ export const PgPrdDemand = () => {
         format: 'date',
         filter: 'text',
         defaultValue: getToday(),
+        requiredField: true,
       },
       {
         header: '완료상태',
@@ -108,6 +109,7 @@ export const PgPrdDemand = () => {
         name: 'prod_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '품번',
@@ -213,6 +215,7 @@ export const PgPrdDemand = () => {
         name: 'to_store_uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+        requiredField: true,
       },
       {
         header: '입고요청창고',

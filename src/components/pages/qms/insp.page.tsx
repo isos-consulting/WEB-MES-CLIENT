@@ -449,7 +449,7 @@ export const PgQmsInsp = () => {
     {header:'시료수', name:'inspector_sample_cnt', width:ENUM_WIDTH.M, filter:'text', hidden: !inspectorInspFg},
     {header:'검사주기', name:'inspector_insp_cycle', width:ENUM_WIDTH.M, filter:'text', hidden: !inspectorInspFg},
     {header:'비고', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
-  ]
+  ];
   
   const newDataPopupGridColumns:IGridColumn[] = cloneDeep(deatilSubGridColumns)?.map((el) => {
     if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) == false) {

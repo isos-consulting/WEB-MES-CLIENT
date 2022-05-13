@@ -1009,6 +1009,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       hidden: true,
       disabled: true,
+      required: true,
     },
     {
       id: 'unit_nm',
@@ -1016,6 +1017,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       hidden: false,
       disabled: true,
+      required: true,
     },
     {
       id: 'bom_input_type_uuid',
@@ -1023,6 +1025,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       hidden: true,
       disabled: true,
+      required: true,
     },
     {
       id: 'bom_input_type_nm',
@@ -1030,6 +1033,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       hidden: false,
       disabled: true,
+      required: true,
     },
     {
       id: 'c_usage',
@@ -1038,6 +1042,7 @@ export const INPUT_POPUP_CREATE = (props: {
       decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       disabled: true,
       hidden: true,
+      required: true,
     },
     {
       id: 'qty',
@@ -1059,6 +1064,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       disabled: true,
       hidden: true,
+      required: true,
     },
     {
       id: 'from_store_nm',
@@ -1066,6 +1072,7 @@ export const INPUT_POPUP_CREATE = (props: {
       type: 'text',
       disabled: true,
       hidden: false,
+      required: true,
     },
     {
       id: 'from_location_uuid',
