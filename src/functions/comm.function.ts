@@ -26,6 +26,73 @@ import { getStorageValue, getUserRefreshToken } from '.';
 dotenv.config();
 const baseURL = process.env.BASE_URL;
 
+const MessageFactory = class {
+  create(message: string | object) {
+    if (typeof message === 'string') return new PlainMessage(message);
+    else if (typeof message === 'object')
+      if (Object.keys(message).includes('user_message'))
+        return new UserMessage(message as TUserMessage);
+      else return new ObjectMessage(message);
+
+    return new UndefinedMessage(message);
+  }
+};
+
+const PlainMessage = class {
+  private message: string;
+
+  constructor(message: string) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return this.message;
+  }
+};
+
+type TUserMessage = {
+  user_message: string;
+  admin_message: string;
+};
+
+const UserMessage = class {
+  private message: TUserMessage;
+
+  constructor(message: TUserMessage) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return this.message?.user_message;
+  }
+};
+
+const ObjectMessage = class {
+  private message: object;
+
+  constructor(message: object) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return Object.keys(this.message).reduce(
+      (acc, cur) => (this.message[acc] += this.message[cur]),
+    );
+  }
+};
+
+const UndefinedMessage = class {
+  private message: string;
+
+  constructor(message: unknown) {
+    this.message = typeof message;
+  }
+
+  getMessage() {
+    return `[Message Type Error] : ${this.message} is not implemented`;
+  }
+};
+
 // environment : production, development, test
 const getTenantInfo = () => {
   return {
@@ -119,7 +186,9 @@ export async function getData<T = any[]>(
       datas = null;
 
       if (!disabledErrorMessage) {
-        message.error(error.response.data.message.user_message);
+        message.error(
+          new MessageFactory().create(error.response.data.message).getMessage(),
+        );
       }
     }
   } finally {
@@ -151,7 +220,8 @@ export async function getData<T = any[]>(
         break;
 
       case 'message':
-        datas = datas?.data?.message.user_message;
+        datas = new MessageFactory().create(datas?.data?.message).getMessage();
+
         break;
 
       case 'success':
@@ -238,8 +308,9 @@ export const executeData = async (
       });
     } else {
       if (!disableErrorMessage)
-        message.error(error.response.data.message.user_message);
-      console.log(error);
+        message.error(
+          new MessageFactory().create(error.response.data.message).getMessage(),
+        );
       datas = null;
     }
   }
@@ -258,7 +329,7 @@ export const executeData = async (
       break;
 
     case 'message':
-      datas = datas?.data?.message.user_message;
+      datas = new MessageFactory().create(datas?.data?.message).getMessage();
       break;
 
     case 'success':
@@ -720,7 +791,6 @@ export const getAccessToken = async (): Promise<{
     // }
     refreshState = error.response.data.state;
   }
-  console.log(...refreshState);
   return { ...refreshState };
 };
 
