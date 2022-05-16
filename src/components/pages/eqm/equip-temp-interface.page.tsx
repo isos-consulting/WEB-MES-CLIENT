@@ -94,23 +94,10 @@ export const PgEqmTempInterface = () => {
         codeName: 'data_item_uuid',
         textName: 'data_item_nm',
       },
-      onAfterChange: async (event) => {
-            // event 에 인터페이스 항목 data_item_uuid 넘어옴
+      onAfterChange: async (dataItemUuid) => {
+        const res = await getData({data_item_uuid: dataItemUuid, use_fg: "true"}, 'gat/data-items/equip');
 
-        const res = await getData({data_item_uuid: event,
-                                   use_fg: "true"},
-                                  'gat/data-items/equip')
-        if (!res) {
-          setInterfaceItem(event);
-          return;
-        } else {
-          const equipmentItem = res.map((row) => {
-          return {
-            code: row.equip_uuid,
-            text: row.equip_nm,
-          }})
-          setEquipmentItem(equipmentItem);
-        }
+        setEquipmentItem(res.map(row => ({code : row.equip_uuid, text: row.equip_nm})));
       }
     },
     {
