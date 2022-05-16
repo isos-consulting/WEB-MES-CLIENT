@@ -286,7 +286,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
   //   return errors;
   // }
 
-  const onSubmit = useMemo(async () => {
+  const onSubmit = useMemo(() => {
     if (props.onSubmit) {
       return (values, { setSubmitting }) =>
         props.onSubmit(values, setSubmitting);
