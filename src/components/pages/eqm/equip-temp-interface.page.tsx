@@ -4,14 +4,6 @@ import { getData, getToday } from '~/functions';
 import LineChart from '~/components/UI/graph/chart-line.ui';
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import { chain, cloneDeep } from 'lodash';
-
-enum TemperatureColors {
-  '가열로 1' = '#00e396',
-  '가열로 2' = '#008ffb',
-  '수조온도' = '#ff8b0a',
-  '온도4' = '#fe4762',
-}
 
 enum TimeAxisScale {
   'year' = '연',
@@ -21,51 +13,10 @@ enum TimeAxisScale {
   'minute' = '분',
 }
 
-interface EquipApiDataType {
-  created_at: string;
-  data_map_id: number;
-  data_map_nm: string;
-  value: number;
-}
-
-interface AxisDataType {
-  label: string;
-  x: string;
-  y: number;
-}
-
-interface GraphProps {
-  label: string;
-  data: AxisDataType[];
-  borderColor: string;
-}
-
 interface DueDate {
   start_date: string;
   end_date: string;
 }
-
-const convertToAxis = (raws: EquipApiDataType[]) => {
-  return raws.map(raw => {
-    return {
-      x: raw.created_at,
-      y: raw.value,
-      label: raw.data_map_nm,
-    };
-  });
-};
-
-const getAxis = ({ label, ...axis }) => axis;
-
-const getDataSets = (data, key) => ({
-  label: key,
-  data: data.map(getAxis),
-  backgroundColor: TemperatureColors[key],
-});
-
-const groupingRaws = (raws: AxisDataType[]) => {
-  return chain(raws).groupBy('label').map(getDataSets).value();
-};
 
 interface EqmTempSearchCondition {
   start_date: string;
@@ -82,7 +33,6 @@ const getTimeAxisComboBoxDatas = () => {
 };
 
 export const PgEqmTempInterface = () => {
-  const initialData: GraphProps[] = [];
   const timeAixsComboLists = getTimeAxisComboBoxDatas();
 
   const [graph, setGraph] = useState([]);
@@ -107,17 +57,16 @@ export const PgEqmTempInterface = () => {
   const handleSearchButtonClick = async (
     searchPayLoads: EqmTempSearchCondition,
   ) => {
-    const _searchPayLoads = cloneDeep(searchPayLoads);
     //입력된 두 개의 날짜 전후 비교
-    if (_searchPayLoads.start_date > _searchPayLoads.end_date) {
+    if (searchPayLoads.start_date > searchPayLoads.end_date) {
       message.error('조회 기간의 순서가 올바른지 확인하세요.');
       return;
     }
 
-    const dataIsValid = validateSearchDate(_searchPayLoads);
-    if (_searchPayLoads.equip_uuid === 'all') delete _searchPayLoads.equip_uuid;
+    const dataIsValid = validateSearchDate(searchPayLoads);
+
     if (dataIsValid) {
-      const datas = await getData(_searchPayLoads, 'gat/data-history/graph');
+      const datas = await getData(searchPayLoads, 'gat/data-history/graph');
 
       setGraph(datas);
     } else {
