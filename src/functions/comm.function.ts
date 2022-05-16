@@ -26,6 +26,17 @@ import { getStorageValue, getUserRefreshToken } from '.';
 dotenv.config();
 const baseURL = process.env.BASE_URL;
 
+const MessageFactory = class {
+  private message: string;
+  constructor(message) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return this.message;
+  }
+};
+
 // environment : production, development, test
 const getTenantInfo = () => {
   return {
@@ -151,7 +162,9 @@ export async function getData<T = any[]>(
         break;
 
       case 'message':
-        datas = datas?.data?.message.user_message;
+        datas = new MessageFactory(datas?.data?.message).getMessage();
+
+        // datas?.data?.message.user_message;
         break;
 
       case 'success':
@@ -238,7 +251,10 @@ export const executeData = async (
       });
     } else {
       if (!disableErrorMessage)
-        message.error(error.response.data.message.user_message);
+        message.error(
+          new MessageFactory(error.response.data.message).getMessage(),
+        );
+      // message.error(error.response.data.message.user_message);
       console.log(error);
       datas = null;
     }
@@ -258,7 +274,8 @@ export const executeData = async (
       break;
 
     case 'message':
-      datas = datas?.data?.message.user_message;
+      datas = new MessageFactory(datas?.data?.message).getMessage();
+      // datas = datas?.data?.message.user_message;
       break;
 
     case 'success':
