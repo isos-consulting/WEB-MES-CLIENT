@@ -46,7 +46,6 @@ const PlainMessage = class {
   }
 
   getMessage() {
-    console.log('pm');
     return this.message;
   }
 };
@@ -792,7 +791,6 @@ export const getAccessToken = async (): Promise<{
     // }
     refreshState = error.response.data.state;
   }
-  console.log(...refreshState);
   return { ...refreshState };
 };
 
