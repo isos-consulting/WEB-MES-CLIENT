@@ -1664,7 +1664,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   );
 
   /** ✅멀티팝업 행추가 */
-  const onAddPopupRow = () => {
+  const onAddPopupRow = async () => {
     const { rowAddPopupInfo } = props;
     // 팝업 부르기
     let popupContent: IPopupItemsRetrunProps = {
@@ -1751,7 +1751,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       title = word;
     }
 
-    getData(popupContent.params, popupContent.uriPath)
+    await getData(popupContent.params, popupContent.uriPath)
       .then(res => {
         // 데이터를 불러온 후 모달을 호출합니다.
         if (typeof res === 'undefined') {

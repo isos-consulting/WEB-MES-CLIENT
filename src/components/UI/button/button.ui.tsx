@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScButton } from './button.ui.styled';
 import Colors from '~styles/color.style.scss';
 import {
@@ -16,8 +16,15 @@ import Props from './button.ui.type';
 
 /** 버튼 */
 const Button: React.FC<Props> = props => {
+  const [loading, setLoading] = useState(false);
   const { ImageType, ...otherProps } = props;
   let iconElement = useMemo(() => setIcon(ImageType), [ImageType]);
+
+  const handleClick = async () => {
+    setLoading(true);
+    await props.onClick();
+    setLoading(false);
+  };
 
   function setIcon(imgType) {
     switch (imgType) {
@@ -45,7 +52,12 @@ const Button: React.FC<Props> = props => {
   }
 
   return (
-    <ScButton {...otherProps} icon={iconElement}>
+    <ScButton
+      {...otherProps}
+      onClick={handleClick}
+      icon={iconElement}
+      loading={loading}
+    >
       {props.children}
     </ScButton>
   );
