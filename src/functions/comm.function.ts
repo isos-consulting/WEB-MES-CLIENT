@@ -27,13 +27,70 @@ dotenv.config();
 const baseURL = process.env.BASE_URL;
 
 const MessageFactory = class {
+  create(message: string | object) {
+    if (typeof message === 'string') return new PlainMessage(message);
+    else if (typeof message === 'object')
+      if (Object.keys(message).includes('user_message'))
+        return new UserMessage(message as TUserMessage);
+      else return new ObjectMessage(message);
+
+    return new UndefinedMessage(message);
+  }
+};
+
+const PlainMessage = class {
   private message: string;
-  constructor(message) {
+
+  constructor(message: string) {
     this.message = message;
   }
 
   getMessage() {
+    console.log('pm');
     return this.message;
+  }
+};
+
+type TUserMessage = {
+  user_message: string;
+  admin_message: string;
+};
+
+const UserMessage = class {
+  private message: TUserMessage;
+
+  constructor(message: TUserMessage) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return this.message?.user_message;
+  }
+};
+
+const ObjectMessage = class {
+  private message: object;
+
+  constructor(message: object) {
+    this.message = message;
+  }
+
+  getMessage() {
+    return Object.keys(this.message).reduce(
+      (acc, cur) => (this.message[acc] += this.message[cur]),
+    );
+  }
+};
+
+const UndefinedMessage = class {
+  private message: string;
+
+  constructor(message: unknown) {
+    this.message = typeof message;
+  }
+
+  getMessage() {
+    return `[Message Type Error] : ${this.message} is not implemented`;
   }
 };
 
@@ -130,7 +187,9 @@ export async function getData<T = any[]>(
       datas = null;
 
       if (!disabledErrorMessage) {
-        message.error(error.response.data.message.user_message);
+        message.error(
+          new MessageFactory().create(error.response.data.message).getMessage(),
+        );
       }
     }
   } finally {
@@ -162,9 +221,8 @@ export async function getData<T = any[]>(
         break;
 
       case 'message':
-        datas = new MessageFactory(datas?.data?.message).getMessage();
+        datas = new MessageFactory().create(datas?.data?.message).getMessage();
 
-        // datas?.data?.message.user_message;
         break;
 
       case 'success':
@@ -252,10 +310,8 @@ export const executeData = async (
     } else {
       if (!disableErrorMessage)
         message.error(
-          new MessageFactory(error.response.data.message).getMessage(),
+          new MessageFactory().create(error.response.data.message).getMessage(),
         );
-      // message.error(error.response.data.message.user_message);
-      console.log(error);
       datas = null;
     }
   }
@@ -274,8 +330,7 @@ export const executeData = async (
       break;
 
     case 'message':
-      datas = new MessageFactory(datas?.data?.message).getMessage();
-      // datas = datas?.data?.message.user_message;
+      datas = new MessageFactory().create(datas?.data?.message).getMessage();
       break;
 
     case 'success':
