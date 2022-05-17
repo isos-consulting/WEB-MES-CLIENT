@@ -892,7 +892,6 @@ export const PgStdBom = () => {
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
     const headerRow = deleteUnitUuid(instance?.store?.data?.rawData[rowKey]);
-    // const headerRow = {...instance?.store?.data?.rawData[rowKey]}.filter((el)=> el.key !== 'unit_uuid');
 
     if (targetType !== 'cell') return;
     setSelectedHeaderRow(headerRow);
