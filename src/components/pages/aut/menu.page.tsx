@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Container, Datagrid, Modal, useGrid } from "~/components/UI";
 import { InputGroupbox, useInputGroup } from "~/components/UI/input-groupbox";
 import { URL_PATH_AUT } from "~/enums";
+import { executeData } from "~/functions";
 import {
   detailModalButtonProps,
   detailModalProps,
@@ -23,7 +24,26 @@ export const PgAutMenu = () => {
   detailModalProps.visible = menuModalVisible;
   detailModalProps.onCancel = menuService.afterCloseMenuModal;
   detailModalProps.onOk = _ => {
-    console.log(inputGroups);
+    const putLevel = (level = -1) => {
+      return level+1;
+    }
+
+    const putUuid = (uuid)=>{
+      return uuid;
+    }
+    
+    const create = (record) => {
+      return {
+        ...record,
+        uuid: putUuid(record.menu_uuid),
+        lv: putLevel(record.upper_level),
+        use_fg: true
+      };
+    }
+
+    console.log(inputGroups.ref.current.values);
+    const record = create(inputGroups.ref.current.values);
+    executeData([record], URL_PATH_AUT.MENU.PUT.MENUS, 'put');
   }
 
   detailModalButtonProps.onClick = menuService.openMenuModal;
