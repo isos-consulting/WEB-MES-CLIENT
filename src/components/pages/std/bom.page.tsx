@@ -886,13 +886,15 @@ export const PgStdBom = () => {
     },
   );
 
+  const deleteUnitUuid = ({ unit_uuid, ...rawdData }) => rawdData;
+
   /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
-    const headerRow = cloneDeep(instance?.store?.data?.rawData[rowKey]);
+    const headerRow = deleteUnitUuid(instance?.store?.data?.rawData[rowKey]);
+    // const headerRow = {...instance?.store?.data?.rawData[rowKey]}.filter((el)=> el.key !== 'unit_uuid');
 
     if (targetType !== 'cell') return;
-    if (headerRow?.unit_uuid) delete headerRow.unit_uuid;
     setSelectedHeaderRow(headerRow);
   };
 
