@@ -1,4 +1,4 @@
-import {FormInstance} from 'antd';
+import { FormInstance } from 'antd';
 
 /** 폼 속성 인터페이스 */
 export default interface IFormProps {
@@ -9,7 +9,7 @@ export default interface IFormProps {
   name?: string;
 
   /** 폼 레이아웃 유형 */
-  layout: 'horizontal' | 'inline' |  'vertical';
+  layout: 'horizontal' | 'inline' | 'vertical';
 
   /** 폼 아이템 */
   formItem?: any;

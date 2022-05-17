@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
 import Props from './date-picker.ui.type';
 import { ScDatePicker } from './date-picker.ui.styled';
-import { Label } from "../label";
-import { Space } from "antd";
+import { Label } from '../label';
+import { Space } from 'antd';
 
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -12,7 +12,6 @@ import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import timezone from 'dayjs/plugin/timezone';
-
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -26,27 +25,19 @@ dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 dayjs.extend(timezone);
 
-
 /** 날짜 선택기 */
-const BaseDatePicker: React.FC<Props> = (props) => {
-  
+const BaseDatePicker: React.FC<Props> = props => {
   const picker = useMemo(() => {
-    return (
-      props.picker === 'datetime' ? 
-        null
-      : props.picker ?? null);
+    return props.picker === 'datetime' ? null : props.picker ?? null;
   }, [props.picker]);
 
-  const values:object = useMemo(() => {
-    
+  const values: object = useMemo(() => {
     if (!props?.value) {
-      return props?.defaultValue ? {value: props.defaultValue} : {};
-
+      return props?.defaultValue ? { value: props.defaultValue } : {};
     } else if (dayjs(props?.value).isValid()) {
-      return {value: dayjs(props.value)};
-
+      return { value: dayjs(props.value) };
     } else {
-      return props?.defaultValue ? {value: props.defaultValue} : {};
+      return props?.defaultValue ? { value: props.defaultValue } : {};
     }
   }, [props?.value, props?.defaultValue]);
 
@@ -57,19 +48,17 @@ const BaseDatePicker: React.FC<Props> = (props) => {
       if ((returnValue === '' || returnValue == null) && props.defaultValue)
         returnValue = props.defaultValue;
 
-      if (props.onChange)
-        props.onChange(returnValue);
+      if (props.onChange) props.onChange(returnValue);
     },
     [props.onChange],
   );
 
-  const showTime:boolean = useMemo(() => {
+  const showTime: boolean = useMemo(() => {
     return props.picker === 'datetime';
   }, [props.picker]);
 
-  const format:string = useMemo(() => {
-    if (props.format)
-      return props.format;
+  const format: string = useMemo(() => {
+    if (props.format) return props.format;
 
     switch (props.picker) {
       case 'date':
@@ -80,17 +69,16 @@ const BaseDatePicker: React.FC<Props> = (props) => {
         return 'MM';
       case 'week':
         return 'dddd';
-      
+
       default:
         return null;
     }
   }, [props.format, props.picker]);
 
-
   if (props?.label != null) {
     return (
-      <Space size={10} wrap >
-        <Label text={props.label} important={props.important}/>
+      <Space size={10} wrap>
+        <Label text={props.label} important={props.important} />
         <ScDatePicker
           id={props.id}
           name={props.name}
@@ -119,14 +107,13 @@ const BaseDatePicker: React.FC<Props> = (props) => {
         // value={values}
         {...values}
         onChange={onChange}
-        placeholder={props.placeholder} 
+        placeholder={props.placeholder}
         disabled={props.disabled}
         widthSize={props.widthSize}
       />
     );
   }
 };
-
 
 const DatePicker = React.memo(BaseDatePicker);
 

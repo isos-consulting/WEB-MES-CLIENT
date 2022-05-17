@@ -12,7 +12,7 @@ export const ENUM_DECIMAL = {
   DEC_USE_STOCK: 4,
   /** 2 */
   DEC_STCOK: 2,
-}
+};
 
 /** 컬럼 너비 지정 enum */
 export const ENUM_WIDTH = {
@@ -25,9 +25,8 @@ export const ENUM_WIDTH = {
   /** 150px */
   L: 150,
   /** 200px */
-  XL: 200
-}
-
+  XL: 200,
+};
 
 /** 데이터 그리드 공통 포맷 */
 export const ENUM_FORMAT = {
@@ -39,4 +38,4 @@ export const ENUM_FORMAT = {
   TIME: 'HH:mm',
   /** YYYY-MM-DD[T]HH:mm:ss */
   DATE_TIMEZONE: 'YYYY-MM-DD[T]HH:mm:ss',
-}
+};

@@ -25,21 +25,19 @@ export default interface IComboboxProps extends IComboboxPropsStyles {
 
   firstItemType?: TComboFirstItemType;
 
-
   /** 콤보박스 값 변경 이벤트 */
   onChange?: (value: any, option: any) => void;
 
   /** 서버 데이터로 콤보박스 리스트를 구성하기 위한 요소 */
   dataSettingOptions?: {
-    uriPath:string,
-    params?:object,
-    codeName: string,
-    textName: string
+    uriPath: string;
+    params?: object;
+    codeName: string;
+    textName: string;
   };
 }
 
 export type TComboFirstItemType = 'none' | 'empty' | 'all' | undefined;
-
 
 /** 콤보박스 리스트 값 인터페이스 */
 export interface IComboboxItem {
@@ -48,11 +46,10 @@ export interface IComboboxItem {
 
   /** 보여줄 값 */
   text: string;
-  
+
   /** 비허용(잠금) 여부 */
   disabled?: boolean;
 }
-
 
 export interface IComboboxPropsStyles {
   widthSize?: 'default' | 'auto' | 'flex';

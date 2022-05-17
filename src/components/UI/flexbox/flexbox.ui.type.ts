@@ -1,5 +1,4 @@
-import React from "react";
-
+import React from 'react';
 
 /** 플렉스 박스 속성 인터페이스 */
 export default interface IFlexboxProps {
@@ -13,19 +12,19 @@ export default interface IFlexboxProps {
   height?: string;
 
   /** 방향 유형 */
-  direction?: "column" | "row" | "row wrap";
+  direction?: 'column' | 'row' | 'row wrap';
 
   /** 정렬 유형 */
-  alignItems?: "center" | "flex-start" | "flex-end";
+  alignItems?: 'center' | 'flex-start' | 'flex-end';
 
   /** 자식 정렬 유형 */
   justifyContent?:
-  | "center"
-  | "space-between"
-  | "flex-start"
-  | "flex-end"
-  | "space-around";
-  
+    | 'center'
+    | 'space-between'
+    | 'flex-start'
+    | 'flex-end'
+    | 'space-around';
+
   /** 스타일 정적 지정 */
   currentStyles?: React.CSSProperties;
 

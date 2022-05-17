@@ -1,17 +1,16 @@
-import React from "react";
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { BarGraph, PieGraph } from '../graph';
-import { Container} from '../container';
+import { Container } from '../container';
 import Props from './graph.ui.type';
-
 
 /**
  * 그래프
  * @param Props
  */
-const Graph: React.FC<Props> = (props) => {
+const Graph: React.FC<Props> = props => {
   const [data, setDatas] = useState([]);
-  var JSXReturns = <></>; 
+  var JSXReturns = <></>;
 
   useEffect(() => {
     if (props.data && props.data.length > 0 && props.dataKeysName) {
@@ -20,10 +19,10 @@ const Graph: React.FC<Props> = (props) => {
       let cloneObj = null;
       let targetValue = null;
       let cloneData = [];
-  
+
       let oldKeys = props.dataKeys;
       let newkeys = props.dataKeysName;
-      
+
       //템플릿에 맞는 데이터로 key, value를 치환하여 가공
       for (let i = 0; i < datas.length; i++) {
         cloneObj = datas[i];
@@ -36,58 +35,70 @@ const Graph: React.FC<Props> = (props) => {
       }
       setDatas(cloneData);
     } else {
-      setDatas(props.data)
+      setDatas(props.data);
     }
-  }, [props.data])
-  
-  
+  }, [props.data]);
 
   switch (props.graphType) {
     case 'Bar':
-      JSXReturns = <BarGraph {...props} data ={data} dataKeys={props.dataKeysName ? props.dataKeysName : props.dataKeys }/>
+      JSXReturns = (
+        <BarGraph
+          {...props}
+          data={data}
+          dataKeys={props.dataKeysName ? props.dataKeysName : props.dataKeys}
+        />
+      );
       break;
-        
+
     case 'Pie':
-      let sumData:number;
-      let pieData=[];
-      let sumDataList=[];
-      if (data ) {
-        sumDataList = data.map((v)=> (v[props.dataKeys[0]]));
-        
-        sumData = sumDataList.reduce(function add(sum,currValue){return sum+currValue;},0);
-        pieData = data.map((v)=> ({
-            id: v[props.indexBy] + '( ' + v[props.dataKeys[1]] + ' %)', 
-            value: v[props.dataKeys[0]]
+      let sumData: number;
+      let pieData = [];
+      let sumDataList = [];
+      if (data) {
+        sumDataList = data.map(v => v[props.dataKeys[0]]);
+
+        sumData = sumDataList.reduce(function add(sum, currValue) {
+          return sum + currValue;
+        }, 0);
+        pieData = data.map(v => ({
+          id: v[props.indexBy] + '( ' + v[props.dataKeys[1]] + ' %)',
+          value: v[props.dataKeys[0]],
         }));
-        
       } else {
-        pieData=[];
+        pieData = [];
         sumData = 0;
       }
 
-      JSXReturns = <PieGraph {...props} data={pieData} maxVal={sumData} />
+      JSXReturns = <PieGraph {...props} data={pieData} maxVal={sumData} />;
       break;
 
     default:
-      JSXReturns = <BarGraph {...props} />
+      JSXReturns = <BarGraph {...props} />;
       break;
   }
 
   if (props.data ? props.data.length === 0 : true) {
     return (
       <Container>
-        <div style={{display:'table', position:'relative', width:'100%', height:props.height || '100%'}}>
-          <div style={{ display:'table-cell',verticalAlign:'middle'}}>
-            <div style={{display:'block',margin:'0 auto', width:'150px'}}>Data not found</div>
+        <div
+          style={{
+            display: 'table',
+            position: 'relative',
+            width: '100%',
+            height: props.height || '100%',
+          }}
+        >
+          <div style={{ display: 'table-cell', verticalAlign: 'middle' }}>
+            <div style={{ display: 'block', margin: '0 auto', width: '150px' }}>
+              Data not found
+            </div>
           </div>
         </div>
       </Container>
     );
-
   } else {
-    return <div style={{height:props.height || '100%'}}>{JSXReturns}</div>;
+    return <div style={{ height: props.height || '100%' }}>{JSXReturns}</div>;
   }
 };
-
 
 export default Graph;

@@ -10,7 +10,7 @@ export class DatagridCheckboxEditor {
       gridId: gridId,
       rowKey: rowKey,
       colName: name,
-    }
+    };
 
     // select 형식의 element 생성
     const rootDiv = document.createElement('input');
@@ -40,38 +40,36 @@ export class DatagridCheckboxEditor {
   }
 }
 
-
-
 /** 체크박스 렌더러 */
 export class DatagridCheckboxRenderer {
   constructor(props) {
-    const {rowKey} = props;
-    const {name} = props.columnInfo;
-    const {gridId, gridMode, editable} = props.columnInfo.renderer?.options;
+    const { rowKey } = props;
+    const { name } = props.columnInfo;
+    const { gridId, gridMode, editable } = props.columnInfo.renderer?.options;
     const grid = props.grid;
     const rootDiv = document.createElement('div');
     const el = document.createElement('input');
 
     this.state = {
-      elementId: gridId + name + rowKey
-    }
+      elementId: gridId + name + rowKey,
+    };
 
     el.type = 'checkbox';
     el.id = gridId + name + rowKey;
-    el.style = "transform: scale(1.3);";
+    el.style = 'transform: scale(1.3);';
 
-    const isEditable = editable === true && ['create', 'update'].includes(gridMode) === true;
+    const isEditable =
+      editable === true && ['create', 'update'].includes(gridMode) === true;
 
     if (isEditable) {
-      el.addEventListener('change', (e) => {
-        const {checked} = e.target;
+      el.addEventListener('change', e => {
+        const { checked } = e.target;
         grid.setValue(rowKey, name, checked);
       });
-
     } else {
       el.onclick = () => false;
     }
-    
+
     rootDiv.className = 'tui-grid-cell-content';
     rootDiv.appendChild(el);
 
@@ -88,7 +86,7 @@ export class DatagridCheckboxRenderer {
 
     if (el != null) {
       el.checked = props?.value;
-    } else if(element != null) {
+    } else if (element != null) {
       element.checked = props?.value;
     }
   }

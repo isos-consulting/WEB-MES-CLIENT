@@ -3,50 +3,49 @@
  */
 export class DatagridTextIconRenderer {
   constructor(props) {
-      const { rowKey } = props;
-      const { name } = props.columnInfo;
-      const { placeHolder, imageSrc } = props.columnInfo.renderer.options;
+    const { rowKey } = props;
+    const { name } = props.columnInfo;
+    const { placeHolder, imageSrc } = props.columnInfo.renderer.options;
 
-      this.state = {
-          elementId: name + rowKey
-      }
-      
-      const rootDiv = document.createElement('div');
+    this.state = {
+      elementId: name + rowKey,
+    };
 
-      const el_value = document.createElement('input');
-      const el_image = document.createElement('img');
+    const rootDiv = document.createElement('div');
 
-      rootDiv.className = 'popup';
+    const el_value = document.createElement('input');
+    const el_image = document.createElement('img');
 
-      el_value.id = this.state.elementId;
-      el_value.type = 'text';
-      el_value.placeholder = placeHolder;
-      el_value.className = 'popup-input';
-      el_value.disabled = true;
-      el_value.value = props.value;
+    rootDiv.className = 'popup';
 
-      el_image.src = imageSrc;
-      el_image.className = 'popup-image';
+    el_value.id = this.state.elementId;
+    el_value.type = 'text';
+    el_value.placeholder = placeHolder;
+    el_value.className = 'popup-input';
+    el_value.disabled = true;
+    el_value.value = props.value;
 
-      rootDiv.appendChild(el_value);
-      rootDiv.appendChild(el_image);
+    el_image.src = imageSrc;
+    el_image.className = 'popup-image';
 
+    rootDiv.appendChild(el_value);
+    rootDiv.appendChild(el_image);
 
-      this.el = rootDiv;
-      this.render(props);
+    this.el = rootDiv;
+    this.render(props);
   }
 
   getElement() {
-      return this.el;
+    return this.el;
   }
 
   render(props) {
-      const element = document.getElementById(this.state?.elementId);
+    const element = document.getElementById(this.state?.elementId);
 
-      if (this.el != null) {
-        this.el.value = props?.value;
-      } else if(element != null) {
-        element.value = props?.value;
-      }
+    if (this.el != null) {
+      this.el.value = props?.value;
+    } else if (element != null) {
+      element.value = props?.value;
+    }
   }
 }

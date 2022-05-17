@@ -1,6 +1,5 @@
 import { ResultStatusType } from 'antd/lib/result';
 
-
 /** 결과 디스플레이 속성 인터페이스 */
 export default interface IResultProps {
   /** 컴포넌트 유형 */

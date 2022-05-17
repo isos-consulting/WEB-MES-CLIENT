@@ -5,7 +5,7 @@ export default interface IHeaderProps {
 
   /** 상단바 제목 */
   title?: string;
-  
+
   /** 상단바 부제목(설명) */
   description?: string;
 }

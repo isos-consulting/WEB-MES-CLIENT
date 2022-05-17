@@ -1,4 +1,4 @@
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 /** 체크박스 속성 인터페이스 */
 export default interface ICheckboxProps {
@@ -6,7 +6,7 @@ export default interface ICheckboxProps {
   id?: string;
 
   name?: string;
-  
+
   /** 체크박스 라벨 */
   label?: string;
 

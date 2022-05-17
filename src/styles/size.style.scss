@@ -15,7 +15,7 @@ $width_level1Menu_default: 70px;
 $width_level2Menu_default: 200px;
 
 // BUTTON
-$width_button_sm: 70px; 
+$width_button_sm: 70px;
 $width_button_md: 90px;
 $width_button_lg: 140px;
 $width_button_xlg: 350px;
@@ -37,7 +37,6 @@ $width_checkbox_lg: 18px;
 $height_checkbox_lg: 18px;
 $width_checkbox_default: 120px;
 $marginTop_checkbox_default: 3px;
-
 
 // RADIO
 $width_radio_sm: 14px;
@@ -64,16 +63,16 @@ $width_graphNotice_md: 150px;
 
 // ATGRIDCARD
 $width_girdCard1_md: 350px;
-$height_girdCard1_md:2px;
+$height_girdCard1_md: 2px;
 
 $width_girdCard2_md: 350px;
 $height_girdCard2_md: 20px;
 
 $width_downtime_md: 350px;
-$height_downtime_md:337px;
+$height_downtime_md: 337px;
 
 $width_downtimeName_md: 100%;
-$height_downtimeName_md:100%;
+$height_downtimeName_md: 100%;
 
 $width_card_md: 350px;
 $height_card_md: 337px;
@@ -156,9 +155,7 @@ $borderRadius_track: 10px;
 $width_modalButton_close: 25px;
 $height_modalButton_close: 20px;
 
-
-
-:export{
+:export {
   letterSpacing_common: $letterSpacing_common;
   borderRadius_common: $borderRadius_common;
 
@@ -173,7 +170,7 @@ $height_modalButton_close: 20px;
   width_level1Menu_default: $width_level1Menu_default;
   width_level2Menu_default: $width_level2Menu_default;
 
-  width_button_sm: $width_button_sm; 
+  width_button_sm: $width_button_sm;
   width_button_md: $width_button_md;
   width_button_lg: $width_button_lg;
   width_button_xlg: $width_button_xlg;
@@ -184,7 +181,7 @@ $height_modalButton_close: 20px;
 
   width_submitButton_default: $width_submitButton_default;
   height_submitButton_default: $height_submitButton_default;
-  
+
   width_checkbox_default: $width_checkbox_default;
   width_checkbox_sm: $width_checkbox_sm;
   height_checkbox_sm: $height_checkbox_sm;
@@ -200,7 +197,7 @@ $height_modalButton_close: 20px;
   height_radio_md: $height_radio_md;
   width_radio_lg: $width_radio_lg;
   height_radio_lg: $height_radio_lg;
-  
+
   width_combobox_md: $width_combobox_md;
   width_combobox_lg: $width_combobox_lg;
   width_combobox_xl: $width_combobox_xl;
@@ -280,7 +277,6 @@ $height_modalButton_close: 20px;
   width_popup_min: $width_popup_min;
   width_gridFilter_default: $width_gridFilter_default;
 
-    
   width_scrollbar_nav: $width_scrollbar_nav;
   height_scrollbar_nav: $height_scrollbar_nav;
   width_scrollbar_page: $width_scrollbar_page;
@@ -288,4 +284,4 @@ $height_modalButton_close: 20px;
 
   width_modalButton_close: $width_modalButton_close;
   height_modalButton_close: $height_modalButton_close;
-};
+}

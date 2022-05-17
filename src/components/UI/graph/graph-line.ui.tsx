@@ -1,18 +1,23 @@
-import React from "react";
-import { ResponsiveLine } from "@nivo/line";
+import React from 'react';
+import { ResponsiveLine } from '@nivo/line';
 import Props from './graph-line.ui.type';
 
-
 /** 라인 그래프 */
-const LineGraph: React.FC<Props> = (props) => (
+const LineGraph: React.FC<Props> = props => (
   <ResponsiveLine
     theme={{
-      fontFamily: 'Noto Sans CJK KR'
+      fontFamily: 'Noto Sans CJK KR',
     }}
     data={props.data}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
     xScale={{ type: 'point' }}
-    yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: true, reverse: false }}
+    yScale={{
+      type: 'linear',
+      min: 'auto',
+      max: 'auto',
+      stacked: true,
+      reverse: false,
+    }}
     colors={['#3C608B', '#E0483E', '#F1A838', '#029F95', '#01737C']}
     yFormat=" >-.2f"
     axisTop={null}
@@ -24,7 +29,7 @@ const LineGraph: React.FC<Props> = (props) => (
       tickRotation: 0,
       legend: 'transportation',
       legendOffset: 36,
-      legendPosition: 'middle'
+      legendPosition: 'middle',
     }}
     axisLeft={{
       orient: 'left',
@@ -33,7 +38,7 @@ const LineGraph: React.FC<Props> = (props) => (
       tickRotation: 0,
       legend: 'count',
       legendOffset: -40,
-      legendPosition: 'middle'
+      legendPosition: 'middle',
     }}
     pointSize={10}
     pointColor={{ theme: 'background' }}
@@ -61,14 +66,13 @@ const LineGraph: React.FC<Props> = (props) => (
             on: 'hover',
             style: {
               itemBackground: 'rgba(0, 0, 0, .03)',
-              itemOpacity: 1
-            }
-          }
-        ]
-      }
+              itemOpacity: 1,
+            },
+          },
+        ],
+      },
     ]}
   />
-)
-
+);
 
 export default LineGraph;

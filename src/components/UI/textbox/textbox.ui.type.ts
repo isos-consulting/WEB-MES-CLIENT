@@ -17,13 +17,13 @@ export default interface ITextboxProps extends ITextboxStyles {
 
   /** 라벨 */
   label?: string;
-  
+
   /** 숨은 값 */
   hiddenValue?: any;
 
   /** 보여질 값 */
   value?: any;
-  
+
   defaultValue?: any;
 
   /** 빈 값일때 보여질 설명 */
@@ -34,7 +34,7 @@ export default interface ITextboxProps extends ITextboxStyles {
 
   /** 중요 여부 */
   important?: boolean;
-  
+
   /** 비허용(잠금)여부 */
   disabled?: boolean;
 

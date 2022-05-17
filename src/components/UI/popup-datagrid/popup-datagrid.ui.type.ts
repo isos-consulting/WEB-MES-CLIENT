@@ -1,10 +1,9 @@
-import Grid from "@toast-ui/react-grid";
-import { ModalProps } from "antd";
-import { MutableRefObject } from "react";
-import { IDatagridProps, IGridColumn } from "../datagrid-new";
-import { IInputGroupboxProps } from "../input-groupbox/input-groupbox.ui";
-import ISearchboxProps from "../searchbox/searchbox.ui.type";
-
+import Grid from '@toast-ui/react-grid';
+import { ModalProps } from 'antd';
+import { MutableRefObject } from 'react';
+import { IDatagridProps, IGridColumn } from '../datagrid-new';
+import { IInputGroupboxProps } from '../input-groupbox/input-groupbox.ui';
+import ISearchboxProps from '../searchbox/searchbox.ui.type';
 
 /** 그리드 팝업 속성 인터페이스 */
 export default interface IGridPopupProps extends ModalProps, IDatagridProps {
@@ -41,7 +40,7 @@ export default interface IGridPopupProps extends ModalProps, IDatagridProps {
   searchParams?: object;
 
   /** 부모 그리드의 데이터를 변경하는 함수 */
-  setParentData?: (data:any) => void;
+  setParentData?: (data: any) => void;
 
   /** 그리드 컬럼 */
   columns: IGridColumn[];
@@ -58,5 +57,5 @@ export default interface IGridPopupProps extends ModalProps, IDatagridProps {
   /** 검색상자 내용 */
   searchProps?: ISearchboxProps;
 
-  onAfterOk?: (success:boolean, savedData?:any) => void;
+  onAfterOk?: (success: boolean, savedData?: any) => void;
 }

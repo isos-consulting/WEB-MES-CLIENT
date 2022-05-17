@@ -12,6 +12,8 @@ phases:
       - yarn build
   post_build:
     commands:
+      - aws s3 sync ./build s3://najs.isos.kr
+      - aws cloudfront create-invalidation --distribution-id E3FEPPSU80W9NC --paths  "/*"
 artifacts:
   files:
     - '**/*'

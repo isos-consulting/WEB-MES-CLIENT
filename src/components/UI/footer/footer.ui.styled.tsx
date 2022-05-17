@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import Props from './footer.ui.type';
 import Fonts from '~styles/font.style.scss';
 import Colors from '~styles/color.style.scss';
@@ -23,5 +23,3 @@ export const ScText = styled.span`
   font-size: ${Fonts.fontSize_footer};
   margin: 5px 40px 25px auto;
 `;
-
-

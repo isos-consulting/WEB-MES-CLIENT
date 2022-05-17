@@ -4,25 +4,27 @@ import React, {
   useRef,
   useState,
   useEffect,
-  forwardRef
-} from "react";
+  forwardRef,
+} from 'react';
 import { OptRow } from 'tui-grid/types/options';
-import { executeData, getStorageValue } from "~/functions";
-import { Button } from "..";
-import "./dragDrop.ui.styled.scss";
+import { executeData, getStorageValue } from '~/functions';
+import { Button } from '..';
+import './dragDrop.ui.styled.scss';
 
 interface IFileTypes {
   id: number;
   object: File;
 }
 
-function getFileNameType(filename:string, returnType?:'name'|'ext') {
-  if(returnType === 'name'){
+function getFileNameType(filename: string, returnType?: 'name' | 'ext') {
+  if (returnType === 'name') {
     return filename.substring(0, filename.lastIndexOf('.')) || filename;
-  } else if (returnType === 'ext'){
-    return filename.substring(filename.lastIndexOf('.')+1, filename.length) || filename;
-  };
-  
+  } else if (returnType === 'ext') {
+    return (
+      filename.substring(filename.lastIndexOf('.') + 1, filename.length) ||
+      filename
+    );
+  }
 }
 
 const BaseDragDrop = forwardRef((props, gridRef) => {
@@ -31,22 +33,29 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
 
   const dragRef = useRef<HTMLLabelElement | null>(null);
   const fileId = useRef<number>(0);
-  
+
   const newForm = (bodyContent: any) => {
     const formData = new FormData();
-  
+
     Object.keys(bodyContent).forEach((key: string) => {
       formData.append(key, bodyContent[key]);
     });
-  
+
     return formData;
-  }
-  
+  };
+
   const uploadUserFile = async (requestHeader: Object) => {
     let fileInfo: OptRow = {};
-    
-    const response = await executeData(requestHeader, '/temp/file', 'post', 'data', false, 'http://191.1.70.225:3002/');
-    
+
+    const response = await executeData(
+      requestHeader,
+      '/temp/file',
+      'post',
+      'data',
+      false,
+      'http://191.1.70.225:3002/',
+    );
+
     if (response.success) {
       fileInfo = response.datas.raws[0];
     }
@@ -57,50 +66,60 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   //   let fileInfo: OptRow = {};
   //   console.log(requestHeader)
   //   const response: Response = await fetch("http://191.1.70.225:3002/upload", requestHeader);
-  
+
   //   if (response.ok) {
   //     const resJson: fileType = await response.json();
-  
+
   //     fileInfo = resJson.datas[0];
   //   }
-  
+
   //   return fileInfo;
   // };
-  
-  const appendRow = (file) => {
-    gridRef.current?.getInstance().appendRow({...file, save_type:'CREATE'});
-  }
-  
+
+  const appendRow = file => {
+    gridRef.current?.getInstance().appendRow({ ...file, save_type: 'CREATE' });
+  };
+
   const putUserFileInfo = async (userFile: File) => {
-    const requestHeader:Object = newForm({ file: userFile, file_nm:getFileNameType(userFile.name,'name'), file_extension:getFileNameType(userFile.name,'ext'), tenant:getStorageValue({storageName:'tenantInfo',keyName:'tenantUuid'}), });
+    const requestHeader: Object = newForm({
+      file: userFile,
+      file_nm: getFileNameType(userFile.name, 'name'),
+      file_extension: getFileNameType(userFile.name, 'ext'),
+      tenant: getStorageValue({
+        storageName: 'tenantInfo',
+        keyName: 'tenantUuid',
+      }),
+    });
     const rowInfo = await uploadUserFile(requestHeader);
-    
-    if(props?.onAppendRow) {
+
+    if (props?.onAppendRow) {
       props?.onAppendRow(rowInfo);
     } else {
       appendRow(rowInfo);
     }
-  }
-  
+  };
+
   const putStorage = async (files: FileList | null) => {
-    const fileList = (files === null)? new FileList() : files;
-    const requests = Array.from(fileList).map(userFile => putUserFileInfo(userFile));
-  
-    await Promise.all(requests)
-  }
+    const fileList = files === null ? new FileList() : files;
+    const requests = Array.from(fileList).map(userFile =>
+      putUserFileInfo(userFile),
+    );
+
+    await Promise.all(requests);
+  };
 
   const onChangeFiles = useCallback(
     (e: ChangeEvent<HTMLInputElement> | any): void => {
-      putStorage(e.target.files)
+      putStorage(e.target.files);
     },
-    [files]
+    [files],
   );
 
   const handleFilterFile = useCallback(
     (id: number): void => {
       setFiles(files.filter((file: IFileTypes) => file.id !== id));
     },
-    [files]
+    [files],
   );
 
   const handleDragIn = useCallback((e: DragEvent): void => {
@@ -132,24 +151,24 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
       onChangeFiles(e);
       setIsDragging(false);
     },
-    [onChangeFiles]
+    [onChangeFiles],
   );
 
   const initDragEvents = useCallback((): void => {
     if (dragRef.current !== null) {
-      dragRef.current.addEventListener("dragenter", handleDragIn);
-      dragRef.current.addEventListener("dragleave", handleDragOut);
-      dragRef.current.addEventListener("dragover", handleDragOver);
-      dragRef.current.addEventListener("drop", handleDrop);
+      dragRef.current.addEventListener('dragenter', handleDragIn);
+      dragRef.current.addEventListener('dragleave', handleDragOut);
+      dragRef.current.addEventListener('dragover', handleDragOver);
+      dragRef.current.addEventListener('drop', handleDrop);
     }
   }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
 
   const resetDragEvents = useCallback((): void => {
     if (dragRef.current !== null) {
-      dragRef.current.removeEventListener("dragenter", handleDragIn);
-      dragRef.current.removeEventListener("dragleave", handleDragOut);
-      dragRef.current.removeEventListener("dragover", handleDragOver);
-      dragRef.current.removeEventListener("drop", handleDrop);
+      dragRef.current.removeEventListener('dragenter', handleDragIn);
+      dragRef.current.removeEventListener('dragleave', handleDragOut);
+      dragRef.current.removeEventListener('dragover', handleDragOver);
+      dragRef.current.removeEventListener('drop', handleDrop);
     }
   }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
 
@@ -164,25 +183,27 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
       <input
         type="file"
         id="fileUpload"
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         multiple={true}
         onChange={onChangeFiles}
       />
-      <Button 
+      <Button
         id="fileUpload"
-        btnType='buttonFill' 
-        widthSize='medium'
-        heightSize='small' 
-        fontSize='small' 
-        ImageType='cancel' 
-        onClick={()=>{
+        btnType="buttonFill"
+        widthSize="medium"
+        heightSize="small"
+        fontSize="small"
+        ImageType="cancel"
+        onClick={() => {
           let input = document.createElement('input');
           input.type = 'file';
-          input.multiple=true;
+          input.multiple = true;
           input.onchange = onChangeFiles;
           input.click();
           //191.1.70.235:3002
-        }}>불러오기
+        }}
+      >
+        불러오기
       </Button>
       {/* <label
         className={isDragging ? "DragDrop-File-Dragging" : "DragDrop-File"}
@@ -197,7 +218,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
           files.map((file: IFileTypes) => {
             const {
               id,
-              object: { name }
+              object: { name },
             } = file;
 
             return (
@@ -220,4 +241,3 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
 const DragDrop = React.memo(BaseDragDrop);
 
 export default DragDrop;
-

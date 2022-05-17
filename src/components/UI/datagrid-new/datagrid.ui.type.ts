@@ -1,17 +1,15 @@
 import React from 'react';
-import {Props as GridProps} from '@toast-ui/react-grid';
+import { Props as GridProps } from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
-import {ColumnOptions, ModifiedRows} from 'tui-grid/types';
+import { ColumnOptions, ModifiedRows } from 'tui-grid/types';
 import { GridEventProps } from 'tui-grid/types/event';
 import { IButtonProps, IModalProps } from '~/components/UI';
-
-
 
 /** 데이터 그리드 속성 인터페이스 */
 export default interface IDatagridProps extends GridProps {
   /** 제목 */
   title?: string;
-  
+
   /** 그리드 아이디 */
   gridId: string;
 
@@ -57,10 +55,10 @@ export default interface IDatagridProps extends GridProps {
 
   /** 강제 리렌더링 */
   forceRerender?: any;
-  
+
   /** 모달에 새로 버튼을 추가합니다. */
   extraButtons?: TGridExtraButtons[];
-  
+
   onClick?: (ev) => void;
   onDblclick?: (ev) => void;
   onCheck?: (ev) => void;
@@ -84,19 +82,32 @@ export interface IGridSummaryOptions {
   minColumns?: string[];
   maxColumns?: string[];
   textColumns?: {
-    columnName: string,
-    content: string | HTMLElement,
+    columnName: string;
+    content: string | HTMLElement;
   }[];
   sumColumns?: string[];
 }
 
 export interface IGridColumn extends ColumnOptions {
   alias?: string;
-  format?: 'text' | 'number' | 'date' | 'datetime' | 'time' | 'check' | 'radio' | 'combo' | 'popup' | 'button' | 'tag' | 'file' | 'percent';
+  format?:
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'datetime'
+    | 'time'
+    | 'check'
+    | 'radio'
+    | 'combo'
+    | 'popup'
+    | 'button'
+    | 'tag'
+    | 'file'
+    | 'percent';
   editable?: boolean;
   noSave?: boolean;
   requiredField?: boolean;
-  
+
   /** 저장시 문자열 공백일 경우 제외 됨 */
   disableStringEmpty?: boolean;
   options?: object;
@@ -104,18 +115,18 @@ export interface IGridColumn extends ColumnOptions {
   unit?: string;
 
   /** 컬럼 셀의 기본값 설정 */
-  defaultValue?: any | ((props:IDatagridProps, ev?) => any);
+  defaultValue?: any | ((props: IDatagridProps, ev?) => any);
 
   formula?: {
     targetColumnName?: string;
     targetColumnNames?: string[];
     resultColumnName: string;
-    formula?: (formulaParams:TFormulaParam, props?:IDatagridProps) => any;
-  }
+    formula?: (formulaParams: TFormulaParam, props?: IDatagridProps) => any;
+  };
 
-  hiddenCondition?: (props?:IDatagridProps) => boolean;
-  disableCondition?: (props?:IDatagridProps) => boolean;
-  editableCondition?: (props?:IDatagridProps) => boolean;
+  hiddenCondition?: (props?: IDatagridProps) => boolean;
+  disableCondition?: (props?: IDatagridProps) => boolean;
+  editableCondition?: (props?: IDatagridProps) => boolean;
 }
 
 export type TFormulaParam = {
@@ -127,22 +138,22 @@ export type TFormulaParam = {
   targetValues?: {};
   rowKey?: number;
   gridRef?: any;
-}
+};
 
 /** 그리드 모드 타입 */
-export type TGridMode = 
-| 'view' 
-| 'select' 
-| 'multi-select' 
-| 'create' 
-| 'update' 
-| 'delete'
+export type TGridMode =
+  | 'view'
+  | 'select'
+  | 'multi-select'
+  | 'create'
+  | 'update'
+  | 'delete';
 
 export type TGridExtraButtons = {
   buttonProps?: IButtonProps;
   buttonAction?: (ev, props?, options?) => void;
   align?: 'left' | 'right';
-}
+};
 
 /** 그리드 수정 동작 코드 */
 export const EDIT_ACTION_CODE = {
@@ -150,25 +161,22 @@ export const EDIT_ACTION_CODE = {
   UPDATE: 'U',
   DELETE: 'D',
   SELECT: 'S',
-}
-
+};
 
 /** 그리드 특정 컬럼 코드 */
 export const COLUMN_CODE = {
   EDIT: '_edit',
   ATTRIBUTE: '_attributes',
-  CHECK: '_checked'
-}
+  CHECK: '_checked',
+};
 export const COLUMN_NAME = {
   EDIT: '구분',
   ATTRIBUTE: '속성',
-  CHECK: '체크박스'
-}
-
+  CHECK: '체크박스',
+};
 
 /** 그리드 수정이력 인터페이스 */
-export interface IGridModifiedRows extends ModifiedRows {};
-
+export interface IGridModifiedRows extends ModifiedRows {}
 
 /** IGridPopupInfo인터페이스에서 컬럼정보를 다룰 인터페이스 */
 export interface IGridPopupColumnInfo {
@@ -178,8 +186,6 @@ export interface IGridPopupColumnInfo {
   /** 팝업에서 사용되는 컬럼명 */
   popup: string;
 }
-
-
 
 /** IGridComboInfo인터페이스에서 컬럼정보를 다룰 인터페이스 */
 export interface IGridComboColumnInfo {
@@ -196,7 +202,6 @@ export interface IGridComboColumnInfo {
   };
 }
 
-
 /** IGridComboInfo에서 comboItemLists속성의 인터페이스 (콤보 데이터 타입) */
 export interface IGridComboItem {
   /** 숨을 값 */
@@ -206,18 +211,14 @@ export interface IGridComboItem {
   text: string;
 }
 
-
 /** 콤보박스 함수 리턴타입 */
 export type TGridComboItems = IGridComboItem[];
-
 
 /** 그리드 팝업 정보 객체 리스트 타입 */
 export type TGridPopupInfos = IGridPopupInfo[];
 
 /** 그리드 콤보박스 정보 객체 리스트 타입 */
 export type TGridComboInfos = IGridComboInfo[];
-
-
 
 /** IGridPopupInfo의 콤보박스 버전, 해당 컬럼 셀의 콤보박스를 세팅하기 위해 사용될 인터페이스 */
 export interface IGridComboInfo {
@@ -227,9 +228,8 @@ export interface IGridComboInfo {
   /** 콤보박스 값 배열 */
   itemList?: IGridComboItem[];
 
-  dataApiSettings?: TApiSettings | ((ev?:GridEventProps) => TApiSettings);
-};
-
+  dataApiSettings?: TApiSettings | ((ev?: GridEventProps) => TApiSettings);
+}
 
 /** 그리드 더블클릭시 호출할 팝업의 정보를 다룰 인터페이스 */
 export interface IGridPopupInfo {
@@ -246,34 +246,34 @@ export interface IGridPopupInfo {
   parentGridId?: string;
 
   data?: any[];
-  
+
   popupKey?: TPopupKey;
 
-  dataApiSettings?: TApiSettings | ((ev?:GridEventProps) => TApiSettings);
+  dataApiSettings?: TApiSettings | ((ev?: GridEventProps) => TApiSettings);
 
   columns?: IGridColumn[];
 
   gridMode: TGridMode;
   // // /** OK버튼 클릭시 실행할 이벤트 유형 */
   // actionType?: TGridPopupAction;
-};
+}
 
 type TApiOkEvent = {
-  popupGrid: any,
-  parentGrid: any,
-  ev: GridEventProps,
-}
+  popupGrid: any;
+  parentGrid: any;
+  ev: GridEventProps;
+};
 export type TApiSettings = {
   /** 모달 커스텀 */
-  modalProps?: IModalProps,
+  modalProps?: IModalProps;
   /** API 요청 포인트 */
-  uriPath?: string,
+  uriPath?: string;
   /** API 요청 파라미터 */
-  params?: object,
+  params?: object;
   /** 데이터 직접 설정 */
-  setData?: (value: React.SetStateAction<any[]>) => void,
+  setData?: (value: React.SetStateAction<any[]>) => void;
   /** API 요청 여부를 결정하는 callback함수 */
   onInterlock?: () => boolean;
-  onBeforeOk?: (options:TApiOkEvent, checkedRows) => boolean;
-  onAfterOk?: (options:TApiOkEvent, checkedRows) => void;
+  onBeforeOk?: (options: TApiOkEvent, checkedRows) => boolean;
+  onAfterOk?: (options: TApiOkEvent, checkedRows) => void;
 };

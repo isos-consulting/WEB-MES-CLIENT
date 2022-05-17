@@ -7,18 +7,14 @@ export default interface ISideBarProps {
   width: number;
 }
 
-
 /** 2레벨 메뉴 속성 인터페이스 */
 export interface ILevel2Props {
   /** 활성 여부 */
   active: boolean;
 }
 
-
 /** 메뉴 구성용 인터페이스 */
 export interface IMenuInfo extends ILevel1Info {}
-
-
 
 /** 1레벨 메뉴 인터페이스 */
 export interface ILevel1Info {
@@ -54,11 +50,10 @@ export interface ILevel1Info {
 
   /** 데이터 삭제 권한 */
   delete_fg?: boolean;
-  
+
   /** 하위 메뉴 배열 */
   sub_menu?: IMenuInfo[];
 }
-
 
 /** 2레벨 메뉴 인터페이스 */
 export interface ILevel2Info {
@@ -94,11 +89,10 @@ export interface ILevel2Info {
 
   /** 데이터 삭제 권한 */
   delete_fg: boolean;
-  
+
   /** 하위 메뉴 배열 */
   sub_menu?: IMenuInfo[];
 }
-
 
 /** 3레벨 메뉴 인터페이스 */
 export interface ILevel3Info {
@@ -107,7 +101,7 @@ export interface ILevel3Info {
 
   /** 메뉴 uuid */
   menu_uuid: string;
-  
+
   /** 메뉴 유형 */
   menu_type: string;
 
@@ -171,15 +165,14 @@ export interface TPermission {
 //   subMenu?: ILevel2Info[];
 // }
 
-
 // /** 2레벨 메뉴 인터페이스 */
 // export interface ILevel2Info {
 //   /** 레벨(단계) */
 //   level: 2;
-  
+
 //   /** 메뉴 유형 */
 //   type: 'page' | 'menu';
-  
+
 //   /** 호출될 컴포넌트 명칭 */
 //   componentName: string;
 
@@ -195,7 +188,6 @@ export interface TPermission {
 //   /** 하위 메뉴 배열 */
 //   subMenu?: ILevel3Info[];
 // }
-
 
 // /** 3레벨 메뉴 인터페이스 */
 // export interface ILevel3Info {

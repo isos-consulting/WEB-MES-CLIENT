@@ -1,6 +1,6 @@
 /* #region 🔴color palette */
 $palettes_footer: #565656;
-$palettes_white: #FFFFFF;
+$palettes_white: #ffffff;
 $palettes_fontColor: #333333;
 $palettes_titleColor: #707070;
 $palettes_loginFooter: #929292;
@@ -9,94 +9,90 @@ $palettes_menuActive: #637bff;
 $palettes_darkgray: #57626f;
 $palettes_loginLabel: #393941;
 $palettes_gridFontColor: #000000;
-$palettes_submitButton: #1C263D;
-// $palettes_primary: #0055b8; 
-// $palettes_primary: #1A212B; 
+$palettes_submitButton: #1c263d;
+// $palettes_primary: #0055b8;
+// $palettes_primary: #1A212B;
 // $palettes_primary: #1F2633;
 // $palettes_primary: #2F343D;
-$palettes_primary: #383D44;
+$palettes_primary: #383d44;
 $palettes_skyblue: #e6f7ff;
 $palettes_blue: #1890ff;
-$palettes_lightgreen: #C2EEA0;
-$palettes_green: #99D77F;
-$palettes_lightred: #FFB1AD;
-$palettes_orange: #FF6F27;
-$palettes_lightgray: #DFDFDF;
+$palettes_lightgreen: #c2eea0;
+$palettes_green: #99d77f;
+$palettes_lightred: #ffb1ad;
+$palettes_orange: #ff6f27;
+$palettes_lightgray: #dfdfdf;
 $palettes_gray: #919191;
-$palettes_excelBtn: #035A37;
-$palettes_addBtn: #3D8B7D;
-$palettes_cancelBtn: #F38837;
-$palettes_saveBtn: #167FAC;
-$palettes_deleteBtn: #ED7425; 
+$palettes_excelBtn: #035a37;
+$palettes_addBtn: #3d8b7d;
+$palettes_cancelBtn: #f38837;
+$palettes_saveBtn: #167fac;
+$palettes_deleteBtn: #ed7425;
 $palettes_border: #e3e3e3;
-$palettes_graphGrid: #F0F0F0;
-$Palettes_downtime: #FFB1AD80;
-$palettes_progressBar: #3378EC;
+$palettes_graphGrid: #f0f0f0;
+$Palettes_downtime: #ffb1ad80;
+$palettes_progressBar: #3378ec;
 $palettes_dots: #38bcb2;
 $palettes_lines: #eed312;
-$palettes_statistic: #40A9FF;
-$palettes_maipLast: #F4C2BE;
-$palettes_maipThis: #E0483E;
-$palettes_salesLast: #B2D6E7;
-$palettes_salesThis: #1A85B9;
-$palettes_hoverBtn: #3CA0FE;
-$palettes_gridHeader: #eeeeee;  
-$palettes_gridLayer: #00A9ff;
-$palettes_gridRow: #C8DFF7;
-$palettes_comboBoxContent: #FCFDFF;
+$palettes_statistic: #40a9ff;
+$palettes_maipLast: #f4c2be;
+$palettes_maipThis: #e0483e;
+$palettes_salesLast: #b2d6e7;
+$palettes_salesThis: #1a85b9;
+$palettes_hoverBtn: #3ca0fe;
+$palettes_gridHeader: #eeeeee;
+$palettes_gridLayer: #00a9ff;
+$palettes_gridRow: #c8dff7;
+$palettes_comboBoxContent: #fcfdff;
 $palettes_comboBoxSelector: #9ea4aa;
 $palettes_comboBox: #f8f8f8;
-$palettes_gridCellBorder: #cccccc;  
+$palettes_gridCellBorder: #cccccc;
 $palettes_scrollbar: #c1c1c1;
 $palettes_scrollbar_area: #f1f1f1;
-$palettes_buttonHover: rgba(60, 160, 254, .1);
+$palettes_buttonHover: rgba(60, 160, 254, 0.1);
 $palettes_cardShadow: #00000010;
 $palettes_evenRow: rgba(238, 238, 238, 0.3);
-$palettes_selectedHeader: rgba(213,235,254, 0.5);
+$palettes_selectedHeader: rgba(213, 235, 254, 0.5);
 $palettes_gridRowOdd: rgba(204, 204, 204, 0.5);
 $palettes_gridRowEven: rgba(204, 204, 204, 0.65);
 
-
-$palettes_selectRowOdd: rgba(230, 230, 250,  0.5); 
+$palettes_selectRowOdd: rgba(230, 230, 250, 0.5);
 $palettes_selectRowEven: rgba(230, 230, 250, 0.8);
 
+$palettes_level1Menu: rgba(250, 250, 250, 0.25);
+$palettes_gridCheckbox: #d4eafe;
+$palettes_nivoPie01: #788ee0;
+$palettes_nivoPie02: #26a69a;
+$palettes_nivoPie03: #4caf50;
+$palettes_nivoPie04: #7cb342;
+$palettes_nivoPie05: #6ccc3c;
+$palettes_nivoPie06: #dedede;
+$palettes_nivoPie07: #f75e67;
+$palettes_nivoPie08: #b30000;
+$palettes_nivoPie09: #d7301f;
+$palettes_nivoPie10: #ef6548;
+$palettes_nivoPie11: #fc8d59;
+$palettes_nivoPie12: #fdd49e;
+$palettes_nivoPie13: #fff7ec;
+$palettes_nivoPie14: #fee8c8;
+$palettes_nivoPie15: #fdbb84;
+$palettes_bar01: #3c608b;
+$palettes_bar02: #e0483e;
+$palettes_bar03: #f1a838;
+$palettes_bar04: #1a85b9;
+$palettes_bar05: #01737c;
+$palettes_Pie01: #dedede;
+$palettes_pie02: #f75e67;
+$palettes_pie03: #6ccc3c;
+$palettes_pie04: #e1e0a5;
+$palettes_pie05: #4cacde;
+$palettes_pie06: #ace6aa;
+$palettes_pie07: #cde0bd;
+$palettes_pie08: #4cdbd3;
+$palettes_pie09: #edce9c;
 
-$palettes_level1Menu: rgba(250,250,250,.25);
-$palettes_gridCheckbox: #D4EAFE;  
-$palettes_nivoPie01: #788EE0;
-$palettes_nivoPie02: #26A69A;
-$palettes_nivoPie03: #4CAF50;
-$palettes_nivoPie04: #7CB342;
-$palettes_nivoPie05: #6CCC3C;
-$palettes_nivoPie06: #DEDEDE;
-$palettes_nivoPie07: #F75E67;
-$palettes_nivoPie08: #B30000;
-$palettes_nivoPie09: #D7301F;
-$palettes_nivoPie10: #EF6548;
-$palettes_nivoPie11: #FC8D59;
-$palettes_nivoPie12: #FDD49E;
-$palettes_nivoPie13: #FFF7EC;
-$palettes_nivoPie14: #FEE8C8;
-$palettes_nivoPie15: #FDBB84;
-$palettes_bar01: #3C608B;
-$palettes_bar02: #E0483E;
-$palettes_bar03: #F1A838;
-$palettes_bar04: #1A85B9;
-$palettes_bar05: #01737C;
-$palettes_Pie01: #DEDEDE;
-$palettes_pie02: #F75E67;
-$palettes_pie03: #6CCC3C;
-$palettes_pie04: #E1E0A5;
-$palettes_pie05: #4CACDE;
-$palettes_pie06: #ACE6AA;
-$palettes_pie07: #CDE0BD;
-$palettes_pie08: #4CDBD3;
-$palettes_pie09: #EDCE9C;
-
-
-$palettes_submit: #587BD2;
+$palettes_submit: #587bd2;
 /* #endregion */
-
 
 $fg_fontColor_default: $palettes_fontColor;
 
@@ -217,7 +213,7 @@ $bg_graphGrid_border: $palettes_graphGrid;
 /* #endregion */
 
 /* #region 🔶gridCard */
-$fg_gridCard_default : $palettes_gridFontColor;
+$fg_gridCard_default: $palettes_gridFontColor;
 $bg_gridCard_downtime: $palettes_lightred;
 $bg_gridCard_default: $palettes_white;
 $bg_card_boxShadow: $palettes_cardShadow;
@@ -323,9 +319,9 @@ $bg_numberInputFocus_border: $palettes_blue;
 // $bg_background: #eeeff7;
 // $bg_background: #f5f6fc;
 // $bg_background: #F0F0F0;
-$bg_background: #ECECEC;
+$bg_background: #ececec;
 
-:export{
+:export {
   fg_fontColor_default: $fg_fontColor_default;
   bg_colorbox_operation: $bg_colorbox_operation;
   bg_colorbox_operationBar: $bg_colorbox_operationBar;
@@ -349,7 +345,7 @@ $bg_background: #ECECEC;
   fg_tab_default: $fg_tab_default;
   bg_tabClick_border: $bg_tabClick_border;
   fg_headerText_hover: $fg_headerText_hover;
-  
+
   fg_header_title: $fg_header_title;
   fg_headerDetail_title: $fg_headerDetail_title;
   bg_headerContainer_default: $bg_headerContainer_default;
@@ -443,7 +439,7 @@ $bg_background: #ECECEC;
   bg_comboBoxContent_editor: $bg_comboBoxContent_editor;
   bg_comboBoxSelector_border: $bg_comboBoxSelector_border;
   fg_comboBoxSelector_default: $fg_comboBoxSelector_default;
-  bg_comboBox_default:  $bg_comboBox_default;
+  bg_comboBox_default: $bg_comboBox_default;
   bg_gridRow_odd: $bg_gridRow_odd;
   bg_gridRow_even: $bg_gridRow_even;
   bg_gridSelectRow_odd: $bg_gridSelectRow_odd;
@@ -459,4 +455,4 @@ $bg_background: #ECECEC;
   bg_datepickerFocus_border: $bg_datepickerFocus_border;
   bg_gridRow_checked: $bg_gridRow_checked;
   bg_background: $bg_background;
-};
+}

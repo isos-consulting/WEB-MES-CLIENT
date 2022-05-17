@@ -1,11 +1,10 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import Colors from '~styles/color.style.scss';
 import Fonts from '~styles/font.style.scss';
 import Sizes from '~styles/size.style.scss';
 
-import { Space } from "antd";
+import { Space } from 'antd';
 import Props from './header.ui.type';
-
 
 export const ScContainer = styled.div<Props>`
   display: flex;
@@ -23,8 +22,7 @@ export const ScContainer = styled.div<Props>`
   border-bottom: 1px solid ${Colors.bg_headerContainer_border};
 `;
 
-export const ScLogo = styled.div`
-`;
+export const ScLogo = styled.div``;
 
 export const ScRightWrapper = styled(Space)`
   margin-left: auto;
@@ -47,7 +45,7 @@ export const ScExtendedSpace = styled(Space)`
 export const ScMyPageText = styled.div`
   color: inherit;
   margin: 0 7px;
-  &:hover{
+  &:hover {
     color: ${Colors.fg_headerText_hover};
   }
 `;
@@ -65,7 +63,7 @@ export const ScTitleBodyDescription = styled.div`
   user-select: none;
 
   // title ex) 자재관리 > 발주관리
-  div{
+  div {
     font-size: ${Fonts.fontSize_header};
     color: ${Colors.fg_headerDetail_title};
     font-weight: 500;

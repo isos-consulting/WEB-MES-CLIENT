@@ -4,7 +4,8 @@ export class DatagridComboboxEditor {
     // props 변수 선언
     const { rowKey, grid } = props;
     const { name } = props.columnInfo;
-    const { id, gridId, listItems, codeColName, textColName, setCellValue} = props.columnInfo.editor.options;
+    const { id, gridId, listItems, codeColName, textColName, setCellValue } =
+      props.columnInfo.editor.options;
 
     // class 안에서 사용될 변수 선언
     this.state = {
@@ -14,8 +15,8 @@ export class DatagridComboboxEditor {
       textColName: textColName,
       codeColName: codeColName,
       // setCellValue: setCellValue
-      grid: grid
-    }
+      grid: grid,
+    };
 
     // select 형식의 element 생성
     const rootDiv = document.createElement('div');
@@ -32,10 +33,10 @@ export class DatagridComboboxEditor {
     //sel.className = 'dropdown'
     for (let i = 0; i < listItems?.length; i++) {
       opt = document.createElement('option');
-      opt.className = 'select-list'
-      opt.value =  String(listItems[i]?.code);
+      opt.className = 'select-list';
+      opt.value = String(listItems[i]?.code);
       opt.text = String(listItems[i]?.text);
-      sel.add(opt,null);
+      sel.add(opt, null);
     }
 
     // 넘겨받은 값으로 콤보박스의 default value를 지정합니다.
@@ -51,7 +52,7 @@ export class DatagridComboboxEditor {
   }
 
   getValue() {
-    const {id, gridId, rowKey, codeColName, grid} = this.state;
+    const { id, gridId, rowKey, codeColName, grid } = this.state;
 
     let e = document.getElementById(id);
     let selCode = e.options[e.selectedIndex]?.value;

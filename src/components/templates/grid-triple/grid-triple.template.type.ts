@@ -1,6 +1,12 @@
-import Grid from "@toast-ui/react-grid";
-import { IButtonProps, IDatagridProps, IGridPopupProps, IModalProps, ISearchboxProps } from "~/components/UI";
-import { IInputGroupboxProps } from "~/components/UI/input-groupbox";
+import Grid from '@toast-ui/react-grid';
+import {
+  IButtonProps,
+  IDatagridProps,
+  IGridPopupProps,
+  IModalProps,
+  ISearchboxProps,
+} from '~/components/UI';
+import { IInputGroupboxProps } from '~/components/UI/input-groupbox';
 import React from 'react';
 
 export default interface ITpTripleGridProps {
@@ -9,11 +15,11 @@ export default interface ITpTripleGridProps {
 
   /** 버튼 글자 수정 */
   btnProps?: {
-    create?: IButtonProps,
-    add?: IButtonProps,
-    edit?: IButtonProps,
-    delete?: IButtonProps,
-  }
+    create?: IButtonProps;
+    add?: IButtonProps;
+    edit?: IButtonProps;
+    delete?: IButtonProps;
+  };
 
   /** 페이지 유형 */
   templateType?: 'basic' | 'report';
@@ -43,7 +49,10 @@ export default interface ITpTripleGridProps {
   popupInputProps?: IInputGroupboxProps[];
 
   /** 모달 콘텍스트 */
-  modalContext: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  modalContext: React.ReactElement<
+    any,
+    string | React.JSXElementConstructor<any>
+  >;
 
   /** 모달 visible */
   popupVisibles: boolean[];
@@ -63,12 +72,12 @@ export default interface ITpTripleGridProps {
     printExcel: () => void | null;
   };
 
-  onAfterOkNewDataPopup?: (isSuccess:boolean, savedData?:any[]) => void;
-  onAfterOkAddDataPopup?: (isSuccess:boolean, savedData?:any[]) => void;
-  onAfterOkEditDataPopup?: (isSuccess:boolean, savedData?:any[]) => void;
-};
+  onAfterOkNewDataPopup?: (isSuccess: boolean, savedData?: any[]) => void;
+  onAfterOkAddDataPopup?: (isSuccess: boolean, savedData?: any[]) => void;
+  onAfterOkEditDataPopup?: (isSuccess: boolean, savedData?: any[]) => void;
+}
 
 export type TPopupGridInfos = (IDatagridProps & IModalProps)[];
-export interface IExtraButton extends IButtonProps {};
+export interface IExtraButton extends IButtonProps {}
 export type TExtraModals = IModalProps[];
 export type TExtraGridPopups = IGridPopupProps[];

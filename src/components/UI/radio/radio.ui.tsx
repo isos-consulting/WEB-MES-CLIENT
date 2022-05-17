@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { useRecoilState } from 'recoil';
 import { useEffect } from 'react';
 import Props from './radio.ui.type';
@@ -7,30 +7,28 @@ import { Label } from '../label';
 import { ScRadio } from './radio.ui.styled';
 import { afStringState } from '~recoils/recoil.atom-family';
 
-
 /** 라디오 버튼 */
-const Radio: React.FC<Props> = (props) => {
+const Radio: React.FC<Props> = props => {
   const [radioValue, setRadioValue] = useRecoilState(afStringState(props.id));
 
   const handleChangeRadioValue = (e: RadioChangeEvent) => {
     setRadioValue(e.target.value || '');
-  }
+  };
 
-  const resetState=()=>{
+  const resetState = () => {
     setRadioValue('');
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     return () => {
       resetState();
-    }
-  },[]);
+    };
+  }, []);
 
-  
   if (props?.label != null) {
     return (
       <Space size={10}>
-        <Label text={props.label} important={props.important}/>
+        <Label text={props.label} important={props.important} />
         <ScRadio
           onChange={props.onChange || handleChangeRadioValue}
           value={props.code}
@@ -54,6 +52,5 @@ const Radio: React.FC<Props> = (props) => {
     );
   }
 };
-
 
 export default Radio;

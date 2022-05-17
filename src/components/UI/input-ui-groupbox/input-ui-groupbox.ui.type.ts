@@ -1,7 +1,6 @@
 import React from 'react';
-import {TGridMode} from '../datagrid-new/datagrid.ui.type';
-import {TPopupKey} from '../popup/popup.ui.model';
-
+import { TGridMode } from '../datagrid-new/datagrid.ui.type';
+import { TPopupKey } from '../popup/popup.ui.model';
 
 /** 컴포넌트 그룹박스 속성 인터페이스 */
 export default interface IInputUiGroupboxProps {
@@ -13,22 +12,14 @@ export default interface IInputUiGroupboxProps {
 
   /** 검색 버튼 클릭 이벤트 */
   onSearch?: (e?: React.MouseEvent<HTMLElement>) => void;
-};
-
+}
 
 /** 컴포넌트 그룹박스 아이템 속성 인터페이스 */
 export interface IInputUiGroupItem {
   id: string | string[];
   name?: string;
   label?: string;
-  type?: 
-  | 'text' 
-  | 'check' 
-  | 'combo' 
-  | 'date' 
-  | 'dateRange' 
-  | 'popup'
-  | 'radio';
+  type?: 'text' | 'check' | 'combo' | 'date' | 'dateRange' | 'popup' | 'radio';
 
   code?: string;
   value?: any;
@@ -38,9 +29,11 @@ export interface IInputUiGroupItem {
   defaultValue?: any;
   picker?: any;
   format?: string;
-  popupKey?:TPopupKey;
-  insertable?:boolean;
+  popupKey?: TPopupKey;
+  insertable?: boolean;
   hidden?: boolean;
-  disabled?:boolean;
-  dataSettingOptions?: {uriPath:string, params?:object} | {uriPath:string, params?:object, codeName: string, textName: string};
-};
+  disabled?: boolean;
+  dataSettingOptions?:
+    | { uriPath: string; params?: object }
+    | { uriPath: string; params?: object; codeName: string; textName: string };
+}

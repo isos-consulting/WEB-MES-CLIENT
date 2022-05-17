@@ -4,7 +4,7 @@ import React, { useState, useLayoutEffect } from 'react';
 import { TpTripleGrid } from '~/components/templates/grid-triple';
 import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, useGrid, useSearchbox } from '~/components/UI';
-import { ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
 import {OptComplexColumnInfo} from 'tui-grid/types/options'
 import { add, cloneDeep } from 'lodash';
@@ -229,6 +229,7 @@ export const PgQmsInsp = () => {
   }
 
   const handleAmendInsp = (gridRef:any, type:'개정'|'수정', popupType:TPopup) => {
+    gridRef.current.getInstance().finishEditing();
     const grid = (
       popupType === 'add' ?
         addDataPopupGrid
@@ -437,8 +438,8 @@ export const PgQmsInsp = () => {
     {header:'상세검사내용', name:'insp_item_desc', width:ENUM_WIDTH.XL, filter:'text'},
     {header:'위치번호', name:'position_no', width:ENUM_WIDTH.M, format:'number', filter:'number'},
     {header:'기준', name:'spec_std', width:ENUM_WIDTH.M, filter:'text', requiredField:true},
-    {header:'MIN', name:'spec_min', width:ENUM_WIDTH.M, format:'number', filter:'number'},
-    {header:'MAX', name:'spec_max', width:ENUM_WIDTH.M, format:'number', filter:'number'},
+    {header:'MIN', name:'spec_min', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal: ENUM_DECIMAL.DEC_STCOK},
+    {header:'MAX', name:'spec_max', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal: ENUM_DECIMAL.DEC_STCOK},
     {header:'검사방법UUID', name:'insp_method_uuid', width:ENUM_WIDTH.M, hidden:true},
     {header:'검사방법', name:'insp_method_nm', width:ENUM_WIDTH.M, format:'popup', filter:'text', editable:true},
     {header:'검사구UUID', name:'insp_tool_uuid', width:ENUM_WIDTH.M, hidden:true},
@@ -448,7 +449,7 @@ export const PgQmsInsp = () => {
     {header:'시료수', name:'inspector_sample_cnt', width:ENUM_WIDTH.M, filter:'text', hidden: !inspectorInspFg},
     {header:'검사주기', name:'inspector_insp_cycle', width:ENUM_WIDTH.M, filter:'text', hidden: !inspectorInspFg},
     {header:'비고', name:'remark', width:ENUM_WIDTH.L, filter:'text'},
-  ]
+  ];
   
   const newDataPopupGridColumns:IGridColumn[] = cloneDeep(deatilSubGridColumns)?.map((el) => {
     if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) == false) {
@@ -653,7 +654,11 @@ export const PgQmsInsp = () => {
     ];
 
     headerSearchInfo.setSearchItems(_originSearchItems);
-    if(headerSearchInfo?.setValues) headerSearchInfo?.setValues({insp_type:_defaultInspType})
+    if(headerSearchInfo?.setValues) {
+      const value= {insp_type:_defaultInspType}
+      handleAfterChangeInspType(JSON.stringify(value))
+      headerSearchInfo?.setValues(value)
+    }
     
     const _originInputItems:IInputGroupboxItem[] = [
       {type:'text', id:'insp_uuid', alias:'uuid', label:'검사기준서UUID', disabled:true, hidden:true},
@@ -755,7 +760,7 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
       // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      addDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
+      addDataPopupInputInfo?.setValues(cloneDeep(detailSubInputInfo?.values));
     } else {
       addDataPopupInputInfo?.setValues({});
     }
@@ -765,7 +770,8 @@ export const PgQmsInsp = () => {
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
       // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
-      editDataPopupInputInfo?.setValues(cloneDeep(detailInputInfo.ref.current.values));
+      const inputInfoValues = cloneDeep(detailSubInputInfo?.values);
+      editDataPopupInputInfo?.setValues(inputInfoValues);
       editDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
     } else {
       editDataPopupInputInfo?.setValues({});
