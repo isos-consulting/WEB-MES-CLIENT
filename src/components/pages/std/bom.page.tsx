@@ -889,9 +889,10 @@ export const PgStdBom = () => {
   /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
-    const headerRow = instance?.store?.data?.rawData[rowKey];
+    const headerRow = cloneDeep(instance?.store?.data?.rawData[rowKey]);
 
     if (targetType !== 'cell') return;
+    if (headerRow?.unit_uuid) delete headerRow.unit_uuid;
     setSelectedHeaderRow(headerRow);
   };
 
