@@ -86,7 +86,7 @@ export const PgAutMenu = () => {
       {
         header: '메뉴명',
         name: 'menu_nm',
-        width: ENUM_WIDTH.L,
+        width: ENUM_WIDTH.XXL,
         filter: 'text',
         editable: true,
         requiredField: true,
