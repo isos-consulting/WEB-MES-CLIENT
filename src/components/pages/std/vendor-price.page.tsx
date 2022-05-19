@@ -102,20 +102,6 @@ export const PgStdVendorPrice = () => {
         hidden: true,
       },
       {
-        header: '거래처UUID',
-        name: 'partner_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '거래처',
-        name: 'partner_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        hidden: true,
-      },
-      {
         header: '품목UUID',
         name: 'prod_uuid',
         width: ENUM_WIDTH.M,

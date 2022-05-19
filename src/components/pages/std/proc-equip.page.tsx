@@ -91,27 +91,6 @@ export const PgStdProcEquip = () => {
         hidden: true,
       },
       {
-        header: '공정UUID',
-        name: 'proc_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '공정코드',
-        name: 'proc_cd',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: true,
-      },
-      {
-        header: '공정명',
-        name: 'proc_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        hidden: true,
-      },
-      {
         header: '설비유형UUID',
         name: 'equip_type_uuid',
         width: ENUM_WIDTH.M,

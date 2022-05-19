@@ -53,21 +53,27 @@ export const PgAutGroupPermission = () => {
       disabled: true,
       hidden: true,
     },
+    {
+      type: 'text',
+      id: 'group_nm',
+      label: '권한그룹명',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(
     'NEW_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
 
   const addDataPopupInputInfo = useInputGroup(
     'ADD_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
 
   const editDataPopupInputInfo = useInputGroup(
     'EDIT_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
   //#endregion
 
