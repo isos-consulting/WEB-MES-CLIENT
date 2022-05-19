@@ -111,13 +111,6 @@ export const PgStdWorkerGroupWorker = () => {
         hidden: true,
       },
       {
-        header: '작업조UUID',
-        name: 'worker_group_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
         header: '작업자UUID',
         name: 'emp_uuid',
         width: ENUM_WIDTH.M,
