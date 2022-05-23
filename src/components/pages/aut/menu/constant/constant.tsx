@@ -31,31 +31,43 @@ const menuGridComboInfo = [
 export const menuGridOptions = {treeColumnOptions: menuGridTreeColumnOptions, gridComboInfo: menuGridComboInfo};
 
 const menuGridRowColumnNames = [
-  {original:'upper_menu_uuid', popup:'menu_uuid'},
-  {original:'upper_menu_nm', popup:'menu_nm'}
-  {original:'upper_level', popup:'lv'}
+  {original:'parent_uuid', popup:'menu_uuid'},
+  {original:'parent_nm', popup:'menu_nm'}
+  {original:'parent_lv', popup:'lv'}
 ];
 const menuGridRowAddPopupInfo:IGridPopupInfo = {gridMode: 'select', columnNames:menuGridRowColumnNames};
-
 const menuGridSettings:IDatagridProps= {gridId: '', columns: [], rowAddPopupInfo: menuGridRowAddPopupInfo};
-
 const menuGridPopupButtonSettings = {datagridSettings: menuGridSettings};
 
+const menuGridRowColumnNames2 = [
+  {original:'uuid', popup:'menu_uuid'},
+  {original:'menu_nm_edit', popup:'menu_nm'}
+];
+const menuGridRowAddPopupInfo2:IGridPopupInfo = {gridMode: 'select', columnNames:menuGridRowColumnNames2};
+const menuGridSettings2:IDatagridProps= {gridId: '', columns: [], rowAddPopupInfo: menuGridRowAddPopupInfo2};
+const menuGridPopupButtonSettings2 = {datagridSettings: menuGridSettings2};
 
 export const menuInputGroupBoxs: IInputGroupboxItem[] = [
-  {type: "text", id: "menu_uuid", alias: "uuid", label: "메뉴UUID", usePopup: true, popupKey: "메뉴관리", popupKeys: ["menu_uuid", "menu_nm"]},
-  {type: "text", id: "lv", label: "메뉴레벨", disabled: true, hidden: true},
-  {type: "text", id: "upper_menu_nm", label: "상위 메뉴", usePopup: true, popupKey: "메뉴관리", popupKeys: ["upper_menu_uuid", "upper_menu_nm", "upper_level"], popupButtonSettings: menuGridPopupButtonSettings},
-  {type: "text", id: "menu_nm", label: "메뉴명"},
-  {type: "text", id: "menu_type_uuid", label: "메뉴유형UUID", disabled: true, hidden: true},
-  {type: "combo", id: "menu_type_nm", label: "메뉴유형", dataSettingOptions:{ codeName:'menu_type_uuid', textName:'menu_type_nm', uriPath: URL_PATH_AUT.MENU_TYPE.GET.MENU_TYPES, params: {store_type: 'all'}}},
-  {type: "text", id: "menu_uri", label: "메뉴URL"},
-  {type: "text", id: "component_nm", label: "컴포넌트명"},
-  {type: "text", id: "icon", label: "아이콘"},
+
+  {type: "text", id: "parent_nm", label: "상위메뉴 이름", usePopup: true, popupKey: "메뉴관리", popupKeys: ["parent_uuid", "parent_nm"], popupButtonSettings: menuGridPopupButtonSettings},
+  {type: "text", id: "parent_uuid", label: "parent_uuid*", disabled: true, hidden: true},
+
+  {type: "text", id: "menu_nm_edit", label: "메뉴 이름*", usePopup: true, popupKey: "메뉴관리", popupKeys: ["uuid", "menu_nm_edit", "use_fg", "component_nm", "menu_uri","menu_type_uuid"], popupButtonSettings: menuGridPopupButtonSettings2},
+  {type: "text", id: "uuid", label: "uuid*", disabled: true, hidden: true},  
+  {type: "text", id: "menu_nm", label: "신규메뉴 이름", disabled: false},  
+
+  {type: "text", id: "sortby", label: "정렬순서*"},
+  {type: "text", id: "use_fg", label: "사용유무 [True/False]"},
+
+  {type: "combo", id: "menu_type_uuid", label: "메뉴유형", dataSettingOptions:{ codeName:'menu_type_uuid', textName:'menu_type_nm', uriPath: URL_PATH_AUT.MENU_TYPE.GET.MENU_TYPES, params: {store_type: 'all'}}},
+  {type: "text", id: "menu_type_uuid", label: "menu_type_uuid", disabled: false, hidden: true},  
+  {type: "text", id: "menu_uri", label: "메뉴 URI"},
+  {type: "text", id: "component_nm", label: "컴포넌트 이름"},
+  // {type: "text", id: "icon", label: "아이콘"},
 ];
 
 export const menuSearchButtonProps: IButtonProps = {btnType: "buttonFill", widthSize: "medium", heightSize: "small", fontSize: "small", ImageType: "search", colorType: "basic", disabled: false, onClick: null};
 
 export const detailModalButtonProps: IButtonProps = {btnType: "buttonFill", widthSize: "large", heightSize: "small", fontSize: "small", colorType: "basic", onClick: null, disabled: false};
 
-export const detailModalProps: IModalProps = {title: "메뉴 관리", okText: null, cancelText: null, maskClosable: false, visible: false, onCancel: null, onOk: null, width: "80%"};
+export const detailModalProps: IModalProps = {title: "메뉴 관리", okText: null, cancelText: null, maskClosable: false, visible: false, onCancel: null, onOk: null, width: "60%"};

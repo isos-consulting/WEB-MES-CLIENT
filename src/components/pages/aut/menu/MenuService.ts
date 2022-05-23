@@ -48,7 +48,6 @@ class MenuService {
   }
   searchMenuList = (): void => {
     const searchParams = {};
-
     let data = [];
 
     getData<TGetMenuData[]>(searchParams, this.searchUriPath)
@@ -77,7 +76,7 @@ class MenuService {
           } else if (el.lv == 3) {
             menuDatas[menuDatas.length - 1]?._children[
               menuDatas[menuDatas.length - 1]?._children?.length - 1
-            ]?._children.push({
+            ]?._children?.push({
               ...el,
               _attributes: {
                 expanded: false,
