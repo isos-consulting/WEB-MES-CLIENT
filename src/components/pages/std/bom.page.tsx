@@ -886,10 +886,12 @@ export const PgStdBom = () => {
     },
   );
 
+  const deleteUnitUuid = ({ unit_uuid, ...rawdData }) => rawdData;
+
   /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
-    const headerRow = instance?.store?.data?.rawData[rowKey];
+    const headerRow = deleteUnitUuid(instance?.store?.data?.rawData[rowKey]);
 
     if (targetType !== 'cell') return;
     setSelectedHeaderRow(headerRow);

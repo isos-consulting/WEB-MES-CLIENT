@@ -15,6 +15,7 @@ import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.t
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
+import { cloneDeep } from 'lodash';
 
 /** 사용자별 권한 관리 */
 export const PgAutUserPermission = () => {
@@ -53,21 +54,27 @@ export const PgAutUserPermission = () => {
       disabled: true,
       hidden: true,
     },
+    {
+      type: 'text',
+      id: 'user_nm',
+      label: '사용자',
+      disabled: true,
+    },
   ]);
 
   const newDataPopupInputInfo = useInputGroup(
     'NEW_DATA_POPUP_INPUTBOX',
-    cloneObject(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
 
   const addDataPopupInputInfo = useInputGroup(
     'ADD_DATA_POPUP_INPUTBOX',
-    cloneObject(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
 
   const editDataPopupInputInfo = useInputGroup(
     'EDIT_DATA_POPUP_INPUTBOX',
-    cloneObject(detailInputInfo?.inputItems),
+    cloneDeep(detailInputInfo.props?.inputItems),
   );
   //#endregion
 

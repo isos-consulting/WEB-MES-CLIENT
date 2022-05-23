@@ -661,6 +661,7 @@ export const PgQmsInsp = () => {
     }
     
     const _originInputItems:IInputGroupboxItem[] = [
+      {type:'combo', id:'insp_type', label:'기준서 유형', disabled:true, firstItemType:'none', options: inspType},
       {type:'text', id:'insp_uuid', alias:'uuid', label:'검사기준서UUID', disabled:true, hidden:true},
       {type:'text', id:'prod_uuid', label:'품목UUID', disabled:true, hidden:true},
       {
@@ -674,7 +675,6 @@ export const PgQmsInsp = () => {
         popupKeys: ['prod_uuid', 'prod_no', 'prod_nm'],
         popupButtonSettings: prodPopupButtonSettings,
       },
-      {type:'combo', id:'insp_type', label:'기준서 유형', disabled:true, firstItemType:'none', options: inspType},
       {type:'text', id:'insp_no', label:'기준서 번호', disabled:true},
       {type:'date', id:'reg_date', label:'생성일자', disabled:true},
       {type:'text', id:'contents', label:'개정내역', disabled:true},

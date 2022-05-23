@@ -91,8 +91,6 @@ export const PgStdUnitConvert = () => {
         format: 'text',
         hidden: true,
       },
-      // {header: 'From 단위UUID', name:'from_unit_uuid', width:ENUM_WIDTH.M, format:'popup', hidden:true, requiredField:true},
-      // {header: 'From 단위명', name:'from_unit_nm', width:ENUM_WIDTH.L, format:'popup', editable:true},
       {
         header: 'To 단위UUID',
         name: 'to_unit_uuid',
@@ -135,6 +133,7 @@ export const PgStdUnitConvert = () => {
         width: ENUM_WIDTH.L,
         format: 'number',
         editable: true,
+        defaultValue: 1,
         hidden: true,
         requiredField: true,
       },
@@ -213,6 +212,23 @@ export const PgStdUnitConvert = () => {
       searchUriPath: detailSearchUriPath,
       saveUriPath: detailSaveUriPath,
       gridMode: detailDefaultGridMode,
+      onAfterChange: ev => {
+        const { changes, instance, origin } = ev;
+        if (
+          origin !== 'cell' ||
+          !['from_value', 'to_value'].includes(changes[0].columnName)
+        )
+          return;
+        const rowData = instance.getRow(changes[0].rowKey);
+        const fromValue = Number(rowData.from_value);
+        const toValue = Number(rowData.to_value);
+
+        instance.setValue(
+          changes[0].rowKey,
+          'convert_value',
+          toValue / fromValue,
+        );
+      },
     },
   );
 
@@ -376,6 +392,7 @@ export const PgStdUnitConvert = () => {
         },
       ],
       gridComboInfo: detailGrid.gridInfo.gridComboInfo,
+      onAfterChange: detailGrid.gridInfo.onAfterChange,
     },
   );
 
@@ -388,6 +405,7 @@ export const PgStdUnitConvert = () => {
       rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
       gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
       gridComboInfo: newDataPopupGrid.gridInfo.gridComboInfo,
+      onAfterChange: detailGrid.gridInfo.onAfterChange,
     },
   );
 
@@ -400,6 +418,7 @@ export const PgStdUnitConvert = () => {
       rowAddPopupInfo: newDataPopupGrid.gridInfo.rowAddPopupInfo,
       gridPopupInfo: newDataPopupGrid.gridInfo.gridPopupInfo,
       gridComboInfo: newDataPopupGrid.gridInfo.gridComboInfo,
+      onAfterChange: detailGrid.gridInfo.onAfterChange,
     },
   );
 
