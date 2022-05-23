@@ -140,7 +140,10 @@ const PopupButton: React.FC<Props> = props => {
                   let row: object = child.getInstance().getCheckedRows()[0];
 
                   if (typeof row === 'object') {
-                    row = addKeyOfObject(row, props?.datagridSettings?.rowAddPopupInfo?.columnNames);
+                    row = addKeyOfObject(
+                      row,
+                      props?.datagridSettings?.rowAddPopupInfo?.columnNames,
+                    );
                     row = cleanupKeyOfObject(row, props?.popupKeys);
                     setSelectedRow(row);
 

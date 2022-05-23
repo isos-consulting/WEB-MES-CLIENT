@@ -26,6 +26,7 @@ export const ENUM_WIDTH = {
   L: 150,
   /** 200px */
   XL: 200,
+  XXL: 250,
 };
 
 /** 데이터 그리드 공통 포맷 */

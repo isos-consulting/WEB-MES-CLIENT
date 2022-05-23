@@ -302,9 +302,8 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
     // 초기화되는 내용을 recoil상태값에 반영해야 값이 원활히 동기화 됩니다.
     setDefaultValues(values);
   };
-  
+
   return (
-    
     <Container id={props.id} boxShadow={props.boxShadow} title={props?.title}>
       <div style={props?.title ? { marginTop: 10 } : null}>
         <Formik
@@ -369,7 +368,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   }}
                                   suffix={item.suffix}
                                 />
-                                {item.usePopup ? (                                  
+                                {item.usePopup ? (
                                   <PopupButton
                                     {...item.popupButtonSettings}
                                     id={item.id}
@@ -784,7 +783,10 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                             {...item.popupButtonSettings}
                                             id={item.id}
                                             setValues={values => {
-                                              setValues(crr => ({...crr, ...values}));
+                                              setValues(crr => ({
+                                                ...crr,
+                                                ...values,
+                                              }));
                                               handleSubmit();
                                             }}
                                             firstItemEmpty={

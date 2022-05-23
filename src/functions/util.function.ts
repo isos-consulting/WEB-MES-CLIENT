@@ -725,10 +725,13 @@ export const consoleLogLocalEnv = (
   }
 };
 
-export const addKeyOfObject = (target:object={} ,keys:IGridPopupColumnInfo[]) => {
+export const addKeyOfObject = (
+  target: object = {},
+  keys: IGridPopupColumnInfo[],
+) => {
   const result = cloneObject(target);
 
-  keys?.forEach(({original, popup}) => (result[original] = target[popup]));
+  keys?.forEach(({ original, popup }) => (result[original] = target[popup]));
 
   return result;
-}
+};
