@@ -75,3 +75,14 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
     align: 'center',
   },
 ];
+
+export const rowSpanKeys: string[] = [
+  'reg_date',
+  'workings_nm',
+  'order_no',
+  'order_state',
+  'prod_no',
+  'prod_nm',
+  'item_type_nm',
+  'prod_std',
+];
