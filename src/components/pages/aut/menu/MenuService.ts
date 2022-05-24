@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import { IDatagridProps } from '~/components/UI';
 import { getData } from '~/functions';
 
@@ -113,6 +114,11 @@ const MenuService = class {
       (parent_uuid == null || parent_uuid === '') &&
       (sortby == null || sortby === '')
     );
+  };
+
+  inValidError = text => {
+    message.warning(text);
+    return false;
   };
 };
 
