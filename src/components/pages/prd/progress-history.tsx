@@ -5,6 +5,8 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
+import dayjs from 'dayjs';
+import { message } from 'antd';
 
 export const PgPrdProgressHistory = () => {
   const title = getPageName();
@@ -94,12 +96,28 @@ export const PgPrdProgressHistory = () => {
     return columns;
   };
 
-  const onSearch = async values => {
-    const { raws, value } = await getData(
-      values,
-      'prd/multi-proc-by-orders',
-      'datas',
-    );
+  const invlidOverStartDateAtEndDate = () => {
+    message.warning('시작일은 종료일을 넘을 수 없습니다');
+    return false;
+  };
+
+  const invalidOverEndDateAtNow = () => {
+    message.warning('종료일은 현재 날짜를 넘을 수 없습니다');
+    return false;
+  };
+
+  const isValidSearchCondition = ({ start_date, end_date }) => {
+    return start_date > end_date
+      ? invlidOverStartDateAtEndDate()
+      : end_date > dayjs(new Date()).format('YYYY-MM-DD')
+      ? invalidOverEndDateAtNow()
+      : true;
+  };
+
+  const onSearch = async searchConditions => {
+    const { raws, value } = isValidSearchCondition(searchConditions)
+      ? await getData(searchConditions, 'prd/multi-proc-by-orders', 'datas')
+      : { raws: [], value: { proc_nos: [] } };
 
     for (let index = 0; index < raws.length / 5; index++) {
       raws[index * 5]._attributes = {
