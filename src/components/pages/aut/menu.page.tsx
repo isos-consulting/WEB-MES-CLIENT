@@ -64,8 +64,16 @@ export const PgAutMenu = () => {
 
   return (
     <>
-      <Button {...menuSearchButtonProps}>조회</Button>
-      <Button {...detailModalButtonProps}>메뉴 관리</Button>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Button {...menuSearchButtonProps}>조회</Button>
+        <Button {...detailModalButtonProps}>메뉴 관리</Button>
+      </div>
       <Container height={800}>
         <Datagrid height={750} {...gridProps} />
       </Container>
