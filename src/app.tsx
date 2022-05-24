@@ -156,10 +156,6 @@ const LayoutRoute = () => {
     }
   }, [isLogin]);
 
-  // useLayoutEffect(()=>{
-
-  // },[isLogin])
-
   return (
     <>
       {consoleLogLocalEnv(
@@ -185,19 +181,13 @@ const LayoutRoute = () => {
                     path={'/dashboard'}
                     component={Dashboard}
                   />
-                  {Object.keys(menuContent).map((item, key) => {
-                    if (!menuContent[item]?.component) {
-                      console.log(menuContent[item]);
-                    }
-
-                    return (
-                      <Route
-                        key={key}
-                        path={menuContent[item]?.path}
-                        component={menuContent[item]?.component ?? errorPage404}
-                      />
-                    );
-                  })}
+                  {Object.keys(menuContent).map((item, key) => (
+                    <Route
+                      key={key}
+                      path={menuContent[item]?.path}
+                      component={menuContent[item]?.component ?? errorPage404}
+                    />
+                  ))}
                 </Layout>
               </Switch>
             </BrowserRouter>
