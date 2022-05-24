@@ -31,7 +31,7 @@ const App = () => {
   const [teneunt, setTeneunt] = useState('');
 
   const checkLocalEnviroment = (url: string) => {
-    return url === 'localhost' || url === '191.1.70.201';
+    return url === 'localhost' || url.includes('191.1.70');
   };
 
   const getLocalUrl = () => {
@@ -185,13 +185,19 @@ const LayoutRoute = () => {
                     path={'/dashboard'}
                     component={Dashboard}
                   />
-                  {Object.keys(menuContent).map((item, key) => (
-                    <Route
-                      key={key}
-                      path={menuContent[item]?.path}
-                      component={menuContent[item]?.component ?? errorPage404}
-                    />
-                  ))}
+                  {Object.keys(menuContent).map((item, key) => {
+                    if (!menuContent[item]?.component) {
+                      console.log(menuContent[item]);
+                    }
+
+                    return (
+                      <Route
+                        key={key}
+                        path={menuContent[item]?.path}
+                        component={menuContent[item]?.component ?? errorPage404}
+                      />
+                    );
+                  })}
                 </Layout>
               </Switch>
             </BrowserRouter>
