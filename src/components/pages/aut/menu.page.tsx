@@ -50,8 +50,12 @@ export const PgAutMenu = () => {
         ? confirm(`메뉴를 ${messages.confirm[type]} 하시겠습니까?`)
         : false
     ) {
-      await executeData([record], URL_PATH_AUT.MENU.PUT.MENUS, type);
-      alert(messages.complete);
+      return (await executeData([record], URL_PATH_AUT.MENU.PUT.MENUS, type))
+        ? alert(messages.complete)
+        : console.trace(
+            '%cmenu 정보 저장 API 요청 결과 실패함',
+            'color: red; font-size: 15px;',
+          );
     }
   };
 
