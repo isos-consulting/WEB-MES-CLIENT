@@ -121,11 +121,20 @@ const MenuService = class {
     return false;
   };
 
-  newRecordValid = ({ parent_uuid, menu_nm, sortby }, { prefix, surfix }) => {
+  newRecordValid = (
+    { parent_uuid, menu_nm, menu_uri, menu_type_uuid },
+    { prefix, surfix },
+  ) => {
     return parent_uuid == null || parent_uuid === ''
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
       : menu_nm == null || menu_nm === ''
       ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
+      : menu_type_uuid == null ||
+        menu_type_uuid === '' ||
+        menu_type_uuid === '-'
+      ? this.inValidError(`${prefix} [메뉴 유형]${surfix}`)
+      : menu_uri == null || menu_uri === ''
+      ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
       : true;
   };
 
@@ -134,9 +143,18 @@ const MenuService = class {
     return true;
   };
 
-  updateRecordValid = ({ parent_uuid, sortby }, { prefix, surfix }) => {
+  updateRecordValid = (
+    { parent_uuid, menu_uri, menu_type_uuid },
+    { prefix, surfix },
+  ) => {
     return parent_uuid == null || parent_uuid === ''
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      : menu_type_uuid == null ||
+        menu_type_uuid === '' ||
+        menu_type_uuid === '-'
+      ? this.inValidError(`${prefix} [메뉴 유형]${surfix}`)
+      : menu_uri == null || menu_uri === ''
+      ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
       : true;
   };
 };
