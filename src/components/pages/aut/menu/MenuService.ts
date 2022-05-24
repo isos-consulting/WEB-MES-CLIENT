@@ -107,6 +107,13 @@ const MenuService = class {
   isNewReocrd = ({ uuid }) => {
     return uuid == null || uuid === '';
   };
+
+  isDeleteReocrd = ({ parent_uuid, sortby }) => {
+    return (
+      (parent_uuid == null || parent_uuid === '') &&
+      (sortby == null || sortby === '')
+    );
+  };
 };
 
 export default MenuService;
