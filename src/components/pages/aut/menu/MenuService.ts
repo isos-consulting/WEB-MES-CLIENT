@@ -120,6 +120,24 @@ const MenuService = class {
     message.warning(text);
     return false;
   };
+
+  newRecordValid = ({ parent_uuid, menu_nm, sortby }, { prefix, surfix }) => {
+    return parent_uuid == null || parent_uuid === ''
+      ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      : menu_nm == null || menu_nm === ''
+      ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
+      : sortby == null || sortby === ''
+      ? this.inValidError(`${prefix} [정렬순서]${surfix}`)
+      : true;
+  };
+
+  updateRecordValid = ({ parent_uuid, sortby }, { prefix, surfix }) => {
+    return parent_uuid == null || parent_uuid === ''
+      ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      : sortby == null || sortby === ''
+      ? this.inValidError(`${prefix} [정렬순서]${surfix}`)
+      : true;
+  };
 };
 
 export default MenuService;
