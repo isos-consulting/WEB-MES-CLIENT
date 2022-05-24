@@ -1,5 +1,5 @@
-import { IDatagridProps } from "~/components/UI";
-import { getData } from "~/functions";
+import { IDatagridProps } from '~/components/UI';
+import { getData } from '~/functions';
 
 type TGridAttributes = {
   expanded?: boolean;
@@ -36,7 +36,7 @@ type TGetMenuData = {
   use_fg?: boolean;
 };
 
-class MenuService {
+const MenuService = class {
   private searchUriPath: string;
   private grid: any;
   private modalHook: any;
@@ -51,12 +51,12 @@ class MenuService {
     let data = [];
 
     getData<TGetMenuData[]>(searchParams, this.searchUriPath)
-      .then((res) => {
+      .then(res => {
         data = res;
       })
       .finally(() => {
         let menuDatas: TMenuData[] = [];
-        data.map((el) => {
+        data.map(el => {
           if (el.lv == 1) {
             menuDatas.push({
               ...el,
@@ -98,11 +98,15 @@ class MenuService {
 
   openMenuModal = (): void => {
     this.modalHook(true);
-  }
+  };
 
   afterCloseMenuModal = (): void => {
     this.modalHook(false);
-  }
-}
+  };
+
+  isNewReocrd = ({ uuid }) => {
+    return uuid == null || uuid === '';
+  };
+};
 
 export default MenuService;
