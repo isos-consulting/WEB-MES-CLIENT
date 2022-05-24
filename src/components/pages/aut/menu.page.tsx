@@ -59,8 +59,8 @@ export const PgAutMenu = () => {
     }
   };
 
-  detailModalButtonProps.onClick = menuService.openMenuModal; // 메뉴 관리 클릭
-  menuSearchButtonProps.onClick = menuService.searchMenuList; //조회 버튼 클릭
+  detailModalButtonProps.onClick = menuService.openMenuModal;
+  menuSearchButtonProps.onClick = menuService.searchMenuList;
 
   return (
     <>
