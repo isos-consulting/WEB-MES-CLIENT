@@ -716,7 +716,7 @@ export const consoleLogLocalEnv = (
 ): void => {
   const host = window.location.hostname;
   if (
-    (host === 'localhost' || host === '191.1.70.201') &&
+    (host === 'localhost' || host.includes('191.1.70')) &&
     process.env.LOG_LEVEL === 'production'
   ) {
     if (message != null) {
