@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { IDatagridProps } from '~/components/UI';
-import { getData } from '~/functions';
+import { consoleLogLocalEnv, getData } from '~/functions';
 
 type TGridAttributes = {
   expanded?: boolean;
@@ -129,6 +129,11 @@ const MenuService = class {
       : sortby == null || sortby === ''
       ? this.inValidError(`${prefix} [정렬순서]${surfix}`)
       : true;
+  };
+
+  deleteRecordValid = record => {
+    consoleLogLocalEnv('메뉴 삭제에 대한 유효성 검사는 아직 없습니다');
+    return true;
   };
 
   updateRecordValid = ({ parent_uuid, sortby }, { prefix, surfix }) => {
