@@ -126,8 +126,6 @@ const MenuService = class {
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
       : menu_nm == null || menu_nm === ''
       ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
-      : sortby == null || sortby === ''
-      ? this.inValidError(`${prefix} [정렬순서]${surfix}`)
       : true;
   };
 
@@ -139,8 +137,6 @@ const MenuService = class {
   updateRecordValid = ({ parent_uuid, sortby }, { prefix, surfix }) => {
     return parent_uuid == null || parent_uuid === ''
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
-      : sortby == null || sortby === ''
-      ? this.inValidError(`${prefix} [정렬순서]${surfix}`)
       : true;
   };
 };
