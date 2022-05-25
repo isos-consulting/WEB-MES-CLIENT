@@ -4,130 +4,51 @@ import { dataGridEvents, getData, getPageName, getToday } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import {
+  concreteProgressHistoryGridColumns,
+  searchFields,
+  rowSpanKeys,
+} from './progress-history/constant';
+import ProgressHistoryService from './progress-history/ProgressHistoryService';
 
 export const PgPrdProgressHistory = () => {
   const title = getPageName();
   const [, modalContext] = Modal.useModal();
+  const progressHistoryService = new ProgressHistoryService();
 
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {
-      id: 'reg_date',
-      ids: ['start_date', 'end_date'],
-      names: ['start_date', 'end_date'],
-      defaults: [getToday(-6), getToday()],
-      type: 'daterange',
-      label: '기간',
-    },
-  ]);
+  searchFields[0].defaults = [getToday(-6), getToday()];
 
-  const columns = [
-    {
-      header: '일자',
-      name: 'reg_date',
-      width: ENUM_WIDTH.XL,
-      filter: 'datetime',
-      format: 'datetime',
-      align: 'center',
-    },
-    {
-      header: '작업장',
-      name: 'workings_nm',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      align: 'center',
-    },
-    {
-      header: '작업지시 번호',
-      name: 'order_no',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      align: 'center',
-    },
-    {
-      header: '작업상태',
-      name: 'order_state',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      align: 'center',
-    },
-    {
-      header: '품번',
-      name: 'prod_no',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '품목',
-      name: 'prod_nm',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    },
-    {
-      header: '품목유형',
-      name: 'item_type_nm',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      align: 'center',
-    },
-    {
-      header: '규격',
-      name: 'prod_std',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      align: 'center',
-    },
-    {
-      header: '순서',
-      name: 'sort',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      align: 'center',
-    },
-  ];
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', searchFields);
 
-  const grid = useGrid('GRID', columns);
+  const grid = useGrid('GRID', concreteProgressHistoryGridColumns);
 
-  const concatColumns = (columns, list) => {
-    columns.splice(10, 0, ...list);
+  const onSearch = async searchConditions => {
+    if (!progressHistoryService.isValidSearchCondition(searchConditions)) {
+      return console.trace(
+        '%c공정 별 진행 현황 조회 조건 유효성 검사 실패함',
+        'color: red; font-size: 15px;',
+      );
+    }
 
-    return columns;
-  };
-
-  const onSearch = async values => {
     const { raws, value } = await getData(
-      values,
+      searchConditions,
       'prd/multi-proc-by-orders',
       'datas',
     );
 
     for (let index = 0; index < raws.length / 5; index++) {
       raws[index * 5]._attributes = {
-        rowSpan: {
-          reg_date: 5,
-          workings_nm: 5,
-          order_no: 5,
-          order_state: 5,
-          prod_no: 5,
-          prod_nm: 5,
-          item_type_nm: 5,
-          prod_std: 5,
-        },
+        rowSpan: progressHistoryService.spanObject(rowSpanKeys, 5),
       };
     }
 
-    grid.setGridData(raws);
     grid.setGridColumns(
-      concatColumns(
-        columns,
-        value.proc_nos.map(key => ({
-          heaer: key,
-          name: key,
-          width: ENUM_WIDTH.S,
-          filter: 'text',
-        })),
+      progressHistoryService.dynamicColumns(
+        concreteProgressHistoryGridColumns,
+        value.proc_nos.map(progressHistoryService.columnAttributes),
       ),
     );
+    grid.setGridData(raws);
   };
 
   const buttonActions = {
