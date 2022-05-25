@@ -793,6 +793,11 @@ export const PgPrdWorkReport = () => {
       return;
     }
 
+    if (secondDate > new Date(getToday())) {
+      message.error('오늘 이후의 날짜로 입력할 수 없습니다');
+      return;
+    }
+
     if (values?.sort_type === 'none') {
       searchParams['sort_type'] = 'date';
     }
