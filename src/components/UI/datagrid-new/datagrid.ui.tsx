@@ -214,6 +214,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     let newColumns = cloneDeep(props.columns);
 
     newColumns.forEach((el, colIndex) => {
+      console.log(el);
+
       if (el?.name === 'created_at') {
         chkCreateAtColumn = true;
       } else if (el?.name === 'updated_at') {
@@ -319,11 +321,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                         gridId={fileUploadGridId}
                         columns={[
                           {
-                            header: 'file_mgmt_uuid',
-                            name: 'file_mgmt_uuid',
-                            hidden: true,
+                            header: 'uuid',
+                            name: 'uuid',
                           },
-                          { header: 'save_type', name: 'save_type' },
+                          {
+                            header: 'save_type',
+                            name: 'save_type',
+                          },
                           {
                             header: '삭제',
                             name: 'delete',
@@ -402,7 +406,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                             name: 'file_size',
                             width: ENUM_WIDTH.M,
                           },
-                          { header: '비고', name: 'remark', editable: true },
+                          {
+                            header: '비고',
+                            name: 'remark',
+                            editable: true,
+                          },
                         ]}
                         gridComboInfo={[
                           {
@@ -443,10 +451,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                     const fileData: object[] = childFileGridRef?.current
                       ?.getInstance()
                       ?.getData();
-                    fileData.map(el => {
-                      el['uuid'] = cloneDeep(el['file_mgmt_uuid']);
-                      return el;
-                    });
                     if (okType === 'json') {
                       clickProps.grid.setValue(
                         clickProps.rowKey,
@@ -2582,5 +2586,17 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 });
 
 const Datagrid = React.memo(BaseDatagrid);
+
+const ColumnManager = class {
+  private isChecked: boolean;
+
+  constructor() {
+    this.isChecked = false;
+  }
+
+  toggle() {
+    this.isChecked != this.isChecked;
+  }
+};
 
 export default Datagrid;
