@@ -450,7 +450,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   onOk: async close => {
                     const fileData: object[] = childFileGridRef?.current
                       ?.getInstance()
-                      ?.getData();
+                      ?.getModifiedRows();
+
                     if (okType === 'json') {
                       clickProps.grid.setValue(
                         clickProps.rowKey,
@@ -459,15 +460,20 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                       );
                     } else if (okType === 'save') {
                       const reference_uuid = rowData[reference_col];
-                      fileData.map(el => {
+                      const apiRequestsDatas = [].concat(
+                        ...Object.keys(fileData).map(key => fileData[key]),
+                      );
+
+                      apiRequestsDatas.map(el => {
                         el['reference_uuid'] = reference_uuid;
                         if (!el['save_type']) {
                           el['save_type'] = 'UPDATE';
                         }
                         return el;
                       });
+
                       await executeData(
-                        fileData,
+                        [].concat(...apiRequestsDatas),
                         '/adm/file-mgmts',
                         'post',
                         'data',
