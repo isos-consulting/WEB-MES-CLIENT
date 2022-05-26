@@ -24,6 +24,8 @@ import { DateRangePicker } from '../date-range-picker';
 import { ENUM_DECIMAL } from '~/enums';
 import { IDatagridProps } from '../datagrid-new';
 import { IModalProps } from '../modal';
+import RangePicker from '../date-picker/range/date-range-picker';
+import moment from 'moment';
 
 export interface IInputGroupboxItem {
   /** UI의 아이디 */
@@ -41,7 +43,8 @@ export interface IInputGroupboxItem {
     | 'daterange'
     | 'check'
     | 'radio'
-    | 'combo';
+    | 'combo'
+    | 'rangepicker';
   widthSize?: 'auto' | 'flex' | number | string;
   options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
   placeholder?: string;
@@ -664,6 +667,29 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   }}
                                 />
                               </div>
+                            ) : item.type === 'rangepicker' ? (
+                              <RangePicker
+                                ids={item.ids}
+                                names={item.names}
+                                placeholder={item.placeholder}
+                                defalutValue={[
+                                  moment(_initialValues[item.names[0]]),
+                                  moment(_initialValues[item.names[1]]),
+                                ]}
+                                widthSize={item.widthSize || 'flex'}
+                                onChange={async changedValues => {
+                                  item.names.forEach(
+                                    async (fieldName, fieldIndex) => {
+                                      await setFieldValue(
+                                        fieldName,
+                                        dayjs(changedValues[fieldIndex]).format(
+                                          'YYYY-MM-DD',
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }}
+                              />
                             ) : item.type === 'check' ? (
                               <CheckboxGroup
                                 id={item.id}
