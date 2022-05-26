@@ -53,7 +53,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
       'post',
       'data',
       false,
-      'http://191.1.70.225:3002/',
+      'http://isos.iptime.org:13225/',
     );
 
     if (response.success) {
