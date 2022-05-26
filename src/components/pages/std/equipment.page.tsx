@@ -58,7 +58,7 @@ export const PgStdEquipment = () => {
         width: ENUM_WIDTH.M,
         format: 'file',
         options: {
-          file_mgmt_type_cd: 'FIL_STD_EQM',
+          file_mgmt_type_cd: 'FIL_STD_EQUIP',
           ok_type: 'save',
           reference_col: 'equip_uuid',
         },
