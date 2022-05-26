@@ -323,10 +323,12 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                           {
                             header: 'uuid',
                             name: 'uuid',
+                            hidden: true,
                           },
                           {
                             header: 'save_type',
                             name: 'save_type',
+                            hidden: true,
                           },
                           {
                             header: '삭제',
@@ -335,41 +337,34 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                             format: 'button',
                             options: {
                               value: '삭제',
-                              onClick: async (subEv, subProps) => {
-                                const fileData = subProps.grid.getRow(
-                                  subProps.rowKey,
-                                );
+                              onClick: async (subEv, { grid, rowKey }) => {
+                                const { save_type, uuid, file_mgmt_uuid } =
+                                  grid.getRow(rowKey);
+
+                                console.log(okType, save_type);
                                 if (
                                   okType === 'json' ||
-                                  (okType === 'save' &&
-                                    fileData.save_type === 'create')
+                                  (okType === 'save' && save_type === 'CREATE')
                                 ) {
-                                  const fileUuid = subProps.grid.getRow(
-                                    subProps.rowKey,
-                                  ).uuid;
-                                  const res = await executeData(
+                                  await executeData(
                                     {},
                                     '/temp/file/{uuid}'.replace(
                                       '{uuid}',
-                                      fileUuid,
+                                      uuid ?? file_mgmt_uuid,
                                     ),
                                     'delete',
                                     'data',
                                     false,
-                                    'http://191.1.70.5:3104',
+                                    'http://isos.iptime.org:13225/',
                                   );
 
-                                  subProps.grid.removeRow(subProps.rowKey);
+                                  grid.removeRow(rowKey);
                                 } else {
-                                  if (fileData.save_type === 'DELETE') {
-                                    subProps.grid.setValue(
-                                      subProps.rowKey,
-                                      'save_type',
-                                      '',
-                                    );
+                                  if (save_type === 'DELETE') {
+                                    grid.setValue(rowKey, 'save_type', '');
                                   } else {
-                                    subProps.grid.setValue(
-                                      subProps.rowKey,
+                                    grid.setValue(
+                                      rowKey,
                                       'save_type',
                                       'DELETE',
                                     );
@@ -382,6 +377,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                             header: '파일상세유형UUID',
                             name: 'file_mgmt_detail_type_uuid',
                             width: ENUM_WIDTH.S,
+                            hidden: true,
                           },
                           {
                             header: '파일상세유형',
@@ -448,9 +444,19 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   icon: null,
                   okText: '확인',
                   onOk: async close => {
-                    const fileData: object[] = childFileGridRef?.current
-                      ?.getInstance()
-                      ?.getModifiedRows();
+                    const METHODS = {
+                      CREATE: 'post',
+                      UPDATE: 'put',
+                      DELETE: 'delete',
+                    };
+                    const { createdRows, updatedRows } =
+                      childFileGridRef?.current
+                        ?.getInstance()
+                        ?.getModifiedRows();
+
+                    const fileData = []
+                      .concat(...createdRows)
+                      .concat(...updatedRows);
 
                     if (okType === 'json') {
                       clickProps.grid.setValue(
@@ -459,25 +465,36 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                         fileData,
                       );
                     } else if (okType === 'save') {
-                      const reference_uuid = rowData[reference_col];
-                      const apiRequestsDatas = [].concat(
-                        ...Object.keys(fileData).map(key => fileData[key]),
-                      );
+                      fileData.forEach(el => {
+                        el.uuid ??= el.file_mgmt_uuid;
+                        el.reference_uuid ??= rowData[reference_col];
+                        el.save_type ??= 'UPDATE';
 
-                      apiRequestsDatas.map(el => {
-                        el['reference_uuid'] = reference_uuid;
-                        if (!el['save_type']) {
-                          el['save_type'] = 'UPDATE';
-                        }
                         return el;
                       });
 
-                      await executeData(
-                        [].concat(...apiRequestsDatas),
-                        '/adm/file-mgmts',
-                        'post',
-                        'data',
+                      const groupDatas = fileData.reduce(
+                        (group, current) => (
+                          (group[current.save_type] = [
+                            ...(group[current.save_type] ?? []),
+                            current,
+                          ]),
+                          group
+                        ),
+                        {},
                       );
+
+                      const typedApiCaller = () =>
+                        Object.keys(groupDatas).map(saveType =>
+                          executeData(
+                            groupDatas[saveType],
+                            '/adm/file-mgmts',
+                            METHODS[saveType],
+                            'data',
+                          ),
+                        );
+                      await typedApiCaller();
+
                       close();
                     }
                   },
@@ -1383,7 +1400,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           if (props.gridMode === 'create') {
             editChk = false;
           } else if (chk !== -1) {
-            // 콤보박스인 경우
             const comboInfo = columnComboState?.find(
               el => el.columnName === columnName,
             );
@@ -1392,7 +1408,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
               comboInfo.type === 'code' ? el.code === value : el.text === value,
             );
 
-            // console.log(matchColumnName, comboInfo?.values[comboIndex][comboInfo.type === 'code' ? 'text' : 'code'])
             if (comboIndex !== -1) {
               instance.setValue(
                 rowKey,
