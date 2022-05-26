@@ -17,14 +17,14 @@ const ProgressHistoryService = class {
       : true;
   };
 
-  spanObject = (rowSpanKeys: string[], spanLength: number) => {
-    const spanObject = {};
+  getRowSpanAttributes = (rowSpanKeys: string[], spanLength: number) => {
+    const rowSpanAttributes = {};
 
     rowSpanKeys.forEach((key: string) => {
-      spanObject[key] = spanLength;
+      rowSpanAttributes[key] = spanLength;
     });
 
-    return spanObject;
+    return rowSpanAttributes;
   };
 
   dynamicColumns = (concreateColumns, dynamicColumns) => {

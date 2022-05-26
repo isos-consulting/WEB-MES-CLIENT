@@ -38,7 +38,7 @@ export const PgPrdProgressHistory = () => {
 
     for (let index = 0; index < raws.length / 5; index++) {
       raws[index * 5]._attributes = {
-        rowSpan: progressHistoryService.spanObject(rowSpanKeys, 5),
+        rowSpan: progressHistoryService.getRowSpanAttributes(rowSpanKeys, 5),
       };
     }
 
