@@ -12,6 +12,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 
 /** 품목관리 */
 export const PgStdProd = () => {
@@ -30,6 +31,17 @@ export const PgStdProd = () => {
   const grid = useGrid(
     'GRID',
     [
+      {
+        header: '파일첨부',
+        name: 'files',
+        width: ENUM_WIDTH.M,
+        format: 'file',
+        options: {
+          file_mgmt_type_cd: 'FIL_STD_PROD',
+          ok_type: 'save',
+          reference_col: 'prod_uuid',
+        },
+      },
       {
         header: '품목UUID',
         name: 'prod_uuid',
@@ -772,7 +784,12 @@ export const PgStdProd = () => {
 
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
+    cloneDeep(grid.gridInfo.columns).map(el => {
+      if (el.name === 'files') {
+        el.options['ok_type'] = 'json';
+      }
+      return el;
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
