@@ -214,8 +214,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     let newColumns = cloneDeep(props.columns);
 
     newColumns.forEach((el, colIndex) => {
-      console.log(el);
-
       if (el?.name === 'created_at') {
         chkCreateAtColumn = true;
       } else if (el?.name === 'updated_at') {
@@ -341,7 +339,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                 const { save_type, uuid, file_mgmt_uuid } =
                                   grid.getRow(rowKey);
 
-                                console.log(okType, save_type);
                                 if (
                                   okType === 'json' ||
                                   (okType === 'save' && save_type === 'CREATE')
