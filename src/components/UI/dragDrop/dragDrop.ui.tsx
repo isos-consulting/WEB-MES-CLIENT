@@ -10,7 +10,9 @@ import { OptRow } from 'tui-grid/types/options';
 import { executeData, getStorageValue } from '~/functions';
 import { Button } from '..';
 import './dragDrop.ui.styled.scss';
+import dotenv from 'dotenv';
 
+dotenv.config();
 interface IFileTypes {
   id: number;
   object: File;
@@ -53,7 +55,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
       'post',
       'data',
       false,
-      'http://isos.iptime.org:13225/',
+      process.env.FILE_SERVER_URL,
     );
 
     if (response.success) {

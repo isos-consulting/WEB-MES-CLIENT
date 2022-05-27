@@ -55,7 +55,9 @@ import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
 import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
+import dotenv from 'dotenv';
 
+dotenv.config();
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
 TuiGrid.setLanguage('ko', {
@@ -352,7 +354,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                     'delete',
                                     'data',
                                     false,
-                                    'http://isos.iptime.org:13225/',
+                                    process.env.FILE_SERVER_URL,
                                   );
 
                                   grid.removeRow(rowKey);
