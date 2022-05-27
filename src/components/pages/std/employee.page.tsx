@@ -13,6 +13,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
+import { cloneDeep } from 'lodash';
 
 /** 사원관리 */
 export const PgStdEmployee = () => {
@@ -31,6 +32,17 @@ export const PgStdEmployee = () => {
   const grid = useGrid(
     'GRID',
     [
+      {
+        header: '파일첨부',
+        name: 'files',
+        width: ENUM_WIDTH.M,
+        format: 'file',
+        options: {
+          file_mgmt_type_cd: 'FIL_STD_EMP',
+          ok_type: 'save',
+          reference_col: 'emp_uuid',
+        },
+      },
       {
         header: '사원UUID',
         name: 'emp_uuid',
@@ -301,7 +313,12 @@ export const PgStdEmployee = () => {
 
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
+    cloneDeep(grid.gridInfo.columns).map(el => {
+      if (el.name === 'files') {
+        el.options['ok_type'] = 'json';
+      }
+      return el;
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
