@@ -684,7 +684,16 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   if (item?.onAfterChange)
                                     item?.onAfterChange(e);
                                 }}
-                                label={item.label}
+                                label={
+                                  item.useCheckbox
+                                    ? null
+                                    : item.label
+                                    ? {
+                                        text: item.label,
+                                        important: item.important,
+                                      }
+                                    : null
+                                }
                                 placeholder={item.placeholder}
                                 defalutValue={[
                                   moment(
@@ -698,7 +707,6 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     ],
                                   ),
                                 ]}
-                                important={item.important}
                                 disabled={
                                   item?.useCheckbox
                                     ? !(
