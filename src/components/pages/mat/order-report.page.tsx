@@ -81,7 +81,7 @@ export const PgMatOrderReport = () => {
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'reg_date',
       ids: ['start_reg_date', 'end_reg_date'],
       defaults: [getToday(-7), getToday()],
@@ -90,7 +90,7 @@ export const PgMatOrderReport = () => {
       defaultChecked: true,
     },
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'due_date',
       ids: ['start_due_date', 'end_due_date'],
       defaults: [getToday(-7), getToday()],

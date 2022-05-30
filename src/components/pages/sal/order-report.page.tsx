@@ -44,7 +44,7 @@ export const PgSalOrdersReport = () => {
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'reg_date',
       ids: ['start_reg_date', 'end_reg_date'],
       defaults: [getToday(-7), getToday()],
@@ -53,14 +53,13 @@ export const PgSalOrdersReport = () => {
       defaultChecked: true,
     },
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'due_date',
       ids: ['start_due_date', 'end_due_date'],
       defaults: [getToday(-7), getToday()],
       label: '납기일',
       useCheckbox: true,
     },
-
     {
       type: 'radio',
       id: 'sort_type',

@@ -595,7 +595,7 @@ export const PgMatRelease = () => {
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'reg_date',
       ids: ['start_date', 'end_date'],
       label: '출고일',

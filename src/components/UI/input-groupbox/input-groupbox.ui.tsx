@@ -669,9 +669,22 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                               </div>
                             ) : item.type === 'rangepicker' ? (
                               <RangePicker
+                                id={item.id}
                                 ids={item.ids}
                                 names={item.names}
-                                label={item?.useCheckbox ? null : item.label}
+                                checkbox={item.useCheckbox}
+                                checked={
+                                  values[(item.name || item.id) + '_chk']
+                                }
+                                checkBoxOnChange={async e => {
+                                  await setFieldValued(
+                                    (item.name || item.id) + '_chk',
+                                    e.target.checked,
+                                  );
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                                label={item.label}
                                 placeholder={item.placeholder}
                                 defalutValue={[
                                   moment(
@@ -686,6 +699,15 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   ),
                                 ]}
                                 important={item.important}
+                                disabled={
+                                  item?.useCheckbox
+                                    ? !(
+                                        values[
+                                          (item.name || item.id) + '_chk'
+                                        ] === true
+                                      )
+                                    : item.disabled
+                                }
                                 widthSize={item.widthSize || 'flex'}
                                 onChange={async changedValues => {
                                   const values = item.names ?? item.ids;
