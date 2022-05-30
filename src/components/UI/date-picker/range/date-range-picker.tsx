@@ -85,7 +85,6 @@ const RangePicker: React.FC<RangeDatePickerProps> = props => {
     [props.onChange],
   );
 
-  console.log(props);
   return (
     <>
       <Space size={10} wrap>
