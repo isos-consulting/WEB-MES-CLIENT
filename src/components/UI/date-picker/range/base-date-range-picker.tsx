@@ -11,10 +11,8 @@ import Colors from '~styles/color.style.scss';
 import Sizes from '~styles/size.style.scss';
 import Fonts from '~styles/font.style.scss';
 import styled from 'styled-components';
-import { DatePicker, Space } from 'antd';
+import { DatePicker } from 'antd';
 import { getNow } from '~/functions';
-import { Label } from '../../label';
-import { Checkbox } from '../../checkbox';
 
 dayjs.locale('ko-kr');
 
@@ -26,17 +24,13 @@ dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 dayjs.extend(timezone);
 
+const disabledDate = current => current > dayjs(getNow(0).substring(0, 10));
 export interface BaseRangeDatePickerProps {
   id: string;
   ids: string;
   names?: string;
   placeholder?: string;
-  // checkbox: boolean;
-  // checked: boolean;
-  // checkBoxOnChange: Function;
-  // label?: string;
   defaultValue?: string | any;
-  // important?: boolean;
   disabled?: boolean;
   returnType?: 'date' | 'dateString';
   widthSize?: 'default' | 'auto' | 'flex' | number | string;
@@ -91,32 +85,12 @@ const BaseRangePicker: React.FC<BaseRangeDatePickerProps> = props => {
       names={props.names}
       defaultValue={props.defalutValue}
       onChange={onChange}
-      disabledDate={current => current > dayjs(getNow(0).substring(0, 10))}
+      disabledDate={disabledDate}
       placeholder={props.placeholder}
       disabled={props.disabled}
       widthSize={props.widthSize}
     />
   );
 };
-// <>
-{
-  /* <Space size={10} wrap> */
-}
-{
-  /* {props.checkbox ? ( */
-}
-//   <Checkbox
-//     id={props.id + '_chk'}
-//     code={props.id + '_chk'}
-//     name={(props.name || props.id) + '_chk'}
-//     text={props.label}
-//     checked={props.checked}
-//     onChange={props.checkBoxOnChange}
-//   />
-// ) : (
-//   <Label text={props.label} important={props.important} />
-// )}
-// </Space>
-// </>
 
 export default BaseRangePicker;
