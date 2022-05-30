@@ -11,8 +11,9 @@ import Colors from '~styles/color.style.scss';
 import Sizes from '~styles/size.style.scss';
 import Fonts from '~styles/font.style.scss';
 import styled from 'styled-components';
-import { DatePicker } from 'antd';
+import { DatePicker, Space } from 'antd';
 import { getNow } from '~/functions';
+import { Label } from '../../label';
 
 dayjs.locale('ko-kr');
 
@@ -28,7 +29,9 @@ export interface RangeDatePickerProps {
   ids: string;
   names?: string;
   placeholder?: string;
+  label?: string;
   defaultValue?: string | any;
+  important?: boolean;
   disabled?: boolean;
   returnType?: 'date' | 'dateString';
   widthSize?: 'default' | 'auto' | 'flex' | number | string;
@@ -78,16 +81,19 @@ const RangePicker: React.FC<RangeDatePickerProps> = props => {
   );
 
   return (
-    <ReangePickerWrapper
-      ids={props.ids}
-      names={props.names}
-      defaultValue={props.defalutValue}
-      onChange={onChange}
-      disabledDate={current => current > dayjs(getNow(1).substring(0, 10))}
-      placeholder={props.placeholder}
-      disabled={props.disabled}
-      widthSize={props.widthSize}
-    />
+    <Space size={10} wrap>
+      <Label text={props.label} important={props.important} />
+      <ReangePickerWrapper
+        ids={props.ids}
+        names={props.names}
+        defaultValue={props.defalutValue}
+        onChange={onChange}
+        disabledDate={current => current > dayjs(getNow(1).substring(0, 10))}
+        placeholder={props.placeholder}
+        disabled={props.disabled}
+        widthSize={props.widthSize}
+      />
+    </Space>
   );
 };
 

@@ -671,11 +671,13 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                               <RangePicker
                                 ids={item.ids}
                                 names={item.names}
+                                label={item?.useCheckbox ? null : item.label}
                                 placeholder={item.placeholder}
                                 defalutValue={[
                                   moment(_initialValues[item.names[0]]),
                                   moment(_initialValues[item.names[1]]),
                                 ]}
+                                important={item.important}
                                 widthSize={item.widthSize || 'flex'}
                                 onChange={async changedValues => {
                                   item.names.forEach(
