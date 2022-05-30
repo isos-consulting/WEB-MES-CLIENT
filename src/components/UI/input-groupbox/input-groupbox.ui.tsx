@@ -672,18 +672,26 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 id={item.id}
                                 ids={item.ids}
                                 names={item.names}
-                                checkbox={item.useCheckbox}
-                                checked={
-                                  values[(item.name || item.id) + '_chk']
+                                checkbox={
+                                  item.useCheckbox
+                                    ? {
+                                        id: `${item.id}_chk`,
+                                        code: `${item.id}_chk`,
+                                        name: `${item.name || item.id}_chk`,
+                                        text: item.label,
+                                        checked:
+                                          values[`${item.name || item.id}_chk`],
+                                        onChange: async e => {
+                                          await setFieldValued(
+                                            (item.name || item.id) + '_chk',
+                                            e.target.checked,
+                                          );
+                                          if (item?.onAfterChange)
+                                            item?.onAfterChange(e);
+                                        },
+                                      }
+                                    : null
                                 }
-                                checkBoxOnChange={async e => {
-                                  await setFieldValued(
-                                    (item.name || item.id) + '_chk',
-                                    e.target.checked,
-                                  );
-                                  if (item?.onAfterChange)
-                                    item?.onAfterChange(e);
-                                }}
                                 label={
                                   item.useCheckbox
                                     ? null
