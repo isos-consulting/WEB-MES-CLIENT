@@ -88,7 +88,7 @@ const RangePicker: React.FC<RangeDatePickerProps> = props => {
         names={props.names}
         defaultValue={props.defalutValue}
         onChange={onChange}
-        disabledDate={current => current > dayjs(getNow(1).substring(0, 10))}
+        disabledDate={current => current > dayjs(getNow(0).substring(0, 10))}
         placeholder={props.placeholder}
         disabled={props.disabled}
         widthSize={props.widthSize}

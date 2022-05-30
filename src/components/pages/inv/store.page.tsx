@@ -726,7 +726,7 @@ export const PgInvStore = () => {
   const invStroeUriPath = '/inv/stores';
   const invStoreSearchItems: ISearchItem[] = [
     {
-      type: 'daterange',
+      type: 'rangepicker',
       id: 'reg_date',
       ids: ['start_date', 'end_date'],
       defaults: [getToday(-7), getToday()],
