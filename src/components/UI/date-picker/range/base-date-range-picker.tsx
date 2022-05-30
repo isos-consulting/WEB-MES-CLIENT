@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -67,24 +67,12 @@ export const ReangePickerWrapper = styled(DatePicker.RangePicker)`
 `;
 
 const BaseRangePicker: React.FC<BaseRangeDatePickerProps> = props => {
-  const onChange = useCallback(
-    (dates, dateStrings) => {
-      let returnValue = props.returnType === 'dateString' ? dateStrings : dates;
-
-      if ((returnValue === '' || returnValue == null) && props.defaultValue)
-        returnValue = props.defaultValue;
-
-      if (props.onChange) props.onChange(returnValue);
-    },
-    [props.onChange],
-  );
-
   return (
     <ReangePickerWrapper
       ids={props.ids}
       names={props.names}
       defaultValue={props.defalutValue}
-      onChange={onChange}
+      onChange={props.onChange}
       disabledDate={disabledDate}
       placeholder={props.placeholder}
       disabled={props.disabled}
