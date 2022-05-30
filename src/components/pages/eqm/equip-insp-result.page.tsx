@@ -545,7 +545,7 @@ export const PgEqmInspResult = () => {
       ids: ['start_date', 'end_date'],
       names: ['start_date', 'end_date'],
       defaults: [getToday(-6), getToday()],
-      type: 'daterange',
+      type: 'rangepicker',
       label: '기간',
     },
     {
