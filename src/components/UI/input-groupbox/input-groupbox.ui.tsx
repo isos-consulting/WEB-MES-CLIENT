@@ -672,9 +672,10 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 id={item.id}
                                 ids={item.ids}
                                 names={item.names}
-                                checkbox={
-                                  item.useCheckbox
-                                    ? {
+                                children={
+                                  item.useCheckbox ? (
+                                    <Checkbox
+                                      {...{
                                         id: `${item.id}_chk`,
                                         code: `${item.id}_chk`,
                                         name: `${item.name || item.id}_chk`,
@@ -689,18 +690,16 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                           if (item?.onAfterChange)
                                             item?.onAfterChange(e);
                                         },
-                                      }
-                                    : null
-                                }
-                                label={
-                                  item.useCheckbox
-                                    ? null
-                                    : item.label
-                                    ? {
+                                      }}
+                                    />
+                                  ) : item.label ? (
+                                    <Label
+                                      {...{
                                         text: item.label,
                                         important: item.important,
-                                      }
-                                    : null
+                                      }}
+                                    />
+                                  ) : null
                                 }
                                 placeholder={item.placeholder}
                                 defalutValue={[

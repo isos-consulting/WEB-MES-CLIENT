@@ -1,26 +1,27 @@
+import { Space } from 'antd';
 import React from 'react';
 import BaseRangePicker, {
   BaseRangeDatePickerProps,
 } from './base-date-range-picker';
-import CheckBoxRangeDataPiacker from './checkbox-date-range-picker';
-import LabelRangeDataPiacker from './label-date-range-picker';
 
-export interface RangeDatePickerProps extends BaseRangeDatePickerProps {
-  ILabelProps;
-  ICheckboxProps;
+export interface RangeDatePickerProps<T> extends BaseRangeDatePickerProps {
+  children: T;
 }
 
-const RangePicker: React.FC<RangeDatePickerProps> = ({
+const RangePicker: <T>(
+  t: React.PropsWithChildren<RangeDatePickerProps<T>>,
+) => React.ReactElementRangeDatePickerProps<T> = ({
   checkbox,
   label,
   ...pickerProps
 }) => {
-  return checkbox ? (
-    <CheckBoxRangeDataPiacker {...{ checkbox, ...pickerProps }} />
-  ) : label ? (
-    <LabelRangeDataPiacker {...{ label, ...pickerProps }} />
-  ) : (
-    <BaseRangePicker {...pickerProps} />
+  return (
+    <>
+      <Space size={10} wrap>
+        {pickerProps.children}
+        <BaseRangePicker {...pickerProps} />
+      </Space>
+    </>
   );
 };
 
