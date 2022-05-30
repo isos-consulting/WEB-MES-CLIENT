@@ -674,13 +674,23 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 label={item?.useCheckbox ? null : item.label}
                                 placeholder={item.placeholder}
                                 defalutValue={[
-                                  moment(_initialValues[item.names[0]]),
-                                  moment(_initialValues[item.names[1]]),
+                                  moment(
+                                    _initialValues[
+                                      item.names?.[0] ?? item.ids?.[0]
+                                    ],
+                                  ),
+                                  moment(
+                                    _initialValues[
+                                      item.names?.[1] ?? item.ids?.[1]
+                                    ],
+                                  ),
                                 ]}
                                 important={item.important}
                                 widthSize={item.widthSize || 'flex'}
                                 onChange={async changedValues => {
-                                  item.names.forEach(
+                                  const values = item.names ?? item.ids;
+
+                                  values.forEach(
                                     async (fieldName, fieldIndex) => {
                                       await setFieldValue(
                                         fieldName,
