@@ -265,6 +265,7 @@ export const executeData = async (
     | 'value'
     | 'message'
     | 'success'
+    | 'blob'
     | 'original' = 'data',
   disableErrorMessage: boolean = false,
   optionBaseURL: string = baseURL,
@@ -278,6 +279,7 @@ export const executeData = async (
       baseURL: optionBaseURL,
       url: uriPath,
       data: data,
+      responseType: returnType === 'blob' ? 'blob' : 'json',
       headers: {
         'file-included': true,
         authorization: getUserAccessToken(),
