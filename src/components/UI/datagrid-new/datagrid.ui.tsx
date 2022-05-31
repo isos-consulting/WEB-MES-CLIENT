@@ -16,6 +16,7 @@ import {
 import {
   executeData,
   getData,
+  getUserFactoryUuid,
   setGridFocus,
   setNumberToDigit,
 } from '~/functions';
@@ -411,6 +412,49 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                             header: '비고',
                             name: 'remark',
                             editable: true,
+                          },
+                          {
+                            header: '다운로드',
+                            name: 'download',
+                            width: ENUM_WIDTH.S,
+                            format: 'button',
+                            options: {
+                              value: '다운로드',
+                              onClick: async (subEv, { grid, rowKey }) => {
+                                const {
+                                  save_type,
+                                  file_mgmt_uuid,
+                                  file_extension,
+                                  file_nm,
+                                } = grid.getRow(rowKey);
+
+                                if (
+                                  okType === 'json' ||
+                                  (okType === 'save' && save_type === 'CREATE')
+                                ) {
+                                  message.warn(
+                                    '임시 저장 파일은 다운로드 할 수 없습니다',
+                                  );
+                                } else {
+                                  const blob = await executeData(
+                                    {},
+                                    `tenant/${getUserFactoryUuid()}/file/${file_mgmt_uuid}/download`,
+                                    'post',
+                                    'blob',
+                                    false,
+                                    process.env.FILE_SERVER_URL,
+                                  );
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = `${file_nm}.${file_extension}`;
+                                  document.body.appendChild(a);
+                                  a.click();
+                                  a.remove();
+                                  URL.revokeObjectURL(blob);
+                                }
+                              },
+                            },
                           },
                         ]}
                         gridComboInfo={[
