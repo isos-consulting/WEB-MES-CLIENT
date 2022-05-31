@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import { useGrid } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
-import { getData, getPageName } from '~/functions';
+import { dataGridEvents, getData, getPageName } from '~/functions';
 
 enum TenantHeaderOptions {
   gridName = 'Grid',
@@ -13,7 +13,37 @@ enum TenantHeaderOptions {
 }
 
 export const PgStdTenantOption = () => {
-  const [, modalContext] = Modal.useModal();
+  const handleSearchButtonClick = async () => {
+    const tenantOptData = await getData([], TenantHeaderOptions.searchUriPath);
+
+    grid.setGridData(tenantOptData);
+  };
+
+  const handleSaveButtonClick = () => {
+    const { gridRef, setGridMode } = grid;
+    const { columns, saveUriPath } = grid.gridInfo;
+
+    dataGridEvents.onSave(
+      'basic',
+      {
+        gridRef,
+        setGridMode,
+        columns,
+        saveUriPath,
+      },
+      null,
+      modal,
+      handleSearchButtonClick,
+    );
+  };
+
+  const handleEditCancelAction = () => {
+    const { gridRef, setGridMode } = grid;
+    const { columns } = grid.gridInfo;
+    dataGridEvents.onCancel(gridRef, setGridMode, columns, modal);
+  };
+
+  const [modal, modalContext] = Modal.useModal();
   const grid = useGrid(
     TenantHeaderOptions.gridName,
     [
@@ -63,23 +93,12 @@ export const PgStdTenantOption = () => {
   );
 
   const buttonActions = {
-    search: async () => {
-      const tenantOptData = await getData(
-        [],
-        TenantHeaderOptions.searchUriPath,
-      );
-
-      grid.setGridData(tenantOptData);
-    },
+    search: handleSearchButtonClick,
     update: () => {
       toggle(!editTenantDataModalVisible);
     },
-    save: () => {
-      () => {};
-    },
-    cancelEdit: () => {
-      () => {};
-    },
+    save: handleSaveButtonClick,
+    cancelEdit: handleEditCancelAction,
   };
 
   const [editTenantDataModalVisible, toggle] = useState<boolean>(false);
