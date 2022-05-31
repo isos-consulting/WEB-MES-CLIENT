@@ -144,11 +144,13 @@ const MenuService = class {
   };
 
   updateRecordValid = (
-    { parent_uuid, menu_uri, menu_type_uuid },
+    { parent_uuid, menu_nm, menu_uri, menu_type_uuid },
     { prefix, surfix },
   ) => {
     return parent_uuid == null || parent_uuid === ''
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      : menu_nm == null || menu_nm === ''
+      ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
       : menu_type_uuid == null ||
         menu_type_uuid === '' ||
         menu_type_uuid === '-'
