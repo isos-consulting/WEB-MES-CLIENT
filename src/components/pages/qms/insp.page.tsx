@@ -412,6 +412,17 @@ export const PgQmsInsp = () => {
   ]
 
   const detailGridColumns:IGridColumn[] = [
+    {
+      header: '파일첨부',
+      name: 'files',
+      width: ENUM_WIDTH.M,
+      format: 'file',
+      options: {
+        file_mgmt_type_cd: 'FIL_QMS_INSP',
+        ok_type: 'save',
+        reference_col: 'insp_uuid',
+      },
+    },
     {header:'기준서유형코드', name:'insp_type_cd', width:ENUM_WIDTH.M, filter:'text', hidden:true},
     {header:'기준서유형', name:'insp_type_nm', width:ENUM_WIDTH.M, filter:'text', align:'center'},
     {
