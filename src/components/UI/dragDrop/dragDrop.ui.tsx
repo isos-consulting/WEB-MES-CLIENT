@@ -10,6 +10,7 @@ import { OptRow } from 'tui-grid/types/options';
 import { executeData, getStorageValue } from '~/functions';
 import { Button } from '..';
 import './dragDrop.ui.styled.scss';
+import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -79,7 +80,11 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   // };
 
   const appendRow = file => {
-    gridRef.current?.getInstance().appendRow({ ...file, save_type: 'CREATE' });
+    gridRef.current?.getInstance().appendRow({
+      ...file,
+      save_type: 'CREATE',
+      _edit: EDIT_ACTION_CODE.CREATE,
+    });
   };
 
   const putUserFileInfo = async (userFile: File) => {
