@@ -1,4 +1,5 @@
-import React from 'react';
+import Modal from 'antd/lib/modal/Modal';
+import React, { useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import { useGrid } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
@@ -11,12 +12,8 @@ enum TenantHeaderOptions {
   saveUriPath = '/std/tenant-opts',
 }
 
-enum PopupGrid {
-  new = 'NEW_DATA_POPUP_GRID',
-  edit = 'EDIT_POPUP_GRID',
-}
-
 export const PgStdTenantOption = () => {
+  const [, modalContext] = Modal.useModal();
   const grid = useGrid(
     TenantHeaderOptions.gridName,
     [
@@ -34,7 +31,6 @@ export const PgStdTenantOption = () => {
         name: 'tenant_opt_cd',
         width: ENUM_WIDTH.XL,
         filter: 'text',
-        editable: true,
         requiredField: true,
       },
       {
@@ -42,7 +38,6 @@ export const PgStdTenantOption = () => {
         name: 'tenant_opt_nm',
         width: ENUM_WIDTH.XL,
         filter: 'text',
-        editable: true,
         requiredField: true,
       },
       {
@@ -58,7 +53,6 @@ export const PgStdTenantOption = () => {
         name: 'remark',
         width: ENUM_WIDTH.XXL,
         filter: 'text',
-        editable: true,
       },
     ],
     {
@@ -78,13 +72,7 @@ export const PgStdTenantOption = () => {
       grid.setGridData(tenantOptData);
     },
     update: () => {
-      () => {};
-    },
-    delete: () => {
-      () => {};
-    },
-    create: () => {
-      () => {};
+      toggle(!editTenantDataModalVisible);
     },
     save: () => {
       () => {};
@@ -94,6 +82,17 @@ export const PgStdTenantOption = () => {
     },
   };
 
+  const [editTenantDataModalVisible, toggle] = useState<boolean>(false);
+
+  const editTenantDataModalGrid = useGrid(
+    'EDIT_MODAL_GRID',
+    grid.gridInfo.columns,
+    {
+      seachUriPath: TenantHeaderOptions.searchUriPath,
+      saveUriPath: TenantHeaderOptions.saveUriPath,
+    },
+  );
+
   const tenantOptionTemplateProps = {
     title: getPageName(),
     dataSaveType: 'basic',
@@ -101,12 +100,13 @@ export const PgStdTenantOption = () => {
     gridInfo: grid.gridInfo,
     searchProps: null,
     inputProps: null,
-    popupGridRef: [],
-    popupGridInfo: [],
-    popupVisible: [],
-    setPopupVisible: [],
+    popupGridRef: [, editTenantDataModalGrid.gridRef],
+    popupGridInfo: [, editTenantDataModalGrid.gridInfo],
+    popupVisible: [, editTenantDataModalVisible],
+    setPopupVisible: [, toggle],
     popupInputProps: [null, null],
     buttonActions,
+    modalContext,
   };
   return <TpSingleGrid {...tenantOptionTemplateProps} />;
 };
