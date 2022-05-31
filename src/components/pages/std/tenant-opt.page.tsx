@@ -2,7 +2,7 @@ import React from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import { useGrid } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
-import { getPageName } from '~/functions';
+import { getData, getPageName } from '~/functions';
 
 enum TenantHeaderOptions {
   gridName = 'Grid',
@@ -111,8 +111,13 @@ export const PgStdTenantOption = () => {
   );
 
   const buttonActions = {
-    search: () => {
-      () => {};
+    search: async () => {
+      const tenantOptData = await getData(
+        [],
+        TenantHeaderOptions.searchUriPath,
+      );
+
+      grid.setGridData(tenantOptData);
     },
     update: () => {
       () => {};
