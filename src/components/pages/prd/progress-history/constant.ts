@@ -16,8 +16,8 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
   {
     header: '일자',
     name: 'reg_date',
-    width: ENUM_WIDTH.XL,
-    format: 'datetime',
+    width: ENUM_WIDTH.S,
+    format: 'date',
     align: 'center',
   },
   {
@@ -63,8 +63,16 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
   {
     header: '규격',
     name: 'prod_std',
-    width: ENUM_WIDTH.M,
+    width: ENUM_WIDTH.S,
     filter: 'text',
+    align: 'center',
+  },
+  {
+    header: '수량',
+    name: 'order_qty',
+    width: ENUM_WIDTH.M,
+    format: 'number',
+    filter: 'number',
     align: 'center',
   },
   {
@@ -85,4 +93,5 @@ export const rowSpanKeys: string[] = [
   'prod_nm',
   'item_type_nm',
   'prod_std',
+  'order_qty',
 ];
