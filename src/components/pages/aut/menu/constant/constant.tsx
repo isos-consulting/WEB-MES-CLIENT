@@ -54,7 +54,7 @@ const menuUsedRadios = [
 export const menuInputGroupBoxs: IInputGroupboxItem[] = [
   {type: "text", id: "parent_nm", label: "상위메뉴 이름", usePopup: true, popupKey: "메뉴관리", popupKeys: ["parent_uuid", "parent_nm"], popupButtonSettings: menuGridPopupButtonSettings, },
   {type: "text", id: "parent_uuid", label: "parent_uuid", disabled: true, hidden: true, required: true},
-  {type: "text", id: "menu_nm_edit", label: "메뉴 이름", usePopup: true, popupKey: "메뉴관리", popupKeys: ["uuid", "menu_nm_edit", "use_fg", "component_nm", "menu_uri","menu_type_uuid"], popupButtonSettings: menuGridPopupButtonSettings2, required: true},
+  {type: "text", id: "menu_nm_edit", label: "메뉴 이름", usePopup: true, popupKey: "메뉴관리", popupKeys: ["uuid", "menu_nm_edit", "menu_nm", "use_fg", "component_nm", "menu_uri","menu_type_uuid"], popupButtonSettings: menuGridPopupButtonSettings2, required: true},
   {type: "text", id: "uuid", label: "uuid", disabled: true, hidden: true, required: true},
   {type: "text", id: "menu_nm", label: "신규메뉴 이름", disabled: false},
   {type: "text", id: "sortby", label: "정렬순서"},
