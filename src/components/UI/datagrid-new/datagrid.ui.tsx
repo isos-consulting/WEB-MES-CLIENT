@@ -360,8 +360,14 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                   grid.removeRow(rowKey);
                                 } else {
                                   if (save_type === 'DELETE') {
+                                    grid.setValue(rowKey, COLUMN_CODE.EDIT, '');
                                     grid.setValue(rowKey, 'save_type', '');
                                   } else {
+                                    grid.setValue(
+                                      rowKey,
+                                      COLUMN_CODE.EDIT,
+                                      EDIT_ACTION_CODE.DELETE,
+                                    );
                                     grid.setValue(
                                       rowKey,
                                       'save_type',
