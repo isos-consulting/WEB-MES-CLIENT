@@ -7,7 +7,7 @@ export const searchFields: ISearchItem[] = [
     ids: ['start_date', 'end_date'],
     names: ['start_date', 'end_date'],
     defaults: ['', ''],
-    type: 'rangepicker',
+    type: 'daterange',
     label: '기간',
   },
 ];

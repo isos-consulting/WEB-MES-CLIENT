@@ -57,7 +57,7 @@ export const PgInvStoresTypeHistory = () => {
   /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
-      type: 'rangepicker',
+      type: 'daterange',
       id: 'reg_date',
       ids: ['start_date', 'end_date'],
       defaults: [getToday(-7), getToday()],

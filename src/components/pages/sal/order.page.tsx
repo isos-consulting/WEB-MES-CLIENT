@@ -671,7 +671,7 @@ export const PgSalOrder = () => {
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
     {
-      type: 'rangepicker',
+      type: 'daterange',
       id: 'reg_date',
       ids: ['start_date', 'end_date'],
       defaults: [getToday(-7), getToday()],
