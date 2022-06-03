@@ -16,7 +16,7 @@ import {
 import {
   executeData,
   getData,
-  getUserFactoryUuid,
+  getStorageValue,
   setGridFocus,
   setNumberToDigit,
 } from '~/functions';
@@ -438,7 +438,10 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                 } else {
                                   const blob = await executeData(
                                     {},
-                                    `tenant/${getUserFactoryUuid()}/file/${file_mgmt_uuid}/download`,
+                                    `tenant/${getStorageValue({
+                                      storageName: 'tenantInfo',
+                                      keyName: 'tenantUuid',
+                                    })}/file/${file_mgmt_uuid}/download`,
                                     'post',
                                     'blob',
                                     false,
