@@ -14,7 +14,7 @@ export const searchFields: ISearchItem[] = [
 
 export const concreteProgressHistoryGridColumns: IGridColumn[] = [
   {
-    header: '일자',
+    header: '지시일자',
     name: 'reg_date',
     width: ENUM_WIDTH.S,
     format: 'date',
@@ -68,7 +68,7 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
     align: 'center',
   },
   {
-    header: '수량',
+    header: '지시수량',
     name: 'order_qty',
     width: ENUM_WIDTH.M,
     format: 'number',
