@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 
-const randomValue = () => (Math.random() * 100) % 50;
+const randomValue = () => Math.ceil((Math.random() * 100) % 100);
 
 const dailyApiMock = () =>
   new Promise(res =>
@@ -308,9 +308,19 @@ const dailyApiMock = () =>
 const realTimeAPIMock = () =>
   new Promise(res =>
     res([
-      { title: '설비가동율', value: '70', color: '#788EE0', unit: '%' },
-      { title: '불량율', value: '10', color: '#fe4762', unit: '%' },
-      { title: '생산진척율', value: '45', color: '#ff8b0a', unit: '%' },
+      {
+        title: '설비가동율',
+        value: randomValue(),
+        color: '#788EE0',
+        unit: '%',
+      },
+      { title: '불량율', value: randomValue(), color: '#fe4762', unit: '%' },
+      {
+        title: '생산진척율',
+        value: randomValue(),
+        color: '#ff8b0a',
+        unit: '%',
+      },
     ]),
   );
 
