@@ -7,6 +7,8 @@ import dayjs from 'dayjs';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 
+const randomValue = () => (Math.random() * 100) % 50;
+
 const dailyApiMock = () =>
   new Promise(res =>
     res({
@@ -15,31 +17,31 @@ const dailyApiMock = () =>
           label: '매입금액',
           data: [
             {
-              y: 1,
+              y: randomValue(),
               x: '월',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '화',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '수',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '목',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '금',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '토',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '일',
             },
           ],
@@ -49,31 +51,31 @@ const dailyApiMock = () =>
           label: '매출금액',
           data: [
             {
-              y: 0,
+              y: randomValue(),
               x: '월',
             },
             {
-              y: 5,
+              y: randomValue(),
               x: '화',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '수',
             },
             {
-              y: 6,
+              y: randomValue(),
               x: '목',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '금',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '토',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '일',
             },
           ],
@@ -85,51 +87,51 @@ const dailyApiMock = () =>
           label: '매입금액',
           data: [
             {
-              y: 1,
+              y: randomValue(),
               x: '1월',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '2월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '3월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '4월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '5월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '6월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '7월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '8월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '9월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '10월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '11월',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '12월',
             },
           ],
@@ -139,51 +141,51 @@ const dailyApiMock = () =>
           label: '매출금액',
           data: [
             {
-              y: 0,
+              y: randomValue(),
               x: '1월',
             },
             {
-              y: 5,
+              y: randomValue(),
               x: '2월',
             },
             {
-              y: 16,
+              y: randomValue(),
               x: '3월',
             },
             {
-              y: 4,
+              y: randomValue(),
               x: '4월',
             },
             {
-              y: 3,
+              y: randomValue(),
               x: '5월',
             },
             {
-              y: 2,
+              y: randomValue(),
               x: '6월',
             },
             {
-              y: 8,
+              y: randomValue(),
               x: '7월',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '8월',
             },
             {
-              y: 7,
+              y: randomValue(),
               x: '9월',
             },
             {
-              y: 2,
+              y: randomValue(),
               x: '10월',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '11월',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '12월',
             },
           ],
@@ -195,51 +197,51 @@ const dailyApiMock = () =>
           label: '매입금액',
           data: [
             {
-              y: 1,
+              y: randomValue(),
               x: '2011',
             },
             {
-              y: 10,
+              y: randomValue(),
               x: '2012',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2013',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2014',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2015',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2016',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2017',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2018',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2019',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2020',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2021',
             },
             {
-              y: 0,
+              y: randomValue(),
               x: '2022',
             },
           ],
@@ -249,51 +251,51 @@ const dailyApiMock = () =>
           label: '매출금액',
           data: [
             {
-              y: 150,
+              y: randomValue(),
               x: '2011',
             },
             {
-              y: 500,
+              y: randomValue(),
               x: '2012',
             },
             {
-              y: 160,
+              y: randomValue(),
               x: '2013',
             },
             {
-              y: 400,
+              y: randomValue(),
               x: '2014',
             },
             {
-              y: 130,
+              y: randomValue(),
               x: '2015',
             },
             {
-              y: 200,
+              y: randomValue(),
               x: '2016',
             },
             {
-              y: 80,
+              y: randomValue(),
               x: '2017',
             },
             {
-              y: 100,
+              y: randomValue(),
               x: '2018',
             },
             {
-              y: 754,
+              y: randomValue(),
               x: '2019',
             },
             {
-              y: 200,
+              y: randomValue(),
               x: '2020',
             },
             {
-              y: 1000,
+              y: randomValue(),
               x: '2021',
             },
             {
-              y: 100,
+              y: randomValue(),
               x: '2022',
             },
           ],
