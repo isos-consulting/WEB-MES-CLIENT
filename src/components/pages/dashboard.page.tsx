@@ -1,124 +1,385 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { getData } from '~/functions';
-import { Card, Col, Row, Statistic } from 'antd';
+import { Card, Col, Row } from 'antd';
 import { BarGraph, PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
 import dayjs from 'dayjs';
+import Meta from 'antd/lib/card/Meta';
+import LineChart from '../UI/graph/chart-line.ui';
+
+const dailyApiMock = () =>
+  new Promise(res =>
+    res({
+      daily: [
+        {
+          label: '매입금액',
+          data: [
+            {
+              y: 1,
+              x: '월',
+            },
+            {
+              y: 10,
+              x: '화',
+            },
+            {
+              y: 0,
+              x: '수',
+            },
+            {
+              y: 0,
+              x: '목',
+            },
+            {
+              y: 0,
+              x: '금',
+            },
+            {
+              y: 0,
+              x: '토',
+            },
+            {
+              y: 0,
+              x: '일',
+            },
+          ],
+          borderColor: '#788ee0',
+        },
+        {
+          label: '매출금액',
+          data: [
+            {
+              y: 0,
+              x: '월',
+            },
+            {
+              y: 5,
+              x: '화',
+            },
+            {
+              y: 10,
+              x: '수',
+            },
+            {
+              y: 6,
+              x: '목',
+            },
+            {
+              y: 0,
+              x: '금',
+            },
+            {
+              y: 0,
+              x: '토',
+            },
+            {
+              y: 0,
+              x: '일',
+            },
+          ],
+          borderColor: '#fe4762',
+        },
+      ],
+      monthly: [
+        {
+          label: '매입금액',
+          data: [
+            {
+              y: 1,
+              x: '1월',
+            },
+            {
+              y: 10,
+              x: '2월',
+            },
+            {
+              y: 0,
+              x: '3월',
+            },
+            {
+              y: 0,
+              x: '4월',
+            },
+            {
+              y: 0,
+              x: '5월',
+            },
+            {
+              y: 0,
+              x: '6월',
+            },
+            {
+              y: 0,
+              x: '7월',
+            },
+            {
+              y: 0,
+              x: '8월',
+            },
+            {
+              y: 0,
+              x: '9월',
+            },
+            {
+              y: 0,
+              x: '10월',
+            },
+            {
+              y: 0,
+              x: '11월',
+            },
+            {
+              y: 0,
+              x: '12월',
+            },
+          ],
+          borderColor: '#788ee0',
+        },
+        {
+          label: '매출금액',
+          data: [
+            {
+              y: 0,
+              x: '1월',
+            },
+            {
+              y: 5,
+              x: '2월',
+            },
+            {
+              y: 16,
+              x: '3월',
+            },
+            {
+              y: 4,
+              x: '4월',
+            },
+            {
+              y: 3,
+              x: '5월',
+            },
+            {
+              y: 2,
+              x: '6월',
+            },
+            {
+              y: 8,
+              x: '7월',
+            },
+            {
+              y: 10,
+              x: '8월',
+            },
+            {
+              y: 7,
+              x: '9월',
+            },
+            {
+              y: 2,
+              x: '10월',
+            },
+            {
+              y: 10,
+              x: '11월',
+            },
+            {
+              y: 10,
+              x: '12월',
+            },
+          ],
+          borderColor: '#fe4762',
+        },
+      ],
+      yearly: [
+        {
+          label: '매입금액',
+          data: [
+            {
+              y: 1,
+              x: '2011',
+            },
+            {
+              y: 10,
+              x: '2012',
+            },
+            {
+              y: 0,
+              x: '2013',
+            },
+            {
+              y: 0,
+              x: '2014',
+            },
+            {
+              y: 0,
+              x: '2015',
+            },
+            {
+              y: 0,
+              x: '2016',
+            },
+            {
+              y: 0,
+              x: '2017',
+            },
+            {
+              y: 0,
+              x: '2018',
+            },
+            {
+              y: 0,
+              x: '2019',
+            },
+            {
+              y: 0,
+              x: '2020',
+            },
+            {
+              y: 0,
+              x: '2021',
+            },
+            {
+              y: 0,
+              x: '2022',
+            },
+          ],
+          borderColor: '#788ee0',
+        },
+        {
+          label: '매출금액',
+          data: [
+            {
+              y: 150,
+              x: '2011',
+            },
+            {
+              y: 500,
+              x: '2012',
+            },
+            {
+              y: 160,
+              x: '2013',
+            },
+            {
+              y: 400,
+              x: '2014',
+            },
+            {
+              y: 130,
+              x: '2015',
+            },
+            {
+              y: 200,
+              x: '2016',
+            },
+            {
+              y: 80,
+              x: '2017',
+            },
+            {
+              y: 100,
+              x: '2018',
+            },
+            {
+              y: 754,
+              x: '2019',
+            },
+            {
+              y: 200,
+              x: '2020',
+            },
+            {
+              y: 1000,
+              x: '2021',
+            },
+            {
+              y: 100,
+              x: '2022',
+            },
+          ],
+          borderColor: '#fe4762',
+        },
+      ],
+    }),
+  );
+
+const realTimeAPIMock = () =>
+  new Promise(res =>
+    res([
+      { title: '설비가동율', value: '70', color: '#788EE0', unit: '%' },
+      { title: '불량율', value: '10', color: '#fe4762', unit: '%' },
+      { title: '생산진척율', value: '45', color: '#ff8b0a', unit: '%' },
+    ]),
+  );
 
 export const Dashboard = () => {
-  const [productionData, setProductionData] = useState<object>([]);
-  const [qualityData, setQualityData] = useState<object>([]);
-  const [delayedSalOrderData, setDelayedSalOrderData] = useState<object>([]);
-  const [operatingeRateData, setOperatingeRateData] = useState<object>([]);
-  const [deliveredInWeekData, setDeliveredInWeekData] = useState<object>([]);
-
-  const onSearchDashboardDatas = async () => {
-    // await getData(null, URL_PATH_DAS.WORK_COMPARED_ORDER.GET.WORK_COMPARED_ORDER, 'raws').then((res) => {
-    //   if (res) {
-    //     [{"id": "id","value": 0},{"id": "make2","value": 1}]
-    //   };
-    //   setProductionData(res);
-    // });
-    // await getData(null, URL_PATH_DAS.PASSED_INSP_RESULT.GET.PASSED_INSP_RESULT, 'raws').then((res) => {
-    //   setQualityData(res);
-    // });
-    // await getData(null, URL_PATH_DAS.DELAYED_SAL_ORDER.GET.DELAYED_SAL_ORDER, 'raws').then((res) => {
-    //   setDelayedSalOrderData(res);
-    // });
-    // await getData(null, URL_PATH_DAS.OPERATING_RATE.GET.OPERATING_RATE, 'raws').then((res) => {
-    //   setOperatingeRateData(res);
-    // });
-    // await getData(null, URL_PATH_DAS.DELIVERED_IN_WEEK.GET.DELIVERED_IN_WEEK, 'raws').then((res) => {
-    //   const datas:object[] = res.map((el)=> {
-    //     el['date'] = dayjs(el.date).format('YYYY-MM-DD')
-    //     return el
-    //   });
-    //   setDeliveredInWeekData(res);
-    // });
-  };
+  const [current, chageTarget] = useState<string>('daily');
+  const graphSets = dailyApiMock();
+  const chartSets = realTimeAPIMock();
+  const [totalGraphDataSets, setTotalGraphDataSets] = useState<object>([]);
+  const [realTimeChartDataSets, setRealTimeChartDataSets] = useState<object>(
+    [],
+  );
 
   useLayoutEffect(() => {
-    onSearchDashboardDatas();
-  }, []);
+    graphSets.then(res => setTotalGraphDataSets(res[current]));
+    chartSets.then(setRealTimeChartDataSets);
+  }, [current]);
 
   return (
     <div>
-      <Row gutter={[16, 16]}>
-        <Col span={6}>
-          <PercentPie
-            id="work"
-            title="생산실적"
-            extra={<a href="#">{'상세보기 >'}</a>}
-            height={180}
-            data={productionData}
-          />
-        </Col>
-        <Col span={6}>
-          <PercentPie
-            id="insp"
-            title="품질실적"
-            extra={<a href="#">{'상세보기 >'}</a>}
-            height={180}
-            data={qualityData}
-          />
-        </Col>
-        <Col span={6}>
-          <Card
-            title="미납현황"
-            headStyle={{}}
-            extra={<a href="#">{'상세보기 >'}</a>}
-          >
-            <div
-              style={{
-                display: 'flex',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
+      <div
+        className="chart-container"
+        style={{ height: '59vh', margin: '1vh', backgroundColor: '#ffffff' }}
+      >
+        <Row gutter={[16, 16]}>
+          <Col span={24} key={'outgo'}>
+            <Card
+              title="종합현황"
+              extra={
+                <>
+                  <button
+                    onClick={() => {
+                      chageTarget('daily');
+                    }}
+                  >
+                    일별
+                  </button>
+                  <button
+                    onClick={() => {
+                      chageTarget('monthly');
+                    }}
+                  >
+                    월별
+                  </button>
+                  <button
+                    onClick={() => {
+                      chageTarget('yearly');
+                    }}
+                  >
+                    연도별
+                  </button>
+                </>
+              }
+              headStyle={{}}
+              bodyStyle={{
+                height: 'Calc(59vh - 70px)',
               }}
             >
-              <Statistic
-                title={delayedSalOrderData[0]?.label}
-                value={delayedSalOrderData[0]?.value}
-                suffix={'건'}
-                style={{
-                  height: 190,
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
+              <LineChart
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                }}
+                data={{
+                  datasets: totalGraphDataSets,
                 }}
               />
-            </div>
-          </Card>
-        </Col>
-        <Col span={6}>
-          <PercentPie
-            id="equip"
-            title="가동율"
-            extra={<a href="#">{'상세보기 >'}</a>}
-            height={180}
-            data={operatingeRateData}
-          />
-        </Col>
-      </Row>
-      <Row gutter={[16, 16]}>
-        <Col span={24} key={'outgo'}>
-          <Card
-            title="출하 현황"
-            headStyle={{}}
-            extra={<a href="#">{'상세보기 >'}</a>}
-          >
-            <div style={{ height: 250 }}>
-              <BarGraph
-                data={deliveredInWeekData}
-                dataKeys={['total', 'delivered']}
-                indexBy="date"
-                groupMode="grouped"
-                colors={['#E0483E', '#F4C2BE']}
-              />
-            </div>
-          </Card>
-        </Col>
-      </Row>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <RealTimeCharts data={realTimeChartDataSets} />
     </div>
   );
 };
@@ -136,51 +397,42 @@ type TPercentPie = {
   data: TPieData[];
 };
 
-type TStatisticData = {
-  id?: string;
-  title: string;
-  value: number;
-  unit: string;
-};
-const PercentPie: React.FC<TPercentPie> = props => {
-  let pieData = props.data;
-  let colors: string[] = ['#788EE03F'];
-  let isInteractive: boolean = false;
-  let centerStr: string = '0%';
-  let statisticData: TStatisticData[] = [];
-
-  if (pieData?.length === 0) {
-    pieData = [{ id: 'None', value: 1 }];
-  } else {
-    colors = ['#788EE0', '#788EE03F'];
-    isInteractive = true;
-    if (pieData[0]?.value) {
-      centerStr = (pieData[0]?.value * 100).toFixed(2) + '%';
-    }
-    statisticData = [
-      {
-        title: pieData[0]?.label,
-        value: Number((pieData[0]?.value * 100).toFixed(2)),
-        unit: '%',
-      },
-      {
-        title: pieData[1]?.label,
-        value: Number((pieData[1]?.value * 100).toFixed(2)),
-        unit: '%',
-      },
-    ];
-  }
+const RealTimeCharts = ({ data }) => {
+  const Pies = data.map(({ title, value, color, unit }) => (
+    <Col key={`${title}-col`} span={8}>
+      <PercentPie
+        key={title}
+        id={title}
+        title={title}
+        data={[{ value, unit }]}
+        height={180}
+        color={[color]}
+      />
+    </Col>
+  ));
   return (
-    <Card title={props.title} headStyle={{}} extra={props.extra}>
-      <Row style={{ height: props.height }}>
-        <Col span={16} style={{ height: '100%' }}>
+    <>
+      <div style={{ height: '30vh' }}>
+        <Card title="실시간현황" headStyle={{}}>
+          <Row gutter={[16, 16]}>{Pies}</Row>
+        </Card>
+      </div>
+    </>
+  );
+};
+
+const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
+  return (
+    <Card headStyle={{}}>
+      <Row style={{ height: height }}>
+        <Col span={24} style={{ height: '100%' }}>
           <PieGraph
             maxVal={0}
-            data={pieData}
-            centerStr={centerStr}
-            isInteractive={isInteractive}
+            data={data}
+            centerStr={`${data[0].value}${data[0].unit}`}
+            isInteractive={false}
             valueFormat=" >-.2%"
-            colors={colors}
+            colors={color}
             padAngle={0.1}
             innerRadius={0.85}
             cornerRadius={10}
@@ -192,40 +444,11 @@ const PercentPie: React.FC<TPercentPie> = props => {
             margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
           />
         </Col>
-        <Col span={8} style={{ marginTop: -5, height: '100%' }}>
-          <Row
-            style={{
-              display: 'flex',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            {statisticData.length === 0 ? (
-              <Col span={24}>
-                <h2> no data </h2>
-              </Col>
-            ) : (
-              statisticData.map((datas, index) => {
-                return (
-                  <Col span={24} key={datas?.id + String(index)}>
-                    <Statistic
-                      title={datas?.title}
-                      value={datas?.value}
-                      suffix={datas?.unit}
-                      style={{
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                      }}
-                    />
-                  </Col>
-                );
-              })
-            )}
-          </Row>
-        </Col>
       </Row>
+      <Meta
+        title={title}
+        style={{ textAlign: 'center', marginBottom: '5px' }}
+      />
     </Card>
   );
 };
