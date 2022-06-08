@@ -2636,7 +2636,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         summary={summary}
         data={data}
         rowHeaders={rowHeaders}
-        rowHeight={rowHeight}
+        rowHeight={props.rowHeight || rowHeight}
         minRowHeight={minRowHeight}
         width={props.width || 'auto'}
         bodyHeight={props.height || 500}
