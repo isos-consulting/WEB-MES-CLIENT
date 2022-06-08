@@ -83,12 +83,14 @@ export const PgStdTenantOption = () => {
         name: 'remark',
         width: ENUM_WIDTH.XXL,
         filter: 'text',
+        whiteSpace: 'normal',
       },
     ],
     {
       serchUriPath: TenantHeaderOptions.searchUriPath,
       saveUriPath: TenantHeaderOptions.saveUriPath,
       gridMode: TenantHeaderOptions.gridMode,
+      rowHeight: 'auto',
     },
   );
 
@@ -109,6 +111,7 @@ export const PgStdTenantOption = () => {
     {
       seachUriPath: TenantHeaderOptions.searchUriPath,
       saveUriPath: TenantHeaderOptions.saveUriPath,
+      rowHeight: 'auto',
     },
   );
 
