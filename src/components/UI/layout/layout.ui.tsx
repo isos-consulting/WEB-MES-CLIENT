@@ -63,9 +63,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
       bottom={layoutState.bottomSpacing}
     >
       <Header
+        uuid={currentRouterType?.uuid}
         height={layoutState.topSpacing}
         title={currentRouterType?.description}
         description={currentRouterType?.title}
+        path={currentRouterType?.path}
       />
 
       <SideNavbar

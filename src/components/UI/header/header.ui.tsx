@@ -14,6 +14,7 @@ import {
   ScUserLogo,
 } from './header.ui.styled';
 import { getUserInfo, setLogout } from '~/functions';
+import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -61,6 +62,14 @@ const Header: React.FC<Props> = props => {
             <div>{props.title}</div>
             {props.description}
           </ScTitleBodyDescription>
+
+          {props.title ? (
+            <div
+              style={{ display: 'flex', height: '80%', alignItems: 'flex-end' }}
+            >
+              <SubscribeButton />
+            </div>
+          ) : null}
 
           {/* 우측 버튼 */}
           <ScRightWrapper key="RightWrapper">
