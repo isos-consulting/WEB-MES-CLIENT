@@ -79,7 +79,7 @@ const dailyApiMock = () =>
               x: '일',
             },
           ],
-          borderColor: '#fe4762',
+          borderColor: '#ffc000',
         },
       ],
       monthly: [
@@ -189,7 +189,7 @@ const dailyApiMock = () =>
               x: '12월',
             },
           ],
-          borderColor: '#fe4762',
+          borderColor: '#ffc000',
         },
       ],
       yearly: [
@@ -299,7 +299,7 @@ const dailyApiMock = () =>
               x: '2022',
             },
           ],
-          borderColor: '#fe4762',
+          borderColor: '#ffc000',
         },
       ],
     }),
@@ -311,14 +311,14 @@ const realTimeAPIMock = () =>
       {
         title: '설비가동율',
         value: randomValue(),
-        color: '#788EE0',
+        color: '#4472c4',
         unit: '%',
       },
-      { title: '불량율', value: randomValue(), color: '#fe4762', unit: '%' },
+      { title: '불량율', value: randomValue(), color: '#ffc000', unit: '%' },
       {
         title: '생산진척율',
         value: randomValue(),
-        color: '#ff8b0a',
+        color: '#c4e0b2',
         unit: '%',
       },
     ]),
@@ -418,7 +418,7 @@ const RealTimeCharts = ({ data }) => {
         title={title}
         data={[{ value, unit }]}
         height={180}
-        color={[color]}
+        color={[color, '#FFFFFF']}
       />
     </Col>
   ));
@@ -440,7 +440,13 @@ const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
         <Col span={24} style={{ height: '100%' }}>
           <PieGraph
             maxVal={0}
-            data={data}
+            data={[
+              ...data,
+              {
+                id: Math.random() * 100,
+                value: 100 - data[0].value,
+              },
+            ]}
             centerStr={`${data[0].value}${data[0].unit}`}
             isInteractive={false}
             valueFormat=" >-.2%"
