@@ -33,8 +33,8 @@ const PieGraph: React.FC<Props> = props => {
         }
         data={props.data || []}
         margin={props.margin || { top: 10, right: 10, bottom: 10, left: 10 }}
-        padAngle={1}
-        cornerRadius={10}
+        padAngle={0}
+        cornerRadius={0}
         innerRadius={props.innerRadius || 0.4}
         sortByValue={false}
         valueFormat={props.valueFormat}
