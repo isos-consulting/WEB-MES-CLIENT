@@ -71,6 +71,11 @@ export const Dashboard = () => {
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      min: 0,
+                    },
+                  },
                 }}
                 data={{
                   datasets: totalGraphDataSets,
