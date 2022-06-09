@@ -37,8 +37,8 @@ const SubscribeButton = (buttonProps: SubscribeButtonProps) => {
   };
 
   const subscribeButtonProps: SubscribeButtonProps = {
-    onClick: handleClick,
     checked: checked,
+    onClick: handleClick,
   };
 
   return <StarButtonWrapper {...subscribeButtonProps} />;
