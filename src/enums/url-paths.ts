@@ -1947,6 +1947,16 @@ const URL_PATH = {
         DELIVERED_IN_WEEK: '/das/delivered-in-week',
       },
     },
+    OVERALL_STATUS: {
+      GET: {
+        OVERALL_STATUS: '/das/overall-status',
+      },
+    },
+    REALTIME_STATUS: {
+      GET: {
+        REALTIME_STATUS: '/das/realtime-status',
+      },
+    },
   },
   AUT: {
     PERMISSION: {

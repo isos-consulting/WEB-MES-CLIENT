@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { getData } from '~/functions';
+import { getData, getToday } from '~/functions';
 import { Card, Col, Row } from 'antd';
 import { BarGraph, PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
@@ -7,335 +7,24 @@ import dayjs from 'dayjs';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 
-const randomValue = () => Math.ceil((Math.random() * 100) % 100);
-
-const dailyApiMock = () =>
-  new Promise(res =>
-    res({
-      daily: [
-        {
-          label: '매입금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '월',
-            },
-            {
-              y: randomValue(),
-              x: '화',
-            },
-            {
-              y: randomValue(),
-              x: '수',
-            },
-            {
-              y: randomValue(),
-              x: '목',
-            },
-            {
-              y: randomValue(),
-              x: '금',
-            },
-            {
-              y: randomValue(),
-              x: '토',
-            },
-            {
-              y: randomValue(),
-              x: '일',
-            },
-          ],
-          borderColor: '#788ee0',
-        },
-        {
-          label: '매출금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '월',
-            },
-            {
-              y: randomValue(),
-              x: '화',
-            },
-            {
-              y: randomValue(),
-              x: '수',
-            },
-            {
-              y: randomValue(),
-              x: '목',
-            },
-            {
-              y: randomValue(),
-              x: '금',
-            },
-            {
-              y: randomValue(),
-              x: '토',
-            },
-            {
-              y: randomValue(),
-              x: '일',
-            },
-          ],
-          borderColor: '#ffc000',
-        },
-      ],
-      monthly: [
-        {
-          label: '매입금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '1월',
-            },
-            {
-              y: randomValue(),
-              x: '2월',
-            },
-            {
-              y: randomValue(),
-              x: '3월',
-            },
-            {
-              y: randomValue(),
-              x: '4월',
-            },
-            {
-              y: randomValue(),
-              x: '5월',
-            },
-            {
-              y: randomValue(),
-              x: '6월',
-            },
-            {
-              y: randomValue(),
-              x: '7월',
-            },
-            {
-              y: randomValue(),
-              x: '8월',
-            },
-            {
-              y: randomValue(),
-              x: '9월',
-            },
-            {
-              y: randomValue(),
-              x: '10월',
-            },
-            {
-              y: randomValue(),
-              x: '11월',
-            },
-            {
-              y: randomValue(),
-              x: '12월',
-            },
-          ],
-          borderColor: '#788ee0',
-        },
-        {
-          label: '매출금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '1월',
-            },
-            {
-              y: randomValue(),
-              x: '2월',
-            },
-            {
-              y: randomValue(),
-              x: '3월',
-            },
-            {
-              y: randomValue(),
-              x: '4월',
-            },
-            {
-              y: randomValue(),
-              x: '5월',
-            },
-            {
-              y: randomValue(),
-              x: '6월',
-            },
-            {
-              y: randomValue(),
-              x: '7월',
-            },
-            {
-              y: randomValue(),
-              x: '8월',
-            },
-            {
-              y: randomValue(),
-              x: '9월',
-            },
-            {
-              y: randomValue(),
-              x: '10월',
-            },
-            {
-              y: randomValue(),
-              x: '11월',
-            },
-            {
-              y: randomValue(),
-              x: '12월',
-            },
-          ],
-          borderColor: '#ffc000',
-        },
-      ],
-      yearly: [
-        {
-          label: '매입금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '2011',
-            },
-            {
-              y: randomValue(),
-              x: '2012',
-            },
-            {
-              y: randomValue(),
-              x: '2013',
-            },
-            {
-              y: randomValue(),
-              x: '2014',
-            },
-            {
-              y: randomValue(),
-              x: '2015',
-            },
-            {
-              y: randomValue(),
-              x: '2016',
-            },
-            {
-              y: randomValue(),
-              x: '2017',
-            },
-            {
-              y: randomValue(),
-              x: '2018',
-            },
-            {
-              y: randomValue(),
-              x: '2019',
-            },
-            {
-              y: randomValue(),
-              x: '2020',
-            },
-            {
-              y: randomValue(),
-              x: '2021',
-            },
-            {
-              y: randomValue(),
-              x: '2022',
-            },
-          ],
-          borderColor: '#788ee0',
-        },
-        {
-          label: '매출금액',
-          data: [
-            {
-              y: randomValue(),
-              x: '2011',
-            },
-            {
-              y: randomValue(),
-              x: '2012',
-            },
-            {
-              y: randomValue(),
-              x: '2013',
-            },
-            {
-              y: randomValue(),
-              x: '2014',
-            },
-            {
-              y: randomValue(),
-              x: '2015',
-            },
-            {
-              y: randomValue(),
-              x: '2016',
-            },
-            {
-              y: randomValue(),
-              x: '2017',
-            },
-            {
-              y: randomValue(),
-              x: '2018',
-            },
-            {
-              y: randomValue(),
-              x: '2019',
-            },
-            {
-              y: randomValue(),
-              x: '2020',
-            },
-            {
-              y: randomValue(),
-              x: '2021',
-            },
-            {
-              y: randomValue(),
-              x: '2022',
-            },
-          ],
-          borderColor: '#ffc000',
-        },
-      ],
-    }),
-  );
-
-const realTimeAPIMock = () =>
-  new Promise(res =>
-    res([
-      {
-        title: '설비가동율',
-        value: randomValue(),
-        color: '#4472c4',
-        unit: '%',
-      },
-      { title: '불량율', value: randomValue(), color: '#ffc000', unit: '%' },
-      {
-        title: '생산진척율',
-        value: randomValue(),
-        color: '#c4e0b2',
-        unit: '%',
-      },
-    ]),
-  );
-
 export const Dashboard = () => {
-  const [current, chageTarget] = useState<string>('daily');
-  const graphSets = dailyApiMock();
-  const chartSets = realTimeAPIMock();
+  const [current, chageTarget] = useState<string>('byDay');
+  const graphSets = getData(
+    { reg_date: getToday() },
+    URL_PATH_DAS.OVERALL_STATUS.GET.OVERALL_STATUS,
+  );
+  const chartSets = getData(
+    { reg_date: getToday() },
+    URL_PATH_DAS.REALTIME_STATUS.GET.REALTIME_STATUS,
+  );
   const [totalGraphDataSets, setTotalGraphDataSets] = useState<object>([]);
   const [realTimeChartDataSets, setRealTimeChartDataSets] = useState<object>(
     [],
   );
 
   useLayoutEffect(() => {
-    graphSets.then(res => setTotalGraphDataSets(res[current]));
-    chartSets.then(setRealTimeChartDataSets);
+    graphSets.then(res => setTotalGraphDataSets(res[0][current]));
+    chartSets.then(res => setRealTimeChartDataSets(res));
   }, [current]);
 
   return (
@@ -352,21 +41,21 @@ export const Dashboard = () => {
                 <>
                   <button
                     onClick={() => {
-                      chageTarget('daily');
+                      chageTarget('byDay');
                     }}
                   >
                     일별
                   </button>
                   <button
                     onClick={() => {
-                      chageTarget('monthly');
+                      chageTarget('byMonth');
                     }}
                   >
                     월별
                   </button>
                   <button
                     onClick={() => {
-                      chageTarget('yearly');
+                      chageTarget('byYear');
                     }}
                   >
                     연도별
