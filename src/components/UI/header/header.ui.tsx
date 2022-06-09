@@ -15,6 +15,7 @@ import {
 } from './header.ui.styled';
 import { getUserInfo, setLogout } from '~/functions';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
+import SubscribeList from '../dropdown/subscribe/subscribe-list.ui';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -79,6 +80,7 @@ const Header: React.FC<Props> = props => {
             }}>
               <ScMyPageText>마이페이지</ScMyPageText>
             </Link> */}
+            <SubscribeList />
             <ScMyPageText>{userName}</ScMyPageText>
             <Dropdown
               overlay={
