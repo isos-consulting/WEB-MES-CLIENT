@@ -1745,7 +1745,12 @@ const ProdOrderModal = ({ visible, onClose }) => {
     };
 
     getData(searchParams, '/prd/orders').then(res => {
-      setData(res);
+      const datas = res.map(data => ({
+        ...data,
+        reg_date: data.reg_date.substr(0, 10),
+      }));
+
+      setData(datas);
     });
   };
 
@@ -1805,11 +1810,11 @@ const ProdOrderModal = ({ visible, onClose }) => {
       align: 'center',
     },
     {
-      header: '지시일시',
+      header: '작업일자',
       name: 'reg_date',
       width: 150,
       hidden: false,
-      format: 'datetime',
+      format: 'date',
       editable: true,
       disabled: true,
     },
@@ -1822,17 +1827,16 @@ const ProdOrderModal = ({ visible, onClose }) => {
       editable: true,
       onAfterChange: ({ value, rowKey }) => {
         const rowData = gridRef.current.getInstance().getData()[rowKey];
-        rowData.origin_reg_date ??= gridRef.current
-          .getInstance()
-          .setRow(rowKey, { ...rowData, origin_reg_date: rowData.reg_date });
 
         value
-          ? gridRef.current.getInstance().enableCell(rowKey, 'reg_date')
-          : (() => {
+          ? (() => {
               gridRef.current.getInstance().setRow(rowKey, {
                 ...rowData,
-                reg_date: rowData.origin_reg_date,
+                complete_fg: false,
               });
+              gridRef.current.getInstance().enableCell(rowKey, 'reg_date');
+            })()
+          : (() => {
               gridRef.current.getInstance().disableCell(rowKey, 'reg_date');
             })();
       },
@@ -1844,6 +1848,18 @@ const ProdOrderModal = ({ visible, onClose }) => {
       hidden: false,
       format: 'check',
       editable: true,
+      onAfterChange: ({ value, rowKey }) => {
+        const rowData = gridRef.current.getInstance().getData()[rowKey];
+
+        value
+          ? (() => {
+              gridRef.current.getInstance().setRow(rowKey, {
+                ...rowData,
+                _work_start: false,
+              });
+            })()
+          : null;
+      },
     },
     {
       header: '공정UUID',
