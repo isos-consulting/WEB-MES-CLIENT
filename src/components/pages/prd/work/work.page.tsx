@@ -1805,12 +1805,37 @@ const ProdOrderModal = ({ visible, onClose }) => {
       align: 'center',
     },
     {
+      header: '지시일시',
+      name: 'reg_date',
+      width: 150,
+      hidden: false,
+      format: 'datetime',
+      editable: true,
+      disabled: true,
+    },
+    {
       header: '작업시작',
       name: '_work_start',
       width: 80,
       hidden: false,
       format: 'check',
       editable: true,
+      onAfterChange: ({ value, rowKey }) => {
+        const rowData = gridRef.current.getInstance().getData()[rowKey];
+        rowData.origin_reg_date ??= gridRef.current
+          .getInstance()
+          .setRow(rowKey, { ...rowData, origin_reg_date: rowData.reg_date });
+
+        value
+          ? gridRef.current.getInstance().enableCell(rowKey, 'reg_date')
+          : (() => {
+              gridRef.current.getInstance().setRow(rowKey, {
+                ...rowData,
+                reg_date: rowData.origin_reg_date,
+              });
+              gridRef.current.getInstance().disableCell(rowKey, 'reg_date');
+            })();
+      },
     },
     {
       header: '마감',
