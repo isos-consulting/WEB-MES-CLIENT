@@ -5,7 +5,7 @@ import { TpTripleGrid } from '~/components/templates/grid-triple';
 import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, useGrid, useSearchbox } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
-import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
+import { cleanupKeyOfObject, consoleLogLocalEnv, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
 import {OptComplexColumnInfo} from 'tui-grid/types/options'
 import { add, cloneDeep } from 'lodash';
 import { IInputGroupboxItem, useInputGroup } from '~/components/UI/input-groupbox';
@@ -636,11 +636,20 @@ export const PgQmsInsp = () => {
       const values = ev?.values;
       const params = {};
 
-      if(typeof values.insp_type !== 'string') {
-        console.error('기준서 유형의 자료 형이 문자열이 아님! 기준서 유형 값 :', values.insp_type);
+      if(!values.insp_type) {
         return {
           onInterlock: () => {
               message.warning('기준서 유형을 먼저 선택해주세요.');
+              return false;
+          },
+        }
+      }
+
+      if(typeof values.insp_type !== 'string') {
+        consoleLogLocalEnv(`%c기준서 유형의 자료 형이 문자열이 아님! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;');
+        return {
+          onInterlock: () => {
+              message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
               return false;
           },
         }
@@ -658,7 +667,7 @@ export const PgQmsInsp = () => {
               params['qms_final_insp_fg'] = true;
             }
           } catch (error) {
-            console.error('기준서 유형의 자료를 json 형식으로 변환하는 과정에서 error가 발생함! 기준서 유형 값 : ', values.insp_type)
+            consoleLogLocalEnv(`%c기준서 유형의 자료를 json 형식으로 변환하는 과정에서 error가 발생함! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;')
             return {
               onInterlock: () => {
                   message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
@@ -668,7 +677,7 @@ export const PgQmsInsp = () => {
           }
 
         }else {
-          console.error('이 기준서 유형의 json 형식으로 변환하기 위한 블록 구조가 아님! 기준서 유형 값 : ', values.insp_type);
+          consoleLogLocalEnv(`%c이 기준서 유형의 json 형식으로 변환하기 위한 블록 구조가 아님! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;');
           return {
             onInterlock: () => {
                 message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
