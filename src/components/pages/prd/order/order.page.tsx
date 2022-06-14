@@ -404,6 +404,15 @@ export const PgPrdOrder = () => {
         filter: 'text',
       },
       {
+        header: '우선순위',
+        name: 'priority',
+        width: ENUM_WIDTH.M,
+        editable: true,
+        format: 'number',
+        filter: 'number',
+        // requiredField: true,
+      },
+      {
         header: '지시일',
         name: 'reg_date',
         width: ENUM_WIDTH.M,
@@ -757,6 +766,15 @@ export const PgPrdOrder = () => {
         hidden: true,
       },
       {
+        header: '우선순위',
+        name: 'priority',
+        width: ENUM_WIDTH.M,
+        editable: true,
+        format: 'number',
+        filter: 'number',
+        // requiredField: true,
+      },
+      {
         header: '지시일',
         name: 'reg_date',
         width: ENUM_WIDTH.M,
@@ -981,6 +999,15 @@ export const PgPrdOrder = () => {
         alias: 'uuid',
         width: ENUM_WIDTH.M,
         hidden: true,
+      },
+      {
+        header: '우선순위',
+        name: 'priority',
+        width: ENUM_WIDTH.M,
+        editable: true,
+        format: 'number',
+        filter: 'number',
+        // requiredField: true,
       },
       {
         header: '지시일',
