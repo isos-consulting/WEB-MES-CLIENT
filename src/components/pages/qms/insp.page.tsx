@@ -5,7 +5,7 @@ import { TpTripleGrid } from '~/components/templates/grid-triple';
 import ITpTripleGridProps, { IExtraButton, TExtraGridPopups } from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, IGridColumn, IGridPopupProps, ISearchItem, useGrid, useSearchbox } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
-import { cleanupKeyOfObject, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
+import { cleanupKeyOfObject, consoleLogLocalEnv, dataGridEvents, executeData, getData, getModifiedRows, getPageName, getToday, isModified } from '~/functions';
 import {OptComplexColumnInfo} from 'tui-grid/types/options'
 import { add, cloneDeep } from 'lodash';
 import { IInputGroupboxItem, useInputGroup } from '~/components/UI/input-groupbox';
@@ -635,15 +635,56 @@ export const PgQmsInsp = () => {
     const prodApiSettings = (ev) => {
       const values = ev?.values;
       const params = {};
-      const _inspType = JSON.parse(values?.['insp_type'])
-      if(_inspType?.insp_type_cd === 'RECEIVE_INSP') {
-        params['qms_receive_insp_fg'] = true;
-  
-      } else if(_inspType.insp_type_cd === 'PROC_INSP') {
-        params['qms_proc_insp_fg'] = true;
-  
-      } else if(_inspType.insp_type_cd === 'FINAL_INSP') {
-        params['qms_final_insp_fg'] = true;
+
+      if(!values.insp_type) {
+        return {
+          onInterlock: () => {
+              message.warning('기준서 유형을 먼저 선택해주세요.');
+              return false;
+          },
+        }
+      }
+
+      if(typeof values.insp_type !== 'string') {
+        consoleLogLocalEnv(`%c기준서 유형의 자료 형이 문자열이 아님! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;');
+        return {
+          onInterlock: () => {
+              message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
+              return false;
+          },
+        }
+      } else {
+        if(values.insp_type.substr(0, 1) === '{' && values.insp_type.substr(values.insp_type.length-1, values.insp_type.length) === '}'){
+          try {
+            const _inspType:{insp_type_cd} = JSON.parse(values?.['insp_type'] ?? '{}');
+            if(_inspType?.insp_type_cd === 'RECEIVE_INSP') {
+              params['qms_receive_insp_fg'] = true;
+        
+            } else if(_inspType.insp_type_cd === 'PROC_INSP') {
+              params['qms_proc_insp_fg'] = true;
+        
+            } else if(_inspType.insp_type_cd === 'FINAL_INSP') {
+              params['qms_final_insp_fg'] = true;
+            }
+          } catch (error) {
+            consoleLogLocalEnv(`%c기준서 유형의 자료를 json 형식으로 변환하는 과정에서 error가 발생함! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;')
+            return {
+              onInterlock: () => {
+                  message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
+                  return false;
+              },
+            }
+          }
+
+        }else {
+          consoleLogLocalEnv(`%c이 기준서 유형의 json 형식으로 변환하기 위한 블록 구조가 아님! 기준서 유형 값 : ${values.insp_type}`, 'color: red; font-size: 20px;');
+          return {
+            onInterlock: () => {
+                message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
+                return false;
+            },
+          }
+        }
       }
   
       return {
@@ -657,7 +698,7 @@ export const PgQmsInsp = () => {
       datagridSettings: PROD_POPUP.datagridProps,
       modalSettings: {
         title: '품목관리',
-      }
+      },
     }
 
     const _originSearchItems:ISearchItem[] = [
