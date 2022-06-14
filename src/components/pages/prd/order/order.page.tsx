@@ -410,7 +410,6 @@ export const PgPrdOrder = () => {
         editable: true,
         format: 'number',
         filter: 'number',
-        // requiredField: true,
       },
       {
         header: '지시일',
@@ -772,7 +771,6 @@ export const PgPrdOrder = () => {
         editable: true,
         format: 'number',
         filter: 'number',
-        // requiredField: true,
       },
       {
         header: '지시일',
@@ -1007,7 +1005,6 @@ export const PgPrdOrder = () => {
         editable: true,
         format: 'number',
         filter: 'number',
-        // requiredField: true,
       },
       {
         header: '지시일',
