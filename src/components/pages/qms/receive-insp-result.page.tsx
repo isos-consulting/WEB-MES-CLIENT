@@ -1607,16 +1607,10 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       '_insp_value',
       '_insp_result_state',
     );
+
     const cellFlagResultValue = nullFg ? null : resultFg;
     const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
 
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
-      }
-    }
     popupGridInstance?.setValue(
       rowKey,
       cellFlagColumnName,
