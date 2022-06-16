@@ -1571,7 +1571,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     });
   };
 
-  const onAfterChange = (ev: any) => {
+  const oldChangeCell = (ev: any) => {
     const { origin, changes, instance } = ev;
     if (changes.length === 0) return;
 
@@ -1705,6 +1705,58 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       });
     }
     //#endregion
+  };
+
+  const onAfterChange = (ev: any) => {
+    const { origin, changes, instance } = ev;
+
+    const datas = instance.getData();
+
+    const cellKeys = datas
+      .map(data => {
+        const keys = Object.keys(data).filter(key =>
+          key.includes('_insp_value'),
+        );
+
+        return keys.map(inspectionKey => {
+          if (data[inspectionKey] == null || data[inspectionKey] === '') {
+            return null;
+          }
+
+          if (data[inspectionKey] < data.spec_min) {
+            return false;
+          }
+
+          if (data[inspectionKey] > data.spec_max) {
+            return false;
+          }
+
+          return true;
+        });
+      })
+      .map(checkList => {
+        if (checkList.every(checkItem => checkItem === null)) {
+          return null;
+        }
+
+        if (checkList.some(checkItem => checkItem === false)) {
+          return false;
+        }
+
+        return true;
+      });
+
+    console.log(cellKeys);
+
+    if (cellKeys.some(key => key === null)) {
+      return null;
+    }
+
+    if (cellKeys.some(key => key === false)) {
+      return false;
+    }
+
+    return true;
   };
 
   const onSave = async ev => {
@@ -1872,6 +1924,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         .then(res => {
           setReceiveInspHeaderData(res.header);
           setReceiveInspDetailData(res.details);
+          inputInspResult.setFieldValue('reg_date', getToday());
         })
         .catch(err => {
           onClear();
