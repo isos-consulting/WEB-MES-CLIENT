@@ -1707,8 +1707,48 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     //#endregion
   };
 
+  interface InspectionChecker {}
+
+  class EmptyInspectionChecker implements InspectionChecker {
+    status() {
+      return null;
+    }
+  }
+
+  class NumberInspectionChecker implements InspectionChecker {
+    value: number;
+    min: number;
+    max: number;
+
+    constructor(value: number, min: number, max: number) {
+      this.value = value;
+      this.min = min;
+      this.max = max;
+    }
+
+    innerRange() {
+      return this.value >= this.min && this.value <= this.max;
+    }
+  }
+
+  class EyeInspectionChecker implements InspectionChecker {
+    value: string;
+
+    constructor(value: string) {
+      this.value = value;
+    }
+
+    isOK() {
+      return this.value.toUpperCase() === 'OK';
+    }
+  }
+
+  const inspectionCheck = <T extends InspectionChecker>(checker: T) => {
+    return checker;
+  };
+
   const onAfterChange = (ev: any) => {
-    const { origin, changes, instance } = ev;
+    const { instance } = ev;
 
     const datas = instance.getData();
 
@@ -1720,18 +1760,22 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
         return keys.map(inspectionKey => {
           if (data[inspectionKey] == null || data[inspectionKey] === '') {
-            return null;
+            return inspectionCheck(new EmptyInspectionChecker()).status();
           }
 
-          if (data[inspectionKey] < data.spec_min) {
-            return false;
+          if (isNumber(data.spec_min) && isNumber(data.spec_max)) {
+            return inspectionCheck(
+              new NumberInspectionChecker(
+                data[inspectionKey],
+                data.spec_min,
+                data.spec_max,
+              ).innerRange(),
+            );
+          } else {
+            return inspectionCheck(
+              new EyeInspectionChecker(data[inspectionKey]).isOK(),
+            );
           }
-
-          if (data[inspectionKey] > data.spec_max) {
-            return false;
-          }
-
-          return true;
         });
       })
       .map(checkList => {
@@ -1749,10 +1793,12 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     console.log(cellKeys);
 
     if (cellKeys.some(key => key === null)) {
+      console.log(null);
       return null;
     }
 
     if (cellKeys.some(key => key === false)) {
+      console.log(false);
       return false;
     }
 
