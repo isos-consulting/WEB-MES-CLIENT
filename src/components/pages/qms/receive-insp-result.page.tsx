@@ -1720,10 +1720,35 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     const saveGridInstance = gridRef?.current?.getInstance();
 
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
+    if (
+      saveGridInstance
+        .getData()
+        .map(record => {
+          return Object.keys(record).filter(key =>
+            key.includes('_insp_result_fg'),
+          );
+        })
+        .map((results, index) => {
+          let result = false;
+          results.forEach(key => {
+            if (saveGridInstance.getData()[index][key] != null) {
+              result = true;
+            }
+          });
+          return result;
+        })
+        .includes(false)
+    ) {
+      message.warn(
+        '입력하지 않은 검사 항목이 있습니다. 확인 후 다시 저장해주세요',
+      );
       return;
-    } else if (!inputInspResultValues?.emp_uuid) {
+    }
+    // if (!inputInspResultValues?.insp_result_fg) {
+    //   message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
+    //   return;
+    // } else
+    if (!inputInspResultValues?.emp_uuid) {
       message.warn('검사자를 등록해주세요.');
       return;
     } else if (!inputInspResultValues?.reg_date_time) {
