@@ -1747,10 +1747,29 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     return new checker().check(arg);
   };
 
-  const cellKeys = (records: Array<any>, cellKey: string) =>
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
     records.map(record =>
       Object.keys(record).filter(key => key.includes(cellKey)),
     );
+
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const recordChecker = (record: Array<Array<boolean>>): Array<boolean> =>
+    record.map(cellCheckList => {
+      if (cellCheckList.every(checkItem => checkItem === null)) {
+        return null;
+      }
+
+      if (cellCheckList.some(checkItem => checkItem === false)) {
+        return false;
+      }
+
+      return true;
+    });
 
   const onAfterChange = (ev: any) => {
     const { instance } = ev;
@@ -1759,7 +1778,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     const keys = cellKeys(datas, '_insp_value');
 
-    const checkers = keys.map((inspections, index) =>
+    const definedCountKeys = keys.map((item: Array<string>, index: number) =>
+      sliceKeys(item, datas[index].sample_cnt),
+    );
+
+    const cellCheckers = definedCountKeys.map((inspections, index) =>
       inspections.map(inspectionKey =>
         datas[index][inspectionKey] == null ||
         datas[index][inspectionKey] === ''
@@ -1776,7 +1799,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       ),
     );
 
-    console.log(checkers);
+    const records = recordChecker(cellCheckers);
 
     // datas
     //   .map(data => {
