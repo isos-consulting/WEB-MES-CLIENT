@@ -1786,8 +1786,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   const checkUIProtocol = (check: boolean): string =>
     check === null ? null : check === true ? '합격' : '불합격';
 
+  const eyeCellUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? 'OK' : 'NG';
+
   const onAfterChange = (ev: any) => {
-    const { instance } = ev;
+    const { changes, instance } = ev;
 
     const datas = instance.getData();
 
@@ -1817,6 +1820,37 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     const records = recordChecker(cellCheckers);
 
     const finalChecker = totalChecker(records);
+
+    changes.forEach((change: any) => {
+      if (change.columnName.includes('_insp_value')) {
+        const changedCellIndex = keys[change.rowKey].findIndex(
+          inspValue => inspValue === change.columnName,
+        );
+
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_fg'),
+          cellCheckers[change.rowKey][changedCellIndex],
+        );
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_state'),
+          checkUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+        );
+        if (
+          !(
+            isNumber(datas[change.rowKey].spec_min) &&
+            isNumber(datas[change.rowKey].spec_min)
+          )
+        ) {
+          instance.setValue(
+            change.rowKey,
+            change.columnName,
+            eyeCellUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+          );
+        }
+      }
+    });
 
     datas.forEach((data: any, index: number) => {
       instance.setValue(index, 'insp_result_fg', records[index]);
