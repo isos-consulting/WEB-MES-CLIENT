@@ -1860,6 +1860,41 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         checkUIProtocol(records[index]),
       );
     });
+
+    inputInspResult.setFieldValue('insp_result_fg', finalChecker);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(finalChecker),
+    );
+
+    if (finalChecker === null) {
+      inputInspResult.setFieldDisabled({ insp_handling_type: true });
+    } else {
+      inputInspResult.setFieldDisabled({ insp_handling_type: false });
+    }
+
+    let _inspHandlingCd: string;
+
+    if (finalChecker === true) {
+      _inspHandlingCd = 'INCOME';
+      changeInspResult('INCOME');
+    } else if (finalChecker === false) {
+      _inspHandlingCd = 'RETURN';
+      changeInspResult('RETURN');
+    } else {
+      _inspHandlingCd = '';
+      changeInspResult('');
+    }
+    if (_inspHandlingCd === '') {
+      inputInspResult.setFieldValue('insp_handling_type', '');
+    } else {
+      props.inspHandlingType.forEach(el => {
+        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd) {
+          inputInspResult.setFieldValue('insp_handling_type', el.code);
+          return;
+        }
+      });
+    }
   };
 
   const onSave = async ev => {
