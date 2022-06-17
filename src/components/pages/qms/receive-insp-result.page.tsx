@@ -1771,6 +1771,18 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       return true;
     });
 
+  const totalChecker = (records: Array<boolean>): boolean => {
+    if (records.some(key => key === null)) {
+      return null;
+    }
+
+    if (records.some(key => key === false)) {
+      return false;
+    }
+
+    return true;
+  };
+
   const onAfterChange = (ev: any) => {
     const { instance } = ev;
 
@@ -1801,53 +1813,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     const records = recordChecker(cellCheckers);
 
-    // datas
-    //   .map(data => {
-    //     return Object.keys(data)
-    //       .filter(key => key.includes('_insp_value'))
-    //       .map(inspectionKey => {
-    //         if (data[inspectionKey] == null || data[inspectionKey] === '') {
-    //           return inspectionCheck(new EmptyInspectionChecker()).status();
-    //         }
+    const finalChecker = totalChecker(records);
 
-    //         if (isNumber(data.spec_min) && isNumber(data.spec_max)) {
-    //           return inspectionCheck(
-    //             new NumberInspectionChecker(
-    //               data[inspectionKey],
-    //               data.spec_min,
-    //               data.spec_max,
-    //             ).innerRange(),
-    //           );
-    //         } else {
-    //           return inspectionCheck(
-    //             new EyeInspectionChecker(data[inspectionKey]).isOK(),
-    //           );
-    //         }
-    //       });
-    //   })
-    //   .map(checkList => {
-    //     if (checkList.every(checkItem => checkItem === null)) {
-    //       return null;
-    //     }
-
-    //     if (checkList.some(checkItem => checkItem === false)) {
-    //       return false;
-    //     }
-
-    //     return true;
-    //   });
-
-    // if (cellKeys.some(key => key === null)) {
-    //   console.log(null);
-    //   return null;
-    // }
-
-    // if (cellKeys.some(key => key === false)) {
-    //   console.log(false);
-    //   return false;
-    // }
-
-    return true;
+    console.log(finalChecker);
   };
 
   const onSave = async ev => {
