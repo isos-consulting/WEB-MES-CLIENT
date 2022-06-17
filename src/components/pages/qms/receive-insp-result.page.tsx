@@ -1818,7 +1818,14 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     const finalChecker = totalChecker(records);
 
-    console.log(finalChecker);
+    datas.forEach((data: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', records[index]);
+      instance.setValue(
+        index,
+        'insp_result_state',
+        checkUIProtocol(records[index]),
+      );
+    });
   };
 
   const onSave = async ev => {
