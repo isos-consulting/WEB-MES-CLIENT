@@ -1707,100 +1707,122 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     //#endregion
   };
 
-  interface InspectionChecker {}
+  interface InspectionChecker {
+    check: (...arg: any) => boolean;
+  }
+
+  interface InspectionConcreate {
+    new (): InspectionChecker;
+  }
 
   class EmptyInspectionChecker implements InspectionChecker {
-    status() {
+    check(arg: any) {
       return null;
     }
   }
 
   class NumberInspectionChecker implements InspectionChecker {
-    value: number;
-    min: number;
-    max: number;
-
-    constructor(value: number, min: number, max: number) {
-      this.value = value;
-      this.min = min;
-      this.max = max;
+    check(arg: any) {
+      return this.innerRange(arg);
     }
-
-    innerRange() {
-      return this.value >= this.min && this.value <= this.max;
+    innerRange({ value, min, max }) {
+      return value >= min && value <= max;
     }
   }
 
   class EyeInspectionChecker implements InspectionChecker {
-    value: string;
-
-    constructor(value: string) {
-      this.value = value;
+    check(arg: any) {
+      return this.isOK(arg);
     }
 
-    isOK() {
-      return this.value.toUpperCase() === 'OK';
+    isOK({ value }) {
+      return value.toUpperCase() === 'OK';
     }
   }
 
-  const inspectionCheck = <T extends InspectionChecker>(checker: T) => {
-    return checker;
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
   };
+
+  const cellKeys = (records: Array<any>, cellKey: string) =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
 
   const onAfterChange = (ev: any) => {
     const { instance } = ev;
 
     const datas = instance.getData();
 
-    const cellKeys = datas
-      .map(data => {
-        const keys = Object.keys(data).filter(key =>
-          key.includes('_insp_value'),
-        );
+    const keys = cellKeys(datas, '_insp_value');
 
-        return keys.map(inspectionKey => {
-          if (data[inspectionKey] == null || data[inspectionKey] === '') {
-            return inspectionCheck(new EmptyInspectionChecker()).status();
-          }
+    const checkers = keys.map((inspections, index) =>
+      inspections.map(inspectionKey =>
+        datas[index][inspectionKey] == null ||
+        datas[index][inspectionKey] === ''
+          ? inspectionCheck(EmptyInspectionChecker, null)
+          : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
+          ? inspectionCheck(NumberInspectionChecker, {
+              value: datas[index][inspectionKey],
+              min: datas[index].spec_min,
+              max: datas[index].spec_max,
+            })
+          : inspectionCheck(EyeInspectionChecker, {
+              value: datas[index][inspectionKey],
+            }),
+      ),
+    );
 
-          if (isNumber(data.spec_min) && isNumber(data.spec_max)) {
-            return inspectionCheck(
-              new NumberInspectionChecker(
-                data[inspectionKey],
-                data.spec_min,
-                data.spec_max,
-              ).innerRange(),
-            );
-          } else {
-            return inspectionCheck(
-              new EyeInspectionChecker(data[inspectionKey]).isOK(),
-            );
-          }
-        });
-      })
-      .map(checkList => {
-        if (checkList.every(checkItem => checkItem === null)) {
-          return null;
-        }
+    console.log(checkers);
 
-        if (checkList.some(checkItem => checkItem === false)) {
-          return false;
-        }
+    // datas
+    //   .map(data => {
+    //     return Object.keys(data)
+    //       .filter(key => key.includes('_insp_value'))
+    //       .map(inspectionKey => {
+    //         if (data[inspectionKey] == null || data[inspectionKey] === '') {
+    //           return inspectionCheck(new EmptyInspectionChecker()).status();
+    //         }
 
-        return true;
-      });
+    //         if (isNumber(data.spec_min) && isNumber(data.spec_max)) {
+    //           return inspectionCheck(
+    //             new NumberInspectionChecker(
+    //               data[inspectionKey],
+    //               data.spec_min,
+    //               data.spec_max,
+    //             ).innerRange(),
+    //           );
+    //         } else {
+    //           return inspectionCheck(
+    //             new EyeInspectionChecker(data[inspectionKey]).isOK(),
+    //           );
+    //         }
+    //       });
+    //   })
+    //   .map(checkList => {
+    //     if (checkList.every(checkItem => checkItem === null)) {
+    //       return null;
+    //     }
 
-    console.log(cellKeys);
+    //     if (checkList.some(checkItem => checkItem === false)) {
+    //       return false;
+    //     }
 
-    if (cellKeys.some(key => key === null)) {
-      console.log(null);
-      return null;
-    }
+    //     return true;
+    //   });
 
-    if (cellKeys.some(key => key === false)) {
-      console.log(false);
-      return false;
-    }
+    // if (cellKeys.some(key => key === null)) {
+    //   console.log(null);
+    //   return null;
+    // }
+
+    // if (cellKeys.some(key => key === false)) {
+    //   console.log(false);
+    //   return false;
+    // }
 
     return true;
   };
