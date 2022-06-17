@@ -1783,6 +1783,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     return true;
   };
 
+  const checkUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? '합격' : '불합격';
+
   const onAfterChange = (ev: any) => {
     const { instance } = ev;
 
