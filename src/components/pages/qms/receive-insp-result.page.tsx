@@ -1791,8 +1791,10 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
-
     const datas = instance.getData();
+
+    if (changes.some(change => !change.columnName.includes('_insp_value')))
+      return;
 
     const keys = cellKeys(datas, '_insp_value');
 
