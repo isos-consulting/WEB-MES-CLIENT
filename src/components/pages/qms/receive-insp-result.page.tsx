@@ -1951,6 +1951,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       return;
     }
 
+    const userDefinedInspectionSaveOption = await getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
+
     // if (!inputInspResultValues?.insp_result_fg) {
     //   message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
     //   return;
