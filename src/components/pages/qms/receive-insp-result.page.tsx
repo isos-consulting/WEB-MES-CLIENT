@@ -1910,30 +1910,45 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     const saveGridInstance = gridRef?.current?.getInstance();
 
-    if (
-      saveGridInstance
-        .getData()
-        .map(record => {
-          return Object.keys(record).filter(key =>
-            key.includes('_insp_result_fg'),
-          );
-        })
-        .map((results, index) => {
-          let result = false;
-          results.forEach(key => {
-            if (saveGridInstance.getData()[index][key] != null) {
-              result = true;
-            }
-          });
-          return result;
-        })
-        .includes(false)
-    ) {
-      message.warn(
-        '입력하지 않은 검사 항목이 있습니다. 확인 후 다시 저장해주세요',
-      );
+    const sequencialMissingValueState = cellKeys(
+      saveGridInstance.getData(),
+      '_insp_value',
+    )
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, saveGridInstance.getData()[index].sample_cnt),
+      )
+      .map((inspections, index) =>
+        inspections.map(inspectionKey =>
+          saveGridInstance.getData()[index][inspectionKey] == null ||
+          saveGridInstance.getData()[index][inspectionKey] === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(saveGridInstance.getData()[index].spec_min) &&
+              isNumber(saveGridInstance.getData()[index].spec_max)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: saveGridInstance.getData()[index][inspectionKey],
+                min: saveGridInstance.getData()[index].spec_min,
+                max: saveGridInstance.getData()[index].spec_max,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: saveGridInstance.getData()[index][inspectionKey],
+              }),
+        ),
+      )
+      .some((cells: Array<boolean>) => {
+        if (cells[0] === null) return true;
+
+        if (cells.length > 1) {
+          for (let index = 1; index < cells.length; index++) {
+            if (cells[index - 1] === null && cells[index] !== null) return true;
+          }
+        }
+      });
+
+    if (sequencialMissingValueState) {
+      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
       return;
     }
+
     // if (!inputInspResultValues?.insp_result_fg) {
     //   message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
     //   return;
