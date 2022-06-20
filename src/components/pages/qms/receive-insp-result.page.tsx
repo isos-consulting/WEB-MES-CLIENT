@@ -1899,9 +1899,8 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
   };
 
-  const saveData = async inspectionDatas => {
-    let headerData: object;
-    let detailDatas: object[] = [];
+  const saveData = async inspectionGridInstance => {
+    const inspectionDatas = inspectionGridInstance.getData();
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInspResultIncomeValues =
@@ -1909,7 +1908,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
 
-    headerData = {
+    const inspectionHeader = {
       factory_uuid: getUserFactoryUuid(),
       receive_detail_uuid: inputInputItemsValues?.receive_detail_uuid,
       insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
@@ -1945,34 +1944,37 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    for (let i = 0; i <= inspectionDatas?.getRowCount() - 1; i++) {
-      const values: object[] = [];
-      const row = inspectionDatas?.getRow(i);
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        if (value) {
-          values.push({
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
+    const inspectionItems = cellKeys(inspectionDatas, '_insp_value')
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((definedCountKeys, index) => ({
         factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: row?.insp_detail_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
+        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
+        insp_result_fg: inspectionDatas[index].insp_result_fg,
+        remark: inspectionDatas[index].remark,
+        values: definedCountKeys
+          .map((key, keyIndex) => ({
+            sample_no: keyIndex + 1,
+            insp_result_fg:
+              inspectionDatas[index][
+                key.replace('_insp_value', '_insp_result_fg')
+              ],
+            insp_value:
+              inspectionDatas[index][key] === 'OK'
+                ? 1
+                : inspectionDatas[index][key] === 'NG'
+                ? 0
+                : inspectionDatas[index][key],
+          }))
+          .filter(inspectionCell => inspectionCell.insp_value !== null),
+      }));
 
     const saveData: object = {
-      header: headerData,
-      details: detailDatas,
+      header: inspectionHeader,
+      details: inspectionItems,
     };
+
     await executeData(
       saveData,
       URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS,
