@@ -1899,7 +1899,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
   };
 
-  const saveData = async () => {
+  const saveData = async inspectionDatas => {
     let headerData: object;
     let detailDatas: object[] = [];
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
@@ -1908,7 +1908,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResultIncome?.ref?.current?.values;
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
-    const saveGridInstance = gridRef?.current?.getInstance();
 
     headerData = {
       factory_uuid: getUserFactoryUuid(),
@@ -1946,9 +1945,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
+    for (let i = 0; i <= inspectionDatas?.getRowCount() - 1; i++) {
       const values: object[] = [];
-      const row = saveGridInstance?.getRow(i);
+      const row = inspectionDatas?.getRow(i);
 
       for (let k = 1; k <= row.sample_cnt; k++) {
         const value: any = row?.['x' + k + '_insp_value'];
@@ -2053,29 +2052,31 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         '/std/tenant-opts',
       );
 
-      userDefinedInspectionSaveOption[0].value = 1;
-
       if (userDefinedInspectionSaveOption.length > 0) {
         if (userDefinedInspectionSaveOption[0].value === 1) {
-          message.warn('검사 결과값을 시료수 만큼 입력해주세요');
+          message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
           return;
         } else if (userDefinedInspectionSaveOption[0].value === 2) {
           Modal.confirm({
             title: '',
-            content: '결과 시료수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
-            onOk: () => {},
+            content:
+              '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+            onOk: close => {
+              saveData(inspectionGridRef.current.getInstance());
+              close();
+            },
             onCancel: () => {},
           });
         }
       }
     }
+    saveData(inspectionGridRef.current.getInstance());
   };
 
   const onCancel = ev => {
     onClear();
     props.setPopupVisible(false);
   };
-  //#endregion
 
   //#region Hook 함수
 
