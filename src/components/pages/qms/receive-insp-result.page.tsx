@@ -1899,74 +1899,16 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
   };
 
-  const onSave = async ev => {
+  const saveData = async () => {
     let headerData: object;
     let detailDatas: object[] = [];
-
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInspResultIncomeValues =
       inputInspResultIncome?.ref?.current?.values;
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
-
     const saveGridInstance = gridRef?.current?.getInstance();
-
-    const sequencialMissingValueState = cellKeys(
-      saveGridInstance.getData(),
-      '_insp_value',
-    )
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, saveGridInstance.getData()[index].sample_cnt),
-      )
-      .map((inspections, index) =>
-        inspections.map(inspectionKey =>
-          saveGridInstance.getData()[index][inspectionKey] == null ||
-          saveGridInstance.getData()[index][inspectionKey] === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(saveGridInstance.getData()[index].spec_min) &&
-              isNumber(saveGridInstance.getData()[index].spec_max)
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: saveGridInstance.getData()[index][inspectionKey],
-                min: saveGridInstance.getData()[index].spec_min,
-                max: saveGridInstance.getData()[index].spec_max,
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: saveGridInstance.getData()[index][inspectionKey],
-              }),
-        ),
-      )
-      .some((cells: Array<boolean>) => {
-        if (cells[0] === null) return true;
-
-        if (cells.length > 1) {
-          for (let index = 1; index < cells.length; index++) {
-            if (cells[index - 1] === null && cells[index] !== null) return true;
-          }
-        }
-      });
-
-    if (sequencialMissingValueState) {
-      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
-      return;
-    }
-
-    const userDefinedInspectionSaveOption = await getData(
-      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
-      '/std/tenant-opts',
-    );
-
-    // if (!inputInspResultValues?.insp_result_fg) {
-    //   message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-    //   return;
-    // } else
-    if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      message.warn('검사시간을 등록해주세요.');
-      return;
-    }
 
     headerData = {
       factory_uuid: getUserFactoryUuid(),
@@ -2048,6 +1990,85 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       .catch(e => {
         console.log(e);
       });
+  };
+
+  const onSave = async inspectionGridRef => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
+
+    const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((inspections, index) =>
+        inspections.map(inspectionKey =>
+          inspectionDatas[index][inspectionKey] == null ||
+          inspectionDatas[index][inspectionKey] === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(inspectionDatas[index].spec_min) &&
+              isNumber(inspectionDatas[index].spec_max)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey],
+                min: inspectionDatas[index].spec_min,
+                max: inspectionDatas[index].spec_max,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey],
+              }),
+        ),
+      );
+
+    const sequencialMissingValueState = cellCheckers.some(
+      (cells: Array<boolean>) => {
+        if (cells[0] === null) return true;
+
+        if (cells.length > 1) {
+          for (let index = 1; index < cells.length; index++) {
+            if (cells[index - 1] === null && cells[index] !== null) return true;
+          }
+        }
+      },
+    );
+
+    if (sequencialMissingValueState === true) {
+      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
+      return;
+    }
+
+    if (!inputInspResultValues?.emp_uuid) {
+      message.warn('검사자를 등록해주세요.');
+      return;
+    } else if (!inputInspResultValues?.reg_date_time) {
+      message.warn('검사시간을 등록해주세요.');
+      return;
+    }
+
+    const userInputAllCell = cellCheckers.every(cells =>
+      cells.every(cell => cell !== null),
+    );
+
+    if (userInputAllCell === false) {
+      const userDefinedInspectionSaveOption = await getData(
+        { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+        '/std/tenant-opts',
+      );
+
+      userDefinedInspectionSaveOption[0].value = 1;
+
+      if (userDefinedInspectionSaveOption.length > 0) {
+        if (userDefinedInspectionSaveOption[0].value === 1) {
+          message.warn('검사 결과값을 시료수 만큼 입력해주세요');
+          return;
+        } else if (userDefinedInspectionSaveOption[0].value === 2) {
+          Modal.confirm({
+            title: '',
+            content: '결과 시료수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+            onOk: () => {},
+            onCancel: () => {},
+          });
+        }
+      }
+    }
   };
 
   const onCancel = ev => {
