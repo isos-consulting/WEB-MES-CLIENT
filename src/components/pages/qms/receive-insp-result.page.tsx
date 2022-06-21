@@ -2163,6 +2163,22 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           setReceiveInspHeaderData(res.header);
           setReceiveInspDetailData(res.details);
           inputInspResult.setFieldValue('reg_date', getToday());
+
+          res.details.forEach((detail, idx) => {
+            for (
+              let cell = detail.sample_cnt;
+              cell < res.header.max_sample_cnt;
+
+            ) {
+              cell++;
+              gridRef.current
+                .getInstance()
+                .disableCell(idx, `x${cell}_insp_value`);
+              gridRef.current
+                .getInstance()
+                .removeCellClassName(idx, `x${cell}_insp_value`, 'editor');
+            }
+          });
         })
         .catch(err => {
           onClear();
