@@ -1779,7 +1779,15 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     check(arg: any) {
       return this.innerRange(arg);
     }
-    innerRange({ value, min, max }) {
+    innerRange({
+      value,
+      min,
+      max,
+    }: {
+      value: number;
+      min: number;
+      max: number;
+    }) {
       return value >= min && value <= max;
     }
   }
@@ -1863,9 +1871,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           ? inspectionCheck(EmptyInspectionChecker, null)
           : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
           ? inspectionCheck(NumberInspectionChecker, {
-              value: datas[index][inspectionKey],
-              min: datas[index].spec_min,
-              max: datas[index].spec_max,
+              value: datas[index][inspectionKey] * 1,
+              min: datas[index].spec_min * 1,
+              max: datas[index].spec_max * 1,
             })
           : inspectionCheck(EyeInspectionChecker, {
               value: datas[index][inspectionKey],
@@ -2071,9 +2079,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
             : isNumber(inspectionDatas[index].spec_min) &&
               isNumber(inspectionDatas[index].spec_max)
             ? inspectionCheck(NumberInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey],
-                min: inspectionDatas[index].spec_min,
-                max: inspectionDatas[index].spec_max,
+                value: inspectionDatas[index][inspectionKey] * 1,
+                min: inspectionDatas[index].spec_min * 1,
+                max: inspectionDatas[index].spec_max * 1,
               })
             : inspectionCheck(EyeInspectionChecker, {
                 value: inspectionDatas[index][inspectionKey],
@@ -2813,7 +2821,15 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     check(arg: any) {
       return this.innerRange(arg);
     }
-    innerRange({ value, min, max }) {
+    innerRange({
+      value,
+      min,
+      max,
+    }: {
+      value: number;
+      min: number;
+      max: number;
+    }) {
       return value >= min && value <= max;
     }
   }
@@ -2897,9 +2913,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           ? inspectionCheck(EmptyInspectionChecker, null)
           : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
           ? inspectionCheck(NumberInspectionChecker, {
-              value: datas[index][inspectionKey],
-              min: datas[index].spec_min,
-              max: datas[index].spec_max,
+              value: datas[index][inspectionKey] * 1,
+              min: datas[index].spec_min * 1,
+              max: datas[index].spec_max * 1,
             })
           : inspectionCheck(EyeInspectionChecker, {
               value: datas[index][inspectionKey],
@@ -3105,9 +3121,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
             : isNumber(inspectionDatas[index].spec_min) &&
               isNumber(inspectionDatas[index].spec_max)
             ? inspectionCheck(NumberInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey],
-                min: inspectionDatas[index].spec_min,
-                max: inspectionDatas[index].spec_max,
+                value: inspectionDatas[index][inspectionKey] * 1,
+                min: inspectionDatas[index].spec_min * 1,
+                max: inspectionDatas[index].spec_max * 1,
               })
             : inspectionCheck(EyeInspectionChecker, {
                 value: inspectionDatas[index][inspectionKey],
