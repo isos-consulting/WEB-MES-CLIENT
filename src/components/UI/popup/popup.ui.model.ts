@@ -36,6 +36,7 @@ export type TPopupKey =
   | '검사기준유형관리'
   | '검사유형관리'
   | '작업장관리'
+  | '작업조관리'
   | '구매단가관리'
   | '검사구관리'
   | '재고관리'
@@ -122,6 +123,8 @@ export function getPopupForm(
       return getPI_StdInspType(option);
     case '작업장관리':
       return getPI_StdWorkings(option);
+    case '작업조관리':
+      return getPI_StdWorkerGroups(option);
     case '구매단가관리':
       return getPI_StdVendorPrice(option);
     case '검사구관리':
@@ -1530,6 +1533,40 @@ const getPI_StdWorkings = (
       gridMode: 'select',
     },
     uriPath: '/std/workingses',
+    parentGridId: option?.parentGridId,
+  };
+
+  return result;
+};
+
+const getPI_StdWorkerGroups = (
+  option?: IPopupItemOptionProps,
+): IPopupItemsRetrunProps => {
+  let result: IPopupItemsRetrunProps = {
+    modalProps: {
+      title: '작업조관리',
+      visible: true,
+    },
+    datagridProps: {
+      gridId: option?.id,
+      columns: [
+        { header: '작업조아이디', name: 'worker_group_uuid', hidden: true },
+        {
+          header: '작업조코드',
+          name: 'worker_group_cd',
+          width: 200,
+          filter: 'text',
+        },
+        {
+          header: '작업조명',
+          name: 'worker_group_nm',
+          width: 200,
+          filter: 'text',
+        },
+      ],
+      gridMode: 'select',
+    },
+    uriPath: '/std/worker-groups',
     parentGridId: option?.parentGridId,
   };
 
