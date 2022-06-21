@@ -1403,8 +1403,62 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       type: 'combo',
       firstItemType: 'empty',
       options: props.inspHandlingType,
-      disabled: false,
-      onAfterChange: ev => {},
+      disabled: true,
+      onAfterChange: stringifiedInspectionHandlingType => {
+        const selectedInspHandlingType =
+          stringifiedInspectionHandlingType === ''
+            ? { insp_handling_type_cd: '' }
+            : JSON.parse(stringifiedInspectionHandlingType);
+        const inputQty = inputInputItems.ref.current.values.qty;
+
+        let incomeDisabled: boolean = true;
+        let rejectDisabled: boolean = true;
+        let qtyDisabled: boolean = true;
+        if (
+          ['INCOME', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          incomeDisabled = false;
+        }
+        if (
+          ['RETURN', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          rejectDisabled = false;
+        }
+
+        if (incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', 0);
+        }
+        if (rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        }
+
+        if (!incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', inputQty);
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        } else if (!rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', inputQty);
+        }
+
+        if (selectedInspHandlingType.insp_handling_type_cd === 'SELECTION') {
+          qtyDisabled = false;
+        }
+
+        inputInspResultIncome.setFieldDisabled({
+          qty: qtyDisabled,
+          to_store_uuid: incomeDisabled,
+          to_location_uuid: incomeDisabled,
+        });
+        inputInspResultReject.setFieldDisabled({
+          reject_qty: true,
+          reject_nm: rejectDisabled,
+          reject_store_uuid: rejectDisabled,
+          reject_location_uuid: rejectDisabled,
+        });
+      },
     },
     { id: 'remark', label: '비고', type: 'text' },
   ];
@@ -1995,8 +2049,16 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
   const onSave = async inspectionGridRef => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
 
+    if (inputInspResultValues.insp_handling_type === '') {
+      return message.warn('처리결과를 등록해주세요.');
+    } else if (!inputInspResultValues?.emp_uuid) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (!inputInspResultValues?.reg_date_time) {
+      return message.warn('검사시간을 등록해주세요.');
+    }
+
+    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
     const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
       .map((item: Array<string>, index: number) =>
         sliceKeys(item, inspectionDatas[index].sample_cnt),
@@ -2033,14 +2095,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     if (sequencialMissingValueState === true) {
       message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
-      return;
-    }
-
-    if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      message.warn('검사시간을 등록해주세요.');
       return;
     }
 
@@ -2128,9 +2182,19 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg === false) return;
-    let receiveQty: number = Number(inputInputItems?.values?.qty);
-    let incomeQty: number = Number(inputInspResultIncome?.values?.qty);
-    let rejectQty: number = Number(inputInspResultReject?.values?.reject_qty);
+
+    const inputInputItemsInstance =
+      inputInputItems.ref.current ?? inputInputItems;
+    const inputInspResultIncomeInstance =
+      inputInspResultIncome.ref.current ?? inputInspResultIncome;
+    const inputInspResultRejectInstance =
+      inputInspResultReject.ref.current ?? inputInspResultReject;
+
+    let receiveQty: number = Number(inputInputItemsInstance?.values?.qty);
+    let incomeQty: number = Number(inputInspResultIncomeInstance?.values?.qty);
+    let rejectQty: number = Number(
+      inputInspResultRejectInstance?.values?.reject_qty,
+    );
 
     if (receiveQty - incomeQty < 0) {
       message.warn(
