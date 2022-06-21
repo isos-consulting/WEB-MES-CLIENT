@@ -2566,7 +2566,61 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       firstItemType: 'empty',
       options: props.inspHandlingType,
       disabled: false,
-      onAfterChange: ev => {},
+      onAfterChange: stringifiedInspectionHandlingType => {
+        const selectedInspHandlingType =
+          stringifiedInspectionHandlingType === ''
+            ? { insp_handling_type_cd: '' }
+            : JSON.parse(stringifiedInspectionHandlingType);
+        const inputQty = inputInputItems.ref.current.values.qty;
+
+        let incomeDisabled: boolean = true;
+        let rejectDisabled: boolean = true;
+        let qtyDisabled: boolean = true;
+        if (
+          ['INCOME', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          incomeDisabled = false;
+        }
+        if (
+          ['RETURN', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          rejectDisabled = false;
+        }
+
+        if (incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', 0);
+        }
+        if (rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        }
+
+        if (!incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', inputQty);
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        } else if (!rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', inputQty);
+        }
+
+        if (selectedInspHandlingType.insp_handling_type_cd === 'SELECTION') {
+          qtyDisabled = false;
+        }
+
+        inputInspResultIncome.setFieldDisabled({
+          qty: qtyDisabled,
+          to_store_uuid: incomeDisabled,
+          to_location_uuid: incomeDisabled,
+        });
+        inputInspResultReject.setFieldDisabled({
+          reject_qty: true,
+          reject_nm: rejectDisabled,
+          reject_store_uuid: rejectDisabled,
+          reject_location_uuid: rejectDisabled,
+        });
+      },
     },
     { id: 'remark', label: '비고', type: 'text' },
   ];
@@ -2741,117 +2795,169 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     });
   };
 
+  interface InspectionChecker {
+    check: (...arg: any) => boolean;
+  }
+
+  interface InspectionConcreate {
+    new (): InspectionChecker;
+  }
+
+  class EmptyInspectionChecker implements InspectionChecker {
+    check(arg: any) {
+      return null;
+    }
+  }
+
+  class NumberInspectionChecker implements InspectionChecker {
+    check(arg: any) {
+      return this.innerRange(arg);
+    }
+    innerRange({ value, min, max }) {
+      return value >= min && value <= max;
+    }
+  }
+
+  class EyeInspectionChecker implements InspectionChecker {
+    check(arg: any) {
+      return this.isOK(arg);
+    }
+
+    isOK({ value }) {
+      return value.toUpperCase() === 'OK';
+    }
+  }
+
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
+
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const recordChecker = (record: Array<Array<boolean>>): Array<boolean> =>
+    record.map(cellCheckList => {
+      if (cellCheckList.every(checkItem => checkItem === null)) {
+        return null;
+      }
+
+      if (cellCheckList.some(checkItem => checkItem === false)) {
+        return false;
+      }
+
+      return true;
+    });
+
+  const totalChecker = (records: Array<boolean>): boolean => {
+    if (records.some(key => key === null)) {
+      return null;
+    }
+
+    if (records.some(key => key === false)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const checkUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? '합격' : '불합격';
+
+  const eyeCellUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? 'OK' : 'NG';
+
   const onAfterChange = (ev: any) => {
-    const { origin, changes, instance } = ev;
-    if (changes.length === 0) return;
+    const { changes, instance } = ev;
+    const datas = instance.getData();
 
-    const { columnName, rowKey, value } = changes[0];
-
-    if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
-    )
+    if (changes.some(change => !change.columnName.includes('_insp_value')))
       return;
 
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
+    const keys = cellKeys(datas, '_insp_value');
 
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt; //입력 가능한 시료수
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridRef.current?.getInstance();
-
-    //#region ✅CELL단위 합/불 판정
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_fg',
+    const definedCountKeys = keys.map((item: Array<string>, index: number) =>
+      sliceKeys(item, datas[index].sample_cnt),
     );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
 
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
+    const cellCheckers = definedCountKeys.map((inspections, index) =>
+      inspections.map(inspectionKey =>
+        datas[index][inspectionKey] == null ||
+        datas[index][inspectionKey] === ''
+          ? inspectionCheck(EmptyInspectionChecker, null)
+          : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
+          ? inspectionCheck(NumberInspectionChecker, {
+              value: datas[index][inspectionKey],
+              min: datas[index].spec_min,
+              max: datas[index].spec_max,
+            })
+          : inspectionCheck(EyeInspectionChecker, {
+              value: datas[index][inspectionKey],
+            }),
+      ),
+    );
+
+    const records = recordChecker(cellCheckers);
+
+    const finalChecker = totalChecker(records);
+
+    changes.forEach((change: any) => {
+      if (change.columnName.includes('_insp_value')) {
+        const changedCellIndex = keys[change.rowKey].findIndex(
+          inspValue => inspValue === change.columnName,
+        );
+
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_fg'),
+          cellCheckers[change.rowKey][changedCellIndex],
+        );
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_state'),
+          checkUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+        );
+        if (
+          !(
+            isNumber(datas[change.rowKey].spec_min) &&
+            isNumber(datas[change.rowKey].spec_min)
+          )
+        ) {
+          instance.setValue(
+            change.rowKey,
+            change.columnName,
+            eyeCellUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+          );
+        }
       }
-    }
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
+    });
+
+    datas.forEach((data: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', records[index]);
+      instance.setValue(
+        index,
+        'insp_result_state',
+        checkUIProtocol(records[index]),
+      );
+    });
+
+    inputInspResult.setFieldValue('insp_result_fg', finalChecker);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(finalChecker),
     );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
-    );
-    //#endregion
 
-    //#region ✅ROW단위 합/불 판정
-    if (resultFg === true) {
-      // 현재 값이 합격일 경우만 다른 cell의 판정값 체크
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅최종 합/불 판정
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg, emptyFg] = [false, false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-    // const flagInputboxValue = emptyFg || nullFg ? null : resultFg;
-    // const stateInputboxValue = emptyFg ? '' : nullFg ? '진행중' : resultFg ? '합격' : '불합격';
-
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-
-    if (emptyFg || nullFg) {
+    if (finalChecker === null) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
@@ -2859,18 +2965,16 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
 
     let _inspHandlingCd: string;
 
-    if (flagInputboxValue === true) {
+    if (finalChecker === true) {
       _inspHandlingCd = 'INCOME';
-      changeInspResult('INCOME', false);
-    } else if (flagInputboxValue === false) {
+      changeInspResult('INCOME');
+    } else if (finalChecker === false) {
       _inspHandlingCd = 'RETURN';
-      changeInspResult('RETURN', false);
+      changeInspResult('RETURN');
     } else {
       _inspHandlingCd = '';
-      //inputInspResult.setFieldValue('insp_handling_type','')
-      changeInspResult('', false);
+      changeInspResult('');
     }
-
     if (_inspHandlingCd === '') {
       inputInspResult.setFieldValue('insp_handling_type', '');
     } else {
@@ -2881,14 +2985,10 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         }
       });
     }
-
-    //#endregion
   };
 
-  const onSave = async ev => {
-    let headerData: object;
-    let detailDatas: object[] = [];
-
+  const saveData = async inspectionGridInstance => {
+    const inspectionDatas = inspectionGridInstance.getData();
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInspResultIncomeValues =
@@ -2896,20 +2996,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
-
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      message.warn('검사시간을 등록해주세요.');
-      return;
-    }
-
-    headerData = {
+    const inspectionHeader = {
       uuid: inputInspResultValues?.insp_result_uuid,
       insp_handling_type_uuid: JSON.parse(
         inputInspResultValues.insp_handling_type,
@@ -2935,47 +3022,47 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: object[] = [];
-      const row = saveGridInstance?.getRow(i);
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        const uuid: any = row?.['x' + k + '_insp_result_uuid'];
-
-        if (value) {
-          values.push({
-            uuid: uuid,
-            delete_fg: false,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        } else if (uuid) {
-          values.push({
-            uuid: uuid,
-            delete_fg: true,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
+    const inspectionItems = cellKeys(inspectionDatas, '_insp_value')
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((definedCountKeys, index) => ({
         factory_uuid: getUserFactoryUuid(),
-        uuid: row?.insp_result_detail_info_uuid,
-        insp_detail_uuid: row?.insp_detail_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
+        uuid: inspectionDatas[index].insp_result_detail_info_uuid,
+        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
+        insp_result_fg: inspectionDatas[index].insp_result_fg,
+        remark: inspectionDatas[index].remark,
+        values: definedCountKeys
+          .map((key, keyIndex) => ({
+            uuid: inspectionDatas[index][
+              key.replace('_insp_value', '_insp_result_uuid')
+            ],
+            delete_fg:
+              inspectionDatas[index][
+                key.replace('_insp_value', '_insp_result_uuid')
+              ] == null
+                ? false
+                : true,
+            sample_no: keyIndex + 1,
+            insp_result_fg:
+              inspectionDatas[index][
+                key.replace('_insp_value', '_insp_result_fg')
+              ],
+            insp_value:
+              inspectionDatas[index][key] === 'OK'
+                ? 1
+                : inspectionDatas[index][key] === 'NG'
+                ? 0
+                : inspectionDatas[index][key],
+          }))
+          .filter(inspectionCell => inspectionCell.insp_value !== null),
+      }));
 
     const saveData: object = {
-      header: headerData,
-      details: detailDatas,
+      header: inspectionHeader,
+      details: inspectionItems,
     };
+
     await executeData(
       saveData,
       URI_PATH_PUT_QMS_RECEIVE_INSP_RESULTS,
@@ -2992,6 +3079,88 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       .catch(e => {
         console.log(e);
       });
+  };
+
+  const onSave = async inspectionGridRef => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+
+    if (inputInspResultValues.insp_handling_type === '') {
+      return message.warn('처리결과를 등록해주세요.');
+    } else if (!inputInspResultValues?.emp_uuid) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (!inputInspResultValues?.reg_date_time) {
+      return message.warn('검사시간을 등록해주세요.');
+    }
+
+    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
+    const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((inspections, index) =>
+        inspections.map(inspectionKey =>
+          inspectionDatas[index][inspectionKey] == null ||
+          inspectionDatas[index][inspectionKey] === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(inspectionDatas[index].spec_min) &&
+              isNumber(inspectionDatas[index].spec_max)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey],
+                min: inspectionDatas[index].spec_min,
+                max: inspectionDatas[index].spec_max,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey],
+              }),
+        ),
+      );
+
+    const sequencialMissingValueState = cellCheckers.some(
+      (cells: Array<boolean>) => {
+        if (cells[0] === null) return true;
+
+        if (cells.length > 1) {
+          for (let index = 1; index < cells.length; index++) {
+            if (cells[index - 1] === null && cells[index] !== null) return true;
+          }
+        }
+      },
+    );
+
+    if (sequencialMissingValueState === true) {
+      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
+      return;
+    }
+
+    const userInputAllCell = cellCheckers.every(cells =>
+      cells.every(cell => cell !== null),
+    );
+
+    if (userInputAllCell === false) {
+      const userDefinedInspectionSaveOption = await getData(
+        { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+        '/std/tenant-opts',
+      );
+
+      if (userDefinedInspectionSaveOption.length > 0) {
+        if (userDefinedInspectionSaveOption[0].value === 1) {
+          message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
+          return;
+        } else if (userDefinedInspectionSaveOption[0].value === 2) {
+          Modal.confirm({
+            title: '',
+            content:
+              '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+            onOk: close => {
+              saveData(inspectionGridRef.current.getInstance());
+              close();
+            },
+            onCancel: () => {},
+          });
+        }
+      }
+    }
+    saveData(inspectionGridRef.current.getInstance());
   };
 
   const onCancel = ev => {
@@ -3020,6 +3189,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
               .format('YYYY-MM-DD'),
             qty: res.header.insp_qty,
           });
+
           inputInspResult.setValues({
             ...res.header,
             reg_date_time: res.header.reg_date,
@@ -3035,6 +3205,21 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           inputInspResultReject.setValues({ ...res.header });
 
           changeInspResult(res.header.insp_handling_type_cd, true);
+          res.details.forEach((detail, idx) => {
+            for (
+              let cell = detail.sample_cnt;
+              cell < res.header.max_sample_cnt;
+
+            ) {
+              cell++;
+              gridRef.current
+                .getInstance()
+                .disableCell(idx, `x${cell}_insp_value`);
+              gridRef.current
+                .getInstance()
+                .removeCellClassName(idx, `x${cell}_insp_value`, 'editor');
+            }
+          });
         })
         .catch(err => {
           onClear();
@@ -3051,9 +3236,18 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
 
   useLayoutEffect(() => {
     if (changeIncomeQtyFg === false) return;
-    let receiveQty: number = Number(inputInputItems?.values?.qty);
-    let incomeQty: number = Number(inputInspResultIncome?.values?.qty);
-    let rejectQty: number = Number(inputInspResultReject?.values?.reject_qty);
+    const inputInputItemsInstance =
+      inputInputItems.ref.current ?? inputInputItems;
+    const inputInspResultIncomeInstance =
+      inputInspResultIncome.ref.current ?? inputInspResultIncome;
+    const inputInspResultRejectInstance =
+      inputInspResultReject.ref.current ?? inputInspResultReject;
+
+    let receiveQty: number = Number(inputInputItemsInstance?.values?.qty);
+    let incomeQty: number = Number(inputInspResultIncomeInstance?.values?.qty);
+    let rejectQty: number = Number(
+      inputInspResultRejectInstance?.values?.reject_qty,
+    );
 
     if (receiveQty - incomeQty < 0) {
       message.warn(
