@@ -95,7 +95,9 @@ export const PgEqmTempInterface = () => {
       firstItemType: 'none',
       dataSettingOptions: {
         uriPath: '/gat/data-items',
-        params: {},
+        params: {
+          monitoring_fg: true,
+        },
         codeName: 'data_item_uuid',
         textName: 'data_item_nm',
       },
