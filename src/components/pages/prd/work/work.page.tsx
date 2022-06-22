@@ -1348,7 +1348,6 @@ export const PgPrdWork = () => {
           workWorker?.gridRef?.current?.getInstance()?.refreshLayout();
           break;
         case 'REJECT':
-          console.log(`4?`);
           workReject?.gridRef?.current?.getInstance()?.refreshLayout();
           break;
         case 'DOWNTIME':
