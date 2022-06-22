@@ -1,6 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
-import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
+import {
+  getPopupForm,
+  TGridMode,
+  useGrid,
+  useSearchbox,
+} from '~/components/UI';
 import {
   dataGridEvents,
   getData,
@@ -54,11 +59,44 @@ export const PgStdWorkings = () => {
         editable: true,
         requiredField: true,
       },
+      {
+        header: '작업조UUID',
+        name: 'worker_group_uuid',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+        editable: true,
+        requiredField: false,
+        hidden: true,
+      },
+      {
+        header: '작업조명',
+        name: 'worker_group_nm',
+        width: ENUM_WIDTH.M,
+        format: 'popup',
+        filter: 'text',
+        editable: true,
+        requiredField: false,
+      },
     ],
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       gridMode: defaultGridMode,
+      gridPopupInfo: [
+        {
+          // 작업장
+          columnNames: [
+            { original: 'worker_group_uuid', popup: 'worker_group_uuid' },
+            { original: 'worker_group_nm', popup: 'worker_group_nm' },
+          ],
+          columns: getPopupForm('작업조관리').datagridProps?.columns,
+          dataApiSettings: {
+            uriPath: getPopupForm('작업조관리').uriPath,
+            params: {},
+          },
+          gridMode: 'select',
+        },
+      ],
     },
   );
 
@@ -68,11 +106,13 @@ export const PgStdWorkings = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
+      gridPopupInfo: grid.gridInfo?.gridPopupInfo,
     },
   );
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID', grid.gridInfo.columns, {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
+    gridPopupInfo: grid.gridInfo?.gridPopupInfo,
   });
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
     useState<boolean>(false);
