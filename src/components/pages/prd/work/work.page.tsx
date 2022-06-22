@@ -1273,8 +1273,10 @@ export const PgPrdWork = () => {
       undefined,
       { disabledZeroMessage: true },
     ).then(res => {
+      const { proc_uuid } = routingRow;
       workReject.setData(res);
       workReject.setSearchParams({ work_uuid, work_routing_uuid, complete_fg });
+      workReject.setRowAddedParams({ proc_uuid });
       workReject.setSaveOptionParams({ work_uuid, work_routing_uuid });
     });
 
@@ -1346,6 +1348,7 @@ export const PgPrdWork = () => {
           workWorker?.gridRef?.current?.getInstance()?.refreshLayout();
           break;
         case 'REJECT':
+          console.log(`4?`);
           workReject?.gridRef?.current?.getInstance()?.refreshLayout();
           break;
         case 'DOWNTIME':

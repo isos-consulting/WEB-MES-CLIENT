@@ -20,7 +20,7 @@ import {
   saveGridData,
 } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, pick } from 'lodash';
 
 const DATA_PICKUP_INFO = {
   create: [
@@ -53,6 +53,7 @@ export const REJECT = () => {
   const [modal, contextHolder] = Modal.useModal();
   const [searchParams, setSearchParams] = useState({});
   const [saveOptionParams, setSaveOptionParams] = useState({});
+  const [rowAddedParams, setRowAddedParams] = useState({});
   //#endregion
 
   //#region 🔶부적합 그리드 관련
@@ -218,8 +219,8 @@ export const REJECT = () => {
         },
       ],
       dataApiSettings: {
-        uriPath: '/std/rejects',
-        params: {},
+        uriPath: '/std/proc-rejects',
+        params: { ...rowAddedParams },
       },
       gridMode: 'multi-select',
     },
@@ -445,7 +446,7 @@ export const REJECT = () => {
     if (chk === false) return;
 
     saveData[_gridMode + 'dRows'] = saveData[_gridMode + 'dRows']?.map(row => {
-      return _.pick(row, DATA_PICKUP_INFO?.[_gridMode]);
+      return pick(row, DATA_PICKUP_INFO?.[_gridMode]);
     });
 
     saveGridData(
@@ -533,6 +534,7 @@ export const REJECT = () => {
 
     saveOptionParams,
     setSaveOptionParams,
+    setRowAddedParams,
 
     onSearch,
 
