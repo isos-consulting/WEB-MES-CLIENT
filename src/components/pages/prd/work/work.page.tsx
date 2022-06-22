@@ -2176,11 +2176,30 @@ const ProdOrderModal = ({ visible, onClose }) => {
     }
   };
 
+  class LotNumberGenerator {
+    private day: string;
+
+    constructor(day) {
+      this.day = day;
+    }
+
+    static today() {
+      return new LotNumberGenerator(getToday());
+    }
+
+    static workday(workday: string) {
+      return new LotNumberGenerator(workday);
+    }
+
+    generate() {
+      return this.day.replace(/[^0-9]/g, '');
+    }
+  }
+
   const onSave = () => {
     let updatedRows = gridRef?.current?.getInstance().getModifiedRows()
       ?.updatedRows as any[];
     const start_date = getToday();
-    const lot_no = start_date?.replace(/[^0-9]/g, '');
 
     // 작업시작 처리
     const workStartList = updatedRows
@@ -2188,7 +2207,7 @@ const ProdOrderModal = ({ visible, onClose }) => {
       ?.map(row => {
         let newRow = {
           ...row,
-          lot_no,
+          lot_no: LotNumberGenerator.workday(row.reg_date).generate(),
         };
         newRow = pick(newRow, [
           'factory_uuid',
