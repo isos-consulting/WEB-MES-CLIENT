@@ -2029,7 +2029,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
                 ? 0
                 : inspectionDatas[index][key],
           }))
-          .filter(inspectionCell => inspectionCell.insp_value !== null),
+          .filter(inspectionCell => inspectionCell.insp_result_fg !== null),
       }));
 
     const saveData: object = {
