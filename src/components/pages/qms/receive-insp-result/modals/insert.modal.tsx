@@ -27,9 +27,22 @@ import {
   isNumber,
 } from '~/functions';
 import { message, Modal } from 'antd';
+import { InputForm, QuantityField } from '../models/fields';
+import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
+
+interface InspectionHandlingTypeCodeSet<T> {
+  code: string;
+  text: string;
+  set: T;
+}
+
+interface InspectionHandlingTypeUuidSet {
+  insp_handling_type_uuid: string;
+  insp_handling_type_cd: string;
+}
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
-  inspHandlingType: any;
+  inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
   popupVisible: boolean;
   setPopupVisible: (value?) => void;
   onAfterCloseSearch?: () => void;
@@ -43,6 +56,55 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   const [receiveInspDetailData, setReceiveInspDetailData] = useState<
     TReceiveInspDetail[]
   >([]);
+
+  const handleInspectionHandlingTypeChange = (
+    handlingTypeCode: string,
+    inputQuantity: number,
+  ) => {
+    const incomeFormService = new InspectionHandlingServiceImpl(
+      new InputForm(),
+    );
+    const rejectFormService = new InspectionHandlingServiceImpl(
+      new InputForm(),
+    );
+
+    incomeFormService.addFields(inputInspResultIncome.inputItemKeys);
+    rejectFormService.addFields(inputInspResultReject.inputItemKeys);
+
+    const incomeQuantity = new QuantityField(incomeFormService.getField('qty'));
+    const rejectQuantity = new QuantityField(
+      rejectFormService.getField('reject_qty'),
+    );
+
+    if ('INCOME' === handlingTypeCode) {
+      incomeQuantity.setQuantity(inputQuantity);
+
+      rejectFormService.toggle();
+    } else if ('RETURN' === handlingTypeCode) {
+      incomeFormService.toggle();
+
+      rejectQuantity.setQuantity(inputQuantity);
+    } else if ('SELECTION' === handlingTypeCode) {
+      incomeQuantity.setQuantity(inputQuantity);
+
+      rejectQuantity.toggle();
+    } else {
+      incomeFormService.toggle();
+      rejectFormService.toggle();
+    }
+
+    inputInspResultIncome.setFieldValue('qty', incomeQuantity.info().quantity);
+    inputInspResultReject.setFieldValue(
+      'reject_qty',
+      rejectQuantity.info().quantity,
+    );
+
+    const incomeEnabled = incomeFormService.attributes();
+    const rejectEnabled = rejectFormService.attributes();
+
+    inputInspResultIncome.setFieldDisabled({ ...incomeEnabled });
+    inputInspResultReject.setFieldDisabled({ ...rejectEnabled });
+  };
 
   const RECEIVE_POPUP_COLUMNS: IGridColumn[] = [
     {
@@ -304,9 +366,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     return items;
   }, [receiveInspHeaderData]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [
     {
       id: 'receive_detail_uuid',
@@ -421,60 +481,14 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       firstItemType: 'empty',
       options: props.inspHandlingType,
       disabled: true,
-      onAfterChange: stringifiedInspectionHandlingType => {
-        const selectedInspHandlingType =
-          stringifiedInspectionHandlingType === ''
-            ? { insp_handling_type_cd: '' }
-            : JSON.parse(stringifiedInspectionHandlingType);
+      onAfterChange: inspectionHandlingTypeCode => {
+        const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
+          inspectionHandlingTypeCode === ''
+            ? { insp_handling_type_cd: null }
+            : JSON.parse(inspectionHandlingTypeCode);
         const inputQty = inputInputItems.ref.current.values.qty;
 
-        let incomeDisabled: boolean = true;
-        let rejectDisabled: boolean = true;
-        let qtyDisabled: boolean = true;
-        if (
-          ['INCOME', 'SELECTION'].includes(
-            selectedInspHandlingType.insp_handling_type_cd,
-          )
-        ) {
-          incomeDisabled = false;
-        }
-        if (
-          ['RETURN', 'SELECTION'].includes(
-            selectedInspHandlingType.insp_handling_type_cd,
-          )
-        ) {
-          rejectDisabled = false;
-        }
-
-        if (incomeDisabled) {
-          inputInspResultIncome.setFieldValue('qty', 0);
-        }
-        if (rejectDisabled) {
-          inputInspResultReject.setFieldValue('reject_qty', 0);
-        }
-
-        if (!incomeDisabled) {
-          inputInspResultIncome.setFieldValue('qty', inputQty);
-          inputInspResultReject.setFieldValue('reject_qty', 0);
-        } else if (!rejectDisabled) {
-          inputInspResultReject.setFieldValue('reject_qty', inputQty);
-        }
-
-        if (selectedInspHandlingType.insp_handling_type_cd === 'SELECTION') {
-          qtyDisabled = false;
-        }
-
-        inputInspResultIncome.setFieldDisabled({
-          qty: qtyDisabled,
-          to_store_uuid: incomeDisabled,
-          to_location_uuid: incomeDisabled,
-        });
-        inputInspResultReject.setFieldDisabled({
-          reject_qty: true,
-          reject_nm: rejectDisabled,
-          reject_store_uuid: rejectDisabled,
-          reject_location_uuid: rejectDisabled,
-        });
+        handleInspectionHandlingTypeChange(insp_handling_type_cd, inputQty);
       },
     },
     { id: 'remark', label: '비고', type: 'text' },
@@ -942,28 +956,20 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
     }
 
-    let _inspHandlingCd: string;
+    const inspectionHandlingTypeCode: string =
+      finalChecker === true ? 'INCOME' : finalChecker === false ? 'RETURN' : '';
 
-    if (finalChecker === true) {
-      _inspHandlingCd = 'INCOME';
-      changeInspResult('INCOME');
-    } else if (finalChecker === false) {
-      _inspHandlingCd = 'RETURN';
-      changeInspResult('RETURN');
-    } else {
-      _inspHandlingCd = '';
-      changeInspResult('');
-    }
-    if (_inspHandlingCd === '') {
-      inputInspResult.setFieldValue('insp_handling_type', '');
-    } else {
-      props.inspHandlingType.forEach(el => {
-        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd) {
-          inputInspResult.setFieldValue('insp_handling_type', el.code);
-          return;
-        }
-      });
-    }
+    handleInspectionHandlingTypeChange(
+      inspectionHandlingTypeCode,
+      receiveInputData?.qty,
+    );
+    const { code } = props.inspHandlingType.find(
+      el =>
+        JSON.parse(el.code).insp_handling_type_cd ===
+        inspectionHandlingTypeCode,
+    ) ?? { code: '' };
+
+    inputInspResult.setFieldValue('insp_handling_type', code);
   };
 
   const saveData = async inspectionGridInstance => {
