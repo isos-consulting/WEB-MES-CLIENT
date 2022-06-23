@@ -19,9 +19,6 @@ import {
   blankThenNull,
   executeData,
   getData,
-  getInspCheckResultInfo,
-  getInspCheckResultTotal,
-  getInspCheckResultValue,
   getToday,
   getUserFactoryUuid,
   isNumber,
@@ -79,11 +76,13 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     if ('INCOME' === handlingTypeCode) {
       incomeQuantity.setQuantity(inputQuantity);
 
+      incomeQuantity.toggle();
       rejectFormService.toggle();
     } else if ('RETURN' === handlingTypeCode) {
-      incomeFormService.toggle();
-
       rejectQuantity.setQuantity(inputQuantity);
+
+      incomeFormService.toggle();
+      rejectQuantity.toggle();
     } else if ('SELECTION' === handlingTypeCode) {
       incomeQuantity.setQuantity(inputQuantity);
 
@@ -652,132 +651,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       reject_store_uuid: rejectDisabled,
       reject_location_uuid: rejectDisabled,
     });
-  };
-
-  const oldChangeCell = (ev: any) => {
-    const { origin, changes, instance } = ev;
-    if (changes.length === 0) return;
-
-    const { columnName, rowKey, value } = changes[0];
-
-    if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
-    )
-      return;
-
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
-
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt;
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridRef.current?.getInstance();
-
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_fg',
-    );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
-    );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
-    );
-
-    if (resultFg === true) {
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
-    );
-
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg, emptyFg] = [false, false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-
-    if (emptyFg || nullFg) {
-      inputInspResult.setFieldDisabled({ insp_handling_type: true });
-    } else {
-      inputInspResult.setFieldDisabled({ insp_handling_type: false });
-    }
-
-    let _inspHandlingCd: string;
-
-    if (flagInputboxValue === true) {
-      _inspHandlingCd = 'INCOME';
-      changeInspResult('INCOME');
-    } else if (flagInputboxValue === false) {
-      _inspHandlingCd = 'RETURN';
-      changeInspResult('RETURN');
-    } else {
-      _inspHandlingCd = '';
-      changeInspResult('');
-    }
-    if (_inspHandlingCd === '') {
-      inputInspResult.setFieldValue('insp_handling_type', '');
-    } else {
-      props.inspHandlingType.forEach(el => {
-        if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd) {
-          inputInspResult.setFieldValue('insp_handling_type', el.code);
-          return;
-        }
-      });
-    }
   };
 
   interface InspectionChecker {
