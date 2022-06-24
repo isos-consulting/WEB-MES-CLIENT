@@ -541,43 +541,49 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       return;
     }
 
-    const userInputAllCell = cellCheckers.every(cells =>
+    const isUserInputAllCell = cellCheckers.every(cells =>
       cells.every(cell => cell !== null),
     );
 
-    if (userInputAllCell === false) {
-      const userDefinedInspectionSaveOption = await getData(
-        { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
-        '/std/tenant-opts',
-      );
-
-      if (userDefinedInspectionSaveOption.length > 0) {
-        if (userDefinedInspectionSaveOption[0].value === 1) {
-          message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
-          return;
-        } else if (userDefinedInspectionSaveOption[0].value === 2) {
-          Modal.confirm({
-            title: '',
-            content:
-              '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
-            onOk: async close => {
-              const saveData = saveInspectionData(
-                inspectionGridRef.current.getInstance(),
-              );
-              await callInspectionCreateAPI(saveData);
-              close();
-            },
-            onCancel: () => {},
-          });
-        }
-      }
-    }
+    const userDefinedInspectionSaveOption = await getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
 
     const saveData = saveInspectionData(
       inspectionGridRef.current.getInstance(),
     );
 
-    await callInspectionCreateAPI(saveData);
+    if (userDefinedInspectionSaveOption.length === 0) {
+      return await callInspectionCreateAPI(saveData);
+    }
+
+    if (
+      isUserInputAllCell === false &&
+      userDefinedInspectionSaveOption[0].value === 1
+    ) {
+      message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
+      return;
+    } else if (
+      isUserInputAllCell === false &&
+      userDefinedInspectionSaveOption[0].value === 2
+    ) {
+      Modal.confirm({
+        title: '',
+        content:
+          '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+        onOk: async close => {
+          const saveData = saveInspectionData(
+            inspectionGridRef.current.getInstance(),
+          );
+          await callInspectionCreateAPI(saveData);
+          close();
+        },
+        onCancel: () => {},
+      });
+    }
+
+    return await callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {
