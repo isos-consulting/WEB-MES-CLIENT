@@ -1,7 +1,10 @@
 import { IGridColumn } from '~/components/UI';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING } from '../constants';
+import {
+  InspectionCellHeader,
+  URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING,
+} from '../constants';
 
 export const RECEIVE_POPUP_COLUMNS: IGridColumn[] = [
   {
@@ -394,5 +397,65 @@ export const INPUT_ITEMS_INSP_RESULT_RETURN: IInputGroupboxItem[] = [
       uriPath: '',
     },
     onAfterChange: ev => {},
+  },
+];
+
+export const inspectionCheckCells: IGridColumn[] = [
+  {
+    header: InspectionCellHeader._insp_result_detail_value_uuid,
+    name: '_insp_result_detail_value_uuid',
+    width: ENUM_WIDTH.L,
+    filter: 'text',
+    hidden: true,
+  },
+  {
+    header: InspectionCellHeader._sample_no,
+    name: '_sample_no',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+    hidden: true,
+  },
+  {
+    header: InspectionCellHeader._insp_value,
+    name: '_insp_value',
+    width: ENUM_WIDTH.L,
+    filter: 'text',
+    editable: true,
+  },
+  {
+    header: InspectionCellHeader._insp_result_fg,
+    name: '_insp_result_fg',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+    hidden: true,
+  },
+  {
+    header: InspectionCellHeader._insp_result_state,
+    name: '_insp_result_state',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+    hidden: true,
+  },
+];
+
+export const inspectionItemResultCells: IGridColumn[] = [
+  {
+    header: '합격여부',
+    name: 'insp_result_fg',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+    hidden: true,
+  },
+  {
+    header: '판정',
+    name: 'insp_result_state',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+  },
+  {
+    header: '비고',
+    name: 'remark',
+    width: ENUM_WIDTH.XL,
+    filter: 'text',
   },
 ];

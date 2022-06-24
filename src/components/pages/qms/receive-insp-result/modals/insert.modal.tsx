@@ -8,7 +8,6 @@ import {
   TReceiveInspHeader,
 } from './types';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import {
@@ -27,6 +26,8 @@ import {
   INPUT_ITEMS_INSP_RESULT,
   INPUT_ITEMS_INSP_RESULT_INCOME,
   INPUT_ITEMS_INSP_RESULT_RETURN,
+  inspectionCheckCells,
+  inspectionItemResultCells,
   INSP_DETAIL_COLUMNS,
 } from './constants/columns';
 import {
@@ -184,63 +185,17 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
 
     if (receiveInspHeaderData?.max_sample_cnt > 0) {
       for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
+        const inspectionCheckCellColumns = inspectionCheckCells.map(cell => ({
+          ...cell,
+          header: `x${i}${cell.header}`,
+          name: `x${i}${cell.name}`,
+        }));
+
+        items.push(...inspectionCheckCellColumns);
       }
     }
 
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
+    items.push(...inspectionItemResultCells);
 
     return items;
   }, [receiveInspHeaderData]);
