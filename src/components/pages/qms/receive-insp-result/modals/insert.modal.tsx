@@ -600,7 +600,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     { title: '부적합정보' },
   );
 
-  const onClear = () => {
+  const resetInspectionDatas = () => {
     inputInputItems.ref.current.resetForm();
     inputInspResult.ref.current.resetForm();
     inputInspResultIncome.ref.current.resetForm();
@@ -931,7 +931,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         if (!value) return;
         message.info('저장되었습니다.');
         props.onAfterCloseSearch();
-        onClear();
+        resetInspectionDatas();
         props.setPopupVisible(false);
       })
       .catch(e => {
@@ -1022,7 +1022,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const onCancel = ev => {
-    onClear();
+    resetInspectionDatas();
     props.setPopupVisible(false);
   };
 
@@ -1071,7 +1071,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           });
         })
         .catch(err => {
-          onClear();
+          resetInspectionDatas();
           message.error('에러');
         });
     }
