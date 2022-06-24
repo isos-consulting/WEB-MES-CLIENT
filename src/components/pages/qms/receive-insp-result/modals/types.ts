@@ -123,3 +123,45 @@ export interface InspectionHandlingTypeUuidSet {
   insp_handling_type_uuid: string;
   insp_handling_type_cd: string;
 }
+
+export interface InspectionPostPayloadHeader {
+  factory_uuid: string;
+  receive_detail_uuid: string;
+  insp_type_uuid: string;
+  insp_detail_type_uuid: string;
+  insp_handling_type_uuid: string;
+  insp_uuid: string;
+  unit_uuid: string;
+  prod_uuid: string;
+  lot_no: string;
+  emp_uuid: string;
+  reg_date: string;
+  insp_result_fg: boolean;
+  insp_qty: number;
+  pass_qty: number;
+  reject_qty: number;
+  reject_uuid: string;
+  to_store_uuid: string;
+  to_location_uuid: string;
+  reject_store_uuid: string;
+  reject_location_uuid: string;
+  remark: string;
+}
+
+export interface InspectionSample {
+  sample_no: number;
+  insp_result_fg: boolean;
+  insp_value: number;
+}
+export interface InspectionPostPayloadDetails {
+  factory_uuid: string;
+  insp_detail_uuid: string;
+  insp_result_fg: boolean;
+  remark: string;
+  values: InspectionSample[];
+}
+
+export interface InspectionPostAPIPayload {
+  header: InspectionPostPayloadHeader;
+  details: InspectionPostPayloadDetails[];
+}

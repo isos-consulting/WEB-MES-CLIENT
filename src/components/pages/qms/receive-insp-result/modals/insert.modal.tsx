@@ -3,6 +3,9 @@ import Grid from '@toast-ui/react-grid';
 import {
   InspectionHandlingTypeCodeSet,
   InspectionHandlingTypeUuidSet,
+  InspectionPostAPIPayload,
+  InspectionPostPayloadDetails,
+  InspectionPostPayloadHeader,
   TReceiveDetail,
   TReceiveInspDetail,
   TReceiveInspHeader,
@@ -381,7 +384,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     inputInspResult.setFieldValue('insp_handling_type', code);
   };
 
-  const saveData = async inspectionGridInstance => {
+  const saveInspectionData = inspectionGridInstance => {
     const inspectionDatas = inspectionGridInstance.getData();
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
@@ -390,7 +393,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
 
-    const inspectionHeader = {
+    const inspectionHeader: InspectionPostPayloadHeader = {
       factory_uuid: getUserFactoryUuid(),
       receive_detail_uuid: inputInputItemsValues?.receive_detail_uuid,
       insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
@@ -426,7 +429,10 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    const inspectionItems = cellKeys(inspectionDatas, '_insp_value')
+    const inspectionItems: InspectionPostPayloadDetails[] = cellKeys(
+      inspectionDatas,
+      '_insp_value',
+    )
       .map((item: Array<string>, index: number) =>
         sliceKeys(item, inspectionDatas[index].sample_cnt),
       )
@@ -452,11 +458,13 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           .filter(inspectionCell => inspectionCell.insp_result_fg !== null),
       }));
 
-    const saveData: object = {
+    return {
       header: inspectionHeader,
       details: inspectionItems,
     };
+  };
 
+  const callInspectionCreateAPI = async (saveData: InspectionPostAPIPayload) =>
     await executeData(
       saveData,
       URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS,
@@ -473,7 +481,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       .catch(e => {
         console.log(e);
       });
-  };
 
   const onSave = async inspectionGridRef => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
@@ -484,6 +491,14 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       return message.warn('검사자를 등록해주세요.');
     } else if (!inputInspResultValues?.reg_date_time) {
       return message.warn('검사시간을 등록해주세요.');
+    }
+
+    if (
+      inputInspResultValues.insp_result_fg === true &&
+      JSON.parse(inputInspResultValues.insp_handling_type)
+        .insp_handling_type_cd !== 'INCOME'
+    ) {
+      return message.warn('최종 판정이 합격일 경우 입고만 처리 할 수 있습니다');
     }
 
     const inspectionDatas = inspectionGridRef.current.getInstance().getData();
@@ -545,8 +560,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
             title: '',
             content:
               '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
-            onOk: close => {
-              saveData(inspectionGridRef.current.getInstance());
+            onOk: async close => {
+              const saveData = saveInspectionData(
+                inspectionGridRef.current.getInstance(),
+              );
+              await callInspectionCreateAPI(saveData);
               close();
             },
             onCancel: () => {},
@@ -554,7 +572,12 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         }
       }
     }
-    saveData(inspectionGridRef.current.getInstance());
+
+    const saveData = saveInspectionData(
+      inspectionGridRef.current.getInstance(),
+    );
+
+    await callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {
