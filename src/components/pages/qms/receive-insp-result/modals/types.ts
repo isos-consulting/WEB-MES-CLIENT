@@ -30,7 +30,6 @@ export type TReceiveInspHeader = {
   max_sample_cnt?: number;
   remark?: string;
 };
-
 export type TReceiveInspDetail = {
   insp_detail_uuid?: string;
   insp_uuid?: string;
@@ -63,7 +62,6 @@ export type TReceiveInspDetail = {
   insp_cycle?: string;
   remark?: string;
 };
-
 export type TReceiveDetail = {
   receive_detail_uuid?: string;
   receive_uuid?: string;
@@ -116,3 +114,12 @@ export type TReceiveDetail = {
   remark?: string;
   barcode?: string;
 };
+export interface InspectionHandlingTypeCodeSet<T> {
+  code: string;
+  text: string;
+  set: T;
+}
+export interface InspectionHandlingTypeUuidSet {
+  insp_handling_type_uuid: string;
+  insp_handling_type_cd: string;
+}

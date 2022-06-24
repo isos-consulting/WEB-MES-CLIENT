@@ -1,6 +1,8 @@
 import React, { useRef, useState, useMemo, useLayoutEffect } from 'react';
 import Grid from '@toast-ui/react-grid';
 import {
+  InspectionHandlingTypeCodeSet,
+  InspectionHandlingTypeUuidSet,
   TReceiveDetail,
   TReceiveInspDetail,
   TReceiveInspHeader,
@@ -26,17 +28,6 @@ import {
 import { message, Modal } from 'antd';
 import { InputForm, QuantityField } from '../models/fields';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
-
-interface InspectionHandlingTypeCodeSet<T> {
-  code: string;
-  text: string;
-  set: T;
-}
-
-interface InspectionHandlingTypeUuidSet {
-  insp_handling_type_uuid: string;
-  insp_handling_type_cd: string;
-}
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
