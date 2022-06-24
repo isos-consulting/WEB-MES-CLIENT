@@ -269,50 +269,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     setReceiveInspDetailData([]);
   };
 
-  const changeInspResult = (inspResult?: string) => {
-    let incomeDisabled: boolean = true;
-    let rejectDisabled: boolean = true;
-    let qtyDisabled: boolean = true;
-    if (inspResult) {
-      if (['INCOME', 'SELECTION'].includes(inspResult)) {
-        incomeDisabled = false;
-      }
-      if (['RETURN', 'SELECTION'].includes(inspResult)) {
-        rejectDisabled = false;
-      }
-    }
-
-    if (incomeDisabled) {
-      inputInspResultIncome.setFieldValue('qty', 0);
-    }
-    if (rejectDisabled) {
-      inputInspResultReject.setFieldValue('reject_qty', 0);
-    }
-
-    if (!incomeDisabled) {
-      inputInspResultIncome.setFieldValue('qty', receiveInputData?.qty);
-      inputInspResultReject.setFieldValue('reject_qty', 0);
-    } else if (!rejectDisabled) {
-      inputInspResultReject.setFieldValue('reject_qty', receiveInputData?.qty);
-    }
-
-    if (inspResult === 'SELECTION') {
-      qtyDisabled = false;
-    }
-
-    inputInspResultIncome.setFieldDisabled({
-      qty: qtyDisabled,
-      to_store_uuid: incomeDisabled,
-      to_location_uuid: incomeDisabled,
-    });
-    inputInspResultReject.setFieldDisabled({
-      reject_qty: qtyDisabled,
-      reject_nm: rejectDisabled,
-      reject_store_uuid: rejectDisabled,
-      reject_location_uuid: rejectDisabled,
-    });
-  };
-
   interface InspectionChecker {
     check: (...arg: any) => boolean;
   }
