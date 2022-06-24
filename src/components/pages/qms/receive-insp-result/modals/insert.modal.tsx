@@ -29,6 +29,12 @@ import {
   INPUT_ITEMS_INSP_RESULT_RETURN,
   INSP_DETAIL_COLUMNS,
 } from './constants/columns';
+import {
+  EmptyInspectionChecker,
+  EyeInspectionChecker,
+  InspectionConcreate,
+  NumberInspectionChecker,
+} from '../models/inspection-checker';
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
@@ -268,47 +274,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     setReceiveInspHeaderData({});
     setReceiveInspDetailData([]);
   };
-
-  interface InspectionChecker {
-    check: (...arg: any) => boolean;
-  }
-
-  interface InspectionConcreate {
-    new (): InspectionChecker;
-  }
-
-  class EmptyInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return null;
-    }
-  }
-
-  class NumberInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return this.innerRange(arg);
-    }
-    innerRange({
-      value,
-      min,
-      max,
-    }: {
-      value: number;
-      min: number;
-      max: number;
-    }) {
-      return value >= min && value <= max;
-    }
-  }
-
-  class EyeInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return this.isOK(arg);
-    }
-
-    isOK({ value }) {
-      return value.toUpperCase() === 'OK';
-    }
-  }
 
   const inspectionCheck = <T extends InspectionConcreate>(
     checker: T,
