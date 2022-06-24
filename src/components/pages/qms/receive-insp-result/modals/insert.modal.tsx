@@ -696,6 +696,10 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         ? 'outReceive'
         : '';
 
+    inputInspResult.ref.current.resetForm();
+    inputInspResultIncome.ref.current.resetForm();
+    inputInspResultReject.ref.current.resetForm();
+
     inputInspResultIncome.setFieldValue(
       'to_store_uuid',
       receiveInputData.to_store_uuid,
