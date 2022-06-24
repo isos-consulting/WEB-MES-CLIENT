@@ -8,15 +8,9 @@ import {
   TReceiveInspHeader,
 } from './types';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import {
-  IInputGroupboxItem,
-  useInputGroup,
-} from '~/components/UI/input-groupbox';
-import {
-  URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING,
-  URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS,
-} from './constants';
+import { ENUM_WIDTH } from '~/enums';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import {
   blankThenNull,
   executeData,
@@ -52,76 +46,81 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     TReceiveInspDetail[]
   >([]);
 
-  const stmtNoSubField = INFO_INPUT_ITEMS.find(
-    inputItemsField => inputItemsField.id === 'stmt_no_sub',
-  );
+  const initialize = () => {
+    const stmtNoSubField = INFO_INPUT_ITEMS.find(
+      inputItemsField => inputItemsField.id === 'stmt_no_sub',
+    );
 
-  const regDateField = INPUT_ITEMS_INSP_RESULT.find(
-    inspectionResultField => inspectionResultField.id === 'reg_date',
-  );
+    const regDateField = INPUT_ITEMS_INSP_RESULT.find(
+      inspectionResultField => inspectionResultField.id === 'reg_date',
+    );
 
-  const inspectionHandlingTypeField = INPUT_ITEMS_INSP_RESULT.find(
-    inspectionResultField => inspectionResultField.id === 'insp_handling_type',
-  );
+    const inspectionHandlingTypeField = INPUT_ITEMS_INSP_RESULT.find(
+      inspectionResultField =>
+        inspectionResultField.id === 'insp_handling_type',
+    );
 
-  const inspectionIncomeQuantityField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-    inspectionIncomeField => inspectionIncomeField.id === 'qty',
-  );
+    const inspectionIncomeQuantityField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
+      inspectionIncomeField => inspectionIncomeField.id === 'qty',
+    );
 
-  const inspectionIncomeStoreField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-    inspectionIncomeField => inspectionIncomeField.id === 'to_store_uuid',
-  );
+    const inspectionIncomeStoreField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
+      inspectionIncomeField => inspectionIncomeField.id === 'to_store_uuid',
+    );
 
-  const inspectionIncomeLocationField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-    inspectionIncomeField => inspectionIncomeField.id === 'to_location_uuid',
-  );
+    const inspectionIncomeLocationField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
+      inspectionIncomeField => inspectionIncomeField.id === 'to_location_uuid',
+    );
 
-  const inspectionRejectQuantityField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-    inspectionRejectField => inspectionRejectField.id === 'reject_qty',
-  );
+    const inspectionRejectQuantityField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
+      inspectionRejectField => inspectionRejectField.id === 'reject_qty',
+    );
 
-  const inspectionRejectStoreField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-    inspectionRejectField => inspectionRejectField.id === 'reject_store_uuid',
-  );
+    const inspectionRejectStoreField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
+      inspectionRejectField => inspectionRejectField.id === 'reject_store_uuid',
+    );
 
-  const inspectionRejectLocationField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-    inspectionRejectField =>
-      inspectionRejectField.id === 'reject_location_uuid',
-  );
+    const inspectionRejectLocationField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
+      inspectionRejectField =>
+        inspectionRejectField.id === 'reject_location_uuid',
+    );
 
-  stmtNoSubField.handleChange = values => setReceiveInputData(values);
-  regDateField.default = getToday();
-  inspectionHandlingTypeField.options = props.inspHandlingType;
+    stmtNoSubField.handleChange = values => setReceiveInputData(values);
+    regDateField.default = getToday();
+    inspectionHandlingTypeField.options = props.inspHandlingType;
 
-  inspectionHandlingTypeField.onAfterChange = (
-    inspectionHandlingTypeCode: string,
-  ) => {
-    const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
-      inspectionHandlingTypeCode === ''
-        ? { insp_handling_type_cd: null }
-        : JSON.parse(inspectionHandlingTypeCode);
-    const inputQty = inputInputItems.ref.current.values.qty;
+    inspectionHandlingTypeField.onAfterChange = (
+      inspectionHandlingTypeCode: string,
+    ) => {
+      const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
+        inspectionHandlingTypeCode === ''
+          ? { insp_handling_type_cd: null }
+          : JSON.parse(inspectionHandlingTypeCode);
+      const inputQty = inputInputItems.ref.current.values.qty;
 
-    handleInspectionHandlingTypeChange(insp_handling_type_cd, inputQty);
+      handleInspectionHandlingTypeChange(insp_handling_type_cd, inputQty);
+    };
+
+    inspectionIncomeQuantityField.onAfterChange = () =>
+      setChangeIncomeQtyFg(true);
+
+    inspectionIncomeStoreField.dataSettingOptions['uriPath'] =
+      getPopupForm('창고관리')?.uriPath;
+
+    inspectionIncomeLocationField.dataSettingOptions['uriPath'] =
+      getPopupForm('위치관리')?.uriPath;
+
+    inspectionRejectQuantityField.onAfterChange = () =>
+      setChangeRejectQtyFg(true);
+
+    inspectionRejectStoreField.dataSettingOptions['uriPath'] =
+      getPopupForm('창고관리')?.uriPath;
+
+    inspectionRejectLocationField.dataSettingOptions['uriPath'] =
+      getPopupForm('위치관리')?.uriPath;
   };
 
-  inspectionIncomeQuantityField.onAfterChange = () =>
-    setChangeIncomeQtyFg(true);
-
-  inspectionIncomeStoreField.dataSettingOptions['uriPath'] =
-    getPopupForm('창고관리')?.uriPath;
-
-  inspectionIncomeLocationField.dataSettingOptions['uriPath'] =
-    getPopupForm('위치관리')?.uriPath;
-
-  inspectionRejectQuantityField.onAfterChange = () =>
-    setChangeRejectQtyFg(true);
-
-  inspectionRejectStoreField.dataSettingOptions['uriPath'] =
-    getPopupForm('창고관리')?.uriPath;
-
-  inspectionRejectLocationField.dataSettingOptions['uriPath'] =
-    getPopupForm('위치관리')?.uriPath;
+  initialize();
 
   const handleInspectionHandlingTypeChange = (
     handlingTypeCode: string,
@@ -743,12 +742,16 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   }, [receiveInputData]);
 
   useLayoutEffect(() => {
-    if (inputInspResult?.values?.insp_handling_type) {
-      changeInspResult(
-        JSON.parse(inputInspResult?.values?.insp_handling_type)
-          .insp_handling_type_uuid,
-      );
-    }
+    const inspectionHandlingTypeCode =
+      inputInspResult?.values?.insp_handling_type != null
+        ? JSON.parse(inputInspResult?.values?.insp_handling_type)
+            .insp_handling_type_cd
+        : null;
+
+    handleInspectionHandlingTypeChange(
+      inspectionHandlingTypeCode,
+      receiveInputData?.qty,
+    );
   }, [inputInspResult?.values?.insp_handling_type]);
 
   useLayoutEffect(() => {
