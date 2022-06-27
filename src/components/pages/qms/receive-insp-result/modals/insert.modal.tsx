@@ -362,7 +362,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       checkUIProtocol(finalChecker),
     );
 
-    if (finalChecker === null) {
+    if (finalChecker === null || finalChecker === true) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
