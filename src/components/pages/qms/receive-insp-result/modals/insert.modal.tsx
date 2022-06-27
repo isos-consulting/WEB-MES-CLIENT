@@ -184,7 +184,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    let items: IGridColumn[] = INSP_DETAIL_COLUMNS;
+    let items: IGridColumn[] = [...INSP_DETAIL_COLUMNS];
 
     if (receiveInspHeaderData?.max_sample_cnt > 0) {
       for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
