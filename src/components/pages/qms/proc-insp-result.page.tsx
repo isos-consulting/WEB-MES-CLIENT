@@ -1801,6 +1801,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   useLayoutEffect(() => {
     if (props?.workData && props.popupVisible) {
       inputWork.setValues(props.workData);
+      inputInspResult.setFieldValue('reg_date', getToday());
     }
   }, [props?.workData, props?.popupVisible]);
   //#endregion
