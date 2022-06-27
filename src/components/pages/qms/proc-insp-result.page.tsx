@@ -43,6 +43,7 @@ import {
   InspectionConcreate,
   NumberInspectionChecker,
 } from './receive-insp-result/models/inspection-checker';
+import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1675,13 +1676,110 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
   };
 
-  const onSave = async inspectionGridRef => {
-    let headerData: TPostQmsProcInspResultsHeader;
-    let detailDatas: TPostQmsProcInspResultsDetail[] = [];
+  interface ManufacturingProcessInspectionPostAPIPayloadHeader {
+    factory_uuid: string;
+    work_uuid: string;
+    insp_type_uuid: string;
+    insp_detail_type_uuid: string;
+    insp_uuid: string;
+    prod_uuid: string;
+    lot_no: string;
+    emp_uuid: string;
+    reg_date: string;
+    insp_result_fg: boolean;
+    insp_qty: number;
+    pass_qty: number;
+    reject_qty: number;
+    remark: string;
+  }
 
+  const saveInspectionData = inspectionGridInstance => {
+    const inspectionDatas = inspectionGridInstance.getData();
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
+    const inspectionHeader: ManufacturingProcessInspectionPostAPIPayloadHeader =
+      {
+        factory_uuid: getUserFactoryUuid(),
+        work_uuid: props?.workData?.work_uuid,
+        insp_type_uuid: inputInspResultValues?.insp_type_uuid,
+        insp_detail_type_uuid: inputInspResultValues?.insp_detail_type_uuid,
+        insp_uuid: inspIncludeDetails?.header?.insp_uuid,
+        prod_uuid: props?.workData?.prod_uuid,
+        lot_no: props?.workData?.lot_no,
+        emp_uuid: inputInspResultValues?.emp_uuid,
+        reg_date:
+          inputInspResultValues?.reg_date +
+          ' ' +
+          inputInspResultValues?.reg_date_time +
+          ':00',
+        insp_result_fg: inputInspResultValues?.insp_result_fg,
+        insp_qty: 0,
+        pass_qty: 0,
+        reject_qty: 0,
+        remark: inputInspResultValues?.remark,
+      };
+
+    const inspectionItems: InspectionPostPayloadDetails[] = cellKeys(
+      inspectionDatas,
+      '_insp_value',
+    )
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((definedCountKeys, index) => ({
+        factory_uuid: getUserFactoryUuid(),
+        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
+        insp_result_fg: inspectionDatas[index].insp_result_fg,
+        remark: inspectionDatas[index].remark,
+        values: definedCountKeys
+          .map((key, keyIndex) => ({
+            sample_no: keyIndex + 1,
+            insp_result_fg:
+              inspectionDatas[index][
+                key.replace('_insp_value', '_insp_result_fg')
+              ],
+            insp_value:
+              inspectionDatas[index][key] === 'OK'
+                ? 1
+                : inspectionDatas[index][key] === 'NG'
+                ? 0
+                : inspectionDatas[index][key],
+          }))
+          .filter(inspectionCell => inspectionCell.insp_result_fg !== null),
+      }));
+
+    return {
+      header: inspectionHeader,
+      details: inspectionItems,
+    };
+  };
+
+  interface ManufacturingProcessInspectionPostAPIPayload {
+    header: ManufacturingProcessInspectionPostAPIPayloadHeader;
+    details: InspectionPostPayloadDetails[];
+  }
+
+  const callInspectionCreateAPI = (
+    saveData: ManufacturingProcessInspectionPostAPIPayload,
+  ) =>
+    executeData(
+      saveData,
+      URI_PATH_POST_QMS_PROC_INSP_RESULTS,
+      'post',
+      'success',
+    )
+      .then(value => {
+        if (!value) return;
+        message.info('저장되었습니다.');
+        onClear();
+        props.setPopupVisible(false);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+
+  const onSave = async inspectionGridRef => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
     if (!inputInspResultValues?.emp_uuid) {
       message.warn('검사자를 등록해주세요.');
@@ -1739,13 +1837,13 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       '/std/tenant-opts',
     );
 
-    // const saveData = saveInspectionData(
-    //   inspectionGridRef.current.getInstance(),
-    // );
+    const saveData = saveInspectionData(
+      inspectionGridRef.current.getInstance(),
+    );
 
-    // if (userDefinedInspectionSaveOption.length === 0) {
-    //   return await callInspectionCreateAPI(saveData);
-    // }
+    if (userDefinedInspectionSaveOption.length === 0) {
+      return await callInspectionCreateAPI(saveData);
+    }
 
     if (
       isUserInputAllCell === false &&
@@ -1762,86 +1860,17 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         content:
           '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
         onOk: async close => {
-          // const saveData = saveInspectionData(
-          //   inspectionGridRef.current.getInstance(),
-          // );
-          // await callInspectionCreateAPI(saveData);
+          const saveData = saveInspectionData(
+            inspectionGridRef.current.getInstance(),
+          );
+          await callInspectionCreateAPI(saveData);
           close();
         },
         onCancel: () => {},
       });
     }
 
-    return;
-    headerData = {
-      factory_uuid: getUserFactoryUuid(),
-      work_uuid: props?.workData?.work_uuid,
-      insp_type_uuid: inputInspResultValues?.insp_type_uuid,
-      insp_detail_type_uuid: inputInspResultValues?.insp_detail_type_uuid,
-      insp_uuid: inspIncludeDetails?.header?.insp_uuid,
-      prod_uuid: props?.workData?.prod_uuid,
-      lot_no: props?.workData?.lot_no,
-      emp_uuid: inputInspResultValues?.emp_uuid,
-      reg_date:
-        inputInspResultValues?.reg_date +
-        ' ' +
-        inputInspResultValues?.reg_date_time +
-        ':00',
-      insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_qty: 0,
-      pass_qty: 0,
-      reject_qty: 0,
-      remark: inputInspResultValues?.remark,
-    };
-
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: object[] = [];
-      const row: TGetQmsProcInspResultIncludeDetailsDetail =
-        saveGridInstance?.getRow(
-          i,
-        ) as TGetQmsProcInspResultIncludeDetailsDetail;
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: TPostQmsProcInspResultsDetailValue =
-          row?.['x' + k + '_insp_value'];
-        if (value) {
-          values.push({
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: row?.insp_detail_uuid as any,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
-
-    const saveData: TPostQmsFinalInspResult = {
-      header: headerData,
-      details: detailDatas,
-    };
-
-    await executeData(
-      saveData,
-      URI_PATH_POST_QMS_PROC_INSP_RESULTS,
-      'post',
-      'success',
-    )
-      .then(value => {
-        if (!value) return;
-        message.info('저장되었습니다.');
-        onClear();
-        props.setPopupVisible(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    return await callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {
