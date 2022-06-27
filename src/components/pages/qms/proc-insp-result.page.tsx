@@ -37,6 +37,12 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import { ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import {
+  EmptyInspectionChecker,
+  EyeInspectionChecker,
+  InspectionConcreate,
+  NumberInspectionChecker,
+} from './receive-insp-result/models/inspection-checker';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1539,116 +1545,135 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     setInspIncludeDetails({});
   };
 
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
+
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const recordChecker = (record: Array<Array<boolean>>): Array<boolean> =>
+    record.map(cellCheckList => {
+      if (cellCheckList.every(checkItem => checkItem === null)) {
+        return null;
+      }
+
+      if (cellCheckList.some(checkItem => checkItem === false)) {
+        return false;
+      }
+
+      return true;
+    });
+
+  const totalChecker = (records: Array<boolean>): boolean => {
+    if (records.some(key => key === null)) {
+      return null;
+    }
+
+    if (records.some(key => key === false)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const checkUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? '합격' : '불합격';
+
+  const eyeCellUIProtocol = (check: boolean): string =>
+    check === null ? null : check === true ? 'OK' : 'NG';
+
   const onAfterChange = (ev: any) => {
-    const { origin, changes, instance } = ev;
-    if (changes.length === 0) return;
+    console.log(ev);
+    const { changes, instance } = ev;
+    const datas = instance.getData();
 
-    const { columnName, rowKey, value } = changes[0];
-
-    if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
-    )
+    if (changes.some(change => !change.columnName.includes('_insp_value')))
       return;
 
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
+    const keys = cellKeys(datas, '_insp_value');
 
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt; //입력 가능한 시료수
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridRef.current?.getInstance();
-
-    //#region ✅CELL단위 합/불 판정
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_fg',
+    const definedCountKeys = keys.map((item: Array<string>, index: number) =>
+      sliceKeys(item, datas[index].sample_cnt),
     );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
 
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
+    const cellCheckers = definedCountKeys.map((inspections, index) =>
+      inspections.map(inspectionKey =>
+        datas[index][inspectionKey] == null ||
+        datas[index][inspectionKey] === ''
+          ? inspectionCheck(EmptyInspectionChecker, null)
+          : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
+          ? inspectionCheck(NumberInspectionChecker, {
+              value: datas[index][inspectionKey] * 1,
+              min: datas[index].spec_min * 1,
+              max: datas[index].spec_max * 1,
+            })
+          : inspectionCheck(EyeInspectionChecker, {
+              value: datas[index][inspectionKey],
+            }),
+      ),
+    );
+
+    const records = recordChecker(cellCheckers);
+
+    const finalChecker = totalChecker(records);
+
+    changes.forEach((change: any) => {
+      if (change.columnName.includes('_insp_value')) {
+        const changedCellIndex = keys[change.rowKey].findIndex(
+          inspValue => inspValue === change.columnName,
+        );
+
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_fg'),
+          cellCheckers[change.rowKey][changedCellIndex],
+        );
+        instance.setValue(
+          change.rowKey,
+          change.columnName.replace('_insp_value', '_insp_result_state'),
+          checkUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+        );
+        if (
+          !(
+            isNumber(datas[change.rowKey].spec_min) &&
+            isNumber(datas[change.rowKey].spec_min)
+          )
+        ) {
+          instance.setValue(
+            change.rowKey,
+            change.columnName,
+            eyeCellUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
+          );
+        }
       }
-    }
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
+    });
+
+    datas.forEach((data: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', records[index]);
+      instance.setValue(
+        index,
+        'insp_result_state',
+        checkUIProtocol(records[index]),
+      );
+    });
+
+    inputInspResult.setFieldValue('insp_result_fg', finalChecker);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(finalChecker),
     );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅ROW단위 합/불 판정
-    if (resultFg === true) {
-      // 현재 값이 합격일 경우만 다른 cell의 판정값 체크
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅최종 합/불 판정
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg, emptyFg] = [false, false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-    // const flagInputboxValue = emptyFg || nullFg ? null : resultFg;
-    // const stateInputboxValue = emptyFg ? '' : nullFg ? '진행중' : resultFg ? '합격' : '불합격';
-
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-    //#endregion
   };
 
   const onSave = async ev => {
