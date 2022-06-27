@@ -1675,7 +1675,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
   };
 
-  const onSave = async ev => {
+  const onSave = async inspectionGridRef => {
     let headerData: TPostQmsProcInspResultsHeader;
     let detailDatas: TPostQmsProcInspResultsDetail[] = [];
 
@@ -1688,6 +1688,46 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       return;
     } else if (!inputInspResultValues?.reg_date_time) {
       return message.warn('검사시간을 등록해주세요.');
+    }
+
+    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
+    const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
+      .map((item: Array<string>, index: number) =>
+        sliceKeys(item, inspectionDatas[index].sample_cnt),
+      )
+      .map((inspections, index) =>
+        inspections.map(inspectionKey =>
+          inspectionDatas[index][inspectionKey] == null ||
+          inspectionDatas[index][inspectionKey] === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(inspectionDatas[index].spec_min) &&
+              isNumber(inspectionDatas[index].spec_max)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey] * 1,
+                min: inspectionDatas[index].spec_min * 1,
+                max: inspectionDatas[index].spec_max * 1,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: inspectionDatas[index][inspectionKey],
+              }),
+        ),
+      );
+
+    const sequencialMissingValueState = cellCheckers.some(
+      (cells: Array<boolean>) => {
+        if (cells[0] === null) return true;
+
+        if (cells.length > 1) {
+          for (let index = 1; index < cells.length; index++) {
+            if (cells[index - 1] === null && cells[index] !== null) return true;
+          }
+        }
+      },
+    );
+
+    if (sequencialMissingValueState === true) {
+      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
+      return;
     }
 
     headerData = {
