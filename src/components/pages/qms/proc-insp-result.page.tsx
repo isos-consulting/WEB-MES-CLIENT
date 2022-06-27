@@ -1595,7 +1595,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     check === null ? null : check === true ? 'OK' : 'NG';
 
   const onAfterChange = (ev: any) => {
-    console.log(ev);
     const { changes, instance } = ev;
     const datas = instance.getData();
 
@@ -1684,14 +1683,13 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
     const saveGridInstance = gridRef?.current?.getInstance();
 
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
+    if (!inputInspResultValues?.emp_uuid) {
       message.warn('검사자를 등록해주세요.');
       return;
+    } else if (!inputInspResultValues?.reg_date_time) {
+      return message.warn('검사시간을 등록해주세요.');
     }
-    console.log(inputInspResultValues);
+
     headerData = {
       factory_uuid: getUserFactoryUuid(),
       work_uuid: props?.workData?.work_uuid,
