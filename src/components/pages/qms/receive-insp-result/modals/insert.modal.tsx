@@ -568,7 +568,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       isUserInputAllCell === false &&
       userDefinedInspectionSaveOption[0].value === 2
     ) {
-      Modal.confirm({
+      return Modal.confirm({
         title: '',
         content:
           '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
