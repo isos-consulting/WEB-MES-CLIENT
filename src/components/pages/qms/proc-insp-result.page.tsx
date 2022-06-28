@@ -1916,6 +1916,28 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   }, [props?.workData, props?.popupVisible]);
   //#endregion
 
+  useLayoutEffect(() => {
+    Promise.resolve({ ...inspIncludeDetails }).then(processInspectionInfo => {
+      processInspectionInfo.details?.forEach(
+        (processInspectionItem, itemIndex) => {
+          for (
+            let cell = processInspectionItem.sample_cnt;
+            cell < processInspectionInfo?.header?.max_sample_cnt;
+
+          ) {
+            cell++;
+            gridRef.current
+              .getInstance()
+              .disableCell(itemIndex, `x${cell}_insp_value`);
+            gridRef.current
+              .getInstance()
+              .removeCellClassName(itemIndex, `x${cell}_insp_value`, 'editor');
+          }
+        },
+      );
+    });
+  }, [inspIncludeDetails]);
+
   //#region 컴포넌트 rander
   return (
     <GridPopup
