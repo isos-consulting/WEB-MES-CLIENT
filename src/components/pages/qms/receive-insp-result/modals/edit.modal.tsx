@@ -743,6 +743,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       ).insp_handling_type_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
       unit_uuid: inputInputItemsValues?.unit_uuid,
+      reg_date: `${inputInspResultValues?.reg_date} ${inputInspResultValues?.reg_date_time}:00`,
       insp_result_fg: inputInspResultValues?.insp_result_fg,
       insp_detail_type_uuid: inputInputItemsValues?.insp_detail_type_uuid,
       insp_qty: inputInputItemsValues?.qty,
