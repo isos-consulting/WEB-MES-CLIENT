@@ -1260,31 +1260,22 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
 };
 //#endregion
 
-//#region 성적서 신규 팝업
 const INSP_RESULT_CREATE_POPUP = (props: {
   popupVisible: boolean;
   inspHandlingType: any;
   setPopupVisible: (value?) => void;
   onAfterSave?: () => void;
 }) => {
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
 
-  //#region 상태관리
   const [changeInspQtyFg, setChangeInspQtyFg] = useState(false);
   const [changeIncomeQtyFg, setChangeIncomeQtyFg] = useState(false);
   const [changeRejectQtyFg, setChangeRejectQtyFg] = useState(false);
-  //#endregion
 
-  //#region 데이터 관리
   const [storesStocks, setStoresStocks] = useState<TGetInvStoresStocks>({});
   const [insp, setInsp] = useState<TGetQmsInsp>({});
   const [inspIncludeDetails, setInspIncludeDetails] =
     useState<TGetQmsInspIncludeDetails>({});
-  //#endregion
-
-  //#region 그리드 컬럼세팅
 
   const COLUMNS_FINAL_INSP_DETAILS: IGridColumn[] = [
     {
@@ -1389,7 +1380,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     let items: IGridColumn[] = COLUMNS_FINAL_INSP_DETAILS;
 
     if (inspIncludeDetails?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
       for (let i = 1; i <= inspIncludeDetails?.header?.max_sample_cnt; i++) {
         items.push({
           header: 'x' + i + '_insp_result_detail_value_uuid',
@@ -1451,9 +1441,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
     return items;
   }, [inspIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [
     {
       id: 'prod_uuid',
@@ -1501,9 +1489,24 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       },
       handleChange: values => setStoresStocks(values),
     },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
+    {
+      id: 'prod_nm',
+      label: '품명',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'prod_std',
+      label: '규격',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'unit_nm',
+      label: '단위',
+      type: 'text',
+      disabled: true,
+    },
     {
       id: 'store_uuid',
       label: '출고창고UUID',
@@ -1511,7 +1514,12 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       disabled: true,
       hidden: true,
     },
-    { id: 'store_nm', label: '출고창고', type: 'text', disabled: true },
+    {
+      id: 'store_nm',
+      label: '출고창고',
+      type: 'text',
+      disabled: true,
+    },
     {
       id: 'location_uuid',
       label: '출고위치UUID',
@@ -1519,8 +1527,18 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       disabled: true,
       hidden: true,
     },
-    { id: 'location_nm', label: '출고위치', type: 'text', disabled: true },
-    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
+    {
+      id: 'location_nm',
+      label: '출고위치',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'lot_no',
+      label: 'LOT NO',
+      type: 'text',
+      disabled: true,
+    },
     {
       id: 'qty',
       label: '검사수량',
@@ -1550,9 +1568,23 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       type: 'text',
       disabled: true,
     },
-    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
-    { id: 'reg_date_time', label: '검사시간', type: 'time' },
-    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
+    {
+      id: 'reg_date',
+      label: '검사일자',
+      type: 'date',
+      default: getToday(),
+    },
+    {
+      id: 'reg_date_time',
+      label: '검사시간',
+      type: 'time',
+    },
+    {
+      id: 'emp_uuid',
+      label: '검사자UUID',
+      type: 'text',
+      hidden: true,
+    },
     {
       id: 'emp_nm',
       label: '검사자',
@@ -1571,7 +1603,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       disabled: true,
       onAfterChange: ev => {},
     },
-    { id: 'remark', label: '비고', type: 'text' },
+    {
+      id: 'remark',
+      label: '비고',
+      type: 'text',
+    },
   ];
 
   const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
@@ -1676,9 +1712,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     INPUT_ITEMS_INSP_RESULT_RETURN,
     { title: '부적합정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onClear = () => {
     inputInputItems?.setValues({});
     inputInspResult?.instance?.setValues({});
@@ -1726,9 +1760,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     onClear();
     props.setPopupVisible(false);
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (storesStocks.prod_uuid) {
       getData(
@@ -1873,9 +1905,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   useLayoutEffect(() => {
     onClear();
   }, [props.popupVisible]);
-  //#endregion
 
-  //#region 컴포넌트 rander
   return (
     <GridPopup
       title="데이터 추가하기"
@@ -1903,9 +1933,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       visible={props.popupVisible}
     />
   );
-  //#endregion
 };
-//#endregion
 
 //#region 성적서 수정 팝업
 const INSP_RESULT_EDIT_POPUP = (props: {
