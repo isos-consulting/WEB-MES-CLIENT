@@ -743,7 +743,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       ).insp_handling_type_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
       unit_uuid: inputInputItemsValues?.unit_uuid,
-      reg_date: `${inputInspResultValues?.reg_date} ${inputInspResultValues?.reg_date_time}:00`,
+      reg_date: `${inputInspResultValues?.reg_date} ${dayjs(
+        inputInspResultValues?.reg_date_time,
+      ).format('HH:mm:ss')}`,
       insp_result_fg: inputInspResultValues?.insp_result_fg,
       insp_detail_type_uuid: inputInputItemsValues?.insp_detail_type_uuid,
       insp_qty: inputInputItemsValues?.qty,
@@ -950,7 +952,10 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
 
           inputInspResult.setValues({
             ...res.header,
-            reg_date_time: res.header.reg_date,
+            reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+            reg_date_time: `${res.header.reg_date}`
+              .replace('T', ' ')
+              .slice(0, -5),
             insp_handling_type: JSON.stringify({
               insp_handling_type_uuid: res.header.insp_handling_type_uuid,
               insp_handling_type_cd: res.header.insp_handling_type_cd,
