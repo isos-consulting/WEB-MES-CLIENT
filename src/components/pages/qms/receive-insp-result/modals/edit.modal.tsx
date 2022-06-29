@@ -773,29 +773,48 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         insp_result_fg: inspectionDatas[index].insp_result_fg,
         remark: inspectionDatas[index].remark,
         values: definedCountKeys
-          .map((key, keyIndex) => ({
-            uuid: inspectionDatas[index][
-              key.replace('_insp_value', '_insp_result_uuid')
-            ],
-            delete_fg:
-              inspectionDatas[index][
-                key.replace('_insp_value', '_insp_result_uuid')
-              ] == null
-                ? false
-                : true,
-            sample_no: keyIndex + 1,
-            insp_result_fg:
+          .map((key, keyIndex) => {
+            const result = {
+              uuid: inspectionDatas[index][
+                key.replace('_insp_value', '_insp_result_detail_value_uuid')
+              ],
+              delete_fg:
+                inspectionDatas[index][
+                  key.replace('_insp_value', '_insp_result_fg')
+                ] === null
+                  ? true
+                  : false,
+              sample_no: keyIndex + 1,
+            };
+
+            if (
               inspectionDatas[index][
                 key.replace('_insp_value', '_insp_result_fg')
-              ],
-            insp_value:
-              inspectionDatas[index][key] === 'OK'
-                ? 1
-                : inspectionDatas[index][key] === 'NG'
-                ? 0
-                : inspectionDatas[index][key],
-          }))
-          .filter(inspectionCell => inspectionCell.insp_value !== null),
+              ] !== null
+            ) {
+              return {
+                ...result,
+                insp_result_fg:
+                  inspectionDatas[index][
+                    key.replace('_insp_value', '_insp_result_fg')
+                  ],
+                insp_value:
+                  inspectionDatas[index][key] === 'OK'
+                    ? 1
+                    : inspectionDatas[index][key] === 'NG'
+                    ? 0
+                    : inspectionDatas[index][key],
+              };
+            }
+            return result;
+          })
+          .filter(inspectionCell => {
+            if (inspectionCell.uuid != null) {
+              return true;
+            }
+
+            return inspectionCell.delete_fg === false ? true : false;
+          }),
       }));
 
     const saveData: object = {
