@@ -1888,111 +1888,28 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const onSave = async ev => {
-    let headerData: TPostQmsFinalInspResultsHeader;
-    let detailDatas: TPostQmsFinalInspResultsDetails[] = [];
-
-    const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const inputInspResultIncomeValues =
-      inputInspResultIncome?.ref?.current?.values;
-    const inputInspResultRejectValues =
-      inputInspResultReject?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
-    console.log(inputInputItemsValues);
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      message.warn('검사시간을 등록해주세요.');
-      return;
+    if (inputInspResultValues.insp_handling_type === '') {
+      return message.warn('처리결과를 등록해주세요.');
+    } else if (inputInspResultValues.emp_uuid == null) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (inputInspResultValues.reg_date_time == null) {
+      return message.warn('검사시간을 등록해주세요.');
     }
 
-    headerData = {
-      factory_uuid: getUserFactoryUuid(),
-      insp_handling_type_uuid: JSON.parse(
-        inputInspResultValues.insp_handling_type,
-      ).insp_handling_type_uuid,
-      insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
-      insp_uuid: insp?.insp_uuid,
-      prod_uuid: storesStocks?.prod_uuid,
-      lot_no: storesStocks?.lot_no,
-      from_store_uuid: storesStocks?.store_uuid,
-      from_location_uuid: storesStocks?.location_uuid,
-      emp_uuid: inputInspResultValues?.emp_uuid,
-      reg_date:
-        inputInspResultValues?.reg_date +
-        ' ' +
-        inputInspResultValues?.reg_date_time +
-        ':00',
-      insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_qty: inputInputItemsValues?.qty,
-      pass_qty: inputInspResultIncomeValues?.qty,
-      reject_qty: inputInspResultRejectValues?.reject_qty,
-      reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
-      to_store_uuid: blankThenNull(inputInspResultIncomeValues?.to_store_uuid),
-      to_location_uuid: blankThenNull(
-        inputInspResultIncomeValues?.to_location_uuid,
-      ),
-      reject_store_uuid: blankThenNull(
-        inputInspResultRejectValues?.reject_store_uuid,
-      ),
-      reject_location_uuid: blankThenNull(
-        inputInspResultRejectValues?.reject_location_uuid,
-      ),
-      remark: inputInspResultValues?.remark,
-    };
+    const { insp_handling_type_cd } = JSON.parse(
+      inputInspResultValues.insp_handling_type,
+    );
 
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: object[] = [];
-      const row: TGetQmsFinalInspResultIncludeDetailsDetail =
-        saveGridInstance?.getRow(
-          i,
-        ) as TGetQmsFinalInspResultIncludeDetailsDetail;
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        if (value) {
-          values.push({
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: row?.insp_detail_uuid as any,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
+    if (
+      inputInspResultValues.insp_result_fg === true &&
+      insp_handling_type_cd !== 'INCOME'
+    ) {
+      return message.warn(
+        '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
+      );
     }
-
-    const saveData: TPostQmsFinalInspResults = {
-      header: headerData,
-      details: detailDatas,
-    };
-    await executeData(
-      saveData,
-      URI_PATH_POST_QMS_FINAL_INSP_RESULTS,
-      'post',
-      'success',
-    )
-      .then(value => {
-        if (!value) return;
-        message.info('저장되었습니다.');
-        onClear();
-        props.setPopupVisible(false);
-        props.onAfterSave();
-      })
-      .catch(e => {
-        console.log(e);
-      });
   };
 
   const onCancel = ev => {
