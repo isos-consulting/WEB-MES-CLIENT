@@ -1771,12 +1771,36 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         'header-details',
       )
         .then((res: any) => {
-          console.log(res);
           inputInputItems.setFieldValue(
             'insp_type_uuid',
             res.header.insp_type_uuid,
           );
+
           setInspIncludeDetails(res);
+
+          res?.details.forEach((inspectionItem, inspectionRowIndex) => {
+            const { max_sample_cnt } = res?.header;
+            for (
+              let inspectionInputCellIndex = inspectionItem.sample_cnt;
+              inspectionInputCellIndex < max_sample_cnt;
+
+            ) {
+              inspectionInputCellIndex++;
+              gridRef.current
+                .getInstance()
+                .disableCell(
+                  inspectionRowIndex,
+                  `x${inspectionInputCellIndex}_insp_value`,
+                );
+              gridRef.current
+                .getInstance()
+                .removeCellClassName(
+                  inspectionRowIndex,
+                  `x${inspectionInputCellIndex}_insp_value`,
+                  'editor',
+                );
+            }
+          });
         })
         .catch(err => {
           onClear();
