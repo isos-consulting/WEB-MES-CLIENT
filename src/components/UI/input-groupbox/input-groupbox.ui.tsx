@@ -786,6 +786,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                               <Combobox
                                 id={item.id}
                                 name={item.name || item.id}
+                                widthSize={item.widthSize || 'default'}
                                 options={item.options as IComboboxItem[]}
                                 important={item.important}
                                 label={item.label}

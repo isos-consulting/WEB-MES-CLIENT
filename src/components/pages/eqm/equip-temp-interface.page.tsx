@@ -118,6 +118,7 @@ export const PgEqmTempInterface = () => {
       label: '설비',
       default: 'all',
       firstItemType: 'all',
+      widthSize: '160px',
     },
   ]);
 

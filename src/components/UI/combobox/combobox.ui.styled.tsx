@@ -21,7 +21,9 @@ export const ScCombobox = styled(BaseSelect)`
       ? Sizes.width_combobox_md
       : props.widthSize === 'flex'
       ? '100%'
-      : Sizes.width_combobox_md};
+      : props.widthSize == null
+      ? Sizes.width_combobox_md
+      : props.widthSize};
   /* min-width: ${Sizes.width_combobox_lg}; */
 
   // 콤보박스 내부에 적용
