@@ -1764,6 +1764,21 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const sliceKeys = (keys: Array<string>, slicePoint: number) =>
     keys.slice(0, slicePoint);
 
+  const recordChecker = (
+    inspectionSampleResultFlagStore: Array<Array<boolean>>,
+  ): Array<boolean> =>
+    inspectionSampleResultFlagStore.map(flags => {
+      if (flags.every(flag => flag === null)) {
+        return null;
+      }
+
+      if (flags.includes(false)) {
+        return false;
+      }
+
+      return true;
+    });
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const finalInspectorGridInstanceData = instance.getData();
@@ -1784,7 +1799,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         ),
     );
 
-    const inspectionCellResultStore = definedInsepctionKeysBySampleCount.map(
+    const inspectionSampleResultStore = definedInsepctionKeysBySampleCount.map(
       (inspectionKeys, rowIndex) =>
         inspectionKeys.map(inspectionKey =>
           finalInspectorGridInstanceData[rowIndex][inspectionKey] == null ||
@@ -1804,7 +1819,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         ),
     );
 
-    console.log(inspectionCellResultStore);
+    const inspectionItemResultStore = recordChecker(
+      inspectionSampleResultStore,
+    );
+
+    console.log(inspectionItemResultStore);
   };
 
   const onSave = async ev => {
