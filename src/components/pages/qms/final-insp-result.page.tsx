@@ -1912,6 +1912,15 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         );
       },
     );
+
+    if (
+      inspectionFinalResultFlag === null ||
+      inspectionFinalResultFlag === true
+    ) {
+      inputInspResult.setFieldDisabled({ insp_handling_type: true });
+    } else {
+      inputInspResult.setFieldDisabled({ insp_handling_type: false });
+    }
   };
 
   const onSave = async ev => {
