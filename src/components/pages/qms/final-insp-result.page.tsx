@@ -1913,6 +1913,12 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       },
     );
 
+    inputInspResult.setFieldValue('insp_result_fg', inspectionFinalResultFlag);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(inspectionFinalResultFlag),
+    );
+
     if (
       inspectionFinalResultFlag === null ||
       inspectionFinalResultFlag === true
@@ -1943,29 +1949,173 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     inputInspResult.setFieldValue('insp_handling_type', code);
   };
 
-  const onSave = async ev => {
+  interface InspectionGridInstanceReference<GridInstance> {
+    current: GridInstance;
+  }
+
+  const onSave = async (
+    inspectionGridRef: InspectionGridInstanceReference<Grid>,
+  ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
-
-    if (inputInspResultValues.insp_handling_type === '') {
-      return message.warn('처리결과를 등록해주세요.');
-    } else if (inputInspResultValues.emp_uuid == null) {
-      return message.warn('검사자를 등록해주세요.');
-    } else if (inputInspResultValues.reg_date_time == null) {
-      return message.warn('검사시간을 등록해주세요.');
-    }
-
-    const { insp_handling_type_cd } = JSON.parse(
-      inputInspResultValues.insp_handling_type,
+    const fetchOptionFilledQualityAllInspectionResultFlags = getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
     );
 
-    if (
-      inputInspResultValues.insp_result_fg === true &&
-      insp_handling_type_cd !== 'INCOME'
-    ) {
-      return message.warn(
-        '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
+    // if (
+    //   inputInspResultValues.insp_handling_type === '' ||
+    //   inputInspResultValues.insp_handling_type == null
+    // ) {
+    //   return message.warn('처리결과를 등록해주세요.');
+    // } else if (inputInspResultValues.emp_uuid == null) {
+    //   return message.warn('검사자를 등록해주세요.');
+    // } else if (inputInspResultValues.reg_date_time == null) {
+    //   return message.warn('검사시간을 등록해주세요.');
+    // }
+
+    // const { insp_handling_type_cd } = JSON.parse(
+    //   inputInspResultValues.insp_handling_type,
+    // );
+
+    // if (
+    //   inputInspResultValues.insp_result_fg === true &&
+    //   insp_handling_type_cd !== 'INCOME'
+    // ) {
+    //   return message.warn(
+    //     '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
+    //   );
+    // }
+
+    const inspectionGridInstance = inspectionGridRef.current.getInstance();
+
+    const inspectionSampleResultFlagStore = cellKeys(
+      inspectionGridInstance.getData(),
+      '_insp_value',
+    )
+      .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionKeys,
+          Number(
+            inspectionGridInstance.getValue(inspectionItemIndex, 'sample_cnt'),
+          ),
+        ),
+      )
+      .map(
+        (
+          definedInspectionKeysBySampleCount: Array<string>,
+          inspectionItemIndex: number,
+        ) =>
+          definedInspectionKeysBySampleCount.map(inspectionKey =>
+            inspectionGridInstance.getValue(
+              inspectionItemIndex,
+              inspectionKey,
+            ) == null ||
+            inspectionGridInstance.getValue(
+              inspectionItemIndex,
+              inspectionKey,
+            ) === ''
+              ? inspectionCheck(EmptyInspectionChecker, null)
+              : isNumber(
+                  `${inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'spec_min',
+                  )}`,
+                ) &&
+                isNumber(
+                  `${inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'spec_max',
+                  )}`,
+                )
+              ? inspectionCheck(NumberInspectionChecker, {
+                  value: Number(
+                    inspectionGridInstance.getValue(
+                      inspectionItemIndex,
+                      inspectionKey,
+                    ),
+                  ),
+                  min: Number(
+                    inspectionGridInstance.getValue(
+                      inspectionItemIndex,
+                      'spec_min',
+                    ),
+                  ),
+                  max: Number(
+                    inspectionGridInstance.getValue(
+                      inspectionItemIndex,
+                      'spec_max',
+                    ),
+                  ),
+                })
+              : inspectionCheck(EyeInspectionChecker, {
+                  value: inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    inspectionKey,
+                  ),
+                }),
+          ),
       );
+
+    const sequencialMissingValueState = inspectionSampleResultFlagStore.some(
+      (sampleResultFlags: Array<boolean>) => {
+        if (sampleResultFlags[0] === null) return true;
+
+        if (sampleResultFlags.length > 1) {
+          for (
+            let sampleIndex = 1;
+            sampleIndex < sampleResultFlags.length;
+            sampleIndex++
+          ) {
+            if (
+              sampleResultFlags[sampleIndex - 1] === null &&
+              sampleResultFlags[sampleIndex] !== null
+            )
+              return true;
+          }
+        }
+      },
+    );
+
+    if (sequencialMissingValueState === true) {
+      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
     }
+
+    const isFilledAllInspectionSample = inspectionSampleResultFlagStore.every(
+      (sampleResultFlags: Array<boolean>) =>
+        sampleResultFlags.every((resultFlag: boolean) => resultFlag !== null),
+    );
+
+    // const inspectionPostApiPayload = createInspectionPostApiPayload(inspectionGridInstance);
+    if (isFilledAllInspectionSample === false) {
+      let qualityInspectionFilledOption = 0;
+      fetchOptionFilledQualityAllInspectionResultFlags.then(options => {
+        if (options.length > 0) {
+          qualityInspectionFilledOption = options[0].value;
+        }
+      });
+
+      if (qualityInspectionFilledOption === 1) {
+        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
+      } else if (qualityInspectionFilledOption === 2) {
+        return Modal.confirm({
+          title: '',
+          content:
+            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
+          onOk: async (close: () => void) => {
+            // const inspectionPostApiPayload = createInspectionPostApiPayload(
+            //   inspectionGridInstance,
+            // );
+
+            // await fetchInsepctionPostAPI(inspectionPostApiPayload);
+            close();
+          },
+          onCancel: () => {},
+        });
+      }
+
+      // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
+    }
+    // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
   };
 
   const onCancel = ev => {
