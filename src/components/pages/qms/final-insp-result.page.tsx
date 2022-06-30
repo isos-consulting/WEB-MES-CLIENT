@@ -1921,6 +1921,26 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
     }
+
+    const inspectionHandlingTypeCode: string =
+      inspectionFinalResultFlag === true
+        ? 'INCOME'
+        : inspectionFinalResultFlag === false
+        ? 'RETURN'
+        : '';
+
+    triggerInspectionHandlingTypeChanged(
+      inspectionHandlingTypeCode,
+      inputInputItems?.ref?.current?.values?.qty * 1,
+    );
+
+    const { code } = props.inspHandlingType.find(
+      el =>
+        JSON.parse(el.code).insp_handling_type_cd ===
+        inspectionHandlingTypeCode,
+    ) ?? { code: '' };
+
+    inputInspResult.setFieldValue('insp_handling_type', code);
   };
 
   const onSave = async ev => {
