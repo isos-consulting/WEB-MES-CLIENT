@@ -1897,6 +1897,21 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         }
       }
     });
+
+    finalInspectorGridInstanceData.forEach(
+      (_: unknown, inspectionItemIndex: number) => {
+        instance.setValue(
+          inspectionItemIndex,
+          'insp_result_fg',
+          inspectionItemResultStore[inspectionItemIndex],
+        );
+        instance.setValue(
+          inspectionItemIndex,
+          'insp_result_state',
+          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
+        );
+      },
+    );
   };
 
   const onSave = async ev => {
