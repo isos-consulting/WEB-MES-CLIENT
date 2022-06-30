@@ -2188,16 +2188,35 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       type: 'text',
       disabled: true,
     },
-    { id: 'seq', label: '검사차수', type: 'number', disabled: true },
+    {
+      id: 'seq',
+      label: '검사차수',
+      type: 'number',
+      disabled: true,
+    },
     {
       id: 'insp_detail_type_uuid',
       label: '검사유형',
       type: 'text',
       disabled: true,
     },
-    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
-    { id: 'reg_date_time', label: '검사시간', type: 'time' },
-    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
+    {
+      id: 'reg_date',
+      label: '검사일자',
+      type: 'date',
+      default: getToday(),
+    },
+    {
+      id: 'reg_date_time',
+      label: '검사시간',
+      type: 'time',
+    },
+    {
+      id: 'emp_uuid',
+      label: '검사자UUID',
+      type: 'text',
+      hidden: true,
+    },
     {
       id: 'emp_nm',
       label: '검사자',
@@ -2207,7 +2226,11 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       popupKeys: ['emp_nm', 'emp_uuid'],
       params: { emp_status: 'incumbent' },
     },
-    { id: 'remark', label: '비고', type: 'text' },
+    {
+      id: 'remark',
+      label: '비고',
+      type: 'text',
+    },
   ];
 
   const inputWork = useInputGroup(
