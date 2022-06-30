@@ -1740,8 +1740,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     setInspIncludeDetails({});
   };
 
-  const changeInspResult = (inspResult?: string) => {};
-
   const onAfterChange = (ev: any) => {};
 
   const onSave = async ev => {
@@ -1906,18 +1904,24 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   }, [insp]);
 
   useLayoutEffect(() => {
-    if (inputInspResult?.ref?.current?.values?.insp_handling_type) {
-      changeInspResult(
-        JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type)
-          .insp_handling_type_uuid,
-      );
-    }
+    const { insp_handling_type_cd } =
+      inputInspResult?.ref?.current?.values?.insp_handling_type == null
+        ? { insp_handling_type_cd: null }
+        : JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type);
+
+    triggerInspectionHandlingTypeChanged(
+      insp_handling_type_cd,
+      inputInputItems?.ref?.current?.values?.qty * 1,
+    );
   }, [inputInspResult?.ref?.current?.values?.insp_handling_type_uuid]);
 
   useLayoutEffect(() => {
     if (changeInspQtyFg === false) return;
-    changeInspResult(
-      inputInspResult?.ref?.current?.values?.insp_handling_type_uuid,
+
+    triggerInspectionHandlingTypeChanged(
+      JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type)
+        .insp_handling_type_cd,
+      inputInputItems?.ref?.current?.values?.qty * 1,
     );
 
     setChangeInspQtyFg(false);
