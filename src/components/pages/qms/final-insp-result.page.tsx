@@ -1791,6 +1791,20 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     return true;
   };
 
+  const checkUIProtocol = (inspectResultFlag: boolean): string =>
+    inspectResultFlag === null
+      ? null
+      : inspectResultFlag === true
+      ? '합격'
+      : '불합격';
+
+  const eyeCellUIProtocol = (eyeInspectionResultFlag: boolean): string =>
+    eyeInspectionResultFlag === null
+      ? null
+      : eyeInspectionResultFlag === true
+      ? 'OK'
+      : 'NG';
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const finalInspectorGridInstanceData = instance.getData();
@@ -1837,7 +1851,52 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
     const inspectionFinalResultFlag = totalChecker(inspectionItemResultStore);
 
-    console.log(inspectionFinalResultFlag);
+    changes.forEach(inspectionSample => {
+      if (inspectionSample.columnName.includes('_insp_value')) {
+        const sampleIndex = inspectionKeyStore[
+          inspectionSample.rowKey
+        ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace(
+            '_insp_value',
+            '_insp_result_fg',
+            inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
+          ),
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace(
+            '_insp_value',
+            '_insp_result_state',
+          ),
+          checkUIProtocol(
+            inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
+          ),
+        );
+
+        if (
+          !(
+            isNumber(
+              finalInspectorGridInstanceData[inspectionSample.rowKey].spec_min,
+            ) &&
+            isNumber(
+              finalInspectorGridInstanceData[inspectionSample.rowKey].spec_max,
+            )
+          )
+        ) {
+          instance.setValue(
+            inspectionSample.rowKey,
+            inspectionSample.columnName,
+            eyeCellUIProtocol(
+              inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
+            ),
+          );
+        }
+      }
+    });
   };
 
   const onSave = async ev => {
