@@ -2084,6 +2084,27 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     };
   };
 
+  const fetchInsepctionPostAPI = async (
+    inspectionPostApiPayload: TPostQmsFinalInspResults,
+  ) => {
+    await executeData(
+      inspectionPostApiPayload,
+      URI_PATH_POST_QMS_FINAL_INSP_RESULTS,
+      'post',
+      'success',
+    )
+      .then(value => {
+        if (!value) return;
+        message.info('저장되었습니다.');
+        onClear();
+        props.setPopupVisible(false);
+        props.onAfterSave();
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
   interface InspectionGridInstanceReference<GridInstance> {
     current: GridInstance;
   }
@@ -2243,19 +2264,16 @@ const INSP_RESULT_CREATE_POPUP = (props: {
               inspectionGridInstance,
             );
 
-            // await fetchInsepctionPostAPI(inspectionPostApiPayload);
-            console.log(inspectionPostApiPayload);
+            await fetchInsepctionPostAPI(inspectionPostApiPayload);
             close();
           },
           onCancel: () => {},
         });
       }
 
-      console.log(inspectionPostApiPayload);
-      // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
+      return await fetchInsepctionPostAPI(inspectionPostApiPayload);
     }
-    console.log(inspectionPostApiPayload);
-    // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
+    return await fetchInsepctionPostAPI(inspectionPostApiPayload);
   };
 
   const onCancel = ev => {
@@ -2362,6 +2380,10 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           );
 
           setInspIncludeDetails(res);
+
+          inputInspResult?.ref?.current?.values.reg_date == null
+            ? inputInspResult.setFieldValue('reg_date', getToday())
+            : null;
 
           res?.details.forEach((inspectionItem, inspectionRowIndex) => {
             const { max_sample_cnt } = res?.header;
