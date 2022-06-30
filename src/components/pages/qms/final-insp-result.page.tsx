@@ -42,6 +42,9 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
+import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
+import { InputForm, QuantityField } from './receive-insp-result/models/fields';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1601,7 +1604,17 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       firstItemType: 'empty',
       options: props.inspHandlingType,
       disabled: true,
-      onAfterChange: ev => {},
+      onAfterChange: (inspectionHandlingType: string) => {
+        const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
+          inspectionHandlingType === ''
+            ? { insp_handling_type_cd: null }
+            : JSON.parse(inspectionHandlingType);
+
+        triggerInspectionHandlingTypeChanged(
+          insp_handling_type_cd,
+          inputInputItems?.ref?.current?.values?.qty * 1,
+        );
+      },
     },
     {
       id: 'remark',
@@ -1759,6 +1772,57 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const onCancel = ev => {
     onClear();
     props.setPopupVisible(false);
+  };
+
+  const triggerInspectionHandlingTypeChanged = (
+    inspectionHandlingTypeCode: string,
+    inputQuantity: number,
+  ) => {
+    const incomeFormService = new InspectionHandlingServiceImpl(
+      new InputForm(),
+    );
+
+    const rejectFormService = new InspectionHandlingServiceImpl(
+      new InputForm(),
+    );
+
+    incomeFormService.addFields(inputInspResultIncome.inputItemKeys);
+    rejectFormService.addFields(inputInspResultReject.inputItemKeys);
+
+    const incomeQuantity = new QuantityField(incomeFormService.getField('qty'));
+    const rejectQuantity = new QuantityField(
+      rejectFormService.getField('reject_qty'),
+    );
+
+    if ('INCOME' === inspectionHandlingTypeCode) {
+      incomeQuantity.setQuantity(inputQuantity);
+      incomeQuantity.toggle();
+      rejectFormService.toggle();
+    } else if ('RETURN' === inspectionHandlingTypeCode) {
+      rejectQuantity.setQuantity(inputQuantity);
+
+      incomeFormService.toggle();
+      rejectQuantity.toggle();
+    } else if ('SELECTION' === inspectionHandlingTypeCode) {
+      incomeQuantity.setQuantity(inputQuantity);
+
+      rejectQuantity.toggle();
+    } else {
+      incomeFormService.toggle();
+      rejectFormService.toggle();
+    }
+
+    inputInspResultIncome.setFieldValue('qty', incomeQuantity.info().quantity);
+    inputInspResultReject.setFieldValue(
+      'reject_qty',
+      rejectQuantity.info().quantity,
+    );
+
+    const incomeEnabled = incomeFormService.attributes();
+    const rejectEnabled = rejectFormService.attributes();
+
+    inputInspResultIncome.setFieldDisabled({ ...incomeEnabled });
+    inputInspResultReject.setFieldDisabled({ ...rejectEnabled });
   };
 
   useLayoutEffect(() => {
