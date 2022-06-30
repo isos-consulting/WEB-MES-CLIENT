@@ -45,6 +45,12 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
 import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
 import { InputForm, QuantityField } from './receive-insp-result/models/fields';
+import {
+  EmptyInspectionChecker,
+  EyeInspectionChecker,
+  InspectionConcreate,
+  NumberInspectionChecker,
+} from './receive-insp-result/models/inspection-checker';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1740,7 +1746,66 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     setInspIncludeDetails({});
   };
 
-  const onAfterChange = (ev: any) => {};
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
+  const cellKeys = (
+    records: Array<object>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
+
+  const sliceKeys = (keys: Array<string>, slicePoint: number) =>
+    keys.slice(0, slicePoint);
+
+  const onAfterChange = (ev: any) => {
+    const { changes, instance } = ev;
+    const finalInspectorGridInstanceData = instance.getData();
+
+    if (changes.some(change => !change.columnName.includes('_insp_value')))
+      return;
+
+    const inspectionKeyStore = cellKeys(
+      finalInspectorGridInstanceData,
+      '_insp_value',
+    );
+
+    const definedInsepctionKeysBySampleCount = inspectionKeyStore.map(
+      (inspectionKeys: Array<string>, index: number) =>
+        sliceKeys(
+          inspectionKeys,
+          finalInspectorGridInstanceData[index].sample_cnt,
+        ),
+    );
+
+    const inspectionCellResultStore = definedInsepctionKeysBySampleCount.map(
+      (inspectionKeys, rowIndex) =>
+        inspectionKeys.map(inspectionKey =>
+          finalInspectorGridInstanceData[rowIndex][inspectionKey] == null ||
+          finalInspectorGridInstanceData[rowIndex][inspectionKey] === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(finalInspectorGridInstanceData[rowIndex].spec_min) &&
+              isNumber(finalInspectorGridInstanceData[rowIndex].spec_max)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value:
+                  finalInspectorGridInstanceData[rowIndex][inspectionKey] * 1,
+                min: finalInspectorGridInstanceData[rowIndex].spec_min * 1,
+                max: finalInspectorGridInstanceData[rowIndex].spec_max * 1,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: finalInspectorGridInstanceData[rowIndex][inspectionKey],
+              }),
+        ),
+    );
+
+    console.log(inspectionCellResultStore);
+  };
 
   const onSave = async ev => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
