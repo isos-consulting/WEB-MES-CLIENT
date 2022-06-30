@@ -1965,7 +1965,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 };
 //#endregion
 
-//#region 성적서 수정 팝업
 const INSP_RESULT_EDIT_POPUP = (props: {
   workData: TGetPrdWork;
   inspResultUuid: string;
@@ -1973,20 +1972,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   setPopupVisible: (value?) => void;
   onAfterCloseSearch?: (insp_result_uuid: string) => void;
 }) => {
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
-
-  //#region 상태관리
-
-  //#endregion
-
-  //#region 데이터 관리
   const [inspResultIncludeDetails, setInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
-  //#endregion
-
-  //#region 그리드 컬럼세팅
   const COLUMNS_INSP_RESULT_DETAILS: IGridColumn[] = [
     {
       header: '검사성적서 상세UUID',
@@ -2103,7 +2091,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     let items: IGridColumn[] = COLUMNS_INSP_RESULT_DETAILS;
 
     if (inspResultIncludeDetails?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
       for (
         let i = 1;
         i <= inspResultIncludeDetails?.header?.max_sample_cnt;
@@ -2169,9 +2156,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     return items;
   }, [inspResultIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
     { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
     { id: 'prod_no', label: '품번', type: 'text', disabled: true },
@@ -2235,9 +2220,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     INPUT_ITEMS_INSP_RESULT,
     { title: '검사 정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onClear = () => {
     inputWork?.ref?.current?.resetForm();
     inputInspResult?.ref?.current?.resetForm();
@@ -2262,14 +2245,13 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     const specMin = rowData?.spec_min;
     const specMax = rowData?.spec_max;
 
-    let sampleCnt: any = rowData?.sample_cnt; //입력 가능한 시료수
+    let sampleCnt: any = rowData?.sample_cnt;
     let nullFg: boolean = true;
     let resultFg: boolean = true;
     let emptyFg: boolean;
 
     const popupGridInstance = gridRef.current?.getInstance();
 
-    //#region ✅CELL단위 합/불 판정
     [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
 
     const cellFlagColumnName = String(columnName)?.replace(
@@ -2300,11 +2282,8 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       cellStateColumnName,
       cellStateResultValue,
     );
-    //#endregion
 
-    //#region ✅ROW단위 합/불 판정
     if (resultFg === true) {
-      // 현재 값이 합격일 경우만 다른 cell의 판정값 체크
       [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
         maxCnt: sampleCnt,
       });
@@ -2321,9 +2300,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       rowStateColumnName,
       rowStateResultValue,
     );
-    //#endregion
 
-    //#region ✅최종 합/불 판정
     const maxRowCnt = popupGridInstance?.getRowCount() - 1;
     if (resultFg === true) {
       [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
@@ -2333,8 +2310,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     const flagInputboxName = rowFlagColumnName;
     const stateInputboxName = rowStateColumnName;
-    // const flagInputboxValue = emptyFg || nullFg ? null : resultFg;
-    // const stateInputboxValue = emptyFg ? '' : nullFg ? '진행중' : resultFg ? '합격' : '불합격';
 
     const flagInputboxValue = emptyFg
       ? null
@@ -2353,7 +2328,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
     inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-    //#endregion
   };
 
   const onSave = async ev => {
@@ -2446,9 +2420,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     onClear();
     props.setPopupVisible(false);
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (props?.workData && props.popupVisible) {
       inputWork.setValues(props.workData);
@@ -2479,9 +2451,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       onClear();
     }
   }, [props.popupVisible, props.inspResultUuid]);
-  //#endregion
 
-  //#region 컴포넌트 rander
   return (
     <GridPopup
       title="공정검사 성적서 수정"
@@ -2504,6 +2474,4 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       visible={props.popupVisible}
     />
   );
-  //#endregion
 };
-//#endregion
