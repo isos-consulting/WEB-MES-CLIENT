@@ -51,6 +51,7 @@ import {
   InspectionConcreate,
   NumberInspectionChecker,
 } from './receive-insp-result/models/inspection-checker';
+import TuiGrid from 'tui-grid';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1859,11 +1860,8 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
         instance.setValue(
           inspectionSample.rowKey,
-          inspectionSample.columnName.replace(
-            '_insp_value',
-            '_insp_result_fg',
-            inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
-          ),
+          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
+          inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
         );
 
         instance.setValue(
@@ -1949,6 +1947,143 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     inputInspResult.setFieldValue('insp_handling_type', code);
   };
 
+  const createInspectionPostApiPayload = (
+    inspectionGridInstance: TuiGrid,
+  ): TPostQmsFinalInspResults => {
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const inputInputItemsValues = inputInputItems?.ref?.current?.values;
+    const inputInspResultIncomeValues =
+      inputInspResultIncome?.ref?.current?.values;
+    const inputInspResultRejectValues =
+      inputInspResultReject?.ref?.current?.values;
+
+    const finalInspectionPayloadHeader: TPostQmsFinalInspResultsHeader = {
+      factory_uuid: getUserFactoryUuid(),
+      insp_handling_type_uuid: JSON.parse(
+        inputInspResultValues.insp_handling_type,
+      ).insp_handling_type_uuid,
+      insp_type_uuid: inputInputItemsValues?.insp_type_uuid,
+      insp_uuid: insp?.insp_uuid,
+      prod_uuid: storesStocks?.prod_uuid,
+      lot_no: storesStocks?.lot_no,
+      from_store_uuid: storesStocks?.store_uuid,
+      from_location_uuid: storesStocks?.location_uuid,
+      emp_uuid: inputInspResultValues?.emp_uuid,
+      reg_date:
+        inputInspResultValues?.reg_date +
+        ' ' +
+        inputInspResultValues?.reg_date_time +
+        ':00',
+      insp_result_fg: inputInspResultValues?.insp_result_fg,
+      insp_qty: inputInputItemsValues?.qty,
+      pass_qty: inputInspResultIncomeValues?.qty,
+      reject_qty: inputInspResultRejectValues?.reject_qty,
+      reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
+      to_store_uuid: blankThenNull(inputInspResultIncomeValues?.to_store_uuid),
+      to_location_uuid: blankThenNull(
+        inputInspResultIncomeValues?.to_location_uuid,
+      ),
+      reject_store_uuid: blankThenNull(
+        inputInspResultRejectValues?.reject_store_uuid,
+      ),
+      reject_location_uuid: blankThenNull(
+        inputInspResultRejectValues?.reject_location_uuid,
+      ),
+      remark: inputInspResultValues?.remark,
+    };
+
+    const finalInspectionPayloadDetails: Array<TPostQmsFinalInspResultsDetails> =
+      cellKeys(inspectionGridInstanceData, '_insp_value')
+        .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
+          sliceKeys(
+            inspectionKeys,
+            Number(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'sample_cnt',
+              ),
+            ),
+          ),
+        )
+        .map(
+          (
+            definedInspectionKeysBySampleCount: Array<string>,
+            inspectionItemIndex: number,
+          ) => ({
+            factory_uuid: `${getUserFactoryUuid()}`,
+            insp_detail_uuid: `${inspectionGridInstance.getValue(
+              inspectionItemIndex,
+              'insp_detail_uuid',
+            )}`,
+            insp_result_fg: Boolean(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'insp_result_fg',
+              ),
+            ),
+            remark:
+              inspectionGridInstance.getValue(inspectionItemIndex, 'remark') ===
+              null
+                ? null
+                : `${inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'remark',
+                  )}`,
+            values: definedInspectionKeysBySampleCount
+              .map((inspectionSampleKey: string, sampleKeyIndex: number) => ({
+                sample_no: sampleKeyIndex + 1,
+                insp_result_fg:
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    inspectionSampleKey.replace(
+                      '_insp_value',
+                      '_insp_result_fg',
+                    ),
+                  ) === null
+                    ? null
+                    : Boolean(
+                        inspectionGridInstance.getValue(
+                          inspectionItemIndex,
+                          inspectionSampleKey.replace(
+                            '_insp_value',
+                            '_insp_result_fg',
+                          ),
+                        ),
+                      ),
+                insp_value:
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    inspectionSampleKey,
+                  ) === 'OK'
+                    ? 1
+                    : inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey,
+                      ) === 'NG'
+                    ? 0
+                    : inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey,
+                      ) === null
+                    ? null
+                    : Number(
+                        inspectionGridInstance.getValue(
+                          inspectionItemIndex,
+                          inspectionSampleKey,
+                        ),
+                      ),
+              }))
+              .filter(({ insp_result_fg }) => insp_result_fg !== null),
+          }),
+        );
+
+    return {
+      header: finalInspectionPayloadHeader,
+      details: finalInspectionPayloadDetails,
+    };
+  };
+
   interface InspectionGridInstanceReference<GridInstance> {
     current: GridInstance;
   }
@@ -1962,29 +2097,29 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       '/std/tenant-opts',
     );
 
-    // if (
-    //   inputInspResultValues.insp_handling_type === '' ||
-    //   inputInspResultValues.insp_handling_type == null
-    // ) {
-    //   return message.warn('처리결과를 등록해주세요.');
-    // } else if (inputInspResultValues.emp_uuid == null) {
-    //   return message.warn('검사자를 등록해주세요.');
-    // } else if (inputInspResultValues.reg_date_time == null) {
-    //   return message.warn('검사시간을 등록해주세요.');
-    // }
+    if (
+      inputInspResultValues.insp_handling_type === '' ||
+      inputInspResultValues.insp_handling_type == null
+    ) {
+      return message.warn('처리결과를 등록해주세요.');
+    } else if (inputInspResultValues.emp_uuid == null) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (inputInspResultValues.reg_date_time == null) {
+      return message.warn('검사시간을 등록해주세요.');
+    }
 
-    // const { insp_handling_type_cd } = JSON.parse(
-    //   inputInspResultValues.insp_handling_type,
-    // );
+    const { insp_handling_type_cd } = JSON.parse(
+      inputInspResultValues.insp_handling_type,
+    );
 
-    // if (
-    //   inputInspResultValues.insp_result_fg === true &&
-    //   insp_handling_type_cd !== 'INCOME'
-    // ) {
-    //   return message.warn(
-    //     '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
-    //   );
-    // }
+    if (
+      inputInspResultValues.insp_result_fg === true &&
+      insp_handling_type_cd !== 'INCOME'
+    ) {
+      return message.warn(
+        '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
+      );
+    }
 
     const inspectionGridInstance = inspectionGridRef.current.getInstance();
 
@@ -2085,10 +2220,12 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         sampleResultFlags.every((resultFlag: boolean) => resultFlag !== null),
     );
 
-    // const inspectionPostApiPayload = createInspectionPostApiPayload(inspectionGridInstance);
+    const inspectionPostApiPayload: TPostQmsFinalInspResults =
+      createInspectionPostApiPayload(inspectionGridInstance);
+
     if (isFilledAllInspectionSample === false) {
       let qualityInspectionFilledOption = 0;
-      fetchOptionFilledQualityAllInspectionResultFlags.then(options => {
+      await fetchOptionFilledQualityAllInspectionResultFlags.then(options => {
         if (options.length > 0) {
           qualityInspectionFilledOption = options[0].value;
         }
@@ -2102,19 +2239,22 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           content:
             '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
           onOk: async (close: () => void) => {
-            // const inspectionPostApiPayload = createInspectionPostApiPayload(
-            //   inspectionGridInstance,
-            // );
+            const inspectionPostApiPayload = createInspectionPostApiPayload(
+              inspectionGridInstance,
+            );
 
             // await fetchInsepctionPostAPI(inspectionPostApiPayload);
+            console.log(inspectionPostApiPayload);
             close();
           },
           onCancel: () => {},
         });
       }
 
+      console.log(inspectionPostApiPayload);
       // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
     }
+    console.log(inspectionPostApiPayload);
     // return await fetchInsepctionPostAPI(inspectionPostApiPayload);
   };
 
