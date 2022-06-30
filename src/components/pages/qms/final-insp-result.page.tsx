@@ -1779,6 +1779,18 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       return true;
     });
 
+  const totalChecker = (inspectionItemResultFlags: Array<boolean>): boolean => {
+    if (inspectionItemResultFlags.includes(null)) {
+      return null;
+    }
+
+    if (inspectionItemResultFlags.includes(false)) {
+      return false;
+    }
+
+    return true;
+  };
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const finalInspectorGridInstanceData = instance.getData();
@@ -1823,7 +1835,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inspectionSampleResultStore,
     );
 
-    console.log(inspectionItemResultStore);
+    const inspectionFinalResultFlag = totalChecker(inspectionItemResultStore);
+
+    console.log(inspectionFinalResultFlag);
   };
 
   const onSave = async ev => {
