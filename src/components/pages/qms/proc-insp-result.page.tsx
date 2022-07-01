@@ -2458,90 +2458,16 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     );
   };
 
-  const onSave = async ev => {
-    let headerData: TPutQmsProcInspResultsHeader;
-    let detailDatas: TPutQmsProcInspResultsDetail[] = [];
-
+  const onSave = async (inspectionGridRef: any) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
-
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
+    if (inputInspResultValues?.emp_uuid == null) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (inputInspResultValues?.reg_date == null) {
+      return message.warn('검사일자를 등록해주세요.');
+    } else if (inputInspResultValues?.reg_date_time == null) {
+      return message.warn('검사시간을 등록해주세요.');
     }
-
-    headerData = {
-      uuid: inputInspResultValues?.insp_result_uuid,
-      emp_uuid: inputInspResultValues?.emp_uuid,
-      insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_qty: 0,
-      pass_qty: 0,
-      reject_qty: 0,
-      remark: inputInspResultValues?.remark,
-    };
-
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: TPutQmsProcInspResultsDetailValue[] = [];
-      const row: TGetQmsProcInspResultIncludeDetailsDetail =
-        saveGridInstance?.getRow(
-          i,
-        ) as TGetQmsProcInspResultIncludeDetailsDetail;
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        const uuid: any = row?.['x' + k + '_insp_result_uuid'];
-        if (value) {
-          values.push({
-            uuid: uuid,
-            delete_fg: false,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        } else if (uuid) {
-          values.push({
-            uuid: uuid,
-            delete_fg: true,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        uuid: row?.insp_result_detail_info_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
-
-    const saveData: TPutQmsFinalInspResult = {
-      header: headerData,
-      details: detailDatas,
-    };
-    await executeData(
-      saveData,
-      URI_PATH_PUT_QMS_PROC_INSP_RESULTS,
-      'put',
-      'success',
-    )
-      .then(value => {
-        if (!value) return;
-        message.info('저장되었습니다.');
-        props.onAfterCloseSearch(props?.inspResultUuid);
-        onClear();
-        props.setPopupVisible(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
   };
 
   const onCancel = ev => {
