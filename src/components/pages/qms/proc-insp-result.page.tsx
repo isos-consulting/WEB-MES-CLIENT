@@ -2458,7 +2458,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const fetchOptionFilledQualityAllInspectionResultFlags = getData(
+    const fetchOptionFilledQualityAllInspectionResult = getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
     );
@@ -2569,7 +2569,36 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         sampleResults.every((result: boolean) => result !== null),
     );
 
-    console.log(isFilledAllInspectionSample);
+    if (isFilledAllInspectionSample === false) {
+      const qualityInspectionFilledOption =
+        (
+          await (async () =>
+            await fetchOptionFilledQualityAllInspectionResult)()
+        ).length > 0
+          ? (
+              await (async () =>
+                await fetchOptionFilledQualityAllInspectionResult)()
+            )[0].value
+          : 0;
+
+      if (qualityInspectionFilledOption === 1) {
+        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
+      } else if (qualityInspectionFilledOption === 2) {
+        return Modal.confirm({
+          title: '',
+          content:
+            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
+          onOk: async (close: () => void) => {
+            close();
+          },
+          onCancel: () => {},
+        });
+      }
+
+      return;
+    }
+
+    return;
   };
 
   const onCancel = ev => {
