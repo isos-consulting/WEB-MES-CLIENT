@@ -2471,7 +2471,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           setInspResultIncludeDetails(res);
           inputInspResult.setValues({
             ...res.header,
-            reg_date_time: res.header.reg_date,
+            reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+            reg_date_time: `${res.header.reg_date}`
+              .replace('T', ' ')
+              .slice(0, -5),
           });
         })
         .catch(err => {
