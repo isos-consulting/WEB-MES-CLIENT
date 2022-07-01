@@ -2458,6 +2458,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const fetchOptionFilledQualityAllInspectionResultFlags = getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
 
     if (inputInspResultValues?.emp_uuid == null) {
       return message.warn('검사자를 등록해주세요.');
@@ -2560,7 +2564,12 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
     }
 
-    console.log(isSequenceMissingValue);
+    const isFilledAllInspectionSample = inspectionSampleResultStore.every(
+      (sampleResults: Array<boolean>) =>
+        sampleResults.every((result: boolean) => result !== null),
+    );
+
+    console.log(isFilledAllInspectionSample);
   };
 
   const onCancel = ev => {
