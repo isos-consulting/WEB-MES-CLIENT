@@ -3095,7 +3095,12 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         ),
     );
 
+    const inspectionItemResultStore = recordChecker(
+      inspectionSamplelResultStore,
+    );
+
     console.log(inspectionSamplelResultStore);
+    console.log(inspectionItemResultStore);
   };
 
   const onSave = async ev => {
