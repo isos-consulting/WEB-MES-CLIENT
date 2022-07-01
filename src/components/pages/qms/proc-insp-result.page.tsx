@@ -2476,6 +2476,22 @@ const INSP_RESULT_EDIT_POPUP = (props: {
               .replace('T', ' ')
               .slice(0, -5),
           });
+
+          res.details.forEach((detail, index) => {
+            for (
+              let cell = detail.sample_cnt;
+              cell < res.header.max_sample_cnt;
+
+            ) {
+              cell++;
+              gridRef.current
+                .getInstance()
+                .disableCell(index, `x${cell}_insp_value`);
+              gridRef.current
+                .getInstance()
+                .removeCellClassName(index, `x${cell}_insp_value`, 'editor');
+            }
+          });
         })
         .catch(err => {
           onClear();
