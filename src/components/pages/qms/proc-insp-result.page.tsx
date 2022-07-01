@@ -2313,6 +2313,20 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     return true;
   };
 
+  const checkUIProtocol = (sampleResultFlag: boolean): string =>
+    sampleResultFlag === null
+      ? null
+      : sampleResultFlag === true
+      ? '합격'
+      : '불합격';
+
+  const eyeCellUIProtocol = (eyeSampleResultFlag: boolean): string =>
+    eyeSampleResultFlag === null
+      ? null
+      : eyeSampleResultFlag === true
+      ? 'OK'
+      : 'NG';
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const processInspectionGridInstanceData = instance.getData();
@@ -2368,7 +2382,80 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     const inspectionResultFlag = totalChecker(inspectionItemResultStore);
 
-    console.log(inspectionResultFlag);
+    changes.forEach((inspectionSample: any) => {
+      if (inspectionSample.columnName.includes('_insp_value')) {
+        const changedSampleIndex = processInspectionSampleKeyStore[
+          inspectionSample.rowKey
+        ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
+
+        console.log(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
+          inspectionSamplelResultStore[inspectionSample.rowKey][
+            changedSampleIndex
+          ],
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
+          inspectionSamplelResultStore[inspectionSample.rowKey][
+            changedSampleIndex
+          ],
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace(
+            '_insp_value',
+            '_insp_result_state',
+          ),
+          checkUIProtocol(
+            inspectionSamplelResultStore[inspectionSample.rowKey][
+              changedSampleIndex
+            ],
+          ),
+        );
+
+        if (
+          !(
+            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_min')) &&
+            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_max'))
+          )
+        ) {
+          instance.setValue(
+            inspectionSample.rowKey,
+            inspectionSample.columnName,
+            eyeCellUIProtocol(
+              inspectionSamplelResultStore[inspectionSample.rowKey][
+                changedSampleIndex
+              ],
+            ),
+          );
+        }
+      }
+    });
+
+    processInspectionGridInstanceData.forEach(
+      (_: any, inspectionItemIndex: number) => {
+        instance.setValue(
+          inspectionItemIndex,
+          `insp_result_fg`,
+          inspectionItemResultStore[inspectionItemIndex],
+        );
+        instance.setValue(
+          inspectionItemIndex,
+          `insp_result_state`,
+          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
+        );
+      },
+    );
+
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResultFlag);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(inspectionResultFlag),
+    );
   };
 
   const onSave = async ev => {
