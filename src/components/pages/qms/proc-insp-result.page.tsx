@@ -2276,6 +2276,29 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     return new checker().check(arg);
   };
 
+  const recordChecker = (
+    inspectionItems: Array<Array<boolean>>,
+  ): Array<boolean> =>
+    inspectionItems.map((inspectionItem: Array<boolean>) => {
+      if (
+        inspectionItem.every(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === null,
+        )
+      ) {
+        return null;
+      }
+
+      if (
+        inspectionItem.some(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === false,
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const processInspectionGridInstanceData = instance.getData();
@@ -2325,7 +2348,11 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         ),
     );
 
-    console.log(inspectionSamplelResultStore);
+    const inspectionItemResultStore = recordChecker(
+      inspectionSamplelResultStore,
+    );
+
+    console.log(inspectionItemResultStore);
   };
 
   const onSave = async ev => {
