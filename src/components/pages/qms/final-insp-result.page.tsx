@@ -3099,8 +3099,11 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       inspectionSamplelResultStore,
     );
 
+    const inspectionResultFlag = totalChecker(inspectionItemResultStore);
+
     console.log(inspectionSamplelResultStore);
     console.log(inspectionItemResultStore);
+    console.log(inspectionResultFlag);
   };
 
   const onSave = async ev => {
