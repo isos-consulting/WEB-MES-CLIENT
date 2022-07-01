@@ -2269,6 +2269,13 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
     keys.slice(0, at);
 
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
   const onAfterChange = (ev: any) => {
     const { changes, instance } = ev;
     const processInspectionGridInstanceData = instance.getData();
@@ -2294,7 +2301,31 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         ),
     );
 
-    console.log(enableInspectionSampleKeyStroe);
+    const inspectionSamplelResultStore = enableInspectionSampleKeyStroe.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        inspectionItem.map(inspectionSampleKey =>
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) == null ||
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(instance.getValue(inspectionItemIndex, 'spec_min')) &&
+              isNumber(instance.getValue(inspectionItemIndex, 'spec_max'))
+            ? inspectionCheck(NumberInspectionChecker, {
+                value:
+                  instance.getValue(inspectionItemIndex, inspectionSampleKey) *
+                  1,
+                min: instance.getValue(inspectionItemIndex, 'spec_min') * 1,
+                max: instance.getValue(inspectionItemIndex, 'spec_max') * 1,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: instance.getValue(
+                  inspectionItemIndex,
+                  inspectionSampleKey,
+                ),
+              }),
+        ),
+    );
+
+    console.log(inspectionSamplelResultStore);
   };
 
   const onSave = async ev => {
