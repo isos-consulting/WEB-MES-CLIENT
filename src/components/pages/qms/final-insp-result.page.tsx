@@ -53,6 +53,12 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
+import {
+  EmptyInspectionChecker,
+  EyeInspectionChecker,
+  InspectionConcreate,
+  NumberInspectionChecker,
+} from './receive-insp-result/models/inspection-checker';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -2961,6 +2967,75 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     });
   };
 
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
+
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
+  const recordChecker = (
+    inspectionItems: Array<Array<boolean>>,
+  ): Array<boolean> =>
+    inspectionItems.map((inspectionItem: Array<boolean>) => {
+      if (
+        inspectionItem.every(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === null,
+        )
+      ) {
+        return null;
+      }
+
+      if (
+        inspectionItem.some(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === false,
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+  const totalChecker = (inspectionItems: Array<boolean>): boolean => {
+    if (
+      inspectionItems.some((inspectionItem: boolean) => inspectionItem === null)
+    ) {
+      return null;
+    }
+
+    if (inspectionItems.includes(false)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const checkUIProtocol = (sampleResultFlag: boolean): string =>
+    sampleResultFlag === null
+      ? null
+      : sampleResultFlag === true
+      ? '합격'
+      : '불합격';
+
+  const eyeCellUIProtocol = (eyeSampleResultFlag: boolean): string =>
+    eyeSampleResultFlag === null
+      ? null
+      : eyeSampleResultFlag === true
+      ? 'OK'
+      : 'NG';
+
   interface InspectionSampleAfterChangeProps extends GridEventProps {
     instance: TuiGrid;
   }
@@ -2968,7 +3043,60 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const onAfterChange = ({
     changes,
     instance,
-  }: InspectionSampleAfterChangeProps) => {};
+  }: InspectionSampleAfterChangeProps) => {
+    const finalInspectionGridInstanceData = instance.getData();
+
+    if (
+      changes.some(
+        inspectionSample =>
+          !inspectionSample.columnName.includes('_insp_value'),
+      )
+    )
+      return;
+
+    const finalInspectionSampleKeyStore = cellKeys(
+      finalInspectionGridInstanceData,
+      '_insp_value',
+    );
+
+    const enableInspectionSampleKeyStroe = finalInspectionSampleKeyStore.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionItem,
+          Number(
+            finalInspectionGridInstanceData[inspectionItemIndex].sample_cnt,
+          ),
+        ),
+    );
+
+    const inspectionSamplelResultStore = enableInspectionSampleKeyStroe.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        inspectionItem.map(inspectionSampleKey =>
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) == null ||
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(
+                `${instance.getValue(inspectionItemIndex, 'spec_min')}`,
+              ) &&
+              isNumber(`${instance.getValue(inspectionItemIndex, 'spec_max')}`)
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: Number(
+                  instance.getValue(inspectionItemIndex, inspectionSampleKey),
+                ),
+                min: Number(instance.getValue(inspectionItemIndex, 'spec_min')),
+                max: Number(instance.getValue(inspectionItemIndex, 'spec_max')),
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: instance.getValue(
+                  inspectionItemIndex,
+                  inspectionSampleKey,
+                ),
+              }),
+        ),
+    );
+
+    console.log(inspectionSamplelResultStore);
+  };
 
   const onSave = async ev => {
     let headerData: TPutQmsFinalInspResultsHeader;
