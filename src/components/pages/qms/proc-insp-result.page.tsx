@@ -2258,107 +2258,43 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     setInspResultIncludeDetails({});
   };
 
-  const onAfterChange = (ev: any) => {
-    const { origin, changes, instance } = ev;
-    if (changes.length === 0) return;
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
 
-    const { columnName, rowKey, value } = changes[0];
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const onAfterChange = (ev: any) => {
+    const { changes, instance } = ev;
+    const processInspectionGridInstanceData = instance.getData();
 
     if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
+      changes.some(
+        inspectionSample =>
+          !inspectionSample.columnName.includes('_insp_value'),
+      )
     )
       return;
 
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
-
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt;
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridRef.current?.getInstance();
-
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
+    const processInspectionSampleKeyStore = cellKeys(
+      processInspectionGridInstanceData,
       '_insp_value',
-      '_insp_result_fg',
-    );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
-      }
-    }
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
-    );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
     );
 
-    if (resultFg === true) {
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
+    const enableInspectionSampleKeyStroe = processInspectionSampleKeyStore.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionItem,
+          processInspectionGridInstanceData[inspectionItemIndex].sample_cnt,
+        ),
     );
 
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg, emptyFg] = [false, false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
+    console.log(enableInspectionSampleKeyStroe);
   };
 
   const onSave = async ev => {
