@@ -423,7 +423,7 @@ export const PgQmsProcInspResult = () => {
 
   //#region ✅조회조건
   const SEARCH_ITEMS: ISearchItem[] = [
-    { type: 'date', id: 'start_date', label: '작업일', default: getToday(-7) },
+    { type: 'date', id: 'start_date', label: '작업일', default: getToday(-60) },
     { type: 'date', id: 'end_date', default: getToday() },
   ];
   //#endregion
@@ -2197,8 +2197,16 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     {
       id: 'insp_detail_type_uuid',
       label: '검사유형',
-      type: 'text',
+      type: 'combo',
       disabled: true,
+      dataSettingOptions: {
+        codeName: 'insp_detail_type_uuid',
+        textName: 'insp_detail_type_nm',
+        uriPath: '/adm/insp-detail-types',
+        params: {
+          insp_type_cd: 'PROC_INSP',
+        },
+      },
     },
     {
       id: 'reg_date',
