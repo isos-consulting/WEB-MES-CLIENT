@@ -2388,14 +2388,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           inspectionSample.rowKey
         ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
 
-        console.log(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
-          inspectionSamplelResultStore[inspectionSample.rowKey][
-            changedSampleIndex
-          ],
-        );
-
         instance.setValue(
           inspectionSample.rowKey,
           inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
@@ -2458,7 +2450,13 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     );
   };
 
-  const onSave = async (inspectionGridRef: any) => {
+  interface InspectionGridInstanceReference<GridInstance> {
+    current: GridInstance;
+  }
+
+  const onSave = async (
+    inspectionGridRef: InspectionGridInstanceReference<Grid>,
+  ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
     if (inputInspResultValues?.emp_uuid == null) {
@@ -2468,6 +2466,101 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     } else if (inputInspResultValues?.reg_date_time == null) {
       return message.warn('검사시간을 등록해주세요.');
     }
+
+    const inspectionGridInstance = inspectionGridRef.current.getInstance();
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
+
+    const inspectionSampleResultStore = cellKeys(
+      inspectionGridInstanceData,
+      '_insp_value',
+    )
+      .map((inspectionItemKeys: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionItemKeys,
+          Number(
+            inspectionGridInstance.getValue(inspectionItemIndex, 'sample_cnt'),
+          ),
+        ),
+      )
+      .map((inspectionItemSampleKeys, inspectionItemSampleIndex) =>
+        inspectionItemSampleKeys.map(sampleKey =>
+          inspectionGridInstance.getValue(
+            inspectionItemSampleIndex,
+            sampleKey,
+          ) == null ||
+          inspectionGridInstance.getValue(
+            inspectionItemSampleIndex,
+            sampleKey,
+          ) === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  'spec_min',
+                )}`,
+              ) &&
+              isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  'spec_max',
+                )}`,
+              )
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    sampleKey,
+                  ),
+                ),
+                min: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    'spec_min',
+                  ),
+                ),
+                max: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    'spec_max',
+                  ),
+                ),
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  sampleKey,
+                ),
+              }),
+        ),
+      );
+
+    const isSequenceMissingValue = inspectionSampleResultStore.some(
+      (inspectionSampleResults: Array<boolean>) => {
+        if (inspectionSampleResults[0] === null) return true;
+
+        if (inspectionSampleResults.length > 1) {
+          for (
+            let inspectionItemIndex = 1;
+            inspectionItemIndex < inspectionSampleResults.length;
+            inspectionItemIndex++
+          ) {
+            if (
+              inspectionSampleResults[inspectionItemIndex - 1] === null &&
+              inspectionSampleResults[inspectionItemIndex] !== null
+            )
+              return true;
+          }
+        }
+
+        return false;
+      },
+    );
+
+    if (isSequenceMissingValue === true) {
+      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
+    }
+
+    console.log(isSequenceMissingValue);
   };
 
   const onCancel = ev => {
