@@ -3201,6 +3201,187 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     current: GridInstance;
   }
 
+  const createInspectionPutApiPayload = (inspectionGridInstance: TuiGrid) => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const inputInputItemsValues = inputInputItems?.ref?.current?.values;
+    const inputInspResultIncomeValues =
+      inputInspResultIncome?.ref?.current?.values;
+    const inputInspResultRejectValues =
+      inputInspResultReject?.ref?.current?.values;
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
+
+    const finalInspectionPayloadHeader: TPutQmsFinalInspResultsHeader = {
+      uuid: `${inputInspResultValues?.insp_result_uuid}`,
+      emp_uuid: `${inputInspResultValues?.emp_uuid}`,
+      insp_result_fg: Boolean(inputInspResultValues?.insp_result_fg),
+      insp_handling_type_uuid: JSON.parse(
+        `${inputInspResultValues.insp_handling_type}`,
+      ).insp_handling_type_uuid,
+      insp_qty: Number(inputInputItemsValues?.insp_qty),
+      pass_qty: Number(inputInspResultIncomeValues?.qty),
+      reject_qty: Number(inputInspResultRejectValues?.reject_qty),
+      reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
+      from_store_uuid: `${inspResult.header.from_store_uuid}`,
+      from_location_uuid:
+        inspResult.header.from_location_uuid == null
+          ? null
+          : `${inspResult.header.from_location_uuid}`,
+      to_store_uuid: blankThenNull(inputInspResultIncomeValues?.to_store_uuid),
+      to_location_uuid: blankThenNull(
+        inputInspResultIncomeValues?.to_location_uuid,
+      ),
+      reject_store_uuid: blankThenNull(
+        inputInspResultRejectValues?.reject_store_uuid,
+      ),
+      reject_location_uuid: blankThenNull(
+        inputInspResultRejectValues?.reject_location_uuid,
+      ),
+      remark:
+        inputInspResultValues?.remark == null
+          ? null
+          : `${inputInspResultValues?.remark}`,
+    };
+
+    const finalInspectionPayloadDetails: Array<TPutQmsFinalInspResultsDetails> =
+      cellKeys(inspectionGridInstanceData, '_insp_value')
+        .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
+          sliceKeys(
+            inspectionKeys,
+            Number(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'sample_cnt',
+              ),
+            ),
+          ),
+        )
+        .map(
+          (
+            inspectionSampleKeys: Array<string>,
+            inspectionItemIndex: number,
+          ) => ({
+            factory_uuid: `${getUserFactoryUuid()}`,
+            uuid: `${inspectionGridInstance.getValue(
+              inspectionItemIndex,
+              'insp_result_detail_info_uuid',
+            )}`,
+            insp_result_fg: Boolean(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'insp_result_fg',
+              ),
+            ),
+            remark:
+              inspectionGridInstance.getValue(inspectionItemIndex, 'remark') ===
+              null
+                ? null
+                : `${inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'remark',
+                  )}`,
+            values: inspectionSampleKeys
+              .map((inspectionSampleKey: string, sampleKeyIndex: number) => {
+                const inspectionSample: TPutQmsFinalInspResultsDetailsValues = {
+                  sample_no: sampleKeyIndex + 1,
+                  uuid:
+                    inspectionGridInstance.getValue(
+                      inspectionItemIndex,
+                      inspectionSampleKey.replace(
+                        '_insp_value',
+                        '_insp_result_detail_value_uuid',
+                      ),
+                    ) == null
+                      ? null
+                      : `${inspectionGridInstance.getValue(
+                          inspectionItemIndex,
+                          inspectionSampleKey.replace(
+                            '_insp_value',
+                            '_insp_result_detail_value_uuid',
+                          ),
+                        )}`,
+                  delete_fg:
+                    inspectionGridInstance.getValue(
+                      inspectionItemIndex,
+                      inspectionSampleKey.replace(
+                        '_insp_value',
+                        '_insp_result_fg',
+                      ),
+                    ) === null
+                      ? true
+                      : false,
+                };
+
+                if (
+                  inspectionGridInstance.getValue(
+                    sampleKeyIndex,
+                    inspectionSampleKey.replace(
+                      '_insp_value',
+                      '_insp_result_fg',
+                    ),
+                  ) !== null
+                ) {
+                  return {
+                    ...inspectionSample,
+                    insp_result_fg:
+                      inspectionGridInstance.getValue(
+                        sampleKeyIndex,
+                        inspectionSampleKey.replace(
+                          '_insp_value',
+                          '_insp_result_fg',
+                        ),
+                      ) === null
+                        ? null
+                        : Boolean(
+                            inspectionGridInstance.getValue(
+                              sampleKeyIndex,
+                              inspectionSampleKey.replace(
+                                '_insp_value',
+                                '_insp_result_fg',
+                              ),
+                            ),
+                          ),
+                    insp_value:
+                      inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey,
+                      ) === 'OK'
+                        ? 1
+                        : inspectionGridInstance.getValue(
+                            inspectionItemIndex,
+                            inspectionSampleKey,
+                          ) === 'NG'
+                        ? 0
+                        : inspectionGridInstance.getValue(
+                            inspectionItemIndex,
+                            inspectionSampleKey,
+                          ) === null
+                        ? null
+                        : Number(
+                            inspectionGridInstance.getValue(
+                              inspectionItemIndex,
+                              inspectionSampleKey,
+                            ),
+                          ),
+                  };
+                }
+                return inspectionSample;
+              })
+              .filter(({ uuid, delete_fg }) => {
+                if (uuid !== null) {
+                  return true;
+                }
+
+                return delete_fg === false ? true : false;
+              }),
+          }),
+        );
+
+    return {
+      header: finalInspectionPayloadHeader,
+      details: finalInspectionPayloadDetails,
+    };
+  };
+
   const onSave = async (
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
@@ -3318,6 +3499,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         sampleResults.every((result: boolean) => result !== null),
     );
 
+    const inspectionPutApiPayload: TPutQmsFinalInspResults =
+      createInspectionPutApiPayload(inspectionGridInstance);
+
     if (isFilledAllInspectionSample === false) {
       const qualityInspectionFilledOption =
         (
@@ -3338,93 +3522,20 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           content:
             '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
           onOk: async (close: () => void) => {
+            const inspectionPutApiPayload: TPutQmsFinalInspResults =
+              createInspectionPutApiPayload(inspectionGridInstance);
+
+            console.log(inspectionPutApiPayload);
             close();
           },
           onCancel: () => {},
         });
       }
+      return await console.log(inspectionPutApiPayload);
     }
 
-    return;
+    return await console.log(inspectionPutApiPayload);
 
-    const inputInputItemsValues = inputInputItems?.ref?.current?.values;
-
-    const inputInspResultIncomeValues =
-      inputInspResultIncome?.ref?.current?.values;
-    const inputInspResultRejectValues =
-      inputInspResultReject?.ref?.current?.values;
-
-    let headerData: TPutQmsFinalInspResultsHeader;
-    let detailDatas: TPutQmsFinalInspResultsDetails[] = [];
-
-    headerData = {
-      uuid: inputInspResultValues?.insp_result_uuid,
-      emp_uuid: inputInspResultValues?.emp_uuid,
-      insp_result_fg: inputInspResultValues?.insp_result_fg,
-      insp_handling_type_uuid: JSON.parse(
-        inputInspResultValues.insp_handling_type,
-      ).insp_handling_type_uuid,
-      insp_qty: inputInputItemsValues?.insp_qty,
-      pass_qty: inputInspResultIncomeValues?.qty,
-      reject_qty: inputInspResultRejectValues?.reject_qty,
-      reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
-      from_store_uuid: inspResult.header.from_store_uuid,
-      from_location_uuid: inspResult.header.from_location_uuid,
-      to_store_uuid: blankThenNull(inputInspResultIncomeValues?.to_store_uuid),
-      to_location_uuid: blankThenNull(
-        inputInspResultIncomeValues?.to_location_uuid,
-      ),
-      reject_store_uuid: blankThenNull(
-        inputInspResultRejectValues?.reject_store_uuid,
-      ),
-      reject_location_uuid: blankThenNull(
-        inputInspResultRejectValues?.reject_location_uuid,
-      ),
-      remark: inputInspResultValues?.remark,
-    };
-
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: TPutQmsFinalInspResultsDetailsValues[] = [];
-      const row: TGetQmsFinalInspResultIncludeDetailsDetail =
-        saveGridInstance?.getRow(
-          i,
-        ) as TGetQmsFinalInspResultIncludeDetailsDetail;
-
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        const uuid: any = row?.['x' + k + '_insp_result_uuid'];
-        if (value) {
-          values.push({
-            uuid: uuid,
-            delete_fg: false,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        } else if (uuid) {
-          values.push({
-            uuid: uuid,
-            delete_fg: true,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
-
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        uuid: row?.insp_result_detail_info_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
-
-    const saveData: TPutQmsFinalInspResults = {
-      header: headerData,
-      details: detailDatas,
-    };
     await executeData(
       saveData,
       URI_PATH_PUT_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS,
