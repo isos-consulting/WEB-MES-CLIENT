@@ -3205,6 +3205,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const fetchOptionFilledQualityAllInspectionResult = getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
 
     if (inputInspResultValues?.insp_handling_type === '') {
       return message.warn('처리결과를 등록해주세요.');
@@ -3219,7 +3223,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     const inspectionGridInstance = inspectionGridRef.current.getInstance();
     const inspectionGridInstanceData = inspectionGridInstance.getData();
-    const inspectionSamplelResultStore = cellKeys(
+    const inspectionSampleResultStore = cellKeys(
       inspectionGridInstanceData,
       '_insp_value',
     )
@@ -3285,7 +3289,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         ),
       );
 
-    const isSequenceMissingValue = inspectionSamplelResultStore.some(
+    const isSequenceMissingValue = inspectionSampleResultStore.some(
       (inspectionSampleResults: Array<boolean>) => {
         if (inspectionSampleResults[0] === null) return true;
 
@@ -3309,8 +3313,12 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
     }
 
-    console.log(inspectionSamplelResultStore);
-    console.log(isSequenceMissingValue);
+    const isFilledAllInspectionSample = inspectionSampleResultStore.every(
+      (sampleResults: Array<boolean>) =>
+        sampleResults.every((result: boolean) => result !== null),
+    );
+
+    console.log(isFilledAllInspectionSample);
 
     return;
 
