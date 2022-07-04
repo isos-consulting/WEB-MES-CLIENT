@@ -3206,8 +3206,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   ) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
-
     if (inputInspResultValues?.insp_handling_type === '') {
       return message.warn('처리결과를 등록해주세요.');
     } else if (inputInspResultValues?.emp_uuid == null) {
@@ -3287,7 +3285,32 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         ),
       );
 
+    const isSequenceMissingValue = inspectionSamplelResultStore.some(
+      (inspectionSampleResults: Array<boolean>) => {
+        if (inspectionSampleResults[0] === null) return true;
+
+        if (inspectionSampleResults.length > 1) {
+          for (
+            let inspectionItemIndex = 1;
+            inspectionItemIndex < inspectionSampleResults.length;
+            inspectionItemIndex++
+          ) {
+            if (
+              inspectionSampleResults[inspectionItemIndex - 1] === null &&
+              inspectionSampleResults[inspectionItemIndex] !== null
+            )
+              return true;
+          }
+        }
+      },
+    );
+
+    if (isSequenceMissingValue === true) {
+      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
+    }
+
     console.log(inspectionSamplelResultStore);
+    console.log(isSequenceMissingValue);
 
     return;
 
