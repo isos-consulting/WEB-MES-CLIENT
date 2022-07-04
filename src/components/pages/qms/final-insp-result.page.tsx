@@ -3143,6 +3143,22 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         }
       }
     });
+
+    finalInspectionGridInstanceData.forEach(
+      (_, inspectionItemIndex: number) => {
+        instance.setValue(
+          inspectionItemIndex,
+          'insp_result_fg',
+          inspectionItemResultStore[inspectionItemIndex],
+        );
+
+        instance.setValue(
+          inspectionItemIndex,
+          'insp_result_state',
+          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
+        );
+      },
+    );
     console.log(inspectionSamplelResultStore);
     console.log(inspectionItemResultStore);
     console.log(inspectionResultFlag);
