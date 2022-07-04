@@ -3159,6 +3159,13 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         );
       },
     );
+
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResultFlag);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(inspectionResultFlag),
+    );
+
     console.log(inspectionSamplelResultStore);
     console.log(inspectionItemResultStore);
     console.log(inspectionResultFlag);
