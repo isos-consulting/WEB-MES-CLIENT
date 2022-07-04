@@ -3170,11 +3170,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       checkUIProtocol(inspectionResultFlag),
     );
 
-    if (inspectionResultFlag === null) {
-      inputInspResult.setFieldDisabled({ insp_handling_type: true });
-    } else {
-      inputInspResult.setFieldDisabled({ insp_handling_type: false });
-    }
+    inputInspResult.setFieldDisabled({
+      insp_handling_type: inspectionResultFlag ?? true,
+    });
 
     let inspectionHandlingTypeCode =
       inspectionResultFlag === true
