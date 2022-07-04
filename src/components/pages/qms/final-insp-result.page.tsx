@@ -53,7 +53,6 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
-import { slice } from 'lodash';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
