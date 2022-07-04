@@ -697,7 +697,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       checkUIProtocol(finalChecker),
     );
 
-    if (finalChecker === null) {
+    if (finalChecker === null || finalChecker === true) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
@@ -968,6 +968,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           inputInspResultReject.setValues({ ...res.header });
 
           changeInspResult(res.header.insp_handling_type_cd, true);
+          inputInspResult.setFieldDisabled({
+            insp_handling_type: res.header.insp_result_fg,
+          });
           res.details.forEach((detail, idx) => {
             for (
               let cell = detail.sample_cnt;
