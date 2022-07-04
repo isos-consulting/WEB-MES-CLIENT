@@ -3318,17 +3318,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                       : false,
                 };
 
-                console.log(
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    inspectionSampleKey.replace(
-                      '_insp_value',
-                      '_insp_result_fg',
-                    ),
-                  ),
-                  inspectionItemIndex,
-                  inspectionSampleKey.replace('_insp_value', '_insp_result_fg'),
-                );
                 if (
                   inspectionGridInstance.getValue(
                     inspectionItemIndex,
@@ -3641,6 +3630,29 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         });
 
         changeInspResult(res.header.insp_handling_type_cd, true);
+
+        res.details.forEach((inspectionItem, inspectionItemIndex: number) => {
+          for (
+            let disableSampleIndex = inspectionItem.sample_cnt;
+            disableSampleIndex < res.header.max_sample_cnt;
+
+          ) {
+            disableSampleIndex++;
+            gridRef.current
+              .getInstance()
+              .disableCell(
+                inspectionItemIndex,
+                `x${disableSampleIndex}_insp_value`,
+              );
+            gridRef.current
+              .getInstance()
+              .removeCellClassName(
+                inspectionItemIndex,
+                `x${disableSampleIndex}_insp_value`,
+                'editor',
+              );
+          }
+        });
       })
       .catch(err => {
         onClear();
