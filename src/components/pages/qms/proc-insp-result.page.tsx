@@ -44,6 +44,7 @@ import {
   NumberInspectionChecker,
 } from './receive-insp-result/models/inspection-checker';
 import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
+import TuiGrid from 'tui-grid';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1166,7 +1167,10 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
         setProcInspResultIncludeDetails(res);
         inputInspResult.setValues({
           ...res.header,
-          reg_date_time: res.header.reg_date,
+          reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+          reg_date_time: `${res.header.reg_date}`
+            .replace('T', ' ')
+            .slice(0, -5),
         });
       })
       .catch(err => {
