@@ -2792,7 +2792,61 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       firstItemType: 'empty',
       options: props.inspHandlingType,
       disabled: true,
-      onAfterChange: ev => {},
+      onAfterChange: (stringifiedInspectionHandlingType: string) => {
+        const selectedInspHandlingType =
+          stringifiedInspectionHandlingType === ''
+            ? { insp_handling_type_cd: '' }
+            : JSON.parse(stringifiedInspectionHandlingType);
+        const inputQty = inputInputItems.ref.current.values.insp_qty;
+
+        let incomeDisabled: boolean = true;
+        let rejectDisabled: boolean = true;
+        let qtyDisabled: boolean = true;
+        if (
+          ['INCOME', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          incomeDisabled = false;
+        }
+        if (
+          ['RETURN', 'SELECTION'].includes(
+            selectedInspHandlingType.insp_handling_type_cd,
+          )
+        ) {
+          rejectDisabled = false;
+        }
+
+        if (incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', 0);
+        }
+        if (rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        }
+
+        if (!incomeDisabled) {
+          inputInspResultIncome.setFieldValue('qty', inputQty);
+          inputInspResultReject.setFieldValue('reject_qty', 0);
+        } else if (!rejectDisabled) {
+          inputInspResultReject.setFieldValue('reject_qty', inputQty);
+        }
+
+        if (selectedInspHandlingType.insp_handling_type_cd === 'SELECTION') {
+          qtyDisabled = false;
+        }
+
+        inputInspResultIncome.setFieldDisabled({
+          qty: qtyDisabled,
+          to_store_uuid: incomeDisabled,
+          to_location_uuid: incomeDisabled,
+        });
+        inputInspResultReject.setFieldDisabled({
+          reject_qty: true,
+          reject_nm: rejectDisabled,
+          reject_store_uuid: rejectDisabled,
+          reject_location_uuid: rejectDisabled,
+        });
+      },
     },
     { id: 'remark', label: '비고', type: 'text' },
   ];
@@ -3627,7 +3681,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         });
 
         changeInspResult(res.header.insp_handling_type_cd, true);
-
+        inputInspResult.setFieldDisabled({
+          insp_handling_type: res.header.insp_result_fg,
+        });
         res.details.forEach((inspectionItem, inspectionItemIndex: number) => {
           for (
             let disableSampleIndex = inspectionItem.sample_cnt;
