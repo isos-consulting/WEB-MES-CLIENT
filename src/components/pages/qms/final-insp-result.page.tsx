@@ -53,6 +53,7 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
+import { slice } from 'lodash';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -3196,29 +3197,110 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     }
   };
 
-  const onSave = async ev => {
-    let headerData: TPutQmsFinalInspResultsHeader;
-    let detailDatas: TPutQmsFinalInspResultsDetails[] = [];
+  interface InspectionGridInstanceReference<GridInstance> {
+    current: GridInstance;
+  }
+
+  const onSave = async (
+    inspectionGridRef: InspectionGridInstanceReference<Grid>,
+  ) => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+
+    const saveGridInstance = gridRef?.current?.getInstance();
+
+    if (inputInspResultValues?.insp_handling_type === '') {
+      return message.warn('처리결과를 등록해주세요.');
+    } else if (inputInspResultValues?.emp_uuid == null) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (
+      inputInspResultValues?.reg_date_time == null ||
+      inputInspResultValues?.reg_date_time === 'Invalid Date'
+    ) {
+      return message.warn('검사시간을 등록해주세요.');
+    }
+
+    const inspectionGridInstance = inspectionGridRef.current.getInstance();
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
+    const inspectionSamplelResultStore = cellKeys(
+      inspectionGridInstanceData,
+      '_insp_value',
+    )
+      .map(
+        (
+          inspectionSampleKeys: Array<string>,
+          inspectionSampleItemIndex: number,
+        ) =>
+          sliceKeys(
+            inspectionSampleKeys,
+            Number(
+              inspectionGridInstance.getValue(
+                inspectionSampleItemIndex,
+                'sample_cnt',
+              ),
+            ),
+          ),
+      )
+      .map((inspectionItem, inspectionItemIndex) =>
+        inspectionItem.map(sampleKey =>
+          inspectionGridInstance.getValue(inspectionItemIndex, sampleKey) ==
+            null ||
+          inspectionGridInstance.getValue(inspectionItemIndex, sampleKey) == ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemIndex,
+                  'spec_min',
+                )}`,
+              ) &&
+              isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemIndex,
+                  'spec_max',
+                )}`,
+              )
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    sampleKey,
+                  ),
+                ),
+                min: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'spec_min',
+                  ),
+                ),
+                max: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'spec_max',
+                  ),
+                ),
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: `${inspectionGridInstance.getValue(
+                  inspectionItemIndex,
+                  sampleKey,
+                )}`,
+              }),
+        ),
+      );
+
+    console.log(inspectionSamplelResultStore);
+
+    return;
 
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+
     const inputInspResultIncomeValues =
       inputInspResultIncome?.ref?.current?.values;
     const inputInspResultRejectValues =
       inputInspResultReject?.ref?.current?.values;
 
-    const saveGridInstance = gridRef?.current?.getInstance();
+    let headerData: TPutQmsFinalInspResultsHeader;
+    let detailDatas: TPutQmsFinalInspResultsDetails[] = [];
 
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      message.warn('검사시간을 등록해주세요.');
-      return;
-    }
     headerData = {
       uuid: inputInspResultValues?.insp_result_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
