@@ -2548,7 +2548,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
                 if (
                   inspectionGridInstance.getValue(
-                    sampleKeyIndex,
+                    inspectionItemIndex,
                     inspectionSampleKey.replace(
                       '_insp_value',
                       '_insp_result_fg',
@@ -2559,7 +2559,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                     ...inspectionSample,
                     insp_result_fg:
                       inspectionGridInstance.getValue(
-                        sampleKeyIndex,
+                        inspectionItemIndex,
                         inspectionSampleKey.replace(
                           '_insp_value',
                           '_insp_result_fg',
@@ -2568,7 +2568,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                         ? null
                         : Boolean(
                             inspectionGridInstance.getValue(
-                              sampleKeyIndex,
+                              inspectionItemIndex,
                               inspectionSampleKey.replace(
                                 '_insp_value',
                                 '_insp_result_fg',
