@@ -53,12 +53,6 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
-import {
-  EmptyInspectionChecker,
-  EyeInspectionChecker,
-  InspectionConcreate,
-  NumberInspectionChecker,
-} from './receive-insp-result/models/inspection-checker';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -3101,9 +3095,58 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     const inspectionResultFlag = totalChecker(inspectionItemResultStore);
 
+    changes.forEach(inspectionSample => {
+      if (inspectionSample.columnName.includes('insp_value')) {
+        const sampleIndex = finalInspectionSampleKeyStore[
+          inspectionSample.rowKey
+        ].findIndex(
+          inspectionSampleKey =>
+            inspectionSampleKey === inspectionSample.columnName,
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
+          inspectionSamplelResultStore[inspectionSample.rowKey][sampleIndex],
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace(
+            '_insp_value',
+            '_insp_result_state',
+          ),
+          checkUIProtocol(
+            inspectionSamplelResultStore[inspectionSample.rowKey][sampleIndex],
+          ),
+        );
+
+        if (
+          !(
+            isNumber(
+              `${instance.getValue(inspectionSample.rowKey, 'spec_min')}`,
+            ) &&
+            isNumber(
+              `${instance.getValue(inspectionSample.rowKey, 'spec_max')}`,
+            )
+          )
+        ) {
+          instance.setValue(
+            inspectionSample.rowKey,
+            inspectionSample.columnName,
+            eyeCellUIProtocol(
+              inspectionSamplelResultStore[inspectionSample.rowKey][
+                sampleIndex
+              ],
+            ),
+          );
+        }
+      }
+    });
     console.log(inspectionSamplelResultStore);
     console.log(inspectionItemResultStore);
     console.log(inspectionResultFlag);
+    console.log(instance.getData());
   };
 
   const onSave = async ev => {
@@ -3129,12 +3172,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       message.warn('검사시간을 등록해주세요.');
       return;
     }
-    console.log({
-      inputInputItemsValues,
-      inputInspResultValues,
-      inputInspResultIncomeValues,
-      inputInspResultRejectValues,
-    });
     headerData = {
       uuid: inputInspResultValues?.insp_result_uuid,
       emp_uuid: inputInspResultValues?.emp_uuid,
@@ -3283,13 +3320,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           reject_store_uuid: header.reject_store_uuid,
           reject_location_uuid: header.reject_location_uuid,
         });
-
-        console.log(
-          inputInputItems.ref.current.values,
-          inputInspResult.ref.current.values,
-          inputInspResultIncome.ref.current.values,
-          inputInspResultReject.ref.current.values,
-        );
 
         changeInspResult(res.header.insp_handling_type_cd, true);
       })
