@@ -450,6 +450,7 @@ type TPostQmsFinalInspResults = {
 type TPutQmsFinalInspResultsHeader = {
   uuid?: string;
   emp_uuid?: string;
+  reg_date: string;
   insp_result_fg?: boolean;
   insp_handling_type_uuid?: string;
   insp_qty?: number;
@@ -1172,7 +1173,10 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
           setFinalInspResultIncludeDetails(res);
           inputInspResult.setValues({
             ...res.header,
-            reg_date_time: res.header.reg_date,
+            reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+            reg_date_time: `${res.header.reg_date
+              .replace('T', '')
+              .slice(0, -5)}`,
           });
           inputInspResultIncome.setValues({
             ...res.header,
@@ -3213,6 +3217,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     const finalInspectionPayloadHeader: TPutQmsFinalInspResultsHeader = {
       uuid: `${inputInspResultValues?.insp_result_uuid}`,
       emp_uuid: `${inputInspResultValues?.emp_uuid}`,
+      reg_date: `${inputInspResultValues?.reg_date} ${dayjs(
+        inputInspResultValues.reg_date_time,
+      ).format('HH:mm:ss')}`,
       insp_result_fg: Boolean(inputInspResultValues?.insp_result_fg),
       insp_handling_type_uuid: JSON.parse(
         `${inputInspResultValues.insp_handling_type}`,
@@ -3311,9 +3318,20 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                       : false,
                 };
 
+                console.log(
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    inspectionSampleKey.replace(
+                      '_insp_value',
+                      '_insp_result_fg',
+                    ),
+                  ),
+                  inspectionItemIndex,
+                  inspectionSampleKey.replace('_insp_value', '_insp_result_fg'),
+                );
                 if (
                   inspectionGridInstance.getValue(
-                    sampleKeyIndex,
+                    inspectionItemIndex,
                     inspectionSampleKey.replace(
                       '_insp_value',
                       '_insp_result_fg',
@@ -3324,7 +3342,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                     ...inspectionSample,
                     insp_result_fg:
                       inspectionGridInstance.getValue(
-                        sampleKeyIndex,
+                        inspectionItemIndex,
                         inspectionSampleKey.replace(
                           '_insp_value',
                           '_insp_result_fg',
@@ -3333,7 +3351,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                         ? null
                         : Boolean(
                             inspectionGridInstance.getValue(
-                              sampleKeyIndex,
+                              inspectionItemIndex,
                               inspectionSampleKey.replace(
                                 '_insp_value',
                                 '_insp_result_fg',
@@ -3380,6 +3398,27 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       header: finalInspectionPayloadHeader,
       details: finalInspectionPayloadDetails,
     };
+  };
+
+  const fetchInspectionPutAPI = async (
+    inspectionPutApiPayload: TPutQmsFinalInspResults,
+  ) => {
+    await executeData(
+      inspectionPutApiPayload,
+      URI_PATH_PUT_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS,
+      'put',
+      'success',
+    )
+      .then(value => {
+        if (!value) return;
+        props.onAfterCloseSearch(props?.inspResultUuid);
+        onClear();
+        props.setPopupVisible(false);
+        message.info('저장되었습니다.');
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 
   const onSave = async (
@@ -3525,33 +3564,16 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             const inspectionPutApiPayload: TPutQmsFinalInspResults =
               createInspectionPutApiPayload(inspectionGridInstance);
 
-            console.log(inspectionPutApiPayload);
+            await fetchInspectionPutAPI(inspectionPutApiPayload);
             close();
           },
           onCancel: () => {},
         });
       }
-      return await console.log(inspectionPutApiPayload);
+      return await fetchInspectionPutAPI(inspectionPutApiPayload);
     }
 
-    return await console.log(inspectionPutApiPayload);
-
-    await executeData(
-      saveData,
-      URI_PATH_PUT_QMS_FINAL_INSP_RESULT_INCLUDE_DETAILS,
-      'put',
-      'success',
-    )
-      .then(value => {
-        if (!value) return;
-        props.onAfterCloseSearch(props?.inspResultUuid);
-        onClear();
-        props.setPopupVisible(false);
-        message.info('저장되었습니다.');
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    return await fetchInspectionPutAPI(inspectionPutApiPayload);
   };
 
   const onCancel = ev => {
@@ -3589,13 +3611,14 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           lot_no: header.lot_no,
           insp_qty: header.insp_qty,
         });
+
         inputInspResult.setValues({
           insp_uuid: header.insp_uuid,
           insp_result_uuid: header.insp_result_uuid,
           insp_result_fg: header.insp_result_fg,
           insp_result_state: header.insp_result_state,
-          reg_date: header.reg_date,
-          reg_date_time: header.reg_date,
+          reg_date: dayjs(header.reg_date).format('YYYY-MM-DD'),
+          reg_date_time: `${header.reg_date.replace('T', '').slice(0, -5)}`,
           emp_uuid: header.emp_uuid,
           emp_nm: header.emp_nm,
           insp_handling_type: JSON.stringify({
