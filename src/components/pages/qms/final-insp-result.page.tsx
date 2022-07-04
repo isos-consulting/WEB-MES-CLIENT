@@ -3166,10 +3166,34 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       checkUIProtocol(inspectionResultFlag),
     );
 
-    console.log(inspectionSamplelResultStore);
-    console.log(inspectionItemResultStore);
-    console.log(inspectionResultFlag);
-    console.log(instance.getData());
+    if (inspectionResultFlag === null) {
+      inputInspResult.setFieldDisabled({ insp_handling_type: true });
+    } else {
+      inputInspResult.setFieldDisabled({ insp_handling_type: false });
+    }
+
+    let inspectionHandlingTypeCode =
+      inspectionResultFlag === true
+        ? 'INCOME'
+        : inspectionResultFlag === false
+        ? 'RETURN'
+        : '';
+
+    changeInspResult(inspectionHandlingTypeCode);
+
+    if (inspectionHandlingTypeCode === '') {
+      inputInspResult.setFieldValue('insp_handling_type', '');
+    } else {
+      props.inspHandlingType.forEach(el => {
+        if (
+          JSON.parse(el.code).insp_handling_type_cd ===
+          inspectionHandlingTypeCode
+        ) {
+          inputInspResult.setFieldValue('insp_handling_type', el.code);
+          return;
+        }
+      });
+    }
   };
 
   const onSave = async ev => {
