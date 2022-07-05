@@ -43,8 +43,6 @@ const Header: React.FC<Props> = props => {
     changeSubscribeState(!prev);
   };
 
-  console.log(props);
-
   return (
     <div>
       <Suspense fallback="...loading">
@@ -90,25 +88,25 @@ const Header: React.FC<Props> = props => {
                     title={'북마크'}
                     style={{ width: '150px', marginLeft: '5px' }}
                   >
-                    <Bookmark.Item key="bookmark-menu-disabled" disabled={true}>
-                      메뉴가 없습니다
-                    </Bookmark.Item>
-                    <Bookmark.Item key="bookmark-menu-1">
-                      <Link to="/adm/bom-type">
-                        BOM 구성유형
-                      </>
-                    </Bookmark.Item>
-                    <Bookmark.Item key="bookmark-menu-2">
-                      <Link to="/dashboard">대시보드</Link>
-                    </Bookmark.Item>
-                    <Bookmark.Item key="bookmark-menu-3">
-                      <Link
-                        to="/std/factories"
-                        style={{ color: '#000000' }}
-                      >
-                        공장관리
-                      </Link>
-                    </Bookmark.Item>
+                    <Bookmark.Item
+                      key="bookmark-menu-disabled"
+                      disabled={true}
+                    ></Bookmark.Item>
+                    <Bookmark.Item
+                      key="bookmark-menu-1"
+                      location="/std/factories"
+                      title="공장 관리"
+                    ></Bookmark.Item>
+                    <Bookmark.Item
+                      key="bookmark-menu-2"
+                      location="/dashboard"
+                      title="대시보드"
+                    ></Bookmark.Item>
+                    <Bookmark.Item
+                      key="bookmark-menu-3"
+                      location="/spec/routings"
+                      title="라우팅 관리"
+                    />
                   </Bookmark.List>
                   <Menu.Divider />
                   <Menu.Item
