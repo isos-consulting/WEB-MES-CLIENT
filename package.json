@@ -19,7 +19,7 @@
     "parcel-bundler": "1.12.5",
     "postcss-modules": "3.2.2",
     "prettier": "^2.6.2",
-    "typescript": "4.4.4",
+    "typescript": "^4.7.4",
     "uuid": "8.3.2"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@nivo/pie": "^0.74.0",
     "@toast-ui/react-grid": "^4.19.4",
     "@types/chart.js": "^2.9.37",
+    "@types/jest": "^28.1.4",
     "@types/lodash": "^4.14.177",
     "ant-design": "1.0.0",
     "antd": "4.16.1",
@@ -43,6 +44,7 @@
     "exceljs": "4.2.1",
     "formik": "2.2.9",
     "images": "3.2.3",
+    "jest": "^28.1.1",
     "moment": "^2.29.3",
     "rc-picker": "2.5.0",
     "react": "17.0.2",
@@ -60,7 +62,9 @@
     "cleanup-dist": "rimraf dist",
     "cleanup": "rimraf build",
     "start": "rimraf dist && parcel ./public/index.html --port 3000 --open",
-    "build": "rimraf dist && parcel build ./public/index.html -d build --no-source-maps"
+    "build": "rimraf dist && parcel build ./public/index.html -d build --no-source-maps",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "browser": {
     "dom-storage": false
