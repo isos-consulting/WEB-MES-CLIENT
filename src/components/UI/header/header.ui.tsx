@@ -14,8 +14,8 @@ import {
   ScUserLogo,
 } from './header.ui.styled';
 import { getUserInfo, setLogout } from '~/functions';
+import { Bookmark } from '~components/UI/dropdown/subscribe/subscribe-list.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
-import SubscribeList from '../dropdown/subscribe/subscribe-list.ui';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -39,7 +39,6 @@ const Header: React.FC<Props> = props => {
     <div>
       <Suspense fallback="...loading">
         <ScContainer {...props}>
-          {/* 로고 */}
           <ScLogo>
             <Link
               to="/dashboard"
@@ -58,36 +57,31 @@ const Header: React.FC<Props> = props => {
             </Link>
           </ScLogo>
 
-          {/* 타이틀 */}
           <ScTitleBodyDescription>
             <div>{props.title}</div>
             {props.description}
           </ScTitleBodyDescription>
 
-          {props.title ? (
-            <div
-              style={{ display: 'flex', height: '80%', alignItems: 'flex-end' }}
-            >
-              <SubscribeButton />
-            </div>
-          ) : null}
+          <SubscribeButton />
 
-          {/* 우측 버튼 */}
           <ScRightWrapper key="RightWrapper">
-            {/* <BellOutlined onClick={() => alert('아이콘 클릭')} /> */}
-            {/* <Link to='/mypage' style={{
-              color: 'inherit'
-            }}>
-              <ScMyPageText>마이페이지</ScMyPageText>
-            </Link> */}
-            <SubscribeList setState={setLayoutState} />
             <ScMyPageText>{userName}</ScMyPageText>
             <Dropdown
               overlay={
                 <Menu>
+                  <Bookmark.List
+                    key={'bookmark-list'}
+                    title={'북마크'}
+                    style={{ width: '150px', marginLeft: '5px' }}
+                  >
+                    <Bookmark.Item key="bookmark-menu-disabled" disabled={true}>
+                      메뉴가 없습니다
+                    </Bookmark.Item>
+                  </Bookmark.List>
+                  <Menu.Divider />
                   <Menu.Item
                     key="0"
-                    style={{ textAlign: 'center' }}
+                    style={{ marginLeft: '5px' }}
                     onClick={setLogout}
                   >
                     로그아웃

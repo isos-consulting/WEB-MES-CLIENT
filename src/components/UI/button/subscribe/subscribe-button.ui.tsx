@@ -17,8 +17,9 @@ const StarButtonWrapper = styled(StarButton)`
     color: ${({ checked }) => (checked ? 'yellow' : 'white')};
     -webkit-text-stroke: 1px black;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 1.5em;
     user-select: none;
+    padding: 10px;
   }
 `;
 

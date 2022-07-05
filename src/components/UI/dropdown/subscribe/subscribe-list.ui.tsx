@@ -1,35 +1,30 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { Menu, SubMenuProps, MenuItemProps } from 'antd';
 
-const SubscribeList = ({ setState }) => {
-  const createSubscribeDropdown = button => {
-    console.log(button);
-    const dropdown =
-      document.querySelector('.subscribe-menu-list') ??
-      document.createElement('article');
+interface BookmarkProps extends SubMenuProps {
+  key: string;
+}
 
-    dropdown.className = 'subscribe-menu-list';
+const MenuList = (props: BookmarkProps) => {
+  return <Menu.SubMenu {...props}></Menu.SubMenu>;
+};
 
-    document.querySelector('.subscribe-menu-list')
-      ? null
-      : document.body.appendChild(dropdown);
-
-    ReactDOM.render(<SubscribeDropDown />, dropdown);
+const MenuItem = (props: MenuItemProps) => {
+  const menuItemProps = {
+    style: {
+      minWidth: '150px',
+      maxWidth: '200px',
+      marginLeft: '5px',
+    },
+    ...props,
   };
 
-  return (
-    <>
-      <button onClick={createSubscribeDropdown}>구독 목록</button>
-    </>
-  );
+  return <Menu.Item {...menuItemProps}></Menu.Item>;
 };
 
-const SubscribeDropDown = () => {
-  return (
-    <>
-      <div>1</div>
-    </>
-  );
-};
+export default BookmarkProps;
 
-export default SubscribeList;
+export const Bookmark = {
+  List: MenuList,
+  Item: MenuItem,
+};
