@@ -80,7 +80,7 @@ const Header: React.FC<Props> = props => {
             }}>
               <ScMyPageText>마이페이지</ScMyPageText>
             </Link> */}
-            <SubscribeList />
+            <SubscribeList setState={setLayoutState} />
             <ScMyPageText>{userName}</ScMyPageText>
             <Dropdown
               overlay={
