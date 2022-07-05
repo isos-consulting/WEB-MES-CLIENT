@@ -44,6 +44,7 @@ import {
   NumberInspectionChecker,
 } from './receive-insp-result/models/inspection-checker';
 import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
+import TuiGrid from 'tui-grid';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -381,8 +382,16 @@ type TPutQmsProcInspResultsDetailValue = {
   insp_value: number;
 };
 
+type TPutQmsProcInspDeleteResultsDetailValue = {
+  uuid: string;
+  delete_fg: boolean;
+  sample_no: number;
+};
+
 type TPutQmsProcInspResultsDetail = {
-  values?: TPutQmsProcInspResultsDetailValue[];
+  values?:
+    | TPutQmsProcInspResultsDetailValue[]
+    | TPutQmsProcInspDeleteResultsDetailValue[];
   factory_uuid?: string;
   uuid: string;
   insp_result_fg: boolean;
@@ -1158,7 +1167,10 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
         setProcInspResultIncludeDetails(res);
         inputInspResult.setValues({
           ...res.header,
-          reg_date_time: res.header.reg_date,
+          reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+          reg_date_time: `${res.header.reg_date}`
+            .replace('T', ' ')
+            .slice(0, -5),
         });
       })
       .catch(err => {
@@ -1965,7 +1977,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 };
 //#endregion
 
-//#region 성적서 수정 팝업
 const INSP_RESULT_EDIT_POPUP = (props: {
   workData: TGetPrdWork;
   inspResultUuid: string;
@@ -1973,20 +1984,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   setPopupVisible: (value?) => void;
   onAfterCloseSearch?: (insp_result_uuid: string) => void;
 }) => {
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
-
-  //#region 상태관리
-
-  //#endregion
-
-  //#region 데이터 관리
   const [inspResultIncludeDetails, setInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
-  //#endregion
-
-  //#region 그리드 컬럼세팅
   const COLUMNS_INSP_RESULT_DETAILS: IGridColumn[] = [
     {
       header: '검사성적서 상세UUID',
@@ -2103,7 +2103,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     let items: IGridColumn[] = COLUMNS_INSP_RESULT_DETAILS;
 
     if (inspResultIncludeDetails?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
       for (
         let i = 1;
         i <= inspResultIncludeDetails?.header?.max_sample_cnt;
@@ -2169,9 +2168,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     return items;
   }, [inspResultIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
     { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
     { id: 'prod_no', label: '품번', type: 'text', disabled: true },
@@ -2203,16 +2200,43 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       type: 'text',
       disabled: true,
     },
-    { id: 'seq', label: '검사차수', type: 'number', disabled: true },
+    {
+      id: 'seq',
+      label: '검사차수',
+      type: 'number',
+      disabled: true,
+    },
     {
       id: 'insp_detail_type_uuid',
       label: '검사유형',
-      type: 'text',
+      type: 'combo',
       disabled: true,
+      dataSettingOptions: {
+        codeName: 'insp_detail_type_uuid',
+        textName: 'insp_detail_type_nm',
+        uriPath: '/adm/insp-detail-types',
+        params: {
+          insp_type_cd: 'PROC_INSP',
+        },
+      },
     },
-    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
-    { id: 'reg_date_time', label: '검사시간', type: 'time' },
-    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
+    {
+      id: 'reg_date',
+      label: '검사일자',
+      type: 'date',
+      default: getToday(),
+    },
+    {
+      id: 'reg_date_time',
+      label: '검사시간',
+      type: 'time',
+    },
+    {
+      id: 'emp_uuid',
+      label: '검사자UUID',
+      type: 'text',
+      hidden: true,
+    },
     {
       id: 'emp_nm',
       label: '검사자',
@@ -2222,7 +2246,11 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       popupKeys: ['emp_nm', 'emp_uuid'],
       params: { emp_status: 'incumbent' },
     },
-    { id: 'remark', label: '비고', type: 'text' },
+    {
+      id: 'remark',
+      label: '비고',
+      type: 'text',
+    },
   ];
 
   const inputWork = useInputGroup(
@@ -2235,197 +2263,365 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     INPUT_ITEMS_INSP_RESULT,
     { title: '검사 정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onClear = () => {
     inputWork?.ref?.current?.resetForm();
     inputInspResult?.ref?.current?.resetForm();
     setInspResultIncludeDetails({});
   };
 
-  const onAfterChange = (ev: any) => {
-    const { origin, changes, instance } = ev;
-    if (changes.length === 0) return;
+  const cellKeys = (
+    records: Array<any>,
+    cellKey: string,
+  ): Array<Array<string>> =>
+    records.map(record =>
+      Object.keys(record).filter(key => key.includes(cellKey)),
+    );
 
-    const { columnName, rowKey, value } = changes[0];
+  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
+    keys.slice(0, at);
+
+  const inspectionCheck = <T extends InspectionConcreate>(
+    checker: T,
+    arg: any,
+  ) => {
+    return new checker().check(arg);
+  };
+
+  const recordChecker = (
+    inspectionItems: Array<Array<boolean>>,
+  ): Array<boolean> =>
+    inspectionItems.map((inspectionItem: Array<boolean>) => {
+      if (
+        inspectionItem.every(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === null,
+        )
+      ) {
+        return null;
+      }
+
+      if (
+        inspectionItem.some(
+          inspectionSampleResultFlag => inspectionSampleResultFlag === false,
+        )
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+  const totalChecker = (inspectionItems: Array<boolean>): boolean => {
+    if (
+      inspectionItems.some((inspectionItem: boolean) => inspectionItem === null)
+    ) {
+      return null;
+    }
+
+    if (inspectionItems.includes(false)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const checkUIProtocol = (sampleResultFlag: boolean): string =>
+    sampleResultFlag === null
+      ? null
+      : sampleResultFlag === true
+      ? '합격'
+      : '불합격';
+
+  const eyeCellUIProtocol = (eyeSampleResultFlag: boolean): string =>
+    eyeSampleResultFlag === null
+      ? null
+      : eyeSampleResultFlag === true
+      ? 'OK'
+      : 'NG';
+
+  const onAfterChange = (ev: any) => {
+    const { changes, instance } = ev;
+    const processInspectionGridInstanceData = instance.getData();
 
     if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
+      changes.some(
+        inspectionSample =>
+          !inspectionSample.columnName.includes('_insp_value'),
+      )
     )
       return;
 
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
-
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt; //입력 가능한 시료수
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridRef.current?.getInstance();
-
-    //#region ✅CELL단위 합/불 판정
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
+    const processInspectionSampleKeyStore = cellKeys(
+      processInspectionGridInstanceData,
       '_insp_value',
-      '_insp_result_fg',
     );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
 
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
+    const enableInspectionSampleKeyStroe = processInspectionSampleKeyStore.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionItem,
+          processInspectionGridInstanceData[inspectionItemIndex].sample_cnt,
+        ),
+    );
+
+    const inspectionSamplelResultStore = enableInspectionSampleKeyStroe.map(
+      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
+        inspectionItem.map(inspectionSampleKey =>
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) == null ||
+          instance.getValue(inspectionItemIndex, inspectionSampleKey) === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(instance.getValue(inspectionItemIndex, 'spec_min')) &&
+              isNumber(instance.getValue(inspectionItemIndex, 'spec_max'))
+            ? inspectionCheck(NumberInspectionChecker, {
+                value:
+                  instance.getValue(inspectionItemIndex, inspectionSampleKey) *
+                  1,
+                min: instance.getValue(inspectionItemIndex, 'spec_min') * 1,
+                max: instance.getValue(inspectionItemIndex, 'spec_max') * 1,
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: instance.getValue(
+                  inspectionItemIndex,
+                  inspectionSampleKey,
+                ),
+              }),
+        ),
+    );
+
+    const inspectionItemResultStore = recordChecker(
+      inspectionSamplelResultStore,
+    );
+
+    const inspectionResultFlag = totalChecker(inspectionItemResultStore);
+
+    changes.forEach((inspectionSample: any) => {
+      if (inspectionSample.columnName.includes('_insp_value')) {
+        const changedSampleIndex = processInspectionSampleKeyStore[
+          inspectionSample.rowKey
+        ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
+          inspectionSamplelResultStore[inspectionSample.rowKey][
+            changedSampleIndex
+          ],
+        );
+
+        instance.setValue(
+          inspectionSample.rowKey,
+          inspectionSample.columnName.replace(
+            '_insp_value',
+            '_insp_result_state',
+          ),
+          checkUIProtocol(
+            inspectionSamplelResultStore[inspectionSample.rowKey][
+              changedSampleIndex
+            ],
+          ),
+        );
+
+        if (
+          !(
+            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_min')) &&
+            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_max'))
+          )
+        ) {
+          instance.setValue(
+            inspectionSample.rowKey,
+            inspectionSample.columnName,
+            eyeCellUIProtocol(
+              inspectionSamplelResultStore[inspectionSample.rowKey][
+                changedSampleIndex
+              ],
+            ),
+          );
+        }
       }
-    }
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
+    });
+
+    processInspectionGridInstanceData.forEach(
+      (_: any, inspectionItemIndex: number) => {
+        instance.setValue(
+          inspectionItemIndex,
+          `insp_result_fg`,
+          inspectionItemResultStore[inspectionItemIndex],
+        );
+        instance.setValue(
+          inspectionItemIndex,
+          `insp_result_state`,
+          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
+        );
+      },
     );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
+
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResultFlag);
+    inputInspResult.setFieldValue(
+      'insp_result_state',
+      checkUIProtocol(inspectionResultFlag),
     );
-    //#endregion
-
-    //#region ✅ROW단위 합/불 판정
-    if (resultFg === true) {
-      // 현재 값이 합격일 경우만 다른 cell의 판정값 체크
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅최종 합/불 판정
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg, emptyFg] = [false, false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-    // const flagInputboxValue = emptyFg || nullFg ? null : resultFg;
-    // const stateInputboxValue = emptyFg ? '' : nullFg ? '진행중' : resultFg ? '합격' : '불합격';
-
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    inputInspResult.setFieldValue(flagInputboxName, flagInputboxValue);
-    inputInspResult.setFieldValue(stateInputboxName, stateInputboxValue);
-    //#endregion
   };
 
-  const onSave = async ev => {
-    let headerData: TPutQmsProcInspResultsHeader;
-    let detailDatas: TPutQmsProcInspResultsDetail[] = [];
-
+  const createInspectionPutApiPayload = (inspectionGridInstance: TuiGrid) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
 
-    const saveGridInstance = gridRef?.current?.getInstance();
-
-    if (!inputInspResultValues?.insp_result_fg) {
-      message.warn('최종판정이 되지 않았습니다. 확인 후 다시 저장해주세요.');
-      return;
-    } else if (!inputInspResultValues?.emp_uuid) {
-      message.warn('검사자를 등록해주세요.');
-      return;
-    }
-
-    headerData = {
-      uuid: inputInspResultValues?.insp_result_uuid,
-      emp_uuid: inputInspResultValues?.emp_uuid,
-      insp_result_fg: inputInspResultValues?.insp_result_fg,
+    const processInspectionPayloadHeader: TPutQmsProcInspResultsHeader = {
+      uuid: `${inputInspResultValues?.insp_result_uuid}`,
+      emp_uuid: `${inputInspResultValues?.emp_uuid}`,
+      insp_result_fg: Boolean(inputInspResultValues?.insp_result_fg),
       insp_qty: 0,
       pass_qty: 0,
       reject_qty: 0,
-      remark: inputInspResultValues?.remark,
+      remark: `${inputInspResultValues?.remark}`,
     };
 
-    for (let i = 0; i <= saveGridInstance?.getRowCount() - 1; i++) {
-      const values: TPutQmsProcInspResultsDetailValue[] = [];
-      const row: TGetQmsProcInspResultIncludeDetailsDetail =
-        saveGridInstance?.getRow(
-          i,
-        ) as TGetQmsProcInspResultIncludeDetailsDetail;
+    const processInspectionPayloadDetails: Array<TPutQmsProcInspResultsDetail> =
+      cellKeys(inspectionGridInstanceData, '_insp_value')
+        .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
+          sliceKeys(
+            inspectionKeys,
+            Number(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'sample_cnt',
+              ),
+            ),
+          ),
+        )
+        .map(
+          (
+            inspectionSampleKeys: Array<string>,
+            inspectionItemIndex: number,
+          ) => ({
+            factory_uuid: getUserFactoryUuid(),
+            uuid: `${inspectionGridInstance.getValue(
+              inspectionItemIndex,
+              'insp_result_detail_info_uuid',
+            )}`,
+            insp_result_fg: Boolean(
+              inspectionGridInstance.getValue(
+                inspectionItemIndex,
+                'insp_result_fg',
+              ),
+            ),
+            remark:
+              inspectionGridInstance.getValue(inspectionItemIndex, 'remark') ===
+              null
+                ? null
+                : `${inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    'remark',
+                  )}`,
+            values: inspectionSampleKeys
+              .map((inspectionSampleKey: string, sampleKeyIndex: number) => {
+                const inspectionSample: TPutQmsProcInspDeleteResultsDetailValue =
+                  {
+                    sample_no: sampleKeyIndex + 1,
+                    uuid:
+                      inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey.replace(
+                          '_insp_value',
+                          '_insp_result_detail_value_uuid',
+                        ),
+                      ) == null
+                        ? null
+                        : `${inspectionGridInstance.getValue(
+                            inspectionItemIndex,
+                            inspectionSampleKey.replace(
+                              '_insp_value',
+                              '_insp_result_detail_value_uuid',
+                            ),
+                          )}`,
+                    delete_fg:
+                      inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey.replace(
+                          '_insp_value',
+                          '_insp_result_fg',
+                        ),
+                      ) === null
+                        ? true
+                        : false,
+                  };
 
-      for (let k = 1; k <= row.sample_cnt; k++) {
-        const value: any = row?.['x' + k + '_insp_value'];
-        const uuid: any = row?.['x' + k + '_insp_result_uuid'];
-        if (value) {
-          values.push({
-            uuid: uuid,
-            delete_fg: false,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        } else if (uuid) {
-          values.push({
-            uuid: uuid,
-            delete_fg: true,
-            sample_no: k,
-            insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-            insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-          });
-        }
-      }
+                if (
+                  inspectionGridInstance.getValue(
+                    inspectionItemIndex,
+                    inspectionSampleKey.replace(
+                      '_insp_value',
+                      '_insp_result_fg',
+                    ),
+                  ) !== null
+                ) {
+                  return {
+                    ...inspectionSample,
+                    insp_result_fg:
+                      inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey.replace(
+                          '_insp_value',
+                          '_insp_result_fg',
+                        ),
+                      ) === null
+                        ? null
+                        : Boolean(
+                            inspectionGridInstance.getValue(
+                              inspectionItemIndex,
+                              inspectionSampleKey.replace(
+                                '_insp_value',
+                                '_insp_result_fg',
+                              ),
+                            ),
+                          ),
+                    insp_value:
+                      inspectionGridInstance.getValue(
+                        inspectionItemIndex,
+                        inspectionSampleKey,
+                      ) === 'OK'
+                        ? 1
+                        : inspectionGridInstance.getValue(
+                            inspectionItemIndex,
+                            inspectionSampleKey,
+                          ) === 'NG'
+                        ? 0
+                        : inspectionGridInstance.getValue(
+                            inspectionItemIndex,
+                            inspectionSampleKey,
+                          ) === null
+                        ? null
+                        : Number(
+                            inspectionGridInstance.getValue(
+                              inspectionItemIndex,
+                              inspectionSampleKey,
+                            ),
+                          ),
+                  };
+                }
+                return inspectionSample;
+              })
+              .filter(({ uuid, delete_fg }) => {
+                if (uuid !== null) {
+                  return true;
+                }
 
-      detailDatas.push({
-        values,
-        factory_uuid: getUserFactoryUuid(),
-        uuid: row?.insp_result_detail_info_uuid,
-        insp_result_fg: row?.insp_result_fg,
-        remark: row?.remark,
-      });
-    }
+                return delete_fg === false ? true : false;
+              }),
+          }),
+        );
 
-    const saveData: TPutQmsFinalInspResult = {
-      header: headerData,
-      details: detailDatas,
+    return {
+      header: processInspectionPayloadHeader,
+      details: processInspectionPayloadDetails,
     };
+  };
+
+  const fetchInsepctionPutAPI = async (
+    inspectionPostApiPayload: TPutQmsFinalInspResult,
+  ) => {
     await executeData(
-      saveData,
+      inspectionPostApiPayload,
       URI_PATH_PUT_QMS_PROC_INSP_RESULTS,
       'put',
       'success',
@@ -2442,13 +2638,168 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       });
   };
 
+  interface InspectionGridInstanceReference<GridInstance> {
+    current: GridInstance;
+  }
+
+  const onSave = async (
+    inspectionGridRef: InspectionGridInstanceReference<Grid>,
+  ) => {
+    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const fetchOptionFilledQualityAllInspectionResult = getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
+
+    if (inputInspResultValues?.emp_uuid == null) {
+      return message.warn('검사자를 등록해주세요.');
+    } else if (inputInspResultValues?.reg_date == null) {
+      return message.warn('검사일자를 등록해주세요.');
+    } else if (inputInspResultValues?.reg_date_time == null) {
+      return message.warn('검사시간을 등록해주세요.');
+    }
+
+    const inspectionGridInstance = inspectionGridRef.current.getInstance();
+    const inspectionGridInstanceData = inspectionGridInstance.getData();
+
+    const inspectionSampleResultStore = cellKeys(
+      inspectionGridInstanceData,
+      '_insp_value',
+    )
+      .map((inspectionItemKeys: Array<string>, inspectionItemIndex: number) =>
+        sliceKeys(
+          inspectionItemKeys,
+          Number(
+            inspectionGridInstance.getValue(inspectionItemIndex, 'sample_cnt'),
+          ),
+        ),
+      )
+      .map((inspectionItemSampleKeys, inspectionItemSampleIndex) =>
+        inspectionItemSampleKeys.map(sampleKey =>
+          inspectionGridInstance.getValue(
+            inspectionItemSampleIndex,
+            sampleKey,
+          ) == null ||
+          inspectionGridInstance.getValue(
+            inspectionItemSampleIndex,
+            sampleKey,
+          ) === ''
+            ? inspectionCheck(EmptyInspectionChecker, null)
+            : isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  'spec_min',
+                )}`,
+              ) &&
+              isNumber(
+                `${inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  'spec_max',
+                )}`,
+              )
+            ? inspectionCheck(NumberInspectionChecker, {
+                value: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    sampleKey,
+                  ),
+                ),
+                min: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    'spec_min',
+                  ),
+                ),
+                max: Number(
+                  inspectionGridInstance.getValue(
+                    inspectionItemSampleIndex,
+                    'spec_max',
+                  ),
+                ),
+              })
+            : inspectionCheck(EyeInspectionChecker, {
+                value: inspectionGridInstance.getValue(
+                  inspectionItemSampleIndex,
+                  sampleKey,
+                ),
+              }),
+        ),
+      );
+
+    const isSequenceMissingValue = inspectionSampleResultStore.some(
+      (inspectionSampleResults: Array<boolean>) => {
+        if (inspectionSampleResults[0] === null) return true;
+
+        if (inspectionSampleResults.length > 1) {
+          for (
+            let inspectionItemIndex = 1;
+            inspectionItemIndex < inspectionSampleResults.length;
+            inspectionItemIndex++
+          ) {
+            if (
+              inspectionSampleResults[inspectionItemIndex - 1] === null &&
+              inspectionSampleResults[inspectionItemIndex] !== null
+            )
+              return true;
+          }
+        }
+
+        return false;
+      },
+    );
+
+    if (isSequenceMissingValue === true) {
+      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
+    }
+
+    const isFilledAllInspectionSample = inspectionSampleResultStore.every(
+      (sampleResults: Array<boolean>) =>
+        sampleResults.every((result: boolean) => result !== null),
+    );
+
+    const inspectionPutApiPayload: TPutQmsFinalInspResult =
+      createInspectionPutApiPayload(inspectionGridInstance);
+
+    if (isFilledAllInspectionSample === false) {
+      const qualityInspectionFilledOption =
+        (
+          await (async () =>
+            await fetchOptionFilledQualityAllInspectionResult)()
+        ).length > 0
+          ? (
+              await (async () =>
+                await fetchOptionFilledQualityAllInspectionResult)()
+            )[0].value
+          : 0;
+
+      if (qualityInspectionFilledOption === 1) {
+        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
+      } else if (qualityInspectionFilledOption === 2) {
+        return Modal.confirm({
+          title: '',
+          content:
+            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
+          onOk: async (close: () => void) => {
+            const inspectionPutApiPayload: TPutQmsFinalInspResult =
+              createInspectionPutApiPayload(inspectionGridInstance);
+            await fetchInsepctionPutAPI(inspectionPutApiPayload);
+            close();
+          },
+          onCancel: () => {},
+        });
+      }
+
+      return await fetchInsepctionPutAPI(inspectionPutApiPayload);
+    }
+
+    return await fetchInsepctionPutAPI(inspectionPutApiPayload);
+  };
+
   const onCancel = ev => {
     onClear();
     props.setPopupVisible(false);
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (props?.workData && props.popupVisible) {
       inputWork.setValues(props.workData);
@@ -2468,7 +2819,26 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           setInspResultIncludeDetails(res);
           inputInspResult.setValues({
             ...res.header,
-            reg_date_time: res.header.reg_date,
+            reg_date: dayjs(res.header.reg_date).format('YYYY-MM-DD'),
+            reg_date_time: `${res.header.reg_date}`
+              .replace('T', ' ')
+              .slice(0, -5),
+          });
+
+          res.details.forEach((detail, index) => {
+            for (
+              let cell = detail.sample_cnt;
+              cell < res.header.max_sample_cnt;
+
+            ) {
+              cell++;
+              gridRef.current
+                .getInstance()
+                .disableCell(index, `x${cell}_insp_value`);
+              gridRef.current
+                .getInstance()
+                .removeCellClassName(index, `x${cell}_insp_value`, 'editor');
+            }
           });
         })
         .catch(err => {
@@ -2479,9 +2849,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       onClear();
     }
   }, [props.popupVisible, props.inspResultUuid]);
-  //#endregion
 
-  //#region 컴포넌트 rander
   return (
     <GridPopup
       title="공정검사 성적서 수정"
@@ -2504,6 +2872,4 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       visible={props.popupVisible}
     />
   );
-  //#endregion
 };
-//#endregion
