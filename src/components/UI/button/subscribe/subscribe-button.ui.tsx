@@ -1,14 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-type SubscribeButtonClickFunction = () => void;
-
-interface SubscribeButtonProps {
-  checked?: boolean;
-  onClick?: SubscribeButtonClickFunction;
-}
-
-const StarButton = props => {
+const StarButton = (props: SubscribeButtonProps) => {
   return <span {...props}>★</span>;
 };
 
@@ -23,26 +16,26 @@ const StarButtonWrapper = styled(StarButton)`
   }
 `;
 
-const SubscribeButton = (buttonProps: SubscribeButtonProps) => {
-  const [checked, toggle] = useState<boolean>(false);
+interface SubscribeButtonProps {
+  checked?: boolean;
+  onClick?: (prev, setState) => void;
+  key: string;
+}
 
-  if (buttonProps.checked !== undefined) {
-    if (checked !== buttonProps.checked) {
-      toggle(buttonProps.checked);
+const SubscribeButton = (
+  buttonProps: SubscribeButtonProps,
+): React.FC<SubscribeButtonProps> => {
+  const [checked, toggle] = useState<boolean>(buttonProps.checked ?? false);
+
+  const onClick = () => {
+    if (buttonProps.onClick != null) {
+      buttonProps.onClick(checked, toggle);
+    } else {
+      toggle(!checked);
     }
-  }
-
-  const handleClick = () => {
-    toggle(!checked);
-    buttonProps.onClick?.();
   };
 
-  const subscribeButtonProps: SubscribeButtonProps = {
-    checked: checked,
-    onClick: handleClick,
-  };
-
-  return <StarButtonWrapper {...subscribeButtonProps} />;
+  return <StarButtonWrapper {...{ checked, onClick }} />;
 };
 
 export default SubscribeButton;

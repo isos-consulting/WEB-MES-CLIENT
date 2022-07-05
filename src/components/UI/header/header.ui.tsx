@@ -16,7 +16,6 @@ import {
 import { getUserInfo, setLogout } from '~/functions';
 import { Bookmark } from '~components/UI/dropdown/subscribe/subscribe-list.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
-import { ScExtendedLink } from '../side-navbar/side-navbar.ui.styled';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -35,6 +34,16 @@ const Header: React.FC<Props> = props => {
   const userName = useMemo(() => {
     return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
   }, [userInfo?.user_nm]);
+
+  const subscribe = (
+    prev: boolean,
+    changeSubscribeState: (boolean) => void,
+  ) => {
+    console.log('create or delete subscribe action');
+    changeSubscribeState(!prev);
+  };
+
+  console.log(props);
 
   return (
     <div>
@@ -63,7 +72,13 @@ const Header: React.FC<Props> = props => {
             {props.description}
           </ScTitleBodyDescription>
 
-          <SubscribeButton />
+          {props.title == null ? null : (
+            <SubscribeButton
+              checked={false}
+              onClick={subscribe}
+              key={`subscribe-button-${props.description}`}
+            />
+          )}
 
           <ScRightWrapper key="RightWrapper">
             <ScMyPageText>{userName}</ScMyPageText>
@@ -79,20 +94,20 @@ const Header: React.FC<Props> = props => {
                       메뉴가 없습니다
                     </Bookmark.Item>
                     <Bookmark.Item key="bookmark-menu-1">
-                      <ScExtendedLink to="/adm/bom-type">
+                      <Link to="/adm/bom-type">
                         BOM 구성유형
-                      </ScExtendedLink>
+                      </>
                     </Bookmark.Item>
                     <Bookmark.Item key="bookmark-menu-2">
-                      <ScExtendedLink to="/dashboard">대시보드</ScExtendedLink>
+                      <Link to="/dashboard">대시보드</Link>
                     </Bookmark.Item>
                     <Bookmark.Item key="bookmark-menu-3">
-                      <ScExtendedLink
+                      <Link
                         to="/std/factories"
                         style={{ color: '#000000' }}
                       >
                         공장관리
-                      </ScExtendedLink>
+                      </Link>
                     </Bookmark.Item>
                   </Bookmark.List>
                   <Menu.Divider />
