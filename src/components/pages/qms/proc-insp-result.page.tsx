@@ -2473,7 +2473,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       insp_qty: 0,
       pass_qty: 0,
       reject_qty: 0,
-      remark: `${inputInspResultValues?.remark}`,
+      remark:
+        inputInspResultValues?.remark == null
+          ? null
+          : `${inputInspResultValues?.remark}`,
     };
 
     const processInspectionPayloadDetails: Array<TPutQmsProcInspResultsDetail> =
