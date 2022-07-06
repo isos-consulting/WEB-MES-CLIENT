@@ -14,7 +14,7 @@ import {
   ScUserLogo,
 } from './header.ui.styled';
 import { executeData, getData, getUserInfo, setLogout } from '~/functions';
-import Bookmark from '~components/UI/dropdown/subscribe/subscribe-list.ui';
+import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 
 const ScContainer = lazy(() =>
@@ -92,7 +92,7 @@ const Header: React.FC<Props> = props => {
                   >
                     {bookmarkItems.length === 0 ? (
                       <Bookmark.Item
-                        key="bookmark-menu-disabled"
+                        key="bookmark-menu-noitem"
                         disabled={true}
                       />
                     ) : (
