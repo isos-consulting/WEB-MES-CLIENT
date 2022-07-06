@@ -1,17 +1,11 @@
-import React, {
-  lazy,
-  Suspense,
-  useMemo,
-  useState,
-  useLayoutEffect,
-} from 'react';
+import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
 import { Dropdown, Menu, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import { useSetRecoilState } from 'recoil';
 import { img_logo2 } from '~images/index';
 import { Link } from 'react-router-dom';
-import { layoutStore, authStore } from '~hooks/index';
+import { layoutStore } from '~hooks/index';
 import Props from './header.ui.type';
 import {
   ScMyPageText,
@@ -32,14 +26,23 @@ const ScLogo = lazy(() =>
   import('./header.ui.styled').then(module => ({ default: module.ScLogo })),
 );
 
-/** 헤더 */
+const fetchBookmarks = () =>
+  getData({}, '/aut/bookmarks', 'raws', {}, false, null, {
+    disabledZeroMessage: true,
+  });
+
 const Header: React.FC<Props> = props => {
   const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
+  const [bookmarkItems, setBookmarkList] = useState<any[]>([]);
 
   const userName = useMemo(() => {
     return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
   }, [userInfo?.user_nm]);
+
+  useEffect(() => {
+    fetchBookmarks().then(setBookmarkList);
+  }, []);
 
   return (
     <div>
@@ -72,6 +75,8 @@ const Header: React.FC<Props> = props => {
             <BookmarkButton
               uuid={props.uuid}
               key={`bookmark-button-${props.uuid}`}
+              items={bookmarkItems}
+              flush={setBookmarkList}
             />
           )}
 
@@ -85,20 +90,20 @@ const Header: React.FC<Props> = props => {
                     title={'북마크'}
                     style={{ width: '150px', marginLeft: '5px' }}
                   >
-                    <Bookmark.Item
-                      key="bookmark-menu-disabled"
-                      disabled={true}
-                    />
-                    <Bookmark.Item
-                      key="bookmark-menu-1"
-                      location="/std/factories"
-                      title="공장 관리"
-                    />
-                    <Bookmark.Item
-                      key="bookmark-menu-3"
-                      location="/spec/routings"
-                      title="라우팅 관리"
-                    />
+                    {bookmarkItems.length === 0 ? (
+                      <Bookmark.Item
+                        key="bookmark-menu-disabled"
+                        disabled={true}
+                      />
+                    ) : (
+                      bookmarkItems.map(item => (
+                        <Bookmark.Item
+                          key={item.menu_uuid}
+                          location={item.menu_uri}
+                          title={item.menu_nm}
+                        />
+                      ))
+                    )}
                   </Bookmark>
                   <Menu.Divider />
                   <Menu.Item
@@ -128,32 +133,29 @@ const Header: React.FC<Props> = props => {
 
 interface BookmarkButtonProps {
   uuid: string;
+  key: string;
+  flush: () => void;
+  items: any[];
 }
 
 const BookmarkButton: React.FC<BookmarkButtonProps> = props => {
-  const bookmarkItemStore = getData({}, '/aut/bookmarks');
-  const [isSubscribe, toggle] = useState(false);
-
-  useLayoutEffect(() => {
-    bookmarkItemStore.then(bookmarkItems => {
-      const subscribed = bookmarkItems.some(
-        item => item.menu_uuid === props.uuid,
-      );
-
-      toggle(subscribed);
-    });
-  }, [isSubscribe]);
+  const isSubscribe = props.items.some(item => item.menu_uuid === props.uuid);
 
   const subscribe = () => {
-    isSubscribe === true
-      ? executeData(
-          [{ menu_uuid: props.uuid }],
-          '/aut/bookmark/by-menu',
-          'delete',
-        )
-      : executeData([{ menu_uuid: props.uuid }], '/aut/bookmarks', 'post');
-
-    toggle(!isSubscribe);
+    (async () => {
+      isSubscribe === true
+        ? await executeData(
+            [{ menu_uuid: props.uuid }],
+            '/aut/bookmark/by-menu',
+            'delete',
+          )
+        : await executeData(
+            [{ menu_uuid: props.uuid }],
+            '/aut/bookmarks',
+            'post',
+          );
+      fetchBookmarks().then(props.flush);
+    })();
   };
 
   return (
