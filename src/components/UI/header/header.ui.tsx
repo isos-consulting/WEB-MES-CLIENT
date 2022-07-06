@@ -1,4 +1,10 @@
-import React, { lazy, Suspense, useMemo } from 'react';
+import React, {
+  lazy,
+  Suspense,
+  useMemo,
+  useState,
+  useLayoutEffect,
+} from 'react';
 import { Dropdown, Menu, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
@@ -13,8 +19,8 @@ import {
   ScTitleBodyDescription,
   ScUserLogo,
 } from './header.ui.styled';
-import { getUserInfo, setLogout } from '~/functions';
-import { Bookmark } from '~components/UI/dropdown/subscribe/subscribe-list.ui';
+import { executeData, getData, getUserInfo, setLogout } from '~/functions';
+import Bookmark from '~components/UI/dropdown/subscribe/subscribe-list.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 
 const ScContainer = lazy(() =>
@@ -34,14 +40,6 @@ const Header: React.FC<Props> = props => {
   const userName = useMemo(() => {
     return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
   }, [userInfo?.user_nm]);
-
-  const subscribe = (
-    prev: boolean,
-    changeSubscribeState: (boolean) => void,
-  ) => {
-    console.log('create or delete subscribe action');
-    changeSubscribeState(!prev);
-  };
 
   return (
     <div>
@@ -71,10 +69,9 @@ const Header: React.FC<Props> = props => {
           </ScTitleBodyDescription>
 
           {props.title == null ? null : (
-            <SubscribeButton
-              checked={false}
-              onClick={subscribe}
-              key={`subscribe-button-${props.description}`}
+            <BookmarkButton
+              uuid={props.uuid}
+              key={`bookmark-button-${props.uuid}`}
             />
           )}
 
@@ -83,7 +80,7 @@ const Header: React.FC<Props> = props => {
             <Dropdown
               overlay={
                 <Menu>
-                  <Bookmark.List
+                  <Bookmark
                     key={'bookmark-list'}
                     title={'북마크'}
                     style={{ width: '150px', marginLeft: '5px' }}
@@ -91,23 +88,18 @@ const Header: React.FC<Props> = props => {
                     <Bookmark.Item
                       key="bookmark-menu-disabled"
                       disabled={true}
-                    ></Bookmark.Item>
+                    />
                     <Bookmark.Item
                       key="bookmark-menu-1"
                       location="/std/factories"
                       title="공장 관리"
-                    ></Bookmark.Item>
-                    <Bookmark.Item
-                      key="bookmark-menu-2"
-                      location="/dashboard"
-                      title="대시보드"
-                    ></Bookmark.Item>
+                    />
                     <Bookmark.Item
                       key="bookmark-menu-3"
                       location="/spec/routings"
                       title="라우팅 관리"
                     />
-                  </Bookmark.List>
+                  </Bookmark>
                   <Menu.Divider />
                   <Menu.Item
                     key="0"
@@ -131,6 +123,45 @@ const Header: React.FC<Props> = props => {
         </ScContainer>
       </Suspense>
     </div>
+  );
+};
+
+interface BookmarkButtonProps {
+  uuid: string;
+}
+
+const BookmarkButton: React.FC<BookmarkButtonProps> = props => {
+  const bookmarkItemStore = getData({}, '/aut/bookmarks');
+  const [isSubscribe, toggle] = useState(false);
+
+  useLayoutEffect(() => {
+    bookmarkItemStore.then(bookmarkItems => {
+      const subscribed = bookmarkItems.some(
+        item => item.menu_uuid === props.uuid,
+      );
+
+      toggle(subscribed);
+    });
+  }, [isSubscribe]);
+
+  const subscribe = () => {
+    isSubscribe === true
+      ? executeData(
+          [{ menu_uuid: props.uuid }],
+          '/aut/bookmark/by-menu',
+          'delete',
+        )
+      : executeData([{ menu_uuid: props.uuid }], '/aut/bookmarks', 'post');
+
+    toggle(!isSubscribe);
+  };
+
+  return (
+    <SubscribeButton
+      checked={isSubscribe}
+      onClick={subscribe}
+      key={`subscribe-button-${props.uuid}-${isSubscribe}`}
+    />
   );
 };
 

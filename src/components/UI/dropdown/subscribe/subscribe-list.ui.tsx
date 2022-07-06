@@ -11,7 +11,9 @@ interface BookmarkItemProps extends MenuItemProps {
   title?: string;
 }
 
-const MenuList = (props: BookmarkProps) => {
+const MenuList: React.FC<BookmarkProps> & { Item: typeof MenuItem } = (
+  props: BookmarkProps,
+) => {
   return <Menu.SubMenu {...props}></Menu.SubMenu>;
 };
 
@@ -44,9 +46,7 @@ const MenuItem = (props: BookmarkItemProps) => {
   );
 };
 
-export default BookmarkProps;
+const Bookmark = MenuList;
+Bookmark.Item = MenuItem;
 
-export const Bookmark = {
-  List: MenuList,
-  Item: MenuItem,
-};
+export default Bookmark;
