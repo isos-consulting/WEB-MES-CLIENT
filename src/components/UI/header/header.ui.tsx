@@ -34,14 +34,14 @@ const fetchBookmarks = () =>
 const Header: React.FC<Props> = props => {
   const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
-  const [bookmarkItems, setBookmarkList] = useState<any[]>([]);
+  const [bookmarkItems, setBookmarkItems] = useState<any[]>([]);
 
   const userName = useMemo(() => {
     return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
   }, [userInfo?.user_nm]);
 
   useEffect(() => {
-    fetchBookmarks().then(setBookmarkList);
+    fetchBookmarks().then(setBookmarkItems);
   }, []);
 
   return (
@@ -76,7 +76,7 @@ const Header: React.FC<Props> = props => {
               uuid={props.uuid}
               key={`bookmark-button-${props.uuid}`}
               items={bookmarkItems}
-              flush={setBookmarkList}
+              flush={setBookmarkItems}
             />
           )}
 
