@@ -1,11 +1,11 @@
-import React, { lazy, Suspense, useMemo } from 'react';
+import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
 import { Dropdown, Menu, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import { useSetRecoilState } from 'recoil';
 import { img_logo2 } from '~images/index';
 import { Link } from 'react-router-dom';
-import { layoutStore, authStore } from '~hooks/index';
+import { layoutStore } from '~hooks/index';
 import Props from './header.ui.type';
 import {
   ScMyPageText,
@@ -13,7 +13,9 @@ import {
   ScTitleBodyDescription,
   ScUserLogo,
 } from './header.ui.styled';
-import { getUserInfo, setLogout } from '~/functions';
+import { executeData, getData, getUserInfo, setLogout } from '~/functions';
+import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
+import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -24,20 +26,28 @@ const ScLogo = lazy(() =>
   import('./header.ui.styled').then(module => ({ default: module.ScLogo })),
 );
 
-/** 헤더 */
+const fetchBookmarks = () =>
+  getData({}, '/aut/bookmarks', 'raws', {}, false, null, {
+    disabledZeroMessage: true,
+  });
+
 const Header: React.FC<Props> = props => {
   const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
+  const [bookmarkItems, setBookmarkItems] = useState<any[]>([]);
 
   const userName = useMemo(() => {
     return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
   }, [userInfo?.user_nm]);
 
+  useEffect(() => {
+    fetchBookmarks().then(setBookmarkItems);
+  }, []);
+
   return (
     <div>
       <Suspense fallback="...loading">
         <ScContainer {...props}>
-          {/* 로고 */}
           <ScLogo>
             <Link
               to="/dashboard"
@@ -56,27 +66,45 @@ const Header: React.FC<Props> = props => {
             </Link>
           </ScLogo>
 
-          {/* 타이틀 */}
           <ScTitleBodyDescription>
             <div>{props.title}</div>
             {props.description}
           </ScTitleBodyDescription>
 
-          {/* 우측 버튼 */}
+          {props.title == null ? null : (
+            <BookmarkButton
+              uuid={props.uuid}
+              key={`bookmark-button-${props.uuid}`}
+              items={bookmarkItems}
+              flush={setBookmarkItems}
+            />
+          )}
+
           <ScRightWrapper key="RightWrapper">
-            {/* <BellOutlined onClick={() => alert('아이콘 클릭')} /> */}
-            {/* <Link to='/mypage' style={{
-              color: 'inherit'
-            }}>
-              <ScMyPageText>마이페이지</ScMyPageText>
-            </Link> */}
             <ScMyPageText>{userName}</ScMyPageText>
             <Dropdown
               overlay={
                 <Menu>
+                  <Bookmark key={'bookmark-list'} title={'북마크'}>
+                    {bookmarkItems.length === 0 ? (
+                      <Bookmark.Item
+                        key="bookmark-menu-noitem"
+                        disabled={true}
+                      />
+                    ) : (
+                      bookmarkItems.map(item => (
+                        <Bookmark.Item
+                          key={item.menu_uuid}
+                          location={item.menu_uri}
+                          title={item.menu_nm}
+                        />
+                      ))
+                    )}
+                  </Bookmark>
+                  <Menu.Divider />
                   <Menu.Item
                     key="0"
-                    style={{ textAlign: 'center' }}
+                    style={{ marginLeft: '5px' }}
                     onClick={setLogout}
                   >
                     로그아웃
@@ -96,6 +124,42 @@ const Header: React.FC<Props> = props => {
         </ScContainer>
       </Suspense>
     </div>
+  );
+};
+
+interface BookmarkButtonProps {
+  uuid: string;
+  key: string;
+  flush: () => void;
+  items: any[];
+}
+
+const BookmarkButton: React.FC<BookmarkButtonProps> = ({
+  uuid,
+  flush,
+  items,
+}) => {
+  const isSubscribe = items.some(({ menu_uuid }) => menu_uuid === uuid);
+
+  const subscribe = () => {
+    (async () => {
+      isSubscribe === true
+        ? await executeData(
+            [{ menu_uuid: uuid }],
+            '/aut/bookmark/by-menu',
+            'delete',
+          )
+        : await executeData([{ menu_uuid: uuid }], '/aut/bookmarks', 'post');
+      fetchBookmarks().then(flush);
+    })();
+  };
+
+  return (
+    <SubscribeButton
+      checked={isSubscribe}
+      onClick={subscribe}
+      key={`subscribe-button-${uuid}-${isSubscribe}`}
+    />
   );
 };
 

@@ -8,4 +8,8 @@ export default interface IHeaderProps {
 
   /** 상단바 부제목(설명) */
   description?: string;
+
+  uuid: string;
+
+  path: string;
 }
