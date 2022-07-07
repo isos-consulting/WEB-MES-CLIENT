@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Menu, SubMenuProps, MenuItemProps } from 'antd';
 import { ScExtendedLink } from '../../side-navbar/side-navbar.ui.styled';
 
@@ -11,38 +12,44 @@ interface BookmarkItemProps extends MenuItemProps {
   title?: string;
 }
 
+const SubMenuWrapper = styled(Menu.SubMenu)`
+  width: 150px;
+  margin-left: 5px;
+`;
+
 const MenuList: React.FC<BookmarkProps> & { Item: typeof MenuItem } = (
   props: BookmarkProps,
 ) => {
-  return <Menu.SubMenu {...props}></Menu.SubMenu>;
+  return <SubMenuWrapper {...props} />;
 };
 
+const SubMenuItemWrapper = styled(Menu.Item)`
+  min-width: 150px;
+  max-width: 200px;
+  padding: 0px;
+  text-indent: 17px;
+`;
+
+const LinkWrapper = styled(ScExtendedLink)`
+  padding: 5px 0px;
+  margin: 0px;
+  color: #000000;
+`;
+
+const NoitemWrapper = styled.p`
+  padding: 5px 0px;
+  margin: 0px;
+`;
+
 const MenuItem = (props: BookmarkItemProps) => {
-  const itemProps = {
-    style: {
-      minWidth: '150px',
-      maxWidth: '200px',
-      padding: '0px',
-      textIndent: '17px',
-    },
-    ...props,
-  };
-
-  const textStyle = { padding: '5px 0px', margin: '0px' };
-
-  const linkProps = {
-    style: { ...textStyle, color: '#000000' },
-    to: props.location,
-  };
-
   return (
-    <Menu.Item {...itemProps}>
+    <SubMenuItemWrapper {...props}>
       {props.location == null ? (
-        <p style={textStyle}>메뉴가 없습니다</p>
+        <NoitemWrapper>메뉴가 없습니다</NoitemWrapper>
       ) : (
-        <ScExtendedLink {...linkProps}>{props.title}</ScExtendedLink>
+        <LinkWrapper to={props.location}>{props.title}</LinkWrapper>
       )}
-    </Menu.Item>
+    </SubMenuItemWrapper>
   );
 };
 

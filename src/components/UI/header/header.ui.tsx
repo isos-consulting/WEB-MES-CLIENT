@@ -85,11 +85,7 @@ const Header: React.FC<Props> = props => {
             <Dropdown
               overlay={
                 <Menu>
-                  <Bookmark
-                    key={'bookmark-list'}
-                    title={'북마크'}
-                    style={{ width: '150px', marginLeft: '5px' }}
-                  >
+                  <Bookmark key={'bookmark-list'} title={'북마크'}>
                     {bookmarkItems.length === 0 ? (
                       <Bookmark.Item
                         key="bookmark-menu-noitem"
@@ -138,23 +134,23 @@ interface BookmarkButtonProps {
   items: any[];
 }
 
-const BookmarkButton: React.FC<BookmarkButtonProps> = props => {
-  const isSubscribe = props.items.some(item => item.menu_uuid === props.uuid);
+const BookmarkButton: React.FC<BookmarkButtonProps> = ({
+  uuid,
+  flush,
+  items,
+}) => {
+  const isSubscribe = items.some(({ menu_uuid }) => menu_uuid === uuid);
 
   const subscribe = () => {
     (async () => {
       isSubscribe === true
         ? await executeData(
-            [{ menu_uuid: props.uuid }],
+            [{ menu_uuid: uuid }],
             '/aut/bookmark/by-menu',
             'delete',
           )
-        : await executeData(
-            [{ menu_uuid: props.uuid }],
-            '/aut/bookmarks',
-            'post',
-          );
-      fetchBookmarks().then(props.flush);
+        : await executeData([{ menu_uuid: uuid }], '/aut/bookmarks', 'post');
+      fetchBookmarks().then(flush);
     })();
   };
 
@@ -162,7 +158,7 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = props => {
     <SubscribeButton
       checked={isSubscribe}
       onClick={subscribe}
-      key={`subscribe-button-${props.uuid}-${isSubscribe}`}
+      key={`subscribe-button-${uuid}-${isSubscribe}`}
     />
   );
 };
