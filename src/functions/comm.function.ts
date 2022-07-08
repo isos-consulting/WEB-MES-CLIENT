@@ -801,6 +801,7 @@ export const getAccessToken = async (): Promise<{
  * 로그인 된 정보를 해당 함수에서 삭제해줘야 함.
  */
 export const setLogout = async () => {
+  executeData({}, '/adm/login-log', 'post');
   localStorage.removeItem('userInfo');
 
   window.location.href = '/';
