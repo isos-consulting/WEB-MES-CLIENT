@@ -86,6 +86,7 @@ export const PgAutUser = () => {
         filter: 'text',
         editable: true,
         requiredField: true,
+        hidden: true,
       },
       {
         header: '관리자 유무',
