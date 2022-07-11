@@ -7,6 +7,7 @@ import {
   getData,
   getModifiedRows,
   getPageName,
+  getPermissions,
 } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
@@ -18,6 +19,7 @@ import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 export const PgAutUser = () => {
   /** 페이지 제목 */
   const title = getPageName();
+  const permissions = getPermissions(title);
 
   /** 모달 DOM */
   const [modal, modalContext] = Modal.useModal();
@@ -97,6 +99,19 @@ export const PgAutUser = () => {
         editable: true,
         requiredField: true,
       },
+      {
+        header: '비밀번호 초기화',
+        name: 'pwd_reset',
+        width: ENUM_WIDTH.M,
+        format: 'button',
+        options: {
+          value: '투입',
+          onClick: (_, { grid, rowKey }) => {
+            const resetUser = grid.getRow(rowKey);
+          },
+        },
+        disabled: !permissions?.create_fg,
+      },
     ],
     {
       searchUriPath: searchUriPath,
@@ -122,7 +137,7 @@ export const PgAutUser = () => {
 
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
-    grid.gridInfo.columns,
+    grid.gridInfo.columns.filter(({ name }) => name !== 'pwd_reset'),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
@@ -130,12 +145,14 @@ export const PgAutUser = () => {
     },
   );
 
-  const popupColumns = cloneObject(grid.gridInfo.columns)?.map(el => {
-    if (['id', 'user_nm'].includes(el?.name)) {
-      el['editable'] = false;
-    }
-    return el;
-  });
+  const popupColumns = cloneObject(grid.gridInfo.columns)
+    ?.map(el => {
+      if (['id', 'user_nm'].includes(el?.name)) {
+        el['editable'] = false;
+      }
+      return el;
+    })
+    .filter(({ name }) => name !== 'pwd_reset');
 
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID', popupColumns, {
     searchUriPath: searchUriPath,
