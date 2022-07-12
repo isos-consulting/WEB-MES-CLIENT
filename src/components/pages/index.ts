@@ -68,6 +68,7 @@ export * from './std/vendor-price.page';
 export * from './std/customer-price.page';
 export * from './std/routing.page';
 export * from './std/tenant-opt.page';
+export * from './std/excel-upload.page';
 
 export * from './prd/return.page';
 export * from './prd/return-report.page';
