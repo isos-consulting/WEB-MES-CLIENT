@@ -1,4 +1,4 @@
 export enum SENTENCE {
-  FAVORITE_ADD = '즐겨찾기 추가됨',
-  FAVORITE_REMOVE = '즐겨찾기 삭제됨',
+  FAVORITE = '즐겨찾기 추가됨',
+  UNFAVORITE = '즐겨찾기 삭제됨',
 }
