@@ -6,7 +6,7 @@ const StarButton = (props: SubscribeButtonProps) => {
 };
 
 const StarButtonWrapper = styled(StarButton)`
-  color: ${({ checked }) => (checked ? 'yellow' : 'white')};
+  color: ${({ checked }) => (checked ? '#f7cc07' : 'white')};
   -webkit-text-stroke: 1px black;
   cursor: pointer;
   font-size: 1.5em;
