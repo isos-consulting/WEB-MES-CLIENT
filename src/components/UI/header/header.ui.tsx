@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
-import { Dropdown, Menu, Space } from 'antd';
+import { Dropdown, Menu, message, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import { useSetRecoilState } from 'recoil';
@@ -17,6 +17,7 @@ import { executeData, getData, getUserInfo, setLogout } from '~/functions';
 import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 import { WORD } from '~/constants/lang/ko/word';
+import { SENTENCE } from '~/constants/lang/ko/sentence';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -144,13 +145,21 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({
 
   const subscribe = () => {
     (async () => {
-      isSubscribe === true
+      const isUnsubscribed = isSubscribe;
+
+      isUnsubscribed === true
         ? await executeData(
             [{ menu_uuid: uuid }],
             '/aut/bookmark/by-menu',
             'delete',
           )
         : await executeData([{ menu_uuid: uuid }], '/aut/bookmarks', 'post');
+
+      message.success(
+        isUnsubscribed === true
+          ? SENTENCE.FAVORITE_REMOVE
+          : SENTENCE.FAVORITE_ADD,
+      );
       fetchBookmarks().then(flush);
     })();
   };
