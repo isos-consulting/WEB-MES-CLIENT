@@ -16,6 +16,7 @@ import {
 import { executeData, getData, getUserInfo, setLogout } from '~/functions';
 import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
+import { WORD } from '~/constants/lang/ko/word';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -37,7 +38,7 @@ const Header: React.FC<Props> = props => {
   const [bookmarkItems, setBookmarkItems] = useState<any[]>([]);
 
   const userName = useMemo(() => {
-    return userInfo?.user_nm ? userInfo?.user_nm + '님' : '';
+    return userInfo?.user_nm ? userInfo?.user_nm + WORD.SIR : '';
   }, [userInfo?.user_nm]);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ const Header: React.FC<Props> = props => {
             <Dropdown
               overlay={
                 <Menu>
-                  <Bookmark key={'bookmark-list'} title={'북마크'}>
+                  <Bookmark key={'bookmark-list'} title={WORD.FAVORITE}>
                     {bookmarkItems.length === 0 ? (
                       <Bookmark.Item
                         key="bookmark-menu-noitem"
@@ -107,7 +108,7 @@ const Header: React.FC<Props> = props => {
                     style={{ marginLeft: '5px' }}
                     onClick={setLogout}
                   >
-                    로그아웃
+                    {WORD.LOGOUT}
                   </Menu.Item>
                 </Menu>
               }
