@@ -2,8 +2,10 @@ import React from 'react';
 import { Col, Form, Row } from 'antd';
 import { Button, Textbox } from '~/components/UI';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import PasswordValidation from '~/models/user/password';
 
 const PgUpdatePassword = () => {
+  const [resetForm] = Form.useForm();
   return (
     <div>
       <h1>보다 안전한 서비스 이용을 위해</h1>
@@ -15,16 +17,27 @@ const PgUpdatePassword = () => {
         비밀번호를 변경해주세요
       </h3>
       <Form
+        form={resetForm}
         layout="vertical"
         style={{ width: 700, height: 600, marginBottom: 60 }}
       >
+        <Textbox name="username" hidden={true} autoComplete="username" />
         <Password />
         <Password.Confirm />
         <Button
           btnType="buttonFill"
           widthSize="large"
           fontSize="large"
-          onClick={() => {}}
+          onClick={() => {
+            resetForm
+              .validateFields()
+              .then(values => {
+                console.log(values);
+              })
+              .catch(errorInfo => {
+                console.log(errorInfo);
+              });
+          }}
         >
           변경하기
         </Button>
@@ -33,7 +46,7 @@ const PgUpdatePassword = () => {
   );
 };
 
-const Password: React.FC & { confirm: typeof PasswordConfirm } = () => {
+const Password: React.FC & { Confirm: typeof PasswordConfirm } = () => {
   return (
     <>
       <Form.Item
@@ -44,24 +57,29 @@ const Password: React.FC & { confirm: typeof PasswordConfirm } = () => {
           () => ({
             validator(_, value) {
               if (value.length > 9 && value.length < 17) {
-                let invalidCount = 0;
-
-                if (value.search(/[0-9]/) == -1) invalidCount++;
-
-                if (value.search(/[a-z]/) == -1) invalidCount++;
-
-                if (value.search(/[~!@#$%^&*()_+|<>?:{}]/) == -1)
-                  invalidCount++;
-
-                if (invalidCount > 1)
+                if (PasswordValidation.UPPER_CASE.test(value) === true)
                   return Promise.reject(
                     '영문 소문자, 숫자, 특수문자 중 2종을 조합을 포함해야 합니다.',
                   );
 
-                return Promise.resolve();
-              } else if (value.length === 0) {
-                return Promise.resolve();
+                const validator = new PasswordValidation();
+
+                if (PasswordValidation.NUMBER.test(value) === true)
+                  validator.pass();
+
+                if (PasswordValidation.LOWER_CASE.test(value) === true)
+                  validator.pass();
+
+                if (PasswordValidation.SPECIAL_CHARACTER.test(value) === true)
+                  validator.pass();
+
+                if (validator.isPassed() === true) return Promise.resolve();
+
+                return Promise.reject(
+                  '영문 소문자, 숫자, 특수문자 중 2종을 조합을 포함해야 합니다.',
+                );
               }
+
               return Promise.reject(' 비밀번호는 10 ~ 16자여야 합니다.');
             },
           }),
@@ -84,6 +102,7 @@ const Password: React.FC & { confirm: typeof PasswordConfirm } = () => {
               iconRender={(visible: boolean) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              autoComplete="new-password"
             />
           </Col>
           <Col span={12}>
@@ -97,7 +116,7 @@ const Password: React.FC & { confirm: typeof PasswordConfirm } = () => {
   );
 };
 
-const PasswordConfirm = props => {
+const PasswordConfirm = () => {
   return (
     <>
       <Form.Item
@@ -132,6 +151,7 @@ const PasswordConfirm = props => {
               iconRender={(visible: boolean) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              autoComplete="new-password"
             />
           </Col>
           <Col span={12}>
