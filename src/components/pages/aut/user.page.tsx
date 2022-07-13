@@ -27,6 +27,35 @@ export const PgAutUser = () => {
   const searchUriPath = '/aut/users';
   const saveUriPath = '/aut/users';
 
+  const fetchUserPassword = async ({ user_uuid }) => {
+    return await executeData(
+      [{ uuid: user_uuid }],
+      `/aut/user/pwd-init`,
+      'put',
+    );
+  };
+
+  const resetUserPassword = async ({ user_uuid }) => {
+    const userPasswordResetResponse = await fetchUserPassword({ user_uuid });
+
+    if (userPasswordResetResponse.success === true) {
+      message.success(`${SENTENCE.IS_RESETED_PASSWORD}`);
+    }
+  };
+
+  const confirmResetPasswordModal = ({ grid, rowKey }) => {
+    return modal.confirm({
+      title: `${WORD.PASSWORD} ${WORD.RESET}`,
+      content: `${SENTENCE.IS_RESET_PASSWORD}`,
+      onOk: async () => {
+        await resetUserPassword(grid.getRow(rowKey));
+
+        close();
+      },
+      onCancel: () => {},
+    });
+  };
+
   const grid = useGrid(
     'GRID',
     [
@@ -103,28 +132,8 @@ export const PgAutUser = () => {
         format: 'button',
         options: {
           value: `${WORD.RESET}`,
-          onClick: (_, { grid, rowKey }) => {
-            const { user_uuid } = grid.getRow(rowKey);
-
-            modal.confirm({
-              title: `${WORD.PASSWORD} ${WORD.RESET}`,
-              content: `${SENTENCE.IS_RESET_PASSWORD}`,
-              onOk: async () => {
-                const result = await executeData(
-                  [{ uuid: user_uuid }],
-                  `/aut/user/pwd-init`,
-                  'put',
-                );
-
-                if (result.success) {
-                  message.success(`${SENTENCE.IS_RESETED_PASSWORD}`);
-                } else {
-                  message.error(result.message);
-                }
-                close();
-              },
-              onCancel: () => {},
-            });
+          onClick: (_, clickProps) => {
+            confirmResetPasswordModal(clickProps);
           },
         },
         disabled: !permissions?.create_fg,
