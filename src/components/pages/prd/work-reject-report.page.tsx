@@ -69,7 +69,7 @@ export const PgPrdWorkRejectReport = () => {
   const subGrid = useGrid('SUB_GRID', [], {
     disabledAutoDateColumn: true,
     summaryOptions: {
-      sumColumns: ['total_qty', 'qty', 'reject_detail_qty'],
+      sumColumns: ['qty'],
       textColumns: [
         {
           columnName: 'reject_proc_nm',
@@ -205,23 +205,9 @@ export const PgPrdWorkRejectReport = () => {
             filter: 'text',
           },
           {
-            header: '생산수량',
-            width: ENUM_WIDTH.M,
-            name: 'total_qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
-            header: '양품수량',
-            width: ENUM_WIDTH.M,
-            name: 'qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -336,23 +322,9 @@ export const PgPrdWorkRejectReport = () => {
             filter: 'text',
           },
           {
-            header: '생산수량',
-            width: ENUM_WIDTH.M,
-            name: 'total_qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
-            header: '양품수량',
-            width: ENUM_WIDTH.M,
-            name: 'qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -462,23 +434,9 @@ export const PgPrdWorkRejectReport = () => {
             filter: 'text',
           },
           {
-            header: '생산수량',
-            width: ENUM_WIDTH.M,
-            name: 'total_qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
-            header: '양품수량',
-            width: ENUM_WIDTH.M,
-            name: 'qty',
-            format: 'number',
-            filter: 'number',
-          },
-          {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -516,7 +474,7 @@ export const PgPrdWorkRejectReport = () => {
           {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -559,7 +517,7 @@ export const PgPrdWorkRejectReport = () => {
           {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -597,7 +555,7 @@ export const PgPrdWorkRejectReport = () => {
           {
             header: '불량수량',
             width: ENUM_WIDTH.M,
-            name: 'reject_detail_qty',
+            name: 'qty',
             format: 'number',
             filter: 'number',
           },
@@ -632,7 +590,7 @@ export const PgPrdWorkRejectReport = () => {
 
   const setSubTotalDatas = (data: object[]) => {
     if (data?.length > 0) {
-      const curculationColumnNames = ['reject_detail_qty'];
+      const curculationColumnNames = ['qty'];
       const standardNames =
         searchInfo.values?.sort_type === 'prod'
           ? ['prod_uuid', 'item_type_nm', 'prod_type_nm', 'prod_nm', 'prod_no']
