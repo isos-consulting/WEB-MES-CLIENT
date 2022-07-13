@@ -4,6 +4,7 @@ import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   cloneObject,
   dataGridEvents,
+  executeData,
   getData,
   getModifiedRows,
   getPageName,
@@ -105,9 +106,29 @@ export const PgAutUser = () => {
         width: ENUM_WIDTH.M,
         format: 'button',
         options: {
-          value: '투입',
+          value: '초기화',
           onClick: (_, { grid, rowKey }) => {
-            const resetUser = grid.getRow(rowKey);
+            const { user_uuid } = grid.getRow(rowKey);
+
+            modal.confirm({
+              title: '비밀번호 초기화',
+              content: '비밀번호를 초기화 하시겠습니까?',
+              onOk: async () => {
+                const result = await executeData(
+                  [{ uuid: user_uuid }],
+                  `/aut/user/pwd-init`,
+                  'put',
+                );
+
+                if (result.success) {
+                  message.success('비밀번호 초기화 완료');
+                } else {
+                  message.error(result.message);
+                }
+                close();
+              },
+              onCancel: () => {},
+            });
           },
         },
         disabled: !permissions?.create_fg,
