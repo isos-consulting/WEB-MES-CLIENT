@@ -22,7 +22,6 @@ export const PgAutUser = () => {
   const title = getPageName();
   const permissions = getPermissions(title);
   const [modal, modalContext] = Modal.useModal();
-
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = '/aut/users';
   const saveUriPath = '/aut/users';
