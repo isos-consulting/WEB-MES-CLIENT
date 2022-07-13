@@ -3,6 +3,7 @@ import { IGridModifiedRows } from '../components/UI/datagrid-new/datagrid.ui.typ
 import { getUserInfoKeys, getUserFactoryUuid } from './storage.function';
 import {
   cleanupKeyOfObject,
+  consoleLogLocalEnv,
   getObjectKeyDuplicateCheck,
   getToday,
   isNumber,
@@ -818,7 +819,7 @@ export const convDataToSubTotal = (
       });
       return el;
     });
-    console.log('tempData', tempData);
+    consoleLogLocalEnv('필터링 된 합계 정보 : ', tempData);
 
     // 연산될 기준명의 키 그룹을 생성
     const groupData: any[] = cloneDeep(tempData).map(el =>
