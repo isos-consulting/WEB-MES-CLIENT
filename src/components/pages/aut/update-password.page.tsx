@@ -3,6 +3,8 @@ import { Col, Form, Row } from 'antd';
 import { Button, Textbox } from '~/components/UI';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import PasswordValidation from '~/models/user/password';
+import { consoleLogLocalEnv, executeData } from '~/functions';
+import crypto from 'crypto-js';
 
 const PgUpdatePassword = () => {
   const [resetForm] = Form.useForm();
@@ -31,11 +33,22 @@ const PgUpdatePassword = () => {
           onClick={() => {
             resetForm
               .validateFields()
-              .then(values => {
-                console.log(values);
+              .then(async values => {
+                await executeData(
+                  [
+                    {
+                      pwd: crypto.AES.encrypt(
+                        values.password,
+                        'secret',
+                      ).toString(),
+                    },
+                  ],
+                  '/aut/users/pwd',
+                  'put',
+                );
               })
               .catch(errorInfo => {
-                console.log(errorInfo);
+                consoleLogLocalEnv(errorInfo);
               });
           }}
         >
