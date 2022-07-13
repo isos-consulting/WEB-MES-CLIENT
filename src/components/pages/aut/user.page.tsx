@@ -15,22 +15,18 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
+import { WORD } from '~/constants/lang/ko/word';
+import { SENTENCE } from '~/constants/lang/ko/sentence';
 
-/** 사용자 관리 */
 export const PgAutUser = () => {
-  /** 페이지 제목 */
   const title = getPageName();
   const permissions = getPermissions(title);
-
-  /** 모달 DOM */
   const [modal, modalContext] = Modal.useModal();
 
-  /** INIT */
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = '/aut/users';
   const saveUriPath = '/aut/users';
 
-  /** 그리드 상태를 관리 */
   const grid = useGrid(
     'GRID',
     [
@@ -101,18 +97,18 @@ export const PgAutUser = () => {
         requiredField: true,
       },
       {
-        header: '비밀번호 초기화',
+        header: `${WORD.PASSWORD} ${WORD.RESET}`,
         name: 'pwd_reset',
         width: ENUM_WIDTH.M,
         format: 'button',
         options: {
-          value: '초기화',
+          value: `${WORD.RESET}`,
           onClick: (_, { grid, rowKey }) => {
             const { user_uuid } = grid.getRow(rowKey);
 
             modal.confirm({
-              title: '비밀번호 초기화',
-              content: '비밀번호를 초기화 하시겠습니까?',
+              title: `${WORD.PASSWORD} ${WORD.RESET}`,
+              content: `${SENTENCE.IS_RESET_PASSWORD}`,
               onOk: async () => {
                 const result = await executeData(
                   [{ uuid: user_uuid }],
@@ -121,7 +117,7 @@ export const PgAutUser = () => {
                 );
 
                 if (result.success) {
-                  message.success('비밀번호 초기화 완료');
+                  message.success(`${SENTENCE.IS_RESETED_PASSWORD}`);
                 } else {
                   message.error(result.message);
                 }
@@ -140,7 +136,6 @@ export const PgAutUser = () => {
       gridMode: defaultGridMode,
       gridComboInfo: [
         {
-          // 투입단위 콤보박스
           columnNames: [
             {
               codeColName: { original: 'group_uuid', popup: 'group_uuid' },
@@ -185,21 +180,14 @@ export const PgAutUser = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
 
-  /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', null);
 
-  /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
-  const newDataPopupInputInfo = null; //useInputGroup('NEW_DATA_POPUP_INPUT_BOX', []);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const inputInfo = null;
+  const newDataPopupInputInfo = null;
+  const editDataPopupInputInfo = null;
 
-  /** 액션 관리 */
-
-  /** 검색 */
   const onSearch = values => {
-    // const searchKeys = Object.keys(values);
-    const searchParams = {}; //cleanupKeyOfObject(values, searchKeys);
-
+    const searchParams = {};
     let data = [];
 
     getData(searchParams, searchUriPath)
@@ -212,7 +200,6 @@ export const PgAutUser = () => {
       });
   };
 
-  /** UPDATE / DELETE 저장 기능 */
   const onSave = () => {
     const { gridRef, setGridMode } = grid;
     const { columns, saveUriPath } = grid.gridInfo;
@@ -232,19 +219,15 @@ export const PgAutUser = () => {
     );
   };
 
-  /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {
-    /** 조회 */
     search: () => {
       onSearch(searchInfo?.values);
     },
 
-    /** 수정 */
     update: () => {
       setEditDataPopupGridVisible(true);
     },
 
-    /** 삭제 */
     delete: () => {
       if (
         getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows
@@ -256,19 +239,16 @@ export const PgAutUser = () => {
       onSave();
     },
 
-    /** 신규 추가 */
     create: () => {
       newDataPopupInputInfo?.instance?.resetForm();
       newDataPopupGrid?.setGridData([]);
       setNewDataPopupGridVisible(true);
     },
 
-    /** 저장 */
     save: () => {
       onSave();
     },
 
-    /** 편집 취소 */
     cancelEdit: () => {
       const { gridRef, setGridMode } = grid;
       const { columns } = grid.gridInfo;
@@ -278,7 +258,6 @@ export const PgAutUser = () => {
     printExcel: dataGridEvents.printExcel,
   };
 
-  /** 템플릿에 전달할 값 */
   const props: ITpSingleGridProps = {
     title,
     dataSaveType: 'basic',
