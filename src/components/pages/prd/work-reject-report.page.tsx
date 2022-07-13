@@ -15,21 +15,15 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
 
-/** 불량현황 */
 export const PgPrdWorkRejectReport = () => {
-  /** 페이지 제목 */
   const title = getPageName();
   const [subTitle, setSubTitle] = useState<string>('');
-
-  /** 모달 DOM */
   const [, modalContext] = Modal.useModal();
 
-  /** INIT */
   const defaultGridMode: TGridMode = 'view';
   const searchUriPath = '/prd/work-rejects/report';
   const saveUriPath = null;
 
-  /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', [], {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
@@ -42,7 +36,6 @@ export const PgPrdWorkRejectReport = () => {
     },
   });
 
-  /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
       type: 'daterange',
@@ -51,7 +44,6 @@ export const PgPrdWorkRejectReport = () => {
       defaults: [getToday(-7), getToday()],
       label: '작업일',
     },
-
     {
       type: 'radio',
       id: 'sort_type',
@@ -95,10 +87,9 @@ export const PgPrdWorkRejectReport = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
 
-  /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
-  const newDataPopupInputInfo = null; //useInputGroup('NEW_DATA_POPUP_INPUT_BOX', []);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const inputInfo = null;
+  const newDataPopupInputInfo = null;
+  const editDataPopupInputInfo = null;
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
@@ -143,7 +134,12 @@ export const PgPrdWorkRejectReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '모델',
             width: ENUM_WIDTH.L,
@@ -278,7 +274,12 @@ export const PgPrdWorkRejectReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '모델',
             width: ENUM_WIDTH.L,
@@ -390,7 +391,12 @@ export const PgPrdWorkRejectReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '모델',
             width: ENUM_WIDTH.L,
@@ -570,7 +576,6 @@ export const PgPrdWorkRejectReport = () => {
     return _columns;
   }, [grid?.gridInfo.data, searchInfo?.values]);
 
-  /** 액션 관리 */
   useLayoutEffect(() => {
     setSubTitle(
       searchInfo.values?.sort_type === 'proc'
@@ -583,7 +588,6 @@ export const PgPrdWorkRejectReport = () => {
     );
   }, [searchInfo?.values]);
 
-  // subTotal 데이터 세팅
   useLayoutEffect(() => {
     setSubTotalDatas(grid?.gridInfo?.data);
   }, [subColumns, grid?.gridInfo?.data]);
@@ -611,17 +615,13 @@ export const PgPrdWorkRejectReport = () => {
     }
   };
 
-  // subTotal 데이터 세팅
   useLayoutEffect(() => {
     setSubTotalDatas(grid?.gridInfo?.data);
   }, [subColumns, grid?.gridInfo?.data]);
 
-  /** 검색 */
   const onSearch = values => {
-    const searchKeys = ['start_date', 'end_date', 'sort_type']; //Object.keys(searchInfo.values);
+    const searchKeys = ['start_date', 'end_date', 'sort_type'];
     const searchParams = cleanupKeyOfObject(values, searchKeys);
-
-    //입력된 두 개의 날짜 전후 비교
     const firstDate = new Date(searchParams.start_date);
     const secondDate = new Date(searchParams.end_date);
 
@@ -647,32 +647,18 @@ export const PgPrdWorkRejectReport = () => {
       });
   };
 
-  /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {
-    /** 조회 */
     search: () => {
       onSearch(searchInfo?.values);
     },
-
-    /** 수정 */
     update: null,
-
-    /** 삭제 */
     delete: null,
-
-    /** 신규 추가 */
     create: null,
-
-    /** 저장 */
     save: null,
-
-    /** 편집 취소 */
     cancelEdit: null,
-
     printExcel: dataGridEvents.printExcel,
   };
 
-  /** 템플릿에 전달할 값 */
   const props: ITpSingleGridProps = {
     title,
     templateType: 'report',
