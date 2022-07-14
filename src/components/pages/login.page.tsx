@@ -10,6 +10,7 @@ import { IComboboxItem } from '../UI/combobox';
 import IInputPopupProps from '../UI/input-popup/input-popup.ui.type';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useLayoutEffect } from 'react';
+import { Profile } from '~/models/user/profile';
 
 dotenv.config();
 
@@ -25,7 +26,13 @@ const isSaveUserInfo = () => {
 };
 
 /** 로그인 페이지 */
-export const PgLogin = ({ setIsLogin }) => {
+export const PgLogin = ({
+  profile,
+  authenticatedCallback,
+}: {
+  profile: Profile;
+  authenticatedCallback: (userProfile: Profile) => void;
+}) => {
   consoleLogLocalEnv('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
   const [form] = Form.useForm();
 
@@ -51,8 +58,13 @@ export const PgLogin = ({ setIsLogin }) => {
     consoleLogLocalEnv(
       `로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`,
     );
-    if (isSaveUserInfo()) {
-      setIsLogin(true);
+    if (isSaveUserInfo() === true) {
+      const storedUserProfile =
+        JSON.parse(localStorage.getItem('userInfo')).pwd_fg === true
+          ? profile.authenticate().resetPassword('')
+          : profile.authenticate();
+
+      authenticatedCallback(storedUserProfile);
     } else {
       getFactories();
     }
@@ -78,10 +90,6 @@ export const PgLogin = ({ setIsLogin }) => {
       }
     }
   }, [cboFactory]);
-
-  const showUserModal = () => {
-    setVisible(true);
-  };
 
   const hideUserModal = () => {
     setVisible(false);
@@ -196,19 +204,13 @@ export const PgLogin = ({ setIsLogin }) => {
 
       executeData(strResult, uriPath, 'post')
         .then(res => {
-          const serialFactoryNUuid = (raws, factory) => {
-            return JSON.stringify({
-              uid: raws[0].uid,
-              factory_uuid: factory['factory_uuid'],
-            });
-          };
-
           const serialUserInfo = (raws, userId, factory) => {
             return JSON.stringify({
               uid: raws[0].uid,
               id: userId,
               user_nm: raws[0].user_nm,
               factory_uuid: factory['factory_uuid'],
+              pwd_fg: raws[0].pwd_fg,
               super_admin_fg: raws[0].super_admin_fg,
             });
           };
@@ -225,38 +227,31 @@ export const PgLogin = ({ setIsLogin }) => {
           if (success === true) {
             consoleLogLocalEnv(`로그인 요청 이후 서버 응답 상태 : ${success}`);
             consoleLogLocalEnv(
-              `uuid와 factory uuid 정보 직렬화`,
-              serialFactoryNUuid(raws, factory),
+              '사용자 정보 직렬화',
+              serialUserInfo(raws, userId, factory),
             );
-            localStorage.setItem('userInfo', serialFactoryNUuid(raws, factory));
+            consoleLogLocalEnv('토큰 정보 직렬화', serialTokenInfo(raws));
+            message.success('로그인 성공');
+            localStorage.setItem(
+              'userInfo',
+              serialUserInfo(raws, userId, factory),
+            );
+            localStorage.setItem('tokenInfo', serialTokenInfo(raws));
 
-            if (raws[0].pwd_fg === 1) {
-              showUserModal();
+            if (checked) {
+              localStorage.setItem('iso-factory', cboFactoryCode as string);
+              localStorage.setItem('iso-user-id', userId);
             } else {
-              consoleLogLocalEnv(
-                '사용자 정보 직렬화',
-                serialUserInfo(raws, userId, factory),
-              );
-              consoleLogLocalEnv('토큰 정보 직렬화', serialTokenInfo(raws));
-
-              message.success('로그인 성공');
-              localStorage.setItem(
-                'userInfo',
-                serialUserInfo(raws, userId, factory),
-              );
-              localStorage.setItem('tokenInfo', serialTokenInfo(raws));
-
-              if (checked) {
-                localStorage.setItem('iso-factory', cboFactoryCode as string);
-                localStorage.setItem('iso-user-id', userId);
-              } else {
-                localStorage.removeItem('iso-factory');
-                localStorage.removeItem('iso-user-id');
-              }
-              setIsLogin(true);
-              // window.location.href = "/dashboard"
-              // return setUser(JSON.parse(localStorage.getItem("userInfo") as string));
+              localStorage.removeItem('iso-factory');
+              localStorage.removeItem('iso-user-id');
             }
+
+            const passedUserProfile =
+              raws[0].pwd_fg === true
+                ? profile.authenticate().resetPassword('')
+                : profile.authenticate();
+
+            authenticatedCallback(passedUserProfile);
           }
         })
         .catch(err => console.log(err));
