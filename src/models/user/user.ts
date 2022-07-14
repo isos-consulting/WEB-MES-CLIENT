@@ -3,12 +3,17 @@ type UserProps = {
   password: string;
 };
 
-interface User {
+export interface UserState {
+  isAuthenticated: boolean;
+  isResetPassword: boolean;
+}
+
+export interface User {
   id: string;
   password: string;
 }
 
-const CurrentUser = class implements User {
+export const CurrentUser = class implements User {
   id: string;
   password: string;
 
@@ -43,4 +48,3 @@ const UserManager = class {
 };
 
 export default UserManager;
-export { User, CurrentUser };
