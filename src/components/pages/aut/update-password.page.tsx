@@ -5,8 +5,15 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import PasswordValidation from '~/models/user/password';
 import { consoleLogLocalEnv, executeData } from '~/functions';
 import crypto from 'crypto-js';
+import { Profile } from '~/models/user/profile';
 
-const PgUpdatePassword = () => {
+const PgUpdatePassword = ({
+  profile,
+  authenticatedCallback,
+}: {
+  profile: Profile;
+  authenticatedCallback: (userProfile: Profile) => void;
+}) => {
   const [resetForm] = Form.useForm();
   return (
     <div>
@@ -46,6 +53,20 @@ const PgUpdatePassword = () => {
                   '/aut/users/pwd',
                   'put',
                 );
+
+                const storedUserProfile = JSON.parse(
+                  localStorage.getItem('userInfo'),
+                );
+                const updatedProfile = profile.updatePassword('');
+
+                const stringifiedProfile = JSON.stringify({
+                  ...storedUserProfile,
+                  pwd_fg: updatedProfile.isResetPassword,
+                });
+
+                localStorage.setItem('userInfo', stringifiedProfile);
+
+                authenticatedCallback(updatedProfile);
               })
               .catch(errorInfo => {
                 consoleLogLocalEnv(errorInfo);
