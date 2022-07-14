@@ -2067,6 +2067,11 @@ const URL_PATH = {
         USER_PERMISSIONS: '/aut/user-permissions',
       },
     },
+    TENANT: {
+      GET: {
+        TENANT: '/tenant/auth',
+      },
+    },
   },
   EQM: {
     INSP: {
