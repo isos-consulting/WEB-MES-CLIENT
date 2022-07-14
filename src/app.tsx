@@ -1,11 +1,4 @@
-import React, {
-  lazy,
-  Suspense,
-  useLayoutEffect,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
+import React, { lazy, Suspense, useLayoutEffect, useState } from 'react';
 import { Spin } from 'antd';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -17,25 +10,27 @@ import {
   atSideNavMenuRawData,
 } from '~components/UI';
 import { useLoadingState } from './hooks';
-import { consoleLogLocalEnv, getData, getMenus } from './functions';
+import { getData, getMenus } from './functions';
 import { layoutStore } from '~/components/UI/layout';
 import { Modal } from 'antd';
 import { Dashboard } from './components/pages/dashboard.page';
+import { URL_PATH_AUT } from './enums';
+import { KeyStore } from './constants/keys';
+import { CloudTenant } from './enums/types';
+import UserProfile, { Profile } from './models/user/profile';
+import { CurrentUser } from './models/user/user';
+import PgUpdatePassword from './components/pages/aut/update-password.page';
 
 const Layout = lazy(() =>
   import('./components/UI/layout').then(module => ({ default: module.Layout })),
 );
 
 const App = () => {
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
   const [teneunt, setTeneunt] = useState('');
 
   const checkLocalEnviroment = (url: string) => {
     return url === 'localhost' || url.includes('191.1.70');
-  };
-
-  const getLocalUrl = () => {
-    return 'najs.isos.kr';
   };
 
   const getTenantCode = url => {
@@ -57,69 +52,42 @@ const App = () => {
   };
 
   const handleGetTeneuntInfo = async () => {
-    {
-      consoleLogLocalEnv(
-        '%cTenant 정보 부여 테스트 시작',
-        'color: green; font-size: 20px;',
-      );
-    }
     const hostName = window.location.hostname;
+    const webURL =
+      checkLocalEnviroment(hostName) === true
+        ? process.env.NAJS_LOCAL_WEB_URL
+        : hostName;
 
-    consoleLogLocalEnv(`접속 호스트 : ${hostName}`);
-    consoleLogLocalEnv(`로컬 호스트 일 경우 webURL 주소 : ${getLocalUrl()}`);
-
-    const webURL = checkLocalEnviroment(hostName) ? getLocalUrl() : hostName;
-
-    const tenantInfo = await getData(
+    const tenants: Array<CloudTenant> = await getData(
       { tenant_cd: getTenantCode(webURL) },
-      '/tenant/auth',
+      URL_PATH_AUT.TENANT.GET.TENANT,
       'raws',
       null,
       true,
-      'https://was.isos.kr:3002/',
+      process.env.TENANT_SERVER_URL,
     );
 
-    consoleLogLocalEnv(
-      `테넌트 정보가 존재 하나요? : ${tenantIsNotEmpty(tenantInfo)}`,
-    );
+    if (tenantIsNotEmpty(tenants) === true) {
+      const { uuid } = tenants[0];
+      localStorage.setItem(KeyStore.tenantInfo, getSerialTenantUuid(uuid));
 
-    if (tenantIsNotEmpty(tenantInfo)) {
-      consoleLogLocalEnv(
-        `직렬화 된 tenantUuid : ${getSerialTenantUuid(tenantInfo[0]?.uuid)}`,
-      );
-
-      localStorage.setItem(
-        'tenantInfo',
-        getSerialTenantUuid(tenantInfo[0]?.uuid),
-      );
-
-      {
-        consoleLogLocalEnv(
-          '%cTenant 정보 부여 테스트 끝',
-          'color: green; font-size: 20px;',
-        );
-      }
-      setTeneunt(tenantInfo[0]?.uuid);
+      setTeneunt(uuid);
     }
   };
   const routeLayout = () => {
-    return tenantIsAllocated(teneunt) ? (
+    return tenantIsAllocated(teneunt) === true ? (
       <LayoutRoute />
     ) : (
       <span>테넌트 정보를 받아오는 중...</span>
     );
   };
 
-  /** 로그인을 하면 메뉴와 권한 데이터를 불러옵니다. */
   useLayoutEffect(() => {
     handleGetTeneuntInfo();
   }, []);
 
   return (
     <div>
-      {consoleLogLocalEnv(
-        `tenant 정보를 부여 받았나요?: ${tenantIsAllocated(teneunt)}`,
-      )}
       {routeLayout()}
       {contextHolder}
     </div>
@@ -127,74 +95,64 @@ const App = () => {
 };
 
 const LayoutRoute = () => {
-  const [loading, setLoading] = useLoadingState(); // 이 녀석 때문에 콘솔에 state의 값이 2번씩 찍힘
+  const [profile, setProfile] = useState<Profile>(
+    new UserProfile({
+      ...new CurrentUser({ id: '', password: '' }),
+      isAuthenticated: false,
+      isResetPassword: false,
+    }),
+  );
+  const [loading, setLoading] = useLoadingState();
   const [isLogin, setIsLogin] = useState(false);
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
 
   useLayoutEffect(() => {
-    const setMenus = async () => {
-      const menus = await getMenus();
-
-      consoleLogLocalEnv('menu api 호출 결과:', menus);
-      setMenuContent(menus.data);
-      setMenuRawData(menus.rawData);
-    };
-
-    consoleLogLocalEnv(
-      '%cLayoutRoute 컴포넌트 useLayoutEffect 훅 동작',
-      'color: orange; font-size: 24px;',
-    );
-    consoleLogLocalEnv(
-      `로딩 상태: ${loading}, 로그인 상태: ${isLogin}, 메뉴 정보: `,
-      menuContent,
-    );
-    if (isLogin) {
+    if (profile.isAuthenticated === true) {
       setLoading(true);
-      setMenus();
-      setLoading(false);
+      getMenus().then(menus => {
+        setMenuContent(menus.data);
+        setMenuRawData(menus.rawData);
+        setLoading(false);
+      });
     }
-  }, [isLogin]);
+  }, [profile]);
 
   return (
     <>
-      {consoleLogLocalEnv(
-        '%cLayoutRoute 컴포넌트 테스트 시작',
-        'color: green; font-size: 20px;',
-      )}
-      {consoleLogLocalEnv(`로딩 상태? : ${loading}`)}
-      {consoleLogLocalEnv(`로그인 상태인가요? : ${isLogin}`)}
-      {consoleLogLocalEnv(`메뉴가 있나요? : `, menuContent)}
-      {consoleLogLocalEnv(
-        '%cLayoutRoute 컴포넌트 테스트 끝',
-        'color: green; font-size: 20px;',
-      )}
-      {isLogin ? (
-        <Spin spinning={loading} style={{ zIndex: 999999 }} tip="Loading...">
-          <Suspense fallback="...loading">
-            <BrowserRouter>
-              <Switch>
-                <Redirect exact from="/" to="/dashboard" />
-                <Layout>
-                  <Route
-                    key={'dashboard'}
-                    path={'/dashboard'}
-                    component={Dashboard}
-                  />
-                  {Object.keys(menuContent).map((item, key) => (
+      {profile.isAuthenticated === true ? (
+        profile.isResetPassword === true ? (
+          <PgUpdatePassword
+            profile={profile}
+            authenticatedCallback={setProfile}
+          />
+        ) : (
+          <Spin spinning={loading} style={{ zIndex: 999999 }} tip="Loading...">
+            <Suspense fallback="...loading">
+              <BrowserRouter>
+                <Switch>
+                  <Redirect exact from="/" to="/dashboard" />
+                  <Layout>
                     <Route
-                      key={key}
-                      path={menuContent[item]?.path}
-                      component={menuContent[item]?.component ?? errorPage404}
+                      key={'dashboard'}
+                      path={'/dashboard'}
+                      component={Dashboard}
                     />
-                  ))}
-                </Layout>
-              </Switch>
-            </BrowserRouter>
-          </Suspense>
-        </Spin>
+                    {Object.keys(menuContent).map((item, key) => (
+                      <Route
+                        key={key}
+                        path={menuContent[item]?.path}
+                        component={menuContent[item]?.component ?? errorPage404}
+                      />
+                    ))}
+                  </Layout>
+                </Switch>
+              </BrowserRouter>
+            </Suspense>
+          </Spin>
+        )
       ) : (
-        <PgLogin setIsLogin={setIsLogin} />
+        <PgLogin profile={profile} authenticatedCallback={setProfile} />
       )}
     </>
   );
