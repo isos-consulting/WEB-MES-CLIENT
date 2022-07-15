@@ -13,9 +13,10 @@ import {
   EditFilled,
 } from '@ant-design/icons';
 import Props from './button.ui.type';
+import UploadButton from './upload/upload-button.ui';
 
 /** 버튼 */
-const Button: React.FC<Props> = props => {
+const Button: React.FC<Props> & { Upload: typeof UploadButton } = props => {
   const [loading, setLoading] = useState(false);
   const { ImageType, ...otherProps } = props;
   let iconElement = useMemo(() => setIcon(ImageType), [ImageType]);
@@ -62,5 +63,7 @@ const Button: React.FC<Props> = props => {
     </ScButton>
   );
 };
+
+Button.Upload = UploadButton;
 
 export default Button;
