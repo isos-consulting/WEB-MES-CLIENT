@@ -8,6 +8,34 @@ import {
   useSearchbox,
 } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
+import Excel, { CellValue } from 'exceljs';
+
+const importXLSXFile = async (
+  uploadExcelBuffer: Excel.Buffer,
+  start: number,
+) => {
+  const workBook = new Excel.Workbook();
+  const uploadData = await workBook.xlsx.load(uploadExcelBuffer);
+  const sheet = uploadData.getWorksheet(1);
+  const columns = sheet.getRow(start).values;
+  const list = new Array<Map<string, CellValue>>();
+
+  for (let i = start + 2; i < sheet.rowCount; i++) {
+    const row = sheet.getRow(i);
+
+    if (Array.isArray(row.values) === true) {
+      if (row.values.length > 0) {
+        const data = new Map<string, Excel.CellValue>();
+
+        columns.forEach((column, index) => {
+          data.set(column, row.getCell(index).value);
+        });
+        list.push(data);
+      }
+    }
+  }
+  return list.map(datas => Object.fromEntries(datas.entries()));
+};
 
 const mockMenuList = async () => {
   return [
@@ -70,6 +98,7 @@ const mockMenuColumns = async (menuCode: string) => {
 
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadColumns, setColumns] = useState([]);
+  const [uploadData, setData] = useState([]);
   const menus = mockMenuList();
   const menuCombobox: ISearchItem = {
     type: 'combo',
@@ -83,6 +112,7 @@ export const PgStdExcelUpload: React.FC = () => {
         return setColumns([]);
       }
 
+      setData([]);
       return setColumns(await mockMenuColumns(menuCode));
     },
   };
@@ -106,16 +136,15 @@ export const PgStdExcelUpload: React.FC = () => {
 
   return (
     <>
-      <Button
-        btnType="buttonFill"
-        widthSize="large"
-        heightSize="small"
-        fontSize="small"
-        colorType="blue"
-        onClick={() => {}}
-      >
-        업로드 파일 선택하기
-      </Button>
+      <Button.Upload
+        text="업로드 파일 선택하기"
+        beforeUpload={async uploadFile => {
+          const converted = await importXLSXFile(uploadFile, 9);
+
+          setData(converted);
+          return false;
+        }}
+      />
       <Searchbox {...props} />
       <Container>
         {uploadColumns.length === 0 ? (
@@ -127,7 +156,7 @@ export const PgStdExcelUpload: React.FC = () => {
             title="선택 메뉴"
             gridId="menu_id"
             gridMode="update"
-            data={[{ item_code: '01', item_name: '5mm 나사' }]}
+            data={uploadData}
             columns={uploadColumns}
             gridPopupInfo={[
               {
