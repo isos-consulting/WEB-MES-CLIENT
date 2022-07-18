@@ -404,14 +404,6 @@ export const PgPrdOrder = () => {
         filter: 'text',
       },
       {
-        header: '우선순위',
-        name: 'priority',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        filter: 'number',
-      },
-      {
         header: '지시일',
         name: 'reg_date',
         width: ENUM_WIDTH.M,
@@ -425,6 +417,14 @@ export const PgPrdOrder = () => {
         name: 'order_no',
         width: ENUM_WIDTH.M,
         editable: false,
+      },
+      {
+        header: '우선순위',
+        name: 'priority',
+        width: ENUM_WIDTH.M,
+        editable: true,
+        format: 'number',
+        filter: 'number',
       },
       {
         header: '공정UUID',
