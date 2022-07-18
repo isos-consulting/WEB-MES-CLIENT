@@ -70,6 +70,7 @@ export const PgStdExcelUpload: React.FC = () => {
     columns: [],
     data: [],
   });
+  const [menuCode, setMenuCode] = useState<string>('');
   const menuCombobox: ISearchItem = {
     type: 'combo',
     id: 'menu_id',
@@ -77,11 +78,13 @@ export const PgStdExcelUpload: React.FC = () => {
     default: '',
     firstItemType: 'empty',
     widthSize: '160px',
-    onAfterChange: async menuCode =>
+    onAfterChange: async menuCode => {
+      setMenuCode(menuCode);
       setGridProps({
         columns: await gridColumns(menuCode),
         data: [],
-      }),
+      });
+    },
   };
 
   const { props, setSearchItems } = useSearchbox('SEARCH_INPUTBOX', [
@@ -104,8 +107,31 @@ export const PgStdExcelUpload: React.FC = () => {
     });
   }, []);
 
+  const downloadFile = async () => {
+    const blob = await getData(
+      { excel_form_cd: menuCode },
+      '/adm/excel-forms/download',
+    )[0];
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sample.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(blob.toString());
+  };
+
   return (
     <>
+      <Button
+        onClick={() => {
+          downloadFile();
+        }}
+      >
+        다운로드
+      </Button>
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={async uploadFile => {
