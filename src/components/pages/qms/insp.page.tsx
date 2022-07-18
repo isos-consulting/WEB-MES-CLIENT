@@ -295,7 +295,7 @@ export const PgQmsInsp = () => {
         // delete optionSaveParams.insp_no
       } else if (popupType === 'edit') {
         detailData = {
-          updatedRows : cloneDeep(gridRef.current.getInstance().store.data.rawData);
+          updatedRows : cloneDeep(gridRef.current.getInstance().store.data.rawData)
         }
       }
       optionSaveParams.uuid = optionSaveParams.insp_uuid
