@@ -9,6 +9,7 @@ import {
 } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
+import { getData } from '~/functions';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -37,69 +38,38 @@ const importXLSXFile = async (
   return list.map(datas => Object.fromEntries(datas.entries()));
 };
 
-const mockMenuList = async () => {
-  return [
-    {
-      code: '01',
-      text: '품목관리',
-    },
-    {
-      code: '02',
-      text: '발주관리',
-    },
-    {
-      code: '03',
-      text: '공장관리',
-    },
-    {
-      code: '04',
-      text: '사용자관리',
-    },
-  ];
-};
-
-const mockMenuColumns = async (menuCode: string) => {
-  if (menuCode === '01') {
-    return [
-      {
-        header: '품목코드',
-        name: 'item_code',
-        editable: true,
-        requiredField: true,
-      },
-      {
-        header: '품목명',
-        name: 'item_name',
-        editable: true,
-        requiredField: true,
-      },
-    ];
-  } else if (menuCode === '02') {
-    return [
-      {
-        header: '입고창고',
-        name: 'to_store_nm',
-        format: 'popup',
-        requiredField: false,
-        width: 120,
-        editable: true,
-      },
-      {
-        header: '입고위치',
-        name: 'to_location_nm',
-        format: 'popup',
-        requiredField: false,
-        width: 120,
-        editable: true,
-      },
-    ];
+const gridColumns = async (excelFormCode: string) => {
+  if (excelFormCode === '') {
+    return [];
   }
+
+  const columns = await await getData(
+    [{ excel_form_cd: excelFormCode }],
+    'adm/excel-forms',
+  );
+
+  return columns.map(
+    ({
+      excel_form_column_cd,
+      excel_form_column_nm,
+      excel_form_type,
+      column_fg,
+    }) => ({
+      header: excel_form_column_nm,
+      name: excel_form_column_cd,
+      editable: true,
+      format: excel_form_type,
+      requiredField: column_fg,
+    }),
+  );
 };
 
 export const PgStdExcelUpload: React.FC = () => {
-  const [uploadColumns, setColumns] = useState([]);
-  const [uploadData, setData] = useState([]);
-  const menus = mockMenuList();
+  const menus = getData({}, 'adm/excel-form/items');
+  const [uploadGridProps, setGridProps] = useState({
+    columns: [],
+    data: [],
+  });
   const menuCombobox: ISearchItem = {
     type: 'combo',
     id: 'menu_id',
@@ -107,14 +77,11 @@ export const PgStdExcelUpload: React.FC = () => {
     default: '',
     firstItemType: 'empty',
     widthSize: '160px',
-    onAfterChange: async menuCode => {
-      if (menuCode === '') {
-        return setColumns([]);
-      }
-
-      setData([]);
-      return setColumns(await mockMenuColumns(menuCode));
-    },
+    onAfterChange: async menuCode =>
+      setGridProps({
+        columns: await gridColumns(menuCode),
+        data: [],
+      }),
   };
 
   const { props, setSearchItems } = useSearchbox('SEARCH_INPUTBOX', [
@@ -128,7 +95,10 @@ export const PgStdExcelUpload: React.FC = () => {
       setSearchItems([
         {
           ...menuCombobox,
-          options: menu,
+          options: menu.map(({ excel_form_cd, menu_nm }) => ({
+            code: excel_form_cd,
+            text: menu_nm,
+          })),
         },
       ]);
     });
@@ -141,13 +111,16 @@ export const PgStdExcelUpload: React.FC = () => {
         beforeUpload={async uploadFile => {
           const converted = await importXLSXFile(uploadFile, 9);
 
-          setData(converted);
+          setGridProps({
+            columns: uploadGridProps.columns,
+            data: converted,
+          });
           return false;
         }}
       />
       <Searchbox {...props} />
       <Container>
-        {uploadColumns.length === 0 ? (
+        {uploadGridProps.columns.length === 0 ? (
           <div style={{ height: 'Calc(100vh - 217px)', minHeight: '750px' }}>
             메뉴 선택하세요
           </div>
@@ -156,8 +129,8 @@ export const PgStdExcelUpload: React.FC = () => {
             title="선택 메뉴"
             gridId="menu_id"
             gridMode="update"
-            data={uploadData}
-            columns={uploadColumns}
+            data={uploadGridProps.data}
+            columns={uploadGridProps.columns}
             gridPopupInfo={[
               {
                 // 창고팝업
