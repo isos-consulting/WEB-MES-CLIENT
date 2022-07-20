@@ -17,7 +17,6 @@ import ico_pic_plus from './icon/ico_add_circle_blue.png';
 //팝업아이콘
 import ico_popup from './icon/ico_popup_outline_black.png';
 
-
 /* #region 🔶MENU 아이콘 */
 //대시보드
 import ico_dashboard from './navigation/ico_dashboard_outline_white.png';
@@ -58,39 +57,38 @@ import ico_save from './menu/ico_save_outline_blue.png';
 import ico_search from './menu/ico_search_outline_blue.png';
 //#endregion
 
+import ico_lock from './icon/ico_lock.png';
 
 export {
-    img_logo,
-    img_logo2,
-    img_login_logo,
-    img_login,
-    ico_pic_plus,
-    ico_mypage_profile,
-    img_footer_logo,
-
-    ico_back,
-    ico_copy,
-    ico_delete,
-    ico_excel,
-    ico_exit,
-    ico_add,
-    ico_print,
-    ico_reload,
-    ico_save,
-    ico_search,
-
-    ico_dashboard,
-    ico_product,
-    ico_kpi,
-    ico_material,
-    ico_basic,
-    ico_qms,
-    ico_production,
-    ico_equipment,
-    ico_outsourcing,
-    ico_monitoring,
-    ico_store,
-    ico_corporate,
-    
-    ico_popup
+  img_logo,
+  img_logo2,
+  img_login_logo,
+  img_login,
+  ico_pic_plus,
+  ico_mypage_profile,
+  img_footer_logo,
+  ico_back,
+  ico_copy,
+  ico_delete,
+  ico_excel,
+  ico_exit,
+  ico_add,
+  ico_print,
+  ico_reload,
+  ico_save,
+  ico_search,
+  ico_dashboard,
+  ico_product,
+  ico_kpi,
+  ico_material,
+  ico_basic,
+  ico_qms,
+  ico_production,
+  ico_equipment,
+  ico_outsourcing,
+  ico_monitoring,
+  ico_store,
+  ico_corporate,
+  ico_popup,
+  ico_lock,
 };
