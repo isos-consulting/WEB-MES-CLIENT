@@ -65,7 +65,8 @@
     "start": "rimraf dist && parcel ./public/index.html --port 3000 --open",
     "build": "rimraf dist && parcel build ./public/index.html -d build --no-source-maps",
     "test": "jest --config config/jest.config.js",
-    "test:watch": "jest --config config/jest.config.js --watch"
+    "test:watch": "jest --config config/jest.config.js --watch",
+    "test:coverage": "jest --config config/jest.config.js --coverage"
   },
   "browser": {
     "dom-storage": false
