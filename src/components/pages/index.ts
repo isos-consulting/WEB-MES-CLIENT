@@ -17,6 +17,7 @@ export * from './adm/store-type.page';
 export * from './adm/file-mgmt-type.page';
 export * from './adm/file-mgmt-detail-type.page';
 export * from './adm/company-opt.page';
+export * from './adm/excel-upload-type.page';
 
 export * from './aut/menu.page';
 export * from './aut/permission.page';
