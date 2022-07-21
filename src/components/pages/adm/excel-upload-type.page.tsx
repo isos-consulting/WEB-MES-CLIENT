@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Container, Datagrid } from '~/components/UI';
 import styled from 'styled-components';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 const FlexboxWrapper = styled.div`
   display: flex;
@@ -50,12 +51,12 @@ export const PgAdmExcelUploadType: React.FC = () => {
       <Section>
         <Section.Flexbox justifyContent="space-between">
           <Flexbox.Col>
-            <Button>조회</Button>
+            <Button>{WORD.SEARCH}</Button>
           </Flexbox.Col>
           <Flexbox.Col>
-            <Button>삭제</Button>
-            <Button>수정</Button>
-            <Button>신규항목추가</Button>
+            <Button>{WORD.DELETE}</Button>
+            <Button>{WORD.UPDATE}</Button>
+            <Button>{SENTENCE.ADD_RECORD}</Button>
           </Flexbox.Col>
         </Section.Flexbox>
       </Section>
