@@ -51,12 +51,49 @@ export const PgAdmExcelUploadType: React.FC = () => {
       <Section>
         <Section.Flexbox justifyContent="space-between">
           <Flexbox.Col>
-            <Button>{WORD.SEARCH}</Button>
+            <Button
+              btnType="buttonFill"
+              widthSize="medium"
+              heightSize="small"
+              fontSize="small"
+              ImageType="search"
+              colorType="blue"
+            >
+              {WORD.SEARCH}
+            </Button>
           </Flexbox.Col>
           <Flexbox.Col>
-            <Button>{WORD.DELETE}</Button>
-            <Button>{WORD.UPDATE}</Button>
-            <Button>{SENTENCE.ADD_RECORD}</Button>
+            <Button
+              btnType="buttonFill"
+              widthSize="medium"
+              heightSize="small"
+              fontSize="small"
+              ImageType="delete"
+              colorType="blue"
+            >
+              {WORD.DELETE}
+            </Button>
+            <Button
+              btnType="buttonFill"
+              widthSize="medium"
+              heightSize="small"
+              fontSize="small"
+              ImageType="edit"
+              colorType="blue"
+            >
+              {WORD.EDIT}
+            </Button>
+            <Button
+              btnType="buttonFill"
+              widthSize="large"
+              heightSize="small"
+              fontSize="small"
+              ImageType="add"
+              colorType="blue"
+              disabled={true}
+            >
+              {SENTENCE.ADD_RECORD}
+            </Button>
           </Flexbox.Col>
         </Section.Flexbox>
       </Section>
