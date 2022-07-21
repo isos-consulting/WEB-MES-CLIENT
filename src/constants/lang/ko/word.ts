@@ -6,7 +6,7 @@ export enum WORD {
   RESET = '초기화',
   SEARCH = '조회',
   DELETE = '삭제',
-  UPDATE = '수정',
+  EDIT = '수정',
   ADD = '추가',
   STAR = '★',
 }
