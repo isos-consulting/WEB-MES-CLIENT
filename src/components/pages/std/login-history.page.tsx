@@ -1,37 +1,14 @@
 import React, { useState } from 'react';
 import { Container, Datagrid, Searchbox } from '~/components/UI';
 import { getData, getToday } from '~/functions';
+import UserLoginHistory, {
+  LoginHistoryApiResponse,
+} from '~/models/user/login-history';
 
 interface LoginHistoryRequestQueryString {
   userId: string;
   start_date: string;
   end_date: string;
-}
-
-interface LoginHistoryApiResponse {
-  user_id: string;
-  user_nm: string;
-  logged_at: string;
-}
-
-class UserLoginHistory {
-  private readonly userId: string;
-  private readonly userName: string;
-  private readonly accessDateTime: string;
-
-  constructor({ user_id, user_nm, logged_at }: LoginHistoryApiResponse) {
-    this.userId = user_id;
-    this.userName = user_nm;
-    this.accessDateTime = logged_at;
-  }
-
-  info(): LoginHistoryApiResponse {
-    return {
-      user_id: this.userId,
-      user_nm: this.userName,
-      logged_at: this.accessDateTime,
-    };
-  }
 }
 
 interface defaultItem {
@@ -52,7 +29,7 @@ const fetchLoginHistory = async ({
   end_date,
 }: LoginHistoryRequestQueryString): Promise<UserLoginHistory[]> => {
   const fetchHistoryStore = await getData<LoginHistoryApiResponse[]>(
-    [{ userId: userId, start_date: start_date, end_date: end_date }],
+    [{ userId, start_date, end_date }],
     '/adm/login-log',
   );
 
