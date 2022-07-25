@@ -1,40 +1,8 @@
 import React from 'react';
-import { Button, Container, Datagrid } from '~/components/UI';
-import styled from 'styled-components';
-import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { Container, Datagrid } from '~/components/UI';
+import { WORD } from '~/constants/lang/ko';
 
-const FlexboxWrapper = styled.div`
-  display: flex;
-  justify-content: ${({ justifyContent }) => justifyContent};
-`;
-
-interface FlexboxProps {
-  justifyContent?: string;
-  children?: React.ReactNode;
-}
-
-interface ColProps {
-  children?: React.ReactNode;
-}
-
-const Flexbox: React.FC<FlexboxProps> & {
-  Col: typeof Col;
-} = ({ justifyContent, children }): FlexboxProps => {
-  return (
-    <FlexboxWrapper justifyContent={justifyContent}>{children}</FlexboxWrapper>
-  );
-};
-
-const Col: React.FC = ({ children }): ColProps => {
-  return <div>{children}</div>;
-};
-
-const Section: React.FC & { Flexbox: typeof Flexbox } = props => {
-  return <section>{props.children}</section>;
-};
-
-Flexbox.Col = Col;
-Section.Flexbox = Flexbox;
+import Header, { FlexBox, Button } from './excel-upload-type/components/Header';
 
 const columns = [
   { header: '메뉴명', name: 'menu_nm' },
@@ -48,55 +16,22 @@ const columns = [
 export const PgAdmExcelUploadType: React.FC = () => {
   return (
     <>
-      <Section>
-        <Section.Flexbox justifyContent="space-between">
-          <Flexbox.Col>
+      <Header>
+        <Header.FlexBox justifyContent="space-between">
+          <FlexBox.Col>
             <Button
+              primary="true"
               btnType="buttonFill"
               widthSize="medium"
               heightSize="small"
               fontSize="small"
               ImageType="search"
-              colorType="blue"
             >
               {WORD.SEARCH}
             </Button>
-          </Flexbox.Col>
-          <Flexbox.Col>
-            <Button
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="delete"
-              colorType="blue"
-            >
-              {WORD.DELETE}
-            </Button>
-            <Button
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="edit"
-              colorType="blue"
-            >
-              {WORD.EDIT}
-            </Button>
-            <Button
-              btnType="buttonFill"
-              widthSize="large"
-              heightSize="small"
-              fontSize="small"
-              ImageType="add"
-              colorType="blue"
-              disabled={true}
-            >
-              {SENTENCE.ADD_RECORD}
-            </Button>
-          </Flexbox.Col>
-        </Section.Flexbox>
-      </Section>
+          </FlexBox.Col>
+        </Header.FlexBox>
+      </Header>
       <Container>
         <Datagrid columns={columns} />
       </Container>
