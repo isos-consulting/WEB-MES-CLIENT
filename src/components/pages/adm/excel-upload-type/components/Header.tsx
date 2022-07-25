@@ -5,10 +5,7 @@ import { Button } from '~/components/UI';
 
 interface FlexBoxProps {
   justifyContent: string;
-  children: React.ReactNode;
-}
-
-interface ColumnProps {
+  gap: string;
   children: React.ReactNode;
 }
 
@@ -23,29 +20,23 @@ const ButtonWrapper = styled(Button)`
   }}
 `;
 
-const Column: React.FC<ColumnProps> = ({ children }): ColumnProps => {
-  return <div>{children}</div>;
-};
-
 const FlexBoxWrapper = styled.div`
   display: flex;
   justify-content: ${({ justifyContent }) => justifyContent};
+  gap: ${({ gap }) => gap};
 `;
 
-const FlexBox: React.FC<FlexBoxProps> & { Col: typeof Column } = ({
-  justifyContent,
+const FlexBox: React.FC<FlexBoxProps> = ({
   children,
-}) => {
-  return (
-    <FlexBoxWrapper justifyContent={justifyContent}>{children}</FlexBoxWrapper>
-  );
+  ...flexBoxProps
+}: FlexBoxProps) => {
+  return <FlexBoxWrapper {...flexBoxProps}>{children}</FlexBoxWrapper>;
 };
 
 const Header: React.FC & { FlexBox: typeof FlexBox } = props => {
   return <header>{props.children}</header>;
 };
 
-FlexBox.Col = Column;
 Header.FlexBox = FlexBox;
 
 export default Header;
