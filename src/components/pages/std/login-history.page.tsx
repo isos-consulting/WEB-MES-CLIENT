@@ -6,7 +6,8 @@ import UserLoginHistory, {
 } from '~/models/user/login-history';
 
 interface LoginHistoryRequestQueryString {
-  userId: string;
+  user_id: string;
+  user_nm: string;
   start_date: string;
   end_date: string;
 }
@@ -24,12 +25,13 @@ interface dateReangeItem extends defaultItem {
 }
 
 const fetchLoginHistory = async ({
-  userId,
+  user_id,
+  user_nm,
   start_date,
   end_date,
 }: LoginHistoryRequestQueryString): Promise<UserLoginHistory[]> => {
   const fetchHistoryStore = await getData<LoginHistoryApiResponse[]>(
-    [{ userId, start_date, end_date }],
+    { user_id, start_date, end_date, user_nm },
     '/adm/login-log',
   );
 
@@ -50,8 +52,14 @@ const store: {
       defaults: [getToday(-7), getToday()],
     },
     {
-      id: 'userId',
+      id: 'user_id',
       label: '사용자ID',
+      type: 'text',
+      default: '',
+    },
+    {
+      id: 'user_nm',
+      label: '사용자명',
       type: 'text',
       default: '',
     },
