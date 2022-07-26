@@ -111,12 +111,22 @@ export const PgStdExcelUpload: React.FC = () => {
     const blob = await getData(
       { excel_form_cd: menuCode },
       '/adm/excel-forms/download',
-    )[0];
+      'blob',
+    );
 
-    const url = URL.createObjectURL(blob);
+    const contentDisposition = blob.headers['content-disposition']; // 파일 이름
+    let fileName = 'unknown';
+    if (contentDisposition) {
+      const [fileNameMatch] = contentDisposition
+        .split(';')
+        .filter(str => str.includes('filename'));
+      if (fileNameMatch) [, fileName] = fileNameMatch.split('=');
+    }
+
+    const url = URL.createObjectURL(blob.data);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `sample.xlsx`;
+    a.download = decodeURIComponent(fileName);
     document.body.appendChild(a);
     a.click();
     a.remove();
