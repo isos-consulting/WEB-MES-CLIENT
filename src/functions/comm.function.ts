@@ -122,6 +122,7 @@ export async function getData<T = any[]>(
     | 'value'
     | 'message'
     | 'success'
+    | 'blob'
     | 'report'
     | 'original' = 'raws',
   headersObj?: object,
@@ -153,6 +154,7 @@ export async function getData<T = any[]>(
       baseURL: _baseUrl,
       url: uriPath,
       params: { ...params, factory_uuid: getUserFactoryUuid() },
+      responseType: returnType === 'blob' ? 'blob' : 'json',
       headers: {
         authorization: getUserAccessToken(),
         ...getTenantInfo(),
@@ -202,6 +204,7 @@ export async function getData<T = any[]>(
         }조회 할 데이터가 없습니다.`,
       );
     }
+
     switch (returnType) {
       case 'datas':
         datas = datas?.data?.datas;
@@ -230,6 +233,9 @@ export async function getData<T = any[]>(
 
       case 'report':
         datas = datas?.data?.datas?.raws[0]; // {datas. subTotals}
+        break;
+
+      case 'blob':
         break;
 
       case 'original':
