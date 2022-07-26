@@ -9,4 +9,6 @@ export enum WORD {
   EDIT = '수정',
   ADD = '추가',
   STAR = '★',
+  SAVE = '저장',
+  CANCEL = '취소',
 }

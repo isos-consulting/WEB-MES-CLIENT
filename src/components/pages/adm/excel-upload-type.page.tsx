@@ -24,15 +24,17 @@ const columns = [
 ];
 
 export const PgAdmExcelUploadType: React.FC = () => {
+  const title = getPageName();
+  const basicModalContext = new BasicModalContext({
+    title: title,
+    columns: columns,
+    visible: false,
+    gridMode: 'view',
+  });
+
   const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
     ExcelUploadType[]
   >([]);
-  const basicModalContext = new BasicModalContext({
-    title: getPageName(),
-    surfix: '',
-    columns: columns,
-    visible: false,
-  });
   const [modalStore, setModalStore] =
     useState<IGridPopupProps>(basicModalContext);
 
@@ -73,7 +75,12 @@ export const PgAdmExcelUploadType: React.FC = () => {
               fontSize="small"
               ImageType="edit"
               onClick={() => {
-                setModalStore(modalStore.edit());
+                setModalStore(
+                  BasicModalContext.edit({
+                    title,
+                    columns: columns,
+                  }),
+                );
               }}
             >
               {WORD.EDIT}
@@ -86,7 +93,12 @@ export const PgAdmExcelUploadType: React.FC = () => {
               fontSize="small"
               ImageType="add"
               onClick={() => {
-                setModalStore(modalStore.add());
+                setModalStore(
+                  BasicModalContext.add({
+                    title,
+                    columns: columns,
+                  }),
+                );
               }}
             >
               {SENTENCE.ADD_RECORD}

@@ -1,16 +1,14 @@
-import { IGridColumn, IGridPopupProps } from '~/components/UI';
+import { IGridColumn, IGridPopupProps, TGridMode } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 interface BasicModalContextProps {
   title: string;
-  surfix: string;
   columns: IGridColumn[];
   visible: boolean;
+  gridMode: TGridMode;
 }
 
-interface BasicGridPopupProps extends IGridPopupProps {
-  readonly surfix: string;
-}
+interface BasicGridPopupProps extends IGridPopupProps {}
 
 class BasicModalContext implements BasicGridPopupProps {
   readonly popupId: string;
@@ -22,23 +20,20 @@ class BasicModalContext implements BasicGridPopupProps {
   readonly visible: boolean;
   readonly okText: string;
   readonly cancelText: string;
-  readonly surfix: string;
+  readonly gridMode: TGridMode;
 
-  constructor({ title, surfix, columns, visible }: BasicModalContextProps) {
+  constructor({ title, columns, visible, gridMode }: BasicModalContextProps) {
     const uniqueKey = (Math.random() * 100).toString();
     this.popupId = `${title}-popup-${uniqueKey}`;
     this.gridId = `${title}-grid-${uniqueKey}`;
     this.saveUriPath = '';
     this.columns = columns;
     this.saveType = 'basic';
-    this.title =
-      surfix === ''
-        ? title.trim()
-        : `${title.split('-')[0].trim()} - ${surfix}`;
-    this.surfix = surfix;
+    this.title = title;
     this.visible = visible;
     this.okText = SENTENCE.SAVE_DATA;
     this.cancelText = WORD.CANCEL;
+    this.gridMode = gridMode;
   }
 
   info(): IGridPopupProps {
@@ -52,24 +47,25 @@ class BasicModalContext implements BasicGridPopupProps {
       okText: this.okText,
       cancelText: this.cancelText,
       visible: this.visible,
+      gridMode: this.gridMode,
     };
   }
 
-  add(): BasicModalContext {
+  static add({ title, columns }): BasicModalContext {
     return new BasicModalContext({
-      title: this.title,
-      surfix: SENTENCE.ADD_RECORD,
+      title: `${title} - ${SENTENCE.ADD_RECORD}`,
+      columns: columns,
       visible: true,
-      columns: this.columns,
+      gridMode: 'create',
     });
   }
 
-  edit(): BasicModalContext {
+  static edit({ title, columns }): BasicModalContext {
     return new BasicModalContext({
-      title: this.title,
-      surfix: WORD.EDIT,
+      title: `${title} - ${WORD.EDIT}`,
+      columns: columns,
       visible: true,
-      columns: this.columns,
+      gridMode: 'update',
     });
   }
 }
