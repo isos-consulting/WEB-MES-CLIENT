@@ -1,16 +1,27 @@
 import { IGridColumn, IGridPopupProps, TGridMode } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 
-interface BasicModalContextProps {
+interface BasicModalContextProps<T> {
   title: string;
   columns: IGridColumn[];
   visible: boolean;
   gridMode: TGridMode;
+  data: T[];
+}
+
+interface AddBasicModalContextProps<T> {
+  title: string;
+  columns: IGridColumn[];
+}
+interface EditBasicModalContextProps<T> {
+  title: string;
+  columns: IGridColumn[];
+  data: T[];
 }
 
 interface BasicGridPopupProps extends IGridPopupProps {}
 
-class BasicModalContext implements BasicGridPopupProps {
+class BasicModalContext<T> implements BasicGridPopupProps {
   readonly popupId: string;
   readonly saveUriPath: string;
   readonly columns: IGridColumn[];
@@ -21,8 +32,15 @@ class BasicModalContext implements BasicGridPopupProps {
   readonly okText: string;
   readonly cancelText: string;
   readonly gridMode: TGridMode;
+  readonly data: T[];
 
-  constructor({ title, columns, visible, gridMode }: BasicModalContextProps) {
+  constructor({
+    title,
+    columns,
+    visible,
+    gridMode,
+    data,
+  }: BasicModalContextProps<T>) {
     const uniqueKey = (Math.random() * 100).toString();
     this.popupId = `${title}-popup-${uniqueKey}`;
     this.gridId = `${title}-grid-${uniqueKey}`;
@@ -34,6 +52,7 @@ class BasicModalContext implements BasicGridPopupProps {
     this.okText = SENTENCE.SAVE_DATA;
     this.cancelText = WORD.CANCEL;
     this.gridMode = gridMode;
+    this.data = data;
   }
 
   info(): IGridPopupProps {
@@ -48,24 +67,34 @@ class BasicModalContext implements BasicGridPopupProps {
       cancelText: this.cancelText,
       visible: this.visible,
       gridMode: this.gridMode,
+      data: this.data,
     };
   }
 
-  static add({ title, columns }): BasicModalContext {
+  static add<T>({
+    title,
+    columns,
+  }: AddBasicModalContextProps<T>): BasicModalContext<T> {
     return new BasicModalContext({
       title: `${title} - ${SENTENCE.ADD_RECORD}`,
       columns: columns,
       visible: true,
       gridMode: 'create',
+      data: [],
     });
   }
 
-  static edit({ title, columns }): BasicModalContext {
+  static edit<T>({
+    title,
+    columns,
+    data,
+  }: EditBasicModalContextProps<T>): BasicModalContext<T> {
     return new BasicModalContext({
       title: `${title} - ${WORD.EDIT}`,
       columns: columns,
       visible: true,
       gridMode: 'update',
+      data: data,
     });
   }
 }

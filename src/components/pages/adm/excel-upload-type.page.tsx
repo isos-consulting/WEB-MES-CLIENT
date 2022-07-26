@@ -15,26 +15,28 @@ import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type
 import BasicModalContext from './excel-upload-type/hooks/modal';
 
 const columns = [
-  { header: '메뉴명', name: 'menuName' },
-  { header: '컬럼코드', name: 'formColumnCode' },
-  { header: '컬럼명', name: 'formColumnName' },
-  { header: '컬럼유형', name: 'formType' },
-  { header: '순서', name: 'order' },
-  { header: '사용여부', name: 'required' },
+  { header: '메뉴명', name: 'menuName', editable: true },
+  { header: '컬럼코드', name: 'formColumnCode', editable: true },
+  { header: '컬럼명', name: 'formColumnName', editable: true },
+  { header: '컬럼유형', name: 'formType', editable: true },
+  { header: '순서', name: 'order', editable: true },
+  { header: '사용여부', name: 'required', editable: true },
 ];
 
 export const PgAdmExcelUploadType: React.FC = () => {
   const title = getPageName();
-  const basicModalContext = new BasicModalContext({
-    title: title,
-    columns: columns,
-    visible: false,
-    gridMode: 'view',
-  });
 
   const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
     ExcelUploadType[]
   >([]);
+
+  const basicModalContext = new BasicModalContext<ExcelUploadType>({
+    title: title,
+    columns: columns,
+    visible: false,
+    gridMode: 'view',
+    data: excelUploadTypeListData,
+  });
   const [modalStore, setModalStore] =
     useState<IGridPopupProps>(basicModalContext);
 
@@ -76,9 +78,10 @@ export const PgAdmExcelUploadType: React.FC = () => {
               ImageType="edit"
               onClick={() => {
                 setModalStore(
-                  BasicModalContext.edit({
+                  BasicModalContext.edit<ExcelUploadType>({
                     title,
                     columns: columns,
+                    data: [...excelUploadTypeListData],
                   }),
                 );
               }}
@@ -94,7 +97,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
               ImageType="add"
               onClick={() => {
                 setModalStore(
-                  BasicModalContext.add({
+                  BasicModalContext.add<ExcelUploadType>({
                     title,
                     columns: columns,
                   }),
