@@ -1,10 +1,18 @@
+// import { Modal } from 'antd';
 import React, { useState } from 'react';
-import { Container, Datagrid } from '~/components/UI';
+import {
+  Container,
+  Datagrid,
+  GridPopup,
+  IGridPopupProps,
+} from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from './excel-upload-type/components/Header';
 import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type';
+import BasicModalContext from './excel-upload-type/hooks/modal';
 
 const columns = [
   { header: '메뉴명', name: 'menuName' },
@@ -19,6 +27,14 @@ export const PgAdmExcelUploadType: React.FC = () => {
   const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
     ExcelUploadType[]
   >([]);
+  const basicModalContext = new BasicModalContext({
+    title: getPageName(),
+    surfix: '',
+    columns: columns,
+    visible: false,
+  });
+  const [modalStore, setModalStore] =
+    useState<IGridPopupProps>(basicModalContext);
 
   return (
     <>
@@ -56,6 +72,9 @@ export const PgAdmExcelUploadType: React.FC = () => {
               heightSize="small"
               fontSize="small"
               ImageType="edit"
+              onClick={() => {
+                setModalStore(modalStore.edit());
+              }}
             >
               {WORD.EDIT}
             </Button>
@@ -66,6 +85,9 @@ export const PgAdmExcelUploadType: React.FC = () => {
               heightSize="small"
               fontSize="small"
               ImageType="add"
+              onClick={() => {
+                setModalStore(modalStore.add());
+              }}
             >
               {SENTENCE.ADD_RECORD}
             </Button>
@@ -74,6 +96,14 @@ export const PgAdmExcelUploadType: React.FC = () => {
       </Header>
       <Container>
         <Datagrid data={excelUploadTypeListData} columns={columns} />
+        {modalStore.visible === true ? (
+          <GridPopup
+            {...modalStore.info()}
+            onCancel={() => {
+              setModalStore(basicModalContext);
+            }}
+          />
+        ) : null}
       </Container>
     </>
   );
