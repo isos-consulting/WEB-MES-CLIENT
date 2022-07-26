@@ -11,6 +11,11 @@ import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
 import { getData } from '~/functions';
 
+interface ExcelDownloadApiResponse {
+  data: Blob;
+  headers: { [key: string]: string };
+}
+
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
   start: number,
@@ -108,13 +113,13 @@ export const PgStdExcelUpload: React.FC = () => {
   }, []);
 
   const downloadFile = async () => {
-    const blob = await getData(
+    const blob: ExcelDownloadApiResponse = await getData(
       { excel_form_cd: menuCode },
       '/adm/excel-forms/download',
       'blob',
     );
 
-    const contentDisposition = blob.headers['content-disposition']; // 파일 이름
+    const contentDisposition = blob.headers['content-disposition'];
     let fileName = 'unknown';
     if (contentDisposition) {
       const [fileNameMatch] = contentDisposition
