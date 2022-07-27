@@ -4,9 +4,12 @@ import {
   Container,
   Datagrid,
   GridPopup,
+  IGridColumn,
   IGridPopupProps,
 } from '~/components/UI';
+import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import ModalStore from '~/constants/modals';
 import { getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
@@ -14,13 +17,63 @@ import Header, { Button } from './excel-upload-type/components/Header';
 import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type';
 import BasicModalContext from './excel-upload-type/hooks/modal';
 
-const columns = [
-  { header: '메뉴명', name: 'menuName', editable: true },
-  { header: '컬럼코드', name: 'formColumnCode', editable: true },
-  { header: '컬럼명', name: 'formColumnName', editable: true },
-  { header: '컬럼유형', name: 'formType', editable: true },
-  { header: '순서', name: 'order', editable: true },
-  { header: '사용여부', name: 'required', editable: true },
+const columns: IGridColumn[] = [
+  {
+    header: '메뉴명',
+    name: 'menuName',
+    format: 'popup',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '양식코드',
+    name: 'formCode',
+    format: 'text',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '양식명',
+    name: 'formName',
+    format: 'text',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '컬럼코드',
+    name: 'formColumnCode',
+    format: 'text',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '컬럼명',
+    name: 'formColumnName',
+    format: 'text',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '컬럼유형',
+    name: 'formType',
+    format: 'combo',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '순서',
+    name: 'order',
+    format: 'number',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '사용여부',
+    name: 'required',
+    format: 'check',
+    editable: true,
+    requiredField: true,
+  },
 ];
 
 export const PgAdmExcelUploadType: React.FC = () => {
@@ -36,6 +89,8 @@ export const PgAdmExcelUploadType: React.FC = () => {
     visible: false,
     gridMode: 'view',
     data: excelUploadTypeListData,
+    gridPopupInfo: [ModalStore.menu],
+    gridComboInfo: [ComboStore.formType],
   });
   const [modalStore, setModalStore] =
     useState<IGridPopupProps>(basicModalContext);
@@ -82,6 +137,8 @@ export const PgAdmExcelUploadType: React.FC = () => {
                     title,
                     columns: columns,
                     data: [...excelUploadTypeListData],
+                    gridPopupInfo: [ModalStore.menu],
+                    gridComboInfo: [ComboStore.formType],
                   }),
                 );
               }}
@@ -100,6 +157,8 @@ export const PgAdmExcelUploadType: React.FC = () => {
                   BasicModalContext.add<ExcelUploadType>({
                     title,
                     columns: columns,
+                    gridPopupInfo: [ModalStore.menu],
+                    gridComboInfo: [ComboStore.formType],
                   }),
                 );
               }}
