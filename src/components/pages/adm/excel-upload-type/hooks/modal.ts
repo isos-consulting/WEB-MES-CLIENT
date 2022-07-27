@@ -1,4 +1,10 @@
-import { IGridColumn, IGridPopupProps, TGridMode } from '~/components/UI';
+import {
+  IGridColumn,
+  IGridPopupProps,
+  TGridComboInfos,
+  TGridMode,
+  TGridPopupInfos,
+} from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 interface BasicModalContextProps<T> {
@@ -7,16 +13,22 @@ interface BasicModalContextProps<T> {
   visible: boolean;
   gridMode: TGridMode;
   data: T[];
+  gridPopupInfo: TGridPopupInfos;
+  gridComboInfo: TGridComboInfos;
 }
 
 interface AddBasicModalContextProps<T> {
   title: string;
   columns: IGridColumn[];
+  gridPopupInfo: TGridPopupInfos;
+  gridComboInfo: TGridComboInfos;
 }
 interface EditBasicModalContextProps<T> {
   title: string;
   columns: IGridColumn[];
   data: T[];
+  gridPopupInfo: TGridPopupInfos;
+  gridComboInfo: TGridComboInfos;
 }
 
 interface BasicGridPopupProps extends IGridPopupProps {}
@@ -33,6 +45,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
   readonly cancelText: string;
   readonly gridMode: TGridMode;
   readonly data: T[];
+  readonly gridPopupInfo: TGridPopupInfos;
+  readonly gridComboInfo: TGridComboInfos;
 
   constructor({
     title,
@@ -40,6 +54,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
     visible,
     gridMode,
     data,
+    gridPopupInfo,
+    gridComboInfo,
   }: BasicModalContextProps<T>) {
     const uniqueKey = (Math.random() * 100).toString();
     this.popupId = `${title}-popup-${uniqueKey}`;
@@ -53,6 +69,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
     this.cancelText = WORD.CANCEL;
     this.gridMode = gridMode;
     this.data = data;
+    this.gridPopupInfo = gridPopupInfo;
+    this.gridComboInfo = gridComboInfo;
   }
 
   info(): IGridPopupProps {
@@ -68,12 +86,16 @@ class BasicModalContext<T> implements BasicGridPopupProps {
       visible: this.visible,
       gridMode: this.gridMode,
       data: this.data,
+      gridPopupInfo: this.gridPopupInfo,
+      gridComboInfo: this.gridComboInfo,
     };
   }
 
   static add<T>({
     title,
     columns,
+    gridPopupInfo,
+    gridComboInfo,
   }: AddBasicModalContextProps<T>): BasicModalContext<T> {
     return new BasicModalContext({
       title: `${title} - ${SENTENCE.ADD_RECORD}`,
@@ -81,6 +103,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
       visible: true,
       gridMode: 'create',
       data: [],
+      gridPopupInfo: gridPopupInfo,
+      gridComboInfo: gridComboInfo,
     });
   }
 
@@ -88,6 +112,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
     title,
     columns,
     data,
+    gridPopupInfo,
+    gridComboInfo,
   }: EditBasicModalContextProps<T>): BasicModalContext<T> {
     return new BasicModalContext({
       title: `${title} - ${WORD.EDIT}`,
@@ -95,6 +121,8 @@ class BasicModalContext<T> implements BasicGridPopupProps {
       visible: true,
       gridMode: 'update',
       data: data,
+      gridPopupInfo: gridPopupInfo,
+      gridComboInfo: gridComboInfo,
     });
   }
 }
