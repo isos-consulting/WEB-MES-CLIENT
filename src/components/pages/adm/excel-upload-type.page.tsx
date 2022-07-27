@@ -1,4 +1,3 @@
-// import { Modal } from 'antd';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import React, { useState } from 'react';
@@ -89,6 +88,30 @@ const columns: IGridColumn[] = [
 export const PgAdmExcelUploadType: React.FC = () => {
   const title = getPageName();
 
+  const createExcelUploadType = (
+    excelUploadTypeGridRef: GridInstanceReference<Grid>,
+  ) => {
+    const createdExcelUploadTypeList = excelUploadTypeGridRef.current
+      .getInstance()
+      .getModifiedRows()
+      .createdRows.map(createdRow =>
+        ExcelUploadType.instance(
+          createdRow.valueOf() as ExcelUploadType,
+        ).info(),
+      );
+
+    executeData(createdExcelUploadTypeList, 'adm/excel-forms', 'post').then(
+      ({ success }) => {
+        return success === true
+          ? (() => {
+              setModalContextStore(basicModalContext);
+              message.info(SENTENCE.SAVE_COMPLETE);
+            })()
+          : null;
+      },
+    );
+  };
+
   const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
     ExcelUploadType[]
   >([]);
@@ -101,6 +124,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
     data: excelUploadTypeListData,
     gridPopupInfo: [ModalStore.autMenu],
     gridComboInfo: [ComboStore.formType],
+    onOk: () => {},
   });
   const [modalContextStore, setModalContextStore] =
     useState<IGridPopupProps>(basicModalContext);
@@ -149,6 +173,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
                     data: [...excelUploadTypeListData],
                     gridPopupInfo: [ModalStore.autMenu],
                     gridComboInfo: [ComboStore.formType],
+                    onOk: () => {},
                   }),
                 );
               }}
@@ -169,6 +194,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
                     columns: columns,
                     gridPopupInfo: [ModalStore.autMenu],
                     gridComboInfo: [ComboStore.formType],
+                    onOk: createExcelUploadType,
                   }),
                 );
               }}
@@ -183,25 +209,6 @@ export const PgAdmExcelUploadType: React.FC = () => {
         {modalContextStore.visible === true ? (
           <GridPopup
             {...modalContextStore.info()}
-            onOk={(excelUploadTypeGridRef: GridInstanceReference<Grid>) => {
-              const createdExcelUploadTypeList = excelUploadTypeGridRef.current
-                .getInstance()
-                .getModifiedRows()
-                .createdRows.map(createdRow =>
-                  ExcelUploadType.instance(
-                    createdRow.valueOf() as ExcelUploadType,
-                  ).info(),
-                );
-
-              executeData(
-                createdExcelUploadTypeList,
-                'adm/excel-forms',
-                'post',
-              ).then(({ success }) => {
-                setModalContextStore(basicModalContext);
-                message.info(SENTENCE.SAVE_COMPLETE);
-              });
-            }}
             onCancel={() => {
               setModalContextStore(basicModalContext);
             }}
