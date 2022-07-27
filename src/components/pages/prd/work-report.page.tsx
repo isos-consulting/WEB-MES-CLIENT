@@ -119,6 +119,13 @@ export const PgPrdWorkReport = () => {
             filter: 'text',
           },
           {
+            header: '지시일',
+            width: ENUM_WIDTH.M,
+            name: 'order_date',
+            filter: 'date',
+            format: 'date',
+          },
+          {
             header: '실적일',
             width: ENUM_WIDTH.M,
             name: 'reg_date',
@@ -314,6 +321,13 @@ export const PgPrdWorkReport = () => {
             filter: 'text',
           },
           {
+            header: '지시일',
+            width: ENUM_WIDTH.M,
+            name: 'order_date',
+            filter: 'date',
+            format: 'date',
+          },
+          {
             header: '실적일',
             width: ENUM_WIDTH.M,
             name: 'reg_date',
@@ -411,6 +425,13 @@ export const PgPrdWorkReport = () => {
       case 'none':
       default:
         _columns = [
+          {
+            header: '지시일자',
+            width: ENUM_WIDTH.M,
+            name: 'order_date',
+            filter: 'date',
+            format: 'date',
+          },
           {
             header: '실적일자',
             width: ENUM_WIDTH.M,
