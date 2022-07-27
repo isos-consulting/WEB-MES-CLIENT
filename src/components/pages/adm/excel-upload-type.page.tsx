@@ -1,8 +1,10 @@
 // import { Modal } from 'antd';
+import Grid from '@toast-ui/react-grid';
 import React, { useState } from 'react';
 import {
   Container,
   Datagrid,
+  GridInstanceReference,
   GridPopup,
   IGridColumn,
   IGridPopupProps,
@@ -173,6 +175,21 @@ export const PgAdmExcelUploadType: React.FC = () => {
         {modalStore.visible === true ? (
           <GridPopup
             {...modalStore.info()}
+            onOk={(excelUploadTypeGridRef: GridInstanceReference<Grid>) => {
+              try {
+                const createdExcelUploadTypeList =
+                  excelUploadTypeGridRef.current
+                    .getInstance()
+                    .getModifiedRows()
+                    .createdRows.map(createdRow =>
+                      ExcelUploadType.instance(
+                        createdRow.valueOf() as ExcelUploadType,
+                      ),
+                    );
+              } catch (error) {
+                console.log(error);
+              }
+            }}
             onCancel={() => {
               setModalStore(basicModalContext);
             }}

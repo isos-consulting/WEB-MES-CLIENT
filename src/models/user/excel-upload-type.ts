@@ -27,8 +27,8 @@ class ExcelUploadType {
   private readonly required: boolean;
   private readonly order: number;
   private readonly createdAt: string;
-  private readonly updatedAt: string;
   private readonly createdBy: string;
+  private readonly updatedAt: string;
   private readonly updatedBy: string;
 
   constructor({
@@ -61,6 +61,25 @@ class ExcelUploadType {
     this.updatedAt = updated_at;
     this.createdBy = created_nm;
     this.updatedBy = updated_nm;
+  }
+
+  static instance(excelUploadType: ExcelUploadType): ExcelUploadType {
+    return new ExcelUploadType({
+      uuid: excelUploadType.uuid,
+      menu_uuid: excelUploadType.menuUuid,
+      menu_nm: excelUploadType.menuName,
+      excel_form_cd: excelUploadType.formCode,
+      excel_form_nm: excelUploadType.formName,
+      excel_form_column_cd: excelUploadType.formColumnCode,
+      excel_form_column_nm: excelUploadType.formColumnName,
+      excel_form_type: excelUploadType.formType,
+      column_fg: excelUploadType.required,
+      sortby: excelUploadType.order,
+      created_at: excelUploadType.createdAt,
+      created_nm: excelUploadType.createdBy,
+      updated_at: excelUploadType.updatedAt,
+      updated_nm: excelUploadType.updatedBy,
+    });
   }
 
   info(): ExcelUploadTypeProps {
