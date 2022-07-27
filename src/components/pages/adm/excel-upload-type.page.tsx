@@ -83,7 +83,6 @@ const columns: IGridColumn[] = [
     name: 'required',
     format: 'check',
     editable: true,
-    requiredField: true,
   },
 ];
 
@@ -185,27 +184,23 @@ export const PgAdmExcelUploadType: React.FC = () => {
           <GridPopup
             {...modalContextStore.info()}
             onOk={(excelUploadTypeGridRef: GridInstanceReference<Grid>) => {
-              try {
-                const createdExcelUploadTypeList =
-                  excelUploadTypeGridRef.current
-                    .getInstance()
-                    .getModifiedRows()
-                    .createdRows.map(createdRow =>
-                      ExcelUploadType.instance(
-                        createdRow.valueOf() as ExcelUploadType,
-                      ).info(),
-                    );
-
-                executeData(
-                  createdExcelUploadTypeList,
-                  'adm/excel-forms',
-                  'post',
+              const createdExcelUploadTypeList = excelUploadTypeGridRef.current
+                .getInstance()
+                .getModifiedRows()
+                .createdRows.map(createdRow =>
+                  ExcelUploadType.instance(
+                    createdRow.valueOf() as ExcelUploadType,
+                  ).info(),
                 );
-                message.info(SENTENCE.SAVE_COMPLETE);
+
+              executeData(
+                createdExcelUploadTypeList,
+                'adm/excel-forms',
+                'post',
+              ).then(({ success }) => {
                 setModalContextStore(basicModalContext);
-              } catch (error) {
-                message.warn(error);
-              }
+                message.info(SENTENCE.SAVE_COMPLETE);
+              });
             }}
             onCancel={() => {
               setModalContextStore(basicModalContext);
