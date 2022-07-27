@@ -1,5 +1,6 @@
 // import { Modal } from 'antd';
 import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
 import React, { useState } from 'react';
 import {
   Container,
@@ -12,7 +13,7 @@ import {
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import ModalStore from '~/constants/modals';
-import { getPageName } from '~/functions';
+import { executeData, getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from './excel-upload-type/components/Header';
@@ -20,6 +21,14 @@ import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type
 import BasicModalContext from './excel-upload-type/hooks/modal';
 
 const columns: IGridColumn[] = [
+  {
+    header: '메뉴Uuid',
+    name: 'menuUuid',
+    format: 'text',
+    editable: false,
+    requiredField: true,
+    hidden: true,
+  },
   {
     header: '메뉴명',
     name: 'menuName',
@@ -91,10 +100,10 @@ export const PgAdmExcelUploadType: React.FC = () => {
     visible: false,
     gridMode: 'view',
     data: excelUploadTypeListData,
-    gridPopupInfo: [ModalStore.menu],
+    gridPopupInfo: [ModalStore.autMenu],
     gridComboInfo: [ComboStore.formType],
   });
-  const [modalStore, setModalStore] =
+  const [modalContextStore, setModalContextStore] =
     useState<IGridPopupProps>(basicModalContext);
 
   return (
@@ -134,12 +143,12 @@ export const PgAdmExcelUploadType: React.FC = () => {
               fontSize="small"
               ImageType="edit"
               onClick={() => {
-                setModalStore(
+                setModalContextStore(
                   BasicModalContext.edit<ExcelUploadType>({
                     title,
                     columns: columns,
                     data: [...excelUploadTypeListData],
-                    gridPopupInfo: [ModalStore.menu],
+                    gridPopupInfo: [ModalStore.autMenu],
                     gridComboInfo: [ComboStore.formType],
                   }),
                 );
@@ -155,11 +164,11 @@ export const PgAdmExcelUploadType: React.FC = () => {
               fontSize="small"
               ImageType="add"
               onClick={() => {
-                setModalStore(
+                setModalContextStore(
                   BasicModalContext.add<ExcelUploadType>({
                     title,
                     columns: columns,
-                    gridPopupInfo: [ModalStore.menu],
+                    gridPopupInfo: [ModalStore.autMenu],
                     gridComboInfo: [ComboStore.formType],
                   }),
                 );
@@ -172,9 +181,9 @@ export const PgAdmExcelUploadType: React.FC = () => {
       </Header>
       <Container>
         <Datagrid data={excelUploadTypeListData} columns={columns} />
-        {modalStore.visible === true ? (
+        {modalContextStore.visible === true ? (
           <GridPopup
-            {...modalStore.info()}
+            {...modalContextStore.info()}
             onOk={(excelUploadTypeGridRef: GridInstanceReference<Grid>) => {
               try {
                 const createdExcelUploadTypeList =
@@ -184,14 +193,22 @@ export const PgAdmExcelUploadType: React.FC = () => {
                     .createdRows.map(createdRow =>
                       ExcelUploadType.instance(
                         createdRow.valueOf() as ExcelUploadType,
-                      ),
+                      ).info(),
                     );
+
+                executeData(
+                  createdExcelUploadTypeList,
+                  'adm/excel-forms',
+                  'post',
+                );
+                message.info(SENTENCE.SAVE_COMPLETE);
+                setModalContextStore(basicModalContext);
               } catch (error) {
-                console.log(error);
+                message.warn(error);
               }
             }}
             onCancel={() => {
-              setModalStore(basicModalContext);
+              setModalContextStore(basicModalContext);
             }}
           />
         ) : null}

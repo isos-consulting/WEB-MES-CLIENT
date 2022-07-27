@@ -5,8 +5,11 @@ interface ModalStoreProps {
 }
 
 const ModalStore: ModalStoreProps = {
-  menu: {
-    columnNames: [{ original: 'menuName', popup: 'menu_nm' }],
+  autMenu: {
+    columnNames: [
+      { original: 'menuUuid', popup: 'menu_uuid' },
+      { original: 'menuName', popup: 'menu_nm' },
+    ],
     gridMode: 'select',
     popupKey: '메뉴관리',
   },
