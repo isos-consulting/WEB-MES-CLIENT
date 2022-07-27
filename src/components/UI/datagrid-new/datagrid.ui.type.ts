@@ -277,3 +277,7 @@ export type TApiSettings = {
   onBeforeOk?: (options: TApiOkEvent, checkedRows) => boolean;
   onAfterOk?: (options: TApiOkEvent, checkedRows) => void;
 };
+
+export interface GridInstanceReference<GridInstance> {
+  current: GridInstance;
+}
