@@ -16,6 +16,9 @@ const ComboStore: ComboStoreProps = {
       { code: 'text', text: 'text' },
       { code: 'number', text: 'number' },
       { code: 'popup', text: 'popup' },
+      { code: 'date', text: 'date' },
+      { code: 'datetime', text: 'datetime' },
+      { code: 'time', text: 'time' },
     ],
   },
 };
