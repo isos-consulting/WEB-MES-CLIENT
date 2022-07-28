@@ -1,6 +1,6 @@
 import Grid from '@toast-ui/react-grid';
-import { message } from 'antd';
-import React, { useState } from 'react';
+import { message, Modal } from 'antd';
+import React, { useState, useRef } from 'react';
 import {
   Container,
   Datagrid,
@@ -12,12 +12,14 @@ import {
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import ModalStore from '~/constants/modals';
-import { executeData, getPageName } from '~/functions';
+import { executeData, getModifiedRows, getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from './excel-upload-type/components/Header';
 import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type';
 import BasicModalContext from './excel-upload-type/hooks/modal';
+
+const { confirm } = Modal;
 
 const columns: IGridColumn[] = [
   {
@@ -87,6 +89,10 @@ const columns: IGridColumn[] = [
 
 export const PgAdmExcelUploadType: React.FC = () => {
   const title = getPageName();
+  const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
+    ExcelUploadType[]
+  >([]);
+  const excelUploadTypeGridRef = useRef<Grid>();
 
   const searchExcelUploadTypeList = async () => {
     setExcelUploadTypeListData(await excelUploadTypeList());
@@ -136,10 +142,6 @@ export const PgAdmExcelUploadType: React.FC = () => {
     );
   };
 
-  const [excelUploadTypeListData, setExcelUploadTypeListData] = useState<
-    ExcelUploadType[]
-  >([]);
-
   const basicModalContext = new BasicModalContext<ExcelUploadType>({
     title: title,
     columns: columns,
@@ -155,6 +157,14 @@ export const PgAdmExcelUploadType: React.FC = () => {
 
   return (
     <>
+      {modalContextStore.visible === true ? (
+        <GridPopup
+          {...modalContextStore.info()}
+          onCancel={() => {
+            setModalContextStore(basicModalContext);
+          }}
+        />
+      ) : null}
       <Header>
         <Header.FlexBox justifyContent="space-between">
           <Button
@@ -177,6 +187,33 @@ export const PgAdmExcelUploadType: React.FC = () => {
               fontSize="small"
               ImageType="delete"
               colorType={COLOROURS.SECONDARY.ORANGE[500]}
+              onClick={() => {
+                confirm({
+                  icon: null,
+                  title: WORD.DELETE,
+                  content: SENTENCE.DELETE_CONFIRM,
+                  onOk: () => {
+                    const deletedExcelUploadTypeList = getModifiedRows(
+                      excelUploadTypeGridRef,
+                      columns,
+                    ).deletedRows.map(deletedRow =>
+                      ExcelUploadType.instance(
+                        deletedRow.valueOf() as ExcelUploadType,
+                      ).info(),
+                    );
+
+                    executeData(
+                      deletedExcelUploadTypeList,
+                      'adm/excel-forms',
+                      'delete',
+                    ).then(({ success }) => {
+                      return success === true
+                        ? successSaveDataAfterEvent()
+                        : null;
+                    });
+                  },
+                });
+              }}
             >
               {WORD.DELETE}
             </Button>
@@ -227,15 +264,13 @@ export const PgAdmExcelUploadType: React.FC = () => {
         </Header.FlexBox>
       </Header>
       <Container>
-        <Datagrid data={excelUploadTypeListData} columns={columns} />
-        {modalContextStore.visible === true ? (
-          <GridPopup
-            {...modalContextStore.info()}
-            onCancel={() => {
-              setModalContextStore(basicModalContext);
-            }}
-          />
-        ) : null}
+        <Datagrid
+          ref={excelUploadTypeGridRef}
+          data={excelUploadTypeListData}
+          columns={columns}
+          gridMode={'delete'}
+          disabledAutoDateColumn={true}
+        />
       </Container>
     </>
   );

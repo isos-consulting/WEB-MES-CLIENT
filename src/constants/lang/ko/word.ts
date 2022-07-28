@@ -11,4 +11,6 @@ export enum WORD {
   STAR = '★',
   SAVE = '저장',
   CANCEL = '취소',
+  YES = '예',
+  NO = '아니오',
 }

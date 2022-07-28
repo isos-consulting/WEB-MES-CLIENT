@@ -7,4 +7,6 @@ export enum SENTENCE {
   ADD_RECORD = '신규 항목 추가',
   SAVE_DATA = '저장하기',
   SAVE_COMPLETE = '저장이 완료되었습니다',
+  DELETE_CONFIRM = '삭제하시겠습니까?',
+  NO_DELETE_ITEMS = '삭제할 항목이 없습니다',
 }
