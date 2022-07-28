@@ -15,9 +15,9 @@ import ModalStore from '~/constants/modals';
 import { executeData, getModifiedRows, getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
-import Header, { Button } from './excel-upload-type/components/Header';
-import { excelUploadTypeList } from './excel-upload-type/hooks/excel-upload-type';
-import BasicModalContext from './excel-upload-type/hooks/modal';
+import Header, { Button } from './components/Header';
+import { excelUploadTypeList } from './hooks/excel-upload-type';
+import BasicModalContext from './hooks/modal';
 
 const { confirm } = Modal;
 
