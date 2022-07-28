@@ -88,6 +88,16 @@ const columns: IGridColumn[] = [
 export const PgAdmExcelUploadType: React.FC = () => {
   const title = getPageName();
 
+  const searchExcelUploadTypeList = async () => {
+    setExcelUploadTypeListData(await excelUploadTypeList());
+  };
+
+  const successSaveDataAfterEvent = () => {
+    setModalContextStore(basicModalContext);
+    message.info(SENTENCE.SAVE_COMPLETE);
+    searchExcelUploadTypeList();
+  };
+
   const createExcelUploadType = (
     excelUploadTypeGridRef: GridInstanceReference<Grid>,
   ) => {
@@ -102,12 +112,26 @@ export const PgAdmExcelUploadType: React.FC = () => {
 
     executeData(createdExcelUploadTypeList, 'adm/excel-forms', 'post').then(
       ({ success }) => {
-        return success === true
-          ? (() => {
-              setModalContextStore(basicModalContext);
-              message.info(SENTENCE.SAVE_COMPLETE);
-            })()
-          : null;
+        return success === true ? successSaveDataAfterEvent() : null;
+      },
+    );
+  };
+
+  const updateExcelUploadType = (
+    excelUploadTypeGridRef: GridInstanceReference<Grid>,
+  ) => {
+    const updatedExcelUploadTypeList = excelUploadTypeGridRef.current
+      .getInstance()
+      .getModifiedRows()
+      .updatedRows.map(createdRow =>
+        ExcelUploadType.instance(
+          createdRow.valueOf() as ExcelUploadType,
+        ).info(),
+      );
+
+    executeData(updatedExcelUploadTypeList, 'adm/excel-forms', 'put').then(
+      ({ success }) => {
+        return success === true ? successSaveDataAfterEvent() : null;
       },
     );
   };
@@ -140,9 +164,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
             heightSize="small"
             fontSize="small"
             ImageType="search"
-            onClick={async () => {
-              setExcelUploadTypeListData(await excelUploadTypeList());
-            }}
+            onClick={searchExcelUploadTypeList}
           >
             {WORD.SEARCH}
           </Button>
@@ -173,7 +195,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
                     data: [...excelUploadTypeListData],
                     gridPopupInfo: [ModalStore.autMenu],
                     gridComboInfo: [ComboStore.formType],
-                    onOk: () => {},
+                    onOk: updateExcelUploadType,
                   }),
                 );
               }}
