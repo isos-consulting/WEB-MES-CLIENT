@@ -50,6 +50,6 @@ export interface IButtonStyles {
     | 'popup';
 
   hoverAnimation?: boolean;
-  shape?: 'circle' | 'round' | undefined;
+  shape?: 'circle' | 'round';
   icon?: React.ReactNode;
 }
