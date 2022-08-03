@@ -342,7 +342,7 @@ export const PgQmsReceiveInspResultReport = () => {
       URL_PATH_ADM.INSP_DETAIL_TYPE.GET.INSP_DETAIL_TYPES,
       'raws',
     ).then(async res => {
-      res.map(item => {
+      res.forEach(item => {
         _inspDetailType.push({
           code: item.insp_detail_type_uuid,
           text: item.insp_detail_type_nm,

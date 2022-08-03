@@ -275,7 +275,7 @@ export const PgQmsReceiveInspResult = () => {
       URL_PATH_ADM.INSP_DETAIL_TYPE.GET.INSP_DETAIL_TYPES,
       'raws',
     ).then(async res => {
-      res.map(item => {
+      res.forEach(item => {
         _inspDetailType.push({
           code: item.insp_detail_type_uuid,
           text: item.insp_detail_type_nm,
@@ -290,7 +290,7 @@ export const PgQmsReceiveInspResult = () => {
       URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,
       'raws',
     ).then(async res => {
-      res.map(item => {
+      res.forEach(item => {
         _inspHandlingType.push({
           code: JSON.stringify({
             insp_handling_type_uuid: item.insp_handling_type_uuid,

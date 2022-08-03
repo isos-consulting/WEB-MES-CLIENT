@@ -733,7 +733,7 @@ export const PgQmsFinalInspResult = () => {
       URL_PATH_ADM.INSP_HANDLING_TYPE.GET.INSP_HANDLING_TYPES,
       'raws',
     ).then(async res => {
-      res.map(item => {
+      res.forEach(item => {
         _inspHandlingType.push({
           code: JSON.stringify({
             insp_handling_type_uuid: item.insp_handling_type_uuid,

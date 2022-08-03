@@ -57,7 +57,7 @@ const MenuService = class {
       })
       .finally(() => {
         let menuDatas: TMenuData[] = [];
-        data.map(el => {
+        data.forEach(el => {
           if (el.lv == 1) {
             menuDatas.push({
               ...el,

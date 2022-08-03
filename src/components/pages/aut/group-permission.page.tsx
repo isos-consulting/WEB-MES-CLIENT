@@ -237,7 +237,7 @@ export const PgAutGroupPermission = () => {
       ).then(res => {
         let menuDatas = [];
 
-        res.map(el => {
+        res.forEach(el => {
           if (el.lv == 1) {
             menuDatas.push({
               ...el,
