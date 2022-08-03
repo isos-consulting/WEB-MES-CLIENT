@@ -1851,16 +1851,10 @@ const ProdOrderModal = ({ visible, onClose }) => {
       format: 'check',
       editable: true,
       onAfterChange: ({ value, rowKey }) => {
-        const rowData = gridRef.current.getInstance().getData()[rowKey];
+        const { getData, setRow } = gridRef.current.getInstance();
 
-        value
-          ? (() => {
-              gridRef.current.getInstance().setRow(rowKey, {
-                ...rowData,
-                _work_start: false,
-              });
-            })()
-          : null;
+        if (value === true)
+          setRow(rowKey, { ...getData[rowKey], _work_start: false });
       },
     },
     {

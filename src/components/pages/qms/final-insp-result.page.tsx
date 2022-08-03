@@ -2386,9 +2386,8 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
           setInspIncludeDetails(res);
 
-          inputInspResult?.ref?.current?.values.reg_date == null
-            ? inputInspResult.setFieldValue('reg_date', getToday())
-            : null;
+          if (inputInspResult?.ref?.current?.values.reg_date == null)
+            inputInspResult.setFieldValue('reg_date', getToday());
 
           res?.details.forEach((inspectionItem, inspectionRowIndex) => {
             const { max_sample_cnt } = res?.header;

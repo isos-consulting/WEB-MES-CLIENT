@@ -1259,7 +1259,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                           )}
                         </div>
                       );
-                    else null;
+                    else return null;
                   })}
                   {props.onSubmit ? (
                     <button type="submit">{props.buttonText}</button>

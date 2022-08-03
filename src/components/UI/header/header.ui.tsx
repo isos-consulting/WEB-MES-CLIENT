@@ -146,37 +146,37 @@ const BookmarkButton: React.FC<BookmarkButtonProps> = ({
 
   useEffect(() => {
     (async () => {
-      apiQueue.length === 0 ? null : await apiQueue[0]();
+      if (apiQueue.length > 0) await apiQueue[0]();
     })();
   }, [apiQueue]);
 
   const subscribe = () => {
-    apiQueue.length === 0
-      ? updateQueue([
-          async () => {
-            const isUnsubscribed = isSubscribe;
+    if (apiQueue.length === 0) {
+      updateQueue([
+        async () => {
+          const isUnsubscribed = isSubscribe;
 
-            isUnsubscribed === true
-              ? await executeData(
-                  [{ menu_uuid: uuid }],
-                  '/aut/bookmark/by-menu',
-                  'delete',
-                )
-              : await executeData(
-                  [{ menu_uuid: uuid }],
-                  '/aut/bookmarks',
-                  'post',
-                );
+          isUnsubscribed === true
+            ? await executeData(
+                [{ menu_uuid: uuid }],
+                '/aut/bookmark/by-menu',
+                'delete',
+              )
+            : await executeData(
+                [{ menu_uuid: uuid }],
+                '/aut/bookmarks',
+                'post',
+              );
 
-            message.success(
-              isUnsubscribed === true ? SENTENCE.UNFAVORITE : SENTENCE.FAVORITE,
-            );
+          message.success(
+            isUnsubscribed === true ? SENTENCE.UNFAVORITE : SENTENCE.FAVORITE,
+          );
 
-            await fetchBookmarks().then(flush);
-            updateQueue([]);
-          },
-        ])
-      : null;
+          await fetchBookmarks().then(flush);
+          updateQueue([]);
+        },
+      ]);
+    }
   };
 
   return (

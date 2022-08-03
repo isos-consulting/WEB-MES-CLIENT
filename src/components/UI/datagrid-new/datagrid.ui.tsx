@@ -2668,7 +2668,8 @@ const ColumnManager = class {
   }
 
   toggle() {
-    this.isChecked != this.isChecked;
+    if (this.isChecked === true) this.isChecked = false;
+    else this.isChecked = true;
   }
 };
 
