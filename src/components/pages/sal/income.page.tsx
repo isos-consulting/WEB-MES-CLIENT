@@ -315,7 +315,6 @@ export const PgSalIncome = () => {
           ],
           dataApiSettings: ev => {
             const { rowKey, instance } = ev;
-            3;
             const { rawData } = instance?.store?.data;
 
             const storeUuid = rawData[rowKey]?.to_store_uuid;

@@ -670,7 +670,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         if (
           !(
             isNumber(datas[change.rowKey].spec_min) &&
-            isNumber(datas[change.rowKey].spec_min)
+            isNumber(datas[change.rowKey].spec_max)
           )
         ) {
           instance.setValue(
