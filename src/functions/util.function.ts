@@ -342,6 +342,7 @@ export const getItemState = (
 
     case 'date':
       result = useRecoilState(afDateState(id));
+      break;
 
     default:
       break;
