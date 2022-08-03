@@ -10,7 +10,7 @@ import Props from './graph.ui.type';
  */
 const Graph: React.FC<Props> = props => {
   const [data, setDatas] = useState([]);
-  var JSXReturns = <></>;
+  let JSXReturns = <></>;
 
   useEffect(() => {
     if (props.data && props.data.length > 0 && props.dataKeysName) {
