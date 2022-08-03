@@ -192,7 +192,7 @@ export const setNumberToDigit = (
 // }
 export function isNumber(value: string | number, opt?): boolean {
   // 좌우 trim(공백제거)을 해준다.
-  let num = String(value).replace(/^\s+|\s+$/g, '');
+  let num = String(value).replace(/(?:^\s+)|(?:\s+$)/g, '');
   num = String(num).replace(',', '');
 
   if (typeof opt == 'undefined' || opt == '1') {
