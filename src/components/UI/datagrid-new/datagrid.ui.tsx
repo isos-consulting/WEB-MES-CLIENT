@@ -30,7 +30,6 @@ import {
   DatagridNumberRenderer,
   DatagridDateEditor,
   DatagridDateRenderer,
-  DatagridCheckboxEditor,
   DatagridCheckboxRenderer,
   DatagridTagRenderer,
   DatagridPercentEditor,
@@ -44,7 +43,6 @@ import { getPopupForm, IPopupItemsRetrunProps } from '../popup';
 import { Result } from '../result';
 import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
 import { Button } from '../button';
-import TuiDatePicker from 'tui-date-picker';
 import 'tui-grid/dist/tui-grid.css';
 import Colors from '~styles/color.style.scss';
 import { COLUMN_NAME } from '.';
@@ -76,9 +74,6 @@ TuiGrid.setLanguage('ko', {
     beforeEq: '이하',
   },
 });
-
-// 그리드 일자 location 설정
-TuiDatePicker.localeTexts['ko'];
 
 // 그리드 테마 설정
 TuiGrid.applyTheme('striped', {
