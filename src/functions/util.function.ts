@@ -265,7 +265,6 @@ export const JSONToCSVConvertor = (
     for (var index in arrData[i]) {
       row += '"' + arrData[i][index] + '",';
     }
-    row.slice(0, row.length - 1);
 
     //add a line break after each row
     CSV += row + '\r\n';
