@@ -97,8 +97,6 @@ export const ScButton = styled(BaseButton)`
             ? Sizes.width_button_lg
             : props.widthSize === 'xlarge'
             ? Sizes.width_button_xlg
-            : props.widthSize === 'auto'
-            ? '100%'
             : '100%'
         };
         height: ${
