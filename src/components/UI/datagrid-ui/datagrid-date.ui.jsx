@@ -107,13 +107,11 @@ export class DatagridDateRenderer {
   render(props) {
     switch (this.state.type) {
       case 'time':
-        var timeRegExp = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/;
-        var timeSecondRegExp =
-          /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
         let value = props.value;
         if (
-          !timeRegExp.test(value) &&
-          !timeSecondRegExp.test(value) &&
+          /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/.test(value) === false &&
+          /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/.test(value) ===
+            false &&
           dayjs(value).isValid()
         ) {
           value = dayjs(value).format('HH:mm');
