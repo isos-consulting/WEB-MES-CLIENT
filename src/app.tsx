@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useLayoutEffect, useState } from 'react';
-import { Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { PgLogin } from './components/pages';
@@ -12,7 +12,6 @@ import {
 import { useLoadingState } from './hooks';
 import { getData, getMenus } from './functions';
 import { layoutStore } from '~/components/UI/layout';
-import { Modal } from 'antd';
 import { Dashboard } from './components/pages/dashboard.page';
 import { URL_PATH_AUT } from './enums';
 import { KeyStore } from './constants/keys';
