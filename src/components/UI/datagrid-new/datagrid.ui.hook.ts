@@ -83,7 +83,7 @@ export const useGrid = (
     return result;
   }, [gridColumns]);
 
-  const model = gridModel({
+  return gridModel({
     gridRef,
     gridInstance: gridRef?.current?.getInstance(),
     gridInfo,
@@ -94,6 +94,4 @@ export const useGrid = (
     setGridHidden,
     setComplexColumns,
   });
-
-  return model;
 };
