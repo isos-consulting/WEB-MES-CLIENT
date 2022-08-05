@@ -383,7 +383,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           store_type: 'available',
         },
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
     {
       id: 'to_location_uuid',
@@ -395,7 +397,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
   ];
 
@@ -442,7 +446,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
   ];
 
@@ -917,7 +923,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
               saveData(inspectionGridRef.current.getInstance());
               close();
             },
-            onCancel: () => {},
+            onCancel: () => {
+              // this function will be executed when cancel button is clicked
+            },
           });
         }
       }

@@ -156,7 +156,9 @@ export const onDefaultGridSave = async (
             });
         }
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when user click on cancel button
+      },
       okText: '예',
       cancelText: '아니오',
     });
@@ -183,7 +185,9 @@ export const onDefaultGridCancel = (
       onOk: () => {
         if (afterCancelFunc) afterCancelFunc();
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when user click on cancel button
+      },
       okText: '예',
       cancelText: '아니오',
     });

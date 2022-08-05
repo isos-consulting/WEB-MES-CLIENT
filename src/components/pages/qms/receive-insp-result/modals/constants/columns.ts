@@ -313,7 +313,9 @@ export const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
     firstItemType: 'empty',
     options: [],
     disabled: true,
-    onAfterChange: () => {},
+    onAfterChange: () => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
   { id: 'remark', label: '비고', type: 'text' },
 ];
@@ -324,7 +326,9 @@ export const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
     label: '입고수량',
     type: 'number',
     disabled: true,
-    onAfterChange: () => {},
+    onAfterChange: () => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
   {
     id: 'to_store_uuid',
@@ -339,7 +343,9 @@ export const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
         store_type: 'available',
       },
     },
-    onAfterChange: ev => {},
+    onAfterChange: ev => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
   {
     id: 'to_location_uuid',
@@ -351,7 +357,9 @@ export const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
       textName: 'location_nm',
       uriPath: '',
     },
-    onAfterChange: ev => {},
+    onAfterChange: ev => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
 ];
 
@@ -361,9 +369,16 @@ export const INPUT_ITEMS_INSP_RESULT_RETURN: IInputGroupboxItem[] = [
     label: '부적합수량',
     type: 'number',
     disabled: true,
-    onAfterChange: () => {},
+    onAfterChange: () => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
-  { id: 'reject_uuid', label: '불량유형UUID', type: 'text', hidden: true },
+  {
+    id: 'reject_uuid',
+    label: '불량유형UUID',
+    type: 'text',
+    hidden: true,
+  },
   {
     id: 'reject_nm',
     label: '불량유형',
@@ -396,7 +411,9 @@ export const INPUT_ITEMS_INSP_RESULT_RETURN: IInputGroupboxItem[] = [
       textName: 'location_nm',
       uriPath: '',
     },
-    onAfterChange: ev => {},
+    onAfterChange: ev => {
+      // this is a workaround for the combo box not updating the value
+    },
   },
 ];
 

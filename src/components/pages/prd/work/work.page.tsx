@@ -642,7 +642,12 @@ export const PgPrdWork = () => {
   //#endregion
 
   //#region ✅조회조건
-  const onSearch = (values, afterSearch: () => void = () => {}) => {
+  const onSearch = (
+    values,
+    afterSearch: () => void = () => {
+      // this function is for search after search
+    },
+  ) => {
     const dateParams = !values?.complete_fg
       ? {
           start_date: values?.start_date,

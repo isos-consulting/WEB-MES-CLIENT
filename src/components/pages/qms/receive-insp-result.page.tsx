@@ -702,7 +702,9 @@ const INSP_RESULT_DETAIL_GRID = (props: {
             console.log(e);
           });
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when cancel button is clicked
+      },
       okText: '예',
       cancelText: '아니오',
     });

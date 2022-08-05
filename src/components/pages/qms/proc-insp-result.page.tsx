@@ -1092,7 +1092,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     Modal.confirm({
       icon: null,
       title: '삭제',
-      // icon: <ExclamationCircleOutlined />,
       content: '성적서를 삭제하시겠습니까?',
       onOk: async () => {
         await executeData(
@@ -1111,7 +1110,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
             console.log(e);
           });
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when cancel button is clicked
+      },
       okText: '예',
       cancelText: '아니오',
     });
@@ -1878,7 +1879,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           await callInspectionCreateAPI(saveData);
           close();
         },
-        onCancel: () => {},
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
       });
     }
 
@@ -2788,7 +2791,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             await fetchInsepctionPutAPI(inspectionPutApiPayload);
             close();
           },
-          onCancel: () => {},
+          onCancel: () => {
+            // this function will be executed when cancel button is clicked
+          },
         });
       }
 

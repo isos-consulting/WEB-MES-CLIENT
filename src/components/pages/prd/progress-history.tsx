@@ -55,11 +55,21 @@ export const PgPrdProgressHistory = () => {
     search: () => {
       onSearch(searchInfo?.values);
     },
-    update: () => {},
-    delete: () => {},
-    create: () => {},
-    save: () => {},
-    cancelEdit: () => {},
+    update: () => {
+      // this function is not implemented yet
+    },
+    delete: () => {
+      // this function is not implemented yet
+    },
+    create: () => {
+      // this function is not implemented yet
+    },
+    save: () => {
+      // this function is not implemented yet
+    },
+    cancelEdit: () => {
+      // this function is not implemented yet
+    },
     printExcel: dataGridEvents.printExcel,
   };
 

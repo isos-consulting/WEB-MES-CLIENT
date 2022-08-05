@@ -579,7 +579,9 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           await callInspectionCreateAPI(saveData);
           close();
         },
-        onCancel: () => {},
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
       });
     }
 

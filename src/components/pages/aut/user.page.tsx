@@ -51,7 +51,9 @@ export const PgAutUser = () => {
 
         close();
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when user cancels reset password modal
+      },
     });
   };
 

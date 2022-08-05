@@ -150,7 +150,9 @@ export const PgAdmExcelUploadType: React.FC = () => {
     data: excelUploadTypeListData,
     gridPopupInfo: [ModalStore.autMenu],
     gridComboInfo: [ComboStore.formType],
-    onOk: () => {},
+    onOk: () => {
+      // this function intentionally left blank
+    },
   });
   const [modalContextStore, setModalContextStore] =
     useState<IGridPopupProps>(basicModalContext);

@@ -1258,10 +1258,13 @@ export const PgQmsInsp = () => {
         // 편집 이력이 있는 경우
         modal.confirm({
           title: '편집 취소',
-          // icon: <ExclamationCircleOutlined />,
           content: '편집된 이력이 있습니다. 편집을 취소하시겠습니까?',
-          onOk: () => {},
-          onCancel: () => {},
+          onOk: () => {
+            // this function will be called when user press ok
+          },
+          onCancel: () => {
+            // this function will be called when user press cancel
+          },
           okText: '예',
           cancelText: '아니오',
         });

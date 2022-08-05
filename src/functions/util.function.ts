@@ -324,7 +324,12 @@ export const getItemState = (
     | 'date'
     | 'dateString',
   id: string,
-): [any, (val) => {}] => {
+): [
+  any,
+  (val) => {
+    // this is a function that will be called when the recoil state is changed
+  },
+] => {
   let result = null;
 
   switch (type) {

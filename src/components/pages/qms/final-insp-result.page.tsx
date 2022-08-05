@@ -1124,7 +1124,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
     Modal.confirm({
       icon: null,
       title: '삭제',
-      // icon: <ExclamationCircleOutlined />,
       content: '성적서를 삭제하시겠습니까?',
       onOk: async () => {
         await executeData(
@@ -1143,7 +1142,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
             console.log(e);
           });
       },
-      onCancel: () => {},
+      onCancel: () => {
+        // this function will be executed when cancel button is clicked
+      },
       okText: '예',
       cancelText: '아니오',
     });
@@ -1656,7 +1657,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           store_type: 'available',
         },
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the combo box is changed
+      },
     },
     {
       id: 'to_location_uuid',
@@ -1668,7 +1671,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the combo box is changed
+      },
     },
   ];
 
@@ -1713,7 +1718,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the combo box is changed
+      },
     },
   ];
 
@@ -2272,7 +2279,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
             await fetchInsepctionPostAPI(inspectionPostApiPayload);
             close();
           },
-          onCancel: () => {},
+          onCancel: () => {
+            // this function will be executed when cancel button is clicked
+          },
         });
       }
 
@@ -2873,7 +2882,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           store_type: 'available',
         },
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
     {
       id: 'to_location_uuid',
@@ -2885,7 +2896,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
   ];
 
@@ -2932,7 +2945,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         textName: 'location_nm',
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
-      onAfterChange: ev => {},
+      onAfterChange: ev => {
+        // this function is called when the value of the combo is changed
+      },
     },
   ];
 
@@ -3606,7 +3621,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             await fetchInspectionPutAPI(inspectionPutApiPayload);
             close();
           },
-          onCancel: () => {},
+          onCancel: () => {
+            // this function will be executed when cancel button is clicked
+          },
         });
       }
       return await fetchInspectionPutAPI(inspectionPutApiPayload);
