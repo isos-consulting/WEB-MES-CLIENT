@@ -1,7 +1,6 @@
 import React from 'react';
 import Colors from '~styles/color.style.scss';
 import Sizes from '~styles/size.style.scss';
-// import Fonts from '~styles/font.style.scss';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import Props, { IContainerStyles } from './container.ui.type';

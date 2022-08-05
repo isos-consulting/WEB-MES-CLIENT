@@ -60,7 +60,7 @@ export const useGrid = (
   const [complexColumns, setComplexColumns] = useState<OptComplexColumnInfo[]>(
     options?.header?.complexColumns,
   );
-  // const [gridHeader, setGridHeader] = useState<OptHeader>(options?.header);
+
   const [gridHidden, setGridHidden] = useState<boolean>(false);
   const gridRef = useRef<Grid>();
   const gridInfo: IDatagridProps = {
@@ -93,7 +93,6 @@ export const useGrid = (
     setGridColumns,
     setGridHidden,
     setComplexColumns,
-    // setGridHeader,
   });
 
   return model;
