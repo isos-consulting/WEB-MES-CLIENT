@@ -162,8 +162,8 @@ const errorPage404 = () => {
 
   const onResize = ev => {
     const screenHeight = ev.target.innerHeight;
-    const height = screenHeight - layoutState.bottomSpacing;
-    setHeight(height);
+    const resizedHeight = screenHeight - layoutState.bottomSpacing;
+    setHeight(resizedHeight);
   };
 
   useLayoutEffect(() => {
