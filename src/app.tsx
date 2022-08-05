@@ -116,41 +116,41 @@ const LayoutRoute = () => {
     }
   }, [profile]);
 
+  if (profile.isAuthenticated === false) {
+    return <PgLogin profile={profile} authenticatedCallback={setProfile} />;
+  }
+
   return (
     <>
-      {profile.isAuthenticated === true ? (
-        profile.isResetPassword === true ? (
-          <PgUpdatePassword
-            profile={profile}
-            authenticatedCallback={setProfile}
-          />
-        ) : (
-          <Spin spinning={loading} style={{ zIndex: 999999 }} tip="Loading...">
-            <Suspense fallback="...loading">
-              <BrowserRouter>
-                <Switch>
-                  <Redirect exact from="/" to="/dashboard" />
-                  <Layout>
-                    <Route
-                      key={'dashboard'}
-                      path={'/dashboard'}
-                      component={Dashboard}
-                    />
-                    {Object.keys(menuContent).map((item, key) => (
-                      <Route
-                        key={key}
-                        path={menuContent[item]?.path}
-                        component={menuContent[item]?.component ?? errorPage404}
-                      />
-                    ))}
-                  </Layout>
-                </Switch>
-              </BrowserRouter>
-            </Suspense>
-          </Spin>
-        )
+      {profile.isResetPassword === true ? (
+        <PgUpdatePassword
+          profile={profile}
+          authenticatedCallback={setProfile}
+        />
       ) : (
-        <PgLogin profile={profile} authenticatedCallback={setProfile} />
+        <Spin spinning={loading} style={{ zIndex: 999999 }} tip="Loading...">
+          <Suspense fallback="...loading">
+            <BrowserRouter>
+              <Switch>
+                <Redirect exact from="/" to="/dashboard" />
+                <Layout>
+                  <Route
+                    key={'dashboard'}
+                    path={'/dashboard'}
+                    component={Dashboard}
+                  />
+                  {Object.keys(menuContent).map((item, key) => (
+                    <Route
+                      key={key}
+                      path={menuContent[item]?.path}
+                      component={menuContent[item]?.component ?? errorPage404}
+                    />
+                  ))}
+                </Layout>
+              </Switch>
+            </BrowserRouter>
+          </Suspense>
+        </Spin>
       )}
     </>
   );
