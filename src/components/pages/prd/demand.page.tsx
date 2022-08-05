@@ -490,7 +490,7 @@ export const PgPrdDemand = () => {
     if (isSuccess) {
       const gridRef = editDataPopupGrid?.gridRef;
       const columns = editDataPopupGrid?.gridInfo?.columns;
-      const modifiedRows = await getModifiedRows(gridRef, columns);
+      const modifiedRows = getModifiedRows(gridRef, columns);
       const saveUriPath = '/prd/demands/complete';
 
       // 저장 가능한지 체크

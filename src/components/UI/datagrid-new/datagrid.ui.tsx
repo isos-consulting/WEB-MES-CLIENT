@@ -540,7 +540,8 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                             'data',
                           ),
                         );
-                      await typedApiCaller();
+
+                      typedApiCaller();
 
                       close();
                     }

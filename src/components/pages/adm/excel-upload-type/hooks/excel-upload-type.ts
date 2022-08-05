@@ -2,9 +2,9 @@ import { getData } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 
 export const excelUploadTypeList = async () => {
-  return await (
-    await getData({}, '/adm/excel-forms')
-  ).map(
+  const excelForms = await getData({}, '/adm/excel-forms');
+
+  return excelForms.map(
     excelUploadTypeApiResponse =>
       new ExcelUploadType(excelUploadTypeApiResponse),
   );

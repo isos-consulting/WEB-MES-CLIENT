@@ -727,16 +727,14 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 onChange={async changedValues => {
                                   const values = item.names ?? item.ids;
 
-                                  values.forEach(
-                                    async (fieldName, fieldIndex) => {
-                                      await setFieldValue(
-                                        fieldName,
-                                        dayjs(changedValues[fieldIndex]).format(
-                                          'YYYY-MM-DD',
-                                        ),
-                                      );
-                                    },
-                                  );
+                                  values.forEach((fieldName, fieldIndex) => {
+                                    setFieldValue(
+                                      fieldName,
+                                      dayjs(changedValues[fieldIndex]).format(
+                                        'YYYY-MM-DD',
+                                      ),
+                                    );
+                                  });
                                 }}
                               />
                             ) : item.type === 'check' ? (

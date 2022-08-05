@@ -44,7 +44,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
         instance?.finishEditing();
         // 단순 수정 이력 배열을 저장
         if (props.saveType === 'basic') {
-          const modifiedRows = await getModifiedRows(
+          const modifiedRows = getModifiedRows(
             gridRef,
             props.columns,
             gridRef?.current?.getInstance()?.getData(),

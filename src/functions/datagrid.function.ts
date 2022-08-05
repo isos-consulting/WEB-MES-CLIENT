@@ -585,7 +585,7 @@ export const dataGridEvents = {
           if (gridObject.modifiedData) {
             modifiedRows = gridObject.modifiedData;
           } else {
-            modifiedRows = await getModifiedRows(gridRef, columns);
+            modifiedRows = getModifiedRows(gridRef, columns);
           }
 
           const { createdRows, updatedRows, deletedRows } = modifiedRows;

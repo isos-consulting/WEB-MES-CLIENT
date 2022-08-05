@@ -85,7 +85,7 @@ export const onDefaultGridSave = async (
           let _methodType: 'delete' | 'post' | 'put' | 'patch' = 'post';
           let detailDatas = [];
 
-          const modifiedRows = await getModifiedRows(ref, columns);
+          const modifiedRows = getModifiedRows(ref, columns);
 
           const { createdRows, updatedRows, deletedRows } = modifiedRows;
 
@@ -180,7 +180,6 @@ export const onDefaultGridCancel = (
     // 편집 이력이 있는 경우
     modal.confirm({
       title: '편집 취소',
-      // icon: <ExclamationCircleOutlined />,
       content: '편집된 이력이 있습니다. 편집을 취소하시겠습니까?',
       onOk: () => {
         if (afterCancelFunc) afterCancelFunc();
