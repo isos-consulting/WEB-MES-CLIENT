@@ -102,7 +102,6 @@ const LayoutRoute = () => {
     }),
   );
   const [loading, setLoading] = useLoadingState();
-  const [isLogin, setIsLogin] = useState(false);
   const [menuContent, setMenuContent] = useRecoilState(atSideNavMenuContent);
   const [, setMenuRawData] = useRecoilState(atSideNavMenuRawData);
 
