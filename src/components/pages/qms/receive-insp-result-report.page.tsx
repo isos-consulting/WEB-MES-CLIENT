@@ -393,7 +393,6 @@ export const PgQmsReceiveInspResultReport = () => {
               } catch (e) {
                 console.log(e);
               } finally {
-                // setLoading(false);
               }
             }
           }}
@@ -428,7 +427,6 @@ export const PgQmsReceiveInspResultReport = () => {
         검사정보
       </Typography.Title>
       <Divider style={{ marginBottom: 10 }} />
-      {/* {INSP_RESULT_DETAIL.component} */}
       <INSP_RESULT_DETAIL_GRID
         inspResultUuid={inspResultUuid}
         onSearchResults={onSearch}

@@ -89,8 +89,6 @@ export const saveGridData = async (
 
         // 필수값 삽입
         await saveData[editType[i]]?.forEach(value => {
-          // value['uid'] = getUserUid();
-
           // session 유저 정보의 키와 params로 넘길 키가 중복되는게 있는지 확인 (중복이면 유저 정보에 있는 키는 사용안함)
           if (saveData[editType[i]] != null && getUserInfoKeys() != null) {
             if (
@@ -195,7 +193,6 @@ export const checkGridData = async (
   let chkColumn = cloneDeep(column);
   let chkData: IGridModifiedRows = cloneDeep(data);
   let errorColName = '';
-  // let errorRow = -1;
 
   const editType = ['createdRows', 'updatedRows'];
 
@@ -220,7 +217,6 @@ export const checkGridData = async (
                   resultChk = false;
                   errorType = 'emptyCell';
                   errorColName = chkColumn[i].header;
-                  // errorRow = chkData[editType[y]][z]?._attributes?._rowNum;
                   break;
                 }
               }
@@ -240,7 +236,6 @@ export const checkGridData = async (
                   resultChk = false;
                   errorType = 'dataType';
                   errorColName = chkColumn[i].header;
-                  // errorRow = chkData[editType[y]][z]?._attributes?._rowNum;
                   break;
                 }
               }
@@ -270,14 +265,12 @@ export const checkGridData = async (
 
         case 'emptyCell':
           if (!disabledErrorType.includes('emptyCell')) {
-            // message.error(errorColName + ' ' + errorRow + '행의 값을 입력하지 않았습니다.');
             message.error(errorColName + '의 값을 입력하지 않았습니다.');
           } else resultChk = true;
           break;
 
         case 'dataType':
           if (!disabledErrorType.includes('dataType')) {
-            // message.error(errorColName + ' ' + errorRow + '행의 값 형식이 올바르지 않습니다.');
             message.error(errorColName + '의 값 형식이 올바르지 않습니다.');
           } else resultChk = true;
           break;
@@ -567,7 +560,6 @@ export const dataGridEvents = {
           let result;
           saveGridData(modifiedRows, columns, saveUriPath, optionParams)
             .then(res => {
-              // message.info('저장이 완료되었습니다.');
               if (setGridMode) setGridMode(defaultGridMode);
               result = res;
             })
@@ -638,11 +630,6 @@ export const dataGridEvents = {
                 delete detailDatas[i][column?.name];
               }
             });
-            // const optionKeys = Object.keys(optionParams);
-
-            // optionKeys.forEach((optionKey) => {
-            //   detailDatas[i][optionKey] = optionParams[optionKey];
-            // });
           }
 
           // 헤더 데이터 추가
@@ -932,7 +919,7 @@ export const convDataToSubTotal = (
         ) {
           if (curlType === 'avg') {
             const cnt: number = count.find(el => el.groupKey === groupKey).cnt;
-            sumData[groupKey][curlName] = sumData[groupKey][curlName] / cnt; //(Object.keys(sumData).length || 1);
+            sumData[groupKey][curlName] = sumData[groupKey][curlName] / cnt;
             total[curlName] =
               (total[curlName] || 0) / Object.keys(sumData).length;
           }
@@ -974,21 +961,6 @@ export const convDataToSubTotal = (
         });
       });
     }
-
-    // switch (sortby.type) {
-    //   case 'desc':
-    //     curculationNames.forEach((curlName) => {
-    //       result.subTotals.sort((a, b) => parseFloat(b[curlName]) - parseFloat(a[curlName]));
-    //     });
-    //     break;
-
-    //   case 'asc':
-    //   default:
-    //     curculationNames.forEach((curlName) => {
-    //       result.subTotals.sort((a, b) => parseFloat(a[curlName]) - parseFloat(b[curlName]));
-    //     });
-    //     break;
-    // }
   } catch (error) {
     console.log(error);
   }
@@ -1035,14 +1007,6 @@ export const getTestData = (count: number = 10) => {
           if (key === 'prod_nm') result[key] = '품목' + index;
           if (key === 'partner_uuid') result[key] = 'awtwtawyadgdxg' + index2;
           if (key === 'partner_nm') result[key] = '거래처' + index2;
-          // if (i % 3 === 0) {
-          //   if (key === 'prod_uuid') result[key] = 'awtwtawyadgdxg' + index;
-          //   if (key === 'prod_no') result[key] = 'P-CA-1' + index;
-          //   if (key === 'prod_nm') result[key] = '품목1' + index;
-
-          // } else {
-          //   result[key] = el[key] + '_' + i;
-          // }
         }
       });
 

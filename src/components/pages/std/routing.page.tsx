@@ -813,7 +813,6 @@ export const PgStdRouting = () => {
 
   //#region 🔶조회조건 관리
   /** 조회조건 View */
-  // const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const headerSearchInfo = null;
   const detailSearchInfo = null;
 
@@ -1103,59 +1102,6 @@ export const PgStdRouting = () => {
   return (
     <>
       <TpDoubleGrid {...props} />
-      {/* <ROUTING_WORKINGS_POPUP />; */}
     </>
   );
 };
-
-// const ROUTING_WORKINGS_POPUP = (props:{
-//   // 전달 받을 변수
-//   gridMode:TGridMode,
-//   gridColumns:IGridColumn[],
-//   inputItems,
-//   visible:boolean,
-//   setVisible: (value?) => void,
-// }) => {
-//   const gridRefRoutingWorkings = useRef<Grid>();
-
-//   const URI_PATH_SEARCH_ROUTING_WORKINGS = '/std/routing-workingses'
-//   const URI_PATH_SAVE_ROUTING_WORKINGS = '/std/routing-workingses'
-//   if (props.visible) {
-//     return <>
-//       <GridPopup
-//         popupId={'ROUTING_WORKINGS_POPUP'}
-//         defaultVisible={false}
-
-//         title={'품목별 작업장 관리'}
-//         visible={props.visible}
-
-//         okText='추가하기'
-//         cancelText='취소'
-//         onAfterOk={(isSuccess, savedData) => {
-//           if (!isSuccess) return;
-//           props.setVisible(false);
-//         }}
-//         onCancel={() => props.setVisible(false)}
-
-//         ref={gridRefRoutingWorkings}
-
-//         gridId={'ROUTING_WORKINGS_POPUP_GRID'}
-//         gridMode={props.gridMode}
-//         defaultData={[]}
-//         columns={props.gridColumns}
-//         saveType='basic'
-//         searchUriPath={URI_PATH_SEARCH_ROUTING_WORKINGS}
-//         searchParams={gridPopup.searchParams}
-//         saveUriPath={URI_PATH_SAVE_ROUTING_WORKINGS}
-//         saveParams={gridPopup.saveParams}
-
-//         searchProps={popupSearchProps}
-//         inputProps={popupInputProps}
-
-//         gridComboInfo={gridPopup.gridComboInfo}
-//         gridPopupInfo={gridPopup.gridPopupInfo}
-//         rowAddPopupInfo={gridPopup.rowAddPopupInfo}
-//       />
-//     </>
-//   } else return null;
-// }

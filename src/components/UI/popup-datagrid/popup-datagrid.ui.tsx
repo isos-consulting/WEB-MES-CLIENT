@@ -71,8 +71,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             optionValues = props.saveOptionParams;
           }
 
-          // const optionValues = props.inputProps?.innerRef?.current?.values || props.saveOptionParams;
-
           let inputDatas = {};
 
           if (optionValues) {
@@ -95,14 +93,10 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           )
             .then(result => {
               const { success, count, savedData } = result;
+
               if (success === false) return;
-
-              // 팝업 닫기
               if (props?.visible == null) setVisible(false);
-
               if (props?.onAfterOk) props.onAfterOk(true, savedData);
-
-              // message.info('저장이 완료되었습니다.');
             })
             .catch(e => {
               console.log('Error', e);
@@ -180,7 +174,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           } else {
             optionValues = props.saveOptionParams;
           }
-          // const optionValues = props.inputProps?.innerRef?.current?.values || props.saveOptionParams;
           const optionKeys = Object.keys(optionValues);
 
           let headerData = {};
@@ -443,17 +436,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
     setGridFocus(gridRef, { rowKey: 0, columnName });
   }, [data]);
 
-  // /** ⛔검색조건 검색 */
-  // const onSearch = () => {
-  //   let searchParams = {};
-  //   props.searchItems.forEach((item) => {
-  //     searchParams[item.name] = item.value;
-  //   })
-
-  //   getData(searchParams, props.searchUriPath).then((res) => {
-  //     setData(res);
-  //   });
-  // }
   const modalWidthSize: string | number = useMemo(() => {
     const smSize = '50%';
     const mdSize = '70%';
@@ -467,21 +449,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       ? lgSize
       : props.modalWidth || mdSize;
   }, [props.modalWidth]);
-
-  // const [hotKey, setHotKey] = useState();
-
-  // const hotKeyHandler = (el) => {
-  //   console.log('keyup', el);
-  // };
-
-  // useLayoutEffect(() => {
-  //   if (visible)
-  //     document?.addEventListener('keyup', hotKeyHandler);
-
-  //   return () => {
-  //     document?.removeEventListener('keyup', hotKeyHandler);
-  //   };
-  // }, [visible]);
 
   return (
     <Modal

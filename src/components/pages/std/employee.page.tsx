@@ -351,9 +351,9 @@ export const PgStdEmployee = () => {
   ]);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
-  const newDataPopupInputInfo = null; //useInputGroup('NEW_DATA_POPUP_INPUT_BOX', []);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const inputInfo = null;
+  const newDataPopupInputInfo = null;
+  const editDataPopupInputInfo = null;
 
   /** 액션 관리 */
 

@@ -176,10 +176,8 @@ const onIncludeAliasValues = (inputItems, values) => {
         result[alias] = null;
       } else {
         if (Object.keys(values).includes(originalKeyName)) {
-          // result[alias] = values[originalKeyName];
           result = Object.assign({ [alias]: values[originalKeyName] }, result);
         } else {
-          // result[alias] = null;
           result = Object.assign({ [alias]: null }, result);
         }
       }

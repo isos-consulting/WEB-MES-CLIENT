@@ -5,15 +5,6 @@ import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 /** 검색조건 박스 */
 const Searchbox: React.FC<Props> = props => {
   const { searchItems } = props;
-  // const initialValues = useMemo(() => {
-  //   let result = {};
-
-  //   searchItems?.forEach((item) => {
-  //     result[item.name || item.id] = item?.default;
-  //   });
-
-  //   return result;
-  // }, [searchItems]);
 
   if (!searchItems) return <></>;
 

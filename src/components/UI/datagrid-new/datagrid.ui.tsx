@@ -177,12 +177,6 @@ function getGridComboItem(
   return returnValue;
 }
 
-// interface IColumnComboState {
-//   [key: string]: {
-//     matchColumnName: string,
-//     items: any[]
-//   };
-// }
 interface IColumnComboState {
   columnName: string;
   matchColumnName: string;
@@ -203,7 +197,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   const [columnComboState, setColumnComboState] = useState<IColumnComboState[]>(
     [],
   );
-  // const [loading, setLoading] = useLoadingState();
   let chkCreateAtColumn = false;
   let chkUpdateAtColumn = false;
 
@@ -591,20 +584,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'popup': // 팝업 세팅
-          // ⛔글자 옆에 이미지 출력하는 렌더러인데 제대로 작동하지 않아 일단 바탕색을 변경하여 팝업을 표시하는 것으로 임시 적용함
-
-          // if (el?.editable == true) {
-          //   // 렌더러
-          //   el['renderer'] = {
-          //     type:DatagridTextIconRenderer,
-          //     options: {
-          //       gridId: props.gridId,
-          //       placeHolder: 'click',
-          //       imageSrc: ico_popup,
-          //     }
-          //   }
-          // }
-
           // 정렬
           if (el?.align == null) {
             el['align'] = 'left';
@@ -677,8 +656,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                 dateFormat: ENUM_FORMAT.DATE,
               },
             };
-
-            // el['validation'] = {...el['validation'], reqExp:/^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/};
           }
 
           // 렌더러
@@ -706,8 +683,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                 dateFormat: ENUM_FORMAT.TIME,
               },
             };
-
-            // el['validation'] = {...el['validation'], reqExp:/^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/};
           }
 
           // 렌더러
@@ -879,7 +854,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       // 기본 값 세팅
       if (props.columns[colIndex]?.defaultValue) {
         const defaultValue = props.columns[colIndex]?.defaultValue;
-        el['defaultValue'] = defaultValue; //typeof defaultValue === 'function' ? defaultValue(props): defaultValue;
+        el['defaultValue'] = defaultValue;
       }
 
       // 컬럼간 계산식 세팅
@@ -1664,7 +1639,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 */
   const onCheckAll = useCallback(
     ev => {
-      // const rawDatas = ev?.instance?.store?.data?.rawData;
       const filterdDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
       const rowCount: number = filterdDatas?.length;
 
@@ -1711,7 +1685,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 해제 */
   const onUncheckAll = useCallback(
     ev => {
-      // const rawDatas:any[] = ev?.instance?.store?.data?.rawData;
       const filterdDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
       const rowCount: number = filterdDatas?.length;
 
@@ -1763,10 +1736,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
     if (typeof rowAddPopupInfo.dataApiSettings === 'function') {
       const apiSettings = rowAddPopupInfo.dataApiSettings();
       popupContent = { ...popupContent, ...rowAddPopupInfo, ...apiSettings };
-      // popupContent['uriPath'] = apiSettings?.uriPath;
-      // popupContent['params'] = apiSettings?.params;
-      // popupContent['searchProps'] = apiSettings?.searchProps;
-      // popupContent['inputGroupProps'] = apiSettings?.inputGroupProps;
 
       // 전처리 함수 실행
       if (apiSettings?.onInterlock != null) {
@@ -1789,8 +1758,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         ...rowAddPopupInfo,
         ...rowAddPopupInfo.dataApiSettings,
       };
-      // popupContent['uriPath'] = rowAddPopupInfo.dataApiSettings.uriPath;
-      // popupContent['params'] = rowAddPopupInfo.dataApiSettings.params;
 
       // 전처리 함수 실행
       if (rowAddPopupInfo.dataApiSettings?.onInterlock != null) {
@@ -1814,7 +1781,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       rowAddPopupInfo.columnNames;
     const childGridId = uuidv4();
 
-    // setLoading(true);
     let title = popupContent?.modalProps?.title;
     const word = '다중선택';
 
@@ -1965,9 +1931,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                 const apiSettings = popupInfo.dataApiSettings(ev);
                 popupContent['uriPath'] = apiSettings?.uriPath;
                 popupContent['params'] = apiSettings?.params;
-                // popupContent['searchProps'] = apiSettings?.searchProps;
-                // popupContent['inputGroupProps'] = apiSettings?.inputGroupProps;
-
                 // 전처리 함수 실행
                 if (apiSettings?.onInterlock != null) {
                   const showModal: boolean = apiSettings?.onInterlock();
@@ -2047,8 +2010,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   width: '80%',
                   content: (
                     <>
-                      {/* {popupContent?.searchProps ? <Searchbox {...popupContent.searchProps}/> : null}
-                    {popupContent?.inputGroupProps ? <InputGroupbox {...popupContent.inputGroupProps}/> : null} */}
                       <Datagrid
                         ref={childGridRef}
                         gridId={childGridId}
@@ -2260,14 +2221,11 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       ev.stop();
 
       setFilterInfo(null);
-      // setUnfilterTrigger(data);
-      // setPreviousFilterData(data);
     },
     [gridRef, props.gridMode],
   );
 
   /** ⛔필터 초기화 이벤트 */
-  // const [unfilterTrigger, setUnfilterTrigger] = useState<any>(null);
   const onBeforeUnfilter = useCallback(
     ev => {
       if (filterInfo) return;
@@ -2287,36 +2245,13 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         };
       });
 
-      // const rawData:any[] = ev?.instance?.store?.data?.rawData;
-
       instance.resetData(originData);
       ev.stop();
 
       setFilterInfo(_filterInfo);
-      // setUnfilterTrigger(rawData);
     },
     [gridRef, props.gridMode, originData, columns],
   );
-
-  // useLayoutEffect(() => {
-  //   if (!unfilterTrigger) return;
-
-  //   const instance = gridRef?.current?.getInstance();
-  //   // const rawData = instance?.store?.data?.rawData;
-  //   console.log('unfilterTrigger', unfilterTrigger);
-  //   previousFilterData?.forEach(row => {
-  //     const currentRow = unfilterTrigger?.find(rawEl => rawEl?.rowKey === row?.rowKey);
-  //     if (currentRow?._attributes?.checked) {
-  //       instance.check(currentRow?.rowKey);
-
-  //     } else if (row?._attributes?.checked) {
-  //       instance.check(row?.rowKey);
-  //     }
-  //   });
-
-  //   setPreviousFilterData(null);
-  //   setUnfilterTrigger(null);
-  // }, [gridRef, unfilterTrigger]);
 
   useLayoutEffect(() => {
     if (!filterInfo) return;

@@ -90,7 +90,7 @@ export const PgEqmInsp = () => {
         await onReset();
         setApplyFg(true);
       } else {
-        // message.error('기준서 ' + (value ? '해제' : '적용') + ' 실패');
+        // this is a fail case
       }
     });
   };
@@ -530,7 +530,6 @@ export const PgEqmInsp = () => {
         detailSubInputInfo?.setValues({});
         detailSubGrid?.setGridData([]);
       }
-      // reloadDetailSubGrid(res[0]?.insp_uuid);
     });
   };
 
@@ -551,7 +550,6 @@ export const PgEqmInsp = () => {
 
   //#region 🔶조회조건 관리
   /** 조회조건 View */
-  // const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const detailSearchInfo = null;
   const detailSubSearchInfo = null;
@@ -589,7 +587,6 @@ export const PgEqmInsp = () => {
   const onSearchDetail = async uuid => {
     if (uuid == null) return;
     reloadDetailGrid(uuid);
-    // reloadDetailSubGrid(uuid);
   };
 
   const onSearchDetailSub = uuid => {

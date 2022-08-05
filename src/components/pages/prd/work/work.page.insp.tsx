@@ -265,16 +265,6 @@ export const INSP = () => {
     return items;
   };
 
-  // const INSP_DETAIL_COLUMNS = useMemo(
-  //   () => {
-  //     if (!maxSampleCnt) {
-  //       return INSP_DETAIL_BASIC_COLUMNS;
-  //     }
-  //     return createInspDetailColumns(maxSampleCnt);
-  //   }
-  //   , [INSP_DETAIL_BASIC_COLUMNS, maxSampleCnt]
-  // );
-
   const onAfterChange = (ev: any, { gridInstance, inputInstance }) => {
     const { origin, changes, instance } = ev;
     if (changes.length === 0) return;
@@ -468,7 +458,6 @@ export const INSP = () => {
             insp_detail_type_uuid: ev,
             work_uuid: (headerSaveOptionParams as any)?.work_uuid,
           }).then(({ datas, maxSampleCnt, header, details }) => {
-            // setMaxSampleCnt(res?.header?.max_sample_cnt);
             const newColumns = createInspDetailColumns(maxSampleCnt);
             detailGrid.setGridColumns(newColumns);
 
@@ -560,14 +549,6 @@ export const INSP = () => {
     }
   }, [createPopupVisible]);
 
-  // useLayoutEffect(() => {
-  //   if(editPopupVisible && editPopupInput){
-  //     editPopupInput.setValues(inputRef?.current?.values);
-  //     editPopupGrid.setGridColumns(INSP_DETAIL_COLUMNS);
-  //     editPopupGrid.setGridData(detailData);
-  //   }
-  // }, [editPopupVisible]);
-
   //#region 🚫함수
   const onSearch = (headerSaveOptionParams: {
     work_uuid?: string;
@@ -594,8 +575,6 @@ export const INSP = () => {
           prod_uuid,
           lot_no,
         });
-        // setHeaderGridMode(defaultHeaderGridMode);
-        // setDetailGridMode('view');
       });
     }
   };
@@ -605,9 +584,6 @@ export const INSP = () => {
     setDetailSaveOptionParams({});
     setHeaderData([]);
     detailGrid.setGridData([]);
-    // setDetailData([]);
-    // setHeaderGridMode(defaultHeaderGridMode);
-    // setDetailGridMode('view');
   };
 
   const onDelete = ev => {
@@ -617,7 +593,6 @@ export const INSP = () => {
     }
 
     const isModified = gridRef?.current?.getInstance()?.isModified();
-    // const modifiedDatas = gridRef?.current?.getInstance()?.getModifiedRows();
 
     if (!isModified) {
       message.error('삭제할 항목을 선택해주세요.');
@@ -632,7 +607,6 @@ export const INSP = () => {
       {},
       modal,
       ({ success, count, savedData }) => {
-        // const insp_result_uuid = inputRef?.current?.values?.insp_result_uuid;
         const preSelectedRow = cloneDeep(selectedRow);
         if (success) {
           inputRef?.current?.resetForm();
@@ -694,7 +668,6 @@ export const INSP = () => {
       let detailDatas: object[] = [];
 
       const saveGridInstance = saveGridRef?.current?.getInstance();
-      // const popupGridInstance = saveInputRef?.current;
 
       const saveInputValues = saveInputRef?.current?.values;
       const regDate = dayjs(saveInputValues?.reg_date).isValid()
@@ -705,7 +678,6 @@ export const INSP = () => {
         : saveInputValues?.reg_date_time;
       const regDateTime = regDate + ' ' + regTime + ':00';
       headerData = {
-        //uuid: saveInputValues?.insp_result_uuid,
         factory_uuid: getUserFactoryUuid(),
         work_uuid: (headerSaveOptionParams as any)?.work_uuid,
         insp_type_uuid: saveInputValues?.insp_type_uuid,
@@ -753,12 +725,9 @@ export const INSP = () => {
           }
         }
 
-        //const uuidKey = methodType === 'post' ? 'insp_detail_uuid' : 'uuid';
-
         detailDatas.push({
           values,
           factory_uuid: getUserFactoryUuid(),
-          //[uuidKey]: row?.insp_detail_uuid,
           insp_result_fg: row?.insp_result_fg,
           insp_detail_uuid: row?.insp_detail_uuid,
           remark: row?.remark,
@@ -833,7 +802,7 @@ export const INSP = () => {
       } catch (e) {
         console.log(e);
       } finally {
-        // setLoading(false);
+        // this is for the case when the user clicks on the header row
       }
     }
   };
@@ -927,7 +896,6 @@ export const INSP = () => {
           okText="저장하기"
           cancelText="취소"
           onCancel={() => {
-            // TUIP_PROD_onSearch();
             setCreatePopupVisible(false);
           }}
           gridMode="create"
@@ -973,7 +941,6 @@ export const INSP = () => {
           okText="저장하기"
           cancelText="취소"
           onCancel={() => {
-            // TUIP_PROD_onSearch();
             setEditPopupVisible(false);
           }}
           gridMode="update"

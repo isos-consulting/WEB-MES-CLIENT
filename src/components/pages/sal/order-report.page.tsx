@@ -123,9 +123,9 @@ export const PgSalOrdersReport = () => {
     useState<boolean>(false);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
-  const newDataPopupInputInfo = null; //useInputGroup('NEW_DATA_POPUP_INPUT_BOX', []);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const inputInfo = null;
+  const newDataPopupInputInfo = null;
+  const editDataPopupInputInfo = null;
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
@@ -935,7 +935,7 @@ export const PgSalOrdersReport = () => {
       'end_due_date',
       'complete_state',
       'sort_type',
-    ]; //Object.keys(searchInfo.values);
+    ];
     const searchParams = cleanupKeyOfObject(values, searchKeys);
 
     if (!values?.reg_date_chk) {

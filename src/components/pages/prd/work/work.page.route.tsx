@@ -234,13 +234,6 @@ export const ROUTING = () => {
   };
 
   const onSave = async (ref?, popupGridMode?) => {
-    // onDefaultGridSave('basic', gridRef, WORKER_COLUMNS, SAVE_URI_PATH, {}, modal,
-    //   () => {
-    //     setGridMode('view');
-    //     onSearch();
-    //   }
-    // );
-
     const modifedRows = getModifiedRows(ref ?? gridRef, ROUTING_COLUMNS);
     const _gridMode = popupGridMode ?? gridMode;
 

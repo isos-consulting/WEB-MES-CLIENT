@@ -386,11 +386,8 @@ export const PgPrdReturn = () => {
   /** 입력상자 관리 */
   const inputInfo = null;
 
-  /** 액션 관리 */
-
   /** 검색 */
   const onSearch = values => {
-    // const searchKeys = Object.keys(values);
     const searchParams = cleanupKeyOfObject(values, searchInfo.searchItemKeys);
 
     //입력된 두 개의 날짜 전후 비교

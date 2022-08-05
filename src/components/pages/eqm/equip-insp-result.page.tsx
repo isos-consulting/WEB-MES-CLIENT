@@ -585,7 +585,7 @@ export const PgEqmInspResult = () => {
   ]);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', [
     {
       id: 'reg_date',
@@ -638,7 +638,7 @@ export const PgEqmInspResult = () => {
     },
   ]);
 
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const editDataPopupInputInfo = null;
 
   async function changeNewDataPopupInputValues(values) {
     if (

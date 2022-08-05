@@ -397,13 +397,6 @@ export const DOWNTIME = () => {
 
   /** 저장 이벤트 */
   const onSave = async (ref?, popupGridMode?) => {
-    // onDefaultGridSave('basic', gridRef, WORKER_COLUMNS, SAVE_URI_PATH, {}, modal,
-    //   () => {
-    //     setGridMode('view');
-    //     onSearch();
-    //   }
-    // );
-
     const modifedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
     const _gridMode = popupGridMode ?? gridInfo.gridMode;
 

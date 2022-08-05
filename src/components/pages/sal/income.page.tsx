@@ -475,11 +475,9 @@ export const PgSalIncome = () => {
           };
 
           if (newDataPopupGridVisible) {
-            // params['stock_type'] = newDataPopupInputInfo.values?.stock_type;
             params['reg_date'] =
               newDataPopupInputInfo.ref.current.values?.reg_date;
           } else if (setEditDataPopupGridVisible) {
-            // params['stock_type'] = editDataPopupInputInfo.values?.stock_type;
             params['reg_date'] =
               editDataPopupInputInfo.ref.current.values?.reg_date;
           }
@@ -528,11 +526,10 @@ export const PgSalIncome = () => {
       defaults: [getToday(-7), getToday()],
       label: '입고일',
     },
-    // {type:'date', id:'end_date', default:getToday()}
   ]);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
     { type: 'date', id: 'reg_date', label: '입고일', default: getToday() },
   ]);

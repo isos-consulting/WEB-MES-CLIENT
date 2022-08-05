@@ -131,9 +131,6 @@ const Combobox: React.FC<Props> = props => {
             setComboTextValue(null);
             setComboValue(null);
           }
-
-          // setComboTextValue(props?.defaultText || props?.defaultValue);
-          // setComboValue(props.defaultValue);
           break;
 
         default:
@@ -152,11 +149,6 @@ const Combobox: React.FC<Props> = props => {
       return value;
     }
   }, [props.defaultValue, options]);
-
-  // useLayoutEffect(() => {
-  //   if ((options?.length > 0) === false) return;
-  //   onChangeValue(props.defaultValue, options[0]?.text);
-  // }, [props.defaultValue, options]);
 
   const value = useMemo(() => {
     if (props.value) {

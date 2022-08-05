@@ -136,7 +136,6 @@ export async function getData<T = any[]>(
   loadProgressBar();
   const _baseUrl = optionBaseURL ? optionBaseURL : baseURL;
   let datas: any = null;
-  // let FACTORY_INSERT_FLAG:boolean = true;
 
   try {
     // session 유저 정보의 키와 params로 넘길 키가 중복되는게 있는지 확인 (중복이면 유저 정보에 있는 키는 사용안함)
@@ -146,7 +145,6 @@ export async function getData<T = any[]>(
         true
       ) {
         datas = null;
-        // FACTORY_INSERT_FLAG = false;
       }
     }
     datas = await axios({
@@ -232,7 +230,7 @@ export async function getData<T = any[]>(
         break;
 
       case 'report':
-        datas = datas?.data?.datas?.raws[0]; // {datas. subTotals}
+        datas = datas?.data?.datas?.raws[0];
         break;
 
       case 'blob':
@@ -802,7 +800,6 @@ export const getAccessToken = async (): Promise<{
     refreshState = refreshData.data.state;
   } catch (error) {
     console.log(error);
-    // if (error?.response?.data?.state?.state_no === errorState.EXPIRED_REFRESH_TOKEN) {
     localStorage.setItem(
       'state',
       JSON.stringify({

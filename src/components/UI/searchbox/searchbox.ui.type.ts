@@ -1,6 +1,5 @@
 import { FormikErrors, FormikValues } from 'formik';
 import { IInputGroupboxItem } from '../input-groupbox/input-groupbox.ui';
-// import {IInputUiGroupItem} from '../input-ui-groupbox/input-ui-groupbox.ui.type';
 
 /** 검색조건 박스 속성 인터페이스 */
 export default interface ISearchboxProps extends ISearchboxStyles {

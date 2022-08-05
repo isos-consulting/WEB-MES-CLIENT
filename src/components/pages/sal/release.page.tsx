@@ -61,7 +61,7 @@ export const PgSalRelease = () => {
     useState<boolean>(false);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
     { type: 'date', id: 'reg_date', label: '출고일', default: getToday() },
   ]);

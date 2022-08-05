@@ -930,7 +930,7 @@ export const PgMatOrder = () => {
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid;
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo.values).then(searchResult =>
@@ -942,7 +942,7 @@ export const PgMatOrder = () => {
   /** 수정 이후 수행될 함수 */
   const onAfterSaveEditData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.outgo?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid;
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then(searchResult =>
@@ -954,7 +954,7 @@ export const PgMatOrder = () => {
   /** 세부 저장 이후 수행될 함수 */
   const onAfterSaveAddData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = selectedHeaderRow?.order_uuid; //savedData[0]?.header[0]?.uuid;
+    const savedUuid = selectedHeaderRow?.order_uuid;
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo.values).then(searchResult =>

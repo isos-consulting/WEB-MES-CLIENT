@@ -287,7 +287,7 @@ export const PgAutGroupPermission = () => {
 
   /** 조회조건 Event */
   const onSearchHeader = async values => {
-    const searchParams = {}; //cleanupKeyOfObject(values, searchInitKeys);
+    const searchParams = {};
 
     let data = [];
     await getData(searchParams, headerSearchUriPath)

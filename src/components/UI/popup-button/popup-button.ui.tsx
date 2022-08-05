@@ -9,7 +9,6 @@ import { afPopupReponseRow } from './popup-button.recoil';
 import { v4 as uuidv4 } from 'uuid';
 import Modal from 'antd/lib/modal/Modal';
 import { Datagrid } from '../datagrid-new';
-// import { useLoadingState } from '~/hooks';
 import { useRef } from 'react';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
@@ -38,13 +37,9 @@ const setPopupButtonData = (props: Props) => {
 
 /** 팝업 호출용 버튼 */
 const PopupButton: React.FC<Props> = props => {
-  // const popupState = usePopupState();
   const childGridRef = useRef<Grid>();
-
   const [, setSelectedRow] = useRecoilState(afPopupReponseRow(props.id));
   const [popupItem, setPopupItem] = useState<IPopupItemsRetrunProps>(null);
-  // const [,setLoading] = useLoadingState();
-
   const [modal, contextHolder] = Modal.useModal();
 
   useEffect(() => {
@@ -87,7 +82,6 @@ const PopupButton: React.FC<Props> = props => {
             if (!popupContent?.onInterlock()) return;
           }
 
-          // setLoading(true);
           getData<any[]>(popupContent.params, popupContent.uriPath)
             .then(res => {
               // 데이터를 불러온 후 모달을 호출합니다.
@@ -153,7 +147,6 @@ const PopupButton: React.FC<Props> = props => {
                     }
 
                     if (props?.setValues) {
-                      //props.setValues(crr => {return {...crr, ...row}});
                       props.setValues(row);
                     } else if (props?.setFieldValue) {
                       for (const [key, value] of Object.entries(row)) {

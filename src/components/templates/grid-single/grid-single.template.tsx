@@ -135,7 +135,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
       document.getElementById(inputProps?.id)?.clientHeight || 0,
     );
     const subTotalHeight =
-      subTotalGrid && !subTotalGrid?.hidden ? 230 + 30 + 35 + 16 : 0; // Number(document.getElementById(subTotalGrid?.gridId)?.clientHeight || 0);
+      subTotalGrid && !subTotalGrid?.hidden ? 230 + 30 + 35 + 16 : 0;
 
     const datagridHeight = 30;
     const bodyVertialMargin = 32;

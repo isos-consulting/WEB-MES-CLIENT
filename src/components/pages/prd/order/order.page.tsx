@@ -681,8 +681,6 @@ export const PgPrdOrder = () => {
 
       if (targetType === 'cell') {
         try {
-          // setLoading(true);
-
           const row = ev?.instance?.store?.data?.rawData[rowKey];
           const order_uuid = row?.order_uuid;
 
@@ -739,7 +737,7 @@ export const PgPrdOrder = () => {
         } catch (e) {
           console.log(e);
         } finally {
-          // setLoading(false);
+          // this is for loading
         }
       }
     },

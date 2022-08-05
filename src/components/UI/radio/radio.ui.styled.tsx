@@ -1,6 +1,4 @@
 import Colors from '~styles/color.style.scss';
-// import Sizes from '~styles/size.style.scss';
-// import Fonts from '~styles/font.style.scss';
 import styled from 'styled-components';
 import { Radio } from 'antd';
 

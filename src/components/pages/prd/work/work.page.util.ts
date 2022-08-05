@@ -117,11 +117,6 @@ export const onDefaultGridSave = async (
                 delete detailDatas[i][column?.name];
               }
             });
-            // const optionKeys = Object.keys(optionParams);
-
-            // optionKeys.forEach((optionKey) => {
-            //   detailDatas[i][optionKey] = optionParams[optionKey];
-            // });
           }
 
           // 헤더 데이터 추가

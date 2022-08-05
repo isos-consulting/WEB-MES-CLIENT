@@ -30,7 +30,6 @@ export const PgStdBom = () => {
   /** INIT */
   const headerDefaultGridMode = 'view';
   const headerSearchUriPath = '/std/prods';
-  // const headerSaveUriPath = '/mat/orders';
   const detailDefaultGridMode = 'delete';
   const detailSubDefaultGridMode = 'view';
   const detailSearchUriPath = '/std/boms';
@@ -920,7 +919,6 @@ export const PgStdBom = () => {
 
   //#region 🔶조회조건 관리
   /** 조회조건 View */
-  // const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const headerSearchInfo = null;
   const detailSearchInfo = null;
   const detailSubSearchInfo = null;
@@ -1043,8 +1041,6 @@ export const PgStdBom = () => {
         // 헤더 그리드 재조회
         onSearchHeader(headerSearchInfo?.values).then(searchResult => {
           onAfterSaveAction(searchResult, selectedHeaderRow?.prod_uuid);
-          // const headerRow = savedData[0];
-          // onAfterSaveAction(searchResult, headerRow?.prod_uuid);
         });
       },
       true,

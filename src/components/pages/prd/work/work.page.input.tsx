@@ -717,7 +717,6 @@ export const INPUT_POPUP = (props: {
     ).then(res => {
       setStandardInputData(res);
     });
-    // setNewData([]);
   };
 
   /** 기존 데이터 조회 함수 */

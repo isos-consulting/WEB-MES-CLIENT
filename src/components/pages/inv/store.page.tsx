@@ -333,7 +333,7 @@ export const PgInvStore = () => {
       disabledAutoDateColumn: true,
     },
   );
-  const editDataPopupGrid = null; //useGrid('EDIT_POPUP_GRID', []);
+  const editDataPopupGrid = null;
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
     useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
@@ -355,11 +355,6 @@ export const PgInvStore = () => {
       },
       onAfterChange: ev => {
         const stockType = ev;
-        // if (stockType === '-') {
-        //   setStockType('all');
-        //   setStoreOptions([]);
-        //   return;
-        // }
 
         getData({ store_type: stockType }, '/std/stores').then(res => {
           if (!res) {
@@ -622,7 +617,7 @@ export const PgInvStore = () => {
   ]);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
     {
       type: 'date',
@@ -632,7 +627,7 @@ export const PgInvStore = () => {
       required: true,
     },
   ]);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const editDataPopupInputInfo = null;
 
   /** 검색 */
   const onSearch = values => {

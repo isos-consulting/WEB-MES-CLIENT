@@ -56,7 +56,7 @@ export const PgMatRelease = () => {
     useState<boolean>(false);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
     {
       type: 'date',

@@ -837,7 +837,7 @@ export const PgSalOutgo = () => {
     },
   ]);
 
-  const detailSearchInfo = null; //useSearchbox('DETAIL_SEARCH_INPUTBOX', []);
+  const detailSearchInfo = null;
 
   const newDataPopupSearchInfo = null;
   const addDataPopupSearchInfo = null;

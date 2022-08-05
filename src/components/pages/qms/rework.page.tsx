@@ -64,7 +64,7 @@ export const PgQmsRework = () => {
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
+  const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('NEW_DATA_POPUP_INPUT_BOX', [
     { type: 'date', id: 'reg_date', label: '작업일', default: getToday() },
     {
@@ -73,12 +73,6 @@ export const PgQmsRework = () => {
       label: '일괄처리기준',
       default: 'DISPOSAL',
       firstItemType: 'none',
-      // dataSettingOptions: {
-      //   uriPath:'/adm/rework-types',
-      //   params: {},
-      //   codeName:'rework_type_cd',
-      //   textName:'rework_type_nm'
-      // }
       options: [
         { code: 'DISPOSAL', text: '폐기' },
         { code: 'REWORK', text: '재작업' },
@@ -711,7 +705,6 @@ export const PgQmsRework = () => {
     if (selectedHeaderRow == null) {
       detailGrid.setGridData([]);
     } else {
-      // detailInputInfo.setValues(selectedHeaderRow);
       onSearchDetail(selectedHeaderRow?.rework_uuid);
     }
   }, [selectedHeaderRow]);

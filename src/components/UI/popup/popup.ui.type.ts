@@ -80,14 +80,6 @@ export interface IPopupItemOptionProps {
 export type TPopupList = IPopupModalInfo[];
 export type TPopupType = 'grid' | 'any';
 
-// /**
-//  * 데이터 그리드 전용 팝업 속성 인터페이스
-//  * @param popupActionEvents 그리드 액션 이벤트 정의
-//  */
-// export interface IGridPopupProps {
-//   popupActionEvents: IPopupActionEvents;
-// }
-
 /**
  * 그리드 액션 이벤트 속성 인터페이스
  */

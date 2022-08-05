@@ -207,94 +207,12 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
     setDefaultValues(_initialValues);
   }, []);
 
-  // const preValidate = async (values?:any):Promise<FormikErrors<FormikValues>> => {
-  //   const errors = {};
-
-  //   // setValues(crr => crr !== values ? values : crr);
-
-  //   if (inputItems?.length > 0) {
-  //     let typeErrorList:string[] = [];
-  //     let requireErrorList:string[] = [];
-
-  //     inputItems.forEach((item) => {
-  //       const itemName = item.name || item.id;
-  //       const value = values[itemName];
-
-  //       // 타입 체크
-  //       if (isNotCheckType !== true && item?.useCheckType === true) {
-  //         let pattern = null;
-  //         switch (item.type) {
-  //           case 'number':
-  //             if (!isNaN(value)) {
-  //               typeErrorList.push(itemName);
-  //             }
-  //             break;
-
-  //           case 'date':
-  //             pattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
-
-  //             if (typeof value === 'string' && !pattern.test(value)) {
-  //               typeErrorList.push(itemName);
-  //             }
-  //             break;
-
-  //           // case 'datetime':
-  //           //   pattern = /([0-2][0-9]{3})-([0-1][0-9])-([0-3][0-9]) ([0-5][0-9]):([0-5][0-9]):([0-5][0-9])(([\-\+]([0-1][0-9])\:00))?/;
-
-  //           //   if (typeof value === 'string' && !pattern.test(value)) {
-  //           //     typeErrorList.push(itemName);
-  //           //   }
-  //           //   break;
-
-  //           case 'time':
-  //             pattern = /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/;
-
-  //             if (typeof value === 'string' && !pattern.test(value)) {
-  //               typeErrorList.push(itemName);
-  //             }
-  //             break;
-
-  //           default:
-  //             break;
-  //         }
-
-  //       }
-
-  //       // 필수 값 체크
-  //       if (isNotCheckRequired !== true && item?.required === true) {
-  //         if (!value) {
-  //           requireErrorList.push(itemName);
-  //         }
-  //       }
-  //     });
-
-  //     // 에러 정리
-  //     typeErrorList.forEach(errorItem => {
-  //       errors[errorItem] = '형식이 일치하지 않습니다.';
-  //     });
-
-  //     requireErrorList.forEach(errorItem => {
-  //       errors[errorItem] = '필수 값 입니다.';
-  //     });
-
-  //     // if(typeErrorList.length > 0 || requireErrorList.length > 0)  {
-  //     //   setResult('ERROR');
-  //     // } else {
-  //     //   setResult('');
-  //     // }
-
-  //   }
-
-  //   return errors;
-  // }
-
   const onSubmit = useMemo(() => {
     if (props.onSubmit) {
       return (values, { setSubmitting }) =>
         props.onSubmit(values, setSubmitting);
     } else {
       return (values, { setSubmitting }) => {
-        // setValues(crr => crr !== values ? values : crr);
         setSubmitting(false);
       };
     }

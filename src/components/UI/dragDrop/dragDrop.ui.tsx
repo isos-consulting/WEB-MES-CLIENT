@@ -65,20 +65,6 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
     return fileInfo;
   };
 
-  // const uploadUserFile = async (requestHeader: Object) => {
-  //   let fileInfo: OptRow = {};
-  //   console.log(requestHeader)
-  //   const response: Response = await fetch("http://191.1.70.225:3002/upload", requestHeader);
-
-  //   if (response.ok) {
-  //     const resJson: fileType = await response.json();
-
-  //     fileInfo = resJson.datas[0];
-  //   }
-
-  //   return fileInfo;
-  // };
-
   const appendRow = file => {
     gridRef.current?.getInstance().appendRow({
       ...file,

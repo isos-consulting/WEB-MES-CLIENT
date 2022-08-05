@@ -101,9 +101,9 @@ export const PgMatReceiveReport = () => {
   ]);
 
   /** 입력상자 관리 */
-  const inputInfo = null; //useInputGroup('INPUTBOX', []);
-  const newDataPopupInputInfo = null; //useInputGroup('NEW_DATA_POPUP_INPUT_BOX', []);
-  const editDataPopupInputInfo = null; //useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', []);
+  const inputInfo = null;
+  const newDataPopupInputInfo = null;
+  const editDataPopupInputInfo = null;
 
   const columns = useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
@@ -1169,7 +1169,7 @@ export const PgMatReceiveReport = () => {
 
   /** 검색 */
   const onSearch = values => {
-    const searchKeys = ['start_date', 'end_date', 'sort_type']; //Object.keys(searchInfo.values);
+    const searchKeys = ['start_date', 'end_date', 'sort_type'];
     const searchParams = cleanupKeyOfObject(values, searchKeys);
 
     let data = [];

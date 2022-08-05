@@ -370,7 +370,7 @@ export const PgPrdWork = () => {
   const workWorker = WORKER();
   const workReject = REJECT();
   const workDowntime = DOWNTIME();
-  const workRouting = workRoutingStore(); //ROUTING();
+  const workRouting = workRoutingStore();
 
   // 팝업 관련
   const [prodOrderPopupVisible, setProdOrderPopupVisible] = useState(false);
@@ -529,7 +529,6 @@ export const PgPrdWork = () => {
       return;
     }
 
-    // const SAVE_URI_PATH = '/prd/works';
     const workData = cloneDeep(workInfo);
     const routingData = cloneDeep(routingInfo);
 
@@ -563,7 +562,6 @@ export const PgPrdWork = () => {
             onSearch(searchInfo.values, () => {
               onHeaderClick({ targetType: 'cell' }, workData?.work_uuid);
             });
-            // searchInfo?.onSearch(searchInfo.values);
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
           }
@@ -1122,7 +1120,6 @@ export const PgPrdWork = () => {
 
     if (targetType === 'cell') {
       try {
-        // setLoading(true);
         const searchParams = searchInfo.values;
         let row: any = {};
         if (_work_uuid) {
@@ -1215,7 +1212,6 @@ export const PgPrdWork = () => {
       } catch (e) {
         console.log(e);
       } finally {
-        // setLoading(false);
       }
     }
   };
@@ -1789,8 +1785,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
 
   const WORK_START_SAVE_URI_PATH = '/prd/works';
   const COMPLETE_SAVE_URI_PATH = '/prd/orders/complete';
-  // const CANCEL_COMPLETE_SAVE_URI_PATH = '/prd/works/cancel-complete';
-
   //#endregion
 
   useLayoutEffect(() => {
