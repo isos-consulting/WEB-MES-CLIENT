@@ -9,12 +9,7 @@ import {
 } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
-import { getData } from '~/functions';
-
-interface ExcelDownloadApiResponse {
-  data: Blob;
-  headers: { [key: string]: string };
-}
+import { executeData, getData, getStorageValue } from '~/functions';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -133,25 +128,19 @@ export const PgStdExcelUpload: React.FC = () => {
   }, []);
 
   const downloadFile = async () => {
-    const blob: ExcelDownloadApiResponse = await getData(
-      { excel_form_cd: menuStore.menu_uuid },
-      '/adm/excel-forms/download',
+    const blob: Blob | MediaSource = await executeData(
+      {},
+      `tenant/test/file/${menuStore.menu_file_uuid}/download`,
+      'post',
       'blob',
+      false,
+      process.env.FILE_SERVER_URL_KH,
     );
 
-    const contentDisposition = blob.headers['content-disposition'];
-    let fileName = 'unknown';
-    if (contentDisposition) {
-      const [fileNameMatch] = contentDisposition
-        .split(';')
-        .filter(str => str.includes('filename'));
-      if (fileNameMatch) [, fileName] = fileNameMatch.split('=');
-    }
-
-    const url = URL.createObjectURL(blob.data);
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = decodeURIComponent(fileName);
+    a.download = `${menuStore.file_name}.${menuStore.file_extension}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
