@@ -69,13 +69,29 @@ const gridColumns = async (excelFormCode: string) => {
   );
 };
 
+interface MenuStore {
+  file_extension: string;
+  file_name: string;
+  file_type: string;
+  menu_file_uuid: string;
+  menu_nm: string;
+  menu_uuid: string;
+}
+
+const menus = getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
 export const PgStdExcelUpload: React.FC = () => {
-  const menus = getData({}, 'adm/excel-form/items');
   const [uploadGridProps, setGridProps] = useState({
     columns: [],
     data: [],
   });
-  const [menuCode, setMenuCode] = useState<string>('');
+  const [menuStore, setMenuStore] = useState<MenuStore>({
+    file_extension: '',
+    file_name: '',
+    file_type: '',
+    menu_file_uuid: '',
+    menu_nm: '',
+    menu_uuid: '',
+  });
   const menuCombobox: ISearchItem = {
     type: 'combo',
     id: 'menu_id',
@@ -83,8 +99,12 @@ export const PgStdExcelUpload: React.FC = () => {
     default: '',
     firstItemType: 'empty',
     widthSize: '160px',
-    onAfterChange: async menuCode => {
-      setMenuCode(menuCode);
+    onAfterChange: async (menuCode: string) => {
+      setMenuStore(
+        (await menus).find(
+          ({ menu_uuid }: MenuStore) => menu_uuid === menuCode,
+        ),
+      );
       setGridProps({
         columns: await gridColumns(menuCode),
         data: [],
@@ -103,8 +123,8 @@ export const PgStdExcelUpload: React.FC = () => {
       setSearchItems([
         {
           ...menuCombobox,
-          options: menu.map(({ excel_form_cd, menu_nm }) => ({
-            code: excel_form_cd,
+          options: menu.map(({ menu_uuid, menu_nm }) => ({
+            code: menu_uuid,
             text: menu_nm,
           })),
         },
@@ -114,7 +134,7 @@ export const PgStdExcelUpload: React.FC = () => {
 
   const downloadFile = async () => {
     const blob: ExcelDownloadApiResponse = await getData(
-      { excel_form_cd: menuCode },
+      { excel_form_cd: menuStore.menu_uuid },
       '/adm/excel-forms/download',
       'blob',
     );
