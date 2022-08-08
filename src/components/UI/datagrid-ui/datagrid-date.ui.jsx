@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import EXPRESSSIONS from '~/constants/expressions';
 import { getToday } from '~/functions';
 
 /** 날짜 포멧 에디터 */
@@ -109,9 +110,8 @@ export class DatagridDateRenderer {
       case 'time':
         let value = props.value;
         if (
-          /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9])$/.test(value) === false &&
-          /^([1-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/.test(value) ===
-            false &&
+          EXPRESSSIONS.HOUR_MINUTE.test(value) === false &&
+          EXPRESSSIONS.HOUR_MINUTE_SECOND.test(value) === false &&
           dayjs(value).isValid()
         ) {
           value = dayjs(value).format('HH:mm');
