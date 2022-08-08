@@ -174,11 +174,14 @@ export const PgStdExcelUpload: React.FC = () => {
   const downloadFile = async () => {
     const blob: Blob | MediaSource = await executeData(
       {},
-      `tenant/test/file/${menuStore.menu_file_uuid}/download`,
+      `tenant/${getStorageValue({
+        storageName: 'tenantInfo',
+        keyName: 'tenantUuid',
+      })}/file/${menuStore.menu_file_uuid}/download`,
       'post',
       'blob',
       false,
-      process.env.FILE_SERVER_URL_KH,
+      process.env.FILE_SERVER_URL,
     );
 
     const url = URL.createObjectURL(blob);
