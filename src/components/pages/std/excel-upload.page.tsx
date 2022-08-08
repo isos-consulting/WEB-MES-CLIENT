@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { createRef, useState, useEffect } from 'react';
 import {
   Button,
   Container,
@@ -10,27 +10,53 @@ import {
 import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
 import { executeData, getData, getStorageValue } from '~/functions';
+import Grid from '@toast-ui/react-grid';
+
+interface DataGridColumns {
+  header: string;
+  name: string;
+  format: string;
+}
+
+interface DataGridDatas {
+  [key: string]: string | number | boolean;
+}
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
   start: number,
+  columns: DataGridColumns[],
 ) => {
   const workBook = new Excel.Workbook();
   const uploadData = await workBook.xlsx.load(uploadExcelBuffer);
   const sheet = uploadData.getWorksheet(1);
-  const columns = sheet.getRow(start).values;
   const list = new Array<Map<string, CellValue>>();
+  const columnNames: string[] = uploadData.model.keywords.split(', ');
 
-  for (let i = start + 2; i < sheet.rowCount; i++) {
+  const convertCellValue = (format: string, value: Excel.CellValue) => {
+    if (value == null) return null;
+    if (['text', 'popup'].includes(format) === true) return value.toString();
+    if (format === 'number') return Number(value);
+
+    return !Boolean(value);
+  };
+
+  for (let i = start; i <= sheet.rowCount; i++) {
     const row = sheet.getRow(i);
 
     if (Array.isArray(row.values) === true) {
       if (row.values.length > 0) {
-        const data = new Map<string, Excel.CellValue>();
+        const data = new Map<string, string | number | boolean>();
 
-        columns.forEach((column, index) => {
-          data.set(column, row.getCell(index).value);
+        columnNames.forEach((columnName: string, index: number) => {
+          const { format } = columns.find(({ name }) => name === columnName);
+
+          data.set(
+            columnName,
+            convertCellValue(format, row.getCell(index + 1).value),
+          );
         });
+
         list.push(data);
       }
     }
@@ -75,7 +101,10 @@ interface MenuStore {
 
 const menus = getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
 export const PgStdExcelUpload: React.FC = () => {
-  const [uploadGridProps, setGridProps] = useState({
+  const [uploadGridProps, setGridProps] = useState<{
+    columns: DataGridColumns[];
+    data: DataGridDatas[];
+  }>({
     columns: [],
     data: [],
   });
@@ -87,6 +116,7 @@ export const PgStdExcelUpload: React.FC = () => {
     menu_nm: '',
     menu_uuid: '',
   });
+  const dataGridRef = createRef<Grid>(null);
   const menuCombobox: ISearchItem = {
     type: 'combo',
     id: 'menu_id',
@@ -159,7 +189,11 @@ export const PgStdExcelUpload: React.FC = () => {
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={async uploadFile => {
-          const converted = await importXLSXFile(uploadFile, 9);
+          const converted = await importXLSXFile(
+            uploadFile,
+            11,
+            uploadGridProps.columns,
+          );
 
           setGridProps({
             columns: uploadGridProps.columns,
@@ -168,6 +202,30 @@ export const PgStdExcelUpload: React.FC = () => {
           return false;
         }}
       />
+      <Button
+        onClick={async () => {
+          const validatedDatas = await executeData(
+            dataGridRef.current.getInstance().getData(),
+            'std/partners/excel-validation',
+            'post',
+          );
+
+          setGridProps({
+            columns: [
+              {
+                header: '에러내역',
+                name: 'error',
+                format: 'text',
+                width: ENUM_WIDTH.XXL,
+              },
+              ...uploadGridProps.columns,
+            ],
+            data: validatedDatas.datas.raws,
+          });
+        }}
+      >
+        데이터 검증
+      </Button>
       <Searchbox {...props} />
       <Container>
         {uploadGridProps.columns.length === 0 ? (
@@ -181,7 +239,42 @@ export const PgStdExcelUpload: React.FC = () => {
             gridMode="update"
             data={uploadGridProps.data}
             columns={uploadGridProps.columns}
+            ref={dataGridRef}
             gridPopupInfo={[
+              {
+                // 거래처유형 팝업
+                columnNames: [
+                  { original: 'partner_type_uuid', popup: 'partner_type_uuid' },
+                  { original: 'partner_type_cd', popup: 'partner_type_cd' },
+                  { original: 'partner_type_nm', popup: 'partner_type_nm' },
+                ],
+                columns: [
+                  {
+                    header: '거래처유형UUID',
+                    name: 'partner_type_uuid',
+                    width: ENUM_WIDTH.L,
+                    filter: 'text',
+                    hidden: true,
+                  },
+                  {
+                    header: '거래처유형코드',
+                    name: 'partner_type_cd',
+                    width: ENUM_WIDTH.M,
+                    filter: 'text',
+                  },
+                  {
+                    header: '거래처유형명',
+                    name: 'partner_type_nm',
+                    width: ENUM_WIDTH.L,
+                    filter: 'text',
+                  },
+                ],
+                dataApiSettings: {
+                  uriPath: '/std/partner-types',
+                  params: null,
+                },
+                gridMode: 'select',
+              },
               {
                 // 창고팝업
                 columnNames: [
