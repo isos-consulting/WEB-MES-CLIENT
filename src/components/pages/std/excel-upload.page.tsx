@@ -74,19 +74,33 @@ const gridColumns = async (excelFormCode: string) => {
     'adm/excel-forms',
   );
 
-  return columns.map(
-    ({
-      excel_form_column_cd,
-      excel_form_column_nm,
-      excel_form_type,
-      column_fg,
-    }) => ({
-      header: excel_form_column_nm,
-      name: excel_form_column_cd,
-      editable: true,
-      format: excel_form_type,
-      requiredField: column_fg,
-    }),
+  return [
+    {
+      header: '에러내역',
+      name: 'error',
+      editable: false,
+      format: 'text',
+      requiredField: false,
+      hidden: true,
+      width: ENUM_WIDTH.XXL,
+    },
+  ].concat(
+    columns.map(
+      ({
+        excel_form_column_cd,
+        excel_form_column_nm,
+        excel_form_type,
+        column_fg,
+      }) => ({
+        header: excel_form_column_nm,
+        name: excel_form_column_cd,
+        editable: true,
+        format: excel_form_type,
+        requiredField: column_fg,
+        hidden: false,
+        width: ENUM_WIDTH.M,
+      }),
+    ),
   );
 };
 
@@ -211,15 +225,9 @@ export const PgStdExcelUpload: React.FC = () => {
           );
 
           setGridProps({
-            columns: [
-              {
-                header: '에러내역',
-                name: 'error',
-                format: 'text',
-                width: ENUM_WIDTH.XXL,
-              },
-              ...uploadGridProps.columns,
-            ],
+            columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
+              ...uploadGridProps.columns.slice(1),
+            ),
             data: validatedDatas.datas.raws,
           });
         }}
@@ -240,6 +248,7 @@ export const PgStdExcelUpload: React.FC = () => {
             data={uploadGridProps.data}
             columns={uploadGridProps.columns}
             ref={dataGridRef}
+            disabledAutoDateColumn={true}
             gridPopupInfo={[
               {
                 // 거래처유형 팝업
