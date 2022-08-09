@@ -226,7 +226,7 @@ export const PgStdExcelUpload: React.FC = () => {
             'std/partners/excel-validation',
             'post',
           );
-
+          if (validatedDatas == null) return;
           setGridProps({
             columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
               ...uploadGridProps.columns.slice(1),
