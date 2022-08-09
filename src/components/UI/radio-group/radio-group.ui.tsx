@@ -10,9 +10,7 @@ import { useMemo } from 'react';
 
 /** 라디오 그룹 */
 const RadioGroup: React.FC<Props> = props => {
-  const [radioGroupValue, setRadioGroupValue] = useRecoilState(
-    afStringState(props.id),
-  );
+  const [, setRadioGroupValue] = useRecoilState(afStringState(props.id));
 
   const onChange = (e: RadioChangeEvent) => {
     setRadioGroupValue(e.target.value);

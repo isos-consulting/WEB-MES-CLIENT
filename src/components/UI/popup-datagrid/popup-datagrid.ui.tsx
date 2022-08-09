@@ -92,7 +92,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             inputDatas,
           )
             .then(result => {
-              const { success, count, savedData } = result;
+              const { success, savedData } = result;
 
               if (success === false) return;
               if (props?.visible == null) setVisible(false);
@@ -352,41 +352,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
     props.inputProps,
   ]);
   //#endregion
-
-  /** 셀에 특정 클래스명을 삽입해주는 함수 */
-  const setClassName = (data, columns, gridMode) => {
-    data?.forEach(el => {
-      // 클래스명 삽입 하기
-      let classNames = { column: {} };
-
-      columns?.forEach(column => {
-        classNames['column'][column.name] = [gridMode];
-
-        // editor 클래스명 삽입
-        if (column?.editable === true) {
-          classNames['column'][column.name] = [
-            ...classNames['column'][column.name],
-            'editor',
-          ];
-        }
-
-        // editor 클래스명 삽입
-        if (column?.format === 'popup' && column?.editable === true) {
-          classNames['column'][column.name] = [
-            ...classNames['column'][column.name],
-            'popup',
-          ];
-        }
-      });
-
-      // 최종적으로 데이터 _attributes에 클래스명을 삽입
-      if (Object.keys(classNames['column']).length > 0) {
-        el['_attributes'] = {
-          className: classNames,
-        };
-      }
-    });
-  };
 
   /** 엔터 버튼 클릭시 onOk 동작되도록 함 */
   const onAfterKeyDown = useCallback(

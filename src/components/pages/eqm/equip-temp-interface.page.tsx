@@ -38,7 +38,6 @@ export const PgEqmTempInterface = () => {
   const [graph, setGraph] = useState([]);
   const [timeAxis, setTimeAxis] = useState('minute');
 
-  const [interfaceItem, setInterfaceItem] = useState([]);
   const [equipmentItem, setEquipmentItem] = useState([]);
 
   const handleChangeComboData = timeUnit => setTimeAxis(timeUnit);

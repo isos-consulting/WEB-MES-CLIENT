@@ -497,7 +497,7 @@ export const PgQmsFinalInspResult = () => {
   const permissions = getPermissions(title);
 
   //#region ✅설정값
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
 
   //#region Ref 관리
   const searchRef = useRef<FormikProps<FormikValues>>();
@@ -3652,7 +3652,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       .then(res => {
         setInspResult(res);
 
-        const { header, details } = res;
+        const { header } = res;
 
         inputInputItems.setValues({
           prod_uuid: header.prod_uuid,

@@ -9,7 +9,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 
 /** 라디오 버튼 */
 const Radio: React.FC<Props> = props => {
-  const [radioValue, setRadioValue] = useRecoilState(afStringState(props.id));
+  const [, setRadioValue] = useRecoilState(afStringState(props.id));
 
   const handleChangeRadioValue = (e: RadioChangeEvent) => {
     setRadioValue(e.target.value || '');

@@ -97,7 +97,7 @@ export const PgSalReleaseReport = () => {
   const newDataPopupInputInfo = null;
   const editDataPopupInputInfo = null;
 
-  const columns = useMemo(() => {
+  useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
     switch (searchInfo.values?.sort_type) {
       case 'prod':
@@ -108,7 +108,11 @@ export const PgSalReleaseReport = () => {
             alias: 'uuid',
             hidden: true,
           },
-          { header: '제품아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '제품아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품목유형',
             width: ENUM_WIDTH.M,
@@ -127,7 +131,12 @@ export const PgSalReleaseReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '품명',
             width: ENUM_WIDTH.L,
@@ -275,7 +284,11 @@ export const PgSalReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'text',
           },
-          { header: '제품아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '제품아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품목유형',
             width: ENUM_WIDTH.M,
@@ -294,7 +307,12 @@ export const PgSalReleaseReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '품명',
             width: ENUM_WIDTH.L,
@@ -410,7 +428,11 @@ export const PgSalReleaseReport = () => {
             filter: 'text',
             format: 'date',
           },
-          { header: '제품아이디', name: 'prod_uuid', hidden: true },
+          {
+            header: '제품아이디',
+            name: 'prod_uuid',
+            hidden: true,
+          },
           {
             header: '품목유형',
             width: ENUM_WIDTH.M,
@@ -429,7 +451,12 @@ export const PgSalReleaseReport = () => {
             name: 'prod_no',
             filter: 'text',
           },
-          { header: 'Rev', width: ENUM_WIDTH.S, name: 'rev', filter: 'text' },
+          {
+            header: 'Rev',
+            width: ENUM_WIDTH.S,
+            name: 'rev',
+            filter: 'text',
+          },
           {
             header: '품명',
             width: ENUM_WIDTH.L,

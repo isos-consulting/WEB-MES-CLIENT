@@ -55,7 +55,7 @@ dayjs.extend(weekYear);
 export const PgQmsReceiveInspResult = () => {
   const title = getPageName();
   const permissions = getPermissions(title);
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
   const [workDatas, setWorkDatas] = useState([]);
   const searchRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();

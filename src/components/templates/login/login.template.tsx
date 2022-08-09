@@ -14,7 +14,6 @@ export const TpLogin: React.FC<Props> = props => {
     defaultIdValue,
     idValue,
     factoryValue,
-    disabled,
     savedIdChecked,
     factoryList,
     form,

@@ -39,7 +39,7 @@ const setPopupButtonData = (props: Props) => {
 const PopupButton: React.FC<Props> = props => {
   const childGridRef = useRef<Grid>();
   const [, setSelectedRow] = useRecoilState(afPopupReponseRow(props.id));
-  const [popupItem, setPopupItem] = useState<IPopupItemsRetrunProps>(null);
+  const [, setPopupItem] = useState<IPopupItemsRetrunProps>(null);
   const [modal, contextHolder] = Modal.useModal();
 
   useEffect(() => {

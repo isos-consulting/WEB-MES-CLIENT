@@ -31,7 +31,7 @@ export const ROUTING = () => {
   const permissions = getPermissions(title);
 
   //#region ✅설정값
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
   const gridRef = useRef<Grid>();
 
   const gridMode = 'view';

@@ -608,15 +608,7 @@ export const PgMatReceive = () => {
     {
       buttonProps: { text: '발주 불러오기' },
       buttonAction: (ev, props, options) => {
-        const {
-          gridRef,
-          childGridRef,
-          childGridId,
-          columns,
-          data,
-          modal,
-          onAppendRow,
-        } = options;
+        const { childGridRef, modal, onAppendRow } = options;
         const updateColumns: { original: string; popup: string }[] =
           props.rowAddPopupInfo.columnNames;
 

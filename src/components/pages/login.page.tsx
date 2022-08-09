@@ -128,46 +128,6 @@ export const PgLogin = ({
     hideUserModal();
   };
 
-  // 인풋 팝업박스 세팅 (비밀번호 찾기용 팝업)
-  const InputPopupProps: IInputPopupProps = {
-    modalProps: {
-      onOk: InputPassWordChk,
-      onCancel: hideUserModal,
-      title: '비밀번호변경',
-      okText: '확인',
-      cancelText: '취소',
-      visible: visible,
-    },
-    formProps: {
-      name: 'userForm',
-      layout: 'vertical',
-    },
-    formItemList: [
-      {
-        id: 'inputPwd',
-        name: 'inputPwd',
-        inputItemType: 'password',
-        formItemProps: {
-          name: 'pwd',
-          label: '비밀번호',
-          required: true,
-          requireMessage: '변경 할 비밀번호를 입력해 주세요',
-        },
-      },
-      {
-        id: 'inputPwdChk',
-        name: 'inputPwdChk',
-        inputItemType: 'password',
-        formItemProps: {
-          name: 'pwdChk',
-          label: '비밀번호 확인',
-          required: true,
-          requireMessage: '변경 할 비밀번호를 다시 한번 입력해 주세요',
-        },
-      },
-    ],
-  };
-
   // 아이디와 패스워드가 둘다 입력된 상태면 로그인 버튼 활성화
   const clickable = useMemo(
     () => !!userId?.length && !!userPw?.length,

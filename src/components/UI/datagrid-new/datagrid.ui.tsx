@@ -134,7 +134,7 @@ function getGridComboItem(
 
     // DB데이터 가져와서 동적으로 콤보박스 아이템 생성
   } else {
-    let dataApiInfo = {
+    const dataApiInfo = {
       uriPath: '',
       params: {},
     };
@@ -143,17 +143,13 @@ function getGridComboItem(
       const apiSettings = comboInfo?.dataApiSettings();
       const uriPath = apiSettings?.uriPath;
       const params = apiSettings?.params;
-      dataApiInfo = {
-        uriPath,
-        params,
-      };
+      dataApiInfo.uriPath = uriPath;
+      dataApiInfo.params = params;
     } else {
       const uriPath = comboInfo?.dataApiSettings?.uriPath;
       const params = comboInfo?.dataApiSettings?.params;
-      dataApiInfo = {
-        uriPath,
-        params,
-      };
+      dataApiInfo.uriPath = uriPath;
+      dataApiInfo.params = params;
     }
 
     const { params, uriPath } = dataApiInfo;

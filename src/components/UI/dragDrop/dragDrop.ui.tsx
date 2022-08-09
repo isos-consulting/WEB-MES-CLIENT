@@ -31,11 +31,10 @@ function getFileNameType(filename: string, returnType?: 'name' | 'ext') {
 }
 
 const BaseDragDrop = forwardRef((props, gridRef) => {
-  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [, setIsDragging] = useState<boolean>(false);
   const [files, setFiles] = useState<IFileTypes[]>([]);
 
   const dragRef = useRef<HTMLLabelElement | null>(null);
-  const fileId = useRef<number>(0);
 
   const newForm = (bodyContent: any) => {
     const formData = new FormData();

@@ -166,14 +166,7 @@ export const afInputGroupDefaultValues = atomFamily<FormikValues, string>({
 /** 인풋박스 */
 const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
   const [defaultValues, setDefaultValues] = useState({});
-  const {
-    initialValues,
-    validate,
-    inputItems,
-    isNotCheckRequired,
-    isNotCheckType,
-    innerRef,
-  } = props;
+  const { initialValues, validate, inputItems, innerRef } = props;
 
   const _initialValues = useMemo(() => {
     if (!initialValues) {

@@ -19,7 +19,7 @@ export const PgMldMoldReport = () => {
   const title = getPageName();
 
   /** 모달 DOM */
-  const [modal, modalContext] = Modal.useModal();
+  const [, modalContext] = Modal.useModal();
 
   /** INIT */
   const defaultGridMode: TGridMode = 'view';

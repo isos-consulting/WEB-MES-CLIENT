@@ -44,7 +44,6 @@ export const PgPrdOrder = () => {
   //#region 🔶 작업지시이력 관련
   const [modal, contextHolder] = Modal.useModal();
 
-  const popupGridRef = useRef<Grid>();
   const searchRef = useRef<FormikProps<FormikValues>>();
   const searchParams = searchRef?.current?.values;
 

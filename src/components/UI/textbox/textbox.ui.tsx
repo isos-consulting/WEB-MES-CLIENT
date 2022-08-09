@@ -14,7 +14,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 
 /** 입력박스 */
 const Textbox: React.FC<Props> = props => {
-  const [value, setValue] = useRecoilState(afStringState(props.id));
+  const [, setValue] = useRecoilState(afStringState(props.id));
   const [, setTextHiddenValue] = useRecoilState(afStringState(props.id));
 
   const onChangeTextValue = (event: React.ChangeEvent<HTMLInputElement>) => {

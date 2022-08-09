@@ -87,23 +87,6 @@ export const TpTripleGrid: React.FC<Props> = props => {
     ? props.popupSearchProps[2]
     : null;
 
-  const detailSubPopup = {
-    ...props.popupGridInfos[3],
-    disabledAutoDateColumn:
-      props.popupGridInfos[3]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfos[3]?.disabledAutoDateColumn,
-  };
-  const detailSubPopupRef = props.popupGridRefs[3];
-  const detailSubPopupVisible = props.popupVisibles[3];
-  const setDetailSubPopupVisible = props.setPopupVisibles[3];
-  const detailSubPopupInputProps = props.popupInputProps
-    ? props.popupInputProps[3]
-    : null;
-  const detailSubPopupSearchProps = props.popupSearchProps
-    ? props.popupSearchProps[3]
-    : null;
-
   const headerGridMode = useMemo(() => {
     if (permissions?.delete_fg !== true) {
       return 'view';
@@ -430,7 +413,6 @@ export const TpTripleGrid: React.FC<Props> = props => {
         mainFooter +
         datagridHeaderHeight +
         bodyVertialMargin;
-      detailSubtracttHeight = 0;
       detailSubSubtractHeight =
         ((buttons > 0 ? 1 : 0) +
           (detailSearch > 0 ? 1 : 0) +
@@ -453,7 +435,6 @@ export const TpTripleGrid: React.FC<Props> = props => {
       detailHeight = fixHeight;
       detailSubHeight = mainBody - detailSubSubtractHeight;
     } else if (templateOrientation === 'filledLayoutRight') {
-      headerSubtracttHeight = 0;
       detailSubtracttHeight =
         ((buttons > 0 ? 1 : 0) +
           (headerSearch > 0 ? 1 : 0) +

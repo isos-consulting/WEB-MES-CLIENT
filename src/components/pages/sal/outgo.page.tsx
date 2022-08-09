@@ -503,15 +503,7 @@ export const PgSalOutgo = () => {
         {
           buttonProps: { text: '수주 불러오기' },
           buttonAction: (ev, props, options) => {
-            const {
-              gridRef,
-              childGridRef,
-              childGridId,
-              columns,
-              data,
-              modal,
-              onAppendRow,
-            } = options;
+            const { childGridRef, modal, onAppendRow } = options;
             const updateColumns: { original: string; popup: string }[] =
               props.rowAddPopupInfo.columnNames;
 
@@ -609,15 +601,7 @@ export const PgSalOutgo = () => {
         {
           buttonProps: { text: '지시 불러오기' },
           buttonAction: (ev, props, options) => {
-            const {
-              gridRef,
-              childGridRef,
-              childGridId,
-              columns,
-              data,
-              modal,
-              onAppendRow,
-            } = options;
+            const { childGridRef, modal, onAppendRow } = options;
             const updateColumns: { original: string; popup: string }[] =
               props.rowAddPopupInfo.columnNames;
 
@@ -743,15 +727,6 @@ export const PgSalOutgo = () => {
       onOk: close => {
         const child = gridRef.current;
         const rows = child.getInstance().getCheckedRows();
-
-        let popupGridRef = null;
-        if (newDataPopupGridVisible) {
-          // 신규 등록 팝업일 경우
-          popupGridRef = newDataPopupGrid.gridRef;
-        } else {
-          // 세부 항목 등록 팝업일 경우
-          popupGridRef = editDataPopupGrid.gridRef;
-        }
 
         if (rows.length > 0) {
           rows?.forEach(row => {

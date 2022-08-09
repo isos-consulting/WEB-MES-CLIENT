@@ -74,18 +74,6 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
     });
   };
 
-  const changeCboStore = value => {
-    infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: 'to_store_uuid', value });
-  };
-
-  const changeCboLocation = value => {
-    infoDispatch({
-      type: 'CHANGE_ROUTING_INFO',
-      name: 'to_location_uuid',
-      value,
-    });
-  };
-
   const changeQty = ev => {
     const { value } = ev?.target;
     infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: 'qty', value });

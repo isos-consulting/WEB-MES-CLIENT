@@ -109,7 +109,7 @@ export const PgOutReleaseReport = () => {
   const newDataPopupInputInfo = null;
   const editDataPopupInputInfo = null;
 
-  const columns = useMemo(() => {
+  useMemo(() => {
     let _columns = grid?.gridInfo?.columns;
     switch (searchInfo.values?.sort_type) {
       case 'prod':

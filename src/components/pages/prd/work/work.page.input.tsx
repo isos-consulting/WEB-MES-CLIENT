@@ -59,7 +59,6 @@ export const INPUT = () => {
 
   const SEARCH_URI_PATH = '/prd/work-inputs';
   const GOING_SEARCH_URI_PATH = '/prd/work-inputs/group';
-  const SAVE_URI_PATH = '/prd/work-inputs';
 
   const [inputPopupVisible, setInputPopupVisible] = useState(false);
   //#endregion

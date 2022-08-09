@@ -352,10 +352,9 @@ export const PgPrdWork = () => {
   const permissions = getPermissions(title);
 
   //#region ✅설정값
-  const [, setLoading] = useLoadingState();
   const [modal, contextHolder] = Modal.useModal();
 
-  const [gridMode, setGridMode] = useState<TGridMode>('view');
+  const [gridMode] = useState<TGridMode>('view');
 
   const [workDatas, setWorkDatas] = useState([]);
 

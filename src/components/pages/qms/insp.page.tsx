@@ -46,7 +46,6 @@ export const PgQmsInsp = () => {
   /** INIT */
   const headerDefaultGridMode = 'view';
   const headerSearchUriPath = '/std/prods';
-  const headerSaveUriPath = '/std/prods';
   const detailDefaultGridMode = 'delete';
   const detailSearchUriPath = '/qms/insps';
   const detailSaveUriPath = '/qms/insps';
@@ -84,13 +83,12 @@ export const PgQmsInsp = () => {
 
   const handleApplyInsp = (ev, props) => {
     // 적용 이벤트
-    const { value, rowKey, columnInfo, grid } = props;
+    const { value, rowKey, grid } = props;
     const row = grid?.store?.data?.rawData[rowKey];
 
     const applyUriPath = '/qms/insps/apply';
     const cancelApplyUriPath = '/qms/insps/cancel-apply';
     const uuid = row?.insp_uuid; //검사기준서uuid
-    const prodUuid = row?.prod_uuid;
 
     if (!uuid) {
       message.error('검사기준서 ' + (value ? '해제' : '적용') + ' 실패');

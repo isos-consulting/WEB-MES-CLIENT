@@ -48,8 +48,6 @@ export const PgMatRelease = () => {
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = '/mat/releases';
   const saveUriPath = '/mat/releases';
-  const STORE_POPUP = getPopupForm('창고관리');
-  const LOCATION_POPUP = getPopupForm('위치관리');
   const STOCK_POPUP = getPopupForm('재고관리');
 
   const [releaseRequestPopupVisible, setReleaseRequestPopupVisible] =

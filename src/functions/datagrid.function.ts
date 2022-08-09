@@ -971,7 +971,6 @@ export const convDataToSubTotal = (
 export const getTestData = (count: number = 10) => {
   const today = getToday();
   const USD = 0.00085;
-  const KRW = 1182.0;
 
   const testData = {
     partner_uuid: 'awtwtawyadgdxg',

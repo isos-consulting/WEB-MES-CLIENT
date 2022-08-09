@@ -10,7 +10,6 @@ import Props from './graph.ui.type';
  */
 const Graph: React.FC<Props> = props => {
   const [data, setDatas] = useState([]);
-  let JSXReturns = <></>;
 
   useEffect(() => {
     if (props.data && props.data.length > 0 && props.dataKeysName) {
@@ -39,43 +38,40 @@ const Graph: React.FC<Props> = props => {
     }
   }, [props.data]);
 
-  switch (props.graphType) {
-    case 'Bar':
-      JSXReturns = (
-        <BarGraph
-          {...props}
-          data={data}
-          dataKeys={props.dataKeysName ? props.dataKeysName : props.dataKeys}
-        />
-      );
-      break;
+  const getGraph = () => {
+    switch (props.graphType) {
+      case 'Bar':
+        return (
+          <BarGraph
+            {...props}
+            data={data}
+            dataKeys={props.dataKeysName ? props.dataKeysName : props.dataKeys}
+          />
+        );
+      case 'Pie':
+        let sumData: number;
+        let pieData = [];
+        let sumDataList = [];
+        if (data) {
+          sumDataList = data.map(v => v[props.dataKeys[0]]);
 
-    case 'Pie':
-      let sumData: number;
-      let pieData = [];
-      let sumDataList = [];
-      if (data) {
-        sumDataList = data.map(v => v[props.dataKeys[0]]);
+          sumData = sumDataList.reduce(function add(sum, currValue) {
+            return sum + currValue;
+          }, 0);
+          pieData = data.map(v => ({
+            id: v[props.indexBy] + '( ' + v[props.dataKeys[1]] + ' %)',
+            value: v[props.dataKeys[0]],
+          }));
+        } else {
+          pieData = [];
+          sumData = 0;
+        }
 
-        sumData = sumDataList.reduce(function add(sum, currValue) {
-          return sum + currValue;
-        }, 0);
-        pieData = data.map(v => ({
-          id: v[props.indexBy] + '( ' + v[props.dataKeys[1]] + ' %)',
-          value: v[props.dataKeys[0]],
-        }));
-      } else {
-        pieData = [];
-        sumData = 0;
-      }
-
-      JSXReturns = <PieGraph {...props} data={pieData} maxVal={sumData} />;
-      break;
-
-    default:
-      JSXReturns = <BarGraph {...props} />;
-      break;
-  }
+        return <PieGraph {...props} data={pieData} maxVal={sumData} />;
+      default:
+        return <BarGraph {...props} />;
+    }
+  };
 
   if (props.data ? props.data.length === 0 : true) {
     return (
@@ -97,7 +93,7 @@ const Graph: React.FC<Props> = props => {
       </Container>
     );
   } else {
-    return <div style={{ height: props.height || '100%' }}>{JSXReturns}</div>;
+    return <div style={{ height: props.height || '100%' }}>{getGraph()}</div>;
   }
 };
 

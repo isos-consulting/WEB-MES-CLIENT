@@ -413,7 +413,7 @@ export const PgQmsProcInspResult = () => {
   const permissions = getPermissions(title);
 
   //#region ✅설정값
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
   const INSP_RESULT_DETAIL_GRID = INSP_RESULT_DETAIL_GRID_INFO();
   //#region Ref 관리
   const searchRef = useRef<FormikProps<FormikValues>>();

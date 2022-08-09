@@ -113,7 +113,7 @@ type TReceiveInspDetail = {
 /** 입하이력 */
 export const PgQmsReceiveInspResultReport = () => {
   //#region ✅설정값
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
 
   const [workDatas, setWorkDatas] = useState([]);
 

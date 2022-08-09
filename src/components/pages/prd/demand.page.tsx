@@ -499,7 +499,7 @@ export const PgPrdDemand = () => {
       // 완료상태 따로 저장
       saveGridData(modifiedRows, columns, saveUriPath, {}, true)
         .then(result => {
-          const { success, count, savedData } = result;
+          const { success } = result;
           if (success === false) return;
 
           setEditDataPopupGridVisible(false);

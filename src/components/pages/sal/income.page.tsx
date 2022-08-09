@@ -329,8 +329,6 @@ export const PgSalIncome = () => {
     },
   );
 
-  const [multiPopupDatas, setMultiPopupDatas] = useState<any[]>([]);
-
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
     cloneDeep(grid.gridInfo.columns)?.filter(el => el.name !== 'reg_date'),

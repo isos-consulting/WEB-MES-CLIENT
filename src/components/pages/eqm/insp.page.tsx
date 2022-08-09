@@ -57,14 +57,14 @@ export const PgEqmInsp = () => {
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
   const [selectedDetailRow, setSelectedDetailRow] = useState(null);
-  const [editInspNo, setEditInspNo] = useState(null);
+  const [, setEditInspNo] = useState(null);
 
   const [applyFg, setApplyFg] = useState(false);
 
   /** 기준서 적용(또는 해제) */
   const onApplyInsp = (ev, props) => {
     // 적용 이벤트
-    const { value, rowKey, columnInfo, grid } = props;
+    const { value, rowKey, grid } = props;
     const row = grid?.store?.data?.rawData[rowKey];
 
     const applyUriPath = URL_PATH_EQM.INSP.PUT.APPLY;
@@ -621,8 +621,7 @@ export const PgEqmInsp = () => {
   ]);
 
   const EQUIP_POPUP = getPopupForm('설비관리');
-  const equipApiSettings = ev => {
-    const values = ev?.values;
+  const equipApiSettings = () => {
     const params = { use_fg: true };
 
     return {

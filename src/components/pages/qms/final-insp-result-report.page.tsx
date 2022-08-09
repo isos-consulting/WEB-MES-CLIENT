@@ -225,7 +225,7 @@ type TGetQmsFinalInspResultIncludeDetails = {
 /** 최종검사 성적서 리스트 */
 export const PgQmsFinalInspResultReport = () => {
   //#region ✅설정값
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
 
   //#region Ref 관리
   const searchRef = useRef<FormikProps<FormikValues>>();

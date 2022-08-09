@@ -334,15 +334,7 @@ export const PgEqmRepairHistory = () => {
         {
           buttonProps: { text: '비가동 이력' },
           buttonAction: (ev, props, options) => {
-            const {
-              gridRef,
-              childGridRef,
-              childGridId,
-              columns,
-              data,
-              modal,
-              onAppendRow,
-            } = options;
+            const { childGridRef, modal, onAppendRow } = options;
             const updateColumns: { original: string; popup: string }[] = [
               { original: 'equip_uuid', popup: 'equip_uuid' },
               { original: 'equip_nm', popup: 'equip_nm' },

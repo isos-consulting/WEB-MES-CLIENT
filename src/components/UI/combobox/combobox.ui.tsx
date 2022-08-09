@@ -11,7 +11,7 @@ import { getData } from '~/functions';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
-  const [comboValue, setComboValue] = useRecoilState(afStringState(props.id));
+  const [, setComboValue] = useRecoilState(afStringState(props.id));
   const [, setComboTextValue] = useRecoilState(afStringState(props.id));
   const [options, setOptions] = useState([]);
 

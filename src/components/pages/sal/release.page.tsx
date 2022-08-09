@@ -49,8 +49,6 @@ export const PgSalRelease = () => {
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = '/sal/releases';
   const saveUriPath = '/sal/releases';
-  const STORE_POPUP = getPopupForm('창고관리');
-  const LOCATION_POPUP = getPopupForm('위치관리');
   const STOCK_POPUP = getPopupForm('재고관리');
   const ORDER_PROD_POPUP = getPopupForm('수주품목관리');
   const OUTGO_ORDER_POPUP = getPopupForm('출하지시품목관리');
