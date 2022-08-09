@@ -72,11 +72,11 @@ export const useInputGroup = (
     );
 
   //#region 🔶disabled 관련
-  const setFieldDisabled = (values: { [key: string]: boolean }) => {
+  const setFieldDisabled = (fieldDisbables: { [key: string]: boolean }) => {
     const changedInputItems = cloneObject(_inputItems)?.map(
       (item: IInputGroupboxItem) => {
-        if (Object.keys(values).includes(item?.id)) {
-          item['disabled'] = values[item?.id];
+        if (Object.keys(fieldDisbables).includes(item?.id)) {
+          item['disabled'] = fieldDisbables[item?.id];
         }
 
         return item;
@@ -96,11 +96,11 @@ export const useInputGroup = (
   };
   //#endregion
 
-  const setFieldValue = (id: string, value: any) => {
+  const setFieldValue = (fieldId: string, value: any) => {
     if (ref?.current) {
-      ref?.current?.setFieldValue(id, value);
+      ref?.current?.setFieldValue(fieldId, value);
     } else {
-      setValues(crr => ({ ...crr, [id]: value }));
+      setValues(crr => ({ ...crr, [fieldId]: value }));
     }
   };
 

@@ -17,11 +17,11 @@ const Combobox: React.FC<Props> = props => {
 
   /** 콤보박스 값 변경 이벤트 */
   const onChangeValue = useCallback(
-    (value: any, option: any) => {
+    (changedValue: any, option: any) => {
       setComboTextValue(option.children);
-      setComboValue(value);
+      setComboValue(changedValue);
 
-      if (props.onChange) props.onChange(value);
+      if (props.onChange) props.onChange(changedValue);
     },
     [props.onChange],
   );
@@ -145,8 +145,8 @@ const Combobox: React.FC<Props> = props => {
     if (props.defaultValue) {
       return props.defaultValue;
     } else {
-      const value = options?.length > 0 ? options[0]?.code : null;
-      return value;
+      const nullableOptionCode = options?.length > 0 ? options[0]?.code : null;
+      return nullableOptionCode;
     }
   }, [props.defaultValue, options]);
 
@@ -184,14 +184,10 @@ const Combobox: React.FC<Props> = props => {
               -
             </Select.Option>
           )}
-          {options?.map((value, index) => {
+          {options?.map(({ code, disabled, text }) => {
             return (
-              <Select.Option
-                key={value.code}
-                value={value.code}
-                disabled={value.disabled}
-              >
-                {value.text}
+              <Select.Option key={code} value={code} disabled={disabled}>
+                {text}
               </Select.Option>
             );
           })}
@@ -222,14 +218,10 @@ const Combobox: React.FC<Props> = props => {
             -
           </Select.Option>
         )}
-        {options?.map((value, index) => {
+        {options?.map(({ code, disabled, text }) => {
           return (
-            <Select.Option
-              key={value.code}
-              value={value.code}
-              disabled={value.disabled}
-            >
-              {value.text}
+            <Select.Option key={code} value={code} disabled={disabled}>
+              {text}
             </Select.Option>
           );
         })}
