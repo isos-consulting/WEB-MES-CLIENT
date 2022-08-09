@@ -296,14 +296,7 @@ export function createSubTotal(
   key: any = { key: '', name: '' },
   values: string[] = [],
 ) {
-  let sortOrder = [],
-    resultArray = [];
-
-  // Key Data To Array (기준컬럼 정리)
-  datas.forEach(el => {
-    sortOrder.push(el[key.key]);
-    sortOrder.push(el[key.name]);
-  });
+  const resultArray = [];
 
   // JSON Data Loop
   datas.forEach(el => {
