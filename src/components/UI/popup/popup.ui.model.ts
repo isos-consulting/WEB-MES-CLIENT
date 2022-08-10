@@ -57,103 +57,18 @@ export type TPopupKey =
  * @param option
  * @returns
  */
-export function getPopupForm(
+export const getPopupForm = (
   popupKey: TPopupKey,
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps {
-  let retrunPopupItem: IPopupItemsRetrunProps = null;
-  switch (popupKey) {
-    case '부서관리':
-      return getPI_StdDept(option);
-    case '설비관리':
-      return getPI_StdEquip(option);
-    case '설비유형관리':
-      return getPI_StdEquipType(option);
-    case '공장관리':
-      return getPI_StdFactory(option);
-    case '품목유형관리':
-      return getPI_StdItemType(option);
-    case '위치관리':
-      return getPI_StdLocation(option);
-    case '모델관리':
-      return getPI_StdModel(option);
-    case '공정관리':
-      return getPI_StdProc(option);
-    case '품목관리':
-      return getPI_StdProd(option);
-    case '품목관리2':
-      return getPI_StdProd2(option);
-    case '제품유형관리':
-      return getPI_StdProdType(option);
-    case '불량유형관리':
-      return getPI_StdRejectType(option);
-    case '부적합관리':
-      return getPI_StdReject(option);
-    case '창고관리':
-      return getPI_StdStore(option);
-    case '창고관리':
-      return getPI_AdmStoreType(option);
-    case '단위관리':
-      return getPI_StdUnit(option);
-    case '직급관리':
-      return getPI_StdGrade(option);
-    case '사원관리':
-      return getPI_StdEmp(option);
-    case '비가동관리':
-      return getPI_StdDowntime(option);
-    case '비가동유형관리':
-      return getPI_StdDowntimeType(option);
-    case '화폐단위관리':
-      return getPI_StdMoneyUnit(option);
-    case '거래처관리':
-      return getPI_StdPartner(option);
-    case '거래처유형관리':
-      return getPI_StdPartnerType(option);
-    case '공급처관리':
-      return getPI_StdSupplier(option);
-    case '납품처관리':
-      return getPI_StdDelivery(option);
-    case '단가유형관리':
-      return getPI_StdPriceType(option);
-    case '검사기준관리':
-      return getPI_StdInspItem(option);
-    case '검사기준유형관리':
-      return getPI_StdInspItemType(option);
-    case '검사유형관리':
-      return getPI_StdInspType(option);
-    case '작업장관리':
-      return getPI_StdWorkings(option);
-    case '작업조관리':
-      return getPI_StdWorkerGroups(option);
-    case '구매단가관리':
-      return getPI_StdVendorPrice(option);
-    case '검사구관리':
-      return getPI_StdInspTool(option);
-    case '재고관리':
-      return getPI_InvStore(option);
-    case '검사방법관리':
-      return getPI_StdInspMethod(option);
-    case '판매단가관리':
-      return getPI_StdCustomerPrice(option);
-    case '수주품목관리':
-      return getPI_SalOrderDetail(option);
-    case '출하지시품목관리':
-      return getPI_SalOutgoOrderDetail(option);
-    case '금형문제점관리':
-      return getPI_MldProblem(option);
-    case '금형관리':
-      return getPI_MldMold(option);
-    case 'BOM투입유형관리':
-      return getPI_AdmBomInputType(option);
-    case '메뉴관리':
-      return getPI_AdmMenuInputType(option);
+): IPopupItemsRetrunProps => {
+  if (modalModelMapping.has(popupKey) === false) return null;
 
-    default:
-      break;
-  }
+  const modelFunction = modalModelMapping.get(popupKey);
 
-  return retrunPopupItem;
-}
+  if (modelFunction === undefined) return null;
+
+  return modelFunction(option);
+};
 
 // ====팝업 아이템 리스트=======================================================================================================
 const getPI_StdDept = (
@@ -2947,3 +2862,48 @@ const getPI_AdmMenuInputType = (
 
   return result;
 };
+
+const modalModelMapping = new Map<TPopupKey, Function>([
+  ['부서관리', getPI_StdDept],
+  ['설비관리', getPI_StdEquip],
+  ['설비유형관리', getPI_StdEquipType],
+  ['공장관리', getPI_StdFactory],
+  ['품목유형관리', getPI_StdItemType],
+  ['위치관리', getPI_StdLocation],
+  ['모델관리', getPI_StdModel],
+  ['공정관리', getPI_StdProc],
+  ['품목관리', getPI_StdProd],
+  ['품목관리2', getPI_StdProd2],
+  ['제품유형관리', getPI_StdProdType],
+  ['불량유형관리', getPI_StdRejectType],
+  ['부적합관리', getPI_StdReject],
+  ['창고관리', getPI_StdStore],
+  ['창고관리', getPI_AdmStoreType],
+  ['단위관리', getPI_StdUnit],
+  ['직급관리', getPI_StdGrade],
+  ['사원관리', getPI_StdEmp],
+  ['비가동관리', getPI_StdDowntime],
+  ['비가동유형관리', getPI_StdDowntimeType],
+  ['화폐단위관리', getPI_StdMoneyUnit],
+  ['거래처관리', getPI_StdPartner],
+  ['거래처유형관리', getPI_StdPartnerType],
+  ['공급처관리', getPI_StdSupplier],
+  ['납품처관리', getPI_StdDelivery],
+  ['단가유형관리', getPI_StdPriceType],
+  ['검사기준관리', getPI_StdInspItem],
+  ['검사기준유형관리', getPI_StdInspItemType],
+  ['검사유형관리', getPI_StdInspType],
+  ['작업장관리', getPI_StdWorkings],
+  ['작업조관리', getPI_StdWorkerGroups],
+  ['구매단가관리', getPI_StdVendorPrice],
+  ['검사구관리', getPI_StdInspTool],
+  ['재고관리', getPI_InvStore],
+  ['검사방법관리', getPI_StdInspMethod],
+  ['판매단가관리', getPI_StdCustomerPrice],
+  ['수주품목관리', getPI_SalOrderDetail],
+  ['출하지시품목관리', getPI_SalOutgoOrderDetail],
+  ['금형문제점관리', getPI_MldProblem],
+  ['금형관리', getPI_MldMold],
+  ['BOM투입유형관리', getPI_AdmBomInputType],
+  ['메뉴관리', getPI_AdmMenuInputType],
+]);
