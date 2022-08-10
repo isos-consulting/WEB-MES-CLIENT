@@ -8,7 +8,6 @@ import {
   getData,
   getModifiedRows,
   getPageName,
-  getToday,
   isModified,
 } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';

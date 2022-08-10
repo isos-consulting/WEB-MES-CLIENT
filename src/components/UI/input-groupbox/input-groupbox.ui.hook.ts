@@ -1,12 +1,8 @@
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { SetterOrUpdater, useRecoilValue } from 'recoil';
+import { SetterOrUpdater } from 'recoil';
 import { cloneObject } from '~/functions';
-import {
-  afInputGroupValues,
-  IInputGroupboxItem,
-  IInputGroupboxProps,
-} from './input-groupbox.ui';
+import { IInputGroupboxItem, IInputGroupboxProps } from './input-groupbox.ui';
 
 type InputGroupboxSpecifier = 'id' | 'inputItems' | 'innerRef';
 

@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { Col, Divider, Row, Space, Spin } from 'antd';
+import { Col, Row, Space, Spin } from 'antd';
 import {
   Button,
   Container,

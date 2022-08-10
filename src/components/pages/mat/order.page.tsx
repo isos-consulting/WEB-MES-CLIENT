@@ -5,7 +5,6 @@ import {
   cleanupKeyOfObject,
   dataGridEvents,
   getData,
-  getModifiedRows,
   getPageName,
   getToday,
   isModified,

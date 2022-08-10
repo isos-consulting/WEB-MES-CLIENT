@@ -1,9 +1,8 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { getData, getToday } from '~/functions';
 import { Card, Col, Row } from 'antd';
-import { BarGraph, PieGraph } from '~components/UI/graph';
+import { PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
-import dayjs from 'dayjs';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 

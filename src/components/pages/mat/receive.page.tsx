@@ -6,7 +6,6 @@ import {
   cloneObject,
   dataGridEvents,
   getData,
-  getModifiedRows,
   getPageName,
   getToday,
   isModified,

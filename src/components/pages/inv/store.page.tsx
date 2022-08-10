@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { useState } from 'react';
 import {
   getPopupForm,
@@ -28,7 +28,6 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { onDefaultGridSave } from '../prd/work';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
-import _ from 'lodash';
 
 /** 재고실사관리 */
 export const PgInvStore = () => {

@@ -1,11 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import {
-  TGridMode,
-  useGrid,
-  useSearchbox,
-  getPopupForm,
-} from '~/components/UI';
+import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   dataGridEvents,
   getData,

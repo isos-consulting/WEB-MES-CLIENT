@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Datagrid, getPopupForm, useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,
-  cloneObject,
   dataGridEvents,
   getData,
   getModifiedRows,

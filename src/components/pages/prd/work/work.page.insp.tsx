@@ -1,7 +1,6 @@
-import { getDistance } from '@nivo/core';
 import Grid from '@toast-ui/react-grid';
 import { Space, Col, Row, message, Spin, Modal } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
 import React, {

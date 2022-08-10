@@ -27,8 +27,7 @@ import {
 import Colors from '~styles/color.style.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import _, { cloneDeep } from 'lodash';
-import { selector } from 'recoil';
+import { cloneDeep } from 'lodash';
 
 //#region 🔶🚫투입품목관리
 /** 투입품목관리 */

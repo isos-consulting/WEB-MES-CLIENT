@@ -7,12 +7,7 @@ import {
   useSearchbox,
   getPopupForm,
 } from '~/components/UI';
-import {
-  dataGridEvents,
-  getData,
-  getModifiedRows,
-  getPageName,
-} from '~/functions';
+import { dataGridEvents, getData, getPageName } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps, {
@@ -20,7 +15,6 @@ import ITpSingleGridProps, {
 } from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_EQM } from '~/enums';
 import { FormikProps, FormikValues } from 'formik';
-import { message } from 'antd';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
 
 /** 설비등록대장 */

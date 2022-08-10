@@ -12,10 +12,7 @@ import {
   GridPopup,
   IGridColumn,
   ISearchItem,
-  Label,
   Searchbox,
-  Textbox,
-  TGridMode,
 } from '~/components/UI';
 import {
   IInputGroupboxItem,
@@ -25,9 +22,6 @@ import {
   blankThenNull,
   executeData,
   getData,
-  getInspCheckResultInfo,
-  getInspCheckResultTotal,
-  getInspCheckResultValue,
   getPageName,
   getPermissions,
   getToday,

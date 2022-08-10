@@ -16,11 +16,9 @@ import {
   getModifiedRows,
   getPageName,
   getToday,
-  isModified,
 } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid, TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { TpDoubleGrid } from '~/components/templates';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';

@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from 'react';
-import { Datagrid, useGrid, useSearchbox } from '~/components/UI';
+import { useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,
   dataGridEvents,

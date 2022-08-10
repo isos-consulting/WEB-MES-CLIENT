@@ -20,9 +20,6 @@ import {
 import {
   executeData,
   getData,
-  getInspCheckResultInfo,
-  getInspCheckResultTotal,
-  getInspCheckResultValue,
   getPageName,
   getPermissions,
   getToday,

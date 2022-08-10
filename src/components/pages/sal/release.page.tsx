@@ -1,8 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useState } from 'react';
 import {
-  COLUMN_CODE,
-  EDIT_ACTION_CODE,
   getPopupForm,
   TGridMode,
   useGrid,
