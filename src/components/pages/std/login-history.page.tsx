@@ -12,14 +12,14 @@ interface LoginHistoryRequestQueryString {
   end_date: string;
 }
 
-interface defaultItem {
+interface DefaultItem {
   readonly id: string;
   readonly type: string;
   readonly label: string;
   readonly default: string;
 }
 
-interface dateReangeItem extends defaultItem {
+interface DateReangeItem extends DefaultItem {
   readonly ids: string[];
   readonly defaults: string[];
 }
@@ -39,7 +39,7 @@ const fetchLoginHistory = async ({
 };
 
 const store: {
-  searchItems: (defaultItem | dateReangeItem)[];
+  searchItems: (DefaultItem | DateReangeItem)[];
   columns: { header: string; name: string }[];
 } = {
   searchItems: [
