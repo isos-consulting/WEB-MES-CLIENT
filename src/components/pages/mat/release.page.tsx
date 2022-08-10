@@ -1085,7 +1085,6 @@ export const PgMatRelease = () => {
           setReleaseRequestPopupVisible(false);
         } else {
           message.warn('행을 추가한 후 다시 시도해주세요.');
-          return;
         }
       },
       saveOptionParams: changeNameToAlias(

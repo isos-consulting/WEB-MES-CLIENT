@@ -2363,13 +2363,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
               '적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.',
             );
             onClear();
-            return;
           } else if (res[0].apply_fg === false) {
             message.error(
               '적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.',
             );
             onClear();
-            return;
           } else {
             setInsp(res[0]);
           }
@@ -3261,7 +3259,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           inspectionHandlingTypeCode
         ) {
           inputInspResult.setFieldValue('insp_handling_type', el.code);
-          return;
         }
       });
     }

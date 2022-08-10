@@ -727,7 +727,6 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       props.inspHandlingType.forEach(el => {
         if (JSON.parse(el.code).insp_handling_type_cd === _inspHandlingCd) {
           inputInspResult.setFieldValue('insp_handling_type', el.code);
-          return;
         }
       });
     }
