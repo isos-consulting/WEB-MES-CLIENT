@@ -384,6 +384,7 @@ export const PgStdPartnerProd = () => {
 
   useLayoutEffect(() => {
     if (newDataPopupGridVisible === true) {
+      // 신규 등록 팝업 나타났을 때 기능 추가할 것
     } else {
       newDataPopupInputInfo?.instance?.resetForm();
     }

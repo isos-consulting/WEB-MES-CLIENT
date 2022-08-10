@@ -222,9 +222,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             type: DatagridButtonRenderer,
             options: {
               gridId: props.gridId,
-              // disabled: !el?.editable,
               ...props.columns[colIndex]?.options,
-              // ...el?.options,
             },
           };
 
@@ -244,6 +242,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
             } else if (props.gridMode === 'create') {
               el['options']['ok_type'] = 'json';
             } else {
+              // 수정일 경우 코드 작성
             }
           }
           const okType: 'save' | 'json' = el.options.ok_type;
@@ -685,13 +684,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'datetime': // 날짜/시간 타입 세팅
-          // if (el?.editable == true) {
-          //   // 에디터
-          //   el['editor'] = {
-          //     type:DatagridDateEditor,
-          //   }
-          // }
-
           if (el?.editable == true) {
             // 에디터
             el['editor'] = {
@@ -723,16 +715,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'check': // 체크박스 세팅
-          // if (el?.editable == true) {
-          //   // 에디터
-          //   el['editor'] = {
-          //     type:DatagridCheckboxEditor,
-          //     options: {
-          //       gridId: props.gridId
-          //     }
-          //   }
-          // }
-
           // 렌더러 (체크박스만 에디터 작업을 렌더러가 합니다.)
           el['renderer'] = {
             type: DatagridCheckboxRenderer,
@@ -1155,26 +1137,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
       return data || [];
     }
   }, [props.data, props.gridMode, columns, props.columns]);
-  //#endregion
-
-  //#region 🔶로우 헤더 세팅
-  /** ⛔로우 헤더 (drag-drop, checkbox, rowNum) */
-  // const rowHeaders = useMemo(() => {
-  //   switch (props.gridMode) {
-  //     case 'select':
-  //     case 'multi-select':
-  //     case 'delete':
-  //       return [
-  //         'checkbox',
-  //         'rowNum'
-  //       ];
-
-  //     default:
-  //       return [
-  //         'rowNum'
-  //       ];
-  //   }
-  // }, [props.gridMode]);
   //#endregion
 
   //#region 🔶그리드 액션
@@ -1958,9 +1920,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
             const childGridId = uuidv4();
 
-            // 이것 때문에 리렌더링이 발생하면서 하위 그리드의 데이터가 날아가는 것처럼 보이는 현상이 발생함 (행추가 같은 멀티 팝업은 이런 현상이 없던데 여기만 그럼)
-            // setLoading(true);
-
             getData<any[]>(popupContent.params, popupContent.uriPath)
               .then(res => {
                 // 데이터를 불러온 후 모달을 호출합니다.
@@ -2064,7 +2023,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                   icon: null,
                   content: <Result type="loadFailed" />,
                 });
-              }); //.finally(() => setLoading(false));
+              });
           }
         }
       });
@@ -2152,7 +2111,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 
   //#region 🔶 필터 핸들링
   const [filterInfo, setFilterInfo] = useState<any[]>(null);
-  // const [previousFilterData, setPreviousFilterData] = useState<any[]>(null);
   /** 필터 핸들링 */
   const onBeforeFilter = useCallback(
     ev => {
@@ -2562,10 +2520,6 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         onCheckAll={props.onCheckAll || onCheckAll}
         onUncheckAll={props.onUncheckAll || onUncheckAll}
         treeColumnOptions={props.treeColumnOptions}
-        // onFilter={props.onFilter || onFilter}
-        // onGridBeforeDestroy={onGridBeforeDestroy}
-        // onGridMounted={onGridMounted}
-        // onKeyDown={onKeyDown}
         draggable={props.draggable}
       />
       {contextHolder}
@@ -2574,18 +2528,5 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
 });
 
 const Datagrid = React.memo(BaseDatagrid);
-
-const ColumnManager = class {
-  private isChecked: boolean;
-
-  constructor() {
-    this.isChecked = false;
-  }
-
-  toggle() {
-    if (this.isChecked === true) this.isChecked = false;
-    else this.isChecked = true;
-  }
-};
 
 export default Datagrid;

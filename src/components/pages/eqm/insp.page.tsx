@@ -680,6 +680,7 @@ export const PgEqmInsp = () => {
     'NEW_DATA_POPUP_INPUTBOX',
     cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(el => {
       if (['insp_no'].includes(el?.id)) {
+        // 기준서 번호 입력창 설정
       } else {
         el['disabled'] = false;
       }
@@ -725,6 +726,7 @@ export const PgEqmInsp = () => {
 
   useLayoutEffect(() => {
     if (newDataPopupGridVisible === true) {
+      // 신규 등록 팝업 나타났을 때 기능 추가할 것
     } else {
       newDataPopupInputInfo?.instance?.resetForm();
     }
