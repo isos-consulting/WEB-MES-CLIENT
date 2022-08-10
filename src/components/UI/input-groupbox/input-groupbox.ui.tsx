@@ -361,11 +361,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   label={item?.useCheckbox ? null : item.label}
                                   disabled={
                                     item?.useCheckbox
-                                      ? !(
-                                          values[
-                                            (item.name || item.id) + '_chk'
-                                          ] === true
-                                        )
+                                      ? values[
+                                          (item.name || item.id) + '_chk'
+                                        ] !== true
                                       : item.disabled
                                   }
                                   placeholder={item.placeholder}
@@ -420,11 +418,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   label={item?.useCheckbox ? null : item.label}
                                   disabled={
                                     item?.useCheckbox
-                                      ? !(
-                                          values[
-                                            (item.name || item.id) + '_chk'
-                                          ] === true
-                                        )
+                                      ? values[
+                                          (item.name || item.id) + '_chk'
+                                        ] !== true
                                       : item.disabled
                                   }
                                   placeholders={item.placeholders}
@@ -550,11 +546,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   label={item?.useCheckbox ? null : item.label}
                                   disabled={
                                     item?.useCheckbox
-                                      ? !(
-                                          values[
-                                            (item.name || item.id) + '_chk'
-                                          ] === true
-                                        )
+                                      ? values[
+                                          (item.name || item.id) + '_chk'
+                                        ] !== true
                                       : item.disabled
                                   }
                                   placeholder={item.placeholder}
@@ -627,11 +621,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 ]}
                                 disabled={
                                   item?.useCheckbox
-                                    ? !(
-                                        values[
-                                          (item.name || item.id) + '_chk'
-                                        ] === true
-                                      )
+                                    ? values[
+                                        (item.name || item.id) + '_chk'
+                                      ] !== true
                                     : item.disabled
                                 }
                                 widthSize={item.widthSize || 'flex'}
@@ -854,11 +846,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                       // label={item?.useCheckbox ? null : item.label}
                                       disabled={
                                         item?.useCheckbox
-                                          ? !(
-                                              values[
-                                                (item.name || item.id) + '_chk'
-                                              ] === true
-                                            )
+                                          ? values[
+                                              (item.name || item.id) + '_chk'
+                                            ] !== true
                                           : item.disabled
                                       }
                                       placeholder={item.placeholder}
@@ -917,11 +907,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                       // label={item?.useCheckbox ? null : item.label}
                                       disabled={
                                         item?.useCheckbox
-                                          ? !(
-                                              values[
-                                                (item.name || item.id) + '_chk'
-                                              ] === true
-                                            )
+                                          ? values[
+                                              (item.name || item.id) + '_chk'
+                                            ] !== true
                                           : item.disabled
                                       }
                                       placeholders={item.placeholders}
@@ -1050,11 +1038,9 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                       // label={item?.useCheckbox ? null : item.label}
                                       disabled={
                                         item?.useCheckbox
-                                          ? !(
-                                              values[
-                                                (item.name || item.id) + '_chk'
-                                              ] === true
-                                            )
+                                          ? values[
+                                              (item.name || item.id) + '_chk'
+                                            ] !== true
                                           : item.disabled
                                       }
                                       placeholder={item.placeholder}

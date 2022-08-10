@@ -559,7 +559,7 @@ export const PgMatReceive = () => {
       type: 'text',
       id: 'remark',
       label: '비고',
-      disabled: !(detailGrid.gridInfo.gridMode === 'update'),
+      disabled: detailGrid.gridInfo.gridMode !== 'update',
     },
   ]);
 

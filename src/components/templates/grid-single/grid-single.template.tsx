@@ -268,7 +268,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
   }, [buttonActions, permissions]);
 
   const btnSearch = useMemo(() => {
-    const disabled = !(permissions?.read_fg === true);
+    const disabled = permissions?.read_fg !== true;
     return (
       <Button
         btnType="buttonFill"
