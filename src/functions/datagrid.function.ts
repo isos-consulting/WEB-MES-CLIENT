@@ -22,6 +22,8 @@ import dayjs from 'dayjs';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
 import { cloneDeep } from 'lodash';
 
+type ApiMethod = 'post' | 'put' | 'patch' | 'delete';
+
 /**
  * ✅그리드에서 조작한 데이터를 저장합니다.
  * @param data 저장할 데이터
@@ -117,11 +119,7 @@ export const saveGridData = async (
         }
 
         // 저장
-        await executeData(
-          saveData,
-          uriPath,
-          _methodType[i] as 'post' | 'put' | 'patch' | 'delete',
-        )
+        await executeData(saveData, uriPath, _methodType[i] as ApiMethod)
           .then(res => {
             const { datas, success } = res;
             const { value } = datas;
@@ -503,7 +501,7 @@ export const dataGridEvents = {
       saveUriPath: string;
       setGridMode?: React.Dispatch<React.SetStateAction<TGridMode>>;
       defaultGridMode?: TGridMode;
-      methodType?: 'post' | 'put' | 'patch' | 'delete';
+      methodType?: ApiMethod;
       modifiedData?: object;
     },
     optionParams: object = {},
@@ -527,7 +525,6 @@ export const dataGridEvents = {
     modal.confirm({
       icon: null,
       title: '저장',
-      // icon: <ExclamationCircleOutlined />,
       content: '편집된 내용을 저장하시겠습니까?',
       onOk: async () => {
         let modifiedRows = null;

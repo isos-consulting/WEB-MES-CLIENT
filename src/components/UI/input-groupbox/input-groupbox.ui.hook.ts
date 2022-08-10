@@ -8,6 +8,8 @@ import {
   IInputGroupboxProps,
 } from './input-groupbox.ui';
 
+type InputGroupboxSpecifier = 'id' | 'inputItems' | 'innerRef';
+
 export const inputGroupModel = (props: {
   /** 그룹입력상자 컴포넌트의 레퍼런스, 컴포넌트 DOM에 접근 가능 */
   ref: React.MutableRefObject<FormikProps<FormikValues>>;
@@ -33,15 +35,10 @@ export const inputGroupModel = (props: {
 
   setInputItems: React.Dispatch<React.SetStateAction<IInputGroupboxItem[]>>;
 
-  inputGroupOptions: Omit<
-    IInputGroupboxProps,
-    'id' | 'inputItems' | 'innerRef'
-  >;
+  inputGroupOptions: Omit<IInputGroupboxProps, InputGroupboxSpecifier>;
 
   setInputGroupOptions: React.Dispatch<
-    React.SetStateAction<
-      Omit<IInputGroupboxProps, 'id' | 'inputItems' | 'innerRef'>
-    >
+    React.SetStateAction<Omit<IInputGroupboxProps, InputGroupboxSpecifier>>
   >;
 
   setFieldDisabled: (values: { [key: string]: boolean }) => void;
@@ -56,10 +53,7 @@ export const inputGroupModel = (props: {
 export const useInputGroup = (
   id: string,
   inputItems: IInputGroupboxItem[],
-  inputGroupOptions?: Omit<
-    IInputGroupboxProps,
-    'id' | 'inputItems' | 'innerRef'
-  >,
+  inputGroupOptions?: Omit<IInputGroupboxProps, InputGroupboxSpecifier>,
 ) => {
   const ref = useRef<FormikProps<FormikValues>>();
   const [values, setValues] = useState<FormikValues>({});
