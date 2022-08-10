@@ -72,7 +72,7 @@ export class DatagridPercentEditor {
 /** 그리드 퍼센트 렌더러 */
 export class DatagridPercentRenderer {
   constructor(props) {
-    const { unit, decimal } = props.columnInfo.renderer?.options;
+    const { decimal } = props.columnInfo.renderer?.options;
 
     this.state = {
       unit: '%',

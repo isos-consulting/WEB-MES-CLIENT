@@ -4,7 +4,7 @@ export class DatagridComboboxEditor {
     // props 변수 선언
     const { rowKey, grid } = props;
     const { name } = props.columnInfo;
-    const { id, gridId, listItems, codeColName, textColName, setCellValue } =
+    const { id, gridId, listItems, codeColName, textColName } =
       props.columnInfo.editor.options;
 
     // class 안에서 사용될 변수 선언
@@ -14,7 +14,6 @@ export class DatagridComboboxEditor {
       rowKey,
       textColName: textColName,
       codeColName: codeColName,
-      // setCellValue: setCellValue
       grid: grid,
     };
 
@@ -52,7 +51,7 @@ export class DatagridComboboxEditor {
   }
 
   getValue() {
-    const { id, gridId, rowKey, codeColName, grid } = this.state;
+    const { id, rowKey, codeColName, grid } = this.state;
 
     let e = document.getElementById(id);
     let selCode = e.options[e.selectedIndex]?.value;

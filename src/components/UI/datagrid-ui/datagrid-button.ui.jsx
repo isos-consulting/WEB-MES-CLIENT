@@ -42,7 +42,7 @@ export class DatagridButtonEditor {
 /** 버튼 렌더러 */
 export class DatagridButtonRenderer {
   constructor(props) {
-    const { rowKey, grid } = props;
+    const { rowKey } = props;
     const { name } = props.columnInfo;
     const { gridId, onClick, disabled } = props.columnInfo.renderer?.options;
     const value = props.columnInfo.renderer?.options?.value;
