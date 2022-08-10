@@ -12,22 +12,7 @@ import { IGridPopupProps } from '../popup-datagrid';
 import { IInputGroupboxProps } from '../input-groupbox';
 
 /** 팝업 속성 인터페이스 */
-export default interface IPopupModalInfo extends IGridPopupProps {
-  /** 팝업 템플릿 키 */
-  // popupId: string;
-  // /** 팝업 유형 */
-  // popupType?: TPopupType;
-  // /** 모달 속성 */
-  // modalProps: IModalProps;
-  // /** 데이터 그리드 속성 */
-  // modalProps?: IGridPopupProps;
-  // /** 검색박스 속성 */
-  // searchProps?: ISearchboxProps;
-  // /** 입력 컴포넌트 그룹 속성 */
-  // inputProps?: IInputUiGroupboxProps;
-  // /** 기타 속성 */
-  // optionProps?: IPopupOptionType;
-}
+export default interface IPopupModalInfo extends IGridPopupProps {}
 
 /** 기타 팝업 옵션 속성 인터페이스 */
 export interface IPopupOptionType {
@@ -41,10 +26,10 @@ export interface IPopupItemsRetrunProps {
   modalProps?: IModalProps;
 
   /** 검색박스 속성 */
-  searchProps?: ISearchboxProps | undefined;
+  searchProps?: ISearchboxProps;
 
   /** 입력 컴포넌트 그룹 속성 */
-  inputGroupProps?: IInputGroupboxProps | undefined;
+  inputGroupProps?: IInputGroupboxProps;
 
   /** 데이터 그리드 속성 */
   datagridProps?: IDatagridProps; //IDatagridProps;

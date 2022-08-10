@@ -5,7 +5,7 @@ import { IInputGroupboxItem } from '../input-groupbox/input-groupbox.ui';
 export default interface ISearchboxProps extends ISearchboxStyles {
   id: string;
   /** 검색조건 배열 */
-  searchItems?: ISearchItem[] | undefined;
+  searchItems?: ISearchItem[];
   innerRef?: any;
 
   title?: string;
