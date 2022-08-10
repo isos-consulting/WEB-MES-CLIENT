@@ -26,13 +26,8 @@ export const PgAutUser = () => {
   const searchUriPath = '/aut/users';
   const saveUriPath = '/aut/users';
 
-  const fetchUserPassword = async ({ user_uuid }) => {
-    return await executeData(
-      [{ uuid: user_uuid }],
-      `/aut/user/pwd-init`,
-      'put',
-    );
-  };
+  const fetchUserPassword = async ({ user_uuid }) =>
+    executeData([{ uuid: user_uuid }], `/aut/user/pwd-init`, 'put');
 
   const resetUserPassword = async ({ user_uuid }) => {
     const userPasswordResetResponse = await fetchUserPassword({ user_uuid });

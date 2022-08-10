@@ -39,6 +39,7 @@ import {
   InspectionConcreate,
   NumberInspectionChecker,
 } from '../models/inspection-checker';
+import { SENTENCE } from '~/constants/lang/ko';
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
@@ -465,7 +466,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const callInspectionCreateAPI = async (saveData: InspectionPostAPIPayload) =>
-    await executeData(
+    executeData(
       saveData,
       URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS,
       'post',
@@ -473,7 +474,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     )
       .then(value => {
         if (!value) return;
-        message.info('저장되었습니다.');
+        message.info(SENTENCE.SAVE_COMPLETE);
         props.onAfterCloseSearch();
         resetInspectionDatas();
         props.setPopupVisible(false);
@@ -555,7 +556,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     );
 
     if (userDefinedInspectionSaveOption.length === 0) {
-      return await callInspectionCreateAPI(saveData);
+      return callInspectionCreateAPI(saveData);
     }
 
     if (
@@ -585,7 +586,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       });
     }
 
-    return await callInspectionCreateAPI(saveData);
+    return callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {

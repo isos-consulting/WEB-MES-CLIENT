@@ -1856,7 +1856,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
 
     if (userDefinedInspectionSaveOption.length === 0) {
-      return await callInspectionCreateAPI(saveData);
+      return callInspectionCreateAPI(saveData);
     }
 
     if (
@@ -1886,7 +1886,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       });
     }
 
-    return await callInspectionCreateAPI(saveData);
+    return callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {
@@ -2769,13 +2769,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     if (isFilledAllInspectionSample === false) {
       const qualityInspectionFilledOption =
-        (
-          await (async () =>
-            await fetchOptionFilledQualityAllInspectionResult)()
-        ).length > 0
+        (await (async () => fetchOptionFilledQualityAllInspectionResult)())
+          .length > 0
           ? (
-              await (async () =>
-                await fetchOptionFilledQualityAllInspectionResult)()
+              await (async () => fetchOptionFilledQualityAllInspectionResult)()
             )[0].value
           : 0;
 
@@ -2798,10 +2795,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         });
       }
 
-      return await fetchInsepctionPutAPI(inspectionPutApiPayload);
+      return fetchInsepctionPutAPI(inspectionPutApiPayload);
     }
 
-    return await fetchInsepctionPutAPI(inspectionPutApiPayload);
+    return fetchInsepctionPutAPI(inspectionPutApiPayload);
   };
 
   const onCancel = ev => {
