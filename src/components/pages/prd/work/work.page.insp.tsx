@@ -648,7 +648,7 @@ export const INSP = () => {
     try {
       requiredFileds.map(requiredFiled => {
         if (!compareDatas[requiredFiled.key])
-          throw `${requiredFiled.name} 정보를 확인해주세요.`;
+          throw new Error(`${requiredFiled.name} 정보를 확인해주세요.`);
       });
     } catch (e) {
       throw e;

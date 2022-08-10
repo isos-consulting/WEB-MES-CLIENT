@@ -2160,7 +2160,7 @@ const ProdOrderModal = ({ visible, onClose }) => {
             gridRef?.current?.getInstance()?.clearModifiedData();
           })
           .catch(e => {
-            throw 'myException';
+            throw new Error('myException');
           });
       }
       return true;
