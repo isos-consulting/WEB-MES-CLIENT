@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import { ENUM_DECIMAL } from '~/enums';
 import { isNumber, setNumberToDigit } from '~/functions';
 
 /** 그리드 퍼센트 인풋박스 */

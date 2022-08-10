@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import EXPRESSSIONS from '~/constants/expressions';
-import { getToday } from '~/functions';
 
 /** 날짜 포멧 에디터 */
 export class DatagridDateEditor {
