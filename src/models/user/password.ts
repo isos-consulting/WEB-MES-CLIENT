@@ -42,7 +42,9 @@ const PasswordValidation = class {
     this.count.increment();
   }
 
-  public fail(): void {}
+  public fail(): void {
+    // pass 함수의 대칭성을 구성하기 위해 정의한 함수 입니다, 비밀번호 유효성 검사 실패 기능을 추가할 경우 작성하세요.
+  }
 
   public isPassed(): boolean {
     return this.count.valueOf() > 1;
