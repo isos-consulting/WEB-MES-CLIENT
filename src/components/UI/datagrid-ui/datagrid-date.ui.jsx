@@ -25,14 +25,12 @@ export class DatagridDateEditor {
     rootDiv.name = name;
 
     if (type === 'time') {
-      // rootDiv.step = '1'; //seconds표시
       rootDiv.value = props.value;
     } else if (type === 'date') {
       rootDiv.value = props.value;
       rootDiv.max = '9999-12-31';
     } else {
       rootDiv.max = '9999-12-31T23:59:59';
-      // rootDiv.step = '1'; //seconds표시
       if (props.value !== null) {
         let value = String(props.value);
 

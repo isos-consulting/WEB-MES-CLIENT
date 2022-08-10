@@ -56,7 +56,6 @@ export class DatagridButtonRenderer {
     const rootDiv = document.createElement('div');
     const el = document.createElement('button');
 
-    // el.type = 'button';
     el.disabled = disabled;
     el.id = gridId + name + rowKey;
     if (onClick) el.addEventListener('click', ev => onClick(ev, props));
@@ -83,22 +82,5 @@ export class DatagridButtonRenderer {
 
   render(props, el) {
     this.el.value = el?.innerText;
-    // const element = document.getElementById(this.state?.elementId);
-
-    // if (el != null) {
-    //   if (this.state?.value != null) {
-    //     el.innerText = this.state?.value;
-    //   } else {
-    //     el.innerText = String(props?.value) === 'true' ? props.columnInfo.renderer?.options?.formatTrue : props.columnInfo.renderer?.options?.formatFalse;
-    //   }
-
-    // } else if(element != null) {
-
-    //   if (props.columnInfo.renderer?.options?.value != null) {
-    //     element.innerText = props.columnInfo.renderer?.options?.value;
-    //   } else {
-    //     element.innerText = String(props?.value) === 'true' ? props.columnInfo.renderer?.options?.formatTrue : props.columnInfo.renderer?.options?.formatFalse;
-    //   }
-    // }
   }
 }
