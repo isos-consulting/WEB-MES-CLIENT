@@ -690,7 +690,7 @@ export const PgQmsInsp = () => {
   const newDataPopupGridColumns: IGridColumn[] = cloneDeep(
     deatilSubGridColumns,
   )?.map(el => {
-    if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) == false) {
+    if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) === false) {
       el['editable'] = true;
     }
     return el;

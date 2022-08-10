@@ -380,7 +380,7 @@ export const PgEqmInsp = () => {
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
     cloneDeep(detailSubGrid.gridInfo.columns)?.map(el => {
-      if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) == false) {
+      if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) === false) {
         el['editable'] = true;
       }
       return el;

@@ -574,7 +574,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'number': // 숫자 타입 세팅
-          if (el?.editable == true) {
+          if (el?.editable === true) {
             // 에디터
             el['editor'] = {
               type: DatagridNumberEditor,
@@ -602,7 +602,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'percent': // 퍼센트 타입 세팅
-          if (el?.editable == true) {
+          if (el?.editable === true) {
             // 에디터
             el['editor'] = {
               type: DatagridPercentEditor,
@@ -630,7 +630,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'date': // 날짜 타입 세팅
-          if (el?.editable == true) {
+          if (el?.editable === true) {
             // 에디터
             el['editor'] = {
               type: DatagridDateEditor,
@@ -657,7 +657,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'time': // 시간 타입 세팅
-          if (el?.editable == true) {
+          if (el?.editable === true) {
             // 에디터
             el['editor'] = {
               type: DatagridDateEditor,
@@ -2044,7 +2044,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         // 셀 값 수정 가능한 상태일 떼, popup타입의 셀에서 space를 누른 경우 팝업 호출
         if (
           ['create', 'update']?.includes(props.gridMode) &&
-          column?.editable == true
+          column?.editable === true
         ) {
           switch (column?.format) {
             case 'check':
