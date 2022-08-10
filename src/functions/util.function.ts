@@ -365,13 +365,11 @@ export const convByteArrayToUTF8string = async (data): Promise<string> => {
   const extraByteMap = [1, 1, 1, 1, 2, 2, 3, 0];
   var count = data.length;
   var str = '';
-  let chk = false;
 
   for (var index = 0; index < count; ) {
     var ch = data[index++];
 
     if (ch & 0x80) {
-      chk = false;
       var extra = extraByteMap[(ch >> 3) & 0x07];
 
       if (!(ch & 0x40) || !extra || index + extra > count) return null;

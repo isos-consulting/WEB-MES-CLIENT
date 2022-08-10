@@ -7,7 +7,6 @@ import { consoleLogLocalEnv, executeData, getData } from '../../functions';
 import dotenv from 'dotenv';
 import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
-import IInputPopupProps from '../UI/input-popup/input-popup.ui.type';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useLayoutEffect } from 'react';
 import { Profile } from '~/models/user/profile';
@@ -37,9 +36,6 @@ export const PgLogin = ({
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
-
-  const [visible, setVisible] = useState(false);
-
   const [userId, setUserId] = useState<string>(getLocalStorageId() || null);
   const [userPw, setUserPw] = useState<string>(null);
 
@@ -90,43 +86,6 @@ export const PgLogin = ({
       }
     }
   }, [cboFactory]);
-
-  const hideUserModal = () => {
-    setVisible(false);
-  };
-
-  // 비번 변경용 팝업 액션
-  const InputPassWordChk = (values: object) => {
-    if (values['pwd'] != values['pwdChk']) {
-      message.warning('비밀번호가 다릅니다. 확인해주세요.');
-      return;
-    }
-
-    try {
-      let strResult: object[];
-
-      strResult = [
-        {
-          uidPk: JSON.parse(localStorage.getItem('userInfo') as string)?.uid,
-          pwd: crypto.AES.encrypt(values['pwd'], 'secret').toString(),
-          uid: JSON.parse(localStorage.getItem('userInfo') as string)?.uid,
-          pwdFg: 0,
-        },
-      ];
-
-      executeData(strResult, 'aut/user/', 'patch')
-        .then(res => {
-          if (res?.success === true) {
-            message.success('비밀번호 변경 완료. 다시 로그인해주세요.');
-          }
-        })
-        .catch(err => console.log(err));
-    } catch (err) {
-      return message.error(err);
-    }
-
-    hideUserModal();
-  };
 
   // 아이디와 패스워드가 둘다 입력된 상태면 로그인 버튼 활성화
   const clickable = useMemo(
