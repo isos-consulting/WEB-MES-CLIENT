@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { useEffect } from 'react';
 import {
   ScInputbox,
   ScInputPasswordbox,

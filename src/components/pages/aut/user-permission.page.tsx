@@ -1,5 +1,4 @@
-import React, { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,

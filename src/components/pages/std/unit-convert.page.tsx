@@ -1,5 +1,4 @@
-import React, { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { getPopupForm, useGrid } from '~/components/UI';
 import {
   cleanupKeyOfObject,
@@ -9,11 +8,10 @@ import {
   getPageName,
   isModified,
 } from '~/functions';
-import { Modal } from 'antd';
+import { Modal, message } from 'antd';
 import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
 

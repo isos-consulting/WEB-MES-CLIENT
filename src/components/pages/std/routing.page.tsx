@@ -1,6 +1,5 @@
 import Grid from '@toast-ui/react-grid';
-import React, { useLayoutEffect, useRef } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { IGridColumn, useGrid, getPopupForm } from '~/components/UI';
 import {
   cleanupKeyOfObject,

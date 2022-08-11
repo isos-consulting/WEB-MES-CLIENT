@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch as AntSwitch } from 'antd';
 import { useRecoilState } from 'recoil';
-import { useEffect } from 'react';
 import Props from './switch.ui.type';
 import { afBooleanState } from '~recoils/recoil.atom-family';
 

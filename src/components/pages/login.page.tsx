@@ -1,5 +1,4 @@
-import React from 'react';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState, useLayoutEffect } from 'react';
 import { message, Form } from 'antd';
 import crypto from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,7 +7,6 @@ import dotenv from 'dotenv';
 import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useLayoutEffect } from 'react';
 import { Profile } from '~/models/user/profile';
 
 dotenv.config();

@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Card, Radio as AntRadio, RadioChangeEvent, Space } from 'antd';
 import { Label } from '../label';
 import { Radio } from '../radio';
 import { useRecoilState } from 'recoil';
-import { useEffect } from 'react';
 import Props from './radio-group.ui.type';
 import { afStringState } from '~recoils/recoil.atom-family';
-import { useMemo } from 'react';
 
 /** 라디오 그룹 */
 const RadioGroup: React.FC<Props> = props => {

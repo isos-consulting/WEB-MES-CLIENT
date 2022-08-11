@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BarGraph, PieGraph } from '../graph';
 import { Container } from '../container';
 import Props from './graph.ui.type';

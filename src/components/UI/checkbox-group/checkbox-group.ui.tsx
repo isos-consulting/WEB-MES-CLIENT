@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Checkbox as AntCheckbox, Space } from 'antd';
 import { Label } from '../label';
 import { Checkbox } from '../checkbox';
 import { useRecoilState } from 'recoil';
-import { useEffect } from 'react';
 import Props from './checkbox-group.ui.type';
 import { afAnyArrayState, afObjectState } from '~recoils/recoil.atom-family';
-import { useMemo } from 'react';
 
 /** 체크박스 그룹 */
 const CheckboxGroup: React.FC<Props> = props => {

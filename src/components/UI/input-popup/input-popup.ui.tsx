@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Modal } from '../modal';
 import { Form } from '../form';
 import { FormItem } from '../form-item';
 import { Textbox } from '../textbox';
 import { Form as AntForm } from 'antd';
-import { useEffect, useRef } from 'react';
 import { FormInstance } from 'antd/lib/form';
 import Props from './input-popup.ui.type';
 

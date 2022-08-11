@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { getPopupForm } from '~components/UI/popup/popup.ui.model';
 import { cleanupKeyOfObject, addKeyOfObject, getData } from '~/functions';
@@ -9,7 +9,6 @@ import { afPopupReponseRow } from './popup-button.recoil';
 import { v4 as uuidv4 } from 'uuid';
 import Modal from 'antd/lib/modal/Modal';
 import { Datagrid } from '../datagrid-new';
-import { useRef } from 'react';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import { Result } from '../result';

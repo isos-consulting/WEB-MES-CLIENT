@@ -4,6 +4,8 @@ import React, {
   useLayoutEffect,
   useRef,
   useState,
+  useMemo,
+  useCallback,
 } from 'react';
 import {
   checkGridData,
@@ -15,14 +17,12 @@ import {
 } from '~/functions';
 import { Modal, message } from 'antd';
 import Grid from '@toast-ui/react-grid';
-import { useMemo } from 'react';
 import { Datagrid } from '~/components/UI/datagrid-new';
 import { useRecoilState } from 'recoil';
 import { afPopupVisible } from './popup-datagrid.ui.recoil';
 import { Searchbox } from '~/components/UI/searchbox';
 import Props from './popup-datagrid.ui.type';
 import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
-import { useCallback } from 'react';
 import { useLoadingState } from '~/hooks';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';

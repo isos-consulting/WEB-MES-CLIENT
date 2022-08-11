@@ -11,12 +11,12 @@ import {
   GridPopup,
   IGridColumn,
   TGridMode,
+  Modal as CustomModal,
 } from '~/components/UI';
 import {
   IInputGroupboxItem,
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { Modal as CustomModal } from '~/components/UI';
 import {
   executeData,
   getData,

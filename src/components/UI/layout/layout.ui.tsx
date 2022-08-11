@@ -1,12 +1,10 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Header } from '../header';
 import { Footer } from '../footer';
-import { SideNavbar } from '../side-navbar';
+import { SideNavbar, atSideNavMenuContent } from '../side-navbar';
 import { layoutStore } from './layout.ui.hook';
-import { atSideNavMenuContent } from '../side-navbar';
 import { ScContainer, ScContent, ScMainBody } from './layout.ui.styled';
 import Props from './layout.ui.type';
 import { consoleLogLocalEnv } from '~/functions';

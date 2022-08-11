@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import { IGridModifiedRows } from '../components/UI/datagrid-new/datagrid.ui.type';
 import { getUserInfoKeys, getUserFactoryUuid } from './storage.function';
 import {
@@ -10,7 +10,6 @@ import {
 } from './util.function';
 import { executeData, getData } from './comm.function';
 import { message } from 'antd';
-import { MutableRefObject } from 'react';
 import Grid from '@toast-ui/react-grid';
 import {
   COLUMN_CODE,

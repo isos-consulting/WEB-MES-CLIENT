@@ -1,5 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   getPopupForm,
   IGridColumn,

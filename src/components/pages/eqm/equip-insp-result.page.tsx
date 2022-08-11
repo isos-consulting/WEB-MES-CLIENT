@@ -1,5 +1,4 @@
-import React, { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   EDIT_ACTION_CODE,
   getPopupForm,

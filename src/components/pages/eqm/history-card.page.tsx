@@ -1,6 +1,5 @@
 import Grid from '@toast-ui/react-grid';
-import React from 'react';
-import { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import {
   TGridMode,
   useGrid,

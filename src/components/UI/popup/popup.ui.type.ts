@@ -1,13 +1,12 @@
 import IModalProps from '../modal/modal.ui.type';
-import IDatagridProps from '../datagrid-new/datagrid.ui.type';
-import ISearchboxProps from '../searchbox/searchbox.ui.type';
-import {
+import IDatagridProps, {
   IGridColumn,
   IGridPopupInfo,
   IGridComboInfo,
   TGridMode,
   IGridModifiedRows,
 } from '../datagrid-new/datagrid.ui.type';
+import ISearchboxProps from '../searchbox/searchbox.ui.type';
 import { IGridPopupProps } from '../popup-datagrid';
 import { IInputGroupboxProps } from '../input-groupbox';
 

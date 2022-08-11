@@ -1,12 +1,10 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import { Select } from 'antd';
+import React, { useMemo, useState, useCallback, useLayoutEffect } from 'react';
+import { Select, Space } from 'antd';
 import { useRecoilState } from 'recoil';
 import Props, { IComboboxItem } from './combobox.ui.type';
 import { ScCombobox } from './combobox.ui.styled';
 import { afStringState } from '~recoils/recoil.atom-family';
-import { Space } from 'antd';
 import { Label } from '../label';
-import { useLayoutEffect } from 'react';
 import { getData } from '~/functions';
 
 /** 콤보박스 */

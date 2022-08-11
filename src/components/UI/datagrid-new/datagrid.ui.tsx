@@ -5,13 +5,16 @@ import React, {
   useLayoutEffect,
   useRef,
   useState,
+  useMemo,
 } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import {
+import Props, {
   IGridComboColumnInfo,
   IGridComboInfo,
   IGridPopupInfo,
   TGridComboItems,
+  COLUMN_CODE,
+  EDIT_ACTION_CODE,
 } from './datagrid.ui.type';
 import {
   executeData,
@@ -23,7 +26,6 @@ import {
 import { message, Modal, Space } from 'antd';
 import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
-import { useMemo } from 'react';
 import {
   DatagridComboboxEditor,
   DatagridNumberEditor,
@@ -38,7 +40,6 @@ import {
 import '~styles/grid.style.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-import Props, { COLUMN_CODE, EDIT_ACTION_CODE } from './datagrid.ui.type';
 import { getPopupForm, IPopupItemsRetrunProps } from '../popup';
 import { Result } from '../result';
 import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';

@@ -1,5 +1,4 @@
-import React, { useLayoutEffect } from 'react';
-import { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { getPopupForm, useGrid } from '~/components/UI';
 import {
   cleanupKeyOfObject,
