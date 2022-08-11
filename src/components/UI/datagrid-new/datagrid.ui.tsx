@@ -685,7 +685,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'datetime': // 날짜/시간 타입 세팅
-          if (el?.editable == true) {
+          if (el?.editable === true) {
             // 에디터
             el['editor'] = {
               type: DatagridDateEditor,

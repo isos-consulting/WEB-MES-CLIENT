@@ -142,10 +142,8 @@ const Combobox: React.FC<Props> = props => {
   const defaultValue = useMemo(() => {
     if (props.defaultValue) {
       return props.defaultValue;
-    } else {
-      const nullableOptionCode = options?.length > 0 ? options[0]?.code : null;
-      return nullableOptionCode;
     }
+    return options?.length > 0 ? options[0]?.code : null;
   }, [props.defaultValue, options]);
 
   const value = useMemo(() => {

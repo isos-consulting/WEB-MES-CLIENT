@@ -130,7 +130,7 @@ export const useInputGroup = (
     }
   }, [values]);
 
-  const model = inputGroupModel({
+  return inputGroupModel({
     ref,
     instance: ref?.current,
     props,
@@ -147,8 +147,6 @@ export const useInputGroup = (
     setDisabledAll,
     setFieldValue,
   });
-
-  return model;
 };
 
 /** ❗(임시 / select reponse키와 request키가 달라서 생긴 문제인데, 나중에 이 부분에 대해 reponse키와 request키를 통일할지, 이대로 변환하며 사용할지 결정해야함)

@@ -72,7 +72,7 @@ export const useSearchbox = (
     ...options,
   };
 
-  const model = searchboxModel({
+  return searchboxModel({
     ref,
     instance: ref?.current,
     props,
@@ -83,8 +83,6 @@ export const useSearchbox = (
     searchItems: _searchItems,
     setSearchItems,
   });
-
-  return model;
 };
 
 /** 초기값 object를 만들어주는 함수 */

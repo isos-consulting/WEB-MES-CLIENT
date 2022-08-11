@@ -428,11 +428,15 @@ export const getPageName = () => {
   consoleLogLocalEnv(`path 정보 조회`, useLocation());
   const menuContent = useRecoilValue(atSideNavMenuContent);
   const { pathname } = useLocation();
-  const pageName = Object.keys(menuContent).find(
-    key => menuContent[key].path === pathname,
-  );
 
-  return pageName;
+  return Object.keys(menuContent).find(
+    (key: string) => menuContent[key].path === pathname,
+  );
+};
+
+type dayOptions = {
+  format?: string;
+  unitType?: dayjs.UnitType;
 };
 
 /**
@@ -443,19 +447,14 @@ export const getPageName = () => {
  */
 export const getToday = (
   addNum: number = 0,
-  options: {
-    format?: string;
-    unitType?: dayjs.UnitType;
-  } = {
+  options: dayOptions = {
     format: 'YYYY-MM-DD',
     unitType: 'day',
   },
 ): string => {
-  const today =
-    addNum === 0
-      ? dayjs().format(options.format)
-      : addDate(dayjs(), addNum, options);
-  return today;
+  return addNum === 0
+    ? dayjs().format(options.format)
+    : addDate(dayjs(), addNum, options);
 };
 
 /**
@@ -466,19 +465,14 @@ export const getToday = (
  */
 export const getNow = (
   addNum: number = 0,
-  options: {
-    format?: string;
-    unitType?: dayjs.UnitType;
-  } = {
+  options: dayOptions = {
     format: 'YYYY-MM-DD HH:mm:ss',
     unitType: 'day',
   },
 ): string => {
-  const now =
-    addNum === 0
-      ? dayjs().format(options.format)
-      : addDate(dayjs(), addNum, options);
-  return now;
+  return addNum === 0
+    ? dayjs().format(options.format)
+    : addDate(dayjs(), addNum, options);
 };
 
 /**
@@ -491,10 +485,7 @@ export const getNow = (
 export const addDate = (
   date: string | Dayjs,
   num: number = 0,
-  options: {
-    format?: string;
-    unitType?: dayjs.UnitType;
-  } = {
+  options: dayOptions = {
     format: 'YYYY-MM-DD',
     unitType: 'day',
   },
@@ -509,10 +500,10 @@ export const addDate = (
  * 앞 글자를 대문자로 변경하여 반환합니다.
  * @returns hello => Hello
  */
-export const convUpperToFirstChar = (value: string): string => {
-  const result = value?.replace(/\b[a-z]/, letter => letter.toUpperCase());
-
-  return result;
+export const convUpperToFirstChar = (lowercaseFormatStr: string): string => {
+  return lowercaseFormatStr?.replace(/\b[a-z]/, (firstCharacter: string) =>
+    firstCharacter.toUpperCase(),
+  );
 };
 
 /**
@@ -520,18 +511,18 @@ export const convUpperToFirstChar = (value: string): string => {
  * @param value 문자열
  * @returns my_val => MyVal
  */
-export const convSnakeToPascal = (value: string): string => {
-  const result = value
+export const convSnakeToPascal = (
+  includesSlashSnakeFormatStr: string,
+): string => {
+  return includesSlashSnakeFormatStr
     .split('/')
-    .map(snake =>
-      snake
+    .map((snakeFormatStr: string) =>
+      snakeFormatStr
         .split('_')
         .map(substr => substr.charAt(0).toUpperCase() + substr.slice(1))
         .join(''),
     )
     .join('/');
-
-  return result;
 };
 
 /**

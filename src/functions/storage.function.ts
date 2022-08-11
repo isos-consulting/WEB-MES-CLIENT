@@ -62,6 +62,5 @@ export const getUserUid = () => {
 
 /** 로그인 유저 정보가 담긴 sessionStorage의 키 값들을 가져옵니다. */
 export const getUserInfoKeys = () => {
-  let userInfo = Object.keys(getUserInfo() || {});
-  return userInfo;
+  return Object.keys(getUserInfo() || {});
 };
