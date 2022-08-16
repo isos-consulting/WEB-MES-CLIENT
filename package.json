@@ -67,7 +67,10 @@
     "build": "rimraf dist && parcel build ./public/index.html -d build --no-source-maps",
     "test": "jest --config config/jest.config.js",
     "test:watch": "jest --config config/jest.config.js --watch",
-    "test:coverage": "jest --config config/jest.config.js --coverage"
+    "test:coverage": "jest --config config/jest.config.js --coverage",
+    "e2e:test": "npx playwright test",
+    "e2e:codegen-dev": "npx playwright codegen http://191.1.70.232:3000/",
+    "e2e:report": "npx playwright show-report"
   },
   "browser": {
     "dom-storage": false
