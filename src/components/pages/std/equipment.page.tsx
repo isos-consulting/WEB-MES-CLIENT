@@ -93,7 +93,6 @@ export const PgStdEquipment = () => {
         name: 'workings_nm',
         width: ENUM_WIDTH.L,
         format: 'popup',
-        hidden: true,
       },
       {
         header: '관리자(정)UUID',
