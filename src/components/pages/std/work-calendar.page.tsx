@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { useEffect } from 'react';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
 import { WORD } from '~/constants/lang/ko';
+import { ENUM_WIDTH } from '~/enums';
 import { getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
@@ -69,16 +70,19 @@ export const PgStdWorkCalendar = () => {
             {
               header: '일자',
               name: 'work_date',
+              width: ENUM_WIDTH.S,
             },
             {
               header: 'work',
               name: 'work',
+              width: ENUM_WIDTH.M,
               editable: true,
               format: 'check',
             },
             {
               header: 'hour',
               name: 'hour',
+              width: ENUM_WIDTH.M,
               editable: true,
               format: 'time',
             },
