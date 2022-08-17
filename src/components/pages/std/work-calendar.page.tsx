@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { useEffect } from 'react';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
 import { WORD } from '~/constants/lang/ko';
-import { getToday } from '~/functions';
+import { getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
 export const PgStdWorkCalendar = () => {
@@ -31,7 +31,30 @@ export const PgStdWorkCalendar = () => {
             fontSize="small"
             ImageType="search"
             onClick={() => {
-              // 조회 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+              getData({}, '/std/work-calendars').then(res => {
+                if (res.length > 0) {
+                  setWorkCalendarData(
+                    [
+                      ...Array(
+                        Number(moment(workMonth).endOf('month').format('DD')),
+                      ),
+                    ].map((_, i) => ({
+                      work_date: i + 1,
+                      work:
+                        res.find(({ day }) => day === i + 1)?.work_fg ?? false,
+                      hour:
+                        res.find(({ day }) => day === i + 1)?.hour != null
+                          ? `${res.find(({ day }) => day === i + 1)?.hour}`
+                              .length === 1
+                            ? `0${
+                                res.find(({ day }) => day === i + 1)?.hour
+                              }:00`
+                            : `${res.find(({ day }) => day === i + 1)?.hour}:00`
+                          : null,
+                    })),
+                  );
+                }
+              });
             }}
           >
             {WORD.SEARCH}
