@@ -33,26 +33,13 @@ export const PgStdWorkCalendar = () => {
             onClick={() => {
               getData({}, '/std/work-calendars').then(res => {
                 if (res.length > 0) {
-                  setWorkCalendarData(
-                    [
-                      ...Array(
-                        Number(moment(workMonth).endOf('month').format('DD')),
-                      ),
-                    ].map((_, i) => ({
-                      work_date: i + 1,
-                      work:
-                        res.find(({ day }) => day === i + 1)?.work_fg ?? false,
-                      hour:
-                        res.find(({ day }) => day === i + 1)?.hour != null
-                          ? `${res.find(({ day }) => day === i + 1)?.hour}`
-                              .length === 1
-                            ? `0${
-                                res.find(({ day }) => day === i + 1)?.hour
-                              }:00`
-                            : `${res.find(({ day }) => day === i + 1)?.hour}:00`
-                          : null,
-                    })),
-                  );
+                  const copyWorkCalendarData = [...workCalendarData];
+                  res.forEach(item => {
+                    copyWorkCalendarData[item.day - 1].work = item.work_fg;
+                    copyWorkCalendarData[item.day - 1].hour = item.hour;
+                  });
+
+                  setWorkCalendarData(copyWorkCalendarData);
                 }
               });
             }}
