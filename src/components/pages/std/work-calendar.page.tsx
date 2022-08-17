@@ -1,10 +1,24 @@
-import React from 'react';
-import { Container, Datagrid } from '~/components/UI';
-import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { COLOROURS } from '~/styles/palette';
+import moment from 'moment';
+import React, { useEffect } from 'react';
+import { Container, Datagrid, DatePicker } from '~/components/UI';
+import { WORD } from '~/constants/lang/ko';
+import { getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
 export const PgStdWorkCalendar = () => {
+  const [workMonth, setWorkMonth] = React.useState(
+    moment(getToday()).format('YYYY-MM'),
+  );
+  const [workCalendarData, setWorkCalendarData] = React.useState([]);
+
+  useEffect(() => {
+    setWorkCalendarData(
+      [...Array(Number(moment(workMonth).endOf('month').format('DD')))].map(
+        (_, i) => ({ work_date: i + 1, work: null, hour: null }),
+      ),
+    );
+  }, [workMonth]);
+
   return (
     <>
       <Header>
@@ -22,54 +36,24 @@ export const PgStdWorkCalendar = () => {
           >
             {WORD.SEARCH}
           </Button>
-          <Header.FlexBox gap="0 5px">
-            <Button
-              primary="true"
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="delete"
-              colorType={COLOROURS.SECONDARY.ORANGE[500]}
-              onClick={() => {
-                // 삭제 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
-              }}
-            >
-              {WORD.DELETE}
-            </Button>
-            <Button
-              primary="true"
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="edit"
-              onClick={() => {
-                // 수정 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
-              }}
-            >
-              {WORD.EDIT}
-            </Button>
-            <Button
-              primary="true"
-              btnType="buttonFill"
-              widthSize="large"
-              heightSize="small"
-              fontSize="small"
-              ImageType="add"
-              onClick={() => {
-                // 추가 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
-              }}
-            >
-              {SENTENCE.ADD_RECORD}
-            </Button>
-          </Header.FlexBox>
         </Header.FlexBox>
       </Header>
       <Container>
+        <DatePicker
+          picker="month"
+          format="YYYY-MM"
+          label="근무월"
+          value={workMonth}
+          onChange={e => {
+            setWorkMonth(e.format('YYYY-MM'));
+          }}
+        />
+      </Container>
+      <Container>
         <Datagrid
           ref={null}
-          data={[]}
+          data={[...workCalendarData]}
+          gridMode="update"
           columns={[
             {
               header: '일자',
@@ -78,13 +62,16 @@ export const PgStdWorkCalendar = () => {
             {
               header: 'work',
               name: 'work',
+              editable: true,
+              format: 'check',
             },
             {
               header: 'hour',
               name: 'hour',
+              editable: true,
+              format: 'time',
             },
           ]}
-          gridMode={'delete'}
           disabledAutoDateColumn={true}
         ></Datagrid>
       </Container>
