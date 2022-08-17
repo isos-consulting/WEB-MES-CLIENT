@@ -77,6 +77,7 @@ export const PgStdWorkCalendar = () => {
           ref={null}
           data={[...workCalendarData]}
           gridMode="update"
+          height={700}
           columns={[
             {
               header: '일자',
