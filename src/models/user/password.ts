@@ -26,7 +26,7 @@ export const ValidationCounter = class implements Counter {
 };
 
 const PasswordValidation = class {
-  public static readonly NUMBER = /[0-9]/;
+  public static readonly NUMBER = /\d/;
   public static readonly UPPER_CASE = /[A-Z]/;
   public static readonly LOWER_CASE = /[a-z]/;
   public static readonly SPECIAL_CHARACTER =

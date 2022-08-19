@@ -52,6 +52,7 @@ import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
 import Fonts from '~styles/font.style.scss';
 import { cloneDeep, isEmpty, pick } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
+import EXPRESSSIONS from '~/constants/expressions';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -2186,7 +2187,7 @@ const ProdOrderModal = ({ visible, onClose }) => {
     }
 
     generate() {
-      return this.day.replace(/[^0-9]/g, '');
+      return this.day.replace(EXPRESSSIONS.NON_DIGIT_GLOBAL, '');
     }
   }
 

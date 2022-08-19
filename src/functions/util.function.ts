@@ -14,6 +14,7 @@ import {
 import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
 import dotenv from 'dotenv';
+import EXPRESSSIONS from '~/constants/expressions';
 
 dotenv.config();
 /**
@@ -193,25 +194,20 @@ export function isNumber(value: string | number, opt?): boolean {
   // 좌우 trim(공백제거)을 해준다.
   let num = String(value).replace(/(?:^\s+)|(?:\s+$)/g, '');
   num = String(num).replace(',', '');
+  const tempNum = Number(num);
 
   if (typeof opt == 'undefined' || opt == '1') {
     // 모든 10진수 (부호 선택, 자릿수구분기호 선택, 소수점 선택)
-    var regex = /^[+\-]?(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+){1}(\.[0-9]+)?$/g;
+    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_SIGN_COMMA_DOT_GLOBAL;
   } else if (opt == '2') {
     // 부호 미사용, 자릿수구분기호 선택, 소수점 선택
-    var regex = /^(([1-9][0-9]{0,2}(,[0-9]{3})*)|[0-9]+){1}(\.[0-9]+)?$/g;
+    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_COMMA_DOT_GLOBAL;
   } else if (opt == '3') {
     // 부호 미사용, 자릿수구분기호 미사용, 소수점 선택
-    var regex = /^[0-9]+(\.[0-9]+)?$/g;
+    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_DOT_GLOBAL;
   } else {
-    // 🚫only 숫자만(부호 미사용, 자릿수구분기호 미사용, 소수점 미사용)
-    // 🚫var regex = /^[0-9]$/g;
-
-    // 기본 숫자 형식 비교
-    let tempNum;
-    tempNum = Number(num);
-
-    if (tempNum == '' || isNaN(tempNum)) return false;
+    if (num === '') return false;
+    if (isNaN(tempNum)) return false;
   }
 
   if (regex.test(num)) {
