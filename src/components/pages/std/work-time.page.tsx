@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Datagrid, GridPopup } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { getPageName } from '~/functions';
+import { getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
@@ -56,9 +56,10 @@ const addWorkTimeBasicModalContext = (addWorkTimeModalTitle: string) =>
 
 export const PgStdWorkTime = () => {
   const title = getPageName();
-  const [basicModalContext, setBasicModalContext] = React.useState(
+  const [basicModalContext, setBasicModalContext] = useState(
     displayHiddenBasicModalContext(),
   );
+  const [workTimeDatas, setworkTimeData] = useState([]);
 
   return (
     <>
@@ -73,6 +74,7 @@ export const PgStdWorkTime = () => {
             ImageType="search"
             onClick={() => {
               // 조회 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+              getData({}, 'std/worktimes').then(setworkTimeData);
             }}
           >
             {WORD.SEARCH}
@@ -125,7 +127,7 @@ export const PgStdWorkTime = () => {
       <Container>
         <Datagrid
           ref={null}
-          data={[]}
+          data={[...workTimeDatas]}
           columns={[...workTimeGridColumns]}
           gridMode={'delete'}
         />
