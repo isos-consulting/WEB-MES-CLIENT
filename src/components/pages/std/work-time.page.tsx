@@ -1,10 +1,65 @@
 import React from 'react';
-import { Container, Datagrid } from '~/components/UI';
+import { Container, Datagrid, GridPopup } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
+import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
+
+const workTimeGridColumns = [
+  {
+    header: '근무코드',
+    name: 'work_code',
+  },
+  {
+    header: '근무유형',
+    name: 'work_type_code',
+  },
+  {
+    header: '사용유무',
+    name: 'work_start_flag',
+  },
+  {
+    header: '시작시간',
+    name: 'work_start_time',
+  },
+  {
+    header: '종료시간',
+    name: 'work_term_time',
+  },
+];
+
+const displayHiddenBasicModalContext = () =>
+  new BasicModalContext<unknown>({
+    title: '숨김',
+    columns: [],
+    visible: false,
+    gridMode: 'view',
+    data: [],
+    gridPopupInfo: [],
+    gridComboInfo: [],
+    onOk: () => {
+      // do nothing
+    },
+  });
+
+const addWorkTimeBasicModalContext = (addWorkTimeModalTitle: string) =>
+  BasicModalContext.add<unknown>({
+    title: addWorkTimeModalTitle,
+    columns: [...workTimeGridColumns],
+    gridPopupInfo: [],
+    gridComboInfo: [],
+    onOk: () => {
+      // 신규항목추가 저장 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+    },
+  });
 
 export const PgStdWorkTime = () => {
+  const title = getPageName();
+  const [basicModalContext, setBasicModalContext] = React.useState(
+    displayHiddenBasicModalContext(),
+  );
+
   return (
     <>
       <Header>
@@ -59,6 +114,7 @@ export const PgStdWorkTime = () => {
               ImageType="add"
               onClick={() => {
                 // 추가 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+                console.log(addWorkTimeBasicModalContext(title));
               }}
             >
               {SENTENCE.ADD_RECORD}
@@ -70,27 +126,18 @@ export const PgStdWorkTime = () => {
         <Datagrid
           ref={null}
           data={[]}
-          columns={[
-            {
-              header: '근무유형',
-              name: 'work_type_code',
-            },
-            {
-              header: '체크박스1',
-              name: 'work_start_flag',
-            },
-            {
-              header: '시작시간',
-              name: 'work_start_time',
-            },
-            {
-              header: '종료시간',
-              name: 'work_term_time',
-            },
-          ]}
+          columns={[...workTimeGridColumns]}
           gridMode={'delete'}
-        ></Datagrid>
+        />
       </Container>
+      {basicModalContext.visible === true ? (
+        <GridPopup
+          {...basicModalContext.info()}
+          onCancel={() => {
+            setBasicModalContext(displayHiddenBasicModalContext());
+          }}
+        />
+      ) : null}
     </>
   );
 };
