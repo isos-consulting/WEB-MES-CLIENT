@@ -1,31 +1,94 @@
 import React, { useState } from 'react';
-import { Container, Datagrid, GridPopup } from '~/components/UI';
+import { Container, Datagrid, GridPopup, IGridColumn } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
 
-const workTimeGridColumns = [
+const workTimeGridColumns: IGridColumn[] = [
+  {
+    header: '근무UUID',
+    name: 'worktime_uuid',
+    hidden: true,
+  },
   {
     header: '근무코드',
-    name: 'work_code',
+    name: 'worktime_cd',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '근무명',
+    name: 'worktime_nm',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '근무시간UUID',
+    name: 'worktime_type_uuid',
+    requiredField: true,
+    hidden: true,
+  },
+  {
+    header: '근무시간코드',
+    name: 'worktime_type_cd',
+    requiredField: true,
+    hidden: true,
+  },
+  {
+    header: '근무시간',
+    name: 'worktime_type_nm',
+    format: 'combo',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '근무유형UUID',
+    name: 'work_type_uuid',
+    requiredField: true,
+    hidden: true,
+  },
+  {
+    header: '근무유형코드',
+    name: 'work_type_cd',
+    requiredField: true,
+    hidden: true,
   },
   {
     header: '근무유형',
-    name: 'work_type_code',
+    name: 'work_type_nm',
+    format: 'combo',
+    editable: true,
+    requiredField: true,
   },
   {
     header: '사용유무',
-    name: 'work_start_flag',
+    name: 'use_fg',
+    format: 'check',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '휴게유무',
+    name: 'break_time_fg',
+    format: 'check',
+    editable: true,
+    requiredField: true,
   },
   {
     header: '시작시간',
-    name: 'work_start_time',
+    name: 'start_time',
+    format: 'time',
+    editable: true,
+    requiredField: true,
   },
   {
     header: '종료시간',
-    name: 'work_term_time',
+    name: 'end_time',
+    format: 'time',
+    editable: true,
+    requiredField: true,
   },
 ];
 
