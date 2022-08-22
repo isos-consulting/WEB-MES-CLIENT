@@ -47,7 +47,7 @@ const addWorkTypeBasicModalContext = ({
           ...workTypeAddGridRef.current.getInstance().getModifiedRows()
             .createdRows,
         ],
-        '/std/worktime-types',
+        '/std/work-types',
         'post',
       ).then(({ success }) => {
         if (success === true) {
@@ -76,10 +76,10 @@ const editWorkTypeBasicModalContext = ({
           .getInstance()
           .getModifiedRows()
           .updatedRows.map(updatedRow => ({
-            uuid: updatedRow.worktime_type_uuid,
+            uuid: updatedRow.work_type_uuid,
             ...updatedRow,
           })),
-        'std/worktime-types',
+        'std/work-types',
         'put',
       ).then(({ success }) => {
         if (success === true) {
@@ -89,7 +89,25 @@ const editWorkTypeBasicModalContext = ({
     },
   });
 
-const fetchWorkTypesGetApi = () => getData({}, 'std/worktime-types');
+const deleteWorkTypeConfirm = ({
+  deletedWorkTypeRows,
+  afterFetchWorkTypeDeleteApi,
+}: {
+  deletedWorkTypeRows: unknown[];
+  afterFetchWorkTypeDeleteApi: () => void;
+}) =>
+  confirm({
+    icon: null,
+    title: WORD.DELETE,
+    content: SENTENCE.DELETE_CONFIRM,
+    onOk: () => {
+      executeData(deletedWorkTypeRows, 'std/work-types', 'delete').then(
+        afterFetchWorkTypeDeleteApi,
+      );
+    },
+  });
+
+const fetchWorkTypesGetApi = () => getData({}, 'std/work-types');
 
 export const PgStdWorkType = () => {
   const title = getPageName();
@@ -133,26 +151,18 @@ export const PgStdWorkType = () => {
               fontSize="small"
               ImageType="delete"
               colorType={COLOROURS.SECONDARY.ORANGE[500]}
-              onClick={() => {
-                confirm({
-                  icon: null,
-                  title: WORD.DELETE,
-                  content: SENTENCE.DELETE_CONFIRM,
-                  onOk: () => {
-                    executeData(
-                      workTypeDataGridRef.current
-                        .getInstance()
-                        .getModifiedRows()
-                        .updatedRows.map(deletedRow => ({
-                          uuid: deletedRow.worktime_type_uuid,
-                          deletedRow,
-                        })),
-                      'std/worktime-types',
-                      'delete',
-                    ).then(handleAfterApiSuccess);
-                  },
-                });
-              }}
+              onClick={() =>
+                deleteWorkTypeConfirm({
+                  deletedWorkTypeRows: workTypeDataGridRef.current
+                    .getInstance()
+                    .getModifiedRows()
+                    .updatedRows.map(deletedRow => ({
+                      uuid: deletedRow.work_type_uuid,
+                      deletedRow,
+                    })),
+                  afterFetchWorkTypeDeleteApi: handleAfterApiSuccess,
+                })
+              }
             >
               {WORD.DELETE}
             </Button>
@@ -219,20 +229,27 @@ export const PgStdWorkType = () => {
 const WORK_TYPE_GRID_COLUMNS: IGridColumn[] = [
   {
     header: '',
-    name: 'worktime_type_uuid',
+    name: 'work_type_uuid',
     hidden: true,
   },
   {
     header: '근무유형코드',
-    name: 'worktime_type_cd',
+    name: 'work_type_cd',
     format: 'text',
     editable: true,
     requiredField: true,
   },
   {
     header: '근무유형명',
-    name: 'worktime_type_nm',
+    name: 'work_type_nm',
     format: 'text',
+    editable: true,
+    requiredField: true,
+  },
+  {
+    header: '사용유무',
+    name: 'use_fg',
+    format: 'check',
     editable: true,
     requiredField: true,
   },
