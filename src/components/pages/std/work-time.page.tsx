@@ -1,7 +1,15 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
 import React, { useState } from 'react';
-import { Container, Datagrid, GridPopup, IGridColumn } from '~/components/UI';
+import {
+  Container,
+  Datagrid,
+  GridInstanceReference,
+  GridPopup,
+  IGridColumn,
+} from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { getData, getPageName } from '~/functions';
+import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
@@ -106,14 +114,59 @@ const displayHiddenBasicModalContext = () =>
     },
   });
 
-const addWorkTimeBasicModalContext = (addWorkTimeModalTitle: string) =>
+const addWorkTimeBasicModalContext = (
+  addWorkTimeModalTitle: string,
+  onAfterFetchWorkTimePostApiCallback: Function,
+) =>
   BasicModalContext.add<unknown>({
     title: addWorkTimeModalTitle,
     columns: [...workTimeGridColumns],
     gridPopupInfo: [],
-    gridComboInfo: [],
-    onOk: () => {
-      // 신규항목추가 저장 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+    gridComboInfo: [
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'work_type_uuid',
+              popup: 'work_type_uuid',
+            },
+            textColName: { original: 'work_type_nm', popup: 'work_type_nm' },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: '/std/work-types',
+          params: {},
+        },
+      },
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'worktime_type_uuid',
+              popup: 'worktime_type_uuid',
+            },
+            textColName: {
+              original: 'worktime_type_nm',
+              popup: 'worktime_type_nm',
+            },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: '/std/worktime-types',
+          params: {},
+        },
+      },
+    ],
+    onOk: (workTimeGridRef: GridInstanceReference<Grid>) => {
+      executeData(
+        [...workTimeGridRef.current.getInstance().getData()],
+        '/std/worktimes',
+        'post',
+      ).then(({ success }) => {
+        if (success) {
+          onAfterFetchWorkTimePostApiCallback();
+        }
+      });
     },
   });
 
@@ -123,6 +176,12 @@ export const PgStdWorkTime = () => {
     displayHiddenBasicModalContext(),
   );
   const [workTimeDatas, setworkTimeData] = useState([]);
+
+  const handleAfterFetchWorkTimeApiCallback = () => {
+    setBasicModalContext(displayHiddenBasicModalContext());
+    message.info(SENTENCE.SAVE_COMPLETE);
+    getData({}, '/std/worktimes').then(setworkTimeData);
+  };
 
   return (
     <>
@@ -178,8 +237,12 @@ export const PgStdWorkTime = () => {
               fontSize="small"
               ImageType="add"
               onClick={() => {
-                // 추가 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
-                console.log(addWorkTimeBasicModalContext(title));
+                setBasicModalContext(
+                  addWorkTimeBasicModalContext(
+                    title,
+                    handleAfterFetchWorkTimeApiCallback,
+                  ),
+                );
               }}
             >
               {SENTENCE.ADD_RECORD}
