@@ -6,7 +6,6 @@ import {
   Datagrid,
   GridInstanceReference,
   GridPopup,
-  IGridColumn,
   IGridPopupProps,
 } from '~/components/UI';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
@@ -14,8 +13,10 @@ import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
+import { ColumnStore } from '~/constants/columns';
 
 const { confirm } = Modal;
+const WORK_TYPE_GRID_COLUMNS = ColumnStore.WORK_TYPE;
 
 const displayHiddenWorkTypeBasicModalContext = () =>
   new BasicModalContext<unknown>({
@@ -225,32 +226,3 @@ export const PgStdWorkType = () => {
     </>
   );
 };
-
-const WORK_TYPE_GRID_COLUMNS: IGridColumn[] = [
-  {
-    header: '',
-    name: 'work_type_uuid',
-    hidden: true,
-  },
-  {
-    header: '근무유형코드',
-    name: 'work_type_cd',
-    format: 'text',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '근무유형명',
-    name: 'work_type_nm',
-    format: 'text',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '사용유무',
-    name: 'use_fg',
-    format: 'check',
-    editable: true,
-    requiredField: true,
-  },
-];
