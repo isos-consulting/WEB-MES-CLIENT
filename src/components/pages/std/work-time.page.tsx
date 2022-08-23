@@ -236,9 +236,8 @@ export const PgStdWorkTime = () => {
                 deleteWorkTimeBasicModalContext({deletedWorkTimeRows: workTimeDataGridRef.current
                   .getInstance()
                   .getModifiedRows()
-                  .updatedRows.map(deletedRow => ({
-                    ...deletedRow,
-                    uuid: deletedRow.worktime_uuid,
+                  .updatedRows.map(({worktime_uuid}) => ({
+                    uuid: worktime_uuid,
                   })), 
                   workTimeDeleteApiCallback: () => afterWorkTimeApiSuccess(procedureAtAfterWorkTimeDeleteApiCall);
               })}}
