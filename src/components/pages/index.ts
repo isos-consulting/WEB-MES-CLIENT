@@ -73,6 +73,7 @@ export * from './std/excel-upload.page';
 export * from './std/login-history.page';
 export * from './std/work-calendar.page';
 export * from './std/work-type.page';
+export * from './std/work-time-type.page';
 
 export * from './prd/return.page';
 export * from './prd/return-report.page';
