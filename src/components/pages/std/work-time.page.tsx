@@ -114,10 +114,13 @@ const displayHiddenBasicModalContext = () =>
     },
   });
 
-const addWorkTimeBasicModalContext = (
-  addWorkTimeModalTitle: string,
-  onAfterFetchWorkTimePostApiCallback: Function,
-) =>
+const addWorkTimeBasicModalContext = ({
+  addWorkTimeModalTitle,
+  workTimePostApiCallback,
+}: {
+  addWorkTimeModalTitle: string;
+  workTimePostApiCallback: () => void;
+}) =>
   BasicModalContext.add<unknown>({
     title: addWorkTimeModalTitle,
     columns: [...workTimeGridColumns],
@@ -164,7 +167,7 @@ const addWorkTimeBasicModalContext = (
         'post',
       ).then(({ success }) => {
         if (success) {
-          onAfterFetchWorkTimePostApiCallback();
+          workTimePostApiCallback();
         }
       });
     },
@@ -173,11 +176,11 @@ const addWorkTimeBasicModalContext = (
 const editWorkTimeBasicModalContext = ({
   editWorkTimeModalTitle,
   editWOrkTimeDatas,
-  onAfterFetchWorkTimePutApiCallback,
+  workTimePutApiCallback,
 }: {
   editWorkTimeModalTitle: string;
   editWOrkTimeDatas: unknown[];
-  onAfterFetchWorkTimePutApiCallback: Function;
+  workTimePutApiCallback: () => void;
 }) =>
   BasicModalContext.edit<unknown>({
     title: editWorkTimeModalTitle,
@@ -226,7 +229,7 @@ const editWorkTimeBasicModalContext = ({
             .getInstance()
             .getModifiedRows()
             .updatedRows.map(updatedRows => ({
-              updatedRows,
+              ...updatedRows,
               uuid: updatedRows.worktime_uuid,
             })),
         ],
@@ -234,7 +237,7 @@ const editWorkTimeBasicModalContext = ({
         'put',
       ).then(({ success }) => {
         if (success) {
-          onAfterFetchWorkTimePutApiCallback();
+          workTimePutApiCallback();
         }
       });
     },
@@ -247,7 +250,13 @@ export const PgStdWorkTime = () => {
   );
   const [workTimeDatas, setworkTimeData] = useState([]);
 
-  const handleAfterFetchWorkTimeApiCallback = () => {
+  const afterWorkTimeApiSuccess = (
+    afterworkTimeApiCallbackSuccess: Function,
+  ) => {
+    afterworkTimeApiCallbackSuccess();
+  };
+
+  const procedureAtAfterWorkTimeApiCall = () => {
     setBasicModalContext(displayHiddenBasicModalContext());
     message.info(SENTENCE.SAVE_COMPLETE);
     getData({}, '/std/worktimes').then(setworkTimeData);
@@ -298,8 +307,8 @@ export const PgStdWorkTime = () => {
                   editWorkTimeBasicModalContext({
                     editWorkTimeModalTitle: title,
                     editWOrkTimeDatas: [...workTimeDatas],
-                    onAfterFetchWorkTimePutApiCallback:
-                      handleAfterFetchWorkTimeApiCallback,
+                    workTimePutApiCallback: () =>
+                      afterWorkTimeApiSuccess(procedureAtAfterWorkTimeApiCall),
                   }),
                 );
               }}
@@ -315,10 +324,11 @@ export const PgStdWorkTime = () => {
               ImageType="add"
               onClick={() => {
                 setBasicModalContext(
-                  addWorkTimeBasicModalContext(
-                    title,
-                    handleAfterFetchWorkTimeApiCallback,
-                  ),
+                  addWorkTimeBasicModalContext({
+                    addWorkTimeModalTitle: title,
+                    workTimePostApiCallback: () =>
+                      afterWorkTimeApiSuccess(procedureAtAfterWorkTimeApiCall),
+                  }),
                 );
               }}
             >
