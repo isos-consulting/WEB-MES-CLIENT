@@ -29,4 +29,25 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       requiredField: true,
     },
   ],
+  WORK_TIME_TYPE: [
+    {
+      header: '',
+      name: 'worktime_type_uuid',
+      hidden: true,
+    },
+    {
+      header: '근무시간유형코드',
+      name: 'worktime_type_cd',
+      format: 'text',
+      editable: true,
+      requiredField: true,
+    },
+    {
+      header: '근무시간유형명',
+      name: 'worktime_type_nm',
+      format: 'text',
+      editable: true,
+      requiredField: true,
+    },
+  ],
 };

@@ -9,6 +9,7 @@ import {
   IGridColumn,
   IGridPopupProps,
 } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
@@ -16,6 +17,7 @@ import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
 
 const { confirm } = Modal;
+const WORK_TIME_TYPE_GRID_COLUMNS = ColumnStore.WORK_TIME_TYPE;
 
 const displayHiddenBasicModalContext = () =>
   new BasicModalContext<unknown>({
@@ -245,25 +247,3 @@ export const PgStdWorkTimeType = () => {
     </>
   );
 };
-
-const WORK_TIME_TYPE_GRID_COLUMNS: IGridColumn[] = [
-  {
-    header: '',
-    name: 'worktime_type_uuid',
-    hidden: true,
-  },
-  {
-    header: '근무시간유형코드',
-    name: 'worktime_type_cd',
-    format: 'text',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '근무시간유형명',
-    name: 'worktime_type_nm',
-    format: 'text',
-    editable: true,
-    requiredField: true,
-  },
-];
