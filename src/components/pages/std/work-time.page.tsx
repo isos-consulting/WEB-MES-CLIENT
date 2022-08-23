@@ -170,6 +170,76 @@ const addWorkTimeBasicModalContext = (
     },
   });
 
+const editWorkTimeBasicModalContext = ({
+  editWorkTimeModalTitle,
+  editWOrkTimeDatas,
+  onAfterFetchWorkTimePutApiCallback,
+}: {
+  editWorkTimeModalTitle: string;
+  editWOrkTimeDatas: unknown[];
+  onAfterFetchWorkTimePutApiCallback: Function;
+}) =>
+  BasicModalContext.edit<unknown>({
+    title: editWorkTimeModalTitle,
+    columns: [...workTimeGridColumns],
+    data: editWOrkTimeDatas,
+    gridPopupInfo: [],
+    gridComboInfo: [
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'work_type_uuid',
+              popup: 'work_type_uuid',
+            },
+            textColName: { original: 'work_type_nm', popup: 'work_type_nm' },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: '/std/work-types',
+          params: {},
+        },
+      },
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'worktime_type_uuid',
+              popup: 'worktime_type_uuid',
+            },
+            textColName: {
+              original: 'worktime_type_nm',
+              popup: 'worktime_type_nm',
+            },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: '/std/worktime-types',
+          params: {},
+        },
+      },
+    ],
+    onOk: (workTimeGridRef: GridInstanceReference<Grid>) => {
+      executeData(
+        [
+          ...workTimeGridRef.current
+            .getInstance()
+            .getModifiedRows()
+            .updatedRows.map(updatedRows => ({
+              updatedRows,
+              uuid: updatedRows.worktime_uuid,
+            })),
+        ],
+        '/std/worktimes',
+        'put',
+      ).then(({ success }) => {
+        if (success) {
+          onAfterFetchWorkTimePutApiCallback();
+        }
+      });
+    },
+  });
+
 export const PgStdWorkTime = () => {
   const title = getPageName();
   const [basicModalContext, setBasicModalContext] = useState(
@@ -224,7 +294,14 @@ export const PgStdWorkTime = () => {
               fontSize="small"
               ImageType="edit"
               onClick={() => {
-                // 수정 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
+                setBasicModalContext(
+                  editWorkTimeBasicModalContext({
+                    editWorkTimeModalTitle: title,
+                    editWOrkTimeDatas: [...workTimeDatas],
+                    onAfterFetchWorkTimePutApiCallback:
+                      handleAfterFetchWorkTimeApiCallback,
+                  }),
+                );
               }}
             >
               {WORD.EDIT}
