@@ -6,8 +6,8 @@ import {
   Datagrid,
   GridInstanceReference,
   GridPopup,
-  IGridColumn,
 } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
@@ -15,92 +15,7 @@ import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
 
 const { confirm } = Modal;
-
-const workTimeGridColumns: IGridColumn[] = [
-  {
-    header: '근무UUID',
-    name: 'worktime_uuid',
-    hidden: true,
-  },
-  {
-    header: '근무코드',
-    name: 'worktime_cd',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '근무명',
-    name: 'worktime_nm',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '근무시간UUID',
-    name: 'worktime_type_uuid',
-    requiredField: true,
-    hidden: true,
-  },
-  {
-    header: '근무시간코드',
-    name: 'worktime_type_cd',
-    requiredField: true,
-    hidden: true,
-  },
-  {
-    header: '근무시간',
-    name: 'worktime_type_nm',
-    format: 'combo',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '근무유형UUID',
-    name: 'work_type_uuid',
-    requiredField: true,
-    hidden: true,
-  },
-  {
-    header: '근무유형코드',
-    name: 'work_type_cd',
-    requiredField: true,
-    hidden: true,
-  },
-  {
-    header: '근무유형',
-    name: 'work_type_nm',
-    format: 'combo',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '사용유무',
-    name: 'use_fg',
-    format: 'check',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '휴게유무',
-    name: 'break_time_fg',
-    format: 'check',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '시작시간',
-    name: 'start_time',
-    format: 'time',
-    editable: true,
-    requiredField: true,
-  },
-  {
-    header: '종료시간',
-    name: 'end_time',
-    format: 'time',
-    editable: true,
-    requiredField: true,
-  },
-];
+const WORK_TIME_GRID_COLUMNS = ColumnStore.WORK_TIME;
 
 const displayHiddenBasicModalContext = () =>
   new BasicModalContext<unknown>({
@@ -125,7 +40,7 @@ const addWorkTimeBasicModalContext = ({
 }) =>
   BasicModalContext.add<unknown>({
     title: addWorkTimeModalTitle,
-    columns: [...workTimeGridColumns],
+    columns: [...WORK_TIME_GRID_COLUMNS],
     gridPopupInfo: [],
     gridComboInfo: [
       {
@@ -186,7 +101,7 @@ const editWorkTimeBasicModalContext = ({
 }) =>
   BasicModalContext.edit<unknown>({
     title: editWorkTimeModalTitle,
-    columns: [...workTimeGridColumns],
+    columns: [...WORK_TIME_GRID_COLUMNS],
     data: editWOrkTimeDatas,
     gridPopupInfo: [],
     gridComboInfo: [
@@ -380,7 +295,7 @@ export const PgStdWorkTime = () => {
         <Datagrid
           ref={workTimeDataGridRef}
           data={[...workTimeDatas]}
-          columns={[...workTimeGridColumns]}
+          columns={[...WORK_TIME_GRID_COLUMNS]}
           gridMode={'delete'}
         />
       </Container>
