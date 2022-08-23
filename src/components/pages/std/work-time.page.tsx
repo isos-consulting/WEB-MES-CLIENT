@@ -1,6 +1,6 @@
 import Grid from '@toast-ui/react-grid';
-import { message } from 'antd';
-import React, { useState } from 'react';
+import { message, Modal } from 'antd';
+import React, { useState, useRef } from 'react';
 import {
   Container,
   Datagrid,
@@ -13,6 +13,8 @@ import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
+
+const { confirm } = Modal;
 
 const workTimeGridColumns: IGridColumn[] = [
   {
@@ -228,9 +230,9 @@ const editWorkTimeBasicModalContext = ({
           ...workTimeGridRef.current
             .getInstance()
             .getModifiedRows()
-            .updatedRows.map(updatedRows => ({
-              ...updatedRows,
-              uuid: updatedRows.worktime_uuid,
+            .updatedRows.map(updatedRow => ({
+              ...updatedRow,
+              uuid: updatedRow.worktime_uuid,
             })),
         ],
         '/std/worktimes',
@@ -243,12 +245,33 @@ const editWorkTimeBasicModalContext = ({
     },
   });
 
+const deleteWorkTimeBasicModalContext = ({
+  deletedWorkTimeRows,
+  workTimeDeleteApiCallback,
+}: {
+  deletedWorkTimeRows: unknown[];
+  workTimeDeleteApiCallback: () => void;
+}) =>
+  confirm({
+    icon: null,
+    title: WORD.DELETE,
+    content: SENTENCE.DELETE_CONFIRM,
+    onOk: () => {
+      executeData(
+        deletedWorkTimeRows,
+        'std/worktimes',
+        'delete',
+      ).then(workTimeDeleteApiCallback);
+    },
+  });
+
 export const PgStdWorkTime = () => {
   const title = getPageName();
   const [basicModalContext, setBasicModalContext] = useState(
     displayHiddenBasicModalContext(),
   );
   const [workTimeDatas, setworkTimeData] = useState([]);
+  const workTimeDataGridRef = useRef<Grid>(null);
 
   const afterWorkTimeApiSuccess = (
     afterworkTimeApiCallbackSuccess: Function,
@@ -256,7 +279,13 @@ export const PgStdWorkTime = () => {
     afterworkTimeApiCallbackSuccess();
   };
 
-  const procedureAtAfterWorkTimeApiCall = () => {
+  const procedureAtAfterWorkTimeSaveApiCall = () => {
+    setBasicModalContext(displayHiddenBasicModalContext());
+    message.info(SENTENCE.SAVE_COMPLETE);
+    getData({}, '/std/worktimes').then(setworkTimeData);
+  };
+
+  const procedureAtAfterWorkTimeDeleteApiCall = () => {
     setBasicModalContext(displayHiddenBasicModalContext());
     message.info(SENTENCE.SAVE_COMPLETE);
     getData({}, '/std/worktimes').then(setworkTimeData);
@@ -274,7 +303,6 @@ export const PgStdWorkTime = () => {
             fontSize="small"
             ImageType="search"
             onClick={() => {
-              // 조회 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
               getData({}, 'std/worktimes').then(setworkTimeData);
             }}
           >
@@ -290,8 +318,15 @@ export const PgStdWorkTime = () => {
               ImageType="delete"
               colorType={COLOROURS.SECONDARY.ORANGE[500]}
               onClick={() => {
-                // 삭제 버튼을 클릭했을 때 동작할 코드를 여기에 작성합니다.
-              }}
+                deleteWorkTimeBasicModalContext({deletedWorkTimeRows: workTimeDataGridRef.current
+                  .getInstance()
+                  .getModifiedRows()
+                  .updatedRows.map(deletedRow => ({
+                    ...deletedRow,
+                    uuid: deletedRow.worktime_uuid,
+                  })), 
+                  workTimeDeleteApiCallback: () => afterWorkTimeApiSuccess(procedureAtAfterWorkTimeDeleteApiCall);
+              })}}
             >
               {WORD.DELETE}
             </Button>
@@ -308,7 +343,9 @@ export const PgStdWorkTime = () => {
                     editWorkTimeModalTitle: title,
                     editWOrkTimeDatas: [...workTimeDatas],
                     workTimePutApiCallback: () =>
-                      afterWorkTimeApiSuccess(procedureAtAfterWorkTimeApiCall),
+                      afterWorkTimeApiSuccess(
+                        procedureAtAfterWorkTimeSaveApiCall,
+                      ),
                   }),
                 );
               }}
@@ -327,7 +364,9 @@ export const PgStdWorkTime = () => {
                   addWorkTimeBasicModalContext({
                     addWorkTimeModalTitle: title,
                     workTimePostApiCallback: () =>
-                      afterWorkTimeApiSuccess(procedureAtAfterWorkTimeApiCall),
+                      afterWorkTimeApiSuccess(
+                        procedureAtAfterWorkTimeSaveApiCall,
+                      ),
                   }),
                 );
               }}
@@ -339,7 +378,7 @@ export const PgStdWorkTime = () => {
       </Header>
       <Container>
         <Datagrid
-          ref={null}
+          ref={workTimeDataGridRef}
           data={[...workTimeDatas]}
           columns={[...workTimeGridColumns]}
           gridMode={'delete'}
