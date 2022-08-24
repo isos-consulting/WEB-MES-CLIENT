@@ -32,7 +32,15 @@ export const PgStdWorkCalendar = () => {
             fontSize="small"
             ImageType="search"
             onClick={() => {
-              getData({}, '/std/work-calendars').then(res => {
+              getData(
+                {
+                  start_date: `${workMonth}-01`,
+                  end_date: `${workMonth}-${Number(
+                    moment(workMonth).endOf('month').format('DD'),
+                  )}`,
+                },
+                '/std/work-calendars',
+              ).then(res => {
                 if (res.length > 0) {
                   const copyWorkCalendarData = [...workCalendarData];
                   res.forEach(item => {
