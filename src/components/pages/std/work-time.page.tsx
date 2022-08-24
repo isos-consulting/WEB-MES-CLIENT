@@ -203,7 +203,10 @@ export const PgStdWorkTime = () => {
       .getInstance()
       .getModifiedRows().updatedRows;
 
-    if (userDeletedWorkTimeDatas.length === 0) return;
+    if (userDeletedWorkTimeDatas.length === 0) {
+      message.warn(SENTENCE.NO_DELETE_ITEMS);
+      return;
+    }
 
     deleteWorkTimeConfirmDialogContext({
       deletedWorkTimeDatas: userDeletedWorkTimeDatas.map(
