@@ -18,7 +18,7 @@ type HeaderIncludedModalContextProps<T> = {
   data: T[];
   gridPopupInfo: TGridPopupInfos;
   gridComboInfo: TGridComboInfos;
-  onOk: (excelUploadTypeGridRef: GridInstanceReference<Grid>) => void;
+  onOk: (headerIncludedModalDataGridRef: GridInstanceReference<Grid>) => void;
   inputProps: IInputGroupboxProps[];
 };
 
@@ -40,7 +40,9 @@ export class HeaderIncludedModalContext<T>
   readonly data: T[];
   readonly gridPopupInfo: TGridPopupInfos;
   readonly gridComboInfo: TGridComboInfos;
-  readonly onOk: (excelUploadTypeGridRef: GridInstanceReference<Grid>) => void;
+  readonly onOk: (
+    headerIncludedModalDataGridRef: GridInstanceReference<Grid>,
+  ) => void;
   readonly inputProps: IInputGroupboxProps[];
 
   constructor({
