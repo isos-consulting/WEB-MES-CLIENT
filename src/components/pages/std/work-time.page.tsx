@@ -55,23 +55,6 @@ const addWorkTimeHeaderIncludedModalContext = ({
     data: [],
     gridPopupInfo: [],
     gridComboInfo: [{ ...ComboStore.WORK_TIME_TYPE }],
-    onOk: addedWorkTimeDataGrid => {
-      executeData(
-        addedWorkTimeDataGrid.current
-          .getInstance()
-          .getData()
-          .map(newWorkTimeData => ({
-            ...newWorkTimeData,
-            ...workTypeHeaderFormRef.current.values,
-          })),
-        '/std/worktimes',
-        'post',
-      ).then(({ success }) => {
-        if (success) {
-          workTimePostApiCallback();
-        }
-      });
-    },
     inputProps: [
       {
         id: '',
@@ -95,9 +78,25 @@ const addWorkTimeHeaderIncludedModalContext = ({
         ],
       },
     ],
+    onOk: addedWorkTimeDataGrid => {
+      executeData(
+        addedWorkTimeDataGrid.current
+          .getInstance()
+          .getData()
+          .map(newWorkTimeData => ({
+            ...newWorkTimeData,
+            ...workTypeHeaderFormRef.current.values,
+          })),
+        '/std/worktimes',
+        'post',
+      ).then(({ success }) => {
+        if (success) {
+          workTimePostApiCallback();
+        }
+      });
+    },
   });
-
-const editWorkTimeBasicModalContext = ({
+const editWorkTimeHeaderIncludedModalContext = ({
   editWorkTimeModalTitle,
   editWOrkTimeDatas,
   workTypeHeaderFormRef,
@@ -120,24 +119,6 @@ const editWorkTimeBasicModalContext = ({
     data: editWOrkTimeDatas,
     gridPopupInfo: [],
     gridComboInfo: [{ ...ComboStore.WORK_TIME_TYPE }],
-    onOk: addedWorkTimeDataGrid => {
-      executeData(
-        addedWorkTimeDataGrid.current
-          .getInstance()
-          .getModifiedRows()
-          .updatedRows.map(updatedWorkTimeData => ({
-            ...updatedWorkTimeData,
-            ...workTypeHeaderFormRef.current.values,
-            uuid: updatedWorkTimeData.worktime_uuid,
-          })),
-        '/std/worktimes',
-        'put',
-      ).then(({ success }) => {
-        if (success) {
-          workTimePutApiCallback();
-        }
-      });
-    },
     inputProps: [
       {
         id: '',
@@ -161,13 +142,31 @@ const editWorkTimeBasicModalContext = ({
         ],
       },
     ],
+    onOk: addedWorkTimeDataGrid => {
+      executeData(
+        addedWorkTimeDataGrid.current
+          .getInstance()
+          .getModifiedRows()
+          .updatedRows.map(updatedWorkTimeData => ({
+            ...updatedWorkTimeData,
+            ...workTypeHeaderFormRef.current.values,
+            uuid: updatedWorkTimeData.worktime_uuid,
+          })),
+        '/std/worktimes',
+        'put',
+      ).then(({ success }) => {
+        if (success) {
+          workTimePutApiCallback();
+        }
+      });
+    },
   });
 
-const deleteWorkTimeBasicModalContext = ({
-  deletedWorkTimeRows,
+const deleteWorkTimeConfirmDialogContext = ({
+  deletedWorkTimeDatas,
   workTimeDeleteApiCallback,
 }: {
-  deletedWorkTimeRows: unknown[];
+  deletedWorkTimeDatas: unknown[];
   workTimeDeleteApiCallback: () => void;
 }) =>
   confirm({
@@ -175,7 +174,7 @@ const deleteWorkTimeBasicModalContext = ({
     title: WORD.DELETE,
     content: SENTENCE.DELETE_CONFIRM,
     onOk: () => {
-      executeData(deletedWorkTimeRows, 'std/worktimes', 'delete').then(
+      executeData(deletedWorkTimeDatas, 'std/worktimes', 'delete').then(
         workTimeDeleteApiCallback,
       );
     },
@@ -188,7 +187,7 @@ const fetchWorkTimeDataGetApi = ({ work_type_uuid }: Dictionary<CellValue>) =>
 
 export const PgStdWorkTime = () => {
   const title = getPageName();
-  const [basicModalContext, setBasicModalContext] = useState(
+  const [workTimeModalContext, setWorkTimeModalContext] = useState(
     displayHiddenHeaderIncludedModalContext(),
   );
   const [workTypeDatas, setWorkTypeData] = useState([]);
@@ -199,6 +198,67 @@ export const PgStdWorkTime = () => {
   const workTimeDataGridRef = useRef<Grid>(null);
   const wotkTimeModalHeaderRef = useRef(null);
 
+  const showDeleteWorkTimeConfirmDialog = () => {
+    const userDeletedWorkTimeDatas = workTimeDataGridRef.current
+      .getInstance()
+      .getModifiedRows().updatedRows;
+
+    if (userDeletedWorkTimeDatas.length === 0) return;
+
+    deleteWorkTimeConfirmDialogContext({
+      deletedWorkTimeDatas: userDeletedWorkTimeDatas.map(
+        ({ worktime_uuid }) => ({
+          uuid: worktime_uuid,
+        }),
+      ),
+      workTimeDeleteApiCallback: () =>
+        afterWorkTimeApiSuccess(procedureAtAfterWorkTimeDeleteApiCall),
+    });
+  };
+
+  const showEditWorkTimeModal = () => {
+    const { work_type_uuid, work_type_nm } = userSelectedWorkTypeData;
+
+    if (work_type_uuid == null) {
+      message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
+      return;
+    }
+
+    setWorkTimeModalContext(
+      editWorkTimeHeaderIncludedModalContext({
+        editWorkTimeModalTitle: title,
+        editWOrkTimeDatas: [
+          ...workTimeDataGridRef.current.getInstance().getData(),
+        ],
+        workTypeHeaderFormRef: wotkTimeModalHeaderRef,
+        workTypeUuid: work_type_uuid,
+        workTypeName: work_type_nm,
+        workTimePutApiCallback: () =>
+          afterWorkTimeApiSuccess(procedureAtAfterWorkTimeSaveApiCall),
+      }),
+    );
+  };
+
+  const showAddWorkTimeModal = () => {
+    const { work_type_uuid, work_type_nm } = userSelectedWorkTypeData;
+
+    if (work_type_uuid == null) {
+      message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
+      return;
+    }
+
+    setWorkTimeModalContext(
+      addWorkTimeHeaderIncludedModalContext({
+        addWorkTimeModalTitle: title,
+        workTypeHeaderFormRef: wotkTimeModalHeaderRef,
+        workTypeUuid: work_type_uuid,
+        workTypeName: work_type_nm,
+        workTimePostApiCallback: () =>
+          afterWorkTimeApiSuccess(procedureAtAfterWorkTimeSaveApiCall),
+      }),
+    );
+  };
+
   const afterWorkTimeApiSuccess = (
     afterworkTimeApiCallbackSuccess: Function,
   ) => {
@@ -207,7 +267,7 @@ export const PgStdWorkTime = () => {
   };
 
   const procedureAtAfterWorkTimeSaveApiCall = () => {
-    setBasicModalContext(displayHiddenHeaderIncludedModalContext());
+    setWorkTimeModalContext(displayHiddenHeaderIncludedModalContext());
     message.info(SENTENCE.SAVE_COMPLETE);
   };
 
@@ -252,20 +312,7 @@ export const PgStdWorkTime = () => {
               fontSize="small"
               ImageType="delete"
               colorType={COLOROURS.SECONDARY.ORANGE[500]}
-              onClick={() => {
-                deleteWorkTimeBasicModalContext({
-                  deletedWorkTimeRows: workTimeDataGridRef.current
-                    .getInstance()
-                    .getModifiedRows()
-                    .updatedRows.map(({ worktime_uuid }) => ({
-                      uuid: worktime_uuid,
-                    })),
-                  workTimeDeleteApiCallback: () =>
-                    afterWorkTimeApiSuccess(
-                      procedureAtAfterWorkTimeDeleteApiCall,
-                    ),
-                });
-              }}
+              onClick={showDeleteWorkTimeConfirmDialog}
             >
               {WORD.DELETE}
             </Button>
@@ -276,31 +323,7 @@ export const PgStdWorkTime = () => {
               heightSize="small"
               fontSize="small"
               ImageType="edit"
-              onClick={() => {
-                const { work_type_uuid, work_type_nm } =
-                  userSelectedWorkTypeData;
-
-                if (work_type_uuid == null) {
-                  message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
-                  return;
-                }
-
-                setBasicModalContext(
-                  editWorkTimeBasicModalContext({
-                    editWorkTimeModalTitle: title,
-                    editWOrkTimeDatas: [
-                      ...workTimeDataGridRef.current.getInstance().getData(),
-                    ],
-                    workTypeHeaderFormRef: wotkTimeModalHeaderRef,
-                    workTypeUuid: work_type_uuid,
-                    workTypeName: work_type_nm,
-                    workTimePutApiCallback: () =>
-                      afterWorkTimeApiSuccess(
-                        procedureAtAfterWorkTimeSaveApiCall,
-                      ),
-                  }),
-                );
-              }}
+              onClick={showEditWorkTimeModal}
             >
               {WORD.EDIT}
             </Button>
@@ -311,28 +334,7 @@ export const PgStdWorkTime = () => {
               heightSize="small"
               fontSize="small"
               ImageType="add"
-              onClick={() => {
-                const { work_type_uuid, work_type_nm } =
-                  userSelectedWorkTypeData;
-
-                if (work_type_uuid == null) {
-                  message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
-                  return;
-                }
-
-                setBasicModalContext(
-                  addWorkTimeHeaderIncludedModalContext({
-                    addWorkTimeModalTitle: title,
-                    workTypeHeaderFormRef: wotkTimeModalHeaderRef,
-                    workTypeUuid: work_type_uuid,
-                    workTypeName: work_type_nm,
-                    workTimePostApiCallback: () =>
-                      afterWorkTimeApiSuccess(
-                        procedureAtAfterWorkTimeSaveApiCall,
-                      ),
-                  }),
-                );
-              }}
+              onClick={showAddWorkTimeModal}
             >
               {SENTENCE.ADD_RECORD}
             </Button>
@@ -380,11 +382,11 @@ export const PgStdWorkTime = () => {
           </Container>
         </div>
       </div>
-      {basicModalContext.visible === true ? (
+      {workTimeModalContext.visible === true ? (
         <GridPopup
-          {...basicModalContext.info()}
+          {...workTimeModalContext.info()}
           onCancel={() => {
-            setBasicModalContext(displayHiddenHeaderIncludedModalContext());
+            setWorkTimeModalContext(displayHiddenHeaderIncludedModalContext());
           }}
         />
       ) : null}
