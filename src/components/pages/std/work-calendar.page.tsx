@@ -15,7 +15,11 @@ export const PgStdWorkCalendar = () => {
   useEffect(() => {
     setWorkCalendarData(
       [...Array(Number(moment(workMonth).endOf('month').format('DD')))].map(
-        (_, i) => ({ work_date: i + 1, work: null, hour: null }),
+        (_, i) => ({
+          work_date: i > 8 ? i + 1 : `0${i + 1}`,
+          work: null,
+          hour: null,
+        }),
       ),
     );
   }, [workMonth]);
