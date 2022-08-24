@@ -9,4 +9,5 @@ export enum SENTENCE {
   SAVE_COMPLETE = '저장이 완료되었습니다',
   DELETE_CONFIRM = '삭제하시겠습니까?',
   NO_DELETE_ITEMS = '삭제할 항목이 없습니다',
+  NO_SELECTED_WORK_TYPE = '근무 유형을 선택해주세요',
 }

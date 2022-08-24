@@ -277,6 +277,14 @@ export const PgStdWorkTime = () => {
               fontSize="small"
               ImageType="edit"
               onClick={() => {
+                const { work_type_uuid, work_type_nm } =
+                  userSelectedWorkTypeData;
+
+                if (work_type_uuid == null) {
+                  message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
+                  return;
+                }
+
                 setBasicModalContext(
                   editWorkTimeBasicModalContext({
                     editWorkTimeModalTitle: title,
@@ -284,8 +292,8 @@ export const PgStdWorkTime = () => {
                       ...workTimeDataGridRef.current.getInstance().getData(),
                     ],
                     workTypeHeaderFormRef: wotkTimeModalHeaderRef,
-                    workTypeUuid: userSelectedWorkTypeData.work_type_uuid,
-                    workTypeName: userSelectedWorkTypeData.work_type_nm,
+                    workTypeUuid: work_type_uuid,
+                    workTypeName: work_type_nm,
                     workTimePutApiCallback: () =>
                       afterWorkTimeApiSuccess(
                         procedureAtAfterWorkTimeSaveApiCall,
@@ -308,7 +316,7 @@ export const PgStdWorkTime = () => {
                   userSelectedWorkTypeData;
 
                 if (work_type_uuid == null) {
-                  message.warn('근무 유형을 선택해주세요');
+                  message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
                   return;
                 }
 
