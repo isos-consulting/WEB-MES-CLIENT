@@ -340,7 +340,7 @@ export const PgStdWorkTime = () => {
         </Header.FlexBox>
       </Header>
       <div style={{ display: 'flex' }}>
-        <div style={{ width: '30%' }}>
+        <div style={{ width: '30%', marginRight: '10px' }}>
           <Container>
             <Datagrid
               ref={workTimeDataGridRef}
@@ -348,6 +348,7 @@ export const PgStdWorkTime = () => {
               columns={[...WORK_TYPE_GRID_COLUMNS]}
               gridMode={'delete'}
               disabledAutoDateColumn={true}
+              height={document.getElementById('main-body')?.clientHeight}
               onClick={({
                 rowKey,
                 instance,
@@ -372,6 +373,7 @@ export const PgStdWorkTime = () => {
             <Datagrid
               ref={workTimeDataGridRef}
               data={[...workTimeDatas]}
+              height={document.getElementById('main-body')?.clientHeight}
               columns={[...WORK_TIME_GRID_COLUMNS]}
               gridMode={'delete'}
             />
