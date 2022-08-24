@@ -3,7 +3,7 @@ import TuiGrid, { Dictionary } from 'tui-grid';
 import { CellValue } from 'tui-grid/types/store/data';
 import { message, Modal } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
-import { Container, Datagrid, GridPopup } from '~/components/UI';
+import { Container, Datagrid, GridPopup, Textbox } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
@@ -35,24 +35,42 @@ const displayHiddenHeaderIncludedModalContext = () =>
   });
 
 const addWorkTimeHeaderIncludedModalContext = ({
+  addWorkTimeModalTitle,
   workTypeHeaderFormRef,
   workTypeUuid,
   workTypeName,
+  workTimePostApiCallback,
 }: {
+  addWorkTimeModalTitle: string;
   workTypeHeaderFormRef: React.Ref<FormikProps<FormikValues>>;
   workTypeUuid: string;
   workTypeName: string;
+  workTimePostApiCallback: () => void;
 }) =>
   new HeaderIncludedModalContext<unknown>({
-    title: '추가',
+    title: addWorkTimeModalTitle,
     columns: [...WORK_TIME_GRID_COLUMNS],
     visible: true,
     gridMode: 'create',
     data: [],
     gridPopupInfo: [],
     gridComboInfo: [{ ...ComboStore.WORK_TIME_TYPE }],
-    onOk: () => {
-      console.log(workTypeHeaderFormRef);
+    onOk: addedWorkTimeDataGrid => {
+      executeData(
+        addedWorkTimeDataGrid.current
+          .getInstance()
+          .getData()
+          .map(newWorkTimeData => ({
+            ...newWorkTimeData,
+            ...workTypeHeaderFormRef.current.values,
+          })),
+        '/std/worktimes',
+        'post',
+      ).then(({ success }) => {
+        if (success) {
+          workTimePostApiCallback();
+        }
+      });
     },
     inputProps: [
       {
@@ -119,21 +137,21 @@ export const PgStdWorkTime = () => {
     afterworkTimeApiCallbackSuccess: Function,
   ) => {
     afterworkTimeApiCallbackSuccess();
+    searchUsedWorkTypeDatas();
   };
 
   const procedureAtAfterWorkTimeSaveApiCall = () => {
     setBasicModalContext(displayHiddenHeaderIncludedModalContext());
     message.info(SENTENCE.SAVE_COMPLETE);
-    getData({}, '/std/worktimes').then(setWorkTimeData);
   };
 
   const procedureAtAfterWorkTimeDeleteApiCall = () => {
     message.info(SENTENCE.SAVE_COMPLETE);
-    getData({}, '/std/worktimes').then(setWorkTimeData);
   };
 
   const searchUsedWorkTypeDatas = () =>
     fetchWorkTypeDataGetApi({ use_fg: true }).then(setWorkTypeData);
+
   const searchWorkTimesRelatedWithWorkType = (
     userSelectedWorkType: Dictionary<CellValue>,
   ) => fetchWorkTimeDataGetApi(userSelectedWorkType).then(setWorkTimeData);
@@ -210,13 +228,21 @@ export const PgStdWorkTime = () => {
                 const { work_type_uuid, work_type_nm } =
                   userSelectedWorkTypeData;
 
-                if (work_type_uuid == null) return;
+                if (work_type_uuid == null) {
+                  message.warn('근무 유형을 선택해주세요');
+                  return;
+                }
 
                 setBasicModalContext(
                   addWorkTimeHeaderIncludedModalContext({
+                    addWorkTimeModalTitle: title,
                     workTypeHeaderFormRef: wotkTimeModalHeaderRef,
                     workTypeUuid: work_type_uuid,
                     workTypeName: work_type_nm,
+                    workTimePostApiCallback: () =>
+                      afterWorkTimeApiSuccess(
+                        procedureAtAfterWorkTimeSaveApiCall,
+                      ),
                   }),
                 );
               }}
@@ -251,6 +277,11 @@ export const PgStdWorkTime = () => {
         </div>
         <div style={{ width: '70%' }}>
           <Container>
+            <Textbox
+              label="선택한 근무유형"
+              value={userSelectedWorkTypeData.work_type_nm}
+              readOnly={true}
+            />
             <Datagrid
               ref={workTimeDataGridRef}
               data={[...workTimeDatas]}
