@@ -385,14 +385,14 @@ export const PgStdWorkTime = () => {
           </Container>
         </div>
       </div>
-      {workTimeModalContext.visible === true ? (
+      {workTimeModalContext.visible === true && (
         <GridPopup
           {...workTimeModalContext.info()}
           onCancel={() => {
             setWorkTimeModalContext(displayHiddenHeaderIncludedModalContext());
           }}
         />
-      ) : null}
+      )}
     </>
   );
 };
