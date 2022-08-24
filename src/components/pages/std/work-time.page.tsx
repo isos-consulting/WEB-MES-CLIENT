@@ -97,6 +97,72 @@ const addWorkTimeHeaderIncludedModalContext = ({
     ],
   });
 
+const editWorkTimeBasicModalContext = ({
+  editWorkTimeModalTitle,
+  editWOrkTimeDatas,
+  workTypeHeaderFormRef,
+  workTypeUuid,
+  workTypeName,
+  workTimePutApiCallback,
+}: {
+  editWorkTimeModalTitle: string;
+  editWOrkTimeDatas: unknown[];
+  workTypeHeaderFormRef: React.Ref<FormikProps<FormikValues>>;
+  workTypeUuid: string;
+  workTypeName: string;
+  workTimePutApiCallback: () => void;
+}) =>
+  new HeaderIncludedModalContext<unknown>({
+    title: editWorkTimeModalTitle,
+    columns: [...WORK_TIME_GRID_COLUMNS],
+    visible: true,
+    gridMode: 'update',
+    data: editWOrkTimeDatas,
+    gridPopupInfo: [],
+    gridComboInfo: [{ ...ComboStore.WORK_TIME_TYPE }],
+    onOk: addedWorkTimeDataGrid => {
+      executeData(
+        addedWorkTimeDataGrid.current
+          .getInstance()
+          .getModifiedRows()
+          .updatedRows.map(updatedWorkTimeData => ({
+            ...updatedWorkTimeData,
+            ...workTypeHeaderFormRef.current.values,
+            uuid: updatedWorkTimeData.worktime_uuid,
+          })),
+        '/std/worktimes',
+        'put',
+      ).then(({ success }) => {
+        if (success) {
+          workTimePutApiCallback();
+        }
+      });
+    },
+    inputProps: [
+      {
+        id: '',
+        innerRef: workTypeHeaderFormRef,
+        inputItems: [
+          {
+            type: 'text',
+            id: 'work_type_uuid',
+            label: '',
+            default: workTypeUuid,
+            disabled: true,
+            hidden: true,
+          },
+          {
+            type: 'text',
+            id: 'work_type_nm',
+            default: workTypeName,
+            label: '근무유형',
+            disabled: true,
+          },
+        ],
+      },
+    ],
+  });
+
 const deleteWorkTimeBasicModalContext = ({
   deletedWorkTimeRows,
   workTimeDeleteApiCallback,
@@ -137,7 +203,7 @@ export const PgStdWorkTime = () => {
     afterworkTimeApiCallbackSuccess: Function,
   ) => {
     afterworkTimeApiCallbackSuccess();
-    searchUsedWorkTypeDatas();
+    searchWorkTimesRelatedWithWorkType({ ...userSelectedWorkTypeData });
   };
 
   const procedureAtAfterWorkTimeSaveApiCall = () => {
@@ -211,8 +277,21 @@ export const PgStdWorkTime = () => {
               fontSize="small"
               ImageType="edit"
               onClick={() => {
-                // setBasicModalContext(
-                // );
+                setBasicModalContext(
+                  editWorkTimeBasicModalContext({
+                    editWorkTimeModalTitle: title,
+                    editWOrkTimeDatas: [
+                      ...workTimeDataGridRef.current.getInstance().getData(),
+                    ],
+                    workTypeHeaderFormRef: wotkTimeModalHeaderRef,
+                    workTypeUuid: userSelectedWorkTypeData.work_type_uuid,
+                    workTypeName: userSelectedWorkTypeData.work_type_nm,
+                    workTimePutApiCallback: () =>
+                      afterWorkTimeApiSuccess(
+                        procedureAtAfterWorkTimeSaveApiCall,
+                      ),
+                  }),
+                );
               }}
             >
               {WORD.EDIT}
