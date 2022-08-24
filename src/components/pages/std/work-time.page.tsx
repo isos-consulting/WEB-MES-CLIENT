@@ -11,6 +11,7 @@ import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import { HeaderIncludedModalContext } from '../adm/excel-upload-type/hooks/header-included-modal';
 import { FormikProps, FormikValues } from 'formik';
+import ComboStore from '~/constants/combos';
 
 const { confirm } = Modal;
 const WORK_TYPE_GRID_COLUMNS = ColumnStore.WORK_TYPE.filter(
@@ -49,26 +50,7 @@ const addWorkTimeHeaderIncludedModalContext = ({
     gridMode: 'create',
     data: [],
     gridPopupInfo: [],
-    gridComboInfo: [
-      {
-        columnNames: [
-          {
-            codeColName: {
-              original: 'worktime_type_uuid',
-              popup: 'worktime_type_uuid',
-            },
-            textColName: {
-              original: 'worktime_type_nm',
-              popup: 'worktime_type_nm',
-            },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: '/std/worktime-types',
-          params: {},
-        },
-      },
-    ],
+    gridComboInfo: [{ ...ComboStore.WORK_TIME_TYPE }],
     onOk: () => {
       console.log(workTypeHeaderFormRef);
     },

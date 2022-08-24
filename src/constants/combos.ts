@@ -21,6 +21,24 @@ const ComboStore: ComboStoreProps = {
       { code: 'time', text: 'time' },
     ],
   },
+  WORK_TIME_TYPE: {
+    columnNames: [
+      {
+        codeColName: {
+          original: 'worktime_type_uuid',
+          popup: 'worktime_type_uuid',
+        },
+        textColName: {
+          original: 'worktime_type_nm',
+          popup: 'worktime_type_nm',
+        },
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/worktime-types',
+      params: {},
+    },
+  },
 };
 
 export default ComboStore;
