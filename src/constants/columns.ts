@@ -88,25 +88,6 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       requiredField: true,
     },
     {
-      header: '근무유형UUID',
-      name: 'work_type_uuid',
-      requiredField: true,
-      hidden: true,
-    },
-    {
-      header: '근무유형코드',
-      name: 'work_type_cd',
-      requiredField: true,
-      hidden: true,
-    },
-    {
-      header: '근무유형',
-      name: 'work_type_nm',
-      format: 'combo',
-      editable: true,
-      requiredField: true,
-    },
-    {
       header: '사용유무',
       name: 'use_fg',
       format: 'check',
