@@ -1,12 +1,11 @@
-import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import moment from 'moment';
 import React, { useRef, useEffect } from 'react';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 import { WORD } from '~/constants/lang/ko';
-import { ENUM_WIDTH } from '~/enums';
 import { executeData, getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
@@ -25,15 +24,13 @@ const fetchWorkCalendarGetApi = ({
     '/std/work-calendars',
   );
 
-const workCalendarLists = workMonth =>
-  [...Array(Number(moment(workMonth).endOf('month').format('DD')))].map(
-    (_, i) => ({
-      day_no: i > 8 ? i + 1 : `0${i + 1}`,
-      work_type_uuid: null,
-      work_type_nm: null,
-      day_value: null,
-    }),
-  );
+const workCalendarLists = (userSelectedLastMonth: number) =>
+  [...Array(userSelectedLastMonth)].map((_, i) => ({
+    day_no: i > 8 ? i + 1 : `0${i + 1}`,
+    work_type_uuid: null,
+    work_type_nm: null,
+    day_value: null,
+  }));
 
 const syncWorkCalendar = () => {
   const initilizedMonth = moment(getToday()).format('YYYY-MM');
@@ -46,14 +43,14 @@ const syncWorkCalendar = () => {
 };
 
 export const PgStdWorkCalendar = () => {
-  const [workMonth, setWorkMonth] = React.useState(
-    moment(getToday()).format('YYYY-MM'),
-  );
+  const [workMonth, setWorkMonth] = React.useState(moment(getToday()));
   const [workCalendarData, setWorkCalendarData] = React.useState([]);
   const workCalendarDataGridRef = useRef<Grid>(null);
 
   const setWorkCalendarDatas = workCalendarApiResponseList => {
-    const copyWorkCalendarData = workCalendarLists(workMonth);
+    const copyWorkCalendarData = workCalendarLists(
+      Number(workMonth.endOf('month').format('DD')),
+    );
     const getDayToYMDFormatDate = (YMDFormatDate: string) =>
       YMDFormatDate.substring(YMDFormatDate.length - 2);
 
@@ -69,8 +66,10 @@ export const PgStdWorkCalendar = () => {
 
   const searchWorkCalendarDatas = () => {
     fetchWorkCalendarGetApi({
-      start_date: `${workMonth}-01`,
-      end_date: `${workMonth}-${moment(workMonth).endOf('month').format('DD')}`,
+      start_date: `${workMonth.format('YYYY-MM')}-01`,
+      end_date: `${workMonth.format('YYYY-MM')}-${workMonth
+        .endOf('month')
+        .format('DD')}`,
     }).then(setWorkCalendarDatas);
   };
 
@@ -96,14 +95,14 @@ export const PgStdWorkCalendar = () => {
         ({ day_no, day_value, work_type_uuid, ...workDayRest }) => {
           if (work_type_uuid == null)
             return {
-              day_no: `${workMonth}-${day_no}`,
+              day_no: `${workMonth.format('YYYY-MM')}-${day_no}`,
               day_value: Number(day_value),
               workcalendar_fg: true,
               ...workDayRest,
             };
 
           return {
-            day_no: `${workMonth}-${day_no}`,
+            day_no: `${workMonth.format('YYYY-MM')}-${day_no}`,
             day_value: Number(day_value),
             workcalendar_fg: true,
             work_type_uuid,
@@ -155,10 +154,8 @@ export const PgStdWorkCalendar = () => {
           picker="month"
           format="YYYY-MM"
           label="근무월"
-          value={workMonth}
-          onChange={e => {
-            setWorkMonth(e.format('YYYY-MM'));
-          }}
+          value={workMonth.format('YYYY-MM')}
+          onChange={setWorkMonth}
         />
       </Container>
       <Container>
@@ -167,55 +164,7 @@ export const PgStdWorkCalendar = () => {
           data={[...workCalendarData]}
           gridMode="update"
           height={700}
-          columns={[
-            {
-              header: '일자',
-              name: 'day_no',
-              width: ENUM_WIDTH.S,
-            },
-            {
-              header: '',
-              name: 'work_type_uuid',
-              editable: false,
-              hidden: true,
-            },
-            {
-              header: '근무유형',
-              name: 'work_type_nm',
-              width: ENUM_WIDTH.M,
-              editable: true,
-              format: 'combo',
-            },
-            {
-              header: 'hour',
-              name: 'day_value',
-              width: ENUM_WIDTH.M,
-              editable: true,
-            },
-            {
-              header: '행 초기화',
-              name: 'reset',
-              width: ENUM_WIDTH.S,
-              editable: false,
-              format: 'button',
-              options: {
-                value: `${WORD.RESET}`,
-                onClick: (
-                  _,
-                  { grid, rowKey }: { grid: TuiGrid; rowKey: number },
-                ) => {
-                  console.log(
-                    grid.setRow(rowKey, {
-                      ...grid.getRowAt(rowKey),
-                      work_type_uuid: null,
-                      work_type_nm: null,
-                      day_value: 0,
-                    }),
-                  );
-                },
-              },
-            },
-          ]}
+          columns={ColumnStore.WORK_CALENDAR}
           gridComboInfo={[ComboStore.USED_WORK_TYPE]}
           disabledAutoDateColumn={true}
         ></Datagrid>
