@@ -1,3 +1,4 @@
+import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import moment from 'moment';
@@ -6,6 +7,7 @@ import { Container, Datagrid, DatePicker } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { ENUM_WIDTH } from '~/enums';
 import { executeData, getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
@@ -164,7 +166,30 @@ export const PgStdWorkCalendar = () => {
           data={[...workCalendarData]}
           gridMode="update"
           height={700}
-          columns={ColumnStore.WORK_CALENDAR}
+          columns={[
+            ...ColumnStore.WORK_CALENDAR,
+            {
+              header: '행 초기화',
+              name: 'reset',
+              width: ENUM_WIDTH.S,
+              editable: false,
+              format: 'button',
+              options: {
+                value: `${WORD.RESET}`,
+                onClick: (
+                  _,
+                  { grid, rowKey }: { grid: TuiGrid; rowKey: number },
+                ) => {
+                  grid.setRow(rowKey, {
+                    ...grid.getRowAt(rowKey),
+                    work_type_uuid: null,
+                    work_type_nm: null,
+                    day_value: 0,
+                  });
+                },
+              },
+            },
+          ]}
           gridComboInfo={[ComboStore.USED_WORK_TYPE]}
           disabledAutoDateColumn={true}
         ></Datagrid>

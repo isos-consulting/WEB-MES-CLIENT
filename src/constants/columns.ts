@@ -1,7 +1,5 @@
 import { IGridColumn } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
-import { WORD } from './lang/ko';
-import TuiGrid from 'tui-grid';
 
 export const ColumnStore: { [key: string]: IGridColumn[] } = {
   WORK_TYPE: [
@@ -143,26 +141,6 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       name: 'day_value',
       width: ENUM_WIDTH.M,
       editable: true,
-    },
-    {
-      header: '행 초기화',
-      name: 'reset',
-      width: ENUM_WIDTH.S,
-      editable: false,
-      format: 'button',
-      options: {
-        value: `${WORD.RESET}`,
-        onClick: (_, { grid, rowKey }: { grid: TuiGrid; rowKey: number }) => {
-          console.log(
-            grid.setRow(rowKey, {
-              ...grid.getRowAt(rowKey),
-              work_type_uuid: null,
-              work_type_nm: null,
-              day_value: 0,
-            }),
-          );
-        },
-      },
     },
   ],
 };
