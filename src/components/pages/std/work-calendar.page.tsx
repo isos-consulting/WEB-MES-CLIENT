@@ -44,6 +44,9 @@ const syncWorkCalendar = () => {
   });
 };
 
+const fetchWorkHoursGetApi = ({ work_type_uuid }: { work_type_uuid: string }) =>
+  getData({ work_type_uuid }, 'std/worktimes/work-hours');
+
 export const PgStdWorkCalendar = () => {
   const [workMonth, setWorkMonth] = React.useState(moment(getToday()));
   const [workCalendarData, setWorkCalendarData] = React.useState([]);
@@ -117,6 +120,35 @@ export const PgStdWorkCalendar = () => {
     ).then(searchWorkCalendarDatas);
   };
 
+  const handleChangeWorkTypeNameCombobox = ({ rowKey }: { rowKey: number }) => {
+    const workCalendarDataGridInstance =
+      workCalendarDataGridRef.current.getInstance();
+    const { work_type_uuid, ...changedWorkCalendarDataRest } =
+      workCalendarDataGridInstance.getRowAt(rowKey);
+
+    if (work_type_uuid == null) return;
+
+    fetchWorkHoursGetApi({ work_type_uuid }).then(workHourGetApiResponse => {
+      workCalendarDataGridInstance.setRow(rowKey, {
+        ...changedWorkCalendarDataRest,
+        work_type_uuid,
+        day_value: workHourGetApiResponse[0].work_hours,
+      });
+    });
+  };
+
+  const resetWorkCalendarData = (
+    _,
+    { grid, rowKey }: { grid: TuiGrid; rowKey: number },
+  ) => {
+    grid.setRow(rowKey, {
+      ...grid.getRowAt(rowKey),
+      work_type_uuid: null,
+      work_type_nm: null,
+      day_value: 0,
+    });
+  };
+
   useEffect(() => {
     syncWorkCalendar().then(setWorkCalendarDatas);
   }, []);
@@ -167,7 +199,21 @@ export const PgStdWorkCalendar = () => {
           gridMode="update"
           height={700}
           columns={[
-            ...ColumnStore.WORK_CALENDAR,
+            ...ColumnStore.WORK_CALENDAR.map(
+              ({ name, ...workCalendarDataGridColumnProps }) => {
+                if (name === 'work_type_nm') {
+                  return {
+                    ...workCalendarDataGridColumnProps,
+                    name,
+                    onAfterChange: handleChangeWorkTypeNameCombobox,
+                  };
+                }
+                return {
+                  ...workCalendarDataGridColumnProps,
+                  name,
+                };
+              },
+            ),
             {
               header: '행 초기화',
               name: 'reset',
@@ -176,17 +222,7 @@ export const PgStdWorkCalendar = () => {
               format: 'button',
               options: {
                 value: `${WORD.RESET}`,
-                onClick: (
-                  _,
-                  { grid, rowKey }: { grid: TuiGrid; rowKey: number },
-                ) => {
-                  grid.setRow(rowKey, {
-                    ...grid.getRowAt(rowKey),
-                    work_type_uuid: null,
-                    work_type_nm: null,
-                    day_value: 0,
-                  });
-                },
+                onClick: resetWorkCalendarData,
               },
             },
           ]}
