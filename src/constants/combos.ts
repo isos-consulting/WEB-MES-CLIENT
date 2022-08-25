@@ -39,6 +39,24 @@ const ComboStore: ComboStoreProps = {
       params: {},
     },
   },
+  USED_WORK_TYPE: {
+    columnNames: [
+      {
+        codeColName: {
+          original: 'work_type_uuid',
+          popup: 'work_type_uuid',
+        },
+        textColName: {
+          original: 'work_type_nm',
+          popup: 'work_type_nm',
+        },
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/work-types',
+      params: { use_fg: true },
+    },
+  },
 };
 
 export default ComboStore;
