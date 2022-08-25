@@ -126,7 +126,15 @@ export const PgStdWorkCalendar = () => {
     const { work_type_uuid, ...changedWorkCalendarDataRest } =
       workCalendarDataGridInstance.getRowAt(rowKey);
 
-    if (work_type_uuid == null) return;
+    if (work_type_uuid == null) {
+      workCalendarDataGridInstance.setRow(rowKey, {
+        ...changedWorkCalendarDataRest,
+        work_type_uuid,
+        day_value: null,
+      });
+
+      return;
+    }
 
     fetchWorkHoursGetApi({ work_type_uuid }).then(workHourGetApiResponse => {
       workCalendarDataGridInstance.setRow(rowKey, {
