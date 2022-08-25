@@ -13,4 +13,5 @@ export enum WORD {
   CANCEL = '취소',
   YES = '예',
   NO = '아니오',
+  WORK_MONTH = '근무월',
 }

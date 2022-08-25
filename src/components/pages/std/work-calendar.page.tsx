@@ -5,7 +5,7 @@ import React, { useRef, useEffect } from 'react';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
-import { WORD } from '~/constants/lang/ko';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 
@@ -86,7 +86,7 @@ export const PgStdWorkCalendar = () => {
         return Number.isNaN(Number(day_value)) === true;
       }) === true
     ) {
-      message.warn('숫자만 입력해주세요.');
+      message.warn(SENTENCE.ONLY_NUMBER);
       return;
     }
 
@@ -153,7 +153,7 @@ export const PgStdWorkCalendar = () => {
         <DatePicker
           picker="month"
           format="YYYY-MM"
-          label="근무월"
+          label={WORD.WORK_MONTH}
           value={workMonth.format('YYYY-MM')}
           onChange={setWorkMonth}
         />
