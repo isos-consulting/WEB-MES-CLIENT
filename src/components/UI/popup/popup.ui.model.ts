@@ -2878,7 +2878,7 @@ const modalModelMapping = new Map<TPopupKey, Function>([
   ['불량유형관리', getPI_StdRejectType],
   ['부적합관리', getPI_StdReject],
   ['창고관리', getPI_StdStore],
-  ['창고관리', getPI_AdmStoreType],
+  ['창고유형', getPI_AdmStoreType],
   ['단위관리', getPI_StdUnit],
   ['직급관리', getPI_StdGrade],
   ['사원관리', getPI_StdEmp],
