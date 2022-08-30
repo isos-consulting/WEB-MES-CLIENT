@@ -11,9 +11,7 @@ const isNumberMock = (value: string | number, opt?): boolean => {
     throw new Error(`Invalid option: ${opt}`);
   };
 
-  const num = String(value)
-    .replace(/(?:^\s+)|(?:\s+$)/g, '')
-    .replace(',', '');
+  const num = String(value).replace(/(?:^\s+)|(?:,+)|(?:\s+$)/g, '');
   const isNumberMatched = regexpMatch(num, opt);
 
   if (isNumberMatched === true) {
@@ -73,7 +71,7 @@ describe('숫자 유효성 검사 테스트', () => {
   });
 
   test('천 단위 콤마를 제외한 숫자는 숫자로 인식한다', () => {
-    const comma = '1,234';
+    const comma = '1,234,567';
 
     const isCommaSuccess = isNumberMock(comma);
 
