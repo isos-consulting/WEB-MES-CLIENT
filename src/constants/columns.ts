@@ -141,6 +141,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       name: 'day_value',
       width: ENUM_WIDTH.M,
       editable: true,
+      format: 'number',
     },
   ],
 };
