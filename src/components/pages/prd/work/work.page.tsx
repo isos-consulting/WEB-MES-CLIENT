@@ -1811,6 +1811,12 @@ const ProdOrderModal = ({ visible, onClose }) => {
       align: 'center',
     },
     {
+      header: '지시일자',
+      name: 'order_date',
+      hidden: true,
+      format: 'date',
+    },
+    {
       header: '작업일자',
       name: 'reg_date',
       width: 150,
@@ -1835,6 +1841,14 @@ const ProdOrderModal = ({ visible, onClose }) => {
                 ...rowData,
                 complete_fg: false,
               });
+
+              console.log(rowData.order_date);
+              if (rowData.order_date == null) {
+                gridRef.current
+                  .getInstance()
+                  .setValue(rowKey, 'order_date', rowData.reg_date);
+              }
+
               gridRef.current.getInstance().enableCell(rowKey, 'reg_date');
             })()
           : (() => {
@@ -2208,6 +2222,7 @@ const ProdOrderModal = ({ visible, onClose }) => {
           'factory_uuid',
           'reg_date',
           'order_uuid',
+          'order_date',
           'workings_uuid',
           'prod_uuid',
           'lot_no',
