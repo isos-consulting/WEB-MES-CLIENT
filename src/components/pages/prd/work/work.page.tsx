@@ -1588,30 +1588,47 @@ export const PgPrdWork = () => {
           >
             <div style={{ float: 'right', paddingRight: 4 }}>
               <Space>
-                <Button
-                  btnType="buttonFill"
-                  colorType="blue"
-                  widthSize="large"
-                  heightSize="small"
-                  fontSize="small"
-                  ImageType="add"
-                  onClick={onSaveWork}
-                  disabled={!permissions?.update_fg}
-                >
-                  실행 저장
-                </Button>
-                <Button
-                  btnType="buttonFill"
-                  colorType="delete"
-                  widthSize="large"
-                  heightSize="small"
-                  fontSize="small"
-                  ImageType="check"
-                  onClick={onCompleteWork}
-                  disabled={!permissions?.update_fg}
-                >
-                  작업 종료
-                </Button>
+                {1 ? (
+                  <Button
+                    btnType="buttonFill"
+                    colorType="blue"
+                    widthSize="large"
+                    heightSize="small"
+                    fontSize="small"
+                    ImageType="add"
+                    onClick={onSaveWork}
+                    disabled={!permissions?.update_fg}
+                  >
+                    작업 시작
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      btnType="buttonFill"
+                      colorType="blue"
+                      widthSize="large"
+                      heightSize="small"
+                      fontSize="small"
+                      ImageType="add"
+                      onClick={onSaveWork}
+                      disabled={!permissions?.update_fg}
+                    >
+                      실행 저장
+                    </Button>
+                    <Button
+                      btnType="buttonFill"
+                      colorType="delete"
+                      widthSize="large"
+                      heightSize="small"
+                      fontSize="small"
+                      ImageType="check"
+                      onClick={onCompleteWork}
+                      disabled={!permissions?.update_fg}
+                    >
+                      작업 종료
+                    </Button>
+                  </>
+                )}
               </Space>
             </div>
           </div>
