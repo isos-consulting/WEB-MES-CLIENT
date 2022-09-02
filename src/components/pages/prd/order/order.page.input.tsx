@@ -11,6 +11,7 @@ import {
   IGridPopupProps,
   TGridPopupInfos,
 } from '~/components/UI';
+import { ENUM_DECIMAL } from '~/enums';
 import {
   getData,
   getModifiedRows,
@@ -588,6 +589,7 @@ export const orderInput = () => {
         hidden: false,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
         requiredField: true,
       },
       {
