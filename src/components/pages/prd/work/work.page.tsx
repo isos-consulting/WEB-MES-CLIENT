@@ -58,6 +58,7 @@ import { ScModal } from '~/components/UI/modal/modal.ui.styled';
 import { WORKERREADONLY } from './work.page.worker.readonly';
 import { REJECTREADONLY } from './work.page.reject.readonly';
 import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
+import { workPerformaceTabs } from './work-performance/fixture';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -70,14 +71,7 @@ dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
-const TAB_CODE = {
-  WORK_INSP: 'INSP',
-  WORK_INPUT: 'INPUT',
-  WORK_WORKER: 'WORKER',
-  WORK_REJECT: 'REJECT',
-  WORK_DOWNTIME: 'DOWNTIME',
-  공정순서: 'ROUTING',
-};
+const TAB_CODE = workPerformaceTabs;
 
 const onErrorMessage = type => {
   switch (type) {
