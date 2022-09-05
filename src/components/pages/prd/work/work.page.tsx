@@ -59,6 +59,7 @@ import { WORKERREADONLY } from './work.page.worker.readonly';
 import { REJECTREADONLY } from './work.page.reject.readonly';
 import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
 import { workPerformaceTabs } from './work-performance/fixture';
+import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -73,24 +74,7 @@ dayjs.extend(weekYear);
 
 const TAB_CODE = workPerformaceTabs;
 
-const onErrorMessage = type => {
-  switch (type) {
-    case '하위이력작업시도':
-      message.warn('작업이력을 선택한 후 다시 시도해주세요.');
-      break;
-
-    case '공정순서이력작업시도':
-      message.warn('공정순서를 선택한 후 다시 시도해주세요.');
-      break;
-
-    case '완료된작업시도':
-      message.warn('이미 완료된 작업은 수정할 수 없습니다.');
-      break;
-
-    default:
-      break;
-  }
-};
+const onErrorMessage = showWorkPerformanceErrorMessage;
 
 //#region ✅작업정보 / 생산정보 관련 상태 값
 const infoInit = {
