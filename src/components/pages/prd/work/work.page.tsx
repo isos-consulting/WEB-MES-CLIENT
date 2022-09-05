@@ -63,10 +63,7 @@ import {
   WORK_PERFORMANCE_TABS,
 } from './work-performance/fixture';
 import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
-import {
-  WorkPerformanceAction,
-  WorkPerformanceState,
-} from './work-performance/types';
+import { setWorkPerformanceState } from './work-performance/model-controller';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -82,88 +79,7 @@ dayjs.extend(weekYear);
 const TAB_CODE = WORK_PERFORMANCE_TABS;
 const infoInit = WORK_PERFORMANCE_FIXTURE.EMPTY;
 const onErrorMessage = showWorkPerformanceErrorMessage;
-
-type TAction = WorkPerformanceAction;
-type TState = WorkPerformanceState;
-
-const infoReducer = (state: TState, action: TAction) => {
-  const { type } = action;
-
-  switch (type) {
-    case 'CHANGE_ORDER_INFO':
-      return {
-        ...state,
-        orderInfo: {
-          ...state.orderInfo,
-          [action.name]: action.value,
-        },
-      };
-
-    case 'CHANGE_WORK_INFO':
-      return {
-        ...state,
-        workInfo: {
-          ...state.workInfo,
-          [action.name]: action.value,
-        },
-      };
-
-    case 'CHANGE_ROUTING_INFO':
-      return {
-        ...state,
-        routingInfo: {
-          ...state.routingInfo,
-          [action.name]: action.value,
-        },
-      };
-
-    case 'CHANGE_ALL':
-      return action.value;
-
-    case 'CHANGE_ALL_ORDER':
-      return {
-        ...state,
-        orderInfo: action.value,
-      };
-
-    case 'CHANGE_ALL_WORK':
-      return {
-        ...state,
-        workInfo: action.value,
-      };
-
-    case 'CHANGE_ALL_ROUTING':
-      return {
-        ...state,
-        routingInfo: action.value,
-      };
-
-    case 'CLEAR_ORDER_INFO':
-      return {
-        ...state,
-        orderInfo: infoInit.orderInfo,
-      };
-
-    case 'CLEAR_WORK_INFO':
-      return {
-        ...state,
-        workInfo: infoInit.workInfo,
-      };
-
-    case 'CLEAR_ROUTING_INFO':
-      return {
-        ...state,
-        routingInfo: infoInit.routingInfo,
-      };
-
-    case 'CLEAR_ALL':
-      return infoInit;
-
-    default:
-      return state;
-  }
-};
-//#endregion
+const infoReducer = setWorkPerformanceState;
 
 //#region 🔶🚫생산실적
 /** 생산실적 */
