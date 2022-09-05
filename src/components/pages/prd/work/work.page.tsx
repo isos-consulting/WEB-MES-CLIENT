@@ -8,7 +8,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import { IGridColumn, TGridMode, useSearchbox } from '~/components/UI';
+import { TGridMode, useSearchbox } from '~/components/UI';
 import {
   executeData,
   getData,
@@ -39,7 +39,11 @@ import {
   WORK_PERFORMANCE_FIXTURE,
   WORK_PERFORMANCE_TABS,
 } from './work-performance/fixture';
-import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
+import {
+  showWorkPerformanceErrorMessage,
+  toggleWorkCompleteButton,
+  toggleWorkStartButton,
+} from './work-performance/view-controller';
 import { setWorkPerformanceState } from './work-performance/model-controller';
 import { WorkPerformanceSelectableHeader } from './work-performance/components/Header';
 import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
@@ -50,6 +54,7 @@ import {
   ProdOrderModalInWorkPerformancePage,
   WorkRoutingHistoryModalInWorkPerformancePage,
 } from './work-performance/components/Modal';
+import { TuiGridEvent } from 'tui-grid/types/event';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -66,6 +71,11 @@ const TAB_CODE = WORK_PERFORMANCE_TABS;
 const infoInit = WORK_PERFORMANCE_FIXTURE.EMPTY;
 const onErrorMessage = showWorkPerformanceErrorMessage;
 const infoReducer = setWorkPerformanceState;
+
+interface ToggleButtonColumnEvent extends TuiGridEvent {
+  rowKey: number;
+  value: boolean;
+}
 
 //#region 🔶🚫생산실적
 /** 생산실적 */
@@ -833,13 +843,11 @@ export const PgPrdWork = () => {
 //#region 🔶✅작업지시관리 팝업 (지시/마감 처리)
 /** 작업지시관리 팝업 (지시/마감 처리) */
 const ProdOrderModal = ({ visible, onClose }) => {
-  //#region ✅설정값
   const gridRef = useRef<Grid>();
 
   const [data, setData] = useState([]);
-
-  // 마감작업 체크용
   const [completeChk, setCompleteChk] = useState<boolean>(false);
+
   const searchItems = useMemo(() => {
     return [
       {
@@ -927,346 +935,17 @@ const ProdOrderModal = ({ visible, onClose }) => {
     }
   }, [visible]);
 
-  //#region ✅컬럼
-  const PROD_ORDER_COLUMNS: IGridColumn[] = [
-    {
-      header: '작업지시UUID',
-      name: 'order_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '구분',
-      name: 'order_state',
-      width: 80,
-      hidden: false,
-      format: 'text',
-      align: 'center',
-    },
-    {
-      header: '지시일자',
-      name: 'order_date',
-      hidden: true,
-      format: 'date',
-    },
-    {
-      header: '작업일자',
-      name: 'reg_date',
-      width: 150,
-      hidden: false,
-      format: 'date',
-      editable: true,
-      disabled: true,
-    },
-    {
-      header: '작업시작',
-      name: '_work_start',
-      width: 80,
-      hidden: false,
-      format: 'check',
-      editable: true,
-      onAfterChange: ({ value, rowKey }) => {
-        const rowData = gridRef.current.getInstance().getData()[rowKey];
+  const PROD_ORDER_COLUMNS = ColumnStore.PROD_ORDER.map(column => {
+    if (column.name === '_work_start')
+      column.onAfterChange = ({ value, rowKey }: ToggleButtonColumnEvent) =>
+        toggleWorkStartButton({ value, rowKey, gridRef });
 
-        value
-          ? (() => {
-              gridRef.current.getInstance().setRow(rowKey, {
-                ...rowData,
-                complete_fg: false,
-              });
+    if (column.name === 'complete_fg')
+      column.onAfterChange = ({ value, rowKey }: ToggleButtonColumnEvent) =>
+        toggleWorkCompleteButton({ value, rowKey, gridRef });
 
-              console.log(rowData.order_date);
-              if (rowData.order_date == null) {
-                gridRef.current
-                  .getInstance()
-                  .setValue(rowKey, 'order_date', rowData.reg_date);
-              }
-
-              gridRef.current.getInstance().enableCell(rowKey, 'reg_date');
-            })()
-          : (() => {
-              gridRef.current.getInstance().disableCell(rowKey, 'reg_date');
-            })();
-      },
-    },
-    {
-      header: '마감',
-      name: 'complete_fg',
-      width: 80,
-      hidden: false,
-      format: 'check',
-      editable: true,
-      onAfterChange: ({ value, rowKey }) => {
-        const { getData, setRow } = gridRef.current.getInstance();
-
-        if (value === true)
-          setRow(rowKey, { ...getData[rowKey], _work_start: false });
-      },
-    },
-    {
-      header: '공정UUID',
-      name: 'proc_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '공정',
-      name: 'proc_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업장UUID',
-      name: 'workings_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업장',
-      name: 'workings_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '설비UUID',
-      name: 'equip_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '설비',
-      name: 'equip_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품목 유형UUID',
-      name: 'item_type_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '품목 유형',
-      name: 'item_type_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '제품 유형UUID',
-      name: 'prod_type_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '제품 유형',
-      name: 'prod_type_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품목UUID',
-      name: 'prod_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '품번',
-      name: 'prod_no',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품목',
-      name: 'prod_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '모델UUID',
-      name: 'model_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '모델',
-      name: 'model_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    { header: 'Rev', name: 'rev', width: 100, hidden: false, format: 'text' },
-    {
-      header: '규격',
-      name: 'prod_std',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '단위UUID',
-      name: 'unit_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '단위',
-      name: 'unit_nm',
-      width: 80,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '입고 창고UUID',
-      name: 'to_store_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '입고 창고',
-      name: 'to_store_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '입고 위치UUID',
-      name: 'to_location_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '입고 위치',
-      name: 'to_location_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '계획 수량',
-      name: 'plan_qty',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '지시 수량',
-      name: 'qty',
-      width: 100,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '지시 순번',
-      name: 'seq',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업교대UUID',
-      name: 'shift_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업교대명',
-      name: 'shift_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '시작예정',
-      name: 'start_date',
-      width: 120,
-      hidden: false,
-      format: 'date',
-    },
-    {
-      header: '종료예정',
-      name: 'end_date',
-      width: 120,
-      hidden: false,
-      format: 'date',
-    },
-    {
-      header: '작업조UUID',
-      name: 'worker_group_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업조',
-      name: 'worker_group_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업인원',
-      name: 'worker_cnt',
-      width: 100,
-      hidden: false,
-      format: 'number',
-    },
-    {
-      header: '수주UUID',
-      name: 'sal_order_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '수주상세UUID',
-      name: 'sal_order_detail_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '생산 진행여부',
-      name: 'work_fg',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    // {header:'마감 여부', name:'complete_fg', width:200, hidden:true, format:'text'},
-    {
-      header: '마감 일시',
-      name: 'complete_date',
-      width: 120,
-      hidden: false,
-      format: 'datetime',
-    },
-    {
-      header: '비고',
-      name: 'remark',
-      width: 150,
-      hidden: false,
-      format: 'text',
-    },
-  ];
-  //#endregion
+    return column;
+  });
 
   const handleSaveWorkDatas = workStartDatas => {
     try {

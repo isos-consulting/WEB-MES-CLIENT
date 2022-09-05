@@ -1,4 +1,7 @@
+import TuiGrid from 'tui-grid';
 import { message } from 'antd';
+import { GridInstanceReference } from '~/components/UI';
+import Grid from '@toast-ui/react-grid';
 
 export const showWorkPerformanceErrorMessage = type => {
   switch (type) {
@@ -11,4 +14,66 @@ export const showWorkPerformanceErrorMessage = type => {
     default:
       break;
   }
+};
+
+const enableWorkPerformanceRegDate = ({
+  rowKey,
+  prodOrderDataGrid,
+}: {
+  rowKey: number;
+  prodOrderDataGrid: TuiGrid;
+}) => {
+  const rowData = prodOrderDataGrid.getData()[rowKey];
+
+  prodOrderDataGrid.setRow(rowKey, { ...rowData, complete_fg: false });
+  if (rowData.order_date == null)
+    prodOrderDataGrid.setValue(rowKey, 'order_date', rowData.reg_date);
+
+  prodOrderDataGrid.enableCell(rowKey, 'reg_date');
+};
+
+const disableWorkPerformanceRegDate = ({
+  rowKey,
+  prodOrderDataGrid,
+}: {
+  rowKey: number;
+  prodOrderDataGrid: TuiGrid;
+}) => {
+  prodOrderDataGrid.disableCell(rowKey, 'reg_date');
+};
+
+export const toggleWorkStartButton = ({
+  value,
+  rowKey,
+  gridRef,
+}: {
+  value: boolean;
+  rowKey: number;
+  gridRef: GridInstanceReference<Grid>;
+}) => {
+  value === true
+    ? enableWorkPerformanceRegDate({
+        rowKey: rowKey,
+        prodOrderDataGrid: gridRef.current.getInstance(),
+      })
+    : disableWorkPerformanceRegDate({
+        rowKey: rowKey,
+        prodOrderDataGrid: gridRef.current.getInstance(),
+      });
+};
+
+export const toggleWorkCompleteButton = ({
+  value,
+  rowKey,
+  gridRef,
+}: {
+  value: boolean;
+  rowKey: number;
+  gridRef: GridInstanceReference<Grid>;
+}) => {
+  const prodOrderDataGrid = gridRef.current.getInstance();
+  const rowData = prodOrderDataGrid.getData()[rowKey];
+
+  if (value === true)
+    prodOrderDataGrid.setRow(rowKey, { ...rowData, _work_start: false });
 };
