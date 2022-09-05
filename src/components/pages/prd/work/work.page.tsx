@@ -64,6 +64,9 @@ import {
 } from './work-performance/fixture';
 import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
 import { setWorkPerformanceState } from './work-performance/model-controller';
+import { WorkPerformanceHeader } from './work-performance/components/Header';
+import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
+import { ColumnStore } from '~/constants/columns';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -476,312 +479,6 @@ export const PgPrdWork = () => {
   }, [searchInfo, searchItems]);
   //#endregion
 
-  //#region ✅컬럼
-  const WORK_COLUMNS: IGridColumn[] = [
-    {
-      header: '생산실적UUID',
-      name: 'work_uuid',
-      alias: 'uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '실적 일시',
-      name: 'reg_date',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업지시UUID',
-      name: 'order_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '지시번호',
-      name: 'order_no',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '생산실적 순번',
-      name: 'seq',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '공정UUID',
-      name: 'proc_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '공정',
-      name: 'proc_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업장UUID',
-      name: 'workings_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업장',
-      name: 'workings_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    // {header:'설비UUID', name:'equip_uuid', width:ENUM_WIDTH.L, hidden:true, format:'text'},
-    // {header:'설비', name:'equip_nm', width:ENUM_WIDTH.M, hidden:false, format:'text'},
-    // {header: '금형UUID', name:'mold_uuid', width:150, filter:'text', hidden:true},
-    // {header: '금형명', name:'mold_nm', width:ENUM_WIDTH.L, filter:'text'},
-    // {header: '금형번호', name:'mold_no', width:ENUM_WIDTH.L, filter:'text'},
-    // {header: 'cavity', name:'mold_cavity', width:ENUM_WIDTH.S,  format:'number', decimal:ENUM_DECIMAL.DEC_NOMAL},
-    {
-      header: '품목UUID',
-      name: 'prod_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '품목유형UUID',
-      name: 'item_type_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '품목유형',
-      name: 'item_type_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '제품유형UUID',
-      name: 'prod_type_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '제품유형',
-      name: 'prod_type_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품번',
-      name: 'prod_no',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품명',
-      name: 'prod_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '모델UUID',
-      name: 'model_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '모델',
-      name: 'model_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: 'Rev',
-      name: 'rev',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '규격',
-      name: 'prod_std',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '단위UUID',
-      name: 'unit_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '단위',
-      name: 'unit_nm',
-      width: ENUM_WIDTH.S,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: 'LOT NO',
-      name: 'lot_no',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '지시 수량',
-      name: 'order_qty',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'number',
-    },
-    {
-      header: '생산 수량',
-      name: 'total_qty',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'number',
-    },
-    {
-      header: '양품 수량',
-      name: 'qty',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'number',
-    },
-    {
-      header: '부적합 수량',
-      name: 'reject_qty',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'number',
-    },
-    {
-      header: '생산시작 일시',
-      name: 'start_date',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'datetime',
-    },
-    {
-      header: '생산종료 일시',
-      name: 'end_date',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'datetime',
-    },
-    {
-      header: '작업시간',
-      name: 'work_time',
-      width: ENUM_WIDTH.S,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업교대UUID',
-      name: 'shift_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업교대명',
-      name: 'shift_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업자수',
-      name: 'worker_cnt',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업자명',
-      name: 'worker_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '생산 완료여부(완료, 미완료)',
-      name: 'complete_state',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '생산 종료여부',
-      name: 'complete_fg',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '입고 창고UUID',
-      name: 'to_store_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '입고 창고',
-      name: 'to_store_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '입고 위치UUID',
-      name: 'to_location_uuid',
-      width: ENUM_WIDTH.L,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '입고 위치',
-      name: 'to_location_nm',
-      width: ENUM_WIDTH.M,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '지시 비고',
-      name: 'order_remark',
-      width: ENUM_WIDTH.L,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '생산 비고',
-      name: 'remark',
-      width: ENUM_WIDTH.L,
-      hidden: false,
-      format: 'text',
-    },
-  ];
-  //#endregion
-
   // infoDispatch 실행
   const setInfoData = data => {
     infoDispatch({
@@ -1056,14 +753,12 @@ export const PgPrdWork = () => {
 
   const HeaderGridElement = useMemo(() => {
     return (
-      <Datagrid
-        gridId={'WORK_GRID'}
-        ref={gridRef}
+      <WorkPerformanceHeaderGrid
+        gridRef={gridRef}
         gridMode={gridMode}
-        columns={WORK_COLUMNS}
-        height={300}
-        data={workDatas}
-        onAfterClick={onHeaderClick}
+        columns={[...ColumnStore.WORK_PERFORMANCE]}
+        datas={workDatas}
+        onHeaderClick={onHeaderClick}
       />
     );
   }, [workDatas, gridRef, gridMode]);
@@ -1106,46 +801,13 @@ export const PgPrdWork = () => {
   //#region 🚫렌더부
   return (
     <>
-      <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
-        <CaretRightOutlined />
-        생산이력
-      </Typography.Title>
-      <Divider style={{ marginBottom: 10 }} />
-      <Container>
-        <div style={{ width: '100%', display: 'inline-block' }}>
-          <Space size={[6, 0]} align="start">
-            {/* <Input.Search
-              placeholder='전체 검색어를 입력하세요.'
-              enterButton
-              onSearch={onAllFiltered}/> */}
-            {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
-          </Space>
-          <Space size={[6, 0]} style={{ float: 'right' }}>
-            <Button
-              btnType="buttonFill"
-              widthSize="large"
-              heightSize="small"
-              fontSize="small"
-              ImageType="add"
-              colorType="blue"
-              onClick={onProdOrder}
-              disabled={!permissions?.update_fg}
-            >
-              작업지시 관리
-            </Button>
-            {/* <Button btnType='buttonFill' widthSize='medium' ImageType='add' colorType='blue' onClick={onAppend}>신규 추가</Button> */}
-          </Space>
-        </div>
-        <div style={{ maxWidth: 700, marginTop: -33, marginLeft: 0 }}>
-          <Searchbox
-            {...searchInfo.props}
-            onSearch={permissions?.read_fg ? onSearch : null}
-            boxShadow={false}
-          />
-        </div>
-        <p />
-        {HeaderGridElement}
-      </Container>
+      <WorkPerformanceHeader
+        permissions={permissions}
+        onProdOrder={onProdOrder}
+        searchInfo={searchInfo}
+        onSearch={onSearch}
+        HeaderGridElement={HeaderGridElement}
+      />
       {workInfo.work_uuid ? (
         <Row gutter={[16, 0]}>
           {/* 작업 정보 */}
