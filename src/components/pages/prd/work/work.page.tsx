@@ -58,7 +58,10 @@ import { ScModal } from '~/components/UI/modal/modal.ui.styled';
 import { WORKERREADONLY } from './work.page.worker.readonly';
 import { REJECTREADONLY } from './work.page.reject.readonly';
 import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
-import { workPerformaceTabs } from './work-performance/fixture';
+import {
+  WORK_PERFORMANCE_FIXTURE,
+  WORK_PERFORMANCE_TABS,
+} from './work-performance/fixture';
 import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
 
 // 날짜 로케일 설정
@@ -72,88 +75,9 @@ dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
-const TAB_CODE = workPerformaceTabs;
-
+const TAB_CODE = WORK_PERFORMANCE_TABS;
+const infoInit = WORK_PERFORMANCE_FIXTURE.EMPTY;
 const onErrorMessage = showWorkPerformanceErrorMessage;
-
-//#region ✅작업정보 / 생산정보 관련 상태 값
-const infoInit = {
-  orderInfo: {
-    prod_uuid: null,
-    prod_no: null,
-    prod_nm: null,
-    item_type_uuid: null,
-    item_type_nm: null,
-    prod_type_uuid: null,
-    prod_type_nm: null,
-    model_uuid: null,
-    model_nm: null,
-    rev: null,
-    prod_std: null,
-    unit_uuid: null,
-    unit_nm: null,
-    equip_uuid: null,
-    equip_nm: null,
-    proc_uuid: null,
-    proc_nm: null,
-    shift_uuid: null,
-    shift_nm: null,
-    workings_uuid: null,
-    workings_nm: null,
-    order_remark: null,
-  },
-  workInfo: {
-    work_uuid: null,
-    complete_fg: null,
-    start_date: null,
-    end_date: null,
-    _start_date: null,
-    _end_date: null,
-    _start_time: null,
-    _end_time: null,
-    to_store_uuid: null,
-    to_store_nm: null,
-    to_location_uuid: null,
-    to_location_nm: null,
-    order_qty: null, //지시수량
-    total_qty: null, //생산수량
-    qty: null, //양품수량
-    reject_qty: null, //부적합수량
-    lot_no: null,
-    remark: null,
-  },
-  routingInfo: {
-    work_routing_uuid: null,
-    factory_uuid: null,
-    factory_cd: null,
-    factory_nm: null,
-    work_uuid: null,
-    proc_uuid: null,
-    proc_cd: null,
-    proc_nm: null,
-    proc_no: null,
-    workings_uuid: null,
-    workings_cd: null,
-    workings_nm: null,
-    equip_uuid: null,
-    equip_cd: null,
-    equip_nm: null,
-    mold_uuid: null,
-    mold_cd: null,
-    mold_nm: null,
-    mold_cavity: null,
-    qty: null,
-    start_date: null,
-    end_date: null,
-    _start_date: null,
-    _end_date: null,
-    _start_time: null,
-    _end_time: null,
-    work_time: null,
-    ongoing_fg: null,
-    remark: null,
-  },
-};
 
 type TAction =
   | { type: 'CHANGE_ORDER_INFO'; name: string; value: any }
