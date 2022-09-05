@@ -1,15 +1,5 @@
-import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import {
-  Divider,
-  message,
-  Space,
-  Typography,
-  Modal,
-  Col,
-  Row,
-  Input,
-} from 'antd';
+import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import React, {
   useLayoutEffect,
@@ -19,11 +9,9 @@ import React, {
   useMemo,
 } from 'react';
 import {
-  Button,
   Container,
   Datagrid,
   IGridColumn,
-  Label,
   Searchbox,
   Tabs,
   TGridMode,
@@ -48,10 +36,9 @@ import { INPUT } from './work.page.input';
 import { WORKER } from './work.page.worker';
 import { REJECT } from './work.page.reject';
 import { DOWNTIME } from './work.page.downtime';
-import { ENUM_WIDTH, URL_PATH_PRD } from '~/enums';
-import Fonts from '~styles/font.style.scss';
+import { URL_PATH_PRD } from '~/enums';
 import { cloneDeep, isEmpty, pick } from 'lodash';
-import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
+import { workRoutingStore } from './work-components';
 import EXPRESSSIONS from '~/constants/expressions';
 import { ScModal } from '~/components/UI/modal/modal.ui.styled';
 import { WORKERREADONLY } from './work.page.worker.readonly';
@@ -67,6 +54,7 @@ import { WorkPerformanceSelectableHeader } from './work-performance/components/H
 import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
 import { ColumnStore } from '~/constants/columns';
 import { CascadingSelectHeaderMessageBox } from './work-performance/components/MessageBox';
+import { WorkPerformanceContent } from './work-performance/components/Content';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -809,332 +797,25 @@ export const PgPrdWork = () => {
         HeaderGridElement={HeaderGridElement}
       />
       {workInfo.work_uuid ? (
-        <Row gutter={[16, 0]}>
-          {/* 작업 정보 */}
-          <Col span={24} style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <Typography.Title
-              level={5}
-              style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
-            >
-              <CaretRightOutlined />
-              작업 정보
-            </Typography.Title>
-            <div
-              style={{ width: '100%', display: 'inline-block', marginTop: -26 }}
-            >
-              <div style={{ float: 'right', paddingRight: 4 }}>
-                <Space>
-                  <Button
-                    btnType="buttonFill"
-                    colorType="blue"
-                    widthSize="large"
-                    heightSize="small"
-                    fontSize="small"
-                    ImageType="cancel"
-                    onClick={onCancelWork}
-                    disabled={!permissions?.update_fg}
-                  >
-                    실행 취소
-                  </Button>
-                  <Button
-                    btnType="buttonFill"
-                    colorType="red"
-                    widthSize="large"
-                    heightSize="small"
-                    fontSize="small"
-                    ImageType="delete"
-                    onClick={onDeleteWork}
-                    disabled={!permissions?.delete_fg}
-                  >
-                    실적 삭제
-                  </Button>
-                </Space>
-              </div>
-            </div>
-            <Divider style={{ marginTop: 2, marginBottom: 10 }} />
-            <Row gutter={[16, 16]}>
-              <Col span={12} style={{ paddingLeft: 0 }}>
-                <Container>
-                  <Row gutter={[16, 16]}>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="품번" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.prod_no}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="품명" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.prod_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="품목유형" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.item_type_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="제품유형" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.prod_type_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 4 }}>
-                      <Label text="모델" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.model_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 4 }}>
-                      <Label text="REV" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.rev}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 4 }}>
-                      <Label text="규격" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.prod_std}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 4 }}>
-                      <Label text="단위" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.unit_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                  </Row>
-                </Container>
-              </Col>
-              <Col span={12} style={{ paddingRight: 0 }}>
-                <Container>
-                  <Row gutter={[16, 16]}>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="설비" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.equip_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="공정" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.proc_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="작업교대" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.shift_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={6} style={{ marginBottom: 8 }}>
-                      <Label text="작업장" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.workings_nm}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                    <Col span={24} style={{ marginBottom: 4 }}>
-                      <Label text="지시 비고" />
-                      <Input
-                        disabled={true}
-                        value={orderInfo.remark}
-                        style={{ fontSize: Fonts.fontSize_default }}
-                      />
-                    </Col>
-                  </Row>
-                </Container>
-              </Col>
-            </Row>
-          </Col>
-
-          {/* 실적 정보 */}
-          <Col
-            span={24}
-            style={{ paddingLeft: 0, paddingRight: 0, marginTop: 12 }}
-          >
-            <Typography.Title
-              level={5}
-              style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
-            >
-              <CaretRightOutlined />
-              실적 정보
-            </Typography.Title>
-            <div
-              style={{ width: '100%', display: 'inline-block', marginTop: -26 }}
-            >
-              <div style={{ float: 'right', paddingRight: 4 }}>
-                <Space>
-                  {1 ? (
-                    <>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="blue"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="search"
-                        onClick={onSaveWork}
-                        disabled={!permissions?.read_fg}
-                      >
-                        실적 이력 관리
-                      </Button>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="blue"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="add"
-                        onClick={onSaveWork}
-                        disabled={!permissions?.update_fg}
-                      >
-                        작업 시작
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="blue"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="search"
-                        onClick={onSaveWork}
-                        disabled={!permissions?.read_fg}
-                      >
-                        실적 이력 관리
-                      </Button>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="blue"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="add"
-                        onClick={onSaveWork}
-                        disabled={!permissions?.update_fg}
-                      ></Button>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="blue"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="add"
-                        onClick={onSaveWork}
-                        disabled={!permissions?.update_fg}
-                      >
-                        실행 저장
-                      </Button>
-                      <Button
-                        btnType="buttonFill"
-                        colorType="delete"
-                        widthSize="large"
-                        heightSize="small"
-                        fontSize="small"
-                        ImageType="check"
-                        onClick={onCompleteWork}
-                        disabled={!permissions?.update_fg}
-                      >
-                        작업 종료
-                      </Button>
-                    </>
-                  )}
-                </Space>
-              </div>
-            </div>
-            <Divider style={{ marginTop: 2, marginBottom: 10 }} />
-            <Row gutter={[16, 16]}>
-              <Col span={6} style={{ paddingLeft: 0 }}>
-                {/* 공정순서 */}
-                <RoutingInfo
-                  permissions={permissions}
-                  height={709}
-                  {...workRouting}
-                />
-              </Col>
-              <Col span={18} style={{ paddingRight: 0 }}>
-                <Container>
-                  <Row>
-                    <WorkInfo
-                      permissions={permissions}
-                      values={routingInfo}
-                      infoState={infoState}
-                      infoDispatch={infoDispatch}
-                    />
-                  </Row>
-                  <Divider style={{ marginTop: 2 }} />
-                  <Row>
-                    <Col span={24}>
-                      <Tabs
-                        type="card"
-                        onChange={changeTab}
-                        panels={[
-                          {
-                            tab: '공정검사',
-                            tabKey: TAB_CODE.WORK_INSP,
-                            content: workInsp.component,
-                          },
-                          {
-                            tab: '투입품목 관리',
-                            tabKey: TAB_CODE.WORK_INPUT,
-                            content: workInput.component,
-                          },
-                          {
-                            tab: '투입인원 관리',
-                            tabKey: TAB_CODE.WORK_WORKER,
-                            content: workWorker.component,
-                          },
-                          {
-                            tab: '부적합 관리',
-                            tabKey: TAB_CODE.WORK_REJECT,
-                            content: workReject.component,
-                          },
-                          {
-                            tab: '비가동 관리',
-                            tabKey: TAB_CODE.WORK_DOWNTIME,
-                            content: workDowntime.component,
-                          },
-                          // {
-                          //   tab: '공정순서',
-                          //   tabKey: TAB_CODE.공정순서,
-                          //   content: 공정순서.component,
-                          // },
-                        ]}
-                      />
-                    </Col>
-                  </Row>
-                </Container>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+        <WorkPerformanceContent
+          permissions={permissions}
+          onCancelWork={onCancelWork}
+          onDeleteWork={onDeleteWork}
+          orderInfo={orderInfo}
+          onSaveWork={onSaveWork}
+          onCompleteWork={onCompleteWork}
+          workRouting={workRouting}
+          routingInfo={routingInfo}
+          infoState={infoState}
+          infoDispatch={infoDispatch}
+          changeTab={changeTab}
+          workInsp={workInsp}
+          workInput={workInput}
+          workWorker={workWorker}
+          workReject={workReject}
+          workDowntime={workDowntime}
+          TAB_CODE={TAB_CODE}
+        />
       ) : (
         <CascadingSelectHeaderMessageBox />
       )}

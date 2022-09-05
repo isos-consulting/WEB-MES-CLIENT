@@ -3,7 +3,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Button, Container, Searchbox, TPermission } from '~/components/UI';
 
-export const WorkPerformanceHeader = ({
+export const WorkPerformanceSelectableHeader = ({
   permissions,
   onProdOrder,
   searchInfo,
