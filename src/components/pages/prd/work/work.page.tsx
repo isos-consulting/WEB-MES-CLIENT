@@ -54,6 +54,10 @@ import { cloneDeep, isEmpty, pick } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 import EXPRESSSIONS from '~/constants/expressions';
 import { workingtest } from '~/images';
+import { ScModal } from '~/components/UI/modal/modal.ui.styled';
+import { WORKERREADONLY } from './work.page.worker.readonly';
+import { REJECTREADONLY } from './work.page.reject.readonly';
+import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1590,20 +1594,56 @@ export const PgPrdWork = () => {
               <div style={{ float: 'right', paddingRight: 4 }}>
                 <Space>
                   {1 ? (
-                    <Button
-                      btnType="buttonFill"
-                      colorType="blue"
-                      widthSize="large"
-                      heightSize="small"
-                      fontSize="small"
-                      ImageType="add"
-                      onClick={onSaveWork}
-                      disabled={!permissions?.update_fg}
-                    >
-                      작업 시작
-                    </Button>
+                    <>
+                      <Button
+                        btnType="buttonFill"
+                        colorType="blue"
+                        widthSize="large"
+                        heightSize="small"
+                        fontSize="small"
+                        ImageType="search"
+                        onClick={onSaveWork}
+                        disabled={!permissions?.read_fg}
+                      >
+                        실적 이력 관리
+                      </Button>
+                      <Button
+                        btnType="buttonFill"
+                        colorType="blue"
+                        widthSize="large"
+                        heightSize="small"
+                        fontSize="small"
+                        ImageType="add"
+                        onClick={onSaveWork}
+                        disabled={!permissions?.update_fg}
+                      >
+                        작업 시작
+                      </Button>
+                    </>
                   ) : (
                     <>
+                      <Button
+                        btnType="buttonFill"
+                        colorType="blue"
+                        widthSize="large"
+                        heightSize="small"
+                        fontSize="small"
+                        ImageType="search"
+                        onClick={onSaveWork}
+                        disabled={!permissions?.read_fg}
+                      >
+                        실적 이력 관리
+                      </Button>
+                      <Button
+                        btnType="buttonFill"
+                        colorType="blue"
+                        widthSize="large"
+                        heightSize="small"
+                        fontSize="small"
+                        ImageType="add"
+                        onClick={onSaveWork}
+                        disabled={!permissions?.update_fg}
+                      ></Button>
                       <Button
                         btnType="buttonFill"
                         colorType="blue"
@@ -1747,6 +1787,7 @@ export const PgPrdWork = () => {
       ) : null}
 
       {contextHolder}
+      <WorkRoutingHisotryModal visible={false} />
     </>
   );
   //#endregion
@@ -2366,3 +2407,93 @@ const ProdOrderModal = ({ visible, onClose }) => {
   //#endregion
 };
 //#endregion
+
+const WorkRoutingHisotryModal = ({ visible }: { visible: boolean }) => {
+  if (visible === false) return <></>;
+  const columns = [
+    {
+      header: '공정순서',
+      name: 'proc_no',
+    },
+    {
+      header: '공정',
+      name: 'proc_nm',
+    },
+    {
+      header: '시작일시',
+      name: 'start_date',
+    },
+    {
+      header: '종료일시',
+      name: 'end_date',
+    },
+    {
+      header: '작업장',
+      name: 'working_nm',
+    },
+    {
+      header: '설비',
+      name: 'start_date',
+    },
+    {
+      header: '금형',
+      name: 'start_date',
+    },
+    {
+      header: '금형Cavity',
+      name: 'start_date',
+    },
+    {
+      header: '양품수량',
+      name: 'start_date',
+    },
+    {
+      header: '비고',
+      name: 'start_date',
+    },
+    {
+      header: '실행취소',
+      name: 'cancel',
+      format: 'button',
+    },
+  ];
+
+  const workerReadOnly = WORKERREADONLY();
+  const rejectReadOnly = REJECTREADONLY();
+  const downtimeReadOnly = DOWNTIMEREADONLY();
+
+  return (
+    <ScModal
+      title={'실적이력관리'}
+      visible={visible}
+      width={'95vw'}
+      footer={null}
+    >
+      <Container>
+        <Datagrid columns={columns} height={300} data={[{ proc_no: '1' }]} />
+      </Container>
+      <Container>
+        <Tabs
+          type="card"
+          panels={[
+            {
+              tab: '투입인원 관리',
+              tabKey: TAB_CODE.WORK_WORKER,
+              content: workerReadOnly.component,
+            },
+            {
+              tab: '부적합 관리',
+              tabKey: TAB_CODE.WORK_REJECT,
+              content: rejectReadOnly.component,
+            },
+            {
+              tab: '비가동 관리',
+              tabKey: TAB_CODE.WORK_DOWNTIME,
+              content: downtimeReadOnly.component,
+            },
+          ]}
+        />
+      </Container>
+    </ScModal>
+  );
+};
