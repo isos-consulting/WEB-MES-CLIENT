@@ -1103,53 +1103,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
 
 const WorkRoutingHisotryModal = ({ visible }: { visible: boolean }) => {
   if (visible === false) return <></>;
-  const columns = [
-    {
-      header: '공정순서',
-      name: 'proc_no',
-    },
-    {
-      header: '공정',
-      name: 'proc_nm',
-    },
-    {
-      header: '시작일시',
-      name: 'start_date',
-    },
-    {
-      header: '종료일시',
-      name: 'end_date',
-    },
-    {
-      header: '작업장',
-      name: 'working_nm',
-    },
-    {
-      header: '설비',
-      name: 'start_date',
-    },
-    {
-      header: '금형',
-      name: 'start_date',
-    },
-    {
-      header: '금형Cavity',
-      name: 'start_date',
-    },
-    {
-      header: '양품수량',
-      name: 'start_date',
-    },
-    {
-      header: '비고',
-      name: 'start_date',
-    },
-    {
-      header: '실행취소',
-      name: 'cancel',
-      format: 'button',
-    },
-  ];
 
   const workerReadOnly = WORKERREADONLY();
   const rejectReadOnly = REJECTREADONLY();
@@ -1158,7 +1111,7 @@ const WorkRoutingHisotryModal = ({ visible }: { visible: boolean }) => {
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
       visible={visible}
-      columns={columns}
+      columns={[...ColumnStore.WORK_ROUTING_HISTORY]}
       TAB_CODE={TAB_CODE}
       workerReadOnly={workerReadOnly}
       rejectReadOnly={rejectReadOnly}
