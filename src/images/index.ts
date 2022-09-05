@@ -58,6 +58,7 @@ import ico_search from './menu/ico_search_outline_blue.png';
 //#endregion
 
 import ico_lock from './icon/ico_lock.png';
+import workingtest from './workingtest.png';
 
 export {
   img_logo,
@@ -91,4 +92,5 @@ export {
   ico_corporate,
   ico_popup,
   ico_lock,
+  workingtest,
 };
