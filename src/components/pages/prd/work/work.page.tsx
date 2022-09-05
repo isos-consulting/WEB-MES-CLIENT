@@ -8,15 +8,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import {
-  Container,
-  Datagrid,
-  IGridColumn,
-  Searchbox,
-  Tabs,
-  TGridMode,
-  useSearchbox,
-} from '~/components/UI';
+import { IGridColumn, TGridMode, useSearchbox } from '~/components/UI';
 import {
   executeData,
   getData,
@@ -40,7 +32,6 @@ import { URL_PATH_PRD } from '~/enums';
 import { cloneDeep, isEmpty, pick } from 'lodash';
 import { workRoutingStore } from './work-components';
 import EXPRESSSIONS from '~/constants/expressions';
-import { ScModal } from '~/components/UI/modal/modal.ui.styled';
 import { WORKERREADONLY } from './work.page.worker.readonly';
 import { REJECTREADONLY } from './work.page.reject.readonly';
 import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
@@ -55,6 +46,10 @@ import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderG
 import { ColumnStore } from '~/constants/columns';
 import { CascadingSelectHeaderMessageBox } from './work-performance/components/MessageBox';
 import { WorkPerformanceContent } from './work-performance/components/Content';
+import {
+  ProdOrderModalInWorkPerformancePage,
+  WorkRoutingHistoryModalInWorkPerformancePage,
+} from './work-performance/components/Modal';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1413,39 +1408,17 @@ const ProdOrderModal = ({ visible, onClose }) => {
   };
   //#endregion
 
-  //#region ✅렌더부
   return (
-    <Modal
-      title="작업지시 관리"
-      okText={null}
-      cancelText={null}
-      maskClosable={false}
+    <ProdOrderModalInWorkPerformancePage
       visible={visible}
-      onCancel={onClose}
-      onOk={onSave}
-      width="80%"
-    >
-      <>
-        <Searchbox
-          {...searchInfo.props}
-          onSearch={searchInfo.onSearch}
-          boxShadow={false}
-        />
-        <Datagrid
-          gridId="PROD_ORDER_GRID"
-          ref={gridRef}
-          gridMode="update"
-          columns={PROD_ORDER_COLUMNS}
-          columnOptions={{
-            frozenCount: 3,
-            frozenBorderWidth: 2,
-          }}
-          data={data}
-        />
-      </>
-    </Modal>
+      onClose={onClose}
+      onSave={onSave}
+      searchInfo={searchInfo}
+      gridRef={gridRef}
+      PROD_ORDER_COLUMNS={PROD_ORDER_COLUMNS}
+      data={data}
+    />
   );
-  //#endregion
 };
 //#endregion
 
@@ -1504,37 +1477,13 @@ const WorkRoutingHisotryModal = ({ visible }: { visible: boolean }) => {
   const downtimeReadOnly = DOWNTIMEREADONLY();
 
   return (
-    <ScModal
-      title={'실적이력관리'}
+    <WorkRoutingHistoryModalInWorkPerformancePage
       visible={visible}
-      width={'95vw'}
-      footer={null}
-    >
-      <Container>
-        <Datagrid columns={columns} height={300} data={[{ proc_no: '1' }]} />
-      </Container>
-      <Container>
-        <Tabs
-          type="card"
-          panels={[
-            {
-              tab: '투입인원 관리',
-              tabKey: TAB_CODE.WORK_WORKER,
-              content: workerReadOnly.component,
-            },
-            {
-              tab: '부적합 관리',
-              tabKey: TAB_CODE.WORK_REJECT,
-              content: rejectReadOnly.component,
-            },
-            {
-              tab: '비가동 관리',
-              tabKey: TAB_CODE.WORK_DOWNTIME,
-              content: downtimeReadOnly.component,
-            },
-          ]}
-        />
-      </Container>
-    </ScModal>
+      columns={columns}
+      TAB_CODE={TAB_CODE}
+      workerReadOnly={workerReadOnly}
+      rejectReadOnly={rejectReadOnly}
+      downtimeReadOnly={downtimeReadOnly}
+    />
   );
 };
