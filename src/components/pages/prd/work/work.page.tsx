@@ -53,7 +53,6 @@ import Fonts from '~styles/font.style.scss';
 import { cloneDeep, isEmpty, pick } from 'lodash';
 import { RoutingInfo, WorkInfo, workRoutingStore } from './work-components';
 import EXPRESSSIONS from '~/constants/expressions';
-import { workingtest } from '~/images';
 import { ScModal } from '~/components/UI/modal/modal.ui.styled';
 import { WORKERREADONLY } from './work.page.worker.readonly';
 import { REJECTREADONLY } from './work.page.reject.readonly';
@@ -64,9 +63,10 @@ import {
 } from './work-performance/fixture';
 import { showWorkPerformanceErrorMessage } from './work-performance/view-controller';
 import { setWorkPerformanceState } from './work-performance/model-controller';
-import { WorkPerformanceHeader } from './work-performance/components/Header';
+import { WorkPerformanceSelectableHeader } from './work-performance/components/Header';
 import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
 import { ColumnStore } from '~/constants/columns';
+import { CascadingSelectHeaderMessageBox } from './work-performance/components/MessageBox';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -801,7 +801,7 @@ export const PgPrdWork = () => {
   //#region 🚫렌더부
   return (
     <>
-      <WorkPerformanceHeader
+      <WorkPerformanceSelectableHeader
         permissions={permissions}
         onProdOrder={onProdOrder}
         searchInfo={searchInfo}
@@ -1136,43 +1136,7 @@ export const PgPrdWork = () => {
           </Col>
         </Row>
       ) : (
-        <div
-          style={{
-            position: 'relative',
-            marginTop: '20px',
-            width: '100%',
-            height: '120px',
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <p style={{ fontSize: '15px', fontWeight: '600' }}>
-              생산 이력을 선택하면 작업정보와 실적정보를 확인할 수 있습니다
-            </p>
-          </div>
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              backgroundImage: `url(${workingtest})`,
-              backgroundSize: '100%',
-              backgroundRepeat: 'no-repeat',
-              filter: 'blur(5px)',
-              position: 'absolute',
-            }}
-          />
-        </div>
+        <CascadingSelectHeaderMessageBox />
       )}
 
       {prodOrderPopupVisible ? (
