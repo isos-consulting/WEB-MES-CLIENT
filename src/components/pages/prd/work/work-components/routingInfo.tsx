@@ -16,7 +16,7 @@ export const workRoutingStore = () => {
   }, [data]);
 
   const infos = {
-    uriPath: '/prd/work-routings',
+    uriPath: '/prd/work-routing-origins',
   };
 
   return {
