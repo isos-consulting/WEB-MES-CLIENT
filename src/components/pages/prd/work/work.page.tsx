@@ -562,7 +562,6 @@ export const PgPrdWork = () => {
             el => el?.rowKey === rowKey,
           );
         }
-
         setInfoData(row);
         infoDispatch({ type: 'CHANGE_ALL_WORK', value: row }); //실적 디스플레이
 
@@ -646,94 +645,145 @@ export const PgPrdWork = () => {
   };
 
   const onSearchAfterRouting = (workRow, routingRow) => {
-    const startDatetime = dayjs(routingRow?.['start_date']);
-    const endDatetime = dayjs(routingRow?.['end_date']);
-    infoDispatch({
-      type: 'CHANGE_ALL_ROUTING',
-      value: {
-        ...routingRow,
-        _start_date: startDatetime.isValid()
-          ? startDatetime?.format('YYYY-MM-DD')
-          : null,
-        _start_time: startDatetime.isValid()
-          ? startDatetime?.format('HH:mm:ss')
-          : null,
-        _end_date: endDatetime.isValid()
-          ? endDatetime?.format('YYYY-MM-DD')
-          : null,
-        _end_time: endDatetime.isValid()
-          ? endDatetime?.format('HH:mm:ss')
-          : null,
-      },
-    }); //실적 디스플레이
+    const work_routing_origin_uuid = routingRow?.['work_routing_origin_uuid'];
 
-    const work_uuid = workRow?.['work_uuid'];
-    const complete_fg = workRow?.['complete_fg'];
-    const work_routing_uuid = routingRow?.['work_routing_uuid'];
-    const equip_uuid = routingRow?.['equip_uuid'];
-
-    // 투입인원관리 데이터 조회
     getData(
       {
-        work_uuid: String(work_uuid),
-        work_routing_uuid: work_routing_uuid,
+        work_routing_origin_uuid,
       },
-      workWorker.SEARCH_URI_PATH,
+      '/prd/work-routing',
       undefined,
       undefined,
       undefined,
       undefined,
       { disabledZeroMessage: true },
     ).then(res => {
-      workWorker.setData(res);
-      workWorker.setSearchParams({ work_uuid, work_routing_uuid, complete_fg });
-      workWorker.setSaveOptionParams({ work_uuid, work_routing_uuid });
-    });
+      if (res.length > 0) {
+        const work_uuid = workRow?.['work_uuid'];
+        const complete_fg = workRow?.['complete_fg'];
+        const equip_uuid = routingRow?.['equip_uuid'];
+        const { work_routing_uuid, start_date, end_date } = res[0];
+        const startDatetime = dayjs(start_date);
+        const endDatetime = dayjs(end_date);
 
-    // 부적합관리 데이터 조회
-    getData(
-      {
-        work_uuid: String(work_uuid),
-        work_routing_uuid: work_routing_uuid,
-      },
-      workReject.SEARCH_URI_PATH,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { disabledZeroMessage: true },
-    ).then(res => {
-      const { proc_uuid } = routingRow;
-      workReject.setData(res);
-      workReject.setSearchParams({ work_uuid, work_routing_uuid, complete_fg });
-      workReject.setRowAddedParams({ proc_uuid });
-      workReject.setSaveOptionParams({ work_uuid, work_routing_uuid });
-    });
+        infoDispatch({
+          type: 'CHANGE_ALL_ROUTING',
+          value: {
+            ...res[0],
+            _start_date: startDatetime.isValid()
+              ? startDatetime?.format('YYYY-MM-DD')
+              : null,
+            _start_time: startDatetime.isValid()
+              ? startDatetime?.format('HH:mm:ss')
+              : null,
+            _end_date: endDatetime.isValid()
+              ? endDatetime?.format('YYYY-MM-DD')
+              : null,
+            _end_time: endDatetime.isValid()
+              ? endDatetime?.format('HH:mm:ss')
+              : null,
+          },
+        }); //실적 디스플레이
 
-    // 비가동관리 데이터 조회
-    getData(
-      {
-        work_uuid: String(work_uuid),
-        work_routing_uuid: work_routing_uuid,
-      },
-      workDowntime.SEARCH_URI_PATH,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { disabledZeroMessage: true },
-    ).then(res => {
-      workDowntime.setData(res);
-      workDowntime.setSearchParams({
-        work_uuid,
-        work_routing_uuid,
-        complete_fg,
-      });
-      workDowntime.setSaveOptionParams({
-        work_uuid,
-        work_routing_uuid,
-        equip_uuid,
-      });
+        // 투입인원관리 데이터 조회
+        getData(
+          {
+            work_uuid: String(work_uuid),
+            work_routing_uuid: work_routing_uuid,
+          },
+          workWorker.SEARCH_URI_PATH,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          { disabledZeroMessage: true },
+        ).then(res => {
+          workWorker.setData(res);
+          workWorker.setSearchParams({
+            work_uuid,
+            work_routing_uuid,
+            complete_fg,
+          });
+          workWorker.setSaveOptionParams({
+            work_uuid,
+            work_routing_uuid,
+          });
+        });
+
+        // 부적합관리 데이터 조회
+        getData(
+          {
+            work_uuid: String(work_uuid),
+            work_routing_uuid: work_routing_uuid,
+          },
+          workReject.SEARCH_URI_PATH,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          { disabledZeroMessage: true },
+        ).then(res => {
+          const { proc_uuid } = routingRow;
+          workReject.setData(res);
+          workReject.setSearchParams({
+            work_uuid,
+            work_routing_uuid,
+            complete_fg,
+          });
+          workReject.setRowAddedParams({ proc_uuid });
+          workReject.setSaveOptionParams({
+            work_uuid,
+            work_routing_uuid,
+          });
+        });
+
+        // 비가동관리 데이터 조회
+        getData(
+          {
+            work_uuid: String(work_uuid),
+            work_routing_uuid: work_routing_uuid,
+          },
+          workDowntime.SEARCH_URI_PATH,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          { disabledZeroMessage: true },
+        ).then(res => {
+          workDowntime.setData(res);
+          workDowntime.setSearchParams({
+            work_uuid,
+            work_routing_uuid,
+            complete_fg,
+          });
+          workDowntime.setSaveOptionParams({
+            work_uuid,
+            work_routing_uuid,
+            equip_uuid,
+          });
+        });
+      } else {
+        const startDatetime = dayjs(routingRow?.['start_date']);
+        const endDatetime = dayjs(routingRow?.['end_date']);
+        infoDispatch({
+          type: 'CHANGE_ALL_ROUTING',
+          value: {
+            ...routingRow,
+            _start_date: startDatetime.isValid()
+              ? startDatetime?.format('YYYY-MM-DD')
+              : null,
+            _start_time: startDatetime.isValid()
+              ? startDatetime?.format('HH:mm:ss')
+              : null,
+            _end_date: endDatetime.isValid()
+              ? endDatetime?.format('YYYY-MM-DD')
+              : null,
+            _end_time: endDatetime.isValid()
+              ? endDatetime?.format('HH:mm:ss')
+              : null,
+          },
+        }); //실적 디스플레이
+      }
     });
   };
 
@@ -791,7 +841,6 @@ export const PgPrdWork = () => {
     }
   }, [tabKey, workReject?.gridRef]);
 
-  //#region 🚫렌더부
   return (
     <>
       <WorkPerformanceSelectableHeader
@@ -820,6 +869,9 @@ export const PgPrdWork = () => {
           workReject={workReject}
           workDowntime={workDowntime}
           TAB_CODE={TAB_CODE}
+          isWorkRoutingStarted={
+            infoState.routingInfo?.work_routing_uuid != null
+          }
         />
       ) : (
         <CascadingSelectHeaderMessageBox />
@@ -836,7 +888,6 @@ export const PgPrdWork = () => {
       <WorkRoutingHisotryModal visible={false} />
     </>
   );
-  //#endregion
 };
 //#endregion
 
