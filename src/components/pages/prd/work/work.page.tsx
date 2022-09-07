@@ -108,6 +108,8 @@ export const PgPrdWork = () => {
 
   // 팝업 관련
   const [prodOrderPopupVisible, setProdOrderPopupVisible] = useState(false);
+  const [workRoutingHistoryPopupVisible, setWorkRoutingHistoryPopupVisible] =
+    useState(false);
 
   // 작업정보, 생산정보 관리
   const [infoState, infoDispatch] = useReducer(infoReducer, infoInit);
@@ -121,6 +123,13 @@ export const PgPrdWork = () => {
 
   const onProdOrderClose = () => {
     setProdOrderPopupVisible(false);
+  };
+
+  const showWorkRoutingHistory = () => {
+    setWorkRoutingHistoryPopupVisible(true);
+  };
+  const hideWorkRoutingHistory = () => {
+    setWorkRoutingHistoryPopupVisible(false);
   };
 
   const onStartWork = () => {
@@ -943,6 +952,7 @@ export const PgPrdWork = () => {
           onStartWork={onStartWork}
           onCancelWork={onCancelWork}
           onDeleteWork={onDeleteWork}
+          onWorkHistory={showWorkRoutingHistory}
           orderInfo={orderInfo}
           onSaveWork={onSaveWork}
           onCompleteWork={onCompleteWork}
@@ -973,7 +983,11 @@ export const PgPrdWork = () => {
       ) : null}
 
       {contextHolder}
-      <WorkRoutingHisotryModal visible={false} />
+      <WorkRoutingHisotryModal
+        visible={workRoutingHistoryPopupVisible}
+        work_uuid={workInfo.work_uuid}
+        onCancel={hideWorkRoutingHistory}
+      />
     </>
   );
 };
@@ -1240,21 +1254,36 @@ const ProdOrderModal = ({ visible, onClose }) => {
 };
 //#endregion
 
-const WorkRoutingHisotryModal = ({ visible }: { visible: boolean }) => {
+const WorkRoutingHisotryModal = ({
+  visible,
+  work_uuid,
+  onCancel,
+}: {
+  visible: boolean;
+  work_uuid: string;
+  onCancel: () => void;
+}) => {
   if (visible === false) return <></>;
+  const [workRoutingHistory, setWorkRoutingHistory] = useState<unknown>([]);
 
   const workerReadOnly = WORKERREADONLY();
   const rejectReadOnly = REJECTREADONLY();
   const downtimeReadOnly = DOWNTIMEREADONLY();
 
+  useLayoutEffect(() => {
+    getData({ work_uuid }, '/prd/work-routings').then(setWorkRoutingHistory);
+  }, []);
+
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
       visible={visible}
       columns={[...ColumnStore.WORK_ROUTING_HISTORY]}
+      data={workRoutingHistory}
       TAB_CODE={TAB_CODE}
       workerReadOnly={workerReadOnly}
       rejectReadOnly={rejectReadOnly}
       downtimeReadOnly={downtimeReadOnly}
+      onCancel={onCancel}
     />
   );
 };

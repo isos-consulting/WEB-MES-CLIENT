@@ -13,6 +13,7 @@ export const WorkPerformanceContent = ({
   orderInfo,
   onSaveWork,
   onCompleteWork,
+  onWorkHistory,
   workRouting,
   routingInfo,
   infoState,
@@ -30,6 +31,7 @@ export const WorkPerformanceContent = ({
   onStartWork: () => void;
   onCancelWork: () => void;
   onDeleteWork: () => void;
+  onWorkHistory: () => void;
   orderInfo: any;
   onSaveWork: any;
   onCompleteWork: any;
@@ -220,30 +222,20 @@ export const WorkPerformanceContent = ({
         <div style={{ width: '100%', display: 'inline-block', marginTop: -26 }}>
           <div style={{ float: 'right', paddingRight: 4 }}>
             <Space>
+              <Button
+                btnType="buttonFill"
+                colorType="blue"
+                widthSize="large"
+                heightSize="small"
+                fontSize="small"
+                ImageType="search"
+                onClick={onWorkHistory}
+                disabled={!permissions?.read_fg}
+              >
+                실적 이력 관리
+              </Button>
               {isWorkRoutingStarted === true ? (
                 <>
-                  <Button
-                    btnType="buttonFill"
-                    colorType="blue"
-                    widthSize="large"
-                    heightSize="small"
-                    fontSize="small"
-                    ImageType="search"
-                    onClick={onSaveWork}
-                    disabled={!permissions?.read_fg}
-                  >
-                    실적 이력 관리
-                  </Button>
-                  <Button
-                    btnType="buttonFill"
-                    colorType="blue"
-                    widthSize="large"
-                    heightSize="small"
-                    fontSize="small"
-                    ImageType="add"
-                    onClick={onSaveWork}
-                    disabled={!permissions?.update_fg}
-                  ></Button>
                   <Button
                     btnType="buttonFill"
                     colorType="blue"
@@ -271,18 +263,6 @@ export const WorkPerformanceContent = ({
                 </>
               ) : (
                 <>
-                  <Button
-                    btnType="buttonFill"
-                    colorType="blue"
-                    widthSize="large"
-                    heightSize="small"
-                    fontSize="small"
-                    ImageType="search"
-                    onClick={onSaveWork}
-                    disabled={!permissions?.read_fg}
-                  >
-                    실적 이력 관리
-                  </Button>
                   <Button
                     btnType="buttonFill"
                     colorType="blue"

@@ -774,27 +774,27 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     },
     {
       header: '작업장',
-      name: 'working_nm',
+      name: 'workings_nm',
     },
     {
       header: '설비',
-      name: 'start_date',
+      name: 'equip_nm',
     },
     {
       header: '금형',
-      name: 'start_date',
+      name: 'mold_nm',
     },
     {
       header: '금형Cavity',
-      name: 'start_date',
+      name: 'mold_cavity',
     },
     {
       header: '양품수량',
-      name: 'start_date',
+      name: 'qty',
     },
     {
       header: '비고',
-      name: 'start_date',
+      name: 'remark',
     },
     {
       header: '실행취소',

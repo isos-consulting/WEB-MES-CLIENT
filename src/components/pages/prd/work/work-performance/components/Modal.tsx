@@ -51,6 +51,8 @@ export const WorkRoutingHistoryModalInWorkPerformancePage = ({
   workerReadOnly,
   rejectReadOnly,
   downtimeReadOnly,
+  data,
+  onCancel,
 }) => {
   return (
     <ScModal
@@ -58,9 +60,10 @@ export const WorkRoutingHistoryModalInWorkPerformancePage = ({
       visible={visible}
       width={'95vw'}
       footer={null}
+      onCancel={onCancel}
     >
       <Container>
-        <Datagrid columns={columns} height={300} data={[{ proc_no: '1' }]} />
+        <Datagrid columns={columns} height={300} data={data} />
       </Container>
       <Container>
         <Tabs
