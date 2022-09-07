@@ -1284,6 +1284,7 @@ const WorkRoutingHisotryModal = ({
       rejectReadOnly={rejectReadOnly}
       downtimeReadOnly={downtimeReadOnly}
       onCancel={onCancel}
+      work_uuid={work_uuid}
     />
   );
 };

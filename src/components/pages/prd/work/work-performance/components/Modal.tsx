@@ -1,6 +1,7 @@
 import { Container, Datagrid, Modal, Searchbox, Tabs } from '~/components/UI';
-import React from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { ScModal } from '~/components/UI/modal/modal.ui.styled';
+import { getData } from '~/functions';
 
 export const ProdOrderModalInWorkPerformancePage = ({
   visible,
@@ -53,7 +54,86 @@ export const WorkRoutingHistoryModalInWorkPerformancePage = ({
   downtimeReadOnly,
   data,
   onCancel,
+  work_uuid,
 }) => {
+  const [tab, selectTab] = useState('');
+  const selectRoutingPerformance = ({ rowKey, instance }) => {
+    const { work_routing_uuid, complete_fg } = instance.getRow(rowKey);
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      },
+      workerReadOnly.SEARCH_URI_PATH,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { disabledZeroMessage: true },
+    ).then(res => {
+      workerReadOnly.setData(res);
+      workerReadOnly.setSearchParams({
+        work_uuid,
+        work_routing_uuid,
+        complete_fg,
+      });
+    });
+
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      },
+      rejectReadOnly.SEARCH_URI_PATH,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { disabledZeroMessage: true },
+    ).then(res => {
+      rejectReadOnly.setData(res);
+      rejectReadOnly.setSearchParams({
+        work_uuid,
+        work_routing_uuid,
+        complete_fg,
+      });
+    });
+
+    getData(
+      {
+        work_uuid: String(work_uuid),
+        work_routing_uuid: work_routing_uuid,
+      },
+      downtimeReadOnly.SEARCH_URI_PATH,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      { disabledZeroMessage: true },
+    ).then(res => {
+      downtimeReadOnly.setData(res);
+      downtimeReadOnly.setSearchParams({
+        work_uuid,
+        work_routing_uuid,
+        complete_fg,
+      });
+    });
+  };
+
+  useLayoutEffect(() => {
+    if (tab !== '') {
+      switch (tab) {
+        case 'WORKER':
+          return workerReadOnly.gridRef.current.getInstance().refreshLayout();
+        case 'REJECT':
+          return rejectReadOnly.gridRef.current.getInstance().refreshLayout();
+        case 'DOWNTIME':
+          return downtimeReadOnly.gridRef.current.getInstance().refreshLayout();
+        default:
+          break;
+      }
+    }
+  }, [tab]);
   return (
     <ScModal
       title={'실적이력관리'}
@@ -63,11 +143,17 @@ export const WorkRoutingHistoryModalInWorkPerformancePage = ({
       onCancel={onCancel}
     >
       <Container>
-        <Datagrid columns={columns} height={300} data={data} />
+        <Datagrid
+          columns={columns}
+          height={300}
+          data={data}
+          onAfterClick={selectRoutingPerformance}
+        />
       </Container>
       <Container>
         <Tabs
           type="card"
+          onChange={selectTab}
           panels={[
             {
               tab: '투입인원 관리',
