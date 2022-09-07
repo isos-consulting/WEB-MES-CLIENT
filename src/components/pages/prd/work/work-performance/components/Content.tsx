@@ -7,6 +7,7 @@ import Fonts from '~styles/font.style.scss';
 
 export const WorkPerformanceContent = ({
   permissions,
+  onStartWork,
   onCancelWork,
   onDeleteWork,
   orderInfo,
@@ -26,6 +27,7 @@ export const WorkPerformanceContent = ({
   isWorkRoutingStarted,
 }: {
   permissions: TPermission;
+  onStartWork: () => void;
   onCancelWork: () => void;
   onDeleteWork: () => void;
   orderInfo: any;
@@ -288,7 +290,7 @@ export const WorkPerformanceContent = ({
                     heightSize="small"
                     fontSize="small"
                     ImageType="add"
-                    onClick={onSaveWork}
+                    onClick={onStartWork}
                     disabled={!permissions?.update_fg}
                   >
                     작업 시작

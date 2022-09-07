@@ -123,6 +123,67 @@ export const PgPrdWork = () => {
     setProdOrderPopupVisible(false);
   };
 
+  const onStartWork = () => {
+    const SAVE_URI_PATH = '/prd/work-routings';
+    const {
+      work_routing_origin_uuid,
+      proc_uuid,
+      proc_no,
+      workings_uuid,
+      equip_uuid,
+      mold_uuid,
+      mold_cavity,
+      qty,
+      start_date,
+      end_date,
+      ongoing_fg,
+      prd_signal_cnt,
+      start_signal_val,
+      remark,
+      factory_uuid,
+    } = routingInfo;
+    const { work_uuid } = workInfo;
+    modal.confirm({
+      title: '작업 시작',
+      content: '작업을 시작하시겠습니까?',
+      okText: '예',
+      cancelText: '아니오',
+      onOk: () => {
+        executeData(
+          [
+            {
+              work_routing_origin_uuid,
+              work_uuid,
+              proc_uuid,
+              proc_no,
+              workings_uuid,
+              equip_uuid,
+              mold_uuid,
+              mold_cavity,
+              qty,
+              start_date,
+              end_date,
+              ongoing_fg,
+              prd_signal_cnt,
+              start_signal_val,
+              remark,
+              factory_uuid,
+            },
+          ],
+          SAVE_URI_PATH,
+          'post',
+        ).then(res => {
+          if (res.success === true) {
+            message.info('작업이 시작되었습니다.');
+            onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+          } else {
+            message.error('오류가 발생했습니다. 관리자에게 문의하세요.');
+          }
+        });
+      },
+    });
+  };
+
   /** 작업 취소 처리 */
   const onCancelWork = () => {
     if (workInfo.work_uuid == null) {
@@ -316,8 +377,7 @@ export const PgPrdWork = () => {
       return;
     }
 
-    const SAVE_URI_PATH = '/prd/works/complete';
-    const workData = cloneDeep(workInfo);
+    const SAVE_URI_PATH = '/prd/work-routings/complete';
     const routingData = cloneDeep(routingInfo);
 
     if (!routingData?.['_start_date'] && routingData?.['_start_time']) {
@@ -343,31 +403,56 @@ export const PgPrdWork = () => {
       okText: '예',
       cancelText: '아니오',
       onOk: () => {
-        saveWorkRouting(workData, routingData).then((result: boolean) => {
-          //실적완료처리
-          executeData(
-            [
-              {
-                uuid: workInfo.work_uuid,
-              },
-            ],
-            SAVE_URI_PATH,
-            'put',
-            'success',
-          )
-            .then(success => {
-              if (success === true) {
-                message.info('정상적으로 종료되었습니다.');
-                searchInfo?.onSearch(searchInfo.values);
-              } else {
-                message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
-              }
-            })
-            .catch(e => {
-              console.error(e);
+        //실적완료처리
+        const {
+          uuid,
+          workings_uuid,
+          equip_uuid,
+          mold_uuid,
+          mold_cavity,
+          qty,
+          start_date,
+          end_date,
+          ongoing_fg,
+          prd_signal_cnt,
+          start_signal_val,
+          remark,
+        } = routingInfo;
+        const { work_uuid } = workInfo;
+        executeData(
+          [
+            {
+              uuid,
+              work_uuid,
+              workings_uuid,
+              equip_uuid,
+              mold_uuid,
+              mold_cavity,
+              qty,
+              start_date,
+              end_date,
+              ongoing_fg,
+              prd_signal_cnt,
+              start_signal_val,
+              remark,
+            },
+          ],
+          SAVE_URI_PATH,
+          'put',
+          'success',
+        )
+          .then(success => {
+            if (success === true) {
+              message.info('정상적으로 종료되었습니다.');
+              onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+            } else {
               message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
-            });
-        });
+            }
+          })
+          .catch(e => {
+            console.error(e);
+            message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
+          });
       },
     });
   };
@@ -646,12 +731,15 @@ export const PgPrdWork = () => {
 
   const onSearchAfterRouting = (workRow, routingRow) => {
     const work_routing_origin_uuid = routingRow?.['work_routing_origin_uuid'];
+    const work_uuid = workRow?.['work_uuid'];
 
     getData(
       {
+        work_uuid,
         work_routing_origin_uuid,
+        complete_fg: false,
       },
-      '/prd/work-routing',
+      '/prd/work-routings',
       undefined,
       undefined,
       undefined,
@@ -659,7 +747,6 @@ export const PgPrdWork = () => {
       { disabledZeroMessage: true },
     ).then(res => {
       if (res.length > 0) {
-        const work_uuid = workRow?.['work_uuid'];
         const complete_fg = workRow?.['complete_fg'];
         const equip_uuid = routingRow?.['equip_uuid'];
         const { work_routing_uuid, start_date, end_date } = res[0];
@@ -853,6 +940,7 @@ export const PgPrdWork = () => {
       {workInfo.work_uuid ? (
         <WorkPerformanceContent
           permissions={permissions}
+          onStartWork={onStartWork}
           onCancelWork={onCancelWork}
           onDeleteWork={onDeleteWork}
           orderInfo={orderInfo}
