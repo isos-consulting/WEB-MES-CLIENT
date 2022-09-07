@@ -48,6 +48,38 @@ export const WorkPerformanceContent = ({
   TAB_CODE: any;
   isWorkRoutingStarted: boolean;
 }) => {
+  const workPerformanceInputTabs = [
+    {
+      tab: '공정검사',
+      tabKey: TAB_CODE.WORK_INSP,
+      content: workInsp.component,
+    },
+    {
+      tab: '투입품목 관리',
+      tabKey: TAB_CODE.WORK_INPUT,
+      content: workInput.component,
+    },
+  ].concat(
+    isWorkRoutingStarted === true
+      ? [
+          {
+            tab: '투입인원 관리',
+            tabKey: TAB_CODE.WORK_WORKER,
+            content: workWorker.component,
+          },
+          {
+            tab: '부적합 관리',
+            tabKey: TAB_CODE.WORK_REJECT,
+            content: workReject.component,
+          },
+          {
+            tab: '비가동 관리',
+            tabKey: TAB_CODE.WORK_DOWNTIME,
+            content: workDowntime.component,
+          },
+        ]
+      : [],
+  );
   return (
     <Row gutter={[16, 0]}>
       {/* 작업 정보 */}
@@ -306,33 +338,7 @@ export const WorkPerformanceContent = ({
                   <Tabs
                     type="card"
                     onChange={changeTab}
-                    panels={[
-                      {
-                        tab: '공정검사',
-                        tabKey: TAB_CODE.WORK_INSP,
-                        content: workInsp.component,
-                      },
-                      {
-                        tab: '투입품목 관리',
-                        tabKey: TAB_CODE.WORK_INPUT,
-                        content: workInput.component,
-                      },
-                      {
-                        tab: '투입인원 관리',
-                        tabKey: TAB_CODE.WORK_WORKER,
-                        content: workWorker.component,
-                      },
-                      {
-                        tab: '부적합 관리',
-                        tabKey: TAB_CODE.WORK_REJECT,
-                        content: workReject.component,
-                      },
-                      {
-                        tab: '비가동 관리',
-                        tabKey: TAB_CODE.WORK_DOWNTIME,
-                        content: workDowntime.component,
-                      },
-                    ]}
+                    panels={workPerformanceInputTabs}
                   />
                 </Col>
               </Row>
