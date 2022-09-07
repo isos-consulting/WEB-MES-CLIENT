@@ -447,7 +447,7 @@ export const PgPrdWork = () => {
             },
           ],
           SAVE_URI_PATH,
-          'put',
+          'patch',
           'success',
         )
           .then(success => {
