@@ -474,6 +474,19 @@ export const PgPrdWork = () => {
   };
   //#endregion
 
+  const onCompleteWorkPerformance = () => {
+    executeData(
+      [{ uuid: workInfo.work_uuid }],
+      'prd/works/complete',
+      'put',
+    ).then(res => {
+      if (res) {
+        message.info('정상적으로 종료되었습니다.');
+        onSearch(searchInfo.values);
+      }
+    });
+  };
+
   //#region ✅조회조건
   const onSearch = (
     values,
@@ -942,6 +955,7 @@ export const PgPrdWork = () => {
           onCancelWork={onCancelWork}
           onDeleteWork={onDeleteWork}
           onWorkHistory={showWorkRoutingHistory}
+          onCompleteWorkPerformance={onCompleteWorkPerformance}
           orderInfo={orderInfo}
           onSaveWork={onSaveWork}
           onCompleteWork={onCompleteWork}

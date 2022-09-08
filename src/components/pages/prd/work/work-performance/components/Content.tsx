@@ -14,6 +14,7 @@ export const WorkPerformanceContent = ({
   onSaveWork,
   onCompleteWork,
   onWorkHistory,
+  onCompleteWorkPerformance,
   workRouting,
   routingInfo,
   infoState,
@@ -32,6 +33,7 @@ export const WorkPerformanceContent = ({
   onCancelWork: () => void;
   onDeleteWork: () => void;
   onWorkHistory: () => void;
+  onCompleteWorkPerformance: () => void;
   orderInfo: any;
   onSaveWork: any;
   onCompleteWork: any;
@@ -117,6 +119,18 @@ export const WorkPerformanceContent = ({
                 disabled={!permissions?.delete_fg}
               >
                 실적 삭제
+              </Button>
+              <Button
+                btnType="buttonFill"
+                colorType="delete"
+                widthSize="large"
+                heightSize="small"
+                fontSize="small"
+                ImageType="check"
+                onClick={onCompleteWorkPerformance}
+                disabled={!permissions?.update_fg}
+              >
+                실적 종료
               </Button>
             </Space>
           </div>
