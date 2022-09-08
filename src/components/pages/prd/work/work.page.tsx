@@ -181,10 +181,13 @@ export const PgPrdWork = () => {
           ],
           SAVE_URI_PATH,
           'post',
-        ).then(res => {
+        ).then(async res => {
           if (res.success === true) {
             message.info('작업이 시작되었습니다.');
-            onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+            const selectedRow = { ...workRouting?.selectedRow };
+            await onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+
+            onSearchAfterRouting(workInfo, selectedRow);
           } else {
             message.error('오류가 발생했습니다. 관리자에게 문의하세요.');
           }
@@ -450,10 +453,14 @@ export const PgPrdWork = () => {
           'patch',
           'success',
         )
-          .then(success => {
+          .then(async success => {
             if (success === true) {
               message.info('정상적으로 종료되었습니다.');
-              onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+
+              const selectedRow = { ...workRouting?.selectedRow };
+              await onHeaderClick({ targetType: 'cell' }, workInfo?.work_uuid);
+
+              onSearchAfterRouting(workInfo, selectedRow);
             } else {
               message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
             }
@@ -720,14 +727,6 @@ export const PgPrdWork = () => {
           workRouting.uriPath,
         ).then(res => {
           workRouting.setData(res);
-
-          let selectedRow = {};
-
-          if (res?.length > 0) {
-            selectedRow = res[0];
-          }
-
-          onSearchAfterRouting(row, selectedRow);
         });
         //#endregion
       } catch (e) {
@@ -859,24 +858,14 @@ export const PgPrdWork = () => {
           });
         });
       } else {
-        const startDatetime = dayjs(routingRow?.['start_date']);
-        const endDatetime = dayjs(routingRow?.['end_date']);
         infoDispatch({
           type: 'CHANGE_ALL_ROUTING',
           value: {
             ...routingRow,
-            _start_date: startDatetime.isValid()
-              ? startDatetime?.format('YYYY-MM-DD')
-              : null,
-            _start_time: startDatetime.isValid()
-              ? startDatetime?.format('HH:mm:ss')
-              : null,
-            _end_date: endDatetime.isValid()
-              ? endDatetime?.format('YYYY-MM-DD')
-              : null,
-            _end_time: endDatetime.isValid()
-              ? endDatetime?.format('HH:mm:ss')
-              : null,
+            _start_date: null,
+            _start_time: null,
+            _end_date: null,
+            _end_time: null,
           },
         }); //실적 디스플레이
       }
