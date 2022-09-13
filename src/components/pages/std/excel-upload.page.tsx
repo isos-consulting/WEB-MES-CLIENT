@@ -129,6 +129,7 @@ export const PgStdExcelUpload: React.FC = () => {
     menu_file_uuid: '',
     menu_nm: '',
     menu_uuid: '',
+    menu_uri: '',
   });
   const dataGridRef = createRef<Grid>(null);
   const menuCombobox: ISearchItem = {
@@ -236,6 +237,24 @@ export const PgStdExcelUpload: React.FC = () => {
         }}
       >
         데이터 검증
+      </Button>
+      <Button
+        onClick={async () => {
+          const validatedDatas = await executeData(
+            dataGridRef.current.getInstance().getData(),
+            menuStore.menu_uri,
+            'post',
+          );
+          if (validatedDatas == null) return;
+          setGridProps({
+            columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
+              ...uploadGridProps.columns.slice(1),
+            ),
+            data: validatedDatas.datas.raws,
+          });
+        }}
+      >
+        저장
       </Button>
       <Searchbox {...props} />
       <Container>
