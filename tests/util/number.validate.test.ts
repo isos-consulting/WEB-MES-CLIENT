@@ -1,88 +1,179 @@
-import EXPRESSSIONS from '../../src/constants/expressions';
+import { isNumber } from '../../src/functions/number';
 
-const isNumberMock = (value: string | number, opt?): boolean => {
-  const regexpMatch = (num, opt) => {
-    if (opt == null || opt === '1')
-      return EXPRESSSIONS.DECIMAL_OPTIONAL_SIGN_COMMA_DOT_GLOBAL.test(num);
-    if (opt === '2')
-      return EXPRESSSIONS.DECIMAL_OPTIONAL_COMMA_DOT_GLOBAL.test(num);
-    if (opt === '3') return EXPRESSSIONS.DECIMAL_OPTIONAL_DOT_GLOBAL.test(num);
+describe('순차적인 숫자(sequencial)', () => {
+  test('순차적인 숫자는 인식한다', () => {
+    expect(isNumber('1')).toBe(true);
+    expect(isNumber('12')).toBe(true);
+    expect(isNumber('123')).toBe(true);
+  });
+});
 
-    throw new Error(`Invalid option: ${opt}`);
-  };
+describe('지수 표현 방식(e)', () => {
+  test('지수 표현 방식(e) 숫자 인식 하지 못한다', () => {
+    expect(isNumber('1e1')).toBe(false);
+    expect(isNumber('1e2')).toBe(false);
+    expect(isNumber('1e3')).toBe(false);
+    expect(isNumber('e1')).toBe(false);
+    expect(isNumber('12e')).toBe(false);
+  });
+  test('javascript 내장 객체는 지수 표현 방식(e) 숫자를 인식한다', () => {
+    expect(Number.isNaN(1e1)).toBe(false);
+    expect(Number.isNaN(1e2)).toBe(false);
+    expect(Number.isNaN(1e3)).toBe(false);
+    expect(Number.isSafeInteger(1e1)).toBe(true);
+    expect(Number.isSafeInteger(1e2)).toBe(true);
+    expect(Number.isSafeInteger(1e3)).toBe(true);
+    expect(Number.isFinite(1e1)).toBe(true);
+    expect(Number.isFinite(1e2)).toBe(true);
+    expect(Number.isFinite(1e3)).toBe(true);
+    expect(Number('e1')).toBe(NaN);
+    expect(Number('12e')).toBe(NaN);
+  });
+});
 
-  const num = String(value).replace(/(?:^\s+)|(?:,+)|(?:\s+$)/g, '');
-  const isNumberMatched = regexpMatch(num, opt);
-
-  if (isNumberMatched === true) {
-    return isNaN(Number(num.replace(/,/g, ''))) ? false : true;
-  } else {
-    return false;
-  }
-};
-
-describe('숫자 유효성 검사 테스트', () => {
-  test('123은 숫자로 인식한다', () => {
-    const number = '123';
-
-    const isValueMatchedNumberSuccess = isNumberMock(number);
-
-    expect(isValueMatchedNumberSuccess).toBe(true);
+describe('소숫점(dot)', () => {
+  test('0.0은 숫자로 인식한다', () => {
+    expect(isNumber('0.0')).toBe(true);
+  });
+  test('0.1는 숫자로 인식한다', () => {
+    expect(isNumber('0.1')).toBe(true);
+  });
+  test('0.10는 숫자로 인식한다', () => {
+    expect(isNumber('0.10')).toBe(true);
+  });
+  test('1.0는 숫자로 인식한다', () => {
+    expect(isNumber('1.0')).toBe(true);
+  });
+  test('.1는 숫자로 인식하지 못한다', () => {
+    expect(isNumber('.1')).toBe(false);
+  });
+  test('1.는 숫자로 인식하지 못한다', () => {
+    expect(isNumber('1.')).toBe(false);
+  });
+  test('0.1.1은 숫자로 인식하지 못한다', () => {
+    expect(isNumber('0.1.1')).toBe(false);
   });
 
-  test('isNumberMock 함수는 지수 표현 123e1을 숫자로 인식하지 못한다', () => {
-    // 123e1 === 123 * 10
-    const exponential = '123e1';
+  test('javascript 내장 객체 소숫점 테스트', () => {
+    expect(Number.isNaN(0.0)).toBe(false);
+    expect(Number.isNaN(0.1)).toBe(false);
+    expect(Number.isNaN(0.1)).toBe(false);
+    expect(Number.isNaN(1.0)).toBe(false);
+    expect(Number.isNaN(Number('.1'))).toBe(false);
+    expect(Number.isNaN(Number('1.'))).toBe(false);
+    expect(Number.isNaN(Number('0.1.1'))).toBe(true);
+    expect(Number('.1')).toBe(0.1);
+    expect(Number('1.')).toBe(1);
+    expect(Number('0.1.1')).toBe(NaN);
+  });
+});
 
-    const isValueMatchedNumberFailure = isNumberMock(exponential);
-    const numberConcreateInstanceSuccess = Number.isInteger(
-      Number(exponential),
-    );
-
-    expect(isValueMatchedNumberFailure).toBe(false);
-    expect(numberConcreateInstanceSuccess).toBe(true);
+describe('구분자(comma)', () => {
+  test('1,000은 숫자로 인식한다', () => {
+    expect(isNumber('1,000')).toBe(true);
+  });
+  test('1,000,000은 숫자로 인식한다', () => {
+    expect(isNumber('1,000,000')).toBe(true);
+  });
+  test('1,000,000,000은 숫자로 인식한다', () => {
+    expect(isNumber('1,000,000,000')).toBe(true);
+  });
+  test('1,00은 숫자로 인식한다', () => {
+    expect(isNumber('1,00')).toBe(true);
+  });
+  test('10,00은 숫자로 인식한다', () => {
+    expect(isNumber('10,00')).toBe(true);
+  });
+  test('100,0은 숫자로 인식한다', () => {
+    expect(isNumber('100,0')).toBe(true);
   });
 
-  test('123.456은 숫자로 인식한다', () => {
-    const dottedNumber = '123.456';
+  test('javascript 내장 객체 Number separtor 테스트', () => {
+    expect(Number.isNaN(1_000)).toBe(false);
+    expect(Number.isNaN(1_000_000)).toBe(false);
+    expect(Number.isNaN(1_000_000_000)).toBe(false);
+    expect(Number.isNaN(1_00)).toBe(false);
+    expect(Number.isNaN(10_0)).toBe(false);
+    expect(1_000).toBe(1000);
+    expect(1_000_000).toBe(1000000);
+    expect(1_000_000_000).toBe(1000000000);
+    expect(1_00).toBe(100);
+    expect(10_0).toBe(100);
+    expect(100.0).toBe(100);
+    expect(100.0_1).toBe(100.01);
+  });
+});
 
-    const isDottedNumberSuccess = isNumberMock(dottedNumber);
+describe('연산자(operator)', () => {
+  test('연산자가 포함되어 있지만 숫자로 인식하는 테스트', () => {
+    expect(isNumber('+1')).toBe(true);
+    expect(isNumber('-1')).toBe(true);
+  });
+  test('연산자가 포함되어 있지만 숫자로 인식하지 못하는 테스트', () => {
+    expect(isNumber('+1+1')).toBe(false);
+    expect(isNumber('-1+1')).toBe(false);
+    expect(isNumber('1+1')).toBe(false);
+    expect(isNumber('1-1')).toBe(false);
+    expect(isNumber('*1')).toBe(false);
+    expect(isNumber('/1')).toBe(false);
+    expect(isNumber('^1')).toBe(false);
+  });
+  test('javascript 내장 객체 연산자 테스트', () => {
+    expect(Number.isNaN(+1)).toBe(false);
+    expect(Number.isNaN(-1)).toBe(false);
+    expect(Number.isNaN(+1 + 1)).toBe(false);
+    expect(Number.isNaN(-1 + 1)).toBe(false);
+    expect(Number.isNaN(1 + 1)).toBe(false);
+    expect(Number.isNaN(1 - 1)).toBe(false);
+    expect(Number.isNaN(Number('+1 + 1'))).toBe(true);
+    expect(Number.isNaN(Number('-1 + 1'))).toBe(true);
+    expect(Number.isNaN(Number('1 + 1'))).toBe(true);
+    expect(Number.isNaN(Number('1 - 1'))).toBe(true);
+    expect(Number.isNaN(Number('*1'))).toBe(true);
+    expect(Number.isNaN(Number('/1'))).toBe(true);
+    expect(Number.isNaN(Number('^1'))).toBe(true);
+    expect(Number('+1')).toBe(1);
+    expect(Number('-1')).toBe(-1);
+    expect(Number('+1 + 1')).toBe(NaN);
+    expect(Number('-1 + 1')).toBe(NaN);
+    expect(Number('1 + 1')).toBe(NaN);
+    expect(Number('1 - 1')).toBe(NaN);
+    expect(Number('*1')).toBe(NaN);
+    expect(Number('/1')).toBe(NaN);
+    expect(Number('^1')).toBe(NaN);
+  });
+});
 
-    expect(isDottedNumberSuccess).toBe(true);
+describe('공백 문자(blank)', () => {
+  test('공백 문자 혹은 빈 문자열은 숫자로 인식하지 못한다', () => {
+    expect(isNumber('')).toBe(false);
+    expect(isNumber(' ')).toBe(false);
   });
 
-  test('123.456와 option === 3을 매개변수 인자로 넘겼을 때 숫자로 인식하지 못한다', () => {
-    const finiteDecimal = '123.456';
-    const decimalOption = '3';
-
-    const isNumberFailure = isNumberMock(finiteDecimal, decimalOption);
-    const isFiniteDecimalSuccess = Number.isFinite(Number(finiteDecimal));
-
-    expect(isNumberFailure).toBe(false);
-    expect(isFiniteDecimalSuccess).toBe(true);
+  test('javascript 내장 객체 공백 문자 테스트', () => {
+    expect(Number.isNaN(Number(' '))).toBe(false);
+    expect(Number.isNaN(Number(''))).toBe(false);
+    expect(Number(' ')).toBe(0);
+    expect(Number('')).toBe(0);
   });
+});
 
-  test('공백 문자는 숫자로 인식하지 않는다', () => {
-    const blank = ' ';
+describe('널(null)', () => {
+  test('isNumber은 첫번째 매개변수를 null로 타입에러를 발생하기 때문에 입력할 수 없다', () => {});
 
-    const isBlankFailure = isNumberMock(blank);
-
-    expect(isBlankFailure).toBe(false);
+  test('javascript 내장 객체 null 테스트', () => {
+    expect(Number.isNaN(Number(null))).toBe(false);
+    expect(Number(null)).toBe(0);
   });
+});
 
-  test('천 단위 콤마를 제외한 숫자는 숫자로 인식한다', () => {
-    const comma = '1,234,567';
+describe('불리언(boolean)', () => {
+  test('isNumber은 첫번째 매개변수를 boolean타입을 전달할 때 타입에러를 발생하기 때문에 입력할 수 없다', () => {});
 
-    const isCommaSuccess = isNumberMock(comma);
-
-    expect(isCommaSuccess).toBe(true);
-  });
-
-  test('처음 혹은 마지막에 공백이 포함 된 정수를 표현하는 문자는 숫자로 인식한다', () => {
-    const blankIncluded = ' 1234 ';
-
-    const isBlankIncludedSuccess = isNumberMock(blankIncluded);
-
-    expect(isBlankIncludedSuccess).toBe(true);
+  test('javascript 내장 객체 불리언 테스트', () => {
+    expect(Number.isNaN(Number(true))).toBe(false);
+    expect(Number.isNaN(Number(false))).toBe(false);
+    expect(Number(true)).toBe(1);
+    expect(Number(false)).toBe(0);
   });
 });
