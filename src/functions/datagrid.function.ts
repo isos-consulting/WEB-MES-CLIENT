@@ -6,8 +6,8 @@ import {
   consoleLogLocalEnv,
   getObjectKeyDuplicateCheck,
   getToday,
-  isNumber,
 } from './util.function';
+import { isNumber } from './number';
 import { executeData, getData } from './comm.function';
 import { message } from 'antd';
 import Grid from '@toast-ui/react-grid';

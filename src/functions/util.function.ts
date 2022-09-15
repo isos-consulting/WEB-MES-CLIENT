@@ -14,7 +14,7 @@ import {
 import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
 import dotenv from 'dotenv';
-import EXPRESSSIONS from '~/constants/expressions';
+import { isNumber } from './number';
 
 dotenv.config();
 /**
@@ -167,55 +167,6 @@ export const setNumberToDigit = (
     return num;
   }
 };
-
-/**
- * 숫자 타입인지 판정 (인자값이 숫자인 경우 true를 반환)
- * @param value 판정할 값
- */
-// export const isNumber = (
-//   value:number | string
-// ) => {
-//   if (!isNaN(Number(value)))
-//     return true;
-//   else
-//     return false;
-// }
-// export function isNumber(data:string | number):boolean {
-//   let tempDataStr:string
-//   let tempDataNum:number
-//   tempDataStr = data + ''; // 문자열로 변환
-//   tempDataStr = tempDataStr.replace(/^\s*|\s*$/g, ''); // 좌우 공백 제거
-//   tempDataStr = tempDataStr.replace(',', ''); // 좌우 공백 제거
-//   tempDataNum= Number(tempDataStr)
-//   if (tempDataStr == '' || isNaN(tempDataNum)) return false;
-//   return true;
-// }
-export function isNumber(value: string | number, opt?): boolean {
-  // 좌우 trim(공백제거)을 해준다.
-  let num = String(value).replace(/(?:^\s+)|(?:,+)|(?:\s+$)/g, '');
-  const tempNum = Number(num);
-
-  if (typeof opt == 'undefined' || opt == '1') {
-    // 모든 10진수 (부호 선택, 자릿수구분기호 선택, 소수점 선택)
-    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_SIGN_COMMA_DOT_GLOBAL;
-  } else if (opt == '2') {
-    // 부호 미사용, 자릿수구분기호 선택, 소수점 선택
-    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_COMMA_DOT_GLOBAL;
-  } else if (opt == '3') {
-    // 부호 미사용, 자릿수구분기호 미사용, 소수점 선택
-    var regex = EXPRESSSIONS.DECIMAL_OPTIONAL_DOT_GLOBAL;
-  } else {
-    if (num === '') return false;
-    if (isNaN(tempNum)) return false;
-  }
-
-  if (regex.test(num)) {
-    num = num.replace(/,/g, '');
-    return isNaN(Number(num)) ? false : true;
-  } else {
-    return false;
-  }
-}
 
 /**
  * object 배열 데이터를 csv로 추출하는 함수입니다.
