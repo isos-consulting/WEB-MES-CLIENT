@@ -6,6 +6,7 @@ const EXPRESSSIONS = {
     /^[+\-]?(([1-9]\d{0,2}(,\d{3})*)|\d+){1}(\.\d+)?$/,
   DECIMAL_OPTIONAL_COMMA_DOT: /^(([1-9]\d{0,2}(,\d{3})*)|\d+){1}(\.\d+)?$/,
   DECIMAL_OPTIONAL_DOT: /^\d+(\.\d+)?$/,
+  COMMA_GLOBAL: /,/g,
 };
 
 export default EXPRESSSIONS;
