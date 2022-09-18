@@ -6,6 +6,9 @@ import { Modal } from 'antd';
 /* Modal 스타일 */
 export const ScModal = styled(Modal)`
   margin-top: -45px;
+
+  min-width: 95vw;
+
   //모달 푸터에 적용
   .ant-modal-footer {
     padding: 10px 20px;
