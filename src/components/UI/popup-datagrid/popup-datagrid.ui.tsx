@@ -15,12 +15,13 @@ import {
   saveGridData,
   setGridFocus,
 } from '~/functions';
-import { Modal, message } from 'antd';
+import { message } from 'antd';
 import Grid from '@toast-ui/react-grid';
 import { Datagrid } from '~/components/UI/datagrid-new';
 import { useRecoilState } from 'recoil';
 import { afPopupVisible } from './popup-datagrid.ui.recoil';
 import { Searchbox } from '~/components/UI/searchbox';
+import { Modal } from '../modal';
 import Props from './popup-datagrid.ui.type';
 import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 import { useLoadingState } from '~/hooks';
@@ -401,20 +402,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
     setGridFocus(gridRef, { rowKey: 0, columnName });
   }, [data]);
 
-  const modalWidthSize: string | number = useMemo(() => {
-    const smSize = '50%';
-    const mdSize = '70%';
-    const lgSize = '90%';
-
-    return props.modalWidth === 'sm'
-      ? smSize
-      : props.modalWidth === 'md'
-      ? mdSize
-      : props.modalWidth === 'lg'
-      ? lgSize
-      : props.modalWidth || mdSize;
-  }, [props.modalWidth]);
-
   return (
     <Modal
       id={gridPopupUuid}
@@ -425,7 +412,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       cancelButtonProps={props.cancelButtonProps}
       cancelText={props.cancelText}
       onCancel={onCancel}
-      width={modalWidthSize}
       visible={props.visible ?? visible}
       maskClosable={false}
       confirmLoading={loading}
