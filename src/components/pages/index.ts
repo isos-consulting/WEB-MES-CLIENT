@@ -1,5 +1,4 @@
 export * from './login.page';
-export * from './test-double-grid.page';
 
 export * from './adm/cycle-unit.page';
 export * from './adm/daily-insp-cycle.page';
