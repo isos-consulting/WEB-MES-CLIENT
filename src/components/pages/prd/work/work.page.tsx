@@ -285,10 +285,10 @@ export const PgPrdWork = () => {
     });
   };
 
-  const saveWorkRouting = async (workData, routingData) => {
+  const saveWorkRouting = async (_workData, routingData) => {
     const SAVE_URI_PATH = '/prd/work-routings';
 
-    const result = await executeData(
+    const isSavedWorkRouting = await executeData(
       [
         {
           uuid: routingData?.['uuid'],
@@ -302,21 +302,19 @@ export const PgPrdWork = () => {
           ongoing_fg: routingData?.['ongoing_fg'],
           prd_signal_cnt: routingData?.['prd_signal_cnt'],
           remark: routingData?.['remark'],
+          work_routing_origin_uuid: routingData?.['work_routing_origin_uuid'],
         },
       ],
       SAVE_URI_PATH,
       'put',
       'success',
-    )
-      .then(success => {
-        return true;
-      })
-      .catch(e => {
-        console.error(e);
-        message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
-      });
+    );
 
-    return !!result;
+    if (isSavedWorkRouting !== true)
+      console.error(`공정별 분할 실적 중간 저장 API 요청 중 문제 발생했습니다.
+     자세한 내용은 브라우저 개발자 도구의 네트워크 탭을 확인해주세요.`);
+
+    return isSavedWorkRouting === true;
   };
 
   /** 생산실적 중간저장 처리 */
@@ -362,7 +360,6 @@ export const PgPrdWork = () => {
       okText: '예',
       cancelText: '아니오',
       onOk: () => {
-        // 실적 중간 저장
         saveWorkRouting(workData, routingData).then((result: boolean) => {
           if (result === true) {
             message.info('정상적으로 저장되었습니다.');
