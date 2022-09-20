@@ -272,7 +272,7 @@ export const PgPrdWork = () => {
           .then(success => {
             if (success === true) {
               message.info('정상적으로 삭제되었습니다.');
-              searchInfo?.onSearch();
+              searchInfo?.onSearch(searchInfo.values);
             } else {
               message.error('오류가 발생했습니다. 관리자에게 문의해주세요.');
             }
