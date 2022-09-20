@@ -49,7 +49,7 @@ const gridColumns = async (excelFormCode: string) => {
   }
 
   const columns = await getData(
-    [{ excel_form_cd: excelFormCode }],
+    { excel_form_cd: excelFormCode },
     'adm/excel-forms',
   );
 
