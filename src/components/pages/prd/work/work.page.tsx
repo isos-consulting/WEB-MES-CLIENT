@@ -1280,7 +1280,13 @@ const WorkRoutingHisotryModal = ({
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
       visible={visible}
-      columns={[...ColumnStore.WORK_ROUTING_HISTORY]}
+      columns={[ColumnStore.WORK_ROUTING_HISTORY].concat([
+        {
+          header: '실행취소',
+          name: 'cancel',
+          format: 'button',
+        },
+      ])}
       data={workRoutingHistory}
       TAB_CODE={TAB_CODE}
       workerReadOnly={workerReadOnly}
