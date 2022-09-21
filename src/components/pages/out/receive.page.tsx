@@ -109,6 +109,7 @@ export const PgOutReceive = () => {
         name: 'total_price',
         width: ENUM_WIDTH.L,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
       },
       {
         header: '비고',
@@ -292,6 +293,7 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
         requiredField: true,
         formula: {
@@ -306,6 +308,7 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '수량',
@@ -313,6 +316,7 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
         formula: {
@@ -326,6 +330,7 @@ export const PgOutReceive = () => {
         name: 'total_price',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         filter: 'number',
         requiredField: true,
         defaultValue: (props, row) => {
@@ -389,6 +394,7 @@ export const PgOutReceive = () => {
         name: 'unit_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -678,6 +684,7 @@ export const PgOutReceive = () => {
             name: 'mat_order_min_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_STCOK,
           },
           {
             header: 'LOT_NO',

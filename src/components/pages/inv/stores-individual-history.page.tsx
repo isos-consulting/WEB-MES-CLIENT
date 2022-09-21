@@ -124,7 +124,6 @@ export const PgInvStoresIndividualHistory = () => {
       header: '위치',
       width: ENUM_WIDTH.M,
       name: 'location_nm',
-      format: 'number',
       filter: 'number',
     },
     {

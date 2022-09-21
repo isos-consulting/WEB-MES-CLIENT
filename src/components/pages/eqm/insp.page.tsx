@@ -16,7 +16,13 @@ import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.tem
 import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
-import { ENUM_WIDTH, URL_PATH_ADM, URL_PATH_EQM, URL_PATH_STD } from '~/enums';
+import {
+  ENUM_DECIMAL,
+  ENUM_WIDTH,
+  URL_PATH_ADM,
+  URL_PATH_EQM,
+  URL_PATH_STD,
+} from '~/enums';
 import { cloneDeep } from 'lodash';
 
 /** 설비기준서관리 */
@@ -274,6 +280,7 @@ export const PgEqmInsp = () => {
         name: 'spec_min',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
         filter: 'number',
       },
       {
@@ -281,6 +288,7 @@ export const PgEqmInsp = () => {
         name: 'spec_max',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
         filter: 'number',
       },
       {
@@ -352,6 +360,7 @@ export const PgEqmInsp = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         filter: 'number',
       },
       {

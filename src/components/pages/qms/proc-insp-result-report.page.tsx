@@ -22,7 +22,7 @@ import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 
 // 날짜 로케일 설정
@@ -384,6 +384,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '생산 수량',
@@ -391,6 +392,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '양품 수량',
@@ -398,6 +400,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '부적합 수량',
@@ -405,6 +408,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '생산시작 일시',

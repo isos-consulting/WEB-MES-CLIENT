@@ -20,7 +20,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 /** 자재출고요청관리 */
 export const PgPrdDemand = () => {
@@ -169,6 +169,7 @@ export const PgPrdDemand = () => {
         name: 'qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
         editable: true,
         requiredField: true,

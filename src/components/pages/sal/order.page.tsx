@@ -118,6 +118,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
       },
     ],
     {
@@ -264,6 +265,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'price',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
         requiredField: true,
         formula: {
@@ -277,6 +279,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'exchange',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
         requiredField: true,
         formula: {
@@ -290,6 +293,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
         formula: {
@@ -303,6 +307,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'total_price',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
       },
       {
@@ -310,6 +315,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.M,
         name: 'unit_qty',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
       },
       {
@@ -475,7 +481,7 @@ export const PgSalOrder = () => {
           name: 'unit_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '단위UUID',

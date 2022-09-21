@@ -12,7 +12,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { cloneDeep } from 'lodash';
 
@@ -150,6 +150,7 @@ export const PgSalIncome = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },
@@ -460,6 +461,7 @@ export const PgSalIncome = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_STCOK,
           },
         ],
         dataApiSettings: ev => {

@@ -11,7 +11,7 @@ import {
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
 
 /** 비가동현황 */
@@ -199,6 +199,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
           {
             header: '비고',
@@ -305,6 +306,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
           {
             header: '비고',
@@ -411,6 +413,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
           {
             header: '비고',
@@ -510,6 +513,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
           {
             header: '비고',
@@ -550,6 +554,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
         ];
         break;
@@ -575,6 +580,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
         ];
         break;
@@ -613,6 +619,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_NOMAL,
           },
         ];
         break;

@@ -1,5 +1,5 @@
 import { IGridColumn, ISearchItem } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_WIDTH, ENUM_DECIMAL } from '~/enums';
 
 export const searchFields: ISearchItem[] = [
   {
@@ -72,6 +72,7 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
     name: 'order_qty',
     width: ENUM_WIDTH.M,
     format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
     filter: 'number',
     align: 'center',
   },

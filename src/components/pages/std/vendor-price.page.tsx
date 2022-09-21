@@ -262,6 +262,7 @@ export const PgStdVendorPrice = () => {
         name: 'retroactive_price',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
       },
       {
@@ -269,6 +270,7 @@ export const PgStdVendorPrice = () => {
         name: 'division',
         width: ENUM_WIDTH.S,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         editable: true,
       },
       {

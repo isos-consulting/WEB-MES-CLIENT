@@ -20,6 +20,7 @@ import {
 } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
+import { ENUM_DECIMAL } from '~/enums';
 
 //#region 🔶✅공정순서
 /** 공정순서 */
@@ -117,6 +118,7 @@ export const ROUTING = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
       editable: true,
     },
     {
@@ -157,6 +159,7 @@ export const ROUTING = () => {
       width: 100,
       hidden: true,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_NOMAL,
     },
     {
       header: '비고',

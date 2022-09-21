@@ -159,7 +159,7 @@ export const INPUT = () => {
       name: 'qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       editable: true,
     },
     {
@@ -167,7 +167,7 @@ export const INPUT = () => {
       name: 'required_work_qty',
       width: ENUM_WIDTH.L,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
     },
     { header: '소요량', name: 'c_usage', width: ENUM_WIDTH.M },
     {
@@ -627,14 +627,14 @@ export const INPUT_POPUP = (props: {
       name: 'qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
     },
     {
       header: '실적기준 투입필요 수량',
       name: 'required_work_qty',
       width: ENUM_WIDTH.L,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
     },
     { header: '소요량', name: 'c_usage', width: ENUM_WIDTH.M },
     {
@@ -1115,6 +1115,7 @@ export const INPUT_POPUP_CREATE = (props: {
       name: 'stock_qty',
       width: ENUM_WIDTH.L,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       noSave: true,
     },
     {
@@ -1123,7 +1124,7 @@ export const INPUT_POPUP_CREATE = (props: {
       width: ENUM_WIDTH.XL,
       format: 'number',
       editable: true,
-      decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
     },
     {
       header: '창고UUID',

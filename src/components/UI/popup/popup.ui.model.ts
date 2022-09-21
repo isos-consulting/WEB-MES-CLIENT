@@ -423,11 +423,12 @@ const getPI_StdProd = (
           format: 'text',
         },
         {
-          header: '단위아최소 단위수량',
+          header: '단위 최소 단위수량',
           name: 'mat_order_min_qty',
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '발주 소요일',
@@ -456,6 +457,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '안전 재고수량',
@@ -463,6 +465,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '입고 창고아이디',
@@ -557,6 +560,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '최대값',
@@ -564,6 +568,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '등록일자',
@@ -630,6 +635,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '길이',
@@ -637,6 +643,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '높이',
@@ -644,6 +651,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '재질',
@@ -665,6 +673,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '두께',
@@ -672,6 +681,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '발주 사용유무',
@@ -796,6 +806,7 @@ const getPI_StdProd2 = (
           width: ENUM_WIDTH.M,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '단위UUID',
@@ -1726,6 +1737,7 @@ const getPI_StdVendorPrice = (
           filter: 'text',
           editable: true,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '등록일자',
@@ -2164,6 +2176,7 @@ const getPI_StdCustomerPrice = (
           name: 'unit_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         { header: '단위UUID', name: 'unit_uuid', format: 'text', hidden: true },
         {
@@ -2380,6 +2393,7 @@ const getPI_SalOrderDetail = (
           name: 'qty',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
           filter: 'number',
         },
         {
@@ -2387,6 +2401,7 @@ const getPI_SalOrderDetail = (
           name: 'balance',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
           filter: 'number',
         },
         {
@@ -2583,6 +2598,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'order_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
           filter: 'number',
         },
         {
@@ -2590,6 +2606,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'qty',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
           filter: 'number',
         },
         {
@@ -2597,6 +2614,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'balance',
           width: ENUM_WIDTH.M,
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
           filter: 'number',
         },
         {

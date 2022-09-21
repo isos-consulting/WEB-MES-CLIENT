@@ -12,6 +12,8 @@ export const ENUM_DECIMAL = {
   DEC_USE_STOCK: 4,
   /** 2 */
   DEC_STCOK: 2,
+  /** 2 */
+  DEC_INSPECT_SPEC: 2,
 };
 
 /** 컬럼 너비 지정 enum */

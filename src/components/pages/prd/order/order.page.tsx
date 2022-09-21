@@ -20,7 +20,7 @@ import {
   InputGroupbox,
   useInputGroup,
 } from '~/components/UI/input-groupbox';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   getData,
   getModifiedRows,
@@ -423,6 +423,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         filter: 'number',
       },
       {
@@ -544,6 +545,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '지시수량',
@@ -551,6 +553,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         requiredField: true,
       },
       { header: '지시순번', name: 'seq', width: ENUM_WIDTH.M, hidden: true },
@@ -590,6 +593,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         hidden: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
       },
       {
         header: '수주UUID',
@@ -767,6 +771,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         filter: 'number',
       },
       {
@@ -865,6 +870,7 @@ export const PgPrdOrder = () => {
         name: 'plan_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '지시수량',
@@ -872,6 +878,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         requiredField: true,
       },
       { header: '지시순번', name: 'seq', width: ENUM_WIDTH.M, hidden: true },
@@ -1001,6 +1008,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         filter: 'number',
       },
       {
@@ -1104,6 +1112,7 @@ export const PgPrdOrder = () => {
         name: 'plan_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '지시수량',
@@ -1111,6 +1120,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         requiredField: true,
       },
       {
@@ -1119,6 +1129,7 @@ export const PgPrdOrder = () => {
         width: ENUM_WIDTH.S,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         hidden: true,
       },
       {

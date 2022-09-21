@@ -86,6 +86,7 @@ export const PgMatReturn = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
       },
     ],
     {
@@ -166,6 +167,7 @@ export const PgMatReturn = () => {
         width: 100,
         filter: 'text',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: 'LOT NO',
@@ -468,6 +470,7 @@ export const PgMatReturn = () => {
             name: 'convert_value',
             width: ENUM_WIDTH.S,
             format: 'number',
+            decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
             filter: 'number',
             hidden: true,
           },

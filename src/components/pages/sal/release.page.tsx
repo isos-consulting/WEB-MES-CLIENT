@@ -157,6 +157,7 @@ export const PgSalRelease = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },
@@ -174,6 +175,7 @@ export const PgSalRelease = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '제품출하지시상세UUID',
@@ -189,6 +191,7 @@ export const PgSalRelease = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '출고창고UUID',
@@ -524,7 +527,7 @@ export const PgSalRelease = () => {
             width: ENUM_WIDTH.M,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_STCOK,
           },
           {
             header: '단위UUID',
@@ -561,7 +564,7 @@ export const PgSalRelease = () => {
             width: ENUM_WIDTH.S,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_USE_STOCK,
           },
         ],
         dataApiSettings: () => {

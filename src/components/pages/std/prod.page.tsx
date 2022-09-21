@@ -222,6 +222,7 @@ export const PgStdProd = () => {
         editable: true,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
       },
       {
         header: '재고관리여부',

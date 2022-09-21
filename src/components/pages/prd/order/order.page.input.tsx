@@ -131,11 +131,12 @@ export const orderInput = () => {
         { header: '리비전', name: 'rev', width: 100, filter: 'text' },
         { header: '규격', name: 'prod_std', width: 150, filter: 'text' },
         {
-          header: '단위아최소 단위수량',
+          header: '단위 최소 단위수량',
           name: 'mat_order_min_qty',
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '발주 소요일',
@@ -164,6 +165,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '안전 재고수량',
@@ -171,6 +173,7 @@ export const orderInput = () => {
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
         },
         {
           header: '입고 창고아이디',
@@ -258,6 +261,7 @@ export const orderInput = () => {
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '최대값',
@@ -265,6 +269,7 @@ export const orderInput = () => {
           width: 150,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '등록일자',
@@ -322,6 +327,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '길이',
@@ -329,6 +335,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '높이',
@@ -336,6 +343,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         { header: '재질', name: 'material', width: 100, filter: 'text' },
         { header: '색상', name: 'color', width: 100, filter: 'text' },
@@ -345,6 +353,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '두께',
@@ -352,6 +361,7 @@ export const orderInput = () => {
           width: 100,
           filter: 'text',
           format: 'number',
+          decimal: ENUM_DECIMAL.DEC_NOMAL,
         },
         {
           header: '발주 사용유무',

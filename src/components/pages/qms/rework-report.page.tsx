@@ -172,6 +172,7 @@ export const PgQmsReworkReport = () => {
         name: 'qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -456,6 +457,7 @@ export const PgQmsReworkReport = () => {
         name: 'income_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -463,6 +465,7 @@ export const PgQmsReworkReport = () => {
         name: 'return_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -470,6 +473,7 @@ export const PgQmsReworkReport = () => {
         name: 'disposal_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -845,6 +849,7 @@ export const PgQmsReworkReport = () => {
         name: 'usage',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
         filter: 'number',
       },
       {
@@ -852,6 +857,7 @@ export const PgQmsReworkReport = () => {
         name: 'qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -867,6 +873,7 @@ export const PgQmsReworkReport = () => {
         name: 'income_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
         defaultValue: 0,
         editable: true,
@@ -910,6 +917,7 @@ export const PgQmsReworkReport = () => {
         name: 'return_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
         defaultValue: 0,
         editable: true,
@@ -953,6 +961,7 @@ export const PgQmsReworkReport = () => {
         name: 'disposal_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
         defaultValue: 0,
       },

@@ -213,10 +213,10 @@ export const PgInvStore = () => {
         name: 'qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
         filter: 'number',
         editable: true,
         requiredField: true,
-        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '비고',
@@ -596,10 +596,10 @@ export const PgInvStore = () => {
         name: 'qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
         filter: 'number',
         editable: true,
         requiredField: true,
-        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       // {header: '실사수량', name:'inv_qty', width:ENUM_WIDTH.M, format:'number', filter:'number', decimal:ENUM_DECIMAL.DEC_STCOK, editable:true, hidden:grid?.gridInfo?.gridMode === defaultGridMode},
     ];
@@ -843,6 +843,7 @@ export const PgInvStore = () => {
       name: 'qty',
       width: ENUM_WIDTH.M,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     {

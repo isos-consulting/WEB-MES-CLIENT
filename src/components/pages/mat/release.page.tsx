@@ -189,6 +189,7 @@ export const PgMatRelease = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },
@@ -501,7 +502,7 @@ export const PgMatRelease = () => {
             width: ENUM_WIDTH.M,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_STCOK,
           },
           {
             header: '단위UUID',
@@ -530,7 +531,7 @@ export const PgMatRelease = () => {
             width: ENUM_WIDTH.S,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_USE_STOCK,
           },
         ],
         dataApiSettings: () => {
@@ -909,6 +910,7 @@ export const PgMatRelease = () => {
                 header: '수량',
                 width: ENUM_WIDTH.M,
                 format: 'number',
+                decimal: ENUM_DECIMAL.DEC_STCOK,
                 filter: 'number',
               },
               {
@@ -916,6 +918,7 @@ export const PgMatRelease = () => {
                 header: '미납 수량',
                 width: ENUM_WIDTH.M,
                 format: 'number',
+                decimal: ENUM_DECIMAL.DEC_STCOK,
                 filter: 'number',
               },
               {

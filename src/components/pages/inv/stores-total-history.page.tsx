@@ -10,7 +10,7 @@ import {
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 /** 재고실사현황 */
 export const PgInvStoresTotalHistory = () => {
@@ -100,6 +100,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'qty',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
       hidden: true,
     },
@@ -122,6 +123,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'basic_stock',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     {
@@ -129,6 +131,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'in_qty',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     {
@@ -136,6 +139,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'out_qty',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     {
@@ -143,6 +147,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'update_qty',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     {
@@ -150,6 +155,7 @@ export const PgInvStoresTotalHistory = () => {
       width: ENUM_WIDTH.M,
       name: 'final_stock',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
     { header: '비고', width: ENUM_WIDTH.XL, name: 'remark', filter: 'text' },

@@ -198,6 +198,8 @@ export const PgSalOutgoOrder = () => {
         header: '수주수량',
         name: 'order_qty',
         width: ENUM_WIDTH.M,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'text',
       },
       {
@@ -206,6 +208,7 @@ export const PgSalOutgoOrder = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },
@@ -213,6 +216,8 @@ export const PgSalOutgoOrder = () => {
         header: '미납수량',
         name: 'balance',
         width: ENUM_WIDTH.M,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'text',
       },
       {
@@ -430,14 +435,14 @@ export const PgSalOutgoOrder = () => {
                           name: 'qty',
                           width: ENUM_WIDTH.S,
                           format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_NOMAL,
+                          decimal: ENUM_DECIMAL.DEC_STCOK,
                         },
                         {
                           header: '미납량',
                           name: 'balance',
                           width: ENUM_WIDTH.S,
                           format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_NOMAL,
+                          decimal: ENUM_DECIMAL.DEC_STCOK,
                         },
                         {
                           header: '화폐단위UUID',

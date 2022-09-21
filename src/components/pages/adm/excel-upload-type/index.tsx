@@ -12,6 +12,7 @@ import {
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import ModalStore from '~/constants/modals';
+import { ENUM_DECIMAL } from '~/enums';
 import { executeData, getModifiedRows, getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
@@ -76,6 +77,7 @@ const columns: IGridColumn[] = [
     header: '순서',
     name: 'order',
     format: 'number',
+    decimal: ENUM_DECIMAL.DEC_NOMAL,
     editable: true,
     requiredField: true,
   },
@@ -156,7 +158,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
   });
   const [modalContextStore, setModalContextStore] =
     useState<IGridPopupProps>(basicModalContext);
-
+  console.log(columns);
   return (
     <>
       {modalContextStore.visible === true ? (

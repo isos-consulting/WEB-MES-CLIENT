@@ -24,6 +24,7 @@ import {
   IInputGroupboxItem,
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
+import { ENUM_DECIMAL } from '~/enums';
 import {
   cloneObject,
   executeData,
@@ -157,6 +158,7 @@ export const INSP = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
     },
     {
       header: '최대 값',
@@ -164,6 +166,7 @@ export const INSP = () => {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
     },
     {
       header: '검사방법UUID',

@@ -129,6 +129,7 @@ export const orderRoute = () => {
         hidden: false,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         align: 'center',
         requiredField: true,
       },
@@ -215,6 +216,7 @@ export const orderRoute = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
       },
       {
         header: '설비UUID',
@@ -292,6 +294,7 @@ export const orderRoute = () => {
         hidden: false,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
         align: 'center',
         requiredField: true,
       },
@@ -376,6 +379,7 @@ export const orderRoute = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_NOMAL,
       },
       {
         header: '설비UUID',

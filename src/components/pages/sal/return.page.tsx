@@ -275,6 +275,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         requiredField: true,
         editable: true,
         formula: {

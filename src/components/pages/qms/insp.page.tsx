@@ -603,6 +603,7 @@ export const PgQmsInsp = () => {
       name: 'position_no',
       width: ENUM_WIDTH.M,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_NOMAL,
       filter: 'number',
     },
     {
@@ -618,7 +619,7 @@ export const PgQmsInsp = () => {
       width: ENUM_WIDTH.M,
       format: 'number',
       filter: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
     },
     {
       header: 'MAX',
@@ -626,7 +627,7 @@ export const PgQmsInsp = () => {
       width: ENUM_WIDTH.M,
       format: 'number',
       filter: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
     },
     {
       header: '검사방법UUID',

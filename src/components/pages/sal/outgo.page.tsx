@@ -230,6 +230,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: '지시수량',
@@ -237,6 +238,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
       },
       {
         header: 'LOT NO',
@@ -295,6 +297,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         requiredField: true,
         editable: true,
         formula: {
@@ -360,6 +363,7 @@ export const PgSalOutgo = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
       },
       {

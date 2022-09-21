@@ -10,7 +10,7 @@ import {
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { OptComplexColumnInfo } from 'tui-grid/types/options';
 
 /** 유형별 수불부 */
@@ -106,12 +106,14 @@ export const PgInvStoresTypeHistory = () => {
         name: tranTypes[i]?.tran_type_cd + '_in_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       });
       _columns.push({
         header: '출고',
         name: tranTypes[i]?.tran_type_cd + '_out_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       });
     }
     return _columns;

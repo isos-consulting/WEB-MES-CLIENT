@@ -97,6 +97,7 @@ export const PgOutRelease = () => {
         name: 'total_qty',
         width: ENUM_WIDTH.L,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
       },
     ],
     {
@@ -271,6 +272,7 @@ export const PgOutRelease = () => {
         name: 'exchange',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         filter: 'number',
         editable: true,
         requiredField: true,
@@ -285,6 +287,7 @@ export const PgOutRelease = () => {
         name: 'order_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -307,6 +310,7 @@ export const PgOutRelease = () => {
         name: 'total_price',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         filter: 'number',
         defaultValue: (props, row) => {
           if (row == null) return;
@@ -360,6 +364,7 @@ export const PgOutRelease = () => {
         name: 'unit_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         filter: 'number',
       },
       {
@@ -528,7 +533,7 @@ export const PgOutRelease = () => {
             name: 'unit_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_STCOK,
           },
           {
             header: '단위UUID',
@@ -594,7 +599,7 @@ export const PgOutRelease = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_USE_STOCK,
           },
           {
             header: '화폐단위UUID',
@@ -632,7 +637,7 @@ export const PgOutRelease = () => {
             name: 'exchange',
             width: ENUM_WIDTH.S,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_PRICE,
           },
         ],
         dataApiSettings: () => {

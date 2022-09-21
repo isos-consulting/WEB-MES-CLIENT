@@ -108,6 +108,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
       },
     ],
     {
@@ -255,6 +256,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'price',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
         requiredField: true,
       },
@@ -263,6 +265,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'exchange',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
         requiredField: true,
       },
@@ -271,6 +274,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },
@@ -279,6 +283,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'total_price',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
         editable: true,
       },
       {
@@ -286,6 +291,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.M,
         name: 'unit_qty',
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
       },
       {

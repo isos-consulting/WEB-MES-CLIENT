@@ -1,5 +1,5 @@
 import { IGridColumn } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_WIDTH, ENUM_DECIMAL } from '~/enums';
 
 export const ColumnStore: { [key: string]: IGridColumn[] } = {
   WORK_TYPE: [
@@ -142,6 +142,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.M,
       editable: true,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_NOMAL,
     },
   ],
   WORK_PERFORMANCE: [
@@ -313,6 +314,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '생산 수량',
@@ -320,6 +322,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '양품 수량',
@@ -327,6 +330,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '부적합 수량',
@@ -334,6 +338,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
     },
     {
       header: '생산시작 일시',
@@ -718,6 +723,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: 100,
       hidden: false,
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_NOMAL,
     },
     {
       header: '수주UUID',

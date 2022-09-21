@@ -21,6 +21,7 @@ import {
 } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import { cloneDeep, pick } from 'lodash';
+import { ENUM_DECIMAL } from '~/enums';
 
 const DATA_PICKUP_INFO = {
   create: [
@@ -110,6 +111,7 @@ export const REJECT = () => {
         name: 'qty',
         width: 100,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
         editable: true,
         requiredField: true,
       },

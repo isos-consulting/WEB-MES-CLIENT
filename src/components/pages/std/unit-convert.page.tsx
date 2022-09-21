@@ -130,6 +130,7 @@ export const PgStdUnitConvert = () => {
         name: 'convert_value',
         width: ENUM_WIDTH.L,
         format: 'number',
+        decimal: ENUM_DECIMAL.DEC_UNIT_CHANGE,
         editable: true,
         defaultValue: 1,
         hidden: true,

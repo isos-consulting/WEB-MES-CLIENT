@@ -10,7 +10,7 @@ import {
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH, URL_PATH_INV } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_INV } from '~/enums';
 
 /** 재고실사현황 */
 export const PgInvStoresStocks = () => {
@@ -86,6 +86,7 @@ export const PgInvStoresStocks = () => {
       width: ENUM_WIDTH.M,
       name: 'qty',
       format: 'number',
+      decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       filter: 'number',
     },
   ];
