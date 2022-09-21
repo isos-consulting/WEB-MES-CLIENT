@@ -56,6 +56,7 @@ import { Searchbox } from '../searchbox';
 import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
 import dotenv from 'dotenv';
+import { errorRequireDecimal } from '~/error';
 
 dotenv.config();
 //#region 🔶Tui-Grid 설정 관련
@@ -577,6 +578,9 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         case 'number': // 숫자 타입 세팅
           if (el?.editable === true) {
             // 에디터
+            if (props.decimal == null) {
+              errorRequireDecimal.generate();
+            }
             el['editor'] = {
               type: DatagridNumberEditor,
               options: {
