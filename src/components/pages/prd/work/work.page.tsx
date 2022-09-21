@@ -55,6 +55,7 @@ import {
   WorkRoutingHistoryModalInWorkPerformancePage,
 } from './work-performance/components/Modal';
 import { TuiGridEvent } from 'tui-grid/types/event';
+import TuiGrid from 'tui-grid';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1254,6 +1255,29 @@ const ProdOrderModal = ({ visible, onClose }) => {
 };
 //#endregion
 
+const cancelWorkRoutingState = (
+  _dataGridButtonClickEvent,
+  { grid, rowKey }: { grid: TuiGrid; rowKey: number },
+) => {
+  Modal.confirm({
+    title: '실적 취소',
+    content: '실적을 취소하시겠습니까?',
+    okText: '예',
+    cancelText: '아니오',
+    onOk: async () => {
+      const workRoutingCancelResult = await executeData(
+        [{ uuid: grid.getRow(rowKey).work_routing_uuid }],
+        '/prd/work-routings/cancel-complete',
+        'put',
+        'success',
+      );
+
+      if (workRoutingCancelResult === true)
+        message.info('실적 취소가 완료되었습니다.');
+    },
+  });
+};
+
 const WorkRoutingHisotryModal = ({
   visible,
   work_uuid,
@@ -1277,7 +1301,17 @@ const WorkRoutingHisotryModal = ({
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
       visible={visible}
-      columns={[...ColumnStore.WORK_ROUTING_HISTORY]}
+      columns={[...ColumnStore.WORK_ROUTING_HISTORY].concat([
+        {
+          header: '실적완료취소',
+          name: 'cancel',
+          format: 'button',
+          options: {
+            value: '실적취소',
+            onClick: cancelWorkRoutingState,
+          },
+        },
+      ])}
       data={workRoutingHistory}
       TAB_CODE={TAB_CODE}
       workerReadOnly={workerReadOnly}

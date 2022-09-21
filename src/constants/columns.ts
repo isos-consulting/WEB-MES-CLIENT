@@ -796,10 +796,5 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       header: '비고',
       name: 'remark',
     },
-    {
-      header: '실행취소',
-      name: 'cancel',
-      format: 'button',
-    },
   ],
 };
