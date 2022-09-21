@@ -578,7 +578,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
         case 'number': // 숫자 타입 세팅
           if (el?.editable === true) {
             // 에디터
-            if (props.decimal == null) {
+            if (el.decimal == null) {
               errorRequireDecimal.generate();
             }
             el['editor'] = {
