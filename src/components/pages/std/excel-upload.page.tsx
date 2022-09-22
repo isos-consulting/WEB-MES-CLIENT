@@ -118,19 +118,9 @@ export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
     columns: DataGridColumns[];
     data: DataGridDatas[];
-  }>({
-    columns: [],
-    data: [],
-  });
-  const [menuStore, setMenuStore] = useState<MenuStore>({
-    file_extension: '',
-    file_name: '',
-    file_type: '',
-    menu_file_uuid: '',
-    menu_nm: '',
-    menu_uuid: '',
-    menu_uri: '',
-  });
+  }>(INITIAL_UPLOAD_GRID_PROPS);
+
+  const [menuStore, setMenuStore] = useState<MenuStore>(INITIAL_MENU_STORE);
   const dataGridRef = createRef<Grid>(null);
   const menuCombobox: ISearchItem = {
     type: 'combo',
@@ -195,67 +185,60 @@ export const PgStdExcelUpload: React.FC = () => {
     URL.revokeObjectURL(blob.toString());
   };
 
+  const beforeSelecedExcelFile = async uploadFile => {
+    const converted = await importXLSXFile(
+      uploadFile,
+      11,
+      uploadGridProps.columns,
+    );
+
+    setGridProps({
+      columns: uploadGridProps.columns,
+      data: converted,
+    });
+    return false;
+  };
+
+  const validateData = async () => {
+    const validatedDatas = await executeData(
+      dataGridRef.current.getInstance().getData(),
+      'std/partners/excel-validation',
+      'post',
+    );
+    if (validatedDatas == null) return;
+    setGridProps({
+      columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
+        ...uploadGridProps.columns.slice(1),
+      ),
+      data: validatedDatas.datas.raws,
+    });
+  };
+
+  const saveData = async () => {
+    const validatedDatas = await executeData(
+      dataGridRef.current.getInstance().getData(),
+      menuStore.menu_uri,
+      'post',
+    );
+    if (validatedDatas == null) return;
+    setGridProps({
+      columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
+        ...uploadGridProps.columns.slice(1),
+      ),
+      data: validatedDatas.datas.raws,
+    });
+  };
+
   return (
     <>
-      <Button
-        onClick={() => {
-          downloadFile();
-        }}
-      >
-        다운로드
-      </Button>
+      <Button onClick={downloadFile}>다운로드</Button>
+      <Button onClick={() => downloadFile()}>다운로드</Button>
       <Button.Upload
         text="업로드 파일 선택하기"
-        beforeUpload={async uploadFile => {
-          const converted = await importXLSXFile(
-            uploadFile,
-            11,
-            uploadGridProps.columns,
-          );
-
-          setGridProps({
-            columns: uploadGridProps.columns,
-            data: converted,
-          });
-          return false;
-        }}
+        beforeUpload={beforeSelecedExcelFile}
       />
-      <Button
-        onClick={async () => {
-          const validatedDatas = await executeData(
-            dataGridRef.current.getInstance().getData(),
-            'std/partners/excel-validation',
-            'post',
-          );
-          if (validatedDatas == null) return;
-          setGridProps({
-            columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
-              ...uploadGridProps.columns.slice(1),
-            ),
-            data: validatedDatas.datas.raws,
-          });
-        }}
-      >
-        데이터 검증
-      </Button>
-      <Button
-        onClick={async () => {
-          const validatedDatas = await executeData(
-            dataGridRef.current.getInstance().getData(),
-            menuStore.menu_uri,
-            'post',
-          );
-          if (validatedDatas == null) return;
-          setGridProps({
-            columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
-              ...uploadGridProps.columns.slice(1),
-            ),
-            data: validatedDatas.datas.raws,
-          });
-        }}
-      >
-        저장
-      </Button>
+      <Button onClick={validateData}>데이터 검증</Button>
+      <Button onClick={saveData}>저장</Button>
       <Searchbox {...props} />
       <Container>
         {uploadGridProps.columns.length === 0 ? (
@@ -271,128 +254,145 @@ export const PgStdExcelUpload: React.FC = () => {
             columns={uploadGridProps.columns}
             ref={dataGridRef}
             disabledAutoDateColumn={true}
-            gridPopupInfo={[
-              {
-                // 거래처유형 팝업
-                columnNames: [
-                  { original: 'partner_type_uuid', popup: 'partner_type_uuid' },
-                  { original: 'partner_type_cd', popup: 'partner_type_cd' },
-                  { original: 'partner_type_nm', popup: 'partner_type_nm' },
-                ],
-                columns: [
-                  {
-                    header: '거래처유형UUID',
-                    name: 'partner_type_uuid',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                    hidden: true,
-                  },
-                  {
-                    header: '거래처유형코드',
-                    name: 'partner_type_cd',
-                    width: ENUM_WIDTH.M,
-                    filter: 'text',
-                  },
-                  {
-                    header: '거래처유형명',
-                    name: 'partner_type_nm',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                  },
-                ],
-                dataApiSettings: {
-                  uriPath: '/std/partner-types',
-                  params: null,
-                },
-                gridMode: 'select',
-              },
-              {
-                // 창고팝업
-                columnNames: [
-                  { original: 'to_store_uuid', popup: 'store_uuid' },
-                  { original: 'to_store_cd', popup: 'store_cd' },
-                  { original: 'to_store_nm', popup: 'store_nm' },
-                ],
-                columns: [
-                  {
-                    header: '창고UUID',
-                    name: 'store_uuid',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                    hidden: true,
-                  },
-                  {
-                    header: '창고코드',
-                    name: 'store_cd',
-                    width: ENUM_WIDTH.M,
-                    filter: 'text',
-                  },
-                  {
-                    header: '창고명',
-                    name: 'store_nm',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                  },
-                ],
-                dataApiSettings: ev => {
-                  const { rowKey, instance } = ev;
-                  const { rawData } = instance?.store?.data;
-
-                  return {
-                    uriPath: '/std/stores',
-                    params: { store_type: 'available' },
-                    onAfterOk: () => {
-                      rawData[rowKey].to_location_uuid = '';
-                      rawData[rowKey].to_location_nm = '';
-                    },
-                  };
-                },
-                gridMode: 'select',
-              },
-              {
-                // 위치팝업
-                columnNames: [
-                  { original: 'to_location_uuid', popup: 'location_uuid' },
-                  { original: 'to_location_cd', popup: 'location_cd' },
-                  { original: 'to_location_nm', popup: 'location_nm' },
-                ],
-                columns: [
-                  {
-                    header: '위치UUID',
-                    name: 'location_uuid',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                    hidden: true,
-                  },
-                  {
-                    header: '위치코드',
-                    name: 'location_cd',
-                    width: ENUM_WIDTH.M,
-                    filter: 'text',
-                  },
-                  {
-                    header: '위치명',
-                    name: 'location_nm',
-                    width: ENUM_WIDTH.L,
-                    filter: 'text',
-                  },
-                ],
-                dataApiSettings: ev => {
-                  const { rowKey, instance } = ev;
-                  const { rawData } = instance?.store?.data;
-
-                  const storeUuid = rawData[rowKey]?.to_store_uuid;
-                  return {
-                    uriPath: '/std/locations',
-                    params: { store_uuid: storeUuid ?? '' },
-                  };
-                },
-                gridMode: 'select',
-              },
-            ]}
+            gridPopupInfo={POPUP_COLUMN_INFO}
           />
         )}
       </Container>
     </>
   );
 };
+
+const INITIAL_UPLOAD_GRID_PROPS = {
+  columns: [],
+  data: [],
+};
+
+const INITIAL_MENU_STORE = {
+  file_extension: '',
+  file_name: '',
+  file_type: '',
+  menu_file_uuid: '',
+  menu_nm: '',
+  menu_uuid: '',
+  menu_uri: '',
+};
+
+const POPUP_COLUMN_INFO = [
+  {
+    // 거래처유형 팝업
+    columnNames: [
+      { original: 'partner_type_uuid', popup: 'partner_type_uuid' },
+      { original: 'partner_type_cd', popup: 'partner_type_cd' },
+      { original: 'partner_type_nm', popup: 'partner_type_nm' },
+    ],
+    columns: [
+      {
+        header: '거래처유형UUID',
+        name: 'partner_type_uuid',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '거래처유형코드',
+        name: 'partner_type_cd',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '거래처유형명',
+        name: 'partner_type_nm',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/partner-types',
+      params: null,
+    },
+    gridMode: 'select',
+  },
+  {
+    // 창고팝업
+    columnNames: [
+      { original: 'to_store_uuid', popup: 'store_uuid' },
+      { original: 'to_store_cd', popup: 'store_cd' },
+      { original: 'to_store_nm', popup: 'store_nm' },
+    ],
+    columns: [
+      {
+        header: '창고UUID',
+        name: 'store_uuid',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '창고코드',
+        name: 'store_cd',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '창고명',
+        name: 'store_nm',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
+    ],
+    dataApiSettings: ev => {
+      const { rowKey, instance } = ev;
+      const { rawData } = instance?.store?.data;
+
+      return {
+        uriPath: '/std/stores',
+        params: { store_type: 'available' },
+        onAfterOk: () => {
+          rawData[rowKey].to_location_uuid = '';
+          rawData[rowKey].to_location_nm = '';
+        },
+      };
+    },
+    gridMode: 'select',
+  },
+  {
+    // 위치팝업
+    columnNames: [
+      { original: 'to_location_uuid', popup: 'location_uuid' },
+      { original: 'to_location_cd', popup: 'location_cd' },
+      { original: 'to_location_nm', popup: 'location_nm' },
+    ],
+    columns: [
+      {
+        header: '위치UUID',
+        name: 'location_uuid',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+        hidden: true,
+      },
+      {
+        header: '위치코드',
+        name: 'location_cd',
+        width: ENUM_WIDTH.M,
+        filter: 'text',
+      },
+      {
+        header: '위치명',
+        name: 'location_nm',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+      },
+    ],
+    dataApiSettings: ev => {
+      const { rowKey, instance } = ev;
+      const { rawData } = instance?.store?.data;
+
+      const storeUuid = rawData[rowKey]?.to_store_uuid;
+      return {
+        uriPath: '/std/locations',
+        params: { store_uuid: storeUuid ?? '' },
+      };
+    },
+    gridMode: 'select',
+  },
+];
