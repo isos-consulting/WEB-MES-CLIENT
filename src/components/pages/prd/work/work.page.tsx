@@ -1307,8 +1307,7 @@ const WorkRoutingHisotryModal = ({
   onCancel: () => void;
 }) => {
   if (visible === false) return <></>;
-  const [workRoutingHistory, setWorkRoutingHistory] = useState<unknown>([]);
-  const [modalRefreshFlag, flush] = useState(1);
+  const [workRoutingHistory, setWorkRoutingHistory] = useState<unknown>(null);
 
   const workerReadOnly = WORKERREADONLY();
   const rejectReadOnly = REJECTREADONLY();
@@ -1322,20 +1321,24 @@ const WorkRoutingHisotryModal = ({
       uuid: String(grid.getRow(rowKey).work_routing_uuid),
       afterApiSuccess: () =>
         confirmRemainModal({
-          onOk: () => flush(modalRefreshFlag * -1),
+          onOk: refreshWorkRoutings,
           onCancel,
         }),
     });
   };
 
-  useLayoutEffect(() => {
-    getData({ work_uuid, complete_fg: true }, '/prd/work-routings').then(
-      setWorkRoutingHistory,
+  const refreshWorkRoutings = async () => {
+    await getData({ work_uuid, complete_fg: true }, '/prd/work-routings').then(
+      workRoutings => {
+        setWorkRoutingHistory(workRoutings);
+        workerReadOnly.setData();
+        rejectReadOnly.setData();
+        downtimeReadOnly.setData();
+      },
     );
-    workerReadOnly.setData();
-    rejectReadOnly.setData();
-    downtimeReadOnly.setData();
-  }, [modalRefreshFlag]);
+  };
+
+  if (workRoutingHistory == null) refreshWorkRoutings();
 
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
