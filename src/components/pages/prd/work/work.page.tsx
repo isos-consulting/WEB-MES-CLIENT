@@ -1255,10 +1255,13 @@ const ProdOrderModal = ({ visible, onClose }) => {
 };
 //#endregion
 
-const cancelWorkRoutingState = (
-  _dataGridButtonClickEvent,
-  { grid, rowKey }: { grid: TuiGrid; rowKey: number },
-) => {
+const callCancelWorkRoutingApi = ({
+  uuid,
+  afterApiSuccess,
+}: {
+  uuid: string;
+  afterApiSuccess: Function;
+}) => {
   Modal.confirm({
     title: '실적 취소',
     content: '실적을 취소하시겠습니까?',
@@ -1266,15 +1269,31 @@ const cancelWorkRoutingState = (
     cancelText: '아니오',
     onOk: async () => {
       const workRoutingCancelResult = await executeData(
-        [{ uuid: grid.getRow(rowKey).work_routing_uuid }],
+        [{ uuid }],
         '/prd/work-routings/cancel-complete',
         'put',
         'success',
       );
 
-      if (workRoutingCancelResult === true)
-        message.info('실적 취소가 완료되었습니다.');
+      if (workRoutingCancelResult === true) afterApiSuccess();
     },
+  });
+};
+
+const confirmRemainModal = ({
+  onOk,
+  onCancel,
+}: {
+  onOk: () => void;
+  onCancel: () => void;
+}) => {
+  Modal.confirm({
+    title: '실적 취소 완료',
+    content: '실적 취소가 완료되었습니다. 계속 하시겠습니까?',
+    okText: '머무르기',
+    cancelText: '나가기',
+    onOk: onOk,
+    onCancel: onCancel,
   });
 };
 
@@ -1289,14 +1308,34 @@ const WorkRoutingHisotryModal = ({
 }) => {
   if (visible === false) return <></>;
   const [workRoutingHistory, setWorkRoutingHistory] = useState<unknown>([]);
+  const [modalRefreshFlag, flush] = useState(1);
 
   const workerReadOnly = WORKERREADONLY();
   const rejectReadOnly = REJECTREADONLY();
   const downtimeReadOnly = DOWNTIMEREADONLY();
 
+  const cancelWorkRoutingState = (
+    _,
+    { grid, rowKey }: { grid: TuiGrid; rowKey: number },
+  ) => {
+    callCancelWorkRoutingApi({
+      uuid: String(grid.getRow(rowKey).work_routing_uuid),
+      afterApiSuccess: () =>
+        confirmRemainModal({
+          onOk: () => flush(modalRefreshFlag * -1),
+          onCancel,
+        }),
+    });
+  };
+
   useLayoutEffect(() => {
-    getData({ work_uuid }, '/prd/work-routings').then(setWorkRoutingHistory);
-  }, []);
+    getData({ work_uuid, complete_fg: true }, '/prd/work-routings').then(
+      setWorkRoutingHistory,
+    );
+    workerReadOnly.setData();
+    rejectReadOnly.setData();
+    downtimeReadOnly.setData();
+  }, [modalRefreshFlag]);
 
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
