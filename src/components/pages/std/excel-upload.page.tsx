@@ -38,7 +38,7 @@ const importXLSXFile = async (
     if (['text', 'popup'].includes(format) === true) return value.toString();
     if (format === 'number') return Number(value);
 
-    return !Boolean(value);
+    return value == '1';
   };
 
   for (let i = start; i <= sheet.rowCount; i++) {
@@ -95,7 +95,7 @@ const gridColumns = async (excelFormCode: string) => {
         header: excel_form_column_nm,
         name: excel_form_column_cd,
         editable: true,
-        format: excel_form_type,
+        format: excel_form_type === 'boolean' ? 'check' : excel_form_type,
         requiredField: column_fg,
         hidden: false,
         width: ENUM_WIDTH.M,

@@ -19,6 +19,7 @@ const ComboStore: ComboStoreProps = {
       { code: 'date', text: 'date' },
       { code: 'datetime', text: 'datetime' },
       { code: 'time', text: 'time' },
+      { code: 'boolean', text: 'boolean' },
     ],
   },
   WORK_TIME_TYPE: {
