@@ -1338,7 +1338,7 @@ const WorkRoutingHisotryModal = ({
     );
   };
 
-  if (workRoutingHistory == null) refreshWorkRoutings();
+  useLayoutEffect(refreshWorkRoutings, []);
 
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
