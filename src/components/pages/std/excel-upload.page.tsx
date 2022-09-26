@@ -113,7 +113,8 @@ interface MenuStore {
   menu_uuid: string;
 }
 
-const menus = getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
+const menus = () =>
+  getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
     columns: DataGridColumns[];
@@ -131,7 +132,7 @@ export const PgStdExcelUpload: React.FC = () => {
     widthSize: '160px',
     onAfterChange: async (menuCode: string) => {
       setMenuStore(
-        (await menus).find(
+        (await menus()).find(
           ({ menu_uuid }: MenuStore) => menu_uuid === menuCode,
         ),
       );
@@ -149,7 +150,7 @@ export const PgStdExcelUpload: React.FC = () => {
   ]);
 
   useEffect(() => {
-    menus.then(menu => {
+    menus().then(menu => {
       setSearchItems([
         {
           ...menuCombobox,
