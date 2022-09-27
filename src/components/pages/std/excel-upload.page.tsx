@@ -176,10 +176,12 @@ export const PgStdExcelUpload: React.FC = () => {
       process.env.FILE_SERVER_URL,
     );
 
+    console.log(menuStore);
+
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${menuStore.file_name}.${menuStore.file_extension}`;
+    a.download = `${menuStore.menu_nm}_업로드 양식.${menuStore.file_extension}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -233,7 +235,6 @@ export const PgStdExcelUpload: React.FC = () => {
   return (
     <>
       <Button onClick={downloadFile}>다운로드</Button>
-      <Button onClick={() => downloadFile()}>다운로드</Button>
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={beforeSelecedExcelFile}
