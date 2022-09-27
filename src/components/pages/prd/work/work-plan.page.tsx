@@ -8,6 +8,7 @@ import {
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
+import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import { getPageName } from '~/functions';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
@@ -93,47 +94,25 @@ export const PgWorkPlan = () => {
       }),
     );
 
+  const headerButtonActionTable = {
+    DELETE: confirmAtBeforeDeleteWorkPlan,
+    EDIT: showEditWorkPlanModal,
+    ADD: showAddWorkPlanModal,
+  };
+  const headerButtonsKeys = Object.keys(headerButtonActionTable);
+
+  const headerButtonGroups = Object.entries(ButtonStore)
+    .filter(key => headerButtonsKeys.includes(key[0]))
+    .map(([key, value]) => ({
+      ...value,
+      onClick: headerButtonActionTable[key],
+    }));
+
   return (
     <>
       <header>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <ButtonGroup
-            btnItems={[
-              {
-                key: 'delete',
-                btnType: 'buttonFill',
-                widthSize: 'medium',
-                heightSize: 'small',
-                fontSize: 'small',
-                colorType: 'delete',
-                ImageType: 'delete',
-                onClick: confirmAtBeforeDeleteWorkPlan,
-                children: '삭제',
-              },
-              {
-                key: 'edit',
-                btnType: 'buttonFill',
-                widthSize: 'medium',
-                heightSize: 'small',
-                fontSize: 'small',
-                ImageType: 'edit',
-                colorType: 'blue',
-                onClick: showEditWorkPlanModal,
-                children: '수정',
-              },
-              {
-                key: 'add',
-                btnType: 'buttonFill',
-                widthSize: 'large',
-                heightSize: 'small',
-                fontSize: 'small',
-                ImageType: 'edit',
-                colorType: 'blue',
-                onClick: showAddWorkPlanModal,
-                children: '신규항목추가',
-              },
-            ]}
-          />
+          <ButtonGroup btnItems={headerButtonGroups} />
         </div>
         <Searchbox
           innerRef={workPlanSearchInfo.props.innerRef}
