@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import React, { useState } from 'react';
 import {
-  Button,
+  ButtonGroup,
   Container,
   Datagrid,
   GridPopup,
@@ -95,11 +95,45 @@ export const PgWorkPlan = () => {
 
   return (
     <>
-      <header style={{ width: '100%' }}>
-        <div>
-          <Button onClick={confirmAtBeforeDeleteWorkPlan}>삭제</Button>
-          <Button onClick={showEditWorkPlanModal}>수정</Button>
-          <Button onClick={showAddWorkPlanModal}>신규항목추가</Button>
+      <header>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <ButtonGroup
+            btnItems={[
+              {
+                key: 'delete',
+                btnType: 'buttonFill',
+                widthSize: 'medium',
+                heightSize: 'small',
+                fontSize: 'small',
+                colorType: 'delete',
+                ImageType: 'delete',
+                onClick: confirmAtBeforeDeleteWorkPlan,
+                children: '삭제',
+              },
+              {
+                key: 'edit',
+                btnType: 'buttonFill',
+                widthSize: 'medium',
+                heightSize: 'small',
+                fontSize: 'small',
+                ImageType: 'edit',
+                colorType: 'blue',
+                onClick: showEditWorkPlanModal,
+                children: '수정',
+              },
+              {
+                key: 'add',
+                btnType: 'buttonFill',
+                widthSize: 'large',
+                heightSize: 'small',
+                fontSize: 'small',
+                ImageType: 'edit',
+                colorType: 'blue',
+                onClick: showAddWorkPlanModal,
+                children: '신규항목추가',
+              },
+            ]}
+          />
         </div>
         <Searchbox
           innerRef={workPlanSearchInfo.props.innerRef}
