@@ -69,6 +69,8 @@ const BaseDatePicker: React.FC<Props> = props => {
         return 'MM';
       case 'week':
         return 'dddd';
+      case 'dateym':
+        return 'YYYY-MM';
 
       default:
         return null;

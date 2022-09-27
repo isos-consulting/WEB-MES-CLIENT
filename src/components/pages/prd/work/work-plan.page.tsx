@@ -11,7 +11,7 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { getPageName } from '~/functions';
+import { getNow, getPageName } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
 
@@ -32,15 +32,14 @@ export const PgWorkPlan = () => {
     'workPlanSearchInfo',
     [
       {
-        type: 'date',
+        type: 'dateym',
         id: 'plan_date',
-        default: '2022-09',
+        default: getNow(0, { format: 'YYYY-MM' }),
         label: WORD.WORK_PLAN_MONTH,
       },
     ],
-    userSelectedPlanMonth => {
-      fetchWorkPlanGetApi(userSelectedPlanMonth).then(getWorkPlanData);
-    },
+    userSelectedPlanMonth =>
+      fetchWorkPlanGetApi(userSelectedPlanMonth).then(getWorkPlanData),
   );
 
   const [workPlanData, setWorkPlanData] = useState([]);

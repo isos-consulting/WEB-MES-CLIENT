@@ -41,4 +41,5 @@ export const ENUM_FORMAT = {
   TIME: 'HH:mm',
   /** YYYY-MM-DD[T]HH:mm:ss */
   DATE_TIMEZONE: 'YYYY-MM-DD[T]HH:mm:ss',
+  DATE_YM: 'YYYY-MM',
 };
