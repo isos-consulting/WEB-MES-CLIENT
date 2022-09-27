@@ -2,6 +2,7 @@ import { Modal } from 'antd';
 import React, { useState } from 'react';
 import {
   Button,
+  Container,
   Datagrid,
   GridPopup,
   Searchbox,
@@ -23,22 +24,33 @@ const hiddenWokrPlanModal = new BasicModalContext({
 });
 export const PgWorkPlan = () => {
   const title = getPageName();
-  const [workPlanData, setWorkPlanData] = useState([]);
   const workPlanSearchInfo = useSearchbox(
     'workPlanSearchInfo',
     [{ type: 'date', id: 'plan_date', default: '2022-09', label: '계획월' }],
     userSelectedPlanMonth => {
-      console.log(userSelectedPlanMonth);
-      console.log('데이터 그리드에 검색조건을 적용하여 조회를 수행합니다');
+      fetchWorkPlanGetApi(userSelectedPlanMonth).then(getWorkPlanData);
     },
   );
 
+  const [workPlanData, setWorkPlanData] = useState([]);
   const [workPlanModalContext, modalContextSwitch] =
     useState(hiddenWokrPlanModal);
 
+  const fetchWorkPlanGetApi = planMonth => Promise.resolve([]);
+
   const hideWokrPlanModal = () => modalContextSwitch(hiddenWokrPlanModal);
 
-  const getWorkPlanData = () => [];
+  const getWorkPlanData = () =>
+    fetchWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
+
+  const confirmAtBeforeDeleteWorkPlan = () => {
+    Modal.confirm({
+      icon: null,
+      title: '삭제하시겠습니까?',
+      content: '삭제된 데이터는 복구할 수 없습니다.',
+      onOk: setWorkPlanData(getWorkPlanData),
+    });
+  };
 
   const confirmAtBeforeCallApi = () =>
     Modal.confirm({
@@ -85,34 +97,20 @@ export const PgWorkPlan = () => {
     <>
       <header style={{ width: '100%' }}>
         <div>
-          <Button
-            onClick={() => {
-              console.log('삭제 확인 창 나옴');
-            }}
-          >
-            삭제
-          </Button>
-          <Button
-            onClick={() => {
-              showEditWorkPlanModal();
-            }}
-          >
-            수정
-          </Button>
-          <Button
-            onClick={() => {
-              showAddWorkPlanModal();
-            }}
-          >
-            신규항목추가
-          </Button>
+          <Button onClick={confirmAtBeforeDeleteWorkPlan}>삭제</Button>
+          <Button onClick={showEditWorkPlanModal}>수정</Button>
+          <Button onClick={showAddWorkPlanModal}>신규항목추가</Button>
         </div>
-        <Searchbox {...workPlanSearchInfo} />
+        <Searchbox
+          innerRef={workPlanSearchInfo.props.innerRef}
+          searchItems={workPlanSearchInfo.searchItems}
+          onSearch={workPlanSearchInfo.onSearch}
+        />
       </header>
       <main>
-        <div>
-          <Datagrid data={[]} columns={ColumnStore.WORK_PLAN} />
-        </div>
+        <Container>
+          <Datagrid data={workPlanData} columns={ColumnStore.WORK_PLAN} />
+        </Container>
       </main>
       {workPlanModalContext.visible === true && (
         <GridPopup {...workPlanModalContext} onCancel={hideWokrPlanModal} />
