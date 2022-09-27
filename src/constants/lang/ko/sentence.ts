@@ -6,6 +6,7 @@ export enum SENTENCE {
   IS_RESETED_PASSWORD = '비밀번호가 초기화되었습니다',
   ADD_RECORD = '신규 항목 추가',
   SAVE_DATA = '저장하기',
+  SAVE_CONFIRM = '정보를 저장하시겠습니까?',
   SAVE_COMPLETE = '저장이 완료되었습니다',
   DELETE_CONFIRM = '삭제하시겠습니까?',
   NO_DELETE_ITEMS = '삭제할 항목이 없습니다',

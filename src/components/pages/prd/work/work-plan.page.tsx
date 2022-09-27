@@ -10,11 +10,12 @@ import {
 } from '~/components/UI';
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { getPageName } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
 
-const hiddenWokrPlanModal = new BasicModalContext({
+const hiddenWorkPlanModal = new BasicModalContext({
   title: '',
   columns: ColumnStore.WORK_PLAN,
   visible: false,
@@ -29,7 +30,14 @@ export const PgWorkPlan = () => {
   const title = getPageName();
   const workPlanSearchInfo = useSearchbox(
     'workPlanSearchInfo',
-    [{ type: 'date', id: 'plan_date', default: '2022-09', label: '계획월' }],
+    [
+      {
+        type: 'date',
+        id: 'plan_date',
+        default: '2022-09',
+        label: WORD.WORK_PLAN_MONTH,
+      },
+    ],
     userSelectedPlanMonth => {
       fetchWorkPlanGetApi(userSelectedPlanMonth).then(getWorkPlanData);
     },
@@ -37,11 +45,11 @@ export const PgWorkPlan = () => {
 
   const [workPlanData, setWorkPlanData] = useState([]);
   const [workPlanModalContext, modalContextSwitch] =
-    useState(hiddenWokrPlanModal);
+    useState(hiddenWorkPlanModal);
 
   const fetchWorkPlanGetApi = planMonth => Promise.resolve([]);
 
-  const hideWokrPlanModal = () => modalContextSwitch(hiddenWokrPlanModal);
+  const hideWorkPlanModal = () => modalContextSwitch(hiddenWorkPlanModal);
 
   const getWorkPlanData = () =>
     fetchWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
@@ -49,8 +57,8 @@ export const PgWorkPlan = () => {
   const confirmAtBeforeDeleteWorkPlan = () => {
     Modal.confirm({
       icon: null,
-      title: '삭제하시겠습니까?',
-      content: '삭제된 데이터는 복구할 수 없습니다.',
+      title: WORD.DELETE,
+      content: SENTENCE.DELETE_CONFIRM,
       onOk: setWorkPlanData(getWorkPlanData),
     });
   };
@@ -58,15 +66,15 @@ export const PgWorkPlan = () => {
   const confirmAtBeforeCallApi = () =>
     Modal.confirm({
       icon: null,
-      title: '저장하시겠습니까?',
-      content: '생산 계획 정보를 저장하시겠습니까?',
+      title: WORD.SAVE,
+      content: `${WORD.WORK_PLAN} ${SENTENCE.SAVE_CONFIRM}`,
       onOk: modalApiCallSuccess,
     });
 
   const modalApiCallSuccess = () => {
     Promise.resolve({ success: true }).then(res => {
       if (res.success === true) {
-        modalContextSwitch(hiddenWokrPlanModal);
+        modalContextSwitch(hiddenWorkPlanModal);
         setWorkPlanData(getWorkPlanData);
       }
     });
@@ -128,7 +136,7 @@ export const PgWorkPlan = () => {
         </Container>
       </main>
       {workPlanModalContext.visible === true && (
-        <GridPopup {...workPlanModalContext} onCancel={hideWokrPlanModal} />
+        <GridPopup {...workPlanModalContext} onCancel={hideWorkPlanModal} />
       )}
     </>
   );
