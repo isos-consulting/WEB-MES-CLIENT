@@ -132,7 +132,11 @@ export const PgWorkPlan = () => {
       </header>
       <main>
         <Container>
-          <Datagrid data={workPlanData} columns={ColumnStore.WORK_PLAN} />
+          <Datagrid
+            data={workPlanData}
+            columns={ColumnStore.WORK_PLAN}
+            gridMode="delete"
+          />
         </Container>
       </main>
       {workPlanModalContext.visible === true && (
