@@ -576,11 +576,12 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           break;
 
         case 'number': // 숫자 타입 세팅
+          if (el.decimal == null) {
+            errorRequireDecimal.generate();
+          }
+
           if (el?.editable === true) {
             // 에디터
-            if (el.decimal == null) {
-              errorRequireDecimal.generate();
-            }
             el['editor'] = {
               type: DatagridNumberEditor,
               options: {
