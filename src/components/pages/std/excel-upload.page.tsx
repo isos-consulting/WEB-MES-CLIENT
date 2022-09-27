@@ -176,8 +176,6 @@ export const PgStdExcelUpload: React.FC = () => {
       process.env.FILE_SERVER_URL,
     );
 
-    console.log(menuStore);
-
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
