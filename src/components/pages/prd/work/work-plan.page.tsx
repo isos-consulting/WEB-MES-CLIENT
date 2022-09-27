@@ -11,6 +11,7 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import { getPageName } from '~/functions';
+import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
 
 const hiddenWokrPlanModal = new BasicModalContext({
@@ -23,6 +24,7 @@ const hiddenWokrPlanModal = new BasicModalContext({
   gridComboInfo: [],
   onOk: () => {},
 });
+
 export const PgWorkPlan = () => {
   const title = getPageName();
   const workPlanSearchInfo = useSearchbox(
@@ -111,9 +113,9 @@ export const PgWorkPlan = () => {
   return (
     <>
       <header>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <FlexBox justifyContent="flex-end">
           <ButtonGroup btnItems={headerButtonGroups} />
-        </div>
+        </FlexBox>
         <Searchbox
           innerRef={workPlanSearchInfo.props.innerRef}
           searchItems={workPlanSearchInfo.searchItems}
