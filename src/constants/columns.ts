@@ -811,6 +811,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       format: 'dateym',
       align: 'center',
       editable: true,
+      requiredField: true,
     },
     {
       header: '품목UUID',
@@ -836,8 +837,8 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       header: '제품유형UUID',
       name: 'prod_type_uuid',
       width: ENUM_WIDTH.L,
+      hidden: true,
       editable: false,
-      format: 'text',
     },
     {
       header: '제품유형',
@@ -855,7 +856,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       header: '품명',
       name: 'prod_nm',
       width: ENUM_WIDTH.M,
-      editable: true,
+      editable: false,
     },
     {
       header: '모델UUID',
@@ -891,9 +892,11 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     },
     {
       header: '작업장',
-      name: 'workplaceName',
+      name: 'workings_nm',
       width: ENUM_WIDTH.M,
+      format: 'popup',
       editable: true,
+      requiredField: true,
     },
     {
       header: '계획수량',
@@ -902,6 +905,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       format: 'number',
       decimal: ENUM_DECIMAL.DEC_USE_STOCK,
       editable: true,
+      requiredField: true,
     },
   ],
 };
