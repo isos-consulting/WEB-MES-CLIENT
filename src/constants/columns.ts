@@ -807,7 +807,8 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     {
       header: '계획월',
       name: 'planMonth',
-      width: 100,
+      width: ENUM_WIDTH.M,
+      format: 'dateym',
       align: 'center',
       editable: true,
     },
