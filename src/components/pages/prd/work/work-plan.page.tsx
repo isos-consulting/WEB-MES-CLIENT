@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import React, { useState } from 'react';
 import {
   ButtonGroup,
@@ -13,7 +13,7 @@ import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
-import { getNow, getPageName } from '~/functions';
+import { executeData, getData, getNow, getPageName } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
 
@@ -41,14 +41,15 @@ export const PgWorkPlan = () => {
       },
     ],
     userSelectedPlanMonth =>
-      fetchWorkPlanGetApi(userSelectedPlanMonth).then(getWorkPlanData),
+      fetchWorkPlanGetApi(userSelectedPlanMonth).then(setWorkPlanData),
   );
 
   const [workPlanData, setWorkPlanData] = useState([]);
   const [workPlanModalContext, modalContextSwitch] =
     useState(hiddenWorkPlanModal);
 
-  const fetchWorkPlanGetApi = planMonth => Promise.resolve([]);
+  const fetchWorkPlanGetApi = ({ plan_date }: { plan_date: string }) =>
+    getData({ work_plan_month: plan_date }, '/prd/work-plan-months');
 
   const hideWorkPlanModal = () => modalContextSwitch(hiddenWorkPlanModal);
 
@@ -64,21 +65,25 @@ export const PgWorkPlan = () => {
     });
   };
 
-  const confirmAtBeforeCallApi = () =>
+  const confirmAtBeforeCallApi = grid => {
     Modal.confirm({
       icon: null,
       title: WORD.SAVE,
       content: `${WORD.WORK_PLAN} ${SENTENCE.SAVE_CONFIRM}`,
-      onOk: modalApiCallSuccess,
+      onOk: () => modalApiCallSuccess(grid.current.getInstance().getData()),
     });
+  };
 
-  const modalApiCallSuccess = () => {
-    Promise.resolve({ success: true }).then(res => {
-      if (res.success === true) {
-        modalContextSwitch(hiddenWorkPlanModal);
-        setWorkPlanData(getWorkPlanData);
-      }
-    });
+  const modalApiCallSuccess = workPlanAddedData => {
+    executeData(workPlanAddedData, '/prd/work-plan-months', 'post').then(
+      res => {
+        if (res.success === true) {
+          message.info(SENTENCE.SAVE_SUCCESS);
+          modalContextSwitch(hiddenWorkPlanModal);
+          getWorkPlanData().then(setWorkPlanData);
+        }
+      },
+    );
   };
 
   const showAddWorkPlanModal = () =>

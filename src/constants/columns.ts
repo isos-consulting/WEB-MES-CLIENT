@@ -806,7 +806,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
   WORK_PLAN: [
     {
       header: '계획월',
-      name: 'planMonth',
+      name: 'work_plan_month',
       width: ENUM_WIDTH.M,
       format: 'dateym',
       align: 'center',
@@ -900,7 +900,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     },
     {
       header: '계획수량',
-      name: 'plan_qty',
+      name: 'work_plan_month_qty',
       width: ENUM_WIDTH.M,
       format: 'number',
       decimal: ENUM_DECIMAL.DEC_USE_STOCK,
