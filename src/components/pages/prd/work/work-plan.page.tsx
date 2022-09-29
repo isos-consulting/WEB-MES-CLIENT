@@ -1,5 +1,5 @@
 import { message, Modal } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ButtonGroup,
   Container,
@@ -49,6 +49,8 @@ export const PgWorkPlan = () => {
   const [workPlanModalContext, modalContextSwitch] =
     useState(hiddenWorkPlanModal);
 
+  const workPlanDataGridRef = useRef();
+
   const fetchWorkPlanGetApi = ({ plan_date }: { plan_date: string }) =>
     getData({ work_plan_month: plan_date }, '/prd/work-plan-months');
 
@@ -56,15 +58,6 @@ export const PgWorkPlan = () => {
 
   const getWorkPlanData = () =>
     fetchWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
-
-  const confirmBeforeDeleteWorkPlan = () => {
-    Modal.confirm({
-      icon: null,
-      title: WORD.DELETE,
-      content: SENTENCE.DELETE_CONFIRM,
-      onOk: setWorkPlanData(getWorkPlanData),
-    });
-  };
 
   const confirmBeforeAddWorkPlan = grid => {
     Modal.confirm({
@@ -94,26 +87,58 @@ export const PgWorkPlan = () => {
     });
   };
 
-  const workPlanPostApiCallSuccess = workPlanAddedData => {
-    executeData(workPlanAddedData, '/prd/work-plan-months', 'post').then(
-      res => {
-        if (res.success === true) {
-          message.info(SENTENCE.SAVE_COMPLETE);
-          modalContextSwitch(hiddenWorkPlanModal);
-          getWorkPlanData().then(setWorkPlanData);
-        }
-      },
-    );
+  const confirmBeforeDeleteWorkPlan = () => {
+    const checkedWorkPlans = workPlanDataGridRef.current
+      .getInstance()
+      .getCheckedRows();
+
+    if (checkedWorkPlans.length === 0) {
+      message.warn(SENTENCE.SELECT_RECORD);
+      return;
+    }
+
+    Modal.confirm({
+      icon: null,
+      title: WORD.DELETE,
+      content: SENTENCE.DELETE_CONFIRM,
+      onOk: () =>
+        workPlanDeleteApiCallSuccess(
+          checkedWorkPlans.map(({ work_plan_month_uuid }) => ({
+            uuid: work_plan_month_uuid,
+          })),
+        ),
+    });
   };
 
-  const workPlanPutApiCallSuccess = workPlanAddedData => {
-    executeData(workPlanAddedData, '/prd/work-plan-months', 'put').then(res => {
+  const workPlanPostApiCallSuccess = addedWorkPlan => {
+    executeData(addedWorkPlan, '/prd/work-plan-months', 'post').then(res => {
+      if (res.success === true) {
+        message.info(SENTENCE.SAVE_COMPLETE);
+        modalContextSwitch(hiddenWorkPlanModal);
+        getWorkPlanData().then(setWorkPlanData);
+      }
+    });
+  };
+
+  const workPlanPutApiCallSuccess = editedWorkPlan => {
+    executeData(editedWorkPlan, '/prd/work-plan-months', 'put').then(res => {
       if (res.success === true) {
         message.info(SENTENCE.EDIT_COMPLETE);
         modalContextSwitch(hiddenWorkPlanModal);
         getWorkPlanData().then(setWorkPlanData);
       }
     });
+  };
+
+  const workPlanDeleteApiCallSuccess = deletedWorkPlan => {
+    executeData(deletedWorkPlan, '/prd/work-plan-months', 'delete').then(
+      res => {
+        if (res.success === true) {
+          message.info(SENTENCE.DELETE_COMPLETE);
+          getWorkPlanData().then(setWorkPlanData);
+        }
+      },
+    );
   };
 
   const showAddWorkPlanModal = () =>
@@ -377,6 +402,7 @@ export const PgWorkPlan = () => {
       <main>
         <Container>
           <Datagrid
+            ref={workPlanDataGridRef}
             data={workPlanData}
             columns={ColumnStore.WORK_PLAN}
             gridMode="delete"
