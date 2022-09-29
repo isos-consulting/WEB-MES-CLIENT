@@ -6,6 +6,7 @@ import {
   Datagrid,
   getPopupForm,
   GridPopup,
+  IGridColumn,
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
@@ -56,7 +57,7 @@ export const PgWorkPlan = () => {
   const getWorkPlanData = () =>
     fetchWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
 
-  const confirmAtBeforeDeleteWorkPlan = () => {
+  const confirmBeforeDeleteWorkPlan = () => {
     Modal.confirm({
       icon: null,
       title: WORD.DELETE,
@@ -65,25 +66,54 @@ export const PgWorkPlan = () => {
     });
   };
 
-  const confirmAtBeforeCallApi = grid => {
+  const confirmBeforeAddWorkPlan = grid => {
     Modal.confirm({
       icon: null,
-      title: WORD.SAVE,
+      title: SENTENCE.ADD_RECORD,
       content: `${WORD.WORK_PLAN} ${SENTENCE.SAVE_CONFIRM}`,
-      onOk: () => modalApiCallSuccess(grid.current.getInstance().getData()),
+      onOk: () =>
+        workPlanPostApiCallSuccess(grid.current.getInstance().getData()),
     });
   };
 
-  const modalApiCallSuccess = workPlanAddedData => {
+  const confirmBeforeEditWorkPlan = grid => {
+    Modal.confirm({
+      icon: null,
+      title: WORD.EDIT,
+      content: `${WORD.WORK_PLAN} ${SENTENCE.EDIT_CONFIRM}`,
+      onOk: () =>
+        workPlanPutApiCallSuccess(
+          grid.current
+            .getInstance()
+            .getModifiedRows()
+            .updatedRows.map(({ work_plan_month_uuid, ...workPlanRest }) => ({
+              uuid: work_plan_month_uuid,
+              ...workPlanRest,
+            })),
+        ),
+    });
+  };
+
+  const workPlanPostApiCallSuccess = workPlanAddedData => {
     executeData(workPlanAddedData, '/prd/work-plan-months', 'post').then(
       res => {
         if (res.success === true) {
-          message.info(SENTENCE.SAVE_SUCCESS);
+          message.info(SENTENCE.SAVE_COMPLETE);
           modalContextSwitch(hiddenWorkPlanModal);
           getWorkPlanData().then(setWorkPlanData);
         }
       },
     );
+  };
+
+  const workPlanPutApiCallSuccess = workPlanAddedData => {
+    executeData(workPlanAddedData, '/prd/work-plan-months', 'put').then(res => {
+      if (res.success === true) {
+        message.info(SENTENCE.EDIT_COMPLETE);
+        modalContextSwitch(hiddenWorkPlanModal);
+        getWorkPlanData().then(setWorkPlanData);
+      }
+    });
   };
 
   const showAddWorkPlanModal = () =>
@@ -108,7 +138,7 @@ export const PgWorkPlan = () => {
           },
         ],
         gridComboInfo: [],
-        onOk: confirmAtBeforeCallApi,
+        onOk: confirmBeforeAddWorkPlan,
       }),
       disabledAutoDateColumn: true,
       rowAddPopupInfo: {
@@ -299,16 +329,27 @@ export const PgWorkPlan = () => {
     modalContextSwitch(
       BasicModalContext.edit({
         title,
-        columns: ColumnStore.WORK_PLAN,
+        columns: ColumnStore.WORK_PLAN.map<IGridColumn>(column => {
+          if (column.name === 'work_plan_month_qty') {
+            return {
+              ...column,
+              editable: true,
+            };
+          }
+          return {
+            ...column,
+            editable: false,
+          };
+        }),
         data: [...workPlanData],
         gridPopupInfo: [],
         gridComboInfo: [],
-        onOk: confirmAtBeforeCallApi,
+        onOk: confirmBeforeEditWorkPlan,
       }),
     );
 
   const headerButtonActionTable = {
-    DELETE: confirmAtBeforeDeleteWorkPlan,
+    DELETE: confirmBeforeDeleteWorkPlan,
     EDIT: showEditWorkPlanModal,
     ADD: showAddWorkPlanModal,
   };

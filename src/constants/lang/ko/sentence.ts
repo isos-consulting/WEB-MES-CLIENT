@@ -12,5 +12,6 @@ export enum SENTENCE {
   NO_DELETE_ITEMS = '삭제할 항목이 없습니다',
   NO_SELECTED_WORK_TYPE = '근무 유형을 선택해주세요',
   ONLY_NUMBER = '숫자만 입력해주세요',
-  SAVE_SUCCESS = '저장되었습니다',
+  EDIT_CONFIRM = '수정하시겠습니까?',
+  EDIT_COMPLETE = '수정이 완료되었습니다',
 }
