@@ -198,6 +198,13 @@ export const PgQmsRework = () => {
         requiredField: true,
       },
       {
+        header: '부적합판정 UUID',
+        name: 'rework_type_uuid',
+        width: ENUM_WIDTH.M,
+        hidden: true,
+        requiredField: true,
+      },
+      {
         header: '부적합판정 코드',
         name: 'rework_type_cd',
         width: ENUM_WIDTH.M,
@@ -312,12 +319,11 @@ export const PgQmsRework = () => {
                 store_type: 'all',
               },
               onInterlock: () => {
-                if (rowData?.rework_type_nm === '재작업') {
-                  return true;
-                } else {
-                  message.warning('부적합판정이 재작업일 때 입력 가능합니다');
+                if (rowData?.rework_type_nm == null) {
+                  message.warning('부적합판정을 먼저 선택해주세요');
                   return false;
                 }
+                return true;
               },
             };
           },
@@ -367,10 +373,16 @@ export const PgQmsRework = () => {
         {
           // 재작업유형 팝업
           columnNames: [
+            { original: 'rework_type_uuid', popup: 'rework_type_uuid' },
             { original: 'rework_type_cd', popup: 'rework_type_cd' },
             { original: 'rework_type_nm', popup: 'rework_type_nm' },
           ],
           columns: [
+            {
+              header: '재작업유형UUID',
+              name: 'rework_type_uuid',
+              hidden: true,
+            },
             { header: '재작업유형코드', name: 'rework_type_cd', hidden: true },
             { header: '재작업유형', name: 'rework_type_nm', filter: 'text' },
           ],
@@ -415,6 +427,11 @@ export const PgQmsRework = () => {
           { original: 'model_uuid', popup: 'model_uuid' },
           { original: 'model_nm', popup: 'model_nm' },
           { original: 'rev', popup: 'rev' },
+          { original: 'lot_no', popup: 'lot_no' },
+          { original: 'reject_uuid', popup: 'reject_uuid' },
+          { original: 'reject_cd', popup: 'reject_cd' },
+          { original: 'reject_nm', popup: 'reject_nm' },
+          { original: 'reject_type_uuid', popup: 'reject_type_uuid' },
           { original: 'prod_std', popup: 'prod_std' },
           { original: 'safe_stock', popup: 'safe_stock' },
           { original: 'unit_qty', popup: 'unit_qty' },
@@ -842,11 +859,6 @@ export const PgQmsRework = () => {
 
     const compareValue = maxValue - (inputValue + targetValue);
 
-    console.log(
-      inputValue + targetValue > maxValue,
-      inputValue + targetValue,
-      maxValue,
-    );
     if (inputValue + targetValue > maxValue) {
       message.error(`판정 수량보다 더 많이 ${columnType}시킬 수 없습니다.`);
       instance?.setValue(fomulaParams?.rowKey, fomulaParams?.columnName, 0);
