@@ -281,7 +281,6 @@ export const PgQmsRework = () => {
       },
     ],
     {
-      searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       gridMode: defaultGridMode,
       gridPopupInfo: [
@@ -323,6 +322,7 @@ export const PgQmsRework = () => {
                   message.warning('부적합판정을 먼저 선택해주세요');
                   return false;
                 }
+
                 return true;
               },
             };
@@ -389,7 +389,6 @@ export const PgQmsRework = () => {
           dataApiSettings: (el: any) => {
             const { rowKey, instance } = el;
             const { rawData } = instance?.store.data;
-
             const rowData = rawData[rowKey];
             return {
               uriPath: '/adm/rework-types',
@@ -622,7 +621,6 @@ export const PgQmsRework = () => {
     'NEW_DATA_POPUP_GRID',
     newDataPopupGridColumns,
     {
-      searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
       saveParams: newDataPopupInputInfo?.values,
       gridPopupInfo: grid.gridInfo.gridPopupInfo,
@@ -730,9 +728,9 @@ export const PgQmsRework = () => {
   }, [selectedHeaderRow]);
 
   /** 검색 */
-  const onSearch = values => {
+  const onSearch = () => {
     const searchParams: any = cleanupKeyOfObject(
-      values,
+      searchInfo?.ref.current.values,
       searchInfo.searchItemKeys,
     );
 
@@ -789,7 +787,7 @@ export const PgQmsRework = () => {
       },
       inputInfo?.values,
       modal,
-      () => onSearch(searchInfo?.values),
+      () => onSearch(),
     );
   };
 
@@ -803,7 +801,7 @@ export const PgQmsRework = () => {
   const buttonActions = {
     /** 조회 */
     search: () => {
-      onSearch(searchInfo?.values);
+      onSearch();
     },
 
     /** 수정 */
@@ -1245,7 +1243,7 @@ export const PgQmsRework = () => {
   /** 분해이력에서 품목이 변경됐을 때, 그리드 데이터를 해당 하위 BOM 데이터로 리셋합니다. */
   useLayoutEffect(() => {
     const inputValues = disassemblePopupInputInfo?.values;
-    if (!inputValues || inputValues === {}) return;
+    if (!inputValues || inputValues.length === {}) return;
 
     const prod_uuid = inputValues?.prod_uuid;
 
@@ -1297,7 +1295,7 @@ export const PgQmsRework = () => {
           setEditDataPopupGridVisible(false);
           setDisassemblePopupVisible(false);
 
-          onSearch(searchInfo?.values);
+          onSearch();
         }
       },
       saveOptionParams: changeNameToAlias(
