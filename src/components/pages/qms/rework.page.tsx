@@ -323,6 +323,11 @@ export const PgQmsRework = () => {
                   return false;
                 }
 
+                if (rowData?.rework_type_nm == '폐기') {
+                  message.warning('폐기는 입고창고를 선택할 수 없습니다');
+                  return false;
+                }
+
                 return true;
               },
             };
