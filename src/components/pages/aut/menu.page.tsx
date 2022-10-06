@@ -50,7 +50,14 @@ export const PgAutMenu = () => {
         ? confirm(`메뉴를 ${messages.confirm[type]} 하시겠습니까?`)
         : false
     ) {
-      return (await executeData([record], URL_PATH_AUT.MENU.PUT.MENUS, type))
+      return (await executeData(
+        [record].map(({ menu_type_uuid, ...menu }) => ({
+          ...menu,
+          menu_type_uuid: menu_type_uuid === '' ? null : menu_type_uuid,
+        })),
+        URL_PATH_AUT.MENU.PUT.MENUS,
+        type,
+      ))
         ? alert(messages.complete)
         : console.trace(
             '%cmenu 정보 저장 API 요청 결과 실패함',

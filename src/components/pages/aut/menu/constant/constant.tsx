@@ -210,6 +210,7 @@ export const menuInputGroupBoxs: IInputGroupboxItem[] = [
     type: 'combo',
     id: 'menu_type_uuid',
     label: '메뉴유형',
+    firstItemType: 'empty',
     dataSettingOptions: {
       codeName: 'menu_type_uuid',
       textName: 'menu_type_nm',
