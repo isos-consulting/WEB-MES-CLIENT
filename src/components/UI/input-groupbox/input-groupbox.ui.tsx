@@ -44,7 +44,8 @@ export interface IInputGroupboxItem {
     | 'check'
     | 'radio'
     | 'combo'
-    | 'rangepicker';
+    | 'rangepicker'
+    | 'dateym';
   widthSize?: 'auto' | 'flex' | number | string;
   options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
   placeholder?: string;
@@ -712,6 +713,35 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     : item.dataSettingOptions
                                 }
                                 firstItemType={item?.firstItemType}
+                              />
+                            ) : item.type === 'dateym' ? (
+                              <DatePicker
+                                id={item.id}
+                                name={item.name || item.id}
+                                picker="month"
+                                widthSize={item.widthSize || 'flex'}
+                                format="YYYY-MM"
+                                important={item.important}
+                                label={item.label}
+                                disabled={item.disabled}
+                                placeholder={item.placeholder}
+                                value={values[item.name || item.id]}
+                                defaultValue={
+                                  _initialValues[item.name || item.id]
+                                    ? dayjs(
+                                        _initialValues[item.name || item.id],
+                                      )
+                                    : null
+                                }
+                                onChange={async e => {
+                                  await setFieldValued(
+                                    item.name || item.id,
+                                    dayjs(e).format('YYYY-MM'),
+                                  );
+
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
                               />
                             ) : null
                           ) : (

@@ -752,6 +752,36 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
           }
           break;
 
+        case 'dateym':
+          if (el?.editable === true) {
+            // 에디터
+            el['editor'] = {
+              type: DatagridDateEditor,
+              options: {
+                type: 'dateym',
+                dateFormat: ENUM_FORMAT.DATE_YM,
+                timepicker: {
+                  layoutType: 'tab',
+                  inputType: 'spinbox',
+                },
+              },
+            };
+          }
+
+          el['renderer'] = {
+            type: DatagridDateRenderer,
+            options: {
+              type: 'dateym',
+              dateFormat: ENUM_FORMAT.DATE_YM,
+            },
+          };
+
+          // 정렬
+          if (el?.align == null) {
+            el['align'] = 'center';
+          }
+          break;
+
         case 'text': // 텍스트 세팅
         // format 설정 안하면 'text'로 취급
         default:

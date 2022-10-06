@@ -14,4 +14,6 @@ export enum WORD {
   YES = '예',
   NO = '아니오',
   WORK_MONTH = '근무월',
+  WORK_PLAN_MONTH = '계획월',
+  WORK_PLAN = '생산계획',
 }

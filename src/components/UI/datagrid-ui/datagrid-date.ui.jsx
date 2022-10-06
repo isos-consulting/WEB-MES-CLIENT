@@ -21,6 +21,10 @@ export class DatagridDateEditor {
 
     rootDiv.type = type === 'datetime' ? 'datetime-local' : type;
 
+    if (type === 'dateym') {
+      rootDiv.type = 'month';
+    }
+
     rootDiv.name = name;
 
     if (type === 'time') {
@@ -28,6 +32,9 @@ export class DatagridDateEditor {
     } else if (type === 'date') {
       rootDiv.value = props.value;
       rootDiv.max = '9999-12-31';
+    } else if (type === 'dateym') {
+      rootDiv.value = props.value;
+      rootDiv.max = '9999-12';
     } else {
       rootDiv.max = '9999-12-31T23:59:59';
       if (props.value !== null) {

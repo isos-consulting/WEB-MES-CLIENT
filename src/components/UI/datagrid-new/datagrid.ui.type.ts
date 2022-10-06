@@ -103,7 +103,8 @@ export interface IGridColumn extends ColumnOptions {
     | 'button'
     | 'tag'
     | 'file'
-    | 'percent';
+    | 'percent'
+    | 'dateym';
   editable?: boolean;
   noSave?: boolean;
   requiredField?: boolean;
