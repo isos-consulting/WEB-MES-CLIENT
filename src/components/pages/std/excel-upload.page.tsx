@@ -13,6 +13,7 @@ import { executeData, getData, getStorageValue } from '~/functions';
 import Grid from '@toast-ui/react-grid';
 import {
   DataGridColumns,
+  DataGridDatas,
   ExcelSample,
   SampleUploadableMenu,
 } from './excel-upload/models';
@@ -133,7 +134,6 @@ export const PgStdExcelUpload: React.FC = () => {
 
       setGridProps({
         columns: await gridColumns(menuCode),
-        data: [],
       });
       excelDataGrid.clear();
     },
@@ -189,7 +189,7 @@ export const PgStdExcelUpload: React.FC = () => {
       uploadGridProps.columns,
     );
 
-    excelDataGrid.setData(converted);
+    excelDataGrid.setData(converted as DataGridDatas[]);
 
     return false;
   };
@@ -282,7 +282,6 @@ export const PgStdExcelUpload: React.FC = () => {
 
 const INITIAL_UPLOAD_GRID_PROPS = {
   columns: [],
-  data: [],
 };
 
 const POPUP_COLUMN_INFO = [

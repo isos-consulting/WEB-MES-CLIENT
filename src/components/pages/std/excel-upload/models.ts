@@ -17,7 +17,7 @@ export type DataGridColumns = {
   format: string;
 };
 
-type DataGridDatas = {
+export type DataGridDatas = {
   [key: string]: string | number | boolean | Array<unknown>;
 };
 
