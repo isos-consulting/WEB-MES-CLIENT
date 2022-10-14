@@ -1,5 +1,11 @@
-import { UserSelectableMenu } from '../../src/components/pages/std/excel-upload/models';
-import { useButtonDisableWhenMenuSelectablePolicy } from '../../src/components/pages/std/excel-upload/hooks';
+import {
+  ExcelDataGrid,
+  UserSelectableMenu,
+} from '../../src/components/pages/std/excel-upload/models';
+import {
+  useButtonDisableWhenMenuSelectablePolicy,
+  useExcelUploadDataGrid,
+} from '../../src/components/pages/std/excel-upload/hooks';
 
 jest.mock('../../src/components/pages/std/excel-upload/hooks', () => {
   const originalModule = jest.requireActual(
@@ -15,6 +21,15 @@ jest.mock('../../src/components/pages/std/excel-upload/hooks', () => {
         selectableMenu.item = item;
       });
       return { selectableMenu };
+    }),
+    useExcelUploadDataGrid: jest.fn(() => {
+      const excelDataGrid = new ExcelDataGrid(new Set(), function (
+        arr: unknown[],
+      ) {
+        this.data = new Set(arr);
+      });
+
+      return { excelDataGrid };
     }),
   };
 });
@@ -41,5 +56,34 @@ describe('엑셀 업로드 메뉴 선택 테스트', () => {
     });
 
     expect(selectableMenu.isSelected()).toEqual(true);
+  });
+});
+
+describe('엑셀 데이터 행 없는 경우 데이터 검증과 저장 버튼은 비활성화 된다', () => {
+  test('엑셀 데이터 행이 없으면 true를 반환한다', () => {
+    const { excelDataGrid } = useExcelUploadDataGrid();
+
+    const isEmptyWillTruty = excelDataGrid.isExcelDataEmpty();
+
+    expect(isEmptyWillTruty).toBe(true);
+  });
+
+  test('엑셀 데이터 행이 있으면 false를 반환한다', () => {
+    const { excelDataGrid } = useExcelUploadDataGrid();
+
+    excelDataGrid.setData([{ foo: 'bar' }]);
+    const isNotEmptyWillFalsy = excelDataGrid.isExcelDataEmpty();
+
+    expect(isNotEmptyWillFalsy).toBe(false);
+  });
+
+  test('배열 반환 테스트', () => {
+    const { excelDataGrid } = useExcelUploadDataGrid();
+
+    excelDataGrid.setData([{ foo: 'bar' }, { zoo: 'keeper' }]);
+
+    const fooBarList = excelDataGrid.asList();
+
+    expect(fooBarList).toEqual([{ foo: 'bar' }, { zoo: 'keeper' }]);
   });
 });
