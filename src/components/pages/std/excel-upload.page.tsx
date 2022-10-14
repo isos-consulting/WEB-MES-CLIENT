@@ -109,6 +109,10 @@ const gridColumns = async (excelFormCode: string) => {
 const menus = () =>
   getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
 
+const isNotExcelUploaded = (dataLength, menuIsNotSelected) => {
+  return dataLength > 0 && menuIsNotSelected === false;
+};
+
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
     columns: DataGridColumns[];
@@ -244,13 +248,23 @@ export const PgStdExcelUpload: React.FC = () => {
       />
       <Button
         onClick={validateData}
-        disabled={selectableMenu.isSelected() === false}
+        disabled={
+          isNotExcelUploaded(
+            uploadGridProps.data.length,
+            selectableMenu.isSelected() === false,
+          ) === false
+        }
       >
         데이터 검증
       </Button>
       <Button
         onClick={saveData}
-        disabled={selectableMenu.isSelected() === false}
+        disabled={
+          isNotExcelUploaded(
+            uploadGridProps.data.length,
+            selectableMenu.isSelected() === false,
+          ) === false
+        }
       >
         저장
       </Button>
