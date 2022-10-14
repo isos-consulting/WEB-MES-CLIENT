@@ -18,7 +18,7 @@ export type DataGridColumns = {
 };
 
 type DataGridDatas = {
-  [key: string]: string | number | boolean;
+  [key: string]: string | number | boolean | Array<unknown>;
 };
 
 export class UserSelectableMenu {
@@ -41,11 +41,15 @@ export class UserSelectableMenu {
 
 export class ExcelDataGrid {
   private data: Set<DataGridDatas>;
-  setData: Function;
+  private setter: Function;
 
   constructor(data, setter: Function) {
     this.data = data;
-    this.setData = setter;
+    this.setter = setter;
+  }
+
+  setData(data: DataGridDatas[]) {
+    this.setter(new Set(data));
   }
 
   asList() {
@@ -53,10 +57,34 @@ export class ExcelDataGrid {
   }
 
   clear() {
-    this.setData(new Set());
+    this.setter(new Set());
   }
 
   isExcelDataEmpty() {
     return this.data.size === 0;
+  }
+
+  private hasValidate() {
+    return Array.from(this.data).every(data => data.hasOwnProperty('error'));
+  }
+
+  isValidate() {
+    if (this.data.size === 0) {
+      return false;
+    }
+
+    if (this.hasValidate() === false) {
+      return false;
+    }
+
+    return Array.from(this.data).every(({ error }) => {
+      if (error instanceof Array) {
+        return error.length === 0;
+      } else {
+        throw new Error(
+          '엑셀 업로드 데이터 유효성 검사 API 반환 형식이 잘못되었습니다.',
+        );
+      }
+    });
   }
 }

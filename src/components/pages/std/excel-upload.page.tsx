@@ -221,7 +221,6 @@ export const PgStdExcelUpload: React.FC = () => {
       columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
         ...uploadGridProps.columns.slice(1),
       ),
-      data: validatedDatas.datas.raws,
     });
   };
 
@@ -251,7 +250,8 @@ export const PgStdExcelUpload: React.FC = () => {
         onClick={saveData}
         disabled={
           excelDataGrid.isExcelDataEmpty() === true ||
-          selectableMenu.isSelected() === false
+          selectableMenu.isSelected() === false ||
+          excelDataGrid.isValidate() === false
         }
       >
         저장
