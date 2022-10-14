@@ -11,6 +11,12 @@ import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
 import { executeData, getData, getStorageValue } from '~/functions';
 import Grid from '@toast-ui/react-grid';
+import {
+  ExcelSample,
+  SampleUploadableMenu,
+  UserSelectableMenu,
+} from './excel-upload/models';
+import { useButtonDisableWhenMenuSelectablePolicy } from './excel-upload/hooks';
 
 interface DataGridColumns {
   header: string;
@@ -104,25 +110,20 @@ const gridColumns = async (excelFormCode: string) => {
   );
 };
 
-interface MenuStore {
-  file_extension: string;
-  file_name: string;
-  file_type: string;
-  menu_file_uuid: string;
-  menu_nm: string;
-  menu_uuid: string;
-}
-
 const menus = () =>
   getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
+
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
     columns: DataGridColumns[];
     data: DataGridDatas[];
   }>(INITIAL_UPLOAD_GRID_PROPS);
 
-  const [menuStore, setMenuStore] = useState<MenuStore>(INITIAL_MENU_STORE);
+  const { selectableMenu, unselectedMenuDisabled } =
+    useButtonDisableWhenMenuSelectablePolicy(new UserSelectableMenu());
+
   const dataGridRef = createRef<Grid>(null);
+
   const menuCombobox: ISearchItem = {
     type: 'combo',
     id: 'menu_id',
@@ -131,11 +132,14 @@ export const PgStdExcelUpload: React.FC = () => {
     firstItemType: 'empty',
     widthSize: '160px',
     onAfterChange: async (menuCode: string) => {
-      setMenuStore(
+      console.log({ selectableMenu });
+      selectableMenu.selectMenu(
         (await menus()).find(
-          ({ menu_uuid }: MenuStore) => menu_uuid === menuCode,
+          ({ menu_uuid }: ExcelSample & SampleUploadableMenu) =>
+            menu_uuid === menuCode,
         ),
       );
+
       setGridProps({
         columns: await gridColumns(menuCode),
         data: [],
@@ -164,12 +168,13 @@ export const PgStdExcelUpload: React.FC = () => {
   }, []);
 
   const downloadFile = async () => {
+    console.log({ selectableMenu });
     const blob: Blob | MediaSource = await executeData(
       {},
       `tenant/${getStorageValue({
         storageName: 'tenantInfo',
         keyName: 'tenantUuid',
-      })}/file/${menuStore.menu_file_uuid}/download`,
+      })}/file/${selectableMenu.item.menu_file_uuid}/download`,
       'post',
       'blob',
       false,
@@ -179,7 +184,7 @@ export const PgStdExcelUpload: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${menuStore.menu_nm}_업로드 양식.${menuStore.file_extension}`;
+    a.download = `${selectableMenu.item.menu_nm}_업로드 양식.${selectableMenu.item.file_extension}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -218,7 +223,7 @@ export const PgStdExcelUpload: React.FC = () => {
   const saveData = async () => {
     const validatedDatas = await executeData(
       dataGridRef.current.getInstance().getData(),
-      menuStore.menu_uri,
+      selectableMenu.item.menu_uri,
       'post',
     );
     if (validatedDatas == null) return;
@@ -232,13 +237,20 @@ export const PgStdExcelUpload: React.FC = () => {
 
   return (
     <>
-      <Button onClick={downloadFile}>다운로드</Button>
+      <Button onClick={downloadFile} disabled={unselectedMenuDisabled}>
+        다운로드
+      </Button>
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={beforeSelecedExcelFile}
+        disabled={unselectedMenuDisabled}
       />
-      <Button onClick={validateData}>데이터 검증</Button>
-      <Button onClick={saveData}>저장</Button>
+      <Button onClick={validateData} disabled={unselectedMenuDisabled}>
+        데이터 검증
+      </Button>
+      <Button onClick={saveData} disabled={unselectedMenuDisabled}>
+        저장
+      </Button>
       <Searchbox {...props} />
       <Container>
         {uploadGridProps.columns.length === 0 ? (
@@ -265,16 +277,6 @@ export const PgStdExcelUpload: React.FC = () => {
 const INITIAL_UPLOAD_GRID_PROPS = {
   columns: [],
   data: [],
-};
-
-const INITIAL_MENU_STORE = {
-  file_extension: '',
-  file_name: '',
-  file_type: '',
-  menu_file_uuid: '',
-  menu_nm: '',
-  menu_uuid: '',
-  menu_uri: '',
 };
 
 const POPUP_COLUMN_INFO = [

@@ -12,6 +12,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   onChange,
   text,
   beforeUpload,
+  disabled,
 }: UploadButtonProps) => {
   return (
     <Upload
@@ -23,7 +24,9 @@ const UploadButton: React.FC<UploadButtonProps> = ({
       beforeUpload={beforeUpload}
       showUploadList={false}
     >
-      <Button icon={<UploadOutlined />}>{text}</Button>
+      <Button icon={<UploadOutlined />} disabled={disabled}>
+        {text}
+      </Button>
     </Upload>
   );
 };
