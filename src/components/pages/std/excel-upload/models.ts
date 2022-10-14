@@ -11,6 +11,16 @@ export type SampleUploadableMenu = {
   menu_uri: string;
 };
 
+export type DataGridColumns = {
+  header: string;
+  name: string;
+  format: string;
+};
+
+type DataGridDatas = {
+  [key: string]: string | number | boolean;
+};
+
 export class UserSelectableMenu {
   item: ExcelSample & SampleUploadableMenu;
   selectMenu: Function;
@@ -26,5 +36,27 @@ export class UserSelectableMenu {
 
   isSelected() {
     return this.item != null;
+  }
+}
+
+export class ExcelDataGrid {
+  private data: Set<DataGridDatas>;
+  setData: Function;
+
+  constructor(data, setter: Function) {
+    this.data = data;
+    this.setData = setter;
+  }
+
+  asList() {
+    return Array.from(this.data);
+  }
+
+  clear() {
+    this.setData(new Set());
+  }
+
+  isExcelDataEmpty() {
+    return this.data.size === 0;
   }
 }

@@ -1,4 +1,5 @@
 import {
+  ExcelDataGrid,
   ExcelSample,
   SampleUploadableMenu,
   UserSelectableMenu,
@@ -17,4 +18,12 @@ export const useButtonDisableWhenMenuSelectablePolicy = () => {
   );
 
   return { selectableMenu };
+};
+
+export const useExcelUploadDataGrid = () => {
+  const [excelUploadData, setExcelUploadData] = useState(new Set());
+
+  const excelDataGrid = new ExcelDataGrid(excelUploadData, setExcelUploadData);
+
+  return { excelDataGrid };
 };

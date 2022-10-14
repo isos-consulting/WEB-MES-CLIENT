@@ -11,18 +11,15 @@ import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
 import { executeData, getData, getStorageValue } from '~/functions';
 import Grid from '@toast-ui/react-grid';
-import { ExcelSample, SampleUploadableMenu } from './excel-upload/models';
-import { useButtonDisableWhenMenuSelectablePolicy } from './excel-upload/hooks';
-
-interface DataGridColumns {
-  header: string;
-  name: string;
-  format: string;
-}
-
-interface DataGridDatas {
-  [key: string]: string | number | boolean;
-}
+import {
+  DataGridColumns,
+  ExcelSample,
+  SampleUploadableMenu,
+} from './excel-upload/models';
+import {
+  useButtonDisableWhenMenuSelectablePolicy,
+  useExcelUploadDataGrid,
+} from './excel-upload/hooks';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -109,17 +106,13 @@ const gridColumns = async (excelFormCode: string) => {
 const menus = () =>
   getData({ file_type: 'excel', use_fg: true }, 'adm/menu-files');
 
-const isNotExcelUploaded = (dataLength, menuIsNotSelected) => {
-  return dataLength > 0 && menuIsNotSelected === false;
-};
-
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
     columns: DataGridColumns[];
-    data: DataGridDatas[];
   }>(INITIAL_UPLOAD_GRID_PROPS);
 
   const { selectableMenu } = useButtonDisableWhenMenuSelectablePolicy();
+  const { excelDataGrid } = useExcelUploadDataGrid();
 
   const dataGridRef = createRef<Grid>(null);
 
@@ -142,6 +135,7 @@ export const PgStdExcelUpload: React.FC = () => {
         columns: await gridColumns(menuCode),
         data: [],
       });
+      excelDataGrid.clear();
     },
   };
 
@@ -166,7 +160,6 @@ export const PgStdExcelUpload: React.FC = () => {
   }, []);
 
   const downloadFile = async () => {
-    console.log({ selectableMenu });
     const blob: Blob | MediaSource = await executeData(
       {},
       `tenant/${getStorageValue({
@@ -196,10 +189,8 @@ export const PgStdExcelUpload: React.FC = () => {
       uploadGridProps.columns,
     );
 
-    setGridProps({
-      columns: uploadGridProps.columns,
-      data: converted,
-    });
+    excelDataGrid.setData(converted);
+
     return false;
   };
 
@@ -214,8 +205,9 @@ export const PgStdExcelUpload: React.FC = () => {
       columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
         ...uploadGridProps.columns.slice(1),
       ),
-      data: validatedDatas.datas.raws,
     });
+
+    excelDataGrid.setData(validatedDatas.datas.raws);
   };
 
   const saveData = async () => {
@@ -249,10 +241,8 @@ export const PgStdExcelUpload: React.FC = () => {
       <Button
         onClick={validateData}
         disabled={
-          isNotExcelUploaded(
-            uploadGridProps.data.length,
-            selectableMenu.isSelected() === false,
-          ) === false
+          excelDataGrid.isExcelDataEmpty() === true ||
+          selectableMenu.isSelected() === false
         }
       >
         데이터 검증
@@ -260,10 +250,8 @@ export const PgStdExcelUpload: React.FC = () => {
       <Button
         onClick={saveData}
         disabled={
-          isNotExcelUploaded(
-            uploadGridProps.data.length,
-            selectableMenu.isSelected() === false,
-          ) === false
+          excelDataGrid.isExcelDataEmpty() === true ||
+          selectableMenu.isSelected() === false
         }
       >
         저장
@@ -279,7 +267,7 @@ export const PgStdExcelUpload: React.FC = () => {
             title="선택 메뉴"
             gridId="menu_id"
             gridMode="update"
-            data={uploadGridProps.data}
+            data={excelDataGrid.asList()}
             columns={uploadGridProps.columns}
             ref={dataGridRef}
             disabledAutoDateColumn={true}
