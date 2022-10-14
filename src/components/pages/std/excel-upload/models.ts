@@ -23,4 +23,8 @@ export class UserSelectableMenu {
   allocateSelectMenu(trigger: Function) {
     this.selectMenu = trigger;
   }
+
+  isSelected() {
+    return this.item != null;
+  }
 }

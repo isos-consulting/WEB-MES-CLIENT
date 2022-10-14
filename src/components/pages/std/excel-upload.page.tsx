@@ -11,11 +11,7 @@ import { ENUM_WIDTH } from '~/enums';
 import Excel, { CellValue } from 'exceljs';
 import { executeData, getData, getStorageValue } from '~/functions';
 import Grid from '@toast-ui/react-grid';
-import {
-  ExcelSample,
-  SampleUploadableMenu,
-  UserSelectableMenu,
-} from './excel-upload/models';
+import { ExcelSample, SampleUploadableMenu } from './excel-upload/models';
 import { useButtonDisableWhenMenuSelectablePolicy } from './excel-upload/hooks';
 
 interface DataGridColumns {
@@ -119,8 +115,7 @@ export const PgStdExcelUpload: React.FC = () => {
     data: DataGridDatas[];
   }>(INITIAL_UPLOAD_GRID_PROPS);
 
-  const { selectableMenu, unselectedMenuDisabled } =
-    useButtonDisableWhenMenuSelectablePolicy(new UserSelectableMenu());
+  const { selectableMenu } = useButtonDisableWhenMenuSelectablePolicy();
 
   const dataGridRef = createRef<Grid>(null);
 
@@ -132,7 +127,6 @@ export const PgStdExcelUpload: React.FC = () => {
     firstItemType: 'empty',
     widthSize: '160px',
     onAfterChange: async (menuCode: string) => {
-      console.log({ selectableMenu });
       selectableMenu.selectMenu(
         (await menus()).find(
           ({ menu_uuid }: ExcelSample & SampleUploadableMenu) =>
@@ -237,18 +231,27 @@ export const PgStdExcelUpload: React.FC = () => {
 
   return (
     <>
-      <Button onClick={downloadFile} disabled={unselectedMenuDisabled}>
+      <Button
+        onClick={downloadFile}
+        disabled={selectableMenu.isSelected() === false}
+      >
         다운로드
       </Button>
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={beforeSelecedExcelFile}
-        disabled={unselectedMenuDisabled}
+        disabled={selectableMenu.isSelected() === false}
       />
-      <Button onClick={validateData} disabled={unselectedMenuDisabled}>
+      <Button
+        onClick={validateData}
+        disabled={selectableMenu.isSelected() === false}
+      >
         데이터 검증
       </Button>
-      <Button onClick={saveData} disabled={unselectedMenuDisabled}>
+      <Button
+        onClick={saveData}
+        disabled={selectableMenu.isSelected() === false}
+      >
         저장
       </Button>
       <Searchbox {...props} />
