@@ -132,3 +132,19 @@ describe('엑셀 데이터 검증이 통과하면 저장 버튼이 활성화 된
     expect(inValidateWillFalsy).toBe(false);
   });
 });
+
+describe('엑셀 업로드 데이터 저장 API 호출 후 UI에 표시되는 데이터는 초기화 된다 ', () => {
+  test('데이터 초기화 후 isExcelDataEmpty 함수 실행의 결과는 true를 반환한다', () => {
+    const { excelDataGrid } = useExcelUploadDataGrid();
+
+    excelDataGrid.setData([
+      { foo: 'bar', error: ['foo는 Boolean 타입입니다'] },
+      { zoo: 'keeper', error: [''] },
+    ]);
+
+    excelDataGrid.clear();
+    const emptyWillTruthy = excelDataGrid.isExcelDataEmpty();
+
+    expect(emptyWillTruthy).toBe(true);
+  });
+});
