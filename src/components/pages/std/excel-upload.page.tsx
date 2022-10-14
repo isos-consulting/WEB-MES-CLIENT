@@ -222,6 +222,7 @@ export const PgStdExcelUpload: React.FC = () => {
         ...uploadGridProps.columns.slice(1),
       ),
     });
+    excelDataGrid.clear();
   };
 
   return (
