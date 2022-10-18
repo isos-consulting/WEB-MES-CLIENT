@@ -4,6 +4,7 @@ import { UploadOutlined } from '@ant-design/icons';
 
 interface UploadButtonProps extends UploadProps {
   text: string;
+  onClick: Function;
 }
 
 const UploadButton: React.FC<UploadButtonProps> = ({
@@ -13,6 +14,8 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   text,
   beforeUpload,
   disabled,
+  onClick,
+  openFileDialogOnClick,
 }: UploadButtonProps) => {
   return (
     <Upload
@@ -23,8 +26,9 @@ const UploadButton: React.FC<UploadButtonProps> = ({
       maxCount={1}
       beforeUpload={beforeUpload}
       showUploadList={false}
+      openFileDialogOnClick={openFileDialogOnClick}
     >
-      <Button icon={<UploadOutlined />} disabled={disabled}>
+      <Button icon={<UploadOutlined />} disabled={disabled} onClick={onClick}>
         {text}
       </Button>
     </Upload>

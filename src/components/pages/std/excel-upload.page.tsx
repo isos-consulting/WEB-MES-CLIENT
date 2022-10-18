@@ -21,6 +21,7 @@ import {
   useButtonDisableWhenMenuSelectablePolicy,
   useExcelUploadDataGrid,
 } from './excel-upload/hooks';
+import { message } from 'antd';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -160,6 +161,10 @@ export const PgStdExcelUpload: React.FC = () => {
   }, []);
 
   const downloadFile = async () => {
+    if (selectableMenu.isSelected() === false) {
+      return message.warn('메뉴를 선택해주세요.');
+    }
+
     const blob: Blob | MediaSource = await executeData(
       {},
       `tenant/${getStorageValue({
@@ -182,6 +187,13 @@ export const PgStdExcelUpload: React.FC = () => {
     URL.revokeObjectURL(blob.toString());
   };
 
+  const activeDialog = clickEvent => {
+    clickEvent.preventDefault();
+    if (selectableMenu.isSelected() === false) {
+      return message.warn('메뉴를 선택해주세요.');
+    }
+  };
+
   const beforeSelecedExcelFile = async uploadFile => {
     const converted = await importXLSXFile(
       uploadFile,
@@ -195,6 +207,13 @@ export const PgStdExcelUpload: React.FC = () => {
   };
 
   const validateData = async () => {
+    if (
+      excelDataGrid.isExcelDataEmpty() === true ||
+      selectableMenu.isSelected() === false
+    ) {
+      return message.warn('엑셀파일을 업로드해주세요.');
+    }
+
     const validatedDatas = await executeData(
       dataGridRef.current.getInstance().getData(),
       'std/partners/excel-validation',
@@ -211,6 +230,18 @@ export const PgStdExcelUpload: React.FC = () => {
   };
 
   const saveData = async () => {
+    if (selectableMenu.isSelected() === false) {
+      return message.warn('메뉴를 선택해주세요.');
+    }
+
+    if (
+      excelDataGrid.isExcelDataEmpty() === true ||
+      excelDataGrid.isValidate() === false ||
+      dataGridRef.current.getInstance().getModifiedRows().updatedRows.length > 0
+    ) {
+      return message.warn('데이터 검증을 실행해주세요');
+    }
+
     const validatedDatas = await executeData(
       dataGridRef.current.getInstance().getData(),
       selectableMenu.item.menu_uri,
@@ -225,38 +256,20 @@ export const PgStdExcelUpload: React.FC = () => {
     excelDataGrid.clear();
   };
 
+  const notificationExcelDataGridChanged = () =>
+    message.warn('수정된 데이터가 있습니다. 데이터 검증 버튼을 눌러주세요.');
+
   return (
     <>
-      <Button
-        onClick={downloadFile}
-        disabled={selectableMenu.isSelected() === false}
-      >
-        다운로드
-      </Button>
+      <Button onClick={downloadFile}>다운로드</Button>
       <Button.Upload
         text="업로드 파일 선택하기"
         beforeUpload={beforeSelecedExcelFile}
-        disabled={selectableMenu.isSelected() === false}
+        onClick={activeDialog}
+        openFileDialogOnClick={selectableMenu.isSelected() === true}
       />
-      <Button
-        onClick={validateData}
-        disabled={
-          excelDataGrid.isExcelDataEmpty() === true ||
-          selectableMenu.isSelected() === false
-        }
-      >
-        데이터 검증
-      </Button>
-      <Button
-        onClick={saveData}
-        disabled={
-          excelDataGrid.isExcelDataEmpty() === true ||
-          selectableMenu.isSelected() === false ||
-          excelDataGrid.isValidate() === false
-        }
-      >
-        저장
-      </Button>
+      <Button onClick={validateData}>데이터 검증</Button>
+      <Button onClick={saveData}>저장</Button>
       <Searchbox {...props} />
       <Container>
         {uploadGridProps.columns.length === 0 ? (
@@ -273,6 +286,7 @@ export const PgStdExcelUpload: React.FC = () => {
             ref={dataGridRef}
             disabledAutoDateColumn={true}
             gridPopupInfo={POPUP_COLUMN_INFO}
+            onAfterChange={notificationExcelDataGridChanged}
           />
         )}
       </Container>
