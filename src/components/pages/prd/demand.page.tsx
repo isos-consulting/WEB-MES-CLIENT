@@ -6,15 +6,14 @@ import {
   useSearchbox,
 } from '~/components/UI';
 import {
-  checkGridData,
   cleanupKeyOfObject,
   cloneObject,
   dataGridEvents,
+  executeData,
   getData,
   getModifiedRows,
   getPageName,
   getToday,
-  saveGridData,
 } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
@@ -486,28 +485,25 @@ export const PgPrdDemand = () => {
 
   const onAfterEditSave = async (isSuccess: boolean, savedData?: any[]) => {
     if (isSuccess) {
-      const gridRef = editDataPopupGrid?.gridRef;
-      const columns = editDataPopupGrid?.gridInfo?.columns;
-      const modifiedRows = getModifiedRows(gridRef, columns);
       const saveUriPath = '/prd/demands/complete';
 
-      // 저장 가능한지 체크
-      const chk: boolean = await checkGridData(columns, modifiedRows);
+      if (savedData.length > 0) {
+        executeData(
+          savedData.map(({ uuid, complete_fg }) => ({ uuid, complete_fg })),
+          saveUriPath,
+          'put',
+        )
+          .then(result => {
+            const { success } = result;
+            if (success === false) return;
+          })
+          .catch(e => {
+            console.log('Error', e);
+          });
+      }
 
-      if (chk === false) return;
-
-      // 완료상태 따로 저장
-      saveGridData(modifiedRows, columns, saveUriPath, {}, true)
-        .then(result => {
-          const { success } = result;
-          if (success === false) return;
-
-          setEditDataPopupGridVisible(false);
-          onSearch(searchInfo?.values);
-        })
-        .catch(e => {
-          console.log('Error', e);
-        });
+      setEditDataPopupGridVisible(false);
+      onSearch(searchInfo?.values);
     }
   };
 
