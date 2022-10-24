@@ -84,6 +84,7 @@ export * from './prd/demand.page';
 export * from './prd/order/order.page';
 export * from './prd/work/work.page';
 export * from './prd/work/work-plan.page';
+export * from './prd/work/daily-work-plan.page';
 export * from './prd/progress-history';
 
 export * from './mat/order.page';

@@ -13,7 +13,6 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { ENUM_WIDTH } from '~/enums';
 import {
   executeData,
   getData,
@@ -35,7 +34,7 @@ const hiddenWorkPlanModal = new BasicModalContext({
   onOk: () => {},
 });
 
-export const PgWorkPlan = () => {
+export const PgDailyWorkPlan = () => {
   const title = getPageName();
   const workPlanSearchInfo = useSearchbox(
     'workPlanSearchInfo',
@@ -48,7 +47,7 @@ export const PgWorkPlan = () => {
       },
     ],
     userSelectedPlanMonth =>
-      fetchWorkPlanGetApi(userSelectedPlanMonth).then(setWorkPlanData),
+      fetchDailyWorkPlanGetApi(userSelectedPlanMonth).then(setWorkPlanData),
   );
 
   const [workPlanData, setWorkPlanData] = useState([]);
@@ -57,13 +56,13 @@ export const PgWorkPlan = () => {
 
   const workPlanDataGridRef = useRef();
 
-  const fetchWorkPlanGetApi = ({ plan_date }: { plan_date: string }) =>
-    getData({ plan_month: plan_date, wait_task_fg: false }, 'prd/plan-monthly');
+  const fetchDailyWorkPlanGetApi = ({ plan_date }: { plan_date: string }) =>
+    getData({ plan_month: plan_date, wait_task_fg: false }, '/prd/plan-daily');
 
   const hideWorkPlanModal = () => modalContextSwitch(hiddenWorkPlanModal);
 
   const getWorkPlanData = () =>
-    fetchWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
+    fetchDailyWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
 
   const confirmBeforeAddWorkPlan = grid => {
     Modal.confirm({
@@ -71,7 +70,27 @@ export const PgWorkPlan = () => {
       title: SENTENCE.ADD_RECORD,
       content: `${WORD.WORK_PLAN} ${SENTENCE.SAVE_CONFIRM}`,
       onOk: () =>
-        workPlanPostApiCallSuccess(grid.current.getInstance().getData()),
+        workPlanPostApiCallSuccess(
+          grid.current
+            .getInstance()
+            .getData()
+            .map(
+              ({
+                plan_monthly_uuid,
+                prod_uuid,
+                workings_uuid,
+                plan_day,
+                plan_daily_qty,
+              }) => ({
+                plan_monthly_uuid,
+                prod_uuid,
+                workings_uuid,
+                plan_day,
+                plan_daily_qty,
+                factory_uuid: getUserFactoryUuid(),
+              }),
+            ),
+        ),
     });
   };
 
@@ -80,16 +99,32 @@ export const PgWorkPlan = () => {
       icon: null,
       title: WORD.EDIT,
       content: `${WORD.WORK_PLAN} ${SENTENCE.EDIT_CONFIRM}`,
-      onOk: () =>
+      onOk: () => {
+        console.log(grid.current.getInstance().getModifiedRows().updatedRows);
         workPlanPutApiCallSuccess(
           grid.current
             .getInstance()
             .getModifiedRows()
-            .updatedRows.map(({ work_plan_month_uuid, ...workPlanRest }) => ({
-              uuid: work_plan_month_uuid,
-              ...workPlanRest,
-            })),
-        ),
+            .updatedRows.map(
+              ({
+                plan_daily_uuid,
+                plan_monthly_uuid,
+                prod_uuid,
+                workings_uuid,
+                plan_day,
+                plan_daily_qty,
+              }) => ({
+                uuid: plan_daily_uuid,
+                plan_monthly_uuid,
+                prod_uuid,
+                workings_uuid,
+                plan_day,
+                plan_daily_qty,
+                factory_uuid: getUserFactoryUuid(),
+              }),
+            ),
+        );
+      },
     });
   };
 
@@ -109,27 +144,15 @@ export const PgWorkPlan = () => {
       content: SENTENCE.DELETE_CONFIRM,
       onOk: () =>
         workPlanDeleteApiCallSuccess(
-          checkedWorkPlans.map(({ plan_monthly_uuid }) => ({
-            uuid: plan_monthly_uuid,
+          checkedWorkPlans.map(({ plan_daily_uuid }) => ({
+            uuid: plan_daily_uuid,
           })),
         ),
     });
   };
 
   const workPlanPostApiCallSuccess = addedWorkPlan => {
-    executeData(
-      addedWorkPlan.map(
-        ({ prod_uuid, workings_uuid, plan_month, plan_monthly_qty }) => ({
-          prod_uuid,
-          workings_uuid,
-          plan_month,
-          plan_monthly_qty,
-          factory_uuid: getUserFactoryUuid(),
-        }),
-      ),
-      '/prd/plan-monthly',
-      'post',
-    ).then(res => {
+    executeData(addedWorkPlan, '/prd/plan-daily', 'post').then(res => {
       if (res.success === true) {
         message.info(SENTENCE.SAVE_COMPLETE);
         modalContextSwitch(hiddenWorkPlanModal);
@@ -139,26 +162,7 @@ export const PgWorkPlan = () => {
   };
 
   const workPlanPutApiCallSuccess = editedWorkPlan => {
-    executeData(
-      editedWorkPlan.map(
-        ({
-          plan_monthly_uuid,
-          prod_uuid,
-          workings_uuid,
-          plan_month,
-          plan_monthly_qty,
-        }) => ({
-          uuid: plan_monthly_uuid,
-          prod_uuid,
-          workings_uuid,
-          plan_month,
-          plan_monthly_qty,
-          factory_uuid: getUserFactoryUuid(),
-        }),
-      ),
-      '/prd/plan-monthly',
-      'put',
-    ).then(res => {
+    executeData(editedWorkPlan, '/prd/plan-daily', 'put').then(res => {
       if (res.success === true) {
         message.info(SENTENCE.EDIT_COMPLETE);
         modalContextSwitch(hiddenWorkPlanModal);
@@ -168,7 +172,7 @@ export const PgWorkPlan = () => {
   };
 
   const workPlanDeleteApiCallSuccess = deletedWorkPlan => {
-    executeData(deletedWorkPlan, '/prd/plan-monthly', 'delete').then(res => {
+    executeData(deletedWorkPlan, '/prd/plan-daily', 'delete').then(res => {
       if (res.success === true) {
         message.info(SENTENCE.DELETE_COMPLETE);
         getWorkPlanData().then(setWorkPlanData);
@@ -176,11 +180,11 @@ export const PgWorkPlan = () => {
     });
   };
 
-  const showAddWorkPlanModal = () =>
+  const showAddWorkPlanModal = () => {
     modalContextSwitch({
       ...BasicModalContext.add({
-        title,
-        columns: ColumnStore.WORK_PLAN,
+        title: `${workPlanSearchInfo.ref.current.values.plan_date} ${title}`,
+        columns: ColumnStore.DAILY_WORK_PLAN,
         gridPopupInfo: [
           {
             // 작업장 관리
@@ -204,6 +208,7 @@ export const PgWorkPlan = () => {
       rowAddPopupInfo: {
         // 라우팅 팝업 불러오기
         columnNames: [
+          { original: 'plan_monthly_uuid', popup: 'plan_monthly_uuid' },
           { original: 'routing_uuid', popup: 'routing_uuid' },
           { original: 'proc_uuid', popup: 'proc_uuid' },
           { original: 'proc_no', popup: 'proc_no' },
@@ -225,172 +230,25 @@ export const PgWorkPlan = () => {
           { original: 'unit_nm', popup: 'unit_nm' },
           { original: 'auto_work_fg', popup: 'auto_work_fg' },
         ],
-        columns: [
-          {
-            header: '라우팅UUID',
-            name: 'routing_uuid',
-            alias: 'uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '공정UUID',
-            name: 'proc_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '공정순서',
-            name: 'proc_no',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '공정',
-            name: 'proc_nm',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '작업장UUID',
-            name: 'workings_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '작업장',
-            name: 'workings_nm',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '품목유형UUID',
-            name: 'item_type_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '품목유형',
-            name: 'item_type_nm',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '제품유형UUID',
-            name: 'prod_type_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '제품유형',
-            name: 'prod_type_nm',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '품목UUID',
-            name: 'prod_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '품번',
-            name: 'prod_no',
-            width: ENUM_WIDTH.L,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '품목',
-            name: 'prod_nm',
-            width: ENUM_WIDTH.L,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '모델UUID',
-            name: 'model_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '모델',
-            name: 'model_nm',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: 'Rev',
-            name: 'rev',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '규격',
-            name: 'prod_std',
-            width: ENUM_WIDTH.M,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '단위UUID',
-            name: 'unit_uuid',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-          {
-            header: '단위',
-            name: 'unit_nm',
-            width: ENUM_WIDTH.S,
-            filter: 'text',
-            hidden: false,
-            format: 'text',
-          },
-          {
-            header: '자동 실적처리유무',
-            name: 'auto_work_fg',
-            width: ENUM_WIDTH.M,
-            hidden: true,
-            format: 'text',
-          },
-        ],
+        columns: ColumnStore.WORK_PLAN,
         dataApiSettings: {
-          uriPath: '/std/routings/actived-prod',
-          params: {},
+          uriPath: 'prd/plan-monthly',
+          params: {
+            plan_month: workPlanSearchInfo.ref.current.values.plan_date,
+            wait_task_fg: true,
+          },
         },
         gridMode: 'multi-select',
       },
     });
+  };
 
   const showEditWorkPlanModal = () =>
     modalContextSwitch(
       BasicModalContext.edit({
         title,
-        columns: ColumnStore.WORK_PLAN.map<IGridColumn>(column => {
-          if (column.name === 'plan_monthly_qty') {
+        columns: ColumnStore.DAILY_WORK_PLAN.map<IGridColumn>(column => {
+          if (column.name === 'plan_daily_qty') {
             return {
               ...column,
               editable: true,
@@ -439,7 +297,7 @@ export const PgWorkPlan = () => {
           <Datagrid
             ref={workPlanDataGridRef}
             data={workPlanData}
-            columns={ColumnStore.WORK_PLAN}
+            columns={ColumnStore.DAILY_WORK_PLAN}
             gridMode="delete"
           />
         </Container>
