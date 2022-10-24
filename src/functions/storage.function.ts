@@ -1,6 +1,4 @@
 // --- [sessionStorage에 있는 유저 정보 가져오는 함수들] --------------------------------------------
-import dotenv from 'dotenv';
-dotenv.config();
 
 type TgetStorageValueParams = {
   storageName: 'userInfo' | 'tokenInfo' | 'tenantInfo';
@@ -48,7 +46,11 @@ export const getUserSuperAdminFg = () => {
 
 /** 로그인 유저의 토큰을 가져옵니다. */
 export const getUserAccessToken = () => {
-  return process.env.ACCESS_TOKEN_PREFIX + ' ' + getTokenInfo()?.access_token;
+  return (
+    import.meta.env.VITE_ACCESS_TOKEN_PREFIX +
+    ' ' +
+    getTokenInfo()?.access_token
+  );
 };
 
 export const getUserRefreshToken = () => {

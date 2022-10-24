@@ -1,7 +1,7 @@
 import { createGlobalStyle, css } from 'styled-components';
-import Colors from '~styles/color.style.scss';
-import Sizes from '~styles/size.style.scss';
-import Fonts from '~styles/font.style.scss';
+import Colors from '~styles/color.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
+import Fonts from '~styles/font.style.module.scss';
 import '../index.css';
 
 //#region 🌵공통된 속성

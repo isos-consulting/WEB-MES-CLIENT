@@ -33,11 +33,12 @@ const App = () => {
   };
 
   const getTenantCode = url => {
-    return url.split('.')[0];
+    console.log(url);
+    return `${url}`.split('.')[0];
   };
 
   const tenantIsNotEmpty = (tenants: any[]) => {
-    return tenants.length > 0;
+    return Array.from(tenants).length > 0;
   };
 
   const getSerialTenantUuid = (uuid: string) => {
@@ -52,9 +53,10 @@ const App = () => {
 
   const handleGetTeneuntInfo = async () => {
     const hostName = window.location.hostname;
+    console.log(import.meta);
     const webURL =
       checkLocalEnviroment(hostName) === true
-        ? process.env.NAJS_LOCAL_WEB_URL
+        ? import.meta.env.VITE_NAJS_LOCAL_WEB_URL
         : hostName;
 
     const tenants: Array<CloudTenant> = await getData(
@@ -63,7 +65,7 @@ const App = () => {
       'raws',
       null,
       true,
-      process.env.TENANT_SERVER_URL,
+      import.meta.env.VITE_TENANT_SERVER_URL,
     );
 
     if (tenantIsNotEmpty(tenants) === true) {

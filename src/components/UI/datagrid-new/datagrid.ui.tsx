@@ -37,7 +37,7 @@ import {
   DatagridPercentEditor,
   DatagridPercentRenderer,
 } from '~/components/UI/datagrid-ui';
-import '~styles/grid.style.scss';
+import '~styles/grid.style.module.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import { getPopupForm, IPopupItemsRetrunProps } from '../popup';
@@ -45,7 +45,7 @@ import { Result } from '../result';
 import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
 import { Button } from '../button';
 import 'tui-grid/dist/tui-grid.css';
-import Colors from '~styles/color.style.scss';
+import Colors from '~styles/color.style.module.scss';
 import { COLUMN_NAME } from '.';
 import { layoutStore } from '../layout/layout.ui.hook';
 import { useRecoilValue } from 'recoil';
@@ -55,10 +55,9 @@ import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
 import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
-import dotenv from 'dotenv';
+
 import { errorRequireDecimal } from '~/error';
 
-dotenv.config();
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
 TuiGrid.setLanguage('ko', {
@@ -328,7 +327,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                     'delete',
                                     'data',
                                     false,
-                                    process.env.FILE_SERVER_URL,
+                                    import.meta.env.VITE_FILE_SERVER_URL,
                                   );
 
                                   grid.removeRow(rowKey);
@@ -418,7 +417,7 @@ const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
                                     'post',
                                     'blob',
                                     false,
-                                    process.env.FILE_SERVER_URL,
+                                    import.meta.env.VITE_FILE_SERVER_URL,
                                   );
                                   const url = URL.createObjectURL(blob);
                                   const a = document.createElement('a');

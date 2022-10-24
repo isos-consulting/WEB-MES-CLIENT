@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { IContentProps, ILayoutSpacing } from './layout.ui.type';
-import Colors from '~styles/color.style.scss';
-import Sizes from '~styles/size.style.scss';
+import Colors from '~styles/color.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
 
 /** 페이지 Container 영역의 스타일 */
 export const ScContainer = styled.div<ILayoutSpacing>`

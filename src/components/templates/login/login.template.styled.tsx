@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Colors from '~styles/color.style.scss';
-import Fonts from '~styles/font.style.scss';
-import Sizes from '~styles/size.style.scss';
+import Colors from '~styles/color.style.module.scss';
+import Fonts from '~styles/font.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
 
 export const ScContainer = styled.div`
   //로그인 비밀번호 label 밑

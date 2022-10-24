@@ -1,4 +1,4 @@
-import Colors from '~styles/color.style.scss';
+import Colors from '~styles/color.style.module.scss';
 import styled from 'styled-components';
 import { Radio } from 'antd';
 

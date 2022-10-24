@@ -3,7 +3,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Button, Container, Label, Tabs, TPermission } from '~/components/UI';
 import { RoutingInfo, WorkInfo } from '../../work-components';
-import Fonts from '~styles/font.style.scss';
+import Fonts from '~styles/font.style.module.scss';
 
 export const WorkPerformanceContent = ({
   permissions,

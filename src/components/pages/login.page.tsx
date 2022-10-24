@@ -3,13 +3,11 @@ import { message, Form } from 'antd';
 import crypto from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
 import { consoleLogLocalEnv, executeData, getData } from '../../functions';
-import dotenv from 'dotenv';
+
 import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Profile } from '~/models/user/profile';
-
-dotenv.config();
 
 const pageId = uuidv4();
 const uriPath = 'aut/user/sign-in/';

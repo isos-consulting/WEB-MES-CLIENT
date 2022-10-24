@@ -2,7 +2,7 @@ import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Label, PopupButton, Textbox } from '~/components/UI';
-import Fonts from '~styles/font.style.scss';
+import Fonts from '~styles/font.style.module.scss';
 
 /**
  * 실적 정보 컴포넌트

@@ -1,5 +1,5 @@
-import Colors from '~styles/color.style.scss';
-import Sizes from '~styles/size.style.scss';
+import Colors from '~styles/color.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
 import styled from 'styled-components';
 import { Modal } from 'antd';
 

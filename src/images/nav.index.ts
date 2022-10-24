@@ -15,22 +15,20 @@ import ico_nav_equipment from './navigation/ico_nav_equipment.png';
 import ico_nav_mold from './navigation/ico_nav_mold.png';
 import ico_nav_kpi from './navigation/ico_nav_kpi.png';
 
-
-
-export { 
+export {
   ico_nav_admin,
   ico_nav_authority,
-  ico_nav_dashboard, 
+  ico_nav_dashboard,
   ico_nav_debug,
   ico_nav_inventory,
-  ico_nav_keyPerformanceIndicator, 
-  ico_nav_material, 
+  ico_nav_keyPerformanceIndicator,
+  ico_nav_material,
   ico_nav_monitoring,
-  ico_nav_outsourcing, 
-  ico_nav_production, 
-  ico_nav_qualityManagementSystems, 
-  ico_nav_sales, 
-  ico_nav_standard, 
+  ico_nav_outsourcing,
+  ico_nav_production,
+  ico_nav_qualityManagementSystems,
+  ico_nav_sales,
+  ico_nav_standard,
   ico_nav_equipment,
   ico_nav_mold,
   ico_nav_kpi,

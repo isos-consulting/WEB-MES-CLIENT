@@ -24,7 +24,7 @@ import {
   getPermissions,
   getToday,
 } from '~/functions';
-import Colors from '~styles/color.style.scss';
+import Colors from '~styles/color.style.module.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';

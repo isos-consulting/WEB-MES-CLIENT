@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ScButton } from './button.ui.styled';
-import Colors from '~styles/color.style.scss';
+import Colors from '~styles/color.style.module.scss';
 import {
   FileExcelOutlined,
   DeleteOutlined,

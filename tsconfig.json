@@ -1,5 +1,20 @@
 {
   "compilerOptions": {
+    "target": "es5", // ECMAScript 대상 버전을 지정합니다.
+    "lib": [
+      // 컴파일에 포함될 라이브러리 파일 목록입니다.
+      "es6",
+      "dom",
+      "esnext.asynciterable"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true, //선언 타입(.d.ts) 파일의 타입 검사를 생략합니다.
+    "esModuleInterop": true, // import 할때 default export와 export 항목을 동시에 import할수 있도록 허용합니다. (ex: import React, {useEffect} from 'react';)
+    "allowSyntheticDefaultImports": true, // default export가 없는 모듈임에도 default export 방식으로 import를 했을때 오류를 보고하지 않습니다.
+    "forceConsistentCasingInFileNames": true, // 파일명의 대소문자를 구분합니다. (false하면 파일의 대소문자를 구분하지 않습니다. test === TeSt)
+    "module": "ESNext", // 빌드 결과의 모듈 방식을 지정합니다.
+    "moduleResolution": "node", // import하는 모듈이 무엇을 참조하고 있는지 알아내기 위한 프로세싱 전략을 설정합니다.
+    "jsx": "react", // tsx에서 jsx를 지원하기 위한 포맷을 설정합니다.
     "baseUrl": "./src", //기준이 되는 위치
     "paths": {
       //import alias 정의
@@ -12,30 +27,14 @@
       "~images/*": ["./images/*"]
     },
     "outDir": "build/dist", // 컴파일시 build 경로
-    "module": "commonjs", // 빌드 결과의 모듈 방식을 지정합니다.
-    "target": "es5", // ECMAScript 대상 버전을 지정합니다.
-    "lib": [
-      // 컴파일에 포함될 라이브러리 파일 목록입니다.
-      "es6",
-      "dom",
-      "esnext.asynciterable"
-    ],
     "sourceMap": true,
-    "allowJs": true,
-    // "jsx": "react-jsx",
-    "jsx": "react", // tsx에서 jsx를 지원하기 위한 포맷을 설정합니다.
-    "moduleResolution": "node", // import하는 모듈이 무엇을 참조하고 있는지 알아내기 위한 프로세싱 전략을 설정합니다.
     "rootDir": "src", // 루트 디렉토리를 지정합니다.
-    "forceConsistentCasingInFileNames": true, // 파일명의 대소문자를 구분합니다. (false하면 파일의 대소문자를 구분하지 않습니다. test === TeSt)
-    "esModuleInterop": true, // import 할때 default export와 export 항목을 동시에 import할수 있도록 허용합니다. (ex: import React, {useEffect} from 'react';)
     "noImplicitReturns": false, // 함수의 리턴 값이 제대로 수행되지 않으면 오류를 보고합니다.
     "noImplicitThis": false, // 타입을 지정하지 않은 this 표현식에 오류를 보고합니다.
     "noImplicitAny": false, // 타입 지정 안할시 any로 간주, 타입을 명시하도록 에러를 보고합니다.
     "strictNullChecks": false, // null 검사를 엄격하게 합니다. (null과 undefined를 서브타입(ex: type test = 'string' | null)으로 사용하지 못하게 합니다. 'string' | any 형식으로 작성해야 합니다.)
     "suppressImplicitAnyIndexErrors": true,
-    "allowSyntheticDefaultImports": true, // default export가 없는 모듈임에도 default export 방식으로 import를 했을때 오류를 보고하지 않습니다.
-    "noUnusedLocals": true, //사용하지 않는 지역 변수에 대한 오류를 보고합니다.
-    "skipLibCheck": true //선언 타입(.d.ts) 파일의 타입 검사를 생략합니다.
+    "noUnusedLocals": true //사용하지 않는 지역 변수에 대한 오류를 보고합니다.
   },
   "exclude": [
     // 해당 항목들을 컴파일에서 제외시킵니다.
@@ -49,5 +48,6 @@
     // 컴파일할 항목들을 지정합니다.
     "src/typings",
     "src/**/*"
-  ]
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

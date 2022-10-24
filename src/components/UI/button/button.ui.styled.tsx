@@ -1,11 +1,12 @@
 import React from 'react';
-import Colors from '~styles/color.style.scss';
-import Sizes from '~styles/size.style.scss';
-import Fonts from '~styles/font.style.scss';
+import Colors from '~styles/color.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
+import Fonts from '~styles/font.style.module.scss';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import { IButtonStyles } from './button.ui.type';
 
+console.log({ Colors });
 // styled컴포넌트의 틀이되는 base컴포넌트
 // (antd>button에는 커스텀한 property들이 들어가면 에러가 발생하기 때문에 base컴포넌트를 따로 빼줘야 합니다.)
 const BaseButton: React.FC<IButtonStyles> = props => {

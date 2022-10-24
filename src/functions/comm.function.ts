@@ -7,7 +7,7 @@ import {
 } from './storage.function';
 import { getObjectKeyDuplicateCheck } from './util.function';
 import { message } from 'antd';
-import dotenv from 'dotenv';
+
 import { useReducer, useLayoutEffect, useState } from 'react';
 import {
   atSideNavMenuContent,
@@ -22,8 +22,7 @@ import { JSXElement } from '@babel/types';
 import { errorState } from '~/enums/response.enum';
 import { getStorageValue, getUserRefreshToken } from '.';
 
-dotenv.config();
-const baseURL = process.env.BASE_URL;
+const baseURL = import.meta.env.VITE_BASE_URL;
 
 const MessageFactory = class {
   create(message: string | object) {

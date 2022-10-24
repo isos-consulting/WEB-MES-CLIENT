@@ -11,9 +11,7 @@ import { executeData, getStorageValue } from '~/functions';
 import { Button } from '..';
 import './dragDrop.ui.styled.scss';
 import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
-import dotenv from 'dotenv';
 
-dotenv.config();
 interface IFileTypes {
   id: number;
   object: File;
@@ -55,7 +53,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
       'post',
       'data',
       false,
-      process.env.FILE_SERVER_URL,
+      import.meta.env.VITE_FILE_SERVER_URL,
     );
 
     if (response.success) {

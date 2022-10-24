@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from 'antd';
 import Props from './label.ui.type';
-import Fonts from '~styles/font.style.scss';
+import Fonts from '~styles/font.style.module.scss';
 
 /** 라벨 */
 const Label: React.FC<Props> = props => {

@@ -174,7 +174,7 @@ export const PgStdExcelUpload: React.FC = () => {
       'post',
       'blob',
       false,
-      process.env.FILE_SERVER_URL,
+      import.meta.env.VITE_FILE_SERVER_URL,
     );
 
     const url = URL.createObjectURL(blob);

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Props from './footer.ui.type';
-import Fonts from '~styles/font.style.scss';
-import Colors from '~styles/color.style.scss';
+import Fonts from '~styles/font.style.module.scss';
+import Colors from '~styles/color.style.module.scss';
 
 export const ScContainer = styled.div<Props>`
   display: flex;

@@ -1,4 +1,4 @@
-import '../styles/axios-progress.style.scss';
+import '../styles/axios-progress.style.module.scss';
 import {
   IGridColumn,
   IGridPopupColumnInfo,
@@ -13,10 +13,9 @@ import {
 } from '../recoils/recoil.atom-family';
 import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
-import dotenv from 'dotenv';
+
 import { isNumber } from './number';
 
-dotenv.config();
 /**
  * xlsx => json으로 convert하는 함수입니다.
  * @param bufferData 엑셀파일 버퍼데이터
@@ -656,7 +655,7 @@ export const consoleLogLocalEnv = (
   const host = window.location.hostname;
   if (
     (host === 'localhost' || host.includes('191.1.70')) &&
-    process.env.LOG_LEVEL === 'production'
+    import.meta.env.VITE_LOG_LEVEL === 'production'
   ) {
     if (message != null) {
       console.debug(message, ...optionalParams);
