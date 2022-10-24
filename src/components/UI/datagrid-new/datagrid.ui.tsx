@@ -37,7 +37,7 @@ import {
   DatagridPercentEditor,
   DatagridPercentRenderer,
 } from '~/components/UI/datagrid-ui';
-import '~styles/grid.style.module.scss';
+import '~styles/grid.style.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 import { getPopupForm, IPopupItemsRetrunProps } from '../popup';

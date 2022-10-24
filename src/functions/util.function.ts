@@ -1,4 +1,4 @@
-import '../styles/axios-progress.style.module.scss';
+import '../styles/axios-progress.style.scss';
 import {
   IGridColumn,
   IGridPopupColumnInfo,
