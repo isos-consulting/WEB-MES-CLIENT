@@ -1145,7 +1145,8 @@ export const PgQmsReworkReport = () => {
   /** 분해이력에서 품목이 변경됐을 때, 그리드 데이터를 해당 하위 BOM 데이터로 리셋합니다. */
   useLayoutEffect(() => {
     const inputValues = disassemblePopupInputInfo?.values;
-    if (!inputValues || inputValues === {}) return;
+    if (!inputValues) return;
+    if (Object.keys(inputValues).length === 0) return;
 
     const prod_uuid = inputValues?.prod_uuid;
 
