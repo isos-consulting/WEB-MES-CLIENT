@@ -33,7 +33,6 @@ const App = () => {
   };
 
   const getTenantCode = url => {
-    console.log(url);
     return `${url}`.split('.')[0];
   };
 
@@ -53,7 +52,6 @@ const App = () => {
 
   const handleGetTeneuntInfo = async () => {
     const hostName = window.location.hostname;
-    console.log(import.meta);
     const webURL =
       checkLocalEnviroment(hostName) === true
         ? import.meta.env.VITE_NAJS_LOCAL_WEB_URL
