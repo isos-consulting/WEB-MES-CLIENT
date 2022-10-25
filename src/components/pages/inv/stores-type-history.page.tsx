@@ -176,7 +176,7 @@ export const PgInvStoresTypeHistory = () => {
   const buttonActions = {
     /** 조회 */
     search: () => {
-      onSearch();
+      onSearch({});
     },
 
     /** 수정 */

@@ -628,7 +628,7 @@ export const PgEqmRepairHistory = () => {
       },
       inputInfo?.values,
       modal,
-      () => onSearch(searchInfo?.values),
+      () => onSearch(),
     );
   };
 
@@ -636,7 +636,7 @@ export const PgEqmRepairHistory = () => {
   const buttonActions = {
     /** 조회 */
     search: () => {
-      onSearch(searchInfo?.values);
+      onSearch();
     },
 
     /** 수정 */
