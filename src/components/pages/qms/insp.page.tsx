@@ -17,7 +17,6 @@ import {
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import {
-  consoleLogLocalEnv,
   dataGridEvents,
   executeData,
   getData,
@@ -30,8 +29,11 @@ import { OptComplexColumnInfo } from 'tui-grid/types/options';
 import { cloneDeep } from 'lodash';
 import {
   IInputGroupboxItem,
+  TDataApiSettings,
   useInputGroup,
 } from '~/components/UI/input-groupbox';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import IModalProps from '~/components/UI/modal/modal.ui.type';
 
 /** 검사기준서관리 */
 export const PgQmsInsp = () => {
@@ -927,12 +929,16 @@ export const PgQmsInsp = () => {
       _defaultInspType = inspType[0].code;
     }
 
-    const prodApiSettings = ev => {
+    const prodApiSettings:
+      | TDataApiSettings
+      | ((ev?) => TDataApiSettings) = ev => {
       const values = ev?.values;
       const params = {};
 
       if (!values.insp_type) {
         return {
+          uriPath: PROD_POPUP.uriPath,
+          params: params,
           onInterlock: () => {
             message.warning('기준서 유형을 먼저 선택해주세요.');
             return false;
@@ -941,11 +947,9 @@ export const PgQmsInsp = () => {
       }
 
       if (typeof values.insp_type !== 'string') {
-        consoleLogLocalEnv(
-          `%c기준서 유형의 자료 형이 문자열이 아님! 기준서 유형 값 : ${values.insp_type}`,
-          'color: red; font-size: 20px;',
-        );
         return {
+          uriPath: PROD_POPUP.uriPath,
+          params: params,
           onInterlock: () => {
             message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
             return false;
@@ -971,11 +975,9 @@ export const PgQmsInsp = () => {
               params['qms_final_insp_fg'] = true;
             }
           } catch (error) {
-            consoleLogLocalEnv(
-              `%c기준서 유형의 자료를 json 형식으로 변환하는 과정에서 error가 발생함! 기준서 유형 값 : ${values.insp_type}`,
-              'color: red; font-size: 20px;',
-            );
             return {
+              uriPath: PROD_POPUP.uriPath,
+              params: params,
               onInterlock: () => {
                 message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
                 return false;
@@ -983,11 +985,9 @@ export const PgQmsInsp = () => {
             };
           }
         } else {
-          consoleLogLocalEnv(
-            `%c이 기준서 유형의 json 형식으로 변환하기 위한 블록 구조가 아님! 기준서 유형 값 : ${values.insp_type}`,
-            'color: red; font-size: 20px;',
-          );
           return {
+            uriPath: PROD_POPUP.uriPath,
+            params: params,
             onInterlock: () => {
               message.warning('팝업을 호출하던 중 에러가 발생했습니다.');
               return false;
@@ -1002,7 +1002,11 @@ export const PgQmsInsp = () => {
       };
     };
 
-    const prodPopupButtonSettings = {
+    const prodPopupButtonSettings: {
+      dataApiSettings: TDataApiSettings | ((ev?) => TDataApiSettings);
+      datagridSettings: IDatagridProps;
+      modalSettings: IModalProps;
+    } = {
       dataApiSettings: prodApiSettings,
       datagridSettings: PROD_POPUP.datagridProps,
       modalSettings: {

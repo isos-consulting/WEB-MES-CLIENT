@@ -106,7 +106,7 @@ export interface IInputGroupboxItem {
   defaults?: any[];
 }
 
-type TDataApiSettings = {
+export type TDataApiSettings = {
   uriPath: string;
   params?: object;
 };
