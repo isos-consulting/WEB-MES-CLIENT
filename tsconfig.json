@@ -5,8 +5,10 @@
       // 컴파일에 포함될 라이브러리 파일 목록입니다.
       "es6",
       "dom",
-      "esnext.asynciterable"
+      "esnext.asynciterable",
+      "ESNext"
     ],
+    "types": ["vite/client"],
     "allowJs": true,
     "skipLibCheck": true, //선언 타입(.d.ts) 파일의 타입 검사를 생략합니다.
     "esModuleInterop": true, // import 할때 default export와 export 항목을 동시에 import할수 있도록 허용합니다. (ex: import React, {useEffect} from 'react';)
@@ -42,7 +44,9 @@
     "scripts",
     "webpack",
     "jest",
-    "snippets"
+    "snippets",
+    "tests",
+    "**/*.test.ts"
   ],
   "include": [
     // 컴파일할 항목들을 지정합니다.
