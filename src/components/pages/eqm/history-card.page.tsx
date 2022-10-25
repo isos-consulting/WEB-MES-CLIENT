@@ -610,20 +610,10 @@ export const PgEqmHistoryCard = () => {
     },
 
     /** 삭제 */
-    // delete: () => {
-    //   if (getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows?.length === 0) {
-    //     message.warn('편집된 데이터가 없습니다.');
-    //     return;
-    //   }
-    //   onSave();
-    // },
+    delete: () => {},
 
     /** 신규 추가 */
-    // create: () => {
-    //   newDataPopupInputInfo?.instance?.resetForm();
-    //   newDataPopupGrid?.setGridData([]);
-    //   setNewDataPopupGridVisible(true);
-    // },
+    create: () => {},
 
     /** 저장 */
     save: () => {
