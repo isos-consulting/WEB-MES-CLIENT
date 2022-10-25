@@ -324,43 +324,6 @@ type TGetQmsProcInspResultIncludeDetails = {
   details?: TGetQmsProcInspResultIncludeDetailsDetail[];
 };
 
-type TPostQmsProcInspResultsHeader = {
-  uuid?: string;
-  factory_uuid?: string;
-  work_uuid?: string;
-  insp_type_uuid?: string;
-  insp_detail_type_uuid?: string;
-  insp_uuid?: string;
-  prod_uuid?: string;
-  lot_no?: string;
-  emp_uuid?: string;
-  reg_date?: string;
-  insp_result_fg?: boolean;
-  insp_qty?: number;
-  pass_qty?: number;
-  reject_qty?: number;
-  remark?: string;
-};
-
-type TPostQmsProcInspResultsDetailValue = {
-  sample_no?: number;
-  insp_result_fg?: boolean;
-  insp_value?: number;
-};
-
-type TPostQmsProcInspResultsDetail = {
-  values?: TPostQmsProcInspResultsDetailValue[];
-  factory_uuid?: string;
-  insp_detail_uuid?: string;
-  insp_result_fg?: boolean;
-  remark?: string;
-};
-
-type TPostQmsFinalInspResult = {
-  header?: TPostQmsProcInspResultsHeader;
-  details?: TPostQmsProcInspResultsDetail[];
-};
-
 type TPutQmsProcInspResultsHeader = {
   uuid: string;
   emp_uuid: string;
@@ -2822,7 +2785,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     if (props.inspResultUuid && props.popupVisible) {
       getData({}, searchUriPath, 'header-details')
-        .then((res: TGetQmsProcInspResultIncludeDetails) => {
+        .then((res: any) => {
           setInspResultIncludeDetails(res);
           inputInspResult.setValues({
             ...res.header,

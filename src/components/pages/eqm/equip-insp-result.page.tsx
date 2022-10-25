@@ -637,8 +637,6 @@ export const PgEqmInspResult = () => {
     },
   ]);
 
-  const editDataPopupInputInfo = null;
-
   async function changeNewDataPopupInputValues(values) {
     if (
       values?.['equip_uuid'] === undefined ||

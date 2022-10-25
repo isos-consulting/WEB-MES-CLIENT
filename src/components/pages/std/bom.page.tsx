@@ -385,7 +385,6 @@ export const PgStdBom = () => {
   );
 
   /** 팝업 Grid View */
-  const newDataPopupGrid = null;
   const addDataPopupGrid = useGrid(
     'ADD_DATA_POPUP_GRID',
     cloneObject(detailGrid.gridInfo.columns)?.map(el => {

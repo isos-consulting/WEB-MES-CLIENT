@@ -1,55 +1,17 @@
 import Grid from '@toast-ui/react-grid';
-import { message, Space, Modal } from 'antd';
-import dayjs from 'dayjs';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
-import {
-  Button,
-  Container,
-  Datagrid,
-  GridPopup,
-  IGridPopupProps,
-  IDatagridProps,
-} from '~/components/UI';
-import { IGridModifiedRows } from '~/components/UI/datagrid-new';
-import {
-  checkGridData,
-  getData,
-  getModifiedRows,
-  getPageName,
-  getPermissions,
-  isModified,
-  saveGridData,
-} from '~/functions';
-import { onErrorMessage, TAB_CODE } from './work.page.util';
-
-const DATA_PICKUP_INFO = {
-  create: [
-    'factory_uuid',
-    'work_uuid',
-    'work_routing_uuid',
-    'emp_uuid',
-    'start_date',
-    'end_date',
-    'work_time',
-  ],
-  update: [
-    'work_worker_uuid', //uuid
-    'emp_uuid',
-    'start_date',
-    'end_date',
-    'work_time',
-  ],
-  delete: [
-    'work_worker_uuid', //uuid
-  ],
-};
+import { Container, Datagrid } from '~/components/UI';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import { getData } from '~/functions';
+import { TAB_CODE } from './work.page.util';
 
 //#region 🔶✅투입인원관리
 /** 투입인원관리 */
 export const WORKERREADONLY = () => {
   //#region 🔶공용 설정
-  const [modal, contextHolder] = Modal.useModal();
+  const [, contextHolder] = Modal.useModal();
   const [searchParams, setSearchParams] = useState({});
   const [saveOptionParams, setSaveOptionParams] = useState({});
   //#endregion
@@ -177,90 +139,6 @@ export const WORKERREADONLY = () => {
   };
   //#endregion
 
-  //#region 🔶신규 팝업 관련
-  const newPopupGridRef = useRef<Grid>();
-  const [newPopupVisible, setNewPopupVisible] = useState(false);
-
-  /** 신규 항목 추가 팝업 속성 */
-  const newGridPopupInfo: IGridPopupProps = {
-    ...gridInfo,
-    gridId: TAB_CODE.workWorker + '_NEW_GRID',
-    ref: newPopupGridRef,
-    gridMode: 'create',
-    defaultData: [],
-    data: null,
-    height: null,
-    /** 팝업 아이디 */
-    popupId: TAB_CODE.workWorker + '_GRID' + '_NEW_POPUP',
-    /** 팝업 제목 */
-    title: '투입인원 항목 추가',
-    /** 포지티브 버튼 글자 */
-    okText: '저장하기',
-    onOk: gridRef => onSave(gridRef, 'create'),
-    /** 네거티브 버튼 글자 */
-    cancelText: '취소',
-    onCancel: () => {
-      setNewPopupVisible(false);
-    },
-    /** 부모 참조 */
-    parentGridRef: gridRef,
-    /** 저장 유형 */
-    saveType: 'basic',
-    /** 저장 END POINT */
-    saveUriPath: gridInfo.saveUriPath,
-    /** 조회 END POINT */
-    searchUriPath: gridInfo.searchUriPath,
-    /** 추가 저장 값 */
-    saveOptionParams: saveOptionParams,
-    /** 최초 visible 상태 */
-    defaultVisible: false,
-    /** visible 상태값 */
-    visible: newPopupVisible,
-  };
-  //#endregion
-
-  //#region 🔶수정 팝업 관련
-  const editPopupGridRef = useRef<Grid>();
-  const [editPopupVisible, setEditPopupVisible] = useState(false);
-
-  /** 항목 수정 팝업 속성 */
-  const editGridPopupInfo: IGridPopupProps = {
-    ...gridInfo,
-    gridId: TAB_CODE.workWorker + '_EDIT_GRID',
-    ref: editPopupGridRef,
-    gridMode: 'update',
-    defaultData: [],
-    data: data,
-    height: null,
-    /** 팝업 아이디 */
-    popupId: TAB_CODE.workWorker + '_GRID' + '_EDIT_POPUP',
-    /** 팝업 제목 */
-    title: '투입인원 항목 수정',
-    /** 포지티브 버튼 글자 */
-    okText: '저장하기',
-    onOk: gridRef => onSave(gridRef, 'update'),
-    /** 네거티브 버튼 글자 */
-    cancelText: '취소',
-    onCancel: () => {
-      setEditPopupVisible(false);
-    },
-    /** 부모 참조 */
-    parentGridRef: gridRef,
-    /** 저장 유형 */
-    saveType: 'basic',
-    /** 저장 END POINT */
-    saveUriPath: gridInfo.saveUriPath,
-    /** 조회 END POINT */
-    searchUriPath: gridInfo.searchUriPath,
-    /** 추가 저장 값 */
-    saveOptionParams: saveOptionParams,
-    /** 최초 visible 상태 */
-    defaultVisible: false,
-    /** visible 상태값 */
-    visible: editPopupVisible,
-  };
-  //#endregion
-
   //#region ✅함수
   const onSearch = () => {
     const work_uuid = searchParams?.['work_uuid'];
@@ -280,164 +158,6 @@ export const WORKERREADONLY = () => {
       setData(res);
     });
   };
-
-  /** 조작 가능 여부 판단 */
-  const onCheckAccessAllow = (): boolean => {
-    if (
-      searchParams?.['work_uuid'] == null ||
-      searchParams?.['work_routing_uuid'] == null
-    ) {
-      onErrorMessage('하위이력작업시도');
-      return false;
-    }
-
-    if (searchParams?.['complete_fg'] == 'true') {
-      onErrorMessage('완료된작업시도');
-      return false;
-    }
-
-    return true;
-  };
-
-  /** 삭제 버튼 이벤트 */
-  const onDelete = () => {
-    onCheckedSave();
-  };
-
-  /** 수정 버튼 이벤트 */
-  const onUpdate = () => {
-    setEditPopupVisible(true);
-  };
-
-  /** 신규 추가 버튼 이벤트 */
-  const onAppend = () => {
-    setNewPopupVisible(true);
-  };
-
-  type TPopupType = 'create' | 'update' | 'delete';
-  /** 팝업 여는 이벤트 */
-  const onOpenPopup = (popupType: TPopupType) => {
-    if (!popupType) return;
-    if (onCheckAccessAllow() === false) return;
-
-    switch (popupType) {
-      case 'create':
-        onAppend();
-        break;
-
-      case 'update':
-        onUpdate();
-        break;
-
-      case 'delete':
-        onDelete();
-        break;
-    }
-  };
-
-  const onCheckedSave = () => {
-    if (isModified(gridRef, gridInfo.columns)) {
-      // 편집 이력이 있는 경우
-      modal.confirm({
-        icon: null,
-        title: '저장',
-        // icon: <ExclamationCircleOutlined />,
-        content: '편집된 내용을 저장하시겠습니까?',
-        onOk: async () => {
-          onSave();
-        },
-      });
-    } else {
-      message.warn('저장할 데이터가 없습니다.');
-    }
-  };
-
-  const onSave = async (ref?, popupGridMode?) => {
-    const modifedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
-    const _gridMode = popupGridMode ?? gridInfo.gridMode;
-
-    // date + time 작업을 해줘야함 (❗datetime picker 스타일 깨지는 문제 복구하거나 아예 editor를 만들고 나면 고쳐야함)
-
-    const saveData: IGridModifiedRows =
-      _gridMode === 'create'
-        ? {
-            createdRows: modifedRows.createdRows,
-            updatedRows: [],
-            deletedRows: [],
-          }
-        : _gridMode === 'update'
-        ? {
-            createdRows: [],
-            updatedRows: modifedRows.updatedRows,
-            deletedRows: [],
-          }
-        : _gridMode === 'delete'
-        ? {
-            createdRows: [],
-            updatedRows: [],
-            deletedRows: modifedRows.deletedRows,
-          }
-        : {
-            createdRows: modifedRows.createdRows,
-            updatedRows: [],
-            deletedRows: [],
-          };
-
-    await saveData[_gridMode + 'dRows']?.forEach(el => {
-      if (el['start_date'] != null && el['start_time'] != null) {
-        let time = el['start_time'];
-
-        if (String(time)?.length !== 5) {
-          time = dayjs(time).format('HH:mm');
-        }
-
-        const start_date =
-          dayjs(el['start_date']).format('YYYY-MM-DD') + ' ' + time;
-        if (dayjs(start_date)?.isValid()) {
-          el['start_date'] = dayjs(start_date).format('YYYY-MM-DD HH:mm:ss');
-        }
-      }
-
-      if (el['end_date'] != null && el['end_time'] != null) {
-        let time = el['end_time'];
-
-        if (String(time)?.length !== 5) {
-          time = dayjs(time).format('HH:mm');
-        }
-
-        const end_date =
-          dayjs(el['end_date']).format('YYYY-MM-DD') + ' ' + time;
-        if (dayjs(end_date)?.isValid()) {
-          el['end_date'] = dayjs(end_date).format('YYYY-MM-DD HH:mm:ss');
-        }
-      }
-
-      delete el['start_time'];
-      delete el['end_time'];
-    });
-
-    saveData[_gridMode + 'dRows'] = saveData[_gridMode + 'dRows']?.map(row => {
-      return _.pick(row, DATA_PICKUP_INFO?.[_gridMode]);
-    });
-
-    // 저장 가능한지 체크
-    const chk: boolean = await checkGridData(gridInfo.columns, saveData);
-
-    if (chk === false) return;
-
-    saveGridData(
-      saveData,
-      gridInfo.columns,
-      gridInfo.saveUriPath,
-      saveOptionParams,
-    ).then(({ success }) => {
-      if (!success) return;
-      onSearch();
-      setNewPopupVisible(false);
-      setEditPopupVisible(false);
-    });
-  };
-  //#endregion
 
   //#region ✅렌더부
   const component = (
