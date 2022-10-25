@@ -8,7 +8,7 @@ import { Label } from '../label';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 /** 체크박스 */
-const Checkbox: React.FC<Props> = props => {
+const Checkbox: React.FC<Props<CheckboxChangeEvent>> = props => {
   const [, CheckboxSetValue] = useRecoilState(afBooleanState(props.id));
 
   const handleChangeCheckboxValue = (e: CheckboxChangeEvent) => {
