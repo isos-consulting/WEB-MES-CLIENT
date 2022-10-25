@@ -477,7 +477,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
   /** 강제로 리사이징을 하기 위한 함수 입니다. */
   const forceReszing = () => {
     onResize();
-    clearTimeout();
+    clearTimeout(1000);
   };
 
   useLayoutEffect(() => {
