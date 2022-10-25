@@ -7,7 +7,7 @@ import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 
 export const Dashboard = () => {
-  const Card = () => AntdCard;
+  const Card = AntdCard as any;
   const [current, chageTarget] = useState<string>('byDay');
   const graphSets = getData(
     { reg_date: getToday() },
@@ -104,7 +104,7 @@ type TPercentPie = {
 };
 
 const RealTimeCharts = ({ data }) => {
-  const Card = () => AntdCard;
+  const Card = AntdCard as any;
   const Pies = data.map(({ title, value, color, unit }) => (
     <Col key={`${title}-col`} span={8}>
       <PercentPie
@@ -129,7 +129,7 @@ const RealTimeCharts = ({ data }) => {
 };
 
 const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
-  const Card = () => AntdCard;
+  const Card = AntdCard as any;
   return (
     <Card headStyle={{}}>
       <Row style={{ height: height }}>

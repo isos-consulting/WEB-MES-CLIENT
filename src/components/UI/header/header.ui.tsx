@@ -34,7 +34,7 @@ const fetchBookmarks = () =>
   });
 
 const Header: React.FC<Props> = props => {
-  const Dropdown = () => AntdDropdown;
+  const Dropdown = AntdDropdown as any;
   const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
   const [bookmarkItems, setBookmarkItems] = useState<any[]>([]);

@@ -9,9 +9,7 @@ import { getData } from '~/functions';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
-  const Select = {
-    Option: () => AntdSelect.Option,
-  };
+  const Option = AntdSelect.Option as any;
   const [, setComboValue] = useRecoilState(afStringState(props.id));
   const [, setComboTextValue] = useRecoilState(afStringState(props.id));
   const [options, setOptions] = useState([]);
@@ -171,23 +169,23 @@ const Combobox: React.FC<Props> = props => {
           fontSize={props.fontSize}
         >
           {props?.firstItemType === 'empty' ? (
-            <Select.Option value="" disabled={false}>
+            <Option value="" disabled={false}>
               {''}
-            </Select.Option>
+            </Option>
           ) : props?.firstItemType === 'all' ? (
-            <Select.Option value="all" disabled={false}>
+            <Option value="all" disabled={false}>
               전체
-            </Select.Option>
+            </Option>
           ) : props?.firstItemType === 'none' ? null : (
-            <Select.Option value="-" disabled={false}>
+            <Option value="-" disabled={false}>
               -
-            </Select.Option>
+            </Option>
           )}
           {options?.map(({ code, disabled, text }) => {
             return (
-              <Select.Option key={code} value={code} disabled={disabled}>
+              <Option key={code} value={code} disabled={disabled}>
                 {text}
-              </Select.Option>
+              </Option>
             );
           })}
         </ScCombobox>
@@ -205,23 +203,23 @@ const Combobox: React.FC<Props> = props => {
         fontSize={props.fontSize}
       >
         {props?.firstItemType === 'empty' ? (
-          <Select.Option value="" disabled={false}>
+          <Option value="" disabled={false}>
             {''}
-          </Select.Option>
+          </Option>
         ) : props?.firstItemType === 'all' ? (
-          <Select.Option value="all" disabled={false}>
+          <Option value="all" disabled={false}>
             전체
-          </Select.Option>
+          </Option>
         ) : props?.firstItemType === 'none' ? null : (
-          <Select.Option value="-" disabled={false}>
+          <Option value="-" disabled={false}>
             -
-          </Select.Option>
+          </Option>
         )}
         {options?.map(({ code, disabled, text }) => {
           return (
-            <Select.Option key={code} value={code} disabled={disabled}>
+            <Option key={code} value={code} disabled={disabled}>
               {text}
-            </Select.Option>
+            </Option>
           );
         })}
       </ScCombobox>

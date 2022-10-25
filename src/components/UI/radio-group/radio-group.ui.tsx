@@ -13,7 +13,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 
 /** 라디오 그룹 */
 const RadioGroup: React.FC<Props> = props => {
-  const Card = () => AntdCard;
+  const Card = AntdCard as any;
   const [, setRadioGroupValue] = useRecoilState(afStringState(props.id));
 
   const onChange = (e: RadioChangeEvent) => {

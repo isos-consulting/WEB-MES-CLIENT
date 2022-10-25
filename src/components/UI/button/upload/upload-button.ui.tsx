@@ -17,8 +17,8 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   onClick,
   openFileDialogOnClick,
 }: UploadButtonProps) => {
-  const Upload = () => AntdUpload;
-  const Button = () => AntdButton;
+  const Upload = AntdUpload as any;
+  const Button = AntdButton as any;
 
   return (
     <Upload

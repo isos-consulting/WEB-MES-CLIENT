@@ -8,7 +8,7 @@ import Props, { IContainerStyles } from './container.ui.type';
 const BaseCard: React.FC<IContainerStyles & Props> = props => {
   // 커스텀으로 사용될 속성들을 제외한 기본 속성만 button 컴포넌트에 넣어야 합니다.
   const { boxShadow, marginTop, ...otherProps } = props;
-  const Card = () => AntdCard;
+  const Card = AntdCard as any;
 
   return <Card {...otherProps} />;
 };
