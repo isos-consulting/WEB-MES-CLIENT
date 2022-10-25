@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
-import { Dropdown, Menu, message, Space } from 'antd';
+import { Dropdown as AntdDropdown, Menu, message, Space } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import { useSetRecoilState } from 'recoil';
@@ -34,6 +34,7 @@ const fetchBookmarks = () =>
   });
 
 const Header: React.FC<Props> = props => {
+  const Dropdown = () => AntdDropdown;
   const userInfo = getUserInfo();
   const setLayoutState = useSetRecoilState(layoutStore.state);
   const [bookmarkItems, setBookmarkItems] = useState<any[]>([]);

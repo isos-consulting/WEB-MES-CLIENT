@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Upload, UploadProps } from 'antd';
+import { Button as AntdButton, Upload as AntdUpload, UploadProps } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 interface UploadButtonProps extends UploadProps {
@@ -17,6 +17,9 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   onClick,
   openFileDialogOnClick,
 }: UploadButtonProps) => {
+  const Upload = () => AntdUpload;
+  const Button = () => AntdButton;
+
   return (
     <Upload
       name="file"

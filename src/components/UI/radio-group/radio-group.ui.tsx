@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
-import { Card, Radio as AntRadio, RadioChangeEvent, Space } from 'antd';
+import {
+  Card as AntdCard,
+  Radio as AntRadio,
+  RadioChangeEvent,
+  Space,
+} from 'antd';
 import { Label } from '../label';
 import { Radio } from '../radio';
 import { useRecoilState } from 'recoil';
@@ -8,6 +13,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 
 /** 라디오 그룹 */
 const RadioGroup: React.FC<Props> = props => {
+  const Card = () => AntdCard;
   const [, setRadioGroupValue] = useRecoilState(afStringState(props.id));
 
   const onChange = (e: RadioChangeEvent) => {

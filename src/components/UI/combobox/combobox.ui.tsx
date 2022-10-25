@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useLayoutEffect } from 'react';
-import { Select, Space } from 'antd';
+import { Select as AntdSelect, Space } from 'antd';
 import { useRecoilState } from 'recoil';
 import Props, { IComboboxItem } from './combobox.ui.type';
 import { ScCombobox } from './combobox.ui.styled';
@@ -9,6 +9,9 @@ import { getData } from '~/functions';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
+  const Select = {
+    Option: () => AntdSelect.Option,
+  };
   const [, setComboValue] = useRecoilState(afStringState(props.id));
   const [, setComboTextValue] = useRecoilState(afStringState(props.id));
   const [options, setOptions] = useState([]);
