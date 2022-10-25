@@ -1,7 +1,5 @@
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-
 /** 체크박스 속성 인터페이스 */
-export default interface ICheckboxProps {
+export default interface ICheckboxProps<ChangeEvent> {
   /** 체크박스 아이디 */
   id?: string;
 
@@ -32,5 +30,5 @@ export default interface ICheckboxProps {
   disabled?: boolean;
 
   /** 체크박스 값 변경 이벤트 */
-  onChange?: (e: CheckboxChangeEvent) => void;
+  onChange?: (e: ChangeEvent) => void;
 }
