@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs as AntTabs } from 'antd';
+import { TabPaneProps, Tabs as AntTabs } from 'antd';
 import Props from './tabs.ui.type';
 
 /** 탭 UI */
@@ -12,15 +12,15 @@ const BaseTabs: React.FC<Props> = props => {
       tabPosition={props.tabPosition}
     >
       {props.panels?.map(pane => {
+        const tabPaneProps: TabPaneProps & { key: string } = {
+          tab: pane.tab,
+          key: pane.tabKey,
+          disabled: pane.disabled,
+          style: { marginTop: -18 },
+        };
+
         return (
-          <AntTabs.TabPane
-            tab={pane.tab}
-            key={pane.tabKey}
-            disabled={pane.disabled}
-            style={{ marginTop: -18 }}
-          >
-            {pane.content}
-          </AntTabs.TabPane>
+          <AntTabs.TabPane {...tabPaneProps}>{pane.content}</AntTabs.TabPane>
         );
       })}
     </AntTabs>

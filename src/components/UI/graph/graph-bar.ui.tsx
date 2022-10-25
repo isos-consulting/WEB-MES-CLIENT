@@ -75,8 +75,8 @@ const BarGraph: React.FC<Props> = props => {
         },
       ]}
       animate={true}
-      motionStiffness={90}
-      motionDamping={15}
+      // motionStiffness={90}
+      // motionDamping={15}
     />
   );
 };

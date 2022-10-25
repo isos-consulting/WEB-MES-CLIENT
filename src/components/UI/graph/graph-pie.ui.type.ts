@@ -5,6 +5,8 @@ export default interface IPieGraphProps {
 
   /** 그래프 최대값 */
   maxVal?: number;
+
+  radialLabel: any;
 }
 
 type data = {

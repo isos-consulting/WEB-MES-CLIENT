@@ -24,6 +24,7 @@ export default interface IBarGraphProps {
   /** y축 기준 값 */
   indexBy: string;
 
+  motionStiffness: number;
   /** 하단 여백 */
   bottomMargin?: number;
 }
