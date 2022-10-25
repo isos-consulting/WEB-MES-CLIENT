@@ -754,7 +754,8 @@ export const PgOutRelease = () => {
     if (uuid) {
       const uriPath = detailSearchUriPath.replace('$', uuid);
       getData(detailSearchInfo?.values, uriPath, 'header-details').then(res => {
-        detailGrid.setGridData(res?.details || []);
+        const detailRes = res as unknown as { details: any };
+        detailGrid.setGridData(detailRes?.details || []);
       });
     } else {
       detailGrid.setGridData([]);

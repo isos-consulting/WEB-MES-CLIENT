@@ -790,17 +790,20 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
           inspResultUuid,
         );
       getData({}, searchUriPath, 'header-details')
-        .then(res => {
+        .then((res: any[]) => {
+          const parseRes = res as unknown as {
+            header: { reg_date: any; pass_qty: any };
+          };
           setFinalInspResultIncludeDetails(res);
           inputInspResult.setValues({
-            ...res.header,
-            reg_date_time: res.header.reg_date,
+            ...parseRes.header,
+            reg_date_time: parseRes.header.reg_date,
           });
           inputInspResultIncome.setValues({
-            ...res.header,
-            qty: res.header.pass_qty,
+            ...parseRes.header,
+            qty: parseRes.header.pass_qty,
           });
-          inputInspResultReject.setValues({ ...res.header });
+          inputInspResultReject.setValues({ ...parseRes.header });
         })
         .catch(err => {
           onClear();

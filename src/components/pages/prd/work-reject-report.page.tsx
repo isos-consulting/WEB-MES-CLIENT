@@ -626,7 +626,10 @@ export const PgPrdWorkRejectReport = () => {
 
   const onSearch = values => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];
-    const searchParams = cleanupKeyOfObject(values, searchKeys);
+    const searchParams: { [key: string]: any } = cleanupKeyOfObject(
+      values,
+      searchKeys,
+    );
     const firstDate = new Date(searchParams.start_date);
     const secondDate = new Date(searchParams.end_date);
 

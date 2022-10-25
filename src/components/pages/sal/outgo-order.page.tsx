@@ -554,7 +554,8 @@ export const PgSalOutgoOrder = () => {
 
     const uriPath = detailSearchUriPath.replace('$', uuid);
     getData({ complete_state: 'all' }, uriPath, 'header-details').then(res => {
-      detailGrid.setGridData(res?.details || []);
+      const detailsRes = res as unknown as { details: any };
+      detailGrid.setGridData(detailsRes?.details || []);
     });
   };
   //#endregion

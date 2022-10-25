@@ -635,7 +635,8 @@ export const PgMatOrder = () => {
 
     const uriPath = `/mat/order/${uuid}/include-details`;
     getData(detailSearchInfo.values, uriPath, 'header-details').then(res => {
-      detailGrid.setGridData(res?.details || []);
+      const detailRes = res as unknown as { details: any };
+      detailGrid.setGridData(detailRes?.details || []);
     });
   };
   //#endregion

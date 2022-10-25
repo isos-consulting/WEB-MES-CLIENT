@@ -880,7 +880,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
         insp_result_uuid,
       );
     getData({}, searchUriPath, 'header-details')
-      .then((res: TGetQmsProcInspResultIncludeDetails) => {
+      .then((res: any) => {
         setProcInspResultIncludeDetails(res);
         inputInspResult.setValues({
           ...res.header,

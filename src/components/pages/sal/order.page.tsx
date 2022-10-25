@@ -666,7 +666,8 @@ export const PgSalOrder = () => {
 
     const uriPath = `/sal/order/${uuid}/include-details`;
     getData(detailSearchInfo?.values, uriPath, 'header-details').then(res => {
-      detailGrid.setGridData(res?.details || []);
+      const detailsRes = res as unknown as { details: any };
+      detailGrid.setGridData(detailsRes?.details || []);
     });
   };
   //#endregion

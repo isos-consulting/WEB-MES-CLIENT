@@ -622,14 +622,18 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         'header-details',
       )
         .then(res => {
-          setReceiveInspHeaderData(res.header);
-          setReceiveInspDetailData(res.details);
+          const headerDetailRes = res as unknown as {
+            header: any;
+            details: any;
+          };
+          setReceiveInspHeaderData(headerDetailRes.header);
+          setReceiveInspDetailData(headerDetailRes.details);
           inputInspResult.setFieldValue('reg_date', getToday());
 
-          res.details.forEach((detail, idx) => {
+          headerDetailRes.details.forEach((detail, idx) => {
             for (
               let cell = detail.sample_cnt;
-              cell < res.header.max_sample_cnt;
+              cell < headerDetailRes.header.max_sample_cnt;
 
             ) {
               cell++;

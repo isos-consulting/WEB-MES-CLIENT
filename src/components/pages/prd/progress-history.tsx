@@ -30,11 +30,11 @@ export const PgPrdProgressHistory = () => {
       );
     }
 
-    const { raws, value } = await getData(
+    const { raws, value } = (await getData(
       searchConditions,
       'prd/multi-proc-by-orders',
       'datas',
-    );
+    )) as unknown as { raws: any[]; value: { proc_nos: any[] } };
 
     for (let index = 0; index < raws.length / 5; index++) {
       raws[index * 5]._attributes = {

@@ -177,7 +177,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           }
           const optionKeys = Object.keys(optionValues);
 
-          let headerData = {};
+          let headerData: { [key: string]: any } = {};
 
           optionKeys.forEach(optionKey => {
             const alias = props.inputProps?.inputItems?.find(

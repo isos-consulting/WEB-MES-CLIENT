@@ -826,7 +826,10 @@ export const PgPrdWorkReport = () => {
   /** 검색 */
   const onSearch = values => {
     const searchKeys = ['start_date', 'end_date', 'sort_type'];
-    const searchParams = cleanupKeyOfObject(values, searchKeys);
+    const searchParams: { [key: string]: any } = cleanupKeyOfObject(
+      values,
+      searchKeys,
+    );
 
     //입력된 두 개의 날짜 전후 비교
     const firstDate = new Date(searchParams.start_date);
