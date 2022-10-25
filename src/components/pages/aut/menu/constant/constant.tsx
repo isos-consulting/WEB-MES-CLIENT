@@ -147,8 +147,8 @@ const menuGridSettings2: IDatagridProps = {
 const menuGridPopupButtonSettings2 = { datagridSettings: menuGridSettings2 };
 
 const menuUsedRadios = [
-  { code: true, disabled: false, text: '사용' },
-  { code: false, disabled: false, text: '미사용' },
+  { code: 'true', disabled: false, text: '사용' },
+  { code: 'false', disabled: false, text: '미사용' },
 ];
 export const menuInputGroupBoxs: IInputGroupboxItem[] = [
   {
