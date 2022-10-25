@@ -3,14 +3,9 @@ import { message, Space, Modal } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
-import {
-  Button,
-  Container,
-  Datagrid,
-  GridPopup,
-  IGridPopupProps,
-  IDatagridProps,
-} from '~/components/UI';
+import { Button, Container, Datagrid, GridPopup } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import { IGridModifiedRows } from '~/components/UI/datagrid-new';
 import {
   checkGridData,

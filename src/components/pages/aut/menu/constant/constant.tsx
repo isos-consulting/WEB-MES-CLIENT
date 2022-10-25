@@ -1,10 +1,7 @@
-import {
-  IButtonProps,
-  IDatagridProps,
-  IGridColumn,
-  IGridPopupInfo,
-  IModalProps,
-} from '~/components/UI';
+import { IGridColumn, IGridPopupInfo } from '~/components/UI';
+import IButtonProps from '~/components/UI/button/button.ui.type';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import IModalProps from '~/components/UI/modal/modal.ui.type';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
 import { ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 

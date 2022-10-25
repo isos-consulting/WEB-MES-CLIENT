@@ -7,7 +7,7 @@ import IDatagridProps, {
   IGridModifiedRows,
 } from '../datagrid-new/datagrid.ui.type';
 import ISearchboxProps from '../searchbox/searchbox.ui.type';
-import { IGridPopupProps } from '../popup-datagrid';
+import IGridPopupProps from '../popup-datagrid/popup-datagrid.ui.type';
 import { IInputGroupboxProps } from '../input-groupbox';
 
 /** 팝업 속성 인터페이스 */

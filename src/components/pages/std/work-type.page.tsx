@@ -6,8 +6,8 @@ import {
   Datagrid,
   GridInstanceReference,
   GridPopup,
-  IGridPopupProps,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';

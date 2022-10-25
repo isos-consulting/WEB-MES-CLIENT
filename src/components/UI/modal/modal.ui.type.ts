@@ -1,4 +1,5 @@
 import { ModalProps } from 'antd/lib/modal';
+import React from 'react';
 
 /** 모달 속성 인터페이스 */
 export default interface IModalProps extends ModalProps {

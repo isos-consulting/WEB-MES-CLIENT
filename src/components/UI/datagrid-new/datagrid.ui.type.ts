@@ -3,7 +3,8 @@ import { Props as GridProps } from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
 import { ColumnOptions, ModifiedRows } from 'tui-grid/types';
 import { GridEventProps } from 'tui-grid/types/event';
-import { IButtonProps, IModalProps } from '~/components/UI';
+import IButtonProps from '~/components/UI/button/button.ui.type';
+import IModalProps from '../modal/modal.ui.type';
 
 /** 데이터 그리드 속성 인터페이스 */
 export default interface IDatagridProps extends GridProps {

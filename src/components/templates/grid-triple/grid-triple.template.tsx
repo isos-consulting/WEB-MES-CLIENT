@@ -6,10 +6,10 @@ import {
   Datagrid,
   Div,
   GridPopup,
-  IButtonProps,
   Modal,
   Searchbox,
 } from '~/components/UI';
+import IButtonProps from '~/components/UI/button/button.ui.type';
 import { InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';

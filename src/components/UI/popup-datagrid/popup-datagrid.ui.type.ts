@@ -1,7 +1,8 @@
 import Grid from '@toast-ui/react-grid';
 import { ModalProps } from 'antd';
 import { MutableRefObject } from 'react';
-import { IDatagridProps, IGridColumn } from '../datagrid-new';
+import { IGridColumn } from '../datagrid-new';
+import IDatagridProps from '../datagrid-new/datagrid.ui.type';
 import { IInputGroupboxProps } from '../input-groupbox/input-groupbox.ui';
 import ISearchboxProps from '../searchbox/searchbox.ui.type';
 

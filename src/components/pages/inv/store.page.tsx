@@ -2,12 +2,12 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   getPopupForm,
   IGridColumn,
-  IGridPopupProps,
   ISearchItem,
   TGridMode,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import {
   cleanupKeyOfObject,
   dataGridEvents,

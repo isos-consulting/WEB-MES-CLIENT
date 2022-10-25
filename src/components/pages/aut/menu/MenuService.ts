@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { IDatagridProps } from '~/components/UI';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import { consoleLogLocalEnv, getData } from '~/functions';
 
 type TGridAttributes = {

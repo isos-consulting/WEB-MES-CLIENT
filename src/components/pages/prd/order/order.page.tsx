@@ -9,12 +9,12 @@ import {
   Datagrid,
   getPopupForm,
   GridPopup,
-  IDatagridProps,
   IGridPopupInfo,
-  IGridPopupProps,
   Searchbox,
   Tabs,
 } from '~/components/UI';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import {
   IInputGroupboxItem,
   InputGroupbox,

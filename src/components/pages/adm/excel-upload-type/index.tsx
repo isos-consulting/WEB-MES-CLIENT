@@ -7,8 +7,8 @@ import {
   GridInstanceReference,
   GridPopup,
   IGridColumn,
-  IGridPopupProps,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import ModalStore from '~/constants/modals';

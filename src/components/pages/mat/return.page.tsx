@@ -18,7 +18,6 @@ import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
-const URI_PATH_GET_MAT_RETURN = '/mat/return/{uuid}';
 const URI_PATH_GET_MAT_RETURNS = '/mat/returns';
 const URI_PATH_GET_MAT_RETURN_DETAILS = '/mat/return/{uuid}/details';
 const URI_PATH_GET_MAT_RETURN_INCLUDE_DETAILS =

@@ -1,7 +1,8 @@
 import Grid from '@toast-ui/react-grid';
 import { MutableRefObject } from 'react';
-import { IDatagridProps, TApiSettings } from '../datagrid-new';
-import { IModalProps } from '../modal';
+import { TApiSettings } from '../datagrid-new';
+import IDatagridProps from '../datagrid-new/datagrid.ui.type';
+import IModalProps from '../modal/modal.ui.type';
 import { TPopupKey } from '../popup/popup.ui.model';
 
 /** 팝업 호출 버튼 속성 인터페이스 */

@@ -1,4 +1,5 @@
 import { TabsProps, TabPaneProps } from 'antd';
+import React from 'react';
 
 /** 탭 속성 인터페이스 */
 export default interface ITabsProps extends TabsProps {

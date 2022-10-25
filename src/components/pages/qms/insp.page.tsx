@@ -10,11 +10,11 @@ import {
   Button,
   getPopupForm,
   IGridColumn,
-  IGridPopupProps,
   ISearchItem,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import {
   consoleLogLocalEnv,
@@ -1220,7 +1220,7 @@ export const PgQmsInsp = () => {
     },
 
     /** 삭제 */
-    delete: ev => {
+    delete: () => {
       if (
         getModifiedRows(
           detailSubGrid?.gridRef,

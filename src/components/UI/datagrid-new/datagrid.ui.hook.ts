@@ -1,7 +1,8 @@
 import Grid from '@toast-ui/react-grid';
 import TuiGrid from 'tui-grid';
 import React, { useRef, useState, useMemo } from 'react';
-import { IDatagridProps, IGridColumn, TGridMode } from '.';
+import { IGridColumn, TGridMode } from '.';
+import IDatagridProps from './datagrid.ui.type';
 import { OptComplexColumnInfo } from 'tui-grid/types/options';
 
 /** 데이터 그리드 속성 인터페이스 */

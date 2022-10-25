@@ -1,3 +1,5 @@
+import React from 'react';
+
 /** 입력박스 속성 인터페이스 */
 export default interface ITextboxProps extends ITextboxStyles {
   /** 입력바스 아이디 */

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Result as AntResult } from 'antd';
+import { Result as AntdResult } from 'antd';
 import Props from './result.ui.type';
 
 /** 결과 디스플레이 컴포넌트 */
 const Result: React.FC<Props> = props => {
+  const AntResult = () => AntdResult;
   let returnElement = <></>;
 
   switch (props.type) {

@@ -8,8 +8,8 @@ import {
   GridPopup,
   IGridColumn,
   IGridModifiedRows,
-  IGridPopupProps,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import {
   checkGridData,
   getData,

@@ -7,10 +7,10 @@ import {
   Datagrid,
   getPopupForm,
   GridPopup,
-  IDatagridProps,
-  IGridPopupProps,
   TGridPopupInfos,
 } from '~/components/UI';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   getData,

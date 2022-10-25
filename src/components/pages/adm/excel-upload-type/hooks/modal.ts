@@ -2,11 +2,11 @@ import Grid from '@toast-ui/react-grid';
 import {
   GridInstanceReference,
   IGridColumn,
-  IGridPopupProps,
-  TGridComboInfos,
   TGridMode,
   TGridPopupInfos,
+  TGridComboInfos,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 type BasicModalContextProps<T> = {

@@ -1,11 +1,9 @@
 import Grid from '@toast-ui/react-grid';
-import {
-  IButtonProps,
-  IDatagridProps,
-  IGridPopupProps,
-  IModalProps,
-  ISearchboxProps,
-} from '~/components/UI';
+import IButtonProps from '~/components/UI/button/button.ui.type';
+import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
+import IModalProps from '~/components/UI/modal/modal.ui.type';
+import ISearchboxProps from '~/components/UI/searchbox/searchbox.ui.type';
 import { IInputGroupboxProps } from '~/components/UI/input-groupbox';
 import React from 'react';
 

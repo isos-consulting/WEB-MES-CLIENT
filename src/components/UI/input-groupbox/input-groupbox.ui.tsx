@@ -22,8 +22,8 @@ import { Label } from '../label';
 import { Checkbox } from '../checkbox';
 import { DateRangePicker } from '../date-range-picker';
 import { ENUM_DECIMAL } from '~/enums';
-import { IDatagridProps } from '../datagrid-new';
-import { IModalProps } from '../modal';
+import IDatagridProps from '../datagrid-new/datagrid.ui.type';
+import IModalProps from '../modal/modal.ui.type';
 import RangePicker from '../date-picker/range/date-range-picker';
 import moment from 'moment';
 
