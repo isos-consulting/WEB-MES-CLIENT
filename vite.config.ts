@@ -16,6 +16,7 @@ export default defineConfig({
       '~hooks': '/src/hooks',
       '~styles': '/src/styles',
       '~images': '/src/images',
+      'antd/lib': 'antd/es',
     },
   },
   css: {
