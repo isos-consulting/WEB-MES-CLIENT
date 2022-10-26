@@ -3,13 +3,12 @@ import Colors from '~styles/color.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
 import Fonts from '~styles/font.style.module.scss';
 import styled from 'styled-components';
-import { Button as AntdButton } from 'antd';
+import { Button } from 'antd';
 import { IButtonStyles } from './button.ui.type';
 
 // styled컴포넌트의 틀이되는 base컴포넌트
 // (antd>button에는 커스텀한 property들이 들어가면 에러가 발생하기 때문에 base컴포넌트를 따로 빼줘야 합니다.)
 const BaseButton: React.FC<IButtonStyles> = props => {
-  const Button = AntdButton as any;
   // 커스텀으로 사용될 속성들을 제외한 기본 속성만 button 컴포넌트에 넣어야 합니다.
   const {
     btnType,
@@ -20,6 +19,7 @@ const BaseButton: React.FC<IButtonStyles> = props => {
     ...otherProps
   } = props;
 
+  // @ts-ignore
   return <Button {...otherProps} />;
 };
 

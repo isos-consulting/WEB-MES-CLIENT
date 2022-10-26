@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useLayoutEffect } from 'react';
-import { Select as AntdSelect, Space } from 'antd';
+import { Select, Space } from 'antd';
 import { useRecoilState } from 'recoil';
 import Props, { IComboboxItem } from './combobox.ui.type';
 import { ScCombobox } from './combobox.ui.styled';
@@ -9,7 +9,6 @@ import { getData } from '~/functions';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
-  const Option = AntdSelect.Option as any;
   const [, setComboValue] = useRecoilState(afStringState(props.id));
   const [, setComboTextValue] = useRecoilState(afStringState(props.id));
   const [options, setOptions] = useState([]);
@@ -169,23 +168,27 @@ const Combobox: React.FC<Props> = props => {
           fontSize={props.fontSize}
         >
           {props?.firstItemType === 'empty' ? (
-            <Option value="" disabled={false}>
+            // @ts-ignore
+            <Select.Option value="" disabled={false}>
               {''}
-            </Option>
+            </Select.Option>
           ) : props?.firstItemType === 'all' ? (
-            <Option value="all" disabled={false}>
+            // @ts-ignore
+            <Select.Option value="all" disabled={false}>
               전체
-            </Option>
+            </Select.Option>
           ) : props?.firstItemType === 'none' ? null : (
-            <Option value="-" disabled={false}>
+            // @ts-ignore
+            <Select.Option value="-" disabled={false}>
               -
-            </Option>
+            </Select.Option>
           )}
           {options?.map(({ code, disabled, text }) => {
             return (
-              <Option key={code} value={code} disabled={disabled}>
+              // @ts-ignore
+              <Select.Option key={code} value={code} disabled={disabled}>
                 {text}
-              </Option>
+              </Select.Option>
             );
           })}
         </ScCombobox>
@@ -203,23 +206,27 @@ const Combobox: React.FC<Props> = props => {
         fontSize={props.fontSize}
       >
         {props?.firstItemType === 'empty' ? (
-          <Option value="" disabled={false}>
+          // @ts-ignore
+          <Select.Option value="" disabled={false}>
             {''}
-          </Option>
+          </Select.Option>
         ) : props?.firstItemType === 'all' ? (
-          <Option value="all" disabled={false}>
+          // @ts-ignore
+          <Select.Option value="all" disabled={false}>
             전체
-          </Option>
+          </Select.Option>
         ) : props?.firstItemType === 'none' ? null : (
-          <Option value="-" disabled={false}>
+          // @ts-ignore
+          <Select.Option value="-" disabled={false}>
             -
-          </Option>
+          </Select.Option>
         )}
         {options?.map(({ code, disabled, text }) => {
           return (
-            <Option key={code} value={code} disabled={disabled}>
+            // @ts-ignore
+            <Select.Option key={code} value={code} disabled={disabled}>
               {text}
-            </Option>
+            </Select.Option>
           );
         })}
       </ScCombobox>

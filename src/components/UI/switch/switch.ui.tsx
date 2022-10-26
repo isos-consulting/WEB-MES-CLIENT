@@ -6,7 +6,6 @@ import { afBooleanState } from '~recoils/recoil.atom-family';
 
 /** 스위치 */
 const Switch: React.FC<Props> = props => {
-  const AntSwitch = AntdSwitch as any;
   const [, SwitchSetValue] = useRecoilState(afBooleanState(props.id));
 
   const handleChangeSwitchValue = (checked: boolean, event: MouseEvent) => {
@@ -24,7 +23,8 @@ const Switch: React.FC<Props> = props => {
   }, []);
 
   return (
-    <AntSwitch
+    // @ts-ignore
+    <AntdSwitch
       {...props}
       onChange={props.onChange || handleChangeSwitchValue}
     />

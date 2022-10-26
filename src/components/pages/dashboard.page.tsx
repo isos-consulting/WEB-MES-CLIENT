@@ -1,13 +1,12 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { getData, getToday } from '~/functions';
-import { Card as AntdCard, Col, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 import { PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
 
 export const Dashboard = () => {
-  const Card = AntdCard as any;
   const [current, chageTarget] = useState<string>('byDay');
   const graphSets = getData(
     { reg_date: getToday() },
@@ -35,6 +34,7 @@ export const Dashboard = () => {
       >
         <Row gutter={[16, 16]}>
           <Col span={24} key={'outgo'}>
+            {/*  @ts-ignore */}
             <Card
               title="종합현황"
               extra={
@@ -104,7 +104,6 @@ type TPercentPie = {
 };
 
 const RealTimeCharts = ({ data }) => {
-  const Card = AntdCard as any;
   const Pies = data.map(({ title, value, color, unit }) => (
     <Col key={`${title}-col`} span={8}>
       <PercentPie
@@ -120,6 +119,7 @@ const RealTimeCharts = ({ data }) => {
   return (
     <>
       <div style={{ height: '30vh' }}>
+        {/*  @ts-ignore */}
         <Card title="실시간현황" headStyle={{}}>
           <Row gutter={[16, 16]}>{Pies}</Row>
         </Card>
@@ -129,8 +129,8 @@ const RealTimeCharts = ({ data }) => {
 };
 
 const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
-  const Card = AntdCard as any;
   return (
+    /*  @ts-ignore */
     <Card headStyle={{}}>
       <Row style={{ height: height }}>
         <Col span={24} style={{ height: '100%' }}>
