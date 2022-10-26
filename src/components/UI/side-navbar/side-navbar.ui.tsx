@@ -221,11 +221,12 @@ const Level2: React.FC<ILevel2Props> = ({ active }) => {
                         },
                       );
 
-                      return (
-                        <SubMenu key={level2.menu_uri} title={level2.menu_nm}>
-                          {subMenu}
-                        </SubMenu>
-                      );
+                      const subMenuProps = {
+                        key: level2.menu_uri,
+                        title: level2.menu_nm,
+                      };
+
+                      return <SubMenu {...subMenuProps}>{subMenu}</SubMenu>;
                     }
                   })}
                 </Menu>
