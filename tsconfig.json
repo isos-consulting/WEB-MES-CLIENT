@@ -8,7 +8,7 @@
       "esnext.asynciterable",
       "ESNext"
     ],
-    "types": ["vite/client"],
+    "types": ["vite/client", "jest"],
     "allowJs": true,
     "skipLibCheck": true, //선언 타입(.d.ts) 파일의 타입 검사를 생략합니다.
     "esModuleInterop": true, // import 할때 default export와 export 항목을 동시에 import할수 있도록 허용합니다. (ex: import React, {useEffect} from 'react';)
