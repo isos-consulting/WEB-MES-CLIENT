@@ -25,7 +25,7 @@ import {
 } from '~/functions';
 import { message, Modal, Space } from 'antd';
 import TuiGrid from 'tui-grid';
-import Grid from '@toast-ui/react-grid';
+import G from '@toast-ui/react-grid';
 import {
   DatagridComboboxEditor,
   DatagridNumberEditor,
@@ -115,6 +115,9 @@ const rowHeight = 35;
 const minRowHeight = 10;
 //#endregion
 
+// @ts-ignore
+const Grid = G.default ? G.default : G;
+
 /**
  * 그리드 모듈에서 호출될 팝업에 관한 정보를 기술하여 리턴시켜주는 함수입니다.
  * @param popupKey
@@ -170,14 +173,14 @@ interface IColumnComboState {
 }
 
 /** 데이터 그리드 */
-const BaseDatagrid = forwardRef<Grid, Props>((props, ref) => {
-  const gridRef = useRef<Grid>();
+const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
+  const gridRef = useRef<typeof Grid>();
   useImperativeHandle(ref, () => gridRef.current);
 
   const [originData, setOriginData] = useState<any[]>([]);
 
-  const childFileGridRef = useRef<Grid>();
-  const childGridRef = useRef<Grid>();
+  const childFileGridRef = useRef<typeof Grid>();
+  const childGridRef = useRef<typeof Grid>();
   const [modal, contextHolder] = Modal.useModal();
   const [columnComboState, setColumnComboState] = useState<IColumnComboState[]>(
     [],
