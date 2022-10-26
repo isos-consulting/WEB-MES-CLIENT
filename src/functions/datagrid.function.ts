@@ -42,6 +42,7 @@ export const saveGridData = async (
   let resultChk: boolean = true;
   let resultCount: number = 0;
   let saveData = cloneDeep(data);
+  const resultData: any[] = [];
 
   const editType = ['createdRows', 'updatedRows', 'deletedRows'];
   const _methodType = [
@@ -103,27 +104,28 @@ export const saveGridData = async (
           }
         });
 
-        saveData = saveData[editType[i]];
+        const apiPayLoad = saveData[editType[i]];
 
         // 다른 값 덧붙이기
         if (optionParams != null) {
           if (Object.keys(optionParams).length > 0) {
-            let tempData = cloneDeep(saveData);
-            saveData = [];
+            let tempData = cloneDeep(apiPayLoad);
+            apiPayLoad.length = 0;
 
-            for (let z = 0; z < tempData.length; z++) {
-              saveData.push({ ...tempData[z], ...optionParams });
+            for (let z = 0; z < [tempData].length; z++) {
+              apiPayLoad.push({ ...tempData[z], ...optionParams });
             }
           }
         }
 
         // 저장
-        await executeData(saveData, uriPath, _methodType[i] as ApiMethod)
+        await executeData(apiPayLoad, uriPath, _methodType[i] as ApiMethod)
           .then(res => {
             const { datas, success } = res;
             const { value } = datas;
             if (!success) resultChk = false;
 
+            resultData.concat(value);
             resultCount += value?.count || 0;
           })
           .catch(e => {
@@ -165,7 +167,7 @@ export const saveGridData = async (
     return {
       success: resultChk,
       count: resultCount,
-      savedData: saveData,
+      savedData: resultData,
     };
   }
 };
