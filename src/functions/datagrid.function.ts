@@ -112,7 +112,7 @@ export const saveGridData = async (
             let tempData = cloneDeep(apiPayLoad);
             apiPayLoad.length = 0;
 
-            for (let z = 0; z < [tempData].length; z++) {
+            for (let z = 0; z < tempData.length; z++) {
               apiPayLoad.push({ ...tempData[z], ...optionParams });
             }
           }
