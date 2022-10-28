@@ -10,7 +10,7 @@ import { ENUM_DECIMAL } from '~/enums';
 /** 생산관리 - 부적합관리 */
 export const REJECTREADONLY = () => {
   //#region 🔶공용 설정
-  const [contextHolder] = Modal.useModal();
+  const [_, contextHolder] = Modal.useModal();
   const [searchParams, setSearchParams] = useState({});
   const [saveOptionParams, setSaveOptionParams] = useState({});
   const [rowAddedParams, setRowAddedParams] = useState({});

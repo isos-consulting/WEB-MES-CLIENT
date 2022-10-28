@@ -9,7 +9,7 @@ import { TAB_CODE } from './work.page.util';
 /** 생산관리 - 비가동관리 */
 export const DOWNTIMEREADONLY = () => {
   //#region 🔶공용 설정
-  const [contextHolder] = Modal.useModal();
+  const [_, contextHolder] = Modal.useModal();
   const [searchParams, setSearchParams] = useState({});
   const [saveOptionParams, setSaveOptionParams] = useState({});
   //#endregion
