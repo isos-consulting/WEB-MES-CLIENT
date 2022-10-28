@@ -64,7 +64,7 @@
     "cleanup-cache": "rimraf .cache",
     "cleanup-dist": "rimraf dist",
     "cleanup": "rimraf build",
-    "dev": "vite",
+    "start": "vite",
     "build": "tsc && vite build",
     "test": "jest --config config/jest.config.ts",
     "test:watch": "jest --config config/jest.config.ts --watch",
