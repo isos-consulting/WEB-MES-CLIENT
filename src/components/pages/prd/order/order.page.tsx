@@ -2,7 +2,7 @@ import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
 import { Divider, Space, Typography, Modal, Spin, message } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
-import React, { useMemo, useRef, useState, useCallback } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   Button,
   COLUMN_CODE,
@@ -52,7 +52,6 @@ export const PgPrdOrder = () => {
   //#region 🔶 작업지시이력 관련
   const [modal, contextHolder] = Modal.useModal();
 
-  const childGridRef = useRef();
   const searchRef = useRef<FormikProps<FormikValues>>();
   const searchParams = searchRef?.current?.values;
 
