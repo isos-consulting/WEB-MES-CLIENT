@@ -2784,8 +2784,12 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       );
 
     if (props.inspResultUuid && props.popupVisible) {
-      getData({}, searchUriPath, 'header-details')
-        .then((res: any) => {
+      getData<TGetQmsProcInspResultIncludeDetails>(
+        {},
+        searchUriPath,
+        'header-details',
+      )
+        .then(res => {
           setInspResultIncludeDetails(res);
           inputInspResult.setValues({
             ...res.header,
