@@ -18,7 +18,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "parcel-bundler": "1.12.5",
     "postcss-modules": "3.2.2",
     "prettier": "^2.6.2",
     "ts-jest": "^28.0.7",
@@ -65,16 +64,14 @@
     "cleanup-cache": "rimraf .cache",
     "cleanup-dist": "rimraf dist",
     "cleanup": "rimraf build",
-    "start": "rimraf dist && parcel ./index.html --port 3000 --open",
-    "build": "rimraf dist && parcel build ./public/index.html -d build --no-source-maps",
+    "dev": "vite",
+    "build": "tsc && vite build",
     "test": "jest --config config/jest.config.ts",
     "test:watch": "jest --config config/jest.config.ts --watch",
     "test:coverage": "jest --config config/jest.config.ts --coverage",
     "e2e:test": "npx playwright test",
     "e2e:codegen-dev": "npx playwright codegen http://191.1.70.232:3000/",
-    "e2e:report": "npx playwright show-report",
-    "dev": "vite",
-    "vite-build": "tsc && vite build"
+    "e2e:report": "npx playwright show-report"
   },
   "browser": {
     "dom-storage": false
