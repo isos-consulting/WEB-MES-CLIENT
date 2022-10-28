@@ -32,8 +32,8 @@ const App = () => {
     return url === 'localhost' || url.includes('191.1.70');
   };
 
-  const getTenantCode = url => {
-    return `${url}`.split('.')[0];
+  const getTenantCode = (url: string) => {
+    return url.split('.')[0];
   };
 
   const tenantIsNotEmpty = (tenants: any[]) => {
