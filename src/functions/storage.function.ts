@@ -46,11 +46,9 @@ export const getUserSuperAdminFg = () => {
 
 /** 로그인 유저의 토큰을 가져옵니다. */
 export const getUserAccessToken = () => {
-  return (
-    import.meta.env.VITE_ACCESS_TOKEN_PREFIX +
-    ' ' +
+  return `${import.meta.env.VITE_ACCESS_TOKEN_PREFIX} ${
     getTokenInfo()?.access_token
-  );
+  }`;
 };
 
 export const getUserRefreshToken = () => {
