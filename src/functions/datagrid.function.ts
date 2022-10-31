@@ -109,7 +109,7 @@ export const saveGridData = async (
         // 다른 값 덧붙이기
         if (optionParams != null) {
           if (Object.keys(optionParams).length > 0) {
-            let tempData = cloneDeep(apiPayLoad);
+            const tempData = cloneDeep(apiPayLoad);
             apiPayLoad.length = 0;
 
             for (let z = 0; z < tempData.length; z++) {
