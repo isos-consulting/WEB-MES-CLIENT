@@ -1146,6 +1146,7 @@ export const PgQmsReworkReport = () => {
   useLayoutEffect(() => {
     const inputValues = disassemblePopupInputInfo?.values;
     if (!inputValues) return;
+    if (typeof inputValues !== 'object') return;
     if (Object.keys(inputValues).length === 0) return;
 
     const prod_uuid = inputValues?.prod_uuid;
