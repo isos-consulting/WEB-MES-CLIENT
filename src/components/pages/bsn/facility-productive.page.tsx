@@ -23,11 +23,11 @@ export const PgFacilityProductive = () => {
       type: 'check',
       id: 'facility_type',
       default: 'all',
-      label: '설비',
+      label: '작업장',
       options: [
-        { code: 'partner', text: '거래처별' },
-        { code: 'prod', text: '품목별' },
-        { code: 'date', text: '일자별' },
+        { code: 'ws1', text: '작업장1' },
+        { code: 'ws2', text: '작업장2' },
+        { code: 'ws3', text: '작업장3' },
       ],
     },
   ]);
