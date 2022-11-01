@@ -153,3 +153,4 @@ export * from './mld/mold-report.page';
 export * from './mld/prod-mold.page';
 
 export * from './bsn/facility-productive.page';
+export * from './bsn/downtime.page';
