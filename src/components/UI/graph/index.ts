@@ -1,7 +1,7 @@
 export { default as Graph } from './graph.ui';
 export * from './graph.ui.type';
 
-export { default as BarGraph } from './graph-bar.ui';
+export { BarGraph } from './graph-bar.ui';
 export * from './graph-bar.ui.type';
 
 export { default as LineGraph } from './graph-line.ui';
