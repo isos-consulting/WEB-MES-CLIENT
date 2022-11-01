@@ -16,8 +16,6 @@ export const PgFacilityProductive = () => {
       ids: ['start_reg_date', 'end_reg_date'],
       defaults: [getToday(-7), getToday()],
       label: '생산 기간',
-      useCheckbox: true,
-      defaultChecked: true,
     },
     {
       type: 'check',
