@@ -106,7 +106,7 @@ export const PgDownTimeReport = () => {
         },
         title: {
           display: true,
-          text: '설비 운영율/가동율',
+          text: '비가동 시간',
         },
       },
     },
@@ -121,7 +121,7 @@ export const PgDownTimeReport = () => {
       ],
       datasets: [
         {
-          label: '비가동 시간(분)',
+          label: '시간(분)',
           data: Object.keys(summaryData)
             .filter(key => {
               if (key.includes('ws')) {
