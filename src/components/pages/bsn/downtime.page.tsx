@@ -8,6 +8,73 @@ import {
 } from '~/components/UI';
 import { getToday } from '~/functions';
 
+const data = [
+  {
+    ws1: (Math.random() * 10).toFixed(0),
+    ws2: (Math.random() * 10).toFixed(0),
+    ws3: (Math.random() * 10).toFixed(0),
+    ws4: (Math.random() * 10).toFixed(0),
+    ws5: (Math.random() * 10).toFixed(0),
+    ws6: (Math.random() * 10).toFixed(0),
+  },
+  {
+    ws1: (Math.random() * 10).toFixed(0),
+    ws2: (Math.random() * 10).toFixed(0),
+    ws3: (Math.random() * 10).toFixed(0),
+    ws4: (Math.random() * 10).toFixed(0),
+    ws5: (Math.random() * 10).toFixed(0),
+    ws6: (Math.random() * 10).toFixed(0),
+  },
+  {
+    ws1: (Math.random() * 10).toFixed(0),
+    ws2: (Math.random() * 10).toFixed(0),
+    ws3: (Math.random() * 10).toFixed(0),
+    ws4: (Math.random() * 10).toFixed(0),
+    ws5: (Math.random() * 10).toFixed(0),
+    ws6: (Math.random() * 10).toFixed(0),
+  },
+];
+
+const columns = [
+  {
+    header: '작업장1',
+    name: 'ws1',
+  },
+  {
+    header: '작업장2',
+    name: 'ws2',
+  },
+  {
+    header: '작업장3',
+    name: 'ws3',
+  },
+  {
+    header: '작업장4',
+    name: 'ws4',
+  },
+  {
+    header: '작업장5',
+    name: 'ws5',
+  },
+  {
+    header: '작업장6',
+    name: 'ws6',
+  },
+];
+
+const summaryData = data.reduce((acc, cur, idx) => {
+  const c = idx === 1 ? { ...acc } : acc;
+
+  c.ws1 = (Number(c.ws1) + Number(cur.ws1)).toString();
+  c.ws2 = (Number(c.ws2) + Number(cur.ws2)).toString();
+  c.ws3 = (Number(c.ws3) + Number(cur.ws3)).toString();
+  c.ws4 = (Number(c.ws4) + Number(cur.ws4)).toString();
+  c.ws5 = (Number(c.ws5) + Number(cur.ws5)).toString();
+  c.ws6 = (Number(c.ws6) + Number(cur.ws6)).toString();
+
+  return c;
+});
+
 export const PgDownTimeReport = () => {
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
@@ -51,18 +118,18 @@ export const PgDownTimeReport = () => {
         '작업장4',
         '작업장5',
         '작업장6',
-        '작업장7',
       ],
       datasets: [
         {
-          label: '운영율',
-          data: Array.from({ length: 7 }).map(() => Math.random() * 100),
+          label: '비가동 시간(분)',
+          data: Object.keys(summaryData)
+            .filter(key => {
+              if (key.includes('ws')) {
+                return true;
+              }
+            })
+            .map(key => summaryData[key]),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        },
-        {
-          label: '가동율',
-          data: Array.from({ length: 7 }).map(() => Math.random() * 100),
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
       ],
     },
@@ -79,7 +146,11 @@ export const PgDownTimeReport = () => {
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
-        <Datagrid data={[]} columns={[]} disabledAutoDateColumn={true} />
+        <Datagrid
+          data={[...data]}
+          columns={[...columns]}
+          disabledAutoDateColumn={true}
+        />
       </Container>
     </>
   );
