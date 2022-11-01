@@ -127,7 +127,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정4',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -166,7 +166,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정5',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -205,7 +205,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정6',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -244,7 +244,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정7',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -283,7 +283,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정8',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -322,7 +322,7 @@ const data = [
     a12: (Math.random() * 100).toFixed(2),
   },
   {
-    rt: '공정90',
+    rt: '공정9',
     o1: (Math.random() * 100).toFixed(2),
     o2: (Math.random() * 100).toFixed(2),
     o3: (Math.random() * 100).toFixed(2),
@@ -425,6 +425,7 @@ for (let i = 0; i < 12; i++) {
 const summaryData = [...data].reduce((acc, cur, idx) => {
   const c = idx === 1 ? { ...acc } : acc;
 
+  c.rt = '합계';
   c.o1 = (Number(c.o1) + Number(cur.o1)).toFixed(2);
   c.o2 = (Number(c.o2) + Number(cur.o2)).toFixed(2);
   c.o3 = (Number(c.o3) + Number(cur.o3)).toFixed(2);
@@ -464,8 +465,6 @@ const summaryData = [...data].reduce((acc, cur, idx) => {
 
   return c;
 });
-
-console.log(summaryData);
 
 export const PgProductionPlanAchievementRateReport = () => {
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
@@ -511,22 +510,14 @@ export const PgProductionPlanAchievementRateReport = () => {
           label: '지시',
           data: Object.keys(summaryData)
             .filter(key => key.includes('o'))
-            .map(key =>
-              Number.parseFloat(
-                Number(summaryData[key] / data.length - 1).toFixed(2),
-              ),
-            ),
+            .map(key => summaryData[key]),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
         {
           label: '생산',
           data: Object.keys(summaryData)
             .filter(key => key.includes('c'))
-            .map(key =>
-              Number.parseFloat(
-                Number(summaryData[key] / data.length - 1).toFixed(2),
-              ),
-            ),
+            .map(key => summaryData[key]),
           backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
       ],
@@ -545,7 +536,7 @@ export const PgProductionPlanAchievementRateReport = () => {
       </Container>
       <Container>
         <Datagrid
-          data={[...data]}
+          data={[...data, summaryData]}
           columns={[...columns]}
           header={{
             complexColumns: [...complexColumns],
