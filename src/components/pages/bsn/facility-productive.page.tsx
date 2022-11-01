@@ -8,6 +8,39 @@ import {
 } from '~/components/UI';
 import { getToday } from '~/functions';
 
+const data = [
+  {
+    fg: '운영율',
+    ws1: (Math.random() * 100).toFixed(2),
+    ws2: (Math.random() * 100).toFixed(2),
+    ws3: (Math.random() * 100).toFixed(2),
+    ws4: (Math.random() * 100).toFixed(2),
+    ws5: (Math.random() * 100).toFixed(2),
+    ws6: (Math.random() * 100).toFixed(2),
+    ws7: (Math.random() * 100).toFixed(2),
+  },
+  {
+    fg: '가동율',
+    ws1: (Math.random() * 100).toFixed(2),
+    ws2: (Math.random() * 100).toFixed(2),
+    ws3: (Math.random() * 100).toFixed(2),
+    ws4: (Math.random() * 100).toFixed(2),
+    ws5: (Math.random() * 100).toFixed(2),
+    ws6: (Math.random() * 100).toFixed(2),
+    ws7: (Math.random() * 100).toFixed(2),
+  },
+];
+
+const columns = [
+  { header: '구분', name: 'fg' },
+  { header: '작업장1', name: 'ws1' },
+  { header: '작업장2', name: 'ws2' },
+  { header: '작업장3', name: 'ws3' },
+  { header: '작업장4', name: 'ws4' },
+  { header: '작업장5', name: 'ws5' },
+  { header: '작업장6', name: 'ws6' },
+];
+
 export const PgFacilityProductive = () => {
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
@@ -56,12 +89,16 @@ export const PgFacilityProductive = () => {
       datasets: [
         {
           label: '운영율',
-          data: Array.from({ length: 7 }).map(() => Math.random() * 100),
+          data: Object.keys(data[0])
+            .filter(key => key !== 'fg')
+            .map(key => data[0][key]),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
         {
           label: '가동율',
-          data: Array.from({ length: 7 }).map(() => Math.random() * 100),
+          data: Object.keys(data[1])
+            .filter(key => key !== 'fg')
+            .map(key => data[1][key]),
           backgroundColor: 'rgba(53, 162, 235, 0.5)',
         },
       ],
@@ -79,7 +116,11 @@ export const PgFacilityProductive = () => {
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
-        <Datagrid data={[]} columns={[]} disabledAutoDateColumn={true} />
+        <Datagrid
+          data={[...data]}
+          columns={[...columns]}
+          disabledAutoDateColumn={true}
+        />
       </Container>
     </>
   );
