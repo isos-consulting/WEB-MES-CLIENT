@@ -154,3 +154,4 @@ export * from './mld/prod-mold.page';
 
 export * from './bsn/facility-productive.page';
 export * from './bsn/downtime.page';
+export * from './bsn/production-plan-achievement-rate.page';
