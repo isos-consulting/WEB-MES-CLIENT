@@ -6,6 +6,7 @@ import {
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
+import { URL_PATH_STD } from '~/enums';
 import { getToday } from '~/functions';
 
 const data = [
@@ -42,26 +43,36 @@ const columns = [
 ];
 
 export const PgFacilityProductive = () => {
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {
-      type: 'daterange',
-      id: 'reg_date',
-      ids: ['start_reg_date', 'end_reg_date'],
-      defaults: [getToday(-7), getToday()],
-      label: '생산 기간',
+  const {
+    onSearch,
+    searchItems,
+    props: { innerRef },
+  } = useSearchbox(
+    'SEARCH_INPUTBOX',
+    [
+      {
+        type: 'daterange',
+        id: 'reg_date',
+        ids: ['start_reg_date', 'end_reg_date'],
+        defaults: [getToday(-7), getToday()],
+        label: '생산 기간',
+      },
+      {
+        type: 'multi-combo',
+        id: 'facility_type',
+        label: '작업장',
+        dataSettingOptions: {
+          codeName: 'workings_cd',
+          textName: 'workings_nm',
+          uriPath: URL_PATH_STD.WORKINGS.GET.WORKINGSES,
+          params: { store_type: 'all' },
+        },
+      },
+    ],
+    () => {
+      console.log({ ...innerRef.current.values });
     },
-    {
-      type: 'check',
-      id: 'facility_type',
-      default: 'all',
-      label: '작업장',
-      options: [
-        { code: 'ws1', text: '작업장1' },
-        { code: 'ws2', text: '작업장2' },
-        { code: 'ws3', text: '작업장3' },
-      ],
-    },
-  ]);
+  );
 
   const barGraphProps = {
     options: {
@@ -92,14 +103,14 @@ export const PgFacilityProductive = () => {
           data: Object.keys(data[0])
             .filter(key => key !== 'fg')
             .map(key => data[0][key]),
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          backgroundColor: '#3AD1FF',
         },
         {
           label: '가동율',
           data: Object.keys(data[1])
             .filter(key => key !== 'fg')
             .map(key => data[1][key]),
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+          backgroundColor: '#86E236',
         },
       ],
     },
@@ -107,20 +118,12 @@ export const PgFacilityProductive = () => {
 
   return (
     <>
-      <Searchbox
-        searchItems={searchInfo.searchItems}
-        innerRef={searchInfo.props.innerRef}
-        onSearch={() => {}}
-      />
+      <Searchbox {...{ searchItems, innerRef, onSearch }} />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
-        <Datagrid
-          data={[...data]}
-          columns={[...columns]}
-          disabledAutoDateColumn={true}
-        />
+        <Datagrid disabledAutoDateColumn={true} {...{ data, columns }} />
       </Container>
     </>
   );

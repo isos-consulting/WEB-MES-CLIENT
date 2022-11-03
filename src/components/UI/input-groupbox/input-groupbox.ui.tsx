@@ -26,6 +26,7 @@ import IDatagridProps from '../datagrid-new/datagrid.ui.type';
 import IModalProps from '../modal/modal.ui.type';
 import RangePicker from '../date-picker/range/date-range-picker';
 import moment from 'moment';
+import { MultiSelectableCombobox } from '../combobox/multi-select/multi-selectable.combobox.ui';
 
 export interface IInputGroupboxItem {
   /** UI의 아이디 */
@@ -45,7 +46,8 @@ export interface IInputGroupboxItem {
     | 'radio'
     | 'combo'
     | 'rangepicker'
-    | 'dateym';
+    | 'dateym'
+    | 'multi-combo';
   widthSize?: 'auto' | 'flex' | number | string;
   options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
   placeholder?: string;
@@ -713,6 +715,34 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     : item.dataSettingOptions
                                 }
                                 firstItemType={item?.firstItemType}
+                              />
+                            ) : item.type === 'multi-combo' ? (
+                              <MultiSelectableCombobox
+                                label={item.label}
+                                important={item.important}
+                                defaultValue={
+                                  defaultValues[item.name || item.id]
+                                }
+                                value={values[item.name || item.id]}
+                                onChange={async e => {
+                                  await setFieldValued(item.name || item.id, e);
+
+                                  if (item?.onAfterChange)
+                                    item?.onAfterChange(e);
+                                }}
+                                disabled={item.disabled}
+                                widthSize={item.widthSize || 'default'}
+                                id={item.id}
+                                name={item.name || item.id}
+                                options={item.options as IComboboxItem[]}
+                                dataSettingOptions={
+                                  typeof item?.dataSettingOptions === 'function'
+                                    ? (item.dataSettingOptions({
+                                        item,
+                                        props,
+                                      }) as any)
+                                    : item.dataSettingOptions
+                                }
                               />
                             ) : item.type === 'dateym' ? (
                               <DatePicker
