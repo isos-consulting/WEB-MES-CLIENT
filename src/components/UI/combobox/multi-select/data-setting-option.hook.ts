@@ -7,9 +7,9 @@ type ComboAlias = {
   textName: string;
 };
 
-type ComboData = {
-  code: string;
-  text: string;
+type OptionProps = {
+  value: string;
+  label: string;
 };
 
 type ComboApiResponse = {
@@ -17,26 +17,23 @@ type ComboApiResponse = {
 };
 
 const pushFilteredData = ({ codeName, textName }: ComboAlias) => {
-  return (data: ComboData[], item: ComboApiResponse) => {
+  return (data: OptionProps[], item: ComboApiResponse) => {
     if (item[codeName] && item[textName]) {
       data.push({
-        code: item[codeName],
-        text: item[textName],
+        value: item[codeName],
+        label: item[textName],
       });
     }
     return data;
   };
 };
 
-export const useComboDatas = ({ params, uriPath, codeName, textName }) => {
+export const useComboDatas = ({ uriPath, params, codeName, textName }) => {
   const [comboData, setComboData] = useState<IComboboxItem[]>([]);
 
   const comboApi = async () =>
-    await getData<{ data: any }>(uriPath, params).then(res => {
-      const apiData = res.data.reduce(
-        pushFilteredData({ codeName, textName }),
-        [],
-      );
+    await getData(params, uriPath).then(res => {
+      const apiData = res.reduce(pushFilteredData({ codeName, textName }), []);
 
       setComboData(apiData);
 
@@ -44,7 +41,9 @@ export const useComboDatas = ({ params, uriPath, codeName, textName }) => {
     });
 
   useEffect(() => {
-    comboApi();
+    if (params && uriPath) {
+      comboApi();
+    }
   }, []);
 
   return { comboData, comboApi };
