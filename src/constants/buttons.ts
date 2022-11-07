@@ -32,4 +32,22 @@ export const ButtonStore: {
     ImageType: 'add',
     children: SENTENCE.ADD_RECORD,
   },
+  EXCEL_UPLOAD: {
+    key: 'excel-upload',
+    btnType: 'buttonFill',
+    widthSize: 'large',
+    heightSize: 'small',
+    fontSize: 'small',
+    ImageType: 'add',
+    children: SENTENCE.EXCEL_UPLOAD,
+  },
+  EXCEL_DOWNLOAD: {
+    key: 'excel-download',
+    btnType: 'buttonFill',
+    widthSize: 'large',
+    heightSize: 'small',
+    fontSize: 'small',
+    ImageType: 'add',
+    children: SENTENCE.EXCEL_DOWNLOAD,
+  },
 };

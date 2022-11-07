@@ -16,4 +16,6 @@ export enum SENTENCE {
   EDIT_CONFIRM = '수정하시겠습니까?',
   EDIT_COMPLETE = '수정이 완료되었습니다',
   SELECT_RECORD = '항목을 선택해주세요',
+  EXCEL_UPLOAD = '엑셀 업로드',
+  EXCEL_DOWNLOAD = '엑셀 다운로드',
 }
