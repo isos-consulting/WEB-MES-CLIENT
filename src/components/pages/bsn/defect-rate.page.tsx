@@ -172,7 +172,6 @@ const data = [
 ];
 
 const columns = [];
-const complexColumns = [];
 
 columns.push({ header: '공정', name: 'rt' });
 columns.push({ header: '구분', name: 'fg' });
