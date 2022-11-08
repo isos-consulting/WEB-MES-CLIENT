@@ -21,7 +21,10 @@ export const PgInvEcountERPInterface = () => {
             {
               ...ButtonStore.EXCEL_UPLOAD,
               ImageType: 'popup',
-              children: `입고 ${ButtonStore.EXCEL_UPLOAD.children}`,
+              children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace(
+                '엑셀',
+                '',
+              )}`,
               onClick: () => {
                 setVisible(true);
               },
@@ -29,7 +32,10 @@ export const PgInvEcountERPInterface = () => {
             {
               ...ButtonStore.EXCEL_UPLOAD,
               ImageType: 'popup',
-              children: `출고 ${ButtonStore.EXCEL_UPLOAD.children}`,
+              children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
+                '엑셀',
+                '',
+              )}`,
               onClick: () => {},
             },
           ]}
@@ -55,7 +61,7 @@ export const PgInvEcountERPInterface = () => {
           {
             align: 'right',
             buttonProps: {
-              text: '엑셀 업로드',
+              text: '엑셀 파일 선택',
               imgtype: 'add',
             },
             buttonAction: (_event, buttonProps, gridProps) => {
