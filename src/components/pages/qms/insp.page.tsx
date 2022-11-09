@@ -8,9 +8,7 @@ import ITpTripleGridProps, {
 } from '~/components/templates/grid-triple/grid-triple.template.type';
 import {
   Button,
-  COLUMN_CODE,
   Datagrid,
-  EDIT_ACTION_CODE,
   getPopupForm,
   IGridColumn,
   ISearchItem,
@@ -37,6 +35,13 @@ import {
 } from '~/components/UI/input-groupbox';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import IModalProps from '~/components/UI/modal/modal.ui.type';
+import { ColumnStore } from '~/constants/columns';
+import {
+  inspCloneData,
+  inspCloneModalInfo,
+  isInspTypeCodeNotAllocated,
+  isProdUuidNotAllocated,
+} from './insp/insp-clone.modal';
 
 /** 검사기준서관리 */
 export const PgQmsInsp = () => {
@@ -782,7 +787,7 @@ export const PgQmsInsp = () => {
       extraButtons: [
         {
           buttonProps: { text: '기준서 복사', children: '' },
-          buttonAction: (
+          buttonAction: async (
             _ev,
             {
               inputProps: {
@@ -793,96 +798,45 @@ export const PgQmsInsp = () => {
             },
             { gridRef, childGridRef },
           ) => {
-            const onAddPopup = res => {
-              modal.confirm({
-                title: '기준서 복사',
-                width: '80%',
-                icon: null,
-                okText: '선택',
-                onOk: closeModal => {
-                  const cloneData = childGridRef.current
-                    .getInstance()
-                    .getCheckedRows();
+            const cloneInspItems = async closeModal => {
+              gridRef.current.getInstance().clear();
+              gridRef.current
+                .getInstance()
+                .appendRows(
+                  await inspCloneData(
+                    childGridRef.current.getInstance().getCheckedRows(),
+                  ),
+                );
 
-                  if (cloneData.length > 0) {
-                    return getData(
-                      {},
-                      `qms/insp/${cloneData[0].insp_uuid}/details`,
-                    ).then(inspDetails => {
-                      const newInspDataGrid = gridRef.current.getInstance();
-
-                      newInspDataGrid.resetData(
-                        inspDetails.map(inspDetail => ({
-                          ...inspDetail,
-                          [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
-                        })),
-                      );
-                    });
-                  }
-
-                  return closeModal();
-                },
-                cancelText: '취소',
-                maskClosable: false,
-                content: (
-                  <Datagrid
-                    ref={childGridRef}
-                    data={[...res]}
-                    columns={[
-                      {
-                        header: '품번',
-                        name: 'prod_no',
-                        width: ENUM_WIDTH.L,
-                      },
-                      {
-                        header: '품목명',
-                        name: 'prod_nm',
-                        width: ENUM_WIDTH.L,
-                      },
-                      {
-                        header: '기준서유형UUID',
-                        name: 'insp_type_uuid',
-                        hidden: true,
-                      },
-                      {
-                        header: '기준서유형코드',
-                        name: 'insp_type_cd',
-                        hidden: true,
-                      },
-                      {
-                        header: '기준서유형',
-                        name: 'insp_type_nm',
-                        width: ENUM_WIDTH.M,
-                        align: 'center',
-                      },
-                      {
-                        header: '기준서번호',
-                        name: 'insp_no',
-                        width: ENUM_WIDTH.M,
-                        align: 'center',
-                      },
-                    ]}
-                    gridMode="select"
-                  />
-                ),
-              });
+              return closeModal();
             };
 
-            if (values.insp_type_cd == null) {
+            if (isInspTypeCodeNotAllocated(values.insp_type_cd) === true) {
               message.warn('검사기준서를 선택하신 후 다시 시도해 주세요.');
               return true;
             }
 
-            if (values.prod_uuid == null) {
+            if (isProdUuidNotAllocated(values.prod_uuid) === true) {
               message.warn('품번을 선택하신 후 다시 시도해 주세요.');
               return true;
             }
 
-            return getData(
+            const createdInspData = await getData(
               { insp_type_cd: values.insp_type_cd },
               'qms/insps',
-            ).then(res => {
-              onAddPopup(res);
+            );
+
+            modal.confirm({
+              ...inspCloneModalInfo(),
+              onOk: cloneInspItems,
+              content: (
+                <Datagrid
+                  ref={childGridRef}
+                  data={[...createdInspData]}
+                  columns={ColumnStore.INSP_CLONE}
+                  gridMode="select"
+                />
+              ),
             });
           },
         },
