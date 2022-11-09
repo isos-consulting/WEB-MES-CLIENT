@@ -8,6 +8,7 @@ import ITpTripleGridProps, {
 } from '~/components/templates/grid-triple/grid-triple.template.type';
 import {
   Button,
+  Datagrid,
   getPopupForm,
   IGridColumn,
   ISearchItem,
@@ -34,6 +35,13 @@ import {
 } from '~/components/UI/input-groupbox';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import IModalProps from '~/components/UI/modal/modal.ui.type';
+import { ColumnStore } from '~/constants/columns';
+import {
+  inspCloneData,
+  inspCloneModalInfo,
+  isInspTypeCodeNotAllocated,
+  isProdUuidNotAllocated,
+} from './insp/insp-clone.modal';
 
 /** 검사기준서관리 */
 export const PgQmsInsp = () => {
@@ -774,6 +782,63 @@ export const PgQmsInsp = () => {
           ],
           popupKey: '검사구관리',
           gridMode: 'select',
+        },
+      ],
+      extraButtons: [
+        {
+          buttonProps: { text: '기준서 복사', children: '' },
+          buttonAction: async (
+            _ev,
+            {
+              inputProps: {
+                innerRef: {
+                  current: { values },
+                },
+              },
+            },
+            { gridRef, childGridRef },
+          ) => {
+            const cloneInspItems = async closeModal => {
+              gridRef.current.getInstance().clear();
+              gridRef.current
+                .getInstance()
+                .appendRows(
+                  await inspCloneData(
+                    childGridRef.current.getInstance().getCheckedRows(),
+                  ),
+                );
+
+              return closeModal();
+            };
+
+            if (isInspTypeCodeNotAllocated(values.insp_type_cd) === true) {
+              message.warn('검사기준서를 선택하신 후 다시 시도해 주세요.');
+              return true;
+            }
+
+            if (isProdUuidNotAllocated(values.prod_uuid) === true) {
+              message.warn('품번을 선택하신 후 다시 시도해 주세요.');
+              return true;
+            }
+
+            const createdInspData = await getData(
+              { insp_type_cd: values.insp_type_cd },
+              'qms/insps',
+            );
+
+            modal.confirm({
+              ...inspCloneModalInfo(),
+              onOk: cloneInspItems,
+              content: (
+                <Datagrid
+                  ref={childGridRef}
+                  data={[...createdInspData]}
+                  columns={ColumnStore.INSP_CLONE}
+                  gridMode="select"
+                />
+              ),
+            });
+          },
         },
       ],
     },

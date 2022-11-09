@@ -1036,4 +1036,38 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       editable: false,
     },
   ],
+  INSP_CLONE: [
+    {
+      header: '품번',
+      name: 'prod_no',
+      width: ENUM_WIDTH.L,
+    },
+    {
+      header: '품목명',
+      name: 'prod_nm',
+      width: ENUM_WIDTH.L,
+    },
+    {
+      header: '기준서유형UUID',
+      name: 'insp_type_uuid',
+      hidden: true,
+    },
+    {
+      header: '기준서유형코드',
+      name: 'insp_type_cd',
+      hidden: true,
+    },
+    {
+      header: '기준서유형',
+      name: 'insp_type_nm',
+      width: ENUM_WIDTH.M,
+      align: 'center',
+    },
+    {
+      header: '기준서번호',
+      name: 'insp_no',
+      width: ENUM_WIDTH.M,
+      align: 'center',
+    },
+  ],
 };

@@ -362,15 +362,6 @@ export const getObjectKeyDuplicateCheck = (
  * @returns 현재 라우트 페이지명
  */
 export const getPageName = () => {
-  consoleLogLocalEnv(
-    '%c페이지 이름 조회 테스트 시작',
-    'color: green; font-size: 20px;',
-  );
-  consoleLogLocalEnv(
-    `Recoil에 저장되어 있는 메뉴 정보 조회`,
-    useRecoilValue(atSideNavMenuContent),
-  );
-  consoleLogLocalEnv(`path 정보 조회`, useLocation());
   const menuContent = useRecoilValue(atSideNavMenuContent);
   const { pathname } = useLocation();
 
@@ -646,21 +637,6 @@ export const getInspCheckResultTotal = (rawData, maxRowCnt) => {
     /** emptyFg */
     emptyFg,
   ];
-};
-
-export const consoleLogLocalEnv = (
-  message?: any,
-  ...optionalParams: any[]
-): void => {
-  const host = window.location.hostname;
-  if (
-    (host === 'localhost' || host.includes('191.1.70')) &&
-    import.meta.env.VITE_LOG_LEVEL === 'production'
-  ) {
-    if (message != null) {
-      console.debug(message, ...optionalParams);
-    }
-  }
 };
 
 export const addKeyOfObject = (

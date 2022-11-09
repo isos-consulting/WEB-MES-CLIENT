@@ -13,15 +13,10 @@ import { InputGroupbox } from '~/components/UI/input-groupbox/input-groupbox.ui'
 import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-single.template.type';
-import { consoleLogLocalEnv, getPermissions } from '~/functions';
+import { getPermissions } from '~/functions';
 
 export const TpSingleGrid: React.FC<Props> = props => {
   /** 🔶권한 */
-  consoleLogLocalEnv(
-    '%c단일 그리드 테스트 시작',
-    'color: green; font-size: 20px;',
-  );
-  consoleLogLocalEnv('권한 정보 조회:', getPermissions(props.title));
   const permissions = getPermissions(props.title);
 
   //#region 🔶그리드 관련
