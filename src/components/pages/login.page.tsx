@@ -2,7 +2,7 @@ import React, { useMemo, useState, useLayoutEffect } from 'react';
 import { message, Form } from 'antd';
 import crypto from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
-import { consoleLogLocalEnv, executeData, getData } from '../../functions';
+import { executeData, getData } from '../../functions';
 
 import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
@@ -28,7 +28,6 @@ export const PgLogin = ({
   profile: Profile;
   authenticatedCallback: (userProfile: Profile) => void;
 }) => {
-  consoleLogLocalEnv('%c✔Login 화면 테스트', 'color: green; font-size: 20px;');
   const [form] = Form.useForm();
 
   const [checked, setChecked] = useState<boolean>(Boolean(getLocalStorageId()));
@@ -41,15 +40,9 @@ export const PgLogin = ({
   // 공장 콤보박스 선택된 데이터
   const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');
 
-  consoleLogLocalEnv(
-    `로컬 스토리지에 저장 되어 있는 사용자 ID : ${getLocalStorageId()}`,
-  );
   const defaultValue = getLocalStorageId();
 
   const handleLoginCheck = async () => {
-    consoleLogLocalEnv(
-      `로컬 스토리지에 사용자 정보가 저장되어 있나요? ${isSaveUserInfo()}`,
-    );
     if (isSaveUserInfo() === true) {
       const storedUserProfile =
         JSON.parse(localStorage.getItem('userInfo')).pwd_fg === true
@@ -140,12 +133,6 @@ export const PgLogin = ({
           const { success, datas } = res;
           const { raws } = datas;
           if (success === true) {
-            consoleLogLocalEnv(`로그인 요청 이후 서버 응답 상태 : ${success}`);
-            consoleLogLocalEnv(
-              '사용자 정보 직렬화',
-              serialUserInfo(raws, userId, factory),
-            );
-            consoleLogLocalEnv('토큰 정보 직렬화', serialTokenInfo(raws));
             message.success('로그인 성공');
             localStorage.setItem(
               'userInfo',
@@ -187,7 +174,6 @@ export const PgLogin = ({
       const comboBoxDatas = [];
 
       factories.forEach(factory => {
-        consoleLogLocalEnv(`공장 정보 직렬화: ${serialFactoryInfo(factory)}`);
         comboBoxDatas.push({
           code: serialFactoryInfo(factory),
           text: factory['factory_nm'],
@@ -198,9 +184,6 @@ export const PgLogin = ({
     };
 
     const factories = await getData({}, 'std/factories/sign-in');
-    consoleLogLocalEnv(
-      `콤보박스에 저장 된 공장 정보: ${pushFactoryComboDatas(factories)}`,
-    );
     const cboData = pushFactoryComboDatas(factories);
 
     setCboFactory(cboData);

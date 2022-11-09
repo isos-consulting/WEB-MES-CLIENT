@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
-  consoleLogLocalEnv,
   dataGridEvents,
   getData,
   getModifiedRows,
@@ -14,11 +13,6 @@ import { message } from 'antd';
 
 /** 공장관리 */
 export const PgStdFactory = () => {
-  consoleLogLocalEnv(
-    '%c공장 관리 테스트 시작',
-    'color: green; font-size: 20px;',
-  );
-  consoleLogLocalEnv(`페이지 제목 조회: ${getPageName()}`);
   /** 페이지 제목 */
   const title = getPageName();
 

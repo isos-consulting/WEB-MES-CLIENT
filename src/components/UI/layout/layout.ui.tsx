@@ -7,7 +7,6 @@ import { SideNavbar, atSideNavMenuContent } from '../side-navbar';
 import { layoutStore } from './layout.ui.hook';
 import { ScContainer, ScContent, ScMainBody } from './layout.ui.styled';
 import Props from './layout.ui.type';
-import { consoleLogLocalEnv } from '~/functions';
 
 /** 화면 레이아웃 */
 export const Layout: React.FC<Props> = ({ children }) => {
@@ -18,22 +17,10 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
 
-  consoleLogLocalEnv(
-    '%c레이아웃 테스트 시작',
-    'color: green; font-size: 20px;',
-  );
-  consoleLogLocalEnv(
-    'Recoil에 저장되어 있는 메뉴 정보 조회:,',
-    useRecoilState(atSideNavMenuContent),
-  );
   const getCrruentRouter = async () => {
     const menus = pathname.split('/');
     const menu1 = menus[1];
     const menu2 = menus[2];
-    consoleLogLocalEnv('선택된 메뉴 정보 : ', {
-      selectedLevel1: menu1 as string,
-      selectedLevel2: [menu2],
-    });
     setMenuState({
       selectedLevel1: menu1 as string,
       selectedLevel2: [menu2],
@@ -42,7 +29,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
     const router = Object.keys(menuContent).find(
       key => menuContent[key].path === pathname,
     );
-    consoleLogLocalEnv(`메뉴 타이틀 조회: ${router}`);
     if (router) {
       window.document.title = `ISOS | ` + router;
     }

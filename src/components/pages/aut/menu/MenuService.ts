@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
-import { consoleLogLocalEnv, getData } from '~/functions';
+import { getData } from '~/functions';
 
 type TGridAttributes = {
   expanded?: boolean;
@@ -131,8 +131,8 @@ const MenuService = class {
       : true;
   };
 
-  deleteRecordValid = record => {
-    consoleLogLocalEnv('메뉴 삭제에 대한 유효성 검사는 아직 없습니다');
+  deleteRecordValid = _record => {
+    console.log('메뉴 삭제에 대한 유효성 검사는 아직 없습니다');
     return true;
   };
 

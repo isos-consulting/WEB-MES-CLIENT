@@ -3,7 +3,7 @@ import { Col, Form, Row } from 'antd';
 import { Button, Textbox } from '~/components/UI';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import PasswordValidation from '~/models/user/password';
-import { consoleLogLocalEnv, executeData } from '~/functions';
+import { executeData } from '~/functions';
 import crypto from 'crypto-js';
 import { Profile } from '~/models/user/profile';
 import { ico_lock } from '~/images';
@@ -114,7 +114,7 @@ const PgUpdatePassword = ({
                         authenticatedCallback(updatedProfile);
                       })
                       .catch(errorInfo => {
-                        consoleLogLocalEnv(errorInfo);
+                        // 예외 처리에 대한 코드를 추가해주세요
                       });
                   }}
                 >

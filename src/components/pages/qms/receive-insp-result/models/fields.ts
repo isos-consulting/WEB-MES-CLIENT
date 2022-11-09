@@ -1,5 +1,3 @@
-import { consoleLogLocalEnv } from '~/functions';
-
 export class InputForm {
   private fields: Set<InputField>;
 
@@ -8,12 +6,12 @@ export class InputForm {
   }
 
   addField(field) {
-    if (!(field instanceof InputField)) consoleLogLocalEnv('invalid field');
+    if (!(field instanceof InputField)) console.log('invalid field');
     this.fields.add(field);
   }
 
   removeField(field) {
-    if (!(field instanceof InputField)) consoleLogLocalEnv('invalid field');
+    if (!(field instanceof InputField)) console.log('invalid field');
     this.fields.delete(field);
   }
 
