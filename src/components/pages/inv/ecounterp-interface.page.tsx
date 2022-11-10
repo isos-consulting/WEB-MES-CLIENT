@@ -5,10 +5,12 @@ import {
   Datagrid,
   GridPopup,
   Searchbox,
+  useSearchbox,
 } from '~/components/UI';
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
+import { getToday } from '~/functions';
 
 const columns = {
   구매: ColumnStore.INCOME_STORE_ECOUNT_INTERFACE,
@@ -74,42 +76,55 @@ const extractModalContext = name => {
 
 export const PgInvEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
+  const searchInfo = useSearchbox(
+    'SEARCH_ERP_CONDITION',
+    [
+      {
+        type: 'daterange',
+        id: 'reg_date',
+        ids: ['start_date', 'end_date'],
+        defaults: [getToday(-7), getToday()],
+        label: '검색기간',
+      },
+    ],
+    () => {
+      console.log('hello');
+    },
+  );
   const [modalContext, setModalContext] = useState({
     ...extractModalContext('구매'),
   });
   return (
     <>
-      <Container>
-        <Searchbox></Searchbox>
-        <ButtonGroup
-          btnItems={[
-            {
-              ...ButtonStore.EXCEL_UPLOAD,
-              ImageType: 'popup',
-              children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace(
-                '엑셀',
-                '',
-              )}`,
-              onClick: () => {
-                setVisible(true);
-                setModalContext(extractModalContext('구매'));
-              },
+      <ButtonGroup
+        btnItems={[
+          {
+            ...ButtonStore.EXCEL_UPLOAD,
+            ImageType: 'popup',
+            children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace(
+              '엑셀',
+              '',
+            )}`,
+            onClick: () => {
+              setVisible(true);
+              setModalContext(extractModalContext('구매'));
             },
-            {
-              ...ButtonStore.EXCEL_UPLOAD,
-              ImageType: 'popup',
-              children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
-                '엑셀',
-                '',
-              )}`,
-              onClick: () => {
-                setVisible(true);
-                setModalContext(extractModalContext('생산불출'));
-              },
+          },
+          {
+            ...ButtonStore.EXCEL_UPLOAD,
+            ImageType: 'popup',
+            children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
+              '엑셀',
+              '',
+            )}`,
+            onClick: () => {
+              setVisible(true);
+              setModalContext(extractModalContext('생산불출'));
             },
-          ]}
-        />
-      </Container>
+          },
+        ]}
+      />
+      <Searchbox {...searchInfo} />
       <Container>
         <Datagrid
           columns={ColumnStore.INCOME_STORE_ECOUNT_INTERFACE}
