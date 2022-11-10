@@ -11,6 +11,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_INV } from '~/enums';
+import { EcountERPStocksDownloadButton } from './stores-stocks/ecounterp-stocks.button';
 
 /** 재고실사현황 */
 export const PgInvStoresStocks = () => {
@@ -185,5 +186,10 @@ export const PgInvStoresStocks = () => {
     modalContext,
   };
 
-  return <TpSingleGrid {...props} />;
+  return (
+    <>
+      <EcountERPStocksDownloadButton gridInfo={grid.gridInfo} />
+      <TpSingleGrid {...props} />
+    </>
+  );
 };
