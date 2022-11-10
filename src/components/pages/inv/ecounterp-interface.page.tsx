@@ -62,7 +62,6 @@ const extractModalContext = name => {
         align: 'right',
         buttonProps: {
           text: '파일 선택',
-          imgtype: 'add',
         },
         buttonAction: (_event, _buttonProps, gridProps) => {
           const file = document.createElement('input');
