@@ -94,14 +94,10 @@ export const PgInvEcountERPInterface = () => {
       label: '검색기간',
     },
   ]);
-  const [modalContext, setModalContext] = useState({
-    ...extractModalContext('구매'),
-  });
+  const [modalContext, setModalContext] = useState(extractModalContext('구매'));
 
   const openModal = name => {
-    setModalContext({
-      ...extractModalContext(name),
-    });
+    setModalContext(extractModalContext(name));
     setVisible(true);
   };
 
