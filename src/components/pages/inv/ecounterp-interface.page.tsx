@@ -85,19 +85,15 @@ export const PgInvEcountERPInterface = () => {
   const searchERPHistory = values => {
     // ERP 히스토리 조회
   };
-  const searchInfo = useSearchbox(
-    'SEARCH_ERP_CONDITION',
-    [
-      {
-        type: 'daterange',
-        id: 'reg_date',
-        ids: ['start_date', 'end_date'],
-        defaults: [getToday(-7), getToday()],
-        label: '검색기간',
-      },
-    ],
-    searchERPHistory,
-  );
+  const searchInfo = useSearchbox('SEARCH_ERP_CONDITION', [
+    {
+      type: 'daterange',
+      id: 'reg_date',
+      ids: ['start_date', 'end_date'],
+      defaults: [getToday(-7), getToday()],
+      label: '검색기간',
+    },
+  ]);
   const [modalContext, setModalContext] = useState({
     ...extractModalContext('구매'),
   });
@@ -129,7 +125,11 @@ export const PgInvEcountERPInterface = () => {
   return (
     <>
       <ButtonGroup btnItems={uploadButtons} />
-      <Searchbox {...searchInfo} />
+      <Searchbox
+        searchItems={searchInfo.searchItems}
+        innerRef={searchInfo.props.innerRef}
+        onSearch={searchERPHistory}
+      />
       <Container>
         <Datagrid
           columns={ColumnStore.INCOME_STORE_ECOUNT_INTERFACE}
