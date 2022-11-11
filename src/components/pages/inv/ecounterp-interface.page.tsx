@@ -82,6 +82,9 @@ const extractModalContext = name => {
 
 export const PgInvEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
+  const searchERPHistory = values => {
+    // ERP 히스토리 조회
+  };
   const searchInfo = useSearchbox(
     'SEARCH_ERP_CONDITION',
     [
@@ -93,9 +96,7 @@ export const PgInvEcountERPInterface = () => {
         label: '검색기간',
       },
     ],
-    () => {
-      // 조회 버튼을 클릭했을 때 실행되는 함수를 작성하시오
-    },
+    searchERPHistory,
   );
   const [modalContext, setModalContext] = useState({
     ...extractModalContext('구매'),
