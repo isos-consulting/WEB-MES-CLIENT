@@ -101,36 +101,34 @@ export const PgInvEcountERPInterface = () => {
   const [modalContext, setModalContext] = useState({
     ...extractModalContext('구매'),
   });
+
+  const uploadButtons = [
+    {
+      ...ButtonStore.EXCEL_UPLOAD,
+      ImageType: 'popup',
+      children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace('엑셀', '')}`,
+      onClick: () => {
+        setVisible(true);
+        setModalContext(extractModalContext('구매'));
+      },
+    },
+    {
+      ...ButtonStore.EXCEL_UPLOAD,
+      ImageType: 'popup',
+      children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
+        '엑셀',
+        '',
+      )}`,
+      onClick: () => {
+        setVisible(true);
+        setModalContext(extractModalContext('생산불출'));
+      },
+    },
+  ];
+
   return (
     <>
-      <ButtonGroup
-        btnItems={[
-          {
-            ...ButtonStore.EXCEL_UPLOAD,
-            ImageType: 'popup',
-            children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace(
-              '엑셀',
-              '',
-            )}`,
-            onClick: () => {
-              setVisible(true);
-              setModalContext(extractModalContext('구매'));
-            },
-          },
-          {
-            ...ButtonStore.EXCEL_UPLOAD,
-            ImageType: 'popup',
-            children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
-              '엑셀',
-              '',
-            )}`,
-            onClick: () => {
-              setVisible(true);
-              setModalContext(extractModalContext('생산불출'));
-            },
-          },
-        ]}
-      />
+      <ButtonGroup btnItems={uploadButtons} />
       <Searchbox {...searchInfo} />
       <Container>
         <Datagrid
