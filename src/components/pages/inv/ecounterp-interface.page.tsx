@@ -98,15 +98,23 @@ export const PgInvEcountERPInterface = () => {
     ...extractModalContext('구매'),
   });
 
+  const openModal = name => {
+    setModalContext({
+      ...extractModalContext(name),
+    });
+    setVisible(true);
+  };
+
+  const closeModal = () => {
+    setVisible(false);
+  };
+
   const uploadButtons = [
     {
       ...ButtonStore.EXCEL_UPLOAD,
       ImageType: 'popup',
       children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace('엑셀', '')}`,
-      onClick: () => {
-        setVisible(true);
-        setModalContext(extractModalContext('구매'));
-      },
+      onClick: () => openModal('구매'),
     },
     {
       ...ButtonStore.EXCEL_UPLOAD,
@@ -115,10 +123,7 @@ export const PgInvEcountERPInterface = () => {
         '엑셀',
         '',
       )}`,
-      onClick: () => {
-        setVisible(true);
-        setModalContext(extractModalContext('생산불출'));
-      },
+      onClick: () => openModal('생산불출'),
     },
   ];
 
@@ -138,12 +143,8 @@ export const PgInvEcountERPInterface = () => {
       </Container>
       <GridPopup
         visible={visible}
-        onOk={() => {
-          setVisible(false);
-        }}
-        onCancel={() => {
-          setVisible(false);
-        }}
+        onOk={() => closeModal()}
+        onCancel={() => closeModal()}
         {...modalContext}
         disabledAutoDateColumn={true}
       ></GridPopup>
