@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarGraph,
   Container,
@@ -6,96 +6,63 @@ import {
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
-import { getToday } from '~/functions';
+import { URL_PATH_STD } from '~/enums';
+import { getData, getToday } from '~/functions';
 
-const data = [
-  {
-    ws1: (Math.random() * 10).toFixed(0),
-    ws2: (Math.random() * 10).toFixed(0),
-    ws3: (Math.random() * 10).toFixed(0),
-    ws4: (Math.random() * 10).toFixed(0),
-    ws5: (Math.random() * 10).toFixed(0),
-    ws6: (Math.random() * 10).toFixed(0),
-  },
-  {
-    ws1: (Math.random() * 10).toFixed(0),
-    ws2: (Math.random() * 10).toFixed(0),
-    ws3: (Math.random() * 10).toFixed(0),
-    ws4: (Math.random() * 10).toFixed(0),
-    ws5: (Math.random() * 10).toFixed(0),
-    ws6: (Math.random() * 10).toFixed(0),
-  },
-  {
-    ws1: (Math.random() * 10).toFixed(0),
-    ws2: (Math.random() * 10).toFixed(0),
-    ws3: (Math.random() * 10).toFixed(0),
-    ws4: (Math.random() * 10).toFixed(0),
-    ws5: (Math.random() * 10).toFixed(0),
-    ws6: (Math.random() * 10).toFixed(0),
-  },
-];
-
-const columns = [
-  {
-    header: '작업장1',
-    name: 'ws1',
-  },
-  {
-    header: '작업장2',
-    name: 'ws2',
-  },
-  {
-    header: '작업장3',
-    name: 'ws3',
-  },
-  {
-    header: '작업장4',
-    name: 'ws4',
-  },
-  {
-    header: '작업장5',
-    name: 'ws5',
-  },
-  {
-    header: '작업장6',
-    name: 'ws6',
-  },
-];
-
-const summaryData = data.reduce((acc, cur, idx) => {
-  const c = idx === 1 ? { ...acc } : acc;
-
-  c.ws1 = (Number(c.ws1) + Number(cur.ws1)).toString();
-  c.ws2 = (Number(c.ws2) + Number(cur.ws2)).toString();
-  c.ws3 = (Number(c.ws3) + Number(cur.ws3)).toString();
-  c.ws4 = (Number(c.ws4) + Number(cur.ws4)).toString();
-  c.ws5 = (Number(c.ws5) + Number(cur.ws5)).toString();
-  c.ws6 = (Number(c.ws6) + Number(cur.ws6)).toString();
-
-  return c;
-});
+const workings_columns = [];
 
 export const PgDownTimeReport = () => {
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {
-      type: 'daterange',
-      id: 'reg_date',
-      ids: ['start_reg_date', 'end_reg_date'],
-      defaults: [getToday(-7), getToday()],
-      label: '생산 기간',
+  const [downtime, setDownTime] = useState([]);
+  const [workings, setWorkings] = useState([]);
+  const {
+    onSearch,
+    searchItems,
+    props: { innerRef },
+  } = useSearchbox(
+    'SEARCH_INPUTBOX',
+    [
+      {
+        type: 'daterange',
+        id: 'reg_date',
+        ids: ['start_date', 'end_date'],
+        defaults: [getToday(-7), getToday()],
+        label: '생산 기간',
+      },
+      {
+        type: 'multi-combo',
+        id: 'workings_uuid',
+        label: '작업장',
+        dataSettingOptions: {
+          codeName: 'workings_uuid',
+          textName: 'workings_nm',
+          uriPath: URL_PATH_STD.WORKINGS.GET.WORKINGSES,
+          params: { store_type: 'all' },
+        },
+      },
+    ],
+    () => {
+      getData(
+        {
+          ...innerRef.current.values,
+          working_uuid: [],
+        },
+        'kpi/production/downtime',
+      ).then(downtimes => {
+        setDownTime(downtimes);
+        if (innerRef.current.values.workings_uuid == null) {
+          setWorkings(workings_columns);
+        } else {
+          setWorkings(
+            workings_columns.filter(workings =>
+              innerRef.current.values.workings_uuid.includes(
+                workings.workings_uuid,
+              ),
+            ),
+          );
+        }
+      });
     },
-    {
-      type: 'check',
-      id: 'ws_type',
-      default: 'all',
-      label: '작업장',
-      options: [
-        { code: 'ws1', text: '작업장1' },
-        { code: 'ws2', text: '작업장2' },
-        { code: 'ws3', text: '작업장3' },
-      ],
-    },
-  ]);
+  );
 
   const barGraphProps = {
     options: {
@@ -111,44 +78,40 @@ export const PgDownTimeReport = () => {
       },
     },
     data: {
-      labels: [
-        '작업장1',
-        '작업장2',
-        '작업장3',
-        '작업장4',
-        '작업장5',
-        '작업장6',
-      ],
+      labels: workings.map(({ workings_nm }) => workings_nm),
       datasets: [
         {
           label: '시간(분)',
-          data: Object.keys(summaryData)
-            .filter(key => {
-              if (key.includes('ws')) {
-                return true;
-              }
-            })
-            .map(key => summaryData[key]),
+          data: workings.map(({ workings_cd }) =>
+            Number(downtime[0][workings_cd]),
+          ),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
       ],
     },
   };
 
+  useEffect(() => {
+    getData({ store_type: 'all' }, URL_PATH_STD.WORKINGS.GET.WORKINGSES).then(
+      workings => {
+        workings_columns.push(...workings);
+      },
+    );
+  }, []);
+
   return (
     <>
-      <Searchbox
-        searchItems={searchInfo.searchItems}
-        innerRef={searchInfo.props.innerRef}
-        onSearch={() => {}}
-      />
+      <Searchbox {...{ searchItems, onSearch, innerRef }} />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
-          data={[...data]}
-          columns={[...columns]}
+          data={downtime}
+          columns={workings.map(({ workings_cd, workings_nm }) => ({
+            header: workings_nm,
+            name: workings_cd,
+          }))}
           disabledAutoDateColumn={true}
         />
       </Container>
