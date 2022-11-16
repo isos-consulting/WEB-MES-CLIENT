@@ -64,37 +64,35 @@ export const PgWorkerProductivityReport = () => {
     },
   };
 
-  const data = () => {
+  const productivitiesGridData = () => {
     if (productivities.length === 0) return [];
 
     return [
-      productivities.reduce((c, cur) => {
+      productivities.reduce((acc, cur) => {
         const key = cur.workings_nm;
 
-        if (c[`${key}sum`] == null) {
-          c[`${key}sum`] = 0;
+        if (acc[`${key}sum`] == null) {
+          acc[`${key}sum`] = 0;
         }
 
-        const a = Object.keys(cur)
+        const routingsPerWorking = Object.keys(cur)
           .filter(key => key !== 'workings_nm')
           .map(k => {
             const newWorkingProuctivity = {};
 
-            if (k !== 'workings_nm') {
-              newWorkingProuctivity[`${key}${k}`] = Number(cur[k]).toFixed(2);
-            }
+            newWorkingProuctivity[`${key}${k}`] = Number(cur[k]).toFixed(2);
 
             return newWorkingProuctivity;
           });
 
-        a.forEach(item => {
-          c[`${key}sum`] += Number(Object.values(item)[0]);
-          c = { ...c, ...item };
+        routingsPerWorking.forEach(item => {
+          acc[`${key}sum`] += Number(Object.values(item)[0]);
+          acc = { ...acc, ...item };
         });
 
-        c[`${key}sum`] = c[`${key}sum`].toFixed(2);
+        acc[`${key}sum`] = acc[`${key}sum`].toFixed(2);
 
-        return c;
+        return acc;
       }, {}),
     ];
   };
@@ -107,21 +105,19 @@ export const PgWorkerProductivityReport = () => {
       </Container>
       <Container>
         <Datagrid
-          data={data()}
-          columns={productivities.reduce((c, cur) => {
+          data={productivitiesGridData()}
+          columns={productivities.reduce((acc, cur) => {
             const key = cur.workings_nm;
 
-            const a = Object.keys(cur)
+            const routingsPerWorking = Object.keys(cur)
               .filter(key => key !== 'workings_nm')
-              .map(k => {
-                return {
-                  header: k,
-                  name: `${key}${k}`,
-                  width: ENUM_WIDTH.M,
-                  format: 'number',
-                  decimal: ENUM_DECIMAL.DEC_STCOK,
-                };
-              })
+              .map(k => ({
+                header: k,
+                name: `${key}${k}`,
+                width: ENUM_WIDTH.M,
+                format: 'number',
+                decimal: ENUM_DECIMAL.DEC_STCOK,
+              }))
               .concat({
                 header: '합계',
                 name: `${key}sum`,
@@ -130,7 +126,7 @@ export const PgWorkerProductivityReport = () => {
                 decimal: ENUM_DECIMAL.DEC_STCOK,
               });
 
-            return [...c, ...a];
+            return [...acc, ...routingsPerWorking];
           }, [])}
           header={{
             complexColumns: productivities.map(productivity => ({
