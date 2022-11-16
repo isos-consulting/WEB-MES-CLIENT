@@ -31,24 +31,42 @@ const complexColumns = [
 
 columns.push({ header: '공정', name: 'proc_nm', width: ENUM_WIDTH.L });
 columns.push(
-  ...Object.entries(summaryHeaders).map(([header, name]) => ({
-    header,
-    name,
-    width: ENUM_WIDTH.S,
-    format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
-  })),
+  ...Object.entries(summaryHeaders).map(([header, name]) =>
+    header === '달성'
+      ? {
+          header,
+          name,
+          width: ENUM_WIDTH.S,
+          format: 'percent',
+        }
+      : {
+          header,
+          name,
+          width: ENUM_WIDTH.S,
+          format: 'number',
+          decimal: ENUM_DECIMAL.DEC_STCOK,
+        },
+  ),
 );
 
 for (let i = 0; i < 12; i++) {
   for (const [header, name] of Object.entries(headers)) {
-    columns.push({
-      header,
-      name: `${name}${i + 1}`,
-      width: ENUM_WIDTH.S,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    });
+    if (header === '달성') {
+      columns.push({
+        header: `${i + 1}월`,
+        name: `${name}${i + 1}`,
+        width: ENUM_WIDTH.S,
+        format: 'percent',
+      });
+    } else {
+      columns.push({
+        header,
+        name: `${name}${i + 1}`,
+        width: ENUM_WIDTH.S,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_STCOK,
+      });
+    }
   }
 
   complexColumns.push({
