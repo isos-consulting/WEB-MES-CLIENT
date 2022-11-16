@@ -123,6 +123,8 @@ const App = () => {
       }
     }
 
+    if (useLogPayload.log_action === '') return;
+
     executeData([useLogPayload], '/adm/use-log', 'post');
   };
 
