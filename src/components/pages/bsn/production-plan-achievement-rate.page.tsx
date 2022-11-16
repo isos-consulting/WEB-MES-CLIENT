@@ -80,23 +80,26 @@ const summaryData = data => {
   if (data.length === 0) return {};
 
   return data.reduce((acc, cur, idx) => {
-    const c = idx === 1 ? { ...acc } : acc;
+    const newSummaryData = idx === 1 ? { ...acc } : acc;
 
-    c.proc_nm = '합계';
+    newSummaryData.proc_nm = '합계';
 
     for (let i = 0; i < 12; i++) {
-      c[`order_month_${i + 1}`] = (
-        Number(c[`order_month_${i + 1}`]) + Number(cur[`order_month_${i + 1}`])
+      newSummaryData[`order_month_${i + 1}`] = (
+        Number(newSummaryData[`order_month_${i + 1}`]) +
+        Number(cur[`order_month_${i + 1}`])
       ).toFixed(2);
-      c[`work_month_${i + 1}`] = (
-        Number(c[`work_month_${i + 1}`]) + Number(cur[`work_month_${i + 1}`])
+      newSummaryData[`work_month_${i + 1}`] = (
+        Number(newSummaryData[`work_month_${i + 1}`]) +
+        Number(cur[`work_month_${i + 1}`])
       ).toFixed(2);
-      c[`rate_month_${i + 1}`] = (
-        Number(c[`rate_month_${i + 1}`]) + Number(cur[`rate_month_${i + 1}`])
+      newSummaryData[`rate_month_${i + 1}`] = (
+        Number(newSummaryData[`rate_month_${i + 1}`]) +
+        Number(cur[`rate_month_${i + 1}`])
       ).toFixed(2);
     }
 
-    return c;
+    return newSummaryData;
   });
 };
 
