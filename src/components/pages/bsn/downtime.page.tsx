@@ -48,7 +48,9 @@ export const PgDownTimeReport = () => {
         },
         'kpi/production/downtime',
       ).then(downtimes => {
-        setDownTime(downtimes);
+        setDownTime(
+          downtimes.map(downtime => ({ ...downtime, fg: '비가동 시간' })),
+        );
         if (innerRef.current.values.workings_uuid == null) {
           setWorkings(workings_columns);
         } else {
@@ -94,6 +96,7 @@ export const PgDownTimeReport = () => {
   useEffect(() => {
     getData({ store_type: 'all' }, URL_PATH_STD.WORKINGS.GET.WORKINGSES).then(
       workings => {
+        workings_columns.length = 0;
         workings_columns.push(...workings);
       },
     );
@@ -108,10 +111,12 @@ export const PgDownTimeReport = () => {
       <Container>
         <Datagrid
           data={downtime}
-          columns={workings.map(({ workings_cd, workings_nm }) => ({
-            header: workings_nm,
-            name: workings_cd,
-          }))}
+          columns={[{ header: '구분', name: 'fg' }].concat(
+            workings.map(({ workings_cd, workings_nm }) => ({
+              header: workings_nm,
+              name: workings_cd,
+            })),
+          )}
           disabledAutoDateColumn={true}
         />
       </Container>
