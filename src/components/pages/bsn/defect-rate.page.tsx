@@ -1,241 +1,108 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BarGraph,
   Container,
   Datagrid,
+  IGridColumn,
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
-import { getToday } from '~/functions';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { getData, getToday } from '~/functions';
 
-const data = [
+const columns: IGridColumn[] = [
+  { header: '공정', name: 'proc_nm', width: ENUM_WIDTH.M },
   {
-    rt: 'A',
-    fg: '생산',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
+    header: `생산`,
+    name: 'work_qty_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
   },
   {
-    rt: 'A',
-    fg: '불량',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
+    header: `불량`,
+    name: 'reject_qty_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
   },
   {
-    rt: 'B',
-    fg: '생산',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'B',
-    fg: '불량',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'C',
-    fg: '생산',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'C',
-    fg: '불량',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'D',
-    fg: '생산',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'D',
-    fg: '불량',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'E',
-    fg: '생산',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
-  },
-  {
-    rt: 'E',
-    fg: '불량',
-    o1: (Math.random() * 100).toFixed(2),
-    o2: (Math.random() * 100).toFixed(2),
-    o3: (Math.random() * 100).toFixed(2),
-    o4: (Math.random() * 100).toFixed(2),
-    o5: (Math.random() * 100).toFixed(2),
-    o6: (Math.random() * 100).toFixed(2),
-    o7: (Math.random() * 100).toFixed(2),
-    o8: (Math.random() * 100).toFixed(2),
-    o9: (Math.random() * 100).toFixed(2),
-    o10: (Math.random() * 100).toFixed(2),
-    o11: (Math.random() * 100).toFixed(2),
-    o12: (Math.random() * 100).toFixed(2),
+    header: `불량율`,
+    name: 'rate_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'percent',
   },
 ];
 
-const columns = [];
-
-columns.push({ header: '공정', name: 'rt' });
-columns.push({ header: '구분', name: 'fg' });
+const complexColumns = [
+  {
+    header: '합계',
+    name: 'sum',
+    childNames: [
+      'work_qty_month_sum',
+      'reject_qty_month_sum',
+      'rate_month_sum',
+    ],
+  },
+];
 
 for (let i = 0; i < 12; i++) {
+  const month = i + 1 < 10 ? `0${i + 1}` : `${i + 1}`;
+  const work = `work_qty_month`.concat(month);
+  const reject = `reject_qty_month`.concat(month);
+  const rate = `rate_month`.concat(month);
+
   columns.push({
-    header: `${i + 1}월`,
-    name: `o${i + 1}`,
+    header: `생산`,
+    name: work,
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
+  });
+  columns.push({
+    header: `불량`,
+    name: reject,
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
+  });
+  columns.push({
+    header: `불량율`,
+    name: rate,
+    width: ENUM_WIDTH.S,
+    format: 'percent',
+  });
+
+  complexColumns.push({
+    header: `${month}월`,
+    name: `month_${month}`,
+    childNames: [work, reject, rate],
   });
 }
 
-const summaryData = [...data]
-  .filter(data => data.fg === '생산')
-  .reduce((acc, cur, idx) => {
-    const c = idx === 1 ? { ...acc } : acc;
-
-    c.rt = '합계';
-    c.o1 = (Number(c.o1) + Number(cur.o1)).toFixed(2);
-    c.o2 = (Number(c.o2) + Number(cur.o2)).toFixed(2);
-    c.o3 = (Number(c.o3) + Number(cur.o3)).toFixed(2);
-    c.o4 = (Number(c.o4) + Number(cur.o4)).toFixed(2);
-    c.o5 = (Number(c.o5) + Number(cur.o5)).toFixed(2);
-    c.o6 = (Number(c.o6) + Number(cur.o6)).toFixed(2);
-    c.o7 = (Number(c.o7) + Number(cur.o7)).toFixed(2);
-    c.o8 = (Number(c.o8) + Number(cur.o8)).toFixed(2);
-    c.o9 = (Number(c.o9) + Number(cur.o9)).toFixed(2);
-    c.o10 = (Number(c.o10) + Number(cur.o10)).toFixed(2);
-    c.o11 = (Number(c.o11) + Number(cur.o11)).toFixed(2);
-    c.o12 = (Number(c.o12) + Number(cur.o12)).toFixed(2);
-
-    return c;
-  });
-const summaryDataDefect = [...data]
-  .filter(data => data.fg === '불량')
-  .reduce((acc, cur, idx) => {
-    const c = idx === 1 ? { ...acc } : acc;
-
-    c.rt = '합계';
-    c.o1 = (Number(c.o1) + Number(cur.o1)).toFixed(2);
-    c.o2 = (Number(c.o2) + Number(cur.o2)).toFixed(2);
-    c.o3 = (Number(c.o3) + Number(cur.o3)).toFixed(2);
-    c.o4 = (Number(c.o4) + Number(cur.o4)).toFixed(2);
-    c.o5 = (Number(c.o5) + Number(cur.o5)).toFixed(2);
-    c.o6 = (Number(c.o6) + Number(cur.o6)).toFixed(2);
-    c.o7 = (Number(c.o7) + Number(cur.o7)).toFixed(2);
-    c.o8 = (Number(c.o8) + Number(cur.o8)).toFixed(2);
-    c.o9 = (Number(c.o9) + Number(cur.o9)).toFixed(2);
-    c.o10 = (Number(c.o10) + Number(cur.o10)).toFixed(2);
-    c.o11 = (Number(c.o11) + Number(cur.o11)).toFixed(2);
-    c.o12 = (Number(c.o12) + Number(cur.o12)).toFixed(2);
-
-    return c;
-  });
-
 export const PgDefectRateReport = () => {
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {
-      type: 'daterange',
-      id: 'reg_date',
-      ids: ['start_reg_date', 'end_reg_date'],
-      defaults: [getToday(-7), getToday()],
-      label: '생산 기간',
+  const [defects, setDefects] = useState([]);
+  const {
+    onSearch,
+    searchItems,
+    props: { innerRef },
+  } = useSearchbox(
+    'SEARCH_INPUTBOX',
+    [
+      {
+        type: 'date',
+        id: 'reg_date',
+        default: getToday(),
+        label: '시작일',
+      },
+    ],
+    () => {
+      getData(
+        innerRef.current.values,
+        '/kpi/production/work-rejects-rate',
+      ).then(setDefects);
     },
-  ]);
+  );
 
   const barGraphProps = {
     options: {
@@ -251,30 +118,35 @@ export const PgDefectRateReport = () => {
       },
     },
     data: {
-      labels: [
-        '1월',
-        '2월',
-        '3월',
-        '4월',
-        '5월',
-        '6월',
-        '7월',
-        '8월',
-        '9월',
-        '10월',
-        '11월',
-        '12월',
-      ],
+      labels: complexColumns.map(({ header }) => header),
       datasets: [
         {
           label: '불량율',
-          data: Object.keys(summaryData)
-            .filter(key => key.includes('o'))
-            .map(key =>
-              Number.parseFloat(
-                (summaryDataDefect[key] / summaryData[key]).toFixed(2),
-              ),
+          data: Object.values(
+            defects.reduce(
+              (acc, cur, idx) => {
+                Object.entries(acc).forEach(([key, value]) => {
+                  const month = Number(key) > 9 ? `${key}` : `0${key}`;
+
+                  acc[key] =
+                    Number(value) + Number(cur[`reject_qty_month${month}`]);
+
+                  if (idx === defects.length - 1) {
+                    acc[key] = Number(acc[key]) / defects.length;
+                    acc[key] = Number(acc[key].toFixed(2));
+                  }
+                });
+
+                return acc;
+              },
+              Array(12)
+                .fill(0)
+                .reduce((acc, cur, idx) => {
+                  acc[idx + 1] = cur;
+                  return acc;
+                }, {}),
             ),
+          ) as number[],
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
       ],
@@ -283,18 +155,39 @@ export const PgDefectRateReport = () => {
 
   return (
     <>
-      <Searchbox
-        searchItems={searchInfo.searchItems}
-        innerRef={searchInfo.props.innerRef}
-        onSearch={() => {}}
-      />
+      <Searchbox {...{ onSearch, searchItems, innerRef }} />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
-          data={[...data, summaryData, summaryDataDefect]}
+          data={defects.map(defect => {
+            let workQtyMonthSum = 0;
+            let rejectQtyMonthSum = 0;
+            let rateMonthSum = 0;
+
+            for (let i = 0; i < 12; i++) {
+              const month = i + 1 < 10 ? `0${i + 1}` : `${i + 1}`;
+              const work = `work_qty_month`.concat(month);
+              const reject = `reject_qty_month`.concat(month);
+              const rate = `rate_month`.concat(month);
+
+              workQtyMonthSum += Number(defect[work]);
+              rejectQtyMonthSum += Number(defect[reject]);
+              rateMonthSum += Number(defect[rate]);
+            }
+
+            return {
+              ...defect,
+              work_qty_month_sum: workQtyMonthSum.toString(),
+              reject_qty_month_sum: rejectQtyMonthSum.toString(),
+              rate_month_sum: rateMonthSum.toString(),
+            };
+          })}
           columns={[...columns]}
+          header={{
+            complexColumns,
+          }}
           disabledAutoDateColumn={true}
         />
       </Container>

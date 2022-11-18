@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BarGraph,
   Container,
@@ -7,42 +7,13 @@ import {
   useSearchbox,
 } from '~/components/UI';
 import { URL_PATH_STD } from '~/enums';
-import { getToday } from '~/functions';
+import { getData, getToday } from '~/functions';
 
-const data = [
-  {
-    fg: '운영율',
-    ws1: (Math.random() * 100).toFixed(2),
-    ws2: (Math.random() * 100).toFixed(2),
-    ws3: (Math.random() * 100).toFixed(2),
-    ws4: (Math.random() * 100).toFixed(2),
-    ws5: (Math.random() * 100).toFixed(2),
-    ws6: (Math.random() * 100).toFixed(2),
-    ws7: (Math.random() * 100).toFixed(2),
-  },
-  {
-    fg: '가동율',
-    ws1: (Math.random() * 100).toFixed(2),
-    ws2: (Math.random() * 100).toFixed(2),
-    ws3: (Math.random() * 100).toFixed(2),
-    ws4: (Math.random() * 100).toFixed(2),
-    ws5: (Math.random() * 100).toFixed(2),
-    ws6: (Math.random() * 100).toFixed(2),
-    ws7: (Math.random() * 100).toFixed(2),
-  },
-];
-
-const columns = [
-  { header: '구분', name: 'fg' },
-  { header: '작업장1', name: 'ws1' },
-  { header: '작업장2', name: 'ws2' },
-  { header: '작업장3', name: 'ws3' },
-  { header: '작업장4', name: 'ws4' },
-  { header: '작업장5', name: 'ws5' },
-  { header: '작업장6', name: 'ws6' },
-];
+const workings_columns = [];
 
 export const PgFacilityProductive = () => {
+  const [columns, setColumns] = useState([]);
+  const [data, setData] = useState([]);
   const {
     onSearch,
     searchItems,
@@ -53,16 +24,16 @@ export const PgFacilityProductive = () => {
       {
         type: 'daterange',
         id: 'reg_date',
-        ids: ['start_reg_date', 'end_reg_date'],
+        ids: ['start_date', 'end_date'],
         defaults: [getToday(-7), getToday()],
         label: '생산 기간',
       },
       {
         type: 'multi-combo',
-        id: 'facility_type',
+        id: 'workings_uuid',
         label: '작업장',
         dataSettingOptions: {
-          codeName: 'workings_cd',
+          codeName: 'workings_uuid',
           textName: 'workings_nm',
           uriPath: URL_PATH_STD.WORKINGS.GET.WORKINGSES,
           params: { store_type: 'all' },
@@ -70,7 +41,26 @@ export const PgFacilityProductive = () => {
       },
     ],
     () => {
-      console.log({ ...innerRef.current.values });
+      getData(
+        {
+          ...innerRef.current.values,
+          working_uuid: [],
+        },
+        'kpi/production/equip-productivity',
+      ).then(productivity => {
+        setData(productivity);
+        if (innerRef.current.values.workings_uuid == null) {
+          setColumns(workings_columns);
+        } else {
+          setColumns(
+            workings_columns.filter(workings =>
+              innerRef.current.values.workings_uuid.includes(
+                workings.workings_uuid,
+              ),
+            ),
+          );
+        }
+      });
     },
   );
 
@@ -88,33 +78,33 @@ export const PgFacilityProductive = () => {
       },
     },
     data: {
-      labels: [
-        '작업장1',
-        '작업장2',
-        '작업장3',
-        '작업장4',
-        '작업장5',
-        '작업장6',
-        '작업장7',
-      ],
+      labels: columns.map(column => column.workings_nm),
       datasets: [
         {
           label: '운영율',
-          data: Object.keys(data[0])
-            .filter(key => key !== 'fg')
-            .map(key => data[0][key]),
+          data: Object.entries(data.at(0) ?? {})
+            .filter(([key]) => key !== 'fg')
+            .map(([_key, value]) => Number(value)),
           backgroundColor: '#3AD1FF',
         },
         {
           label: '가동율',
-          data: Object.keys(data[1])
-            .filter(key => key !== 'fg')
-            .map(key => data[1][key]),
+          data: Object.entries(data.at(1) ?? {})
+            .filter(([key]) => key !== 'fg')
+            .map(([_key, value]) => Number(value)),
           backgroundColor: '#86E236',
         },
       ],
     },
   };
+
+  useEffect(() => {
+    getData({ store_type: 'all' }, URL_PATH_STD.WORKINGS.GET.WORKINGSES).then(
+      workings => {
+        workings_columns.push(...workings);
+      },
+    );
+  }, []);
 
   return (
     <>
@@ -123,7 +113,18 @@ export const PgFacilityProductive = () => {
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
-        <Datagrid disabledAutoDateColumn={true} {...{ data, columns }} />
+        <Datagrid
+          disabledAutoDateColumn={true}
+          {...{
+            data,
+            columns: [{ header: '구분', name: 'fg' }].concat(
+              columns.map(column => ({
+                header: column.workings_nm,
+                name: column.workings_cd,
+              })),
+            ),
+          }}
+        />
       </Container>
     </>
   );
