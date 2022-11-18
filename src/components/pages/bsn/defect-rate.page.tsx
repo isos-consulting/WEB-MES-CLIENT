@@ -12,9 +12,39 @@ import { getData, getToday } from '~/functions';
 
 const columns: IGridColumn[] = [
   { header: '공정', name: 'proc_nm', width: ENUM_WIDTH.M },
+  {
+    header: `생산`,
+    name: 'work_qty_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
+  },
+  {
+    header: `불량`,
+    name: 'reject_qty_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
+  },
+  {
+    header: `불량율`,
+    name: 'rate_month_sum',
+    width: ENUM_WIDTH.S,
+    format: 'percent',
+  },
 ];
 
-const complexColumns = [];
+const complexColumns = [
+  {
+    header: '합계',
+    name: 'sum',
+    childNames: [
+      'work_qty_month_sum',
+      'reject_qty_month_sum',
+      'rate_month_sum',
+    ],
+  },
+];
 
 for (let i = 0; i < 12; i++) {
   const month = i + 1 < 10 ? `0${i + 1}` : `${i + 1}`;
@@ -116,7 +146,7 @@ export const PgDefectRateReport = () => {
                   return acc;
                 }, {}),
             ),
-          ),
+          ) as number[],
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
       ],
@@ -131,7 +161,29 @@ export const PgDefectRateReport = () => {
       </Container>
       <Container>
         <Datagrid
-          data={defects}
+          data={defects.map(defect => {
+            let workQtyMonthSum = 0;
+            let rejectQtyMonthSum = 0;
+            let rateMonthSum = 0;
+
+            for (let i = 0; i < 12; i++) {
+              const month = i + 1 < 10 ? `0${i + 1}` : `${i + 1}`;
+              const work = `work_qty_month`.concat(month);
+              const reject = `reject_qty_month`.concat(month);
+              const rate = `rate_month`.concat(month);
+
+              workQtyMonthSum += Number(defect[work]);
+              rejectQtyMonthSum += Number(defect[reject]);
+              rateMonthSum += Number(defect[rate]);
+            }
+
+            return {
+              ...defect,
+              work_qty_month_sum: workQtyMonthSum.toString(),
+              reject_qty_month_sum: rejectQtyMonthSum.toString(),
+              rate_month_sum: rateMonthSum.toString(),
+            };
+          })}
           columns={[...columns]}
           header={{
             complexColumns,
