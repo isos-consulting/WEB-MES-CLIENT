@@ -125,7 +125,7 @@ const App = () => {
 
     if (useLogPayload.log_action === '') return;
 
-    executeData([useLogPayload], '/adm/use-log', 'post');
+    executeData([useLogPayload], '/adm/use-log', 'post', 'data', true);
   };
 
   return (
