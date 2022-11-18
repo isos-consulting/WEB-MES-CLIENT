@@ -10,7 +10,7 @@ import {
   atSideNavMenuRawData,
 } from '~components/UI';
 import { useLoadingState } from './hooks';
-import { getData, getMenus } from './functions';
+import { executeData, getData, getMenus } from './functions';
 import { layoutStore } from '~/components/UI/layout';
 import { Dashboard } from './components/pages/dashboard.page';
 import { URL_PATH_AUT } from './enums';
@@ -85,8 +85,51 @@ const App = () => {
     handleGetTeneuntInfo();
   }, []);
 
+  const handleAppComponentClick = e => {
+    const useLogPayload = {
+      log_caption: location.pathname,
+      log_info: `${location.pathname}-`,
+      log_tag: `${location.pathname}-`,
+      log_action: '',
+    };
+    if (e.target.matches('button')) {
+      useLogPayload.log_info = useLogPayload.log_info.concat(
+        e.target.innerText,
+      );
+      useLogPayload.log_tag = useLogPayload.log_tag.concat(e.target.innerText);
+      useLogPayload.log_action = e.target.innerText;
+    } else {
+      const buttonComponent =
+        e.target[
+          Object.keys(e.target).filter(key => key.includes('__reactFiber'))[0]
+        ]?.stateNode.closest('button');
+
+      if (buttonComponent != null) {
+        if (typeof buttonComponent.innerText === 'object') {
+          const buttonInnerText = buttonComponent.innerText.join('');
+          useLogPayload.log_info =
+            useLogPayload.log_info.concat(buttonInnerText);
+          useLogPayload.log_tag = useLogPayload.log_tag.concat(buttonInnerText);
+          useLogPayload.log_action = buttonInnerText;
+        } else {
+          const buttonInnerText = buttonComponent.innerText;
+          useLogPayload.log_info =
+            useLogPayload.log_info.concat(buttonInnerText);
+          useLogPayload.log_tag = useLogPayload.log_tag.concat(buttonInnerText);
+          useLogPayload.log_action = buttonInnerText;
+        }
+      } else {
+        return;
+      }
+    }
+
+    if (useLogPayload.log_action === '') return;
+
+    executeData([useLogPayload], '/adm/use-log', 'post', 'data', true);
+  };
+
   return (
-    <div>
+    <div onClick={handleAppComponentClick}>
       {routeLayout()}
       {contextHolder}
     </div>
