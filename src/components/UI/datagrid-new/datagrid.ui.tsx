@@ -50,13 +50,16 @@ import { COLUMN_NAME } from '.';
 import { layoutStore } from '../layout/layout.ui.hook';
 import { useRecoilValue } from 'recoil';
 import { ENUM_DECIMAL, ENUM_FORMAT, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
-import dayjs from 'dayjs';
 import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
 import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
 
 import { errorRequireDecimal } from '~/error';
+import {
+  getFilterdDataForDateFormat,
+  isEnabledDateColumnFilter,
+} from './datagrid.utils';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -2147,102 +2150,61 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   );
   //#endregion
 
+  const [storedFilterState, setStoredFilterState] = useState<unknown[]>([]);
   //#region 🔶 필터 핸들링
-  const [filterInfo, setFilterInfo] = useState<any[]>(null);
   /** 필터 핸들링 */
-  const onBeforeFilter = useCallback(
+  const onBeforeDateColumnFilter = useCallback(
     ev => {
-      const instance = gridRef?.current?.getInstance();
-      const { columnFilterState, type, columnName } = ev;
+      const { columnFilterState, type, columnName, instance } = ev;
       const { code, value } = columnFilterState[0];
 
-      if (!['date', 'datetime'].includes(type)) return;
+      if (instance.getFilterState() == null) {
+        setStoredFilterState([{ columnName, state: columnFilterState }]);
+      } else {
+        setStoredFilterState(instance.getFilterState() ?? []);
+      }
 
-      const chk =
-        filterInfo?.findIndex(el => el?.columnName === columnName) || -1;
-      if (chk > -1) return;
+      if (isEnabledDateColumnFilter(type) === false) return;
 
-      const format = ENUM_FORMAT.DATE;
+      const filterdData = getFilterdDataForDateFormat(
+        originData,
+        columnName,
+        code,
+        value,
+      );
 
-      const data = ev?.instance?.store?.data?.rawData;
-      const filterdData = data?.filter(el => {
-        let compValue = el[columnName];
-
-        compValue = dayjs(compValue).locale('ko').format(format);
-
-        switch (code) {
-          case 'eq':
-            return compValue === value;
-
-          case 'ne':
-            return compValue !== value;
-
-          case 'after':
-            return compValue > value;
-
-          case 'afterEq':
-            return compValue >= value;
-
-          case 'before':
-            return compValue < value;
-
-          case 'beforeEq':
-            return compValue <= value;
-
-          default:
-            break;
-        }
+      instance.resetData(filterdData, {
+        filterState: { columnName, columnFilterState },
       });
 
-      // filter state 값 (데이터를 리셋해도 필터 효과가 남아있게 합니다.)
-      const filterState = { columnName, columnFilterState };
-      instance.resetData(filterdData, { filterState });
-
       ev.stop();
-
-      setFilterInfo(null);
     },
-    [gridRef, props.gridMode],
+    [gridRef, originData, props.gridMode],
   );
 
   /** ⛔필터 초기화 이벤트 */
-  const onBeforeUnfilter = useCallback(
+  const onBeforeDateColumnUnfilter = useCallback(
     ev => {
-      if (filterInfo) return;
-      const instance = gridRef?.current?.getInstance();
-      const { filterState, columnName } = ev;
+      const { columnName, instance } = ev;
+      const {
+        filter: { type },
+      } = columns?.find(el => el?.name === columnName);
 
-      const columnInfo = columns?.find(el => el?.name === columnName);
-      if (!['date', 'datetime'].includes(columnInfo?.filter?.type)) return;
+      const filterdState = instance.getFilterState();
+      if (filterdState.length === 1) {
+        setStoredFilterState([]);
+      } else {
+        setStoredFilterState(instance.getFilterState() ?? []);
+      }
+      if (isEnabledDateColumnFilter(type) === false) return;
 
-      const _filterState = filterState?.filter(
-        el => el.columnName !== columnName,
-      );
-      const _filterInfo = _filterState?.map(el => {
-        return {
-          columnName: el?.columnName,
-          columnFilterState: el?.state,
-        };
+      instance.resetData(originData, {
+        filterState: { columnName, columnFilterState: null },
       });
-
-      instance.resetData(originData);
       ev.stop();
-
-      setFilterInfo(_filterInfo);
     },
     [gridRef, props.gridMode, originData, columns],
   );
-
-  useLayoutEffect(() => {
-    if (!filterInfo) return;
-    filterInfo?.forEach(el => {
-      gridRef?.current
-        ?.getInstance()
-        .filter(el?.columnName, el?.columnFilterState);
-    });
-
-    setFilterInfo(null);
-  }, [gridRef, filterInfo, originData]);
   //#endregion
 
   /** ✅rowHeader 세팅 */
@@ -2286,27 +2248,27 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   useLayoutEffect(() => {
     // 이벤트 세팅
     const instance = gridRef.current.getInstance();
-    instance.on('beforeFilter', onBeforeFilter);
+    instance.on('beforeFilter', onBeforeDateColumnFilter);
 
     return () => {
       instance.off('beforeFilter');
     };
-  }, [gridRef, onBeforeFilter]);
+  }, [gridRef, onBeforeDateColumnFilter]);
 
   useLayoutEffect(() => {
     // 이벤트 세팅
     const instance = gridRef.current.getInstance();
-    instance.on('beforeUnfilter', onBeforeUnfilter);
+    instance.on('beforeUnfilter', onBeforeDateColumnUnfilter);
 
     return () => {
       instance.off('beforeUnfilter');
     };
-  }, [gridRef, onBeforeUnfilter]);
+  }, [gridRef, onBeforeDateColumnUnfilter]);
 
   useLayoutEffect(() => {
     // 이벤트 세팅
     const instance = gridRef.current.getInstance();
-    instance.on('afterUnfilter', props.onAfterUnfilter);
+    instance.on('afterUnfilter', props.onAfterUnfilter ?? function () {});
 
     return () => {
       instance.off('afterUnfilter');
@@ -2379,6 +2341,14 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   useLayoutEffect(() => {
     gridRef?.current?.getInstance()?.refreshLayout();
   }, [gridRef, data]);
+
+  useLayoutEffect(() => {
+    const instance = gridRef?.current?.getInstance();
+    storedFilterState.forEach(({ columnName, state }) => {
+      instance.filter(columnName, state);
+      instance.filter(columnName, state);
+    });
+  }, [originData]);
 
   const leftAlignExtraButtons = useMemo(() => {
     return props.extraButtons
