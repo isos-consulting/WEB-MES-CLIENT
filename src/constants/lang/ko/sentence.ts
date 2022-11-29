@@ -4,6 +4,7 @@ export enum SENTENCE {
   RESET_PASSWORD = '비밀번호 초기화됨',
   IS_RESET_PASSWORD = '비밀번호를 초기화 하시겠습니까?',
   IS_RESETED_PASSWORD = '비밀번호가 초기화되었습니다',
+  INPUT_PASSWORD = '비밀번호를 입력해주세요',
   ADD_RECORD = '신규 항목 추가',
   SAVE_DATA = '저장하기',
   SAVE_CONFIRM = '정보를 저장하시겠습니까?',
@@ -18,4 +19,7 @@ export enum SENTENCE {
   SELECT_RECORD = '항목을 선택해주세요',
   EXCEL_UPLOAD = '엑셀 업로드',
   EXCEL_DOWNLOAD = '엑셀 다운로드',
+  OVER_8 = '8자리 이상 입력해주세요',
+  UNDER_16 = '16자리 이하 입력해주세요',
+  INCLUDE_COMBINATION_2 = '영문 소문자, 숫자, 특수문자 중 2종을 조합을 포함해야 합니다.',
 }

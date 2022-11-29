@@ -7,6 +7,7 @@ import { executeData } from '~/functions';
 import crypto from 'crypto-js';
 import { Profile } from '~/models/user/profile';
 import { ico_lock } from '~/images';
+import { SENTENCE } from '~/constants/lang/ko';
 
 const PgUpdatePassword = ({
   profile,
@@ -136,38 +137,26 @@ const Password: React.FC & { Confirm: typeof PasswordConfirm } = () => {
         id="password"
         name="password"
         rules={[
-          { required: true, message: '비밀번호를 입력해주세요' },
+          { required: true, message: SENTENCE.INPUT_PASSWORD },
           () => ({
             validator(_, value) {
-              if (value == null) {
+              if (value == null) return Promise.resolve();
+              if (value.length < 10) return Promise.reject(SENTENCE.OVER_8);
+              if (value.length > 18) return Promise.reject(SENTENCE.UNDER_16);
+              if (PasswordValidation.UPPER_CASE.test(value) === true)
+                return Promise.reject(SENTENCE.INCLUDE_COMBINATION_2);
+
+              const validator = new PasswordValidation();
+              if (PasswordValidation.NUMBER.test(value) === true)
+                validator.pass();
+              if (PasswordValidation.LOWER_CASE.test(value) === true)
+                validator.pass();
+              if (PasswordValidation.SPECIAL_CHARACTER.test(value) === true) {
+                validator.pass();
                 return Promise.resolve();
               }
 
-              if (value.length > 9 && value.length < 17) {
-                if (PasswordValidation.UPPER_CASE.test(value) === true)
-                  return Promise.reject(
-                    '영문 소문자, 숫자, 특수문자 중 2종을 조합을 포함해야 합니다.',
-                  );
-
-                const validator = new PasswordValidation();
-
-                if (PasswordValidation.NUMBER.test(value) === true)
-                  validator.pass();
-
-                if (PasswordValidation.LOWER_CASE.test(value) === true)
-                  validator.pass();
-
-                if (PasswordValidation.SPECIAL_CHARACTER.test(value) === true)
-                  validator.pass();
-
-                if (validator.isPassed() === true) return Promise.resolve();
-
-                return Promise.reject(
-                  '영문 소문자, 숫자, 특수문자 중 2종을 조합을 포함해야 합니다.',
-                );
-              }
-
-              return Promise.reject(' 비밀번호는 10 ~ 16자여야 합니다.');
+              return Promise.reject(SENTENCE.INCLUDE_COMBINATION_2);
             },
           }),
         ]}
