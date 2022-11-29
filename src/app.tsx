@@ -124,7 +124,7 @@ const App = () => {
     }
 
     if (useLogPayload.log_action === '') return;
-    if (useLogPayload.log_caption === '/') return;
+    if (useLogPayload.log_action === '로그인') return;
 
     executeData([useLogPayload], '/adm/use-log', 'post', 'data', true);
   };
