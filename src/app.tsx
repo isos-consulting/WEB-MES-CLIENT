@@ -124,6 +124,7 @@ const App = () => {
     }
 
     if (useLogPayload.log_action === '') return;
+    if (useLogPayload.log_caption === '/') return;
 
     executeData([useLogPayload], '/adm/use-log', 'post', 'data', true);
   };
