@@ -58,6 +58,14 @@ export const PgStdProd = () => {
         requiredField: true,
       },
       {
+        header: '구품번',
+        name: 'prod_no_pre',
+        width: ENUM_WIDTH.L,
+        filter: 'text',
+        editable: true,
+        requiredField: false,
+      },
+      {
         header: '품목명',
         name: 'prod_nm',
         width: ENUM_WIDTH.L,
@@ -436,6 +444,7 @@ export const PgStdProd = () => {
             name: '_prod_group',
             childNames: [
               'prod_no',
+              'prod_no_pre',
               'prod_nm',
               'item_type_nm',
               'prod_type_nm',
