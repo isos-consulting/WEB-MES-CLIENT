@@ -14,17 +14,24 @@ const BaseSelect: React.FC<IBaseSelect> = props => {
   return <Select {...otherProps} />;
 };
 
+const getWidthSize = widthSize => {
+  const width = {
+    default: Sizes.width_combobox_md,
+    flex: '100%',
+  };
+
+  if (widthSize == null) return Sizes.width_combobox_md;
+
+  if (width.hasOwnProperty(widthSize) === true) {
+    return width[widthSize];
+  }
+
+  return widthSize;
+};
+
 /* 콤보박스 스타일 */
 export const ScCombobox = styled(BaseSelect)`
-  width: ${props =>
-    props.widthSize === 'default'
-      ? Sizes.width_combobox_md
-      : props.widthSize === 'flex'
-      ? '100%'
-      : props.widthSize == null
-      ? Sizes.width_combobox_md
-      : props.widthSize};
-  /* min-width: ${Sizes.width_combobox_lg}; */
+  width: ${props => getWidthSize(props.widthSize)};
 
   // 콤보박스 내부에 적용
   .ant-radio-inner::after {
@@ -41,7 +48,6 @@ export const ScCombobox = styled(BaseSelect)`
 
   // 콤보박스에서 선택한 옵션 내용을 보여줄 때 적용
   .ant-select-selection-item {
-    /* font-size: 15px; */
     font-size: ${props =>
       props.fontSize === 'large' ? Fonts.fontSize_cbo_lg : Fonts.fontSize_cbo};
   }
