@@ -19,21 +19,27 @@ const BaseDatepicker: React.FC<IBaseDatePicker> = props => {
   return <DatePicker picker={picker} {...otherProps} />;
 };
 
+const getDatePickerWidthSize = widthSize => {
+  const width = {
+    auto: 'auto',
+    flex: '100%',
+  };
+
+  if (widthSize == null) return Sizes.width_datepicker_md;
+
+  if (width.hasOwnProperty(widthSize) === true) {
+    return width[widthSize];
+  }
+
+  return `${widthSize}px`;
+};
+
 /* Datepicker 스타일 */
 export const ScDatePicker = styled(BaseDatepicker)`
-  width: ${props =>
-    props.widthSize === 'flex'
-      ? '100%'
-      : props.widthSize === 'auto'
-      ? 'auto'
-      : props.widthSize
-      ? `${props.widthSize}px`
-      : Sizes.width_datepicker_md};
-
+  width: ${props => getDatePickerWidthSize(props.widthSize)};
   height: ${Sizes.height_datepicker_default};
   border-radius: ${Sizes.borderRadius_common};
   border-color: ${Colors.bg_datepicker_border};
-  /* margin-bottom: 8px; */
 
   // 포커스, 마우스오버 했을 때 적용
   &:hover,
