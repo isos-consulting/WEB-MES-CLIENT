@@ -5,16 +5,48 @@ import { Space } from 'antd';
 import Props from './date-range-picker.ui.type';
 import dayjs from 'dayjs';
 
+type RangePickerProps = {
+  id: string[];
+  placeholder: string[];
+  defaultValue: string[];
+  name: string[];
+  onChange: ((e: any) => void)[];
+  value: any;
+  disabled: boolean[];
+};
+
 /** 날짜 기간 선택기 */
 const DateRangePicker: React.FC<Props> = props => {
-  const id: string[] = props?.ids || [null, null];
-  const placeholder: string[] = props?.placeholders || ['', ''];
-  const defaultValue: string[] = props?.defaultValues || [null, null];
-  const name: string[] = props?.names || [null, null];
-  const onChange: ((e) => void)[] = props?.onChanges || [null, null];
-  const value = props?.values || [defaultValue[0], defaultValue[1]];
+  const rangePickerProps: RangePickerProps = {
+    id: [null, null],
+    placeholder: ['시작일', '종료일'],
+    defaultValue: [null, null],
+    name: [null, null],
+    onChange: [null, null],
+    value: [null, null],
+    disabled: [false, false],
+  };
+
+  if (props?.ids) rangePickerProps.id = props?.ids;
+  if (props?.placeholders) rangePickerProps.placeholder = props?.placeholders;
+  if (props?.defaultValues)
+    rangePickerProps.defaultValue = props?.defaultValues;
+  if (props?.names) rangePickerProps.name = props?.names;
+  if (props?.onChanges) rangePickerProps.onChange = props?.onChanges;
+  if (props?.values) rangePickerProps.value = props?.values;
+  else
+    rangePickerProps.value = [props?.defaultValues[0], props?.defaultValues[1]];
+  if (props?.disabled)
+    rangePickerProps.disabled = [props?.disabled, props?.disabled];
+
+  const getDatePickerProps = (index: number) =>
+    Object.entries(rangePickerProps).reduce((acc, [key, value]) => {
+      acc[key] = value[index];
+      return acc;
+    }, {});
 
   useLayoutEffect(() => {
+    const { id, defaultValue, name } = rangePickerProps;
     if (props.setFieldValue) {
       props.setFieldValue(
         name && name?.length > 2 ? name[0] : id[0],
@@ -31,47 +63,15 @@ const DateRangePicker: React.FC<Props> = props => {
     return (
       <Space size={10} wrap>
         <Label text={props.label} important={props.important} />
-        <DatePicker
-          id={id[0]}
-          name={name[0]}
-          defaultValue={defaultValue[0]}
-          value={value[0]}
-          onChange={props.onChange || onChange[0]}
-          placeholder={placeholder[0] || '시작 일자'}
-          disabled={props.disabled}
-        />
-        <DatePicker
-          id={id[1]}
-          name={name[1]}
-          defaultValue={defaultValue[1]}
-          value={value[1]}
-          onChange={props.onChange || onChange[1]}
-          placeholder={placeholder[1] || '종료 일자'}
-          disabled={props.disabled}
-        />
+        <DatePicker {...getDatePickerProps(0)} />
+        <DatePicker {...getDatePickerProps(1)} />
       </Space>
     );
   } else {
     return (
       <Space size={[10, 0]} wrap>
-        <DatePicker
-          id={id[0]}
-          name={name[0]}
-          defaultValue={defaultValue[0]}
-          value={value[0]}
-          onChange={props.onChange || onChange[0]}
-          placeholder={placeholder[0] || '시작 일자'}
-          disabled={props.disabled}
-        />
-        <DatePicker
-          id={id[1]}
-          name={name[1]}
-          defaultValue={defaultValue[1]}
-          value={value[1]}
-          onChange={props.onChange || onChange[1]}
-          placeholder={placeholder[1] || '종료 일자'}
-          disabled={props.disabled}
-        />
+        <DatePicker {...getDatePickerProps(0)} />
+        <DatePicker {...getDatePickerProps(1)} />
       </Space>
     );
   }
