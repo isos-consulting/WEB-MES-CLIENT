@@ -28,6 +28,16 @@ const fillStyles = ({
     'border-style': 'none',
   };
 
+  const fillStyleSurfix = `.anticon.anticon-retweet{
+    margin-left: -5px;
+  }
+
+  &:active, &:hover, &:focus, ::selection, ::after{
+    color: ${Colors.fg_button_default};
+    background-color:${style['background-color']}; 
+    border-color: transparent;
+  }`;
+
   const width = {
     small: Sizes.width_button_sm,
     medium: Sizes.width_button_md,
@@ -53,40 +63,26 @@ const fillStyles = ({
     large: Fonts.fontSize_btnFill_lg,
   };
 
-  if (width.hasOwnProperty(widthSize) === true) {
-    style.width = width[widthSize];
-  }
+  if (width.hasOwnProperty(widthSize) === true) style.width = width[widthSize];
 
-  if (height.hasOwnProperty(heightSize) === true) {
+  if (height.hasOwnProperty(heightSize) === true)
     style.height = height[heightSize];
-  }
 
-  if (color.hasOwnProperty(colorType) === true) {
+  if (color.hasOwnProperty(colorType) === true)
     style['background-color'] = color[colorType];
-  }
 
-  if (font.hasOwnProperty(fontSize) === true) {
+  if (font.hasOwnProperty(fontSize) === true)
     style['font-Size'] = font[fontSize];
-  }
 
   return `${Object.entries(style).reduce(
     (acc, [key, value]) => acc + `${key}: ${value};`,
     '',
-  )}
-
-  .anticon.anticon-retweet{
-    margin-left: -5px;
-  }
-
-  &:active, &:hover, &:focus, ::selection, ::after{
-    color: ${Colors.fg_button_default};
-    background-color:${style['background-color']}; 
-    border-color: transparent;
-  }`;
+  )}${fillStyleSurfix}
+  `;
 };
 
 const imageStyles = ({ hoverAnimation }: { hoverAnimation?: boolean }) => {
-  return `
+  const style = `
     width: 30px;
     height: 26px;
     .ant-row{
@@ -95,15 +91,17 @@ const imageStyles = ({ hoverAnimation }: { hoverAnimation?: boolean }) => {
     .ant-btn-icon-only.ant-btn-lg{
       padding: 10px 0;
     }
-  `.concat(
-    hoverAnimation === true
-      ? `
+`;
+
+  if (hoverAnimation === true)
+    return `
+      ${style}
       &:active, &:hover, &:focus{
         transform: rotate(60deg);
         transition: all 0.2s linear;
-      }`
-      : '',
-  );
+      }`;
+
+  return style;
 };
 
 // styled컴포넌트의 틀이되는 base컴포넌트
@@ -131,11 +129,7 @@ export const ScButton = styled(BaseButton)`
 
   // 버튼 타입별 스타일 적용
   ${(props: IButtonStyles) => {
-    switch (props.btnType) {
-      case 'buttonFill':
-        return fillStyles(props);
-      case 'image':
-        return imageStyles(props);
-    }
+    if (props.btnType === 'buttonFill') return fillStyles(props);
+    else if (props.btnType === 'image') return imageStyles(props);
   }}
 `;
