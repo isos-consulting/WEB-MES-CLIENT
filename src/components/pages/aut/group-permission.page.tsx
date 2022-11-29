@@ -225,47 +225,38 @@ export const PgAutGroupPermission = () => {
 
   /** 상세 그리드 데이터 세팅 */
   const reloadDetailGrid = uuid => {
-    if (!uuid) {
-      detailGrid.setGridData([]);
-    } else {
-      getData(
-        {
-          group_uuid: uuid,
-        },
-        detailSearchUriPath,
-      ).then(res => {
+    if (!uuid) detailGrid.setGridData([]);
+    else {
+      getData({ group_uuid: uuid }, detailSearchUriPath).then(res => {
         let menuDatas = [];
 
         res.forEach(el => {
+          const menuElement = {
+            ...el,
+            _attributes: {
+              expanded: true,
+              disabled: true,
+            },
+            _children: [],
+          };
+
           if (el.lv == 1) {
-            menuDatas.push({
-              ...el,
-              _attributes: {
-                expanded: true,
-                disabled: true,
-              },
-              _children: [],
-            });
+            menuDatas.push({ ...menuElement });
           } else if (el.lv == 2) {
-            menuDatas[menuDatas.length - 1]._children.push({
-              ...el,
-              _attributes: {
-                expanded: true,
-                disabled: el.menu_type_nm ? false : true,
-              },
-              _children: el.menu_type_nm ? null : [],
-            });
+            if (el.menu_type_nm) {
+              menuElement._attributes.disabled = false;
+              menuElement._children = null;
+            }
+
+            menuDatas[menuDatas.length - 1]._children.push({ ...menuElement });
           } else if (el.lv == 3) {
+            menuElement._attributes.expanded = false;
+            menuElement._attributes.disabled = false;
+            menuElement._children = null;
+
             menuDatas[menuDatas.length - 1]?._children[
               menuDatas[menuDatas.length - 1]?._children?.length - 1
-            ]?._children.push({
-              ...el,
-              _attributes: {
-                expanded: false,
-                disabled: false,
-              },
-              _children: null,
-            });
+            ]?._children.push({ ...menuElement });
           }
         });
         detailGrid.setGridData(menuDatas);
