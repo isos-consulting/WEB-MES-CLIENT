@@ -110,31 +110,26 @@ export class DatagridDateRenderer {
   }
 
   render(props) {
-    switch (this.state.type) {
-      case 'time':
-        let value = props.value;
-        if (
-          EXPRESSSIONS.HOUR_MINUTE.test(value) === false &&
-          EXPRESSSIONS.HOUR_MINUTE_SECOND.test(value) === false &&
-          dayjs(value).isValid()
-        ) {
-          value = dayjs(value).format('HH:mm');
-        }
-        this.el.innerText = value;
-        break;
-
-      default:
-        if (dayjs(props.value).isValid()) {
-          this.el.innerText =
-            props.value == null
-              ? props.value
-              : String(
-                  dayjs(props.value).locale('ko').format(this.state.dateFormat),
-                );
-        } else {
-          this.el.innerText = props.value ?? null;
-        }
-        break;
+    if (this.state.type === 'time') {
+      let value = props.value;
+      if (
+        EXPRESSSIONS.HOUR_MINUTE.test(value) === false &&
+        EXPRESSSIONS.HOUR_MINUTE_SECOND.test(value) === false &&
+        dayjs(value).isValid()
+      ) {
+        value = dayjs(value).format('HH:mm');
+      }
+      this.el.innerText = value;
+    } else {
+      if (dayjs(props.value).isValid()) {
+        if (props.value == null) this.el.innerText = null;
+        else
+          this.el.innerText = `${dayjs(props.value)
+            .locale('ko')
+            .format(this.state.dateFormat)}`;
+      } else {
+        this.el.innerText = props.value ?? null;
+      }
     }
   }
 }
