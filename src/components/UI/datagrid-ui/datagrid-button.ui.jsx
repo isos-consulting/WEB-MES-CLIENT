@@ -80,7 +80,7 @@ export class DatagridButtonRenderer {
     return this.el;
   }
 
-  render(props, el) {
+  render(_props, el) {
     this.el.value = el?.innerText;
   }
 }
