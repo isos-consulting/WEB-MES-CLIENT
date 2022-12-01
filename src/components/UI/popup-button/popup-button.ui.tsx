@@ -12,6 +12,7 @@ import { Datagrid } from '../datagrid-new';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import { Result } from '../result';
+import { nullify } from '~/functions/object';
 
 /** 팝업키를 사용하지 않고 수기로 작성된 정보로 팝업을 설정합니다. */
 const setPopupButtonData = (props: Props) => {
@@ -41,6 +42,34 @@ const PopupButton: React.FC<Props> = props => {
   const [, setPopupItem] = useState<IPopupItemsRetrunProps>(null);
   const [modal, contextHolder] = Modal.useModal();
 
+  const allocateFromSelection = close => {
+    const child = childGridRef.current;
+    let row: object = child.getInstance().getCheckedRows()[0];
+
+    if (typeof row !== 'object') return message.warn('항목을 선택해주세요.');
+
+    row = addKeyOfObject(
+      row,
+      props?.datagridSettings?.rowAddPopupInfo?.columnNames,
+    );
+    row = cleanupKeyOfObject(row, props?.popupKeys);
+    setSelectedRow(row);
+
+    // 부모 grid? 선택한 Row 데이터를 준다.
+    if (props?.handleChange) {
+      props.handleChange(row);
+    }
+
+    if (props?.setValues) {
+      props.setValues(row);
+    } else if (props?.setFieldValue) {
+      for (const [key, value] of Object.entries(row)) {
+        props.setFieldValue(key, value);
+      }
+    }
+    close();
+  };
+
   useEffect(() => {
     setSelectedRow(null);
   }, []);
@@ -55,120 +84,79 @@ const PopupButton: React.FC<Props> = props => {
         btnType="image"
         ImageType="popup"
         disabled={props.disabled}
-        onClick={() => {
-          // 팝업 부르기
-          let popupContent: IPopupItemsRetrunProps = {
-            datagridProps: {
-              gridId: null,
-              columns: null,
-            },
-            uriPath: null,
-            params: null,
+        onClick={async () => {
+          const confirmDialogContext = {
+            title: '',
+            width: '80%',
+            icon: null,
+            okText: '선택',
+            cancelText: '취소',
+            maskClosable: false,
+            visible: true,
+          };
+          const words = {
+            select: '단일선택',
+            'multi-select': '다중선택',
           };
 
-          if (props.popupKey == null) {
-            popupContent = setPopupButtonData(props);
-          } else {
-            popupContent = getPopupForm(props.popupKey);
-            popupContent['params'] = props.params;
-          }
+          let popupContent = getPopupForm(props.popupKey);
+          popupContent['params'] = props.params;
+
+          if (props.popupKey == null) popupContent = setPopupButtonData(props);
 
           if (popupContent == null) return;
 
           const childGridId = uuidv4();
 
-          if (popupContent?.onInterlock) {
-            if (!popupContent?.onInterlock()) return;
+          if (
+            (
+              popupContent?.onInterlock ??
+              function () {
+                return true;
+              }
+            )() === false
+          )
+            return;
+
+          const { gridMode } = popupContent?.datagridProps;
+          const { title } = popupContent?.modalProps;
+          const word =
+            words.hasOwnProperty(gridMode) === true ? words[gridMode] : '';
+
+          if (title != null && title !== '')
+            confirmDialogContext.title = `${title} - ${word}`;
+          else confirmDialogContext.title = word;
+
+          try {
+            const res = await getData<any[]>(
+              popupContent.params,
+              popupContent.uriPath,
+            );
+
+            if (res === undefined) throw new Error('에러가 발생되었습니다.');
+
+            if (props?.firstItemEmpty && res?.length > 0)
+              res?.unshift(nullify(res[0]));
+
+            modal.confirm({
+              ...confirmDialogContext,
+              content: (
+                <Datagrid
+                  ref={childGridRef}
+                  gridId={childGridId}
+                  {...popupContent.datagridProps}
+                  gridMode="select"
+                  data={res}
+                />
+              ),
+              onOk: allocateFromSelection,
+            });
+          } catch {
+            modal.error({
+              icon: null,
+              content: <Result type="loadFailed" />,
+            });
           }
-
-          getData<any[]>(popupContent.params, popupContent.uriPath)
-            .then(res => {
-              // 데이터를 불러온 후 모달을 호출합니다.
-              if (typeof res === 'undefined') {
-                throw new Error('에러가 발생되었습니다.');
-              }
-
-              const gridMode = popupContent?.datagridProps?.gridMode;
-              let title = popupContent?.modalProps?.title;
-              const word =
-                gridMode === 'select'
-                  ? '단일선택'
-                  : gridMode === 'multi-select'
-                  ? '다중선택'
-                  : '';
-
-              if (title != null && String(title).length > 0) {
-                title = title + ' - ' + word;
-              } else {
-                title = word;
-              }
-
-              // 맨 앞줄에 빈 값 추가
-              if (props?.firstItemEmpty && res?.length > 0) {
-                const keys = Object.keys(res[0]);
-                let emptyValue = {};
-                keys?.forEach(key => {
-                  emptyValue[key] = null;
-                });
-
-                res?.unshift(emptyValue);
-              }
-
-              modal.confirm({
-                title,
-                width: '80%',
-                content: (
-                  <Datagrid
-                    ref={childGridRef}
-                    gridId={childGridId}
-                    {...popupContent.datagridProps}
-                    gridMode="select"
-                    data={res}
-                  />
-                ),
-                icon: null,
-                okText: '선택',
-                onOk: close => {
-                  const child = childGridRef.current;
-                  let row: object = child.getInstance().getCheckedRows()[0];
-
-                  if (typeof row === 'object') {
-                    row = addKeyOfObject(
-                      row,
-                      props?.datagridSettings?.rowAddPopupInfo?.columnNames,
-                    );
-                    row = cleanupKeyOfObject(row, props?.popupKeys);
-                    setSelectedRow(row);
-
-                    // 부모 grid? 선택한 Row 데이터를 준다.
-                    if (props?.handleChange) {
-                      props.handleChange(row);
-                    }
-
-                    if (props?.setValues) {
-                      props.setValues(row);
-                    } else if (props?.setFieldValue) {
-                      for (const [key, value] of Object.entries(row)) {
-                        props.setFieldValue(key, value);
-                      }
-                    }
-                    close();
-                  } else {
-                    message.warn('항목을 선택해주세요.');
-                  }
-                },
-                cancelText: '취소',
-                maskClosable: false,
-                visible: true,
-              });
-            })
-            .catch(e => {
-              // 에러 발생시
-              modal.error({
-                icon: null,
-                content: <Result type="loadFailed" />,
-              });
-            }); //.finally(() => setLoading(false));
         }}
       />
       {contextHolder}
