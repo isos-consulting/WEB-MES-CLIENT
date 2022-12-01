@@ -4,7 +4,6 @@ import { getUserInfoKeys, getUserFactoryUuid } from './storage.function';
 import {
   cleanupKeyOfObject,
   getObjectKeyDuplicateCheck,
-  getToday,
 } from './util.function';
 import { isNumber } from './number';
 import { executeData, getData } from './comm.function';
@@ -952,54 +951,6 @@ export const convDataToSubTotal = (
     }
   } catch (error) {
     console.log(error);
-  }
-
-  return result;
-};
-
-export const getTestData = (count: number = 10) => {
-  const today = getToday();
-  const USD = 0.00085;
-
-  const testData = {
-    partner_uuid: 'awtwtawyadgdxg',
-    partner_nm: '거래처',
-    reg_date: today,
-    prod_uuid: 'eatwat23534wyhg54y34',
-    prod_no: 'P_CA',
-    prod_nm: '품목',
-    model_uuid: '142f34tgeojg34yge',
-    model_nm: '모델',
-    qty: 50,
-    price: 1000,
-    exchange: 1181,
-  };
-
-  let result: any[] = [];
-  for (let i = 1; i <= count; i++) {
-    result[i - 1] = [testData]?.map(el => {
-      const keys = Object.keys(el);
-      const price = Math.floor(Math.random() * (100000 - 0)) + 0;
-      const index = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
-      const index2 = '_' + (Math.floor(Math.random() * (11 - 1)) + 1);
-      let result = {};
-      keys.forEach(key => {
-        if (typeof el[key] === 'number') {
-          if (key === 'qty')
-            result[key] = Math.floor(Math.random() * (1000 - 0)) + 0;
-          if (key === 'price') result[key] = price;
-          if (key === 'exchange') result[key] = price * USD;
-        } else {
-          if (key === 'prod_uuid') result[key] = 'eatwat23534wyhg54y34' + index;
-          if (key === 'prod_no') result[key] = 'P_CA' + index;
-          if (key === 'prod_nm') result[key] = '품목' + index;
-          if (key === 'partner_uuid') result[key] = 'awtwtawyadgdxg' + index2;
-          if (key === 'partner_nm') result[key] = '거래처' + index2;
-        }
-      });
-
-      return result;
-    })[0];
   }
 
   return result;
