@@ -633,15 +633,15 @@ export const PgQmsRework = () => {
       extraButtons: [
         {
           buttonProps: { text: '분해이력 추가' },
-          buttonAction: (ev, props, options) => {
-            //분해이력을 등록하는 팝업 열기
+          buttonAction: () => {
             setDisassemblePopupVisible(true);
           },
         },
         {
           buttonProps: { text: '일괄 처리' },
-          buttonAction: (ev, props, options) => {
-            const inputValues = newDataPopupInputInfo?.values;
+          buttonAction: () => {
+            const inputValues =
+              newDataPopupInputInfo?.props.innerRef.current.values;
             getData(
               {
                 stock_type: 'reject',
@@ -653,21 +653,18 @@ export const PgQmsRework = () => {
               STOCK_POPUP.uriPath,
             ).then(res => {
               res?.map(el => {
+                const reworkTypes = {
+                  REWORK: '재작업',
+                  DISPOSAL: '폐기',
+                  DISASSEMBLE: '분해',
+                  RETURN: '반품',
+                };
                 el[COLUMN_CODE.EDIT] = EDIT_ACTION_CODE.CREATE;
                 el['rework_type_cd'] = inputValues?.rework_type_cd;
 
-                const rework_type_nm =
-                  el['rework_type_cd'] === 'REWORK'
-                    ? '재작업'
-                    : el['rework_type_cd'] === 'DISPOSAL'
-                    ? '폐기'
-                    : el['rework_type_cd'] === 'DISASSEMBLE'
-                    ? '분해'
-                    : el['rework_type_cd'] === 'RETURN'
-                    ? '반품'
-                    : null;
-
-                el['rework_type_nm'] = rework_type_nm;
+                if (reworkTypes.hasOwnProperty(el['rework_type_cd']))
+                  el['rework_type_nm'] = reworkTypes[el['rework_type_cd']];
+                else el['rework_type_nm'] = null;
 
                 el['from_store_uuid'] = el?.store_uuid;
                 el['from_store_nm'] = el?.store_nm;
@@ -678,8 +675,7 @@ export const PgQmsRework = () => {
               });
 
               const rows = res?.filter(el => el?.reject_uuid != null);
-
-              newDataPopupGrid?.setGridData(rows || []);
+              newDataPopupGrid?.setGridData(rows);
             });
           },
         },
