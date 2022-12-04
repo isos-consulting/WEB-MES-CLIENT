@@ -11,10 +11,25 @@ import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
 import { getToday } from '~/functions';
+import { ENUM_WIDTH } from '~/enums';
+
+const inValidPresentationColumn = {
+  header: '오류 내역',
+  name: 'error',
+  width: ENUM_WIDTH.XXL,
+};
 
 const columns = {
-  구매: ColumnStore.INCOME_STORE_ECOUNT_INTERFACE,
-  생산불출: ColumnStore.OUT_STORE_ECOUNT_INTERFACE,
+  구매: [
+    ColumnStore.INCOME_STORE_ECOUNT_INTERFACE[0],
+    inValidPresentationColumn,
+    ...ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.slice(1),
+  ],
+  생산불출: [
+    ColumnStore.OUT_STORE_ECOUNT_INTERFACE[0],
+    inValidPresentationColumn,
+    ...ColumnStore.OUT_STORE_ECOUNT_INTERFACE.slice(1),
+  ],
 };
 
 const readExcelFile = (file: File): Promise<ArrayBuffer> => {
@@ -26,18 +41,20 @@ const readExcelFile = (file: File): Promise<ArrayBuffer> => {
   });
 };
 
-const importExcelFile = (excelFile: File, name: string) => {
+const importExcelFile = (excelFile: File, sheetName: string) => {
   return async gridProps => {
     const excelFileAsBuffer = await readExcelFile(excelFile);
     const sheets = await (
       await new Excel.Workbook().xlsx.load(excelFileAsBuffer)
     ).worksheets;
-    const selectedSheet = sheets.filter(sheet => sheet.name.includes(name));
+    const selectedSheet = sheets.filter(sheet =>
+      sheet.name.includes(sheetName),
+    );
 
     if (selectedSheet.length > 0) {
       const data = selectedSheet[0].getSheetValues();
       const dataWithoutHeader = data.filter(
-        row => row.length > columns[name].length,
+        row => row.length > columns[sheetName].length,
       );
 
       const filterdData = dataWithoutHeader.slice(1).map(row => {
@@ -59,7 +76,6 @@ const extractModalContext = name => {
     columns: columns[name],
     extraButtons: [
       {
-        align: 'right',
         buttonProps: {
           text: '파일 선택',
         },
@@ -74,6 +90,23 @@ const extractModalContext = name => {
               name,
             )(gridProps);
           });
+        },
+      },
+      {
+        buttonProps: {
+          text: '데이터 검증',
+        },
+        buttonAction: (_event, _buttonProps, gridProps) => {
+          console.log(gridProps);
+        },
+      },
+      {
+        align: 'right',
+        buttonProps: {
+          text: '저장',
+        },
+        buttonAction: (_event, _buttonProps, gridProps) => {
+          console.log(gridProps);
         },
       },
     ],
