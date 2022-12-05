@@ -48,9 +48,7 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
     }
 
     const data = selectedSheet[0].getSheetValues();
-    const dataWithoutHeader = data.filter(
-      row => row.length > ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.length,
-    );
+    const dataWithoutHeader = data.filter(row => row.length > 2);
 
     const filterdData = dataWithoutHeader.slice(1).map(row => {
       const obj = {};

@@ -1111,7 +1111,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     { header: '순번', name: '순번', width: ENUM_WIDTH.S },
     { header: '담당자', name: '담당자', width: ENUM_WIDTH.M },
     { header: '보내는창고', name: 'from_store_cd', width: ENUM_WIDTH.S },
-    { header: '받는공장', name: 'partner_cd', width: ENUM_WIDTH.S },
+    { header: '받는공장', name: '받는공장', width: ENUM_WIDTH.S },
     { header: '프로젝트', name: '프로젝트', width: ENUM_WIDTH.S },
     {
       header: '작지(일자-번호품목)',
@@ -1131,6 +1131,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     { header: '적요', name: '적요', width: ENUM_WIDTH.S },
     { header: '시리얼/로트', name: 'lot_no', width: ENUM_WIDTH.XL },
     { header: 'BOX', name: 'BOX', width: ENUM_WIDTH.S },
+    { header: '거래처코드', name: 'partner_cd', width: ENUM_WIDTH.M },
   ],
   REWORK_REPORT_HEADER: [
     {

@@ -10,8 +10,16 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
-import { getToday } from '~/functions';
+import { executeData, getToday, getUserFactoryUuid } from '~/functions';
 import { WORD } from '~/constants/lang/ko';
+import { message } from 'antd';
+
+const outgoInterfaceInterlockAction = {
+  state: 'unload',
+  update(state) {
+    this.state = state;
+  },
+};
 
 const readExcelFile = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
@@ -32,22 +40,28 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
       sheet.name.includes(sheetName),
     );
 
-    if (selectedSheet.length > 0) {
-      const data = selectedSheet[0].getSheetValues();
-      const dataWithoutHeader = data.filter(
-        row => row.length > ColumnStore.OUT_STORE_ECOUNT_INTERFACE.length,
+    if (selectedSheet.length === 0) {
+      message.error(
+        '생산 불출 데이터 업로드를 올바르게 할 수 있는 엑셀 파일인지 확인해주세요.',
       );
-
-      const filterdData = dataWithoutHeader.slice(1).map(row => {
-        const obj = {};
-        for (let i = 1; i < row.length; i++) {
-          obj[dataWithoutHeader[0][i]] = row[i];
-        }
-
-        return obj;
-      });
-      gridProps.gridRef.current.getInstance().appendRows(filterdData);
+      return;
     }
+
+    const data = selectedSheet[0].getSheetValues();
+    const dataWithoutHeader = data.filter(row => row.length > 2);
+
+    const filterdData = dataWithoutHeader.slice(1).map(row => {
+      const obj = {};
+      for (let i = 1; i < row.length; i++) {
+        const excelColumnName = ColumnStore.OUT_STORE_ECOUNT_INTERFACE.find(
+          column => column.header === dataWithoutHeader[0][i],
+        ).name;
+        obj[excelColumnName] = row[i];
+      }
+
+      return obj;
+    });
+    gridProps.gridRef.current.getInstance().resetData(filterdData);
   };
 };
 
@@ -67,34 +81,16 @@ const extractModalContext = name => {
         buttonProps: {
           text: '엑셀 파일 선택',
         },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          const file = document.createElement('input');
-          file.type = 'file';
-          file.click();
-
-          file.addEventListener('change', async e => {
-            await importExcelFile(
-              (e.target as HTMLInputElement).files[0],
-              name,
-            )(gridProps);
-          });
-        },
       },
       {
         buttonProps: {
           text: '데이터 검증',
-        },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          console.log(gridProps);
         },
       },
       {
         align: 'right',
         buttonProps: {
           text: '저장',
-        },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          console.log(gridProps);
         },
       },
     ],
@@ -115,7 +111,98 @@ export const PgInvOutgoEcountERPInterface = () => {
       label: '검색기간',
     },
   ]);
-  const [modalContext, setModalContext] = useState(extractModalContext('구매'));
+  const [modalContext, setModalContext] = useState(
+    extractModalContext('생산불출'),
+  );
+
+  modalContext.extraButtons[0].buttonAction = (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    const file = document.createElement('input');
+    file.type = 'file';
+    file.click();
+
+    file.addEventListener('change', async e => {
+      await importExcelFile(
+        (e.target as HTMLInputElement).files[0],
+        '생산불출',
+      )(gridProps);
+      outgoInterfaceInterlockAction.update('load');
+    });
+  };
+
+  modalContext.extraButtons[1].buttonAction = async (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    if (outgoInterfaceInterlockAction.state === 'unload') {
+      message.warn('엑셀 파일을 먼저 선택해주세요');
+      return;
+    }
+
+    const validatedDatas = await executeData(
+      gridProps.gridRef.current.getInstance().getData(),
+      '/sal/outgos/e-count/validation',
+      'post',
+    );
+
+    gridProps.gridRef.current
+      .getInstance()
+      .resetData(validatedDatas.datas.raws);
+
+    const isValid = validatedDatas.datas.raws.every(
+      data => data.error.length === 0,
+    );
+
+    if (isValid === false) {
+      outgoInterfaceInterlockAction.update('invalid');
+      return;
+    }
+    outgoInterfaceInterlockAction.update('valid');
+  };
+
+  modalContext.extraButtons[2].buttonAction = async (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    if (outgoInterfaceInterlockAction.state === 'unload') {
+      message.warn('엑셀 파일을 먼저 선택해주세요');
+      return;
+    }
+
+    if (outgoInterfaceInterlockAction.state === 'load') {
+      message.warn('데이터 검증을 먼저 해주세요.');
+      return;
+    }
+
+    if (outgoInterfaceInterlockAction.state === 'invalid') {
+      message.warn('유효하지 않은 데이터 입니다 오류 내역 행을 확인해주세요.');
+      return;
+    }
+
+    const uploadOutgoData = await executeData(
+      gridProps.gridRef.current
+        .getInstance()
+        .getData()
+        .map(data => ({
+          ...data,
+          factory_uuid: getUserFactoryUuid(),
+        })),
+      '/sal/outgos/e-count',
+      'post',
+    );
+
+    if (uploadOutgoData == null) {
+      return;
+    }
+
+    message.info('생산불출 데이터 업로드가 완료되었습니다.');
+    closeModal();
+  };
 
   const openModal = name => {
     setModalContext(extractModalContext(name));
@@ -123,6 +210,7 @@ export const PgInvOutgoEcountERPInterface = () => {
   };
 
   const closeModal = () => {
+    outgoInterfaceInterlockAction.update('unload');
     setVisible(false);
   };
 
