@@ -10,7 +10,7 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
-import { executeData, getToday } from '~/functions';
+import { executeData, getToday, getUserFactoryUuid } from '~/functions';
 import { WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
 
@@ -40,26 +40,30 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
       sheet.name.includes(sheetName),
     );
 
-    if (selectedSheet.length > 0) {
-      const data = selectedSheet[0].getSheetValues();
-      const dataWithoutHeader = data.filter(
-        row => row.length > ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.length,
+    if (selectedSheet.length === 0) {
+      message.error(
+        '구매 데이터 업로드를 올바르게 할 수 있는 엑셀 파일인지 확인해주세요.',
       );
-
-      const filterdData = dataWithoutHeader.slice(1).map(row => {
-        const obj = {};
-        for (let i = 1; i < row.length; i++) {
-          const excelColumnName =
-            ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.find(
-              column => column.header === dataWithoutHeader[0][i],
-            ).name;
-          obj[excelColumnName] = row[i];
-        }
-
-        return obj;
-      });
-      gridProps.gridRef.current.getInstance().appendRows(filterdData);
+      return;
     }
+
+    const data = selectedSheet[0].getSheetValues();
+    const dataWithoutHeader = data.filter(
+      row => row.length > ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.length,
+    );
+
+    const filterdData = dataWithoutHeader.slice(1).map(row => {
+      const obj = {};
+      for (let i = 1; i < row.length; i++) {
+        const excelColumnName = ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.find(
+          column => column.header === dataWithoutHeader[0][i],
+        ).name;
+        obj[excelColumnName] = row[i];
+      }
+
+      return obj;
+    });
+    gridProps.gridRef.current.getInstance().resetData(filterdData);
   };
 };
 
@@ -140,7 +144,26 @@ export const PgInvIncomeEcountERPInterface = () => {
       return;
     }
 
-    console.log(gridProps);
+    const validatedDatas = await executeData(
+      gridProps.gridRef.current.getInstance().getData(),
+      '/mat/receives/e-count/validation',
+      'post',
+    );
+
+    gridProps.gridRef.current
+      .getInstance()
+      .resetData(validatedDatas.datas.raws);
+
+    const isValid = validatedDatas.datas.raws.every(
+      data => data.error.length === 0,
+    );
+
+    if (isValid === false) {
+      excelAction.update('invalid');
+      return;
+    }
+
+    excelAction.update('valid');
   };
 
   modalContext.extraButtons[2].buttonAction = async (
@@ -158,15 +181,27 @@ export const PgInvIncomeEcountERPInterface = () => {
     }
 
     if (excelAction.state === 'invalid') {
-      message.warn('데이터 검증에 실패하였습니다.');
+      message.warn('유효하지 않은 데이터 입니다 오류 내역 행을 확인해주세요.');
       return;
     }
 
-    executeData(
-      gridProps.gridRef.current.getInstance().getData(),
+    const uploadIncomData = await executeData(
+      gridProps.gridRef.current
+        .getInstance()
+        .getData()
+        .map(data => ({
+          ...data,
+          factory_uuid: getUserFactoryUuid(),
+        })),
       '/mat/receives/e-count',
       'post',
     );
+
+    if (uploadIncomData == null) {
+      return;
+    }
+
+    message.info('구매 데이터 업로드가 완료되었습니다.');
     closeModal();
   };
 
@@ -176,6 +211,7 @@ export const PgInvIncomeEcountERPInterface = () => {
   };
 
   const closeModal = () => {
+    excelAction.update('unload');
     setVisible(false);
   };
 
@@ -206,7 +242,6 @@ export const PgInvIncomeEcountERPInterface = () => {
         visible={visible}
         onOk={() => closeModal()}
         onCancel={() => {
-          excelAction.update('unload');
           closeModal();
         }}
         {...modalContext}
