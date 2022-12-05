@@ -1414,4 +1414,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
     { header: '반출 위치', name: 'return_location_nm', width: ENUM_WIDTH.M },
     { header: '비교', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
   ],
+  EXCEL_INVALID_ERROR: [
+    { header: '오류 내역', name: 'error', width: ENUM_WIDTH.XXL },
+  ],
 };
