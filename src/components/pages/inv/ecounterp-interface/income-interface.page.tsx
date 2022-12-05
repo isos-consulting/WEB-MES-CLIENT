@@ -10,8 +10,16 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
-import { getToday } from '~/functions';
+import { executeData, getToday } from '~/functions';
 import { WORD } from '~/constants/lang/ko';
+import { message } from 'antd';
+
+const excelAction = {
+  state: 'unload',
+  update(state) {
+    this.state = state;
+  },
+};
 
 const readExcelFile = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
@@ -41,7 +49,11 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
       const filterdData = dataWithoutHeader.slice(1).map(row => {
         const obj = {};
         for (let i = 1; i < row.length; i++) {
-          obj[dataWithoutHeader[0][i]] = row[i];
+          const excelColumnName =
+            ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.find(
+              column => column.header === dataWithoutHeader[0][i],
+            ).name;
+          obj[excelColumnName] = row[i];
         }
 
         return obj;
@@ -67,34 +79,16 @@ const extractModalContext = name => {
         buttonProps: {
           text: '엑셀 파일 선택',
         },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          const file = document.createElement('input');
-          file.type = 'file';
-          file.click();
-
-          file.addEventListener('change', async e => {
-            await importExcelFile(
-              (e.target as HTMLInputElement).files[0],
-              name,
-            )(gridProps);
-          });
-        },
       },
       {
         buttonProps: {
           text: '데이터 검증',
-        },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          console.log(gridProps);
         },
       },
       {
         align: 'right',
         buttonProps: {
           text: '저장',
-        },
-        buttonAction: (_event, _buttonProps, gridProps) => {
-          console.log(gridProps);
         },
       },
     ],
@@ -103,6 +97,7 @@ const extractModalContext = name => {
 
 export const PgInvIncomeEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
+
   const searchERPHistory = values => {
     // ERP 히스토리 조회
   };
@@ -116,6 +111,64 @@ export const PgInvIncomeEcountERPInterface = () => {
     },
   ]);
   const [modalContext, setModalContext] = useState(extractModalContext('구매'));
+
+  modalContext.extraButtons[0].buttonAction = async (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    const file = document.createElement('input');
+    file.type = 'file';
+    file.click();
+
+    file.addEventListener('change', async e => {
+      await importExcelFile(
+        (e.target as HTMLInputElement).files[0],
+        '구매',
+      )(gridProps);
+      excelAction.update('load');
+    });
+  };
+
+  modalContext.extraButtons[1].buttonAction = async (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    if (excelAction.state === 'unload') {
+      message.warn('엑셀 파일을 먼저 선택해주세요.');
+      return;
+    }
+
+    console.log(gridProps);
+  };
+
+  modalContext.extraButtons[2].buttonAction = async (
+    _event,
+    _buttonProps,
+    gridProps,
+  ) => {
+    if (excelAction.state === 'unload') {
+      message.warn('엑셀 파일을 먼저 선택해주세요.');
+      return;
+    }
+    if (excelAction.state === 'load') {
+      message.warn('데이터 검증을 먼저 해주세요.');
+      return;
+    }
+
+    if (excelAction.state === 'invalid') {
+      message.warn('데이터 검증에 실패하였습니다.');
+      return;
+    }
+
+    executeData(
+      gridProps.gridRef.current.getInstance().getData(),
+      '/mat/receives/e-count',
+      'post',
+    );
+    closeModal();
+  };
 
   const openModal = name => {
     setModalContext(extractModalContext(name));
@@ -152,7 +205,10 @@ export const PgInvIncomeEcountERPInterface = () => {
       <GridPopup
         visible={visible}
         onOk={() => closeModal()}
-        onCancel={() => closeModal()}
+        onCancel={() => {
+          excelAction.update('unload');
+          closeModal();
+        }}
         {...modalContext}
         disabledAutoDateColumn={true}
       ></GridPopup>
