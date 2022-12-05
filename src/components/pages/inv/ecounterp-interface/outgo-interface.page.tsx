@@ -11,7 +11,7 @@ import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
 import { executeData, getToday, getUserFactoryUuid } from '~/functions';
-import { WORD } from '~/constants/lang/ko';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
 
 const outgoInterfaceInterlockAction = {
@@ -42,7 +42,7 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
 
     if (selectedSheet.length === 0) {
       message.error(
-        '생산 불출 데이터 업로드를 올바르게 할 수 있는 엑셀 파일인지 확인해주세요.',
+        `${WORD.ECOUNT_OUTGO} ${SENTENCE.CHECK_SHEET_IS_VALID_UPLOAD}`,
       );
       return;
     }
@@ -139,7 +139,7 @@ export const PgInvOutgoEcountERPInterface = () => {
     gridProps,
   ) => {
     if (outgoInterfaceInterlockAction.state === 'unload') {
-      message.warn('엑셀 파일을 먼저 선택해주세요');
+      message.warn(SENTENCE.SELECT_SHEET_BEFORE_UPLOAD);
       return;
     }
 
@@ -170,17 +170,17 @@ export const PgInvOutgoEcountERPInterface = () => {
     gridProps,
   ) => {
     if (outgoInterfaceInterlockAction.state === 'unload') {
-      message.warn('엑셀 파일을 먼저 선택해주세요');
+      message.warn(SENTENCE.SELECT_SHEET_BEFORE_UPLOAD);
       return;
     }
 
     if (outgoInterfaceInterlockAction.state === 'load') {
-      message.warn('데이터 검증을 먼저 해주세요.');
+      message.warn(SENTENCE.CLICK_DATA_VALIDATION_BUTTON_BEFORE_UPLOAD);
       return;
     }
 
     if (outgoInterfaceInterlockAction.state === 'invalid') {
-      message.warn('유효하지 않은 데이터 입니다 오류 내역 행을 확인해주세요.');
+      message.warn(SENTENCE.CHECK_ERROR_COLUMN_CAUSED_BY_INVALID_DATA);
       return;
     }
 
@@ -200,7 +200,7 @@ export const PgInvOutgoEcountERPInterface = () => {
       return;
     }
 
-    message.info('생산불출 데이터 업로드가 완료되었습니다.');
+    message.info(`${WORD.ECOUNT_OUTGO} ${SENTENCE.UPLOAD_COMPLETE}`);
     closeModal();
   };
 
