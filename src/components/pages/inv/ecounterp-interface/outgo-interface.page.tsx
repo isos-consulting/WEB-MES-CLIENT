@@ -11,18 +11,7 @@ import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
 import { getToday } from '~/functions';
-import { ENUM_WIDTH } from '~/enums';
-
-const validationErrorPresentationColumn = {
-  header: '오류 내역',
-  name: 'error',
-  width: ENUM_WIDTH.XXL,
-};
-
-const columns = {
-  구매: ColumnStore.INCOME_STORE_ECOUNT_INTERFACE,
-  생산불출: ColumnStore.OUT_STORE_ECOUNT_INTERFACE,
-};
+import { WORD } from '~/constants/lang/ko';
 
 const readExcelFile = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
@@ -46,7 +35,7 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
     if (selectedSheet.length > 0) {
       const data = selectedSheet[0].getSheetValues();
       const dataWithoutHeader = data.filter(
-        row => row.length > columns[sheetName].length,
+        row => row.length > ColumnStore.OUT_STORE_ECOUNT_INTERFACE.length,
       );
 
       const filterdData = dataWithoutHeader.slice(1).map(row => {
@@ -64,15 +53,15 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
 
 const extractModalContext = name => {
   return {
-    title: `${name} 등록`,
-    columns: columns[name],
+    title: `생산불출 등록`,
+    columns: ColumnStore.OUT_STORE_ECOUNT_INTERFACE,
     okButtonProps: {
       hidden: true,
     },
     extraButtons: [
       {
         buttonProps: {
-          text: '파일 선택',
+          text: '엑셀 파일 선택',
         },
         buttonAction: (_event, _buttonProps, gridProps) => {
           const file = document.createElement('input');
@@ -137,16 +126,7 @@ export const PgInvOutgoEcountERPInterface = () => {
     {
       ...ButtonStore.EXCEL_UPLOAD,
       ImageType: 'popup',
-      children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace('엑셀', '')}`,
-      onClick: () => openModal('구매'),
-    },
-    {
-      ...ButtonStore.EXCEL_UPLOAD,
-      ImageType: 'popup',
-      children: `생산불출${ButtonStore.EXCEL_UPLOAD.children.replace(
-        '엑셀',
-        '',
-      )}`,
+      children: `생산불출 ${WORD.UPLOAD}`,
       onClick: () => openModal('생산불출'),
     },
   ];

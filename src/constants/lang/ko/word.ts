@@ -16,4 +16,5 @@ export enum WORD {
   WORK_MONTH = '근무월',
   WORK_PLAN_MONTH = '계획월',
   WORK_PLAN = '생산계획',
+  UPLOAD = '업로드',
 }

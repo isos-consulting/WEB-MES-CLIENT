@@ -11,6 +11,7 @@ import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
 import { getToday } from '~/functions';
+import { WORD } from '~/constants/lang/ko';
 
 const readExcelFile = (file: File): Promise<ArrayBuffer> => {
   return new Promise((resolve, reject) => {
@@ -125,7 +126,7 @@ export const PgInvIncomeEcountERPInterface = () => {
     {
       ...ButtonStore.EXCEL_UPLOAD,
       ImageType: 'popup',
-      children: `구매${ButtonStore.EXCEL_UPLOAD.children.replace('엑셀', '')}`,
+      children: `구매 ${WORD.UPLOAD}`,
       onClick: () => openModal('구매'),
     },
   ];
