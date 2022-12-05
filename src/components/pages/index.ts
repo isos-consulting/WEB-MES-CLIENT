@@ -122,7 +122,8 @@ export * from './inv/stores-total-history.page';
 export * from './inv/stores-type-history.page';
 export * from './inv/stores-individual-history.page';
 export * from './inv/stores-stocks.page';
-export * from './inv/ecounterp-interface.page';
+export * from './inv/ecounterp-interface/income-interface.page';
+export * from './inv/ecounterp-interface/outgo-interface.page';
 
 export * from './out/release.page';
 export * from './out/release-report,page';
