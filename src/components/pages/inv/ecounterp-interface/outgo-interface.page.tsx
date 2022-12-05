@@ -54,7 +54,11 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
 const extractModalContext = name => {
   return {
     title: `생산불출 등록`,
-    columns: ColumnStore.OUT_STORE_ECOUNT_INTERFACE,
+    columns: [
+      ColumnStore.OUT_STORE_ECOUNT_INTERFACE[0],
+      ...ColumnStore.EXCEL_INVALID_ERROR,
+      ...ColumnStore.OUT_STORE_ECOUNT_INTERFACE.slice(1),
+    ],
     okButtonProps: {
       hidden: true,
     },
