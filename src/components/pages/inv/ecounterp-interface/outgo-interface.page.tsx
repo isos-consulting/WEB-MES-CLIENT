@@ -10,7 +10,12 @@ import {
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
 import Excel from 'exceljs';
-import { executeData, getToday, getUserFactoryUuid } from '~/functions';
+import {
+  executeData,
+  getData,
+  getToday,
+  getUserFactoryUuid,
+} from '~/functions';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
 
@@ -99,8 +104,8 @@ const extractModalContext = name => {
 
 export const PgInvOutgoEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
-  const searchERPHistory = values => {
-    // ERP 히스토리 조회
+  const searchHistoryOfOutgoERP = values => {
+    getData(values, '/inv/ecerps/sal-outgo');
   };
   const searchInfo = useSearchbox('SEARCH_ERP_CONDITION', [
     {
@@ -229,7 +234,7 @@ export const PgInvOutgoEcountERPInterface = () => {
       <Searchbox
         searchItems={searchInfo.searchItems}
         innerRef={searchInfo.props.innerRef}
-        onSearch={searchERPHistory}
+        onSearch={searchHistoryOfOutgoERP}
       />
       <Container>
         <Datagrid
