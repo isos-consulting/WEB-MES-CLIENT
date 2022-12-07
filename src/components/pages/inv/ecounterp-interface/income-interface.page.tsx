@@ -104,9 +104,10 @@ const extractModalContext = name => {
 
 export const PgInvIncomeEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
+  const [incomeHistory, setIncomeHistory] = useState([]);
 
-  const searchHistoryOfIncomeERP = values =>
-    getData(values, '/inv/ecerps/mat-receive');
+  const searchHistoryOfIncomeERP = async values =>
+    setIncomeHistory(await getData(values, '/inv/ecerps/mat-receive'));
 
   const searchInfo = useSearchbox('SEARCH_ERP_CONDITION', [
     {
@@ -238,6 +239,7 @@ export const PgInvIncomeEcountERPInterface = () => {
       <Container>
         <Datagrid
           columns={ColumnStore.INCOME_STORE_ECOUNT_INTERFACE}
+          data={incomeHistory}
           disabledAutoDateColumn={true}
         />
       </Container>
