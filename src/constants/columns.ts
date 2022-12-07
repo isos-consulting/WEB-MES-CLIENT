@@ -1125,7 +1125,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       width: ENUM_WIDTH.L,
     },
     { header: '품목코드', name: 'prod_no', width: ENUM_WIDTH.M },
-    { header: '품목명', name: '품목명', width: ENUM_WIDTH.XXL },
+    { header: '품목명', name: 'prod_nm', width: ENUM_WIDTH.XXL },
     { header: '규격', name: '규격', width: ENUM_WIDTH.M },
     { header: '수량', name: 'qty', width: ENUM_WIDTH.M },
     { header: '적요', name: '적요', width: ENUM_WIDTH.S },

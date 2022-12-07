@@ -104,9 +104,10 @@ const extractModalContext = name => {
 
 export const PgInvOutgoEcountERPInterface = () => {
   const [visible, setVisible] = useState(false);
-  const searchHistoryOfOutgoERP = values => {
-    getData(values, '/inv/ecerps/sal-outgo');
-  };
+  const [outgoHistory, setOutgoHistory] = useState([]);
+  const searchHistoryOfOutgoERP = async values =>
+    setOutgoHistory(await getData(values, '/inv/ecerps/sal-outgo'));
+
   const searchInfo = useSearchbox('SEARCH_ERP_CONDITION', [
     {
       type: 'daterange',
@@ -238,7 +239,8 @@ export const PgInvOutgoEcountERPInterface = () => {
       />
       <Container>
         <Datagrid
-          columns={ColumnStore.INCOME_STORE_ECOUNT_INTERFACE}
+          columns={ColumnStore.OUT_STORE_ECOUNT_INTERFACE}
+          data={outgoHistory}
           disabledAutoDateColumn={true}
         />
       </Container>
