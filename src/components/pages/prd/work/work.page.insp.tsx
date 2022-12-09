@@ -643,18 +643,15 @@ export const INSP = () => {
       onErrorMessage('하위이력작업시도');
       return;
     }
+    createPopupGrid.setGridData([]);
     setCreatePopupVisible(true);
   };
 
   const compareRequiredData = (compareDatas, requiredFileds) => {
-    try {
-      requiredFileds.map(requiredFiled => {
-        if (!compareDatas[requiredFiled.key])
-          throw new Error(`${requiredFiled.name} 정보를 확인해주세요.`);
-      });
-    } catch (e) {
-      throw e;
-    }
+    requiredFileds.forEach(requiredFiled => {
+      if (!compareDatas[requiredFiled.key])
+        throw new Error(`${requiredFiled.name} 정보를 확인해주세요.`);
+    });
   };
 
   const onSave = async (gridRef, inputRef) => {
@@ -751,7 +748,7 @@ export const INSP = () => {
           console.log(e);
         });
     } catch (e) {
-      message.warn(e);
+      message.warn(e.message);
     }
   };
   //#endregion
