@@ -675,7 +675,9 @@ export const INSP = () => {
       const regTime = dayjs(saveInputValues?.reg_date_time).isValid()
         ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss')
         : saveInputValues?.reg_date_time;
-      const regDateTime = regDate + ' ' + regTime + ':00';
+      const regDateTime = dayjs(regDate + ' ' + regTime).format(
+        'YYYY-MM-DD HH:mm:ss',
+      );
       headerData = {
         factory_uuid: getUserFactoryUuid(),
         work_uuid: (headerSaveOptionParams as any)?.work_uuid,
