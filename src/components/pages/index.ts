@@ -82,6 +82,7 @@ export * from './prd/work-downtime-report.page';
 export * from './prd/work-report.page';
 export * from './prd/demand.page';
 export * from './prd/order/order.page';
+export * from './prd/order/najs.order.page';
 export * from './prd/work/work.page';
 export * from './prd/work/work-plan.page';
 export * from './prd/work/daily-work-plan.page';
