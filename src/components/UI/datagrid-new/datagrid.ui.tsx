@@ -787,8 +787,24 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           }
           break;
 
+        case 'multi-select':
+          if (el?.editable === true) {
+            el['formatter'] = 'listItemText';
+            el['editor'] = {
+              type: 'checkbox',
+              options: {
+                listItems: [
+                  { text: 'Pop', value: '1' },
+                  { text: 'Rock', value: '2' },
+                  { text: 'R&B', value: '3' },
+                  { text: 'Electronic', value: '4' },
+                  { text: 'etc.', value: '5' },
+                ],
+              },
+            };
+          }
+          break;
         case 'text': // 텍스트 세팅
-        // format 설정 안하면 'text'로 취급
         default:
           // 에디터
           if (el?.editable === true) {
