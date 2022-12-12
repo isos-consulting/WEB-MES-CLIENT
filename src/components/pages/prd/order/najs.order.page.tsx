@@ -312,10 +312,8 @@ export const PgPrdNajsOrder = () => {
         },
       ],
       dataApiSettings: {
-        uriPath: '/std/routing-resources',
-        params: {
-          resource_type: 'equip',
-        },
+        uriPath: 'std/equips',
+        params: {},
       },
       gridMode: 'select',
     },
@@ -554,6 +552,13 @@ export const PgPrdNajsOrder = () => {
         width: ENUM_WIDTH.XXL,
       },
       {
+        header: '설비UUID',
+        name: 'equip_uuid',
+        width: ENUM_WIDTH.M,
+        hidden: true,
+        format: 'text',
+      },
+      {
         header: '설비명',
         name: 'equip_nm',
         width: ENUM_WIDTH.L,
@@ -675,6 +680,24 @@ export const PgPrdNajsOrder = () => {
         dataApiSettings: {
           uriPath: '/std/worker-groups',
           params: {},
+        },
+      },
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'worker_uuid',
+              popup: 'emp_uuid',
+            },
+            textColName: {
+              original: 'worker_nm',
+              popup: 'emp_nm',
+            },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: '/std/emps',
+          params: { emp_status: 'incumbent', worker_fg: true },
         },
       },
     ],
@@ -892,12 +915,19 @@ export const PgPrdNajsOrder = () => {
         format: 'multi-select',
       },
       {
+        header: '설비UUID',
+        name: 'equip_uuid',
+        width: ENUM_WIDTH.M,
+        hidden: true,
+        format: 'text',
+      },
+      {
         header: '설비명',
         name: 'equip_nm',
         width: ENUM_WIDTH.L,
         editable: true,
         hidden: false,
-        format: 'text',
+        format: 'popup',
       },
     ],
     defaultData: [],
@@ -1427,12 +1457,19 @@ export const PgPrdNajsOrder = () => {
         editable: true,
       },
       {
+        header: '설비UUID',
+        name: 'equip_uuid',
+        width: ENUM_WIDTH.M,
+        hidden: true,
+        format: 'text',
+      },
+      {
         header: '설비명',
         name: 'equip_nm',
         width: ENUM_WIDTH.L,
         editable: true,
         hidden: false,
-        format: 'text',
+        format: 'popup',
       },
     ],
     defaultData: data,
