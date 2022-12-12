@@ -58,6 +58,54 @@ const ComboStore: ComboStoreProps = {
       params: { use_fg: true },
     },
   },
+  SHIFT: {
+    columnNames: [
+      {
+        codeColName: { original: 'shift_uuid', popup: 'shift_uuid' },
+        textColName: { original: 'shift_nm', popup: 'shift_nm' },
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/shifts',
+      params: {},
+    },
+  },
+  WORKER_GROUP: {
+    columnNames: [
+      {
+        codeColName: {
+          original: 'worker_group_uuid',
+          popup: 'worker_group_uuid',
+        },
+        textColName: {
+          original: 'worker_group_nm',
+          popup: 'worker_group_nm',
+        },
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/worker-groups',
+      params: {},
+    },
+  },
+  WORKER_EMPLOYEE: {
+    columnNames: [
+      {
+        codeColName: {
+          original: 'worker_uuid',
+          popup: 'emp_uuid',
+        },
+        textColName: {
+          original: 'worker_nm',
+          popup: 'emp_nm',
+        },
+      },
+    ],
+    dataApiSettings: {
+      uriPath: '/std/emps',
+      params: { emp_status: 'incumbent', worker_fg: true },
+    },
+  },
 };
 
 export default ComboStore;

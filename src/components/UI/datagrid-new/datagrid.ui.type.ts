@@ -212,6 +212,7 @@ export interface IGridComboItem {
 
   /** 보여줄 값 */
   text: string;
+  value?: string;
 }
 
 /** 콤보박스 함수 리턴타입 */

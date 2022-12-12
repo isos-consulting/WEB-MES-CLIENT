@@ -159,6 +159,7 @@ function getGridComboItem(
             returnValue.push({
               code: rowData[columnName.codeColName.popup],
               text: rowData[columnName.textColName.popup],
+              value: rowData[columnName.codeColName.popup],
             });
         }
       });
@@ -789,17 +790,14 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
         case 'multi-select':
           if (el?.editable === true) {
+            const listItems = columnComboState?.find(
+              item => item.columnName === el.name,
+            )?.values;
             el['formatter'] = 'listItemText';
             el['editor'] = {
               type: 'checkbox',
               options: {
-                listItems: [
-                  { text: 'Pop', value: '1' },
-                  { text: 'Rock', value: '2' },
-                  { text: 'R&B', value: '3' },
-                  { text: 'Electronic', value: '4' },
-                  { text: 'etc.', value: '5' },
-                ],
+                listItems,
               },
             };
           }
@@ -2315,7 +2313,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     for (let i = 0; i < columns.length; i++) {
       const column = columns[i];
 
-      if (column.format === 'combo') {
+      if (column.format === 'combo' || column.format === 'multi-select') {
         let matchColumnName: string = null;
         let columnName: IGridComboColumnInfo = null;
         let type = null;

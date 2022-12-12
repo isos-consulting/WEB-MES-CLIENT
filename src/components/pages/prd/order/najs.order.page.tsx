@@ -1,6 +1,5 @@
-import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, Space, Typography, Modal, Spin, message } from 'antd';
+import { Modal, Spin, message } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -37,6 +36,7 @@ import {
 import { onDefaultGridSave } from './order.page.util';
 import { v4 as uuidv4 } from 'uuid';
 import { ColumnStore } from '~/constants/columns';
+import ComboStore from '~/constants/combos';
 
 export const PgPrdNajsOrder = () => {
   const title = getPageName();
@@ -652,59 +652,12 @@ export const PgPrdNajsOrder = () => {
     },
     gridPopupInfo: ORDER_POPUP_INFO,
     gridComboInfo: [
-      {
-        columnNames: [
-          {
-            codeColName: { original: 'shift_uuid', popup: 'shift_uuid' },
-            textColName: { original: 'shift_nm', popup: 'shift_nm' },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: '/std/shifts',
-          params: {},
-        },
-      },
-      {
-        columnNames: [
-          {
-            codeColName: {
-              original: 'worker_group_uuid',
-              popup: 'worker_group_uuid',
-            },
-            textColName: {
-              original: 'worker_group_nm',
-              popup: 'worker_group_nm',
-            },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: '/std/worker-groups',
-          params: {},
-        },
-      },
-      {
-        columnNames: [
-          {
-            codeColName: {
-              original: 'worker_uuid',
-              popup: 'emp_uuid',
-            },
-            textColName: {
-              original: 'worker_nm',
-              popup: 'emp_nm',
-            },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: '/std/emps',
-          params: { emp_status: 'incumbent', worker_fg: true },
-        },
-      },
+      ComboStore.SHIFT,
+      ComboStore.WORKER_GROUP,
+      ComboStore.WORKER_EMPLOYEE,
     ],
   };
-  //#endregion
 
-  //#region 🔶신규 팝업 관련
   const newPopupGridRef = useRef<Grid>();
   const [newPopupVisible, setNewPopupVisible] = useState(false);
 
@@ -1248,9 +1201,7 @@ export const PgPrdNajsOrder = () => {
       },
     ],
   };
-  //#endregion
 
-  //#region 🔶수정 팝업 관련
   const editPopupGridRef = useRef<Grid>();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
 
@@ -1511,30 +1462,30 @@ export const PgPrdNajsOrder = () => {
       onSearch(searchParams);
     },
   };
-  //#endregion
 
-  const onSearch = values => {
-    getData(
-      {
-        ...values,
-        order_state: 'all',
-      },
-      gridInfo.searchUriPath,
-    ).then(res => {
-      setData(res || []);
-      inputReceive.ref.current.resetForm();
-    });
+  const onSearch = async (orderSearchParams: Record<string, string>) => {
+    const findedOrderDatas =
+      (await getData(
+        {
+          ...orderSearchParams,
+          order_state: 'all',
+        },
+        gridInfo.searchUriPath,
+      )) ?? [];
+
+    setData(findedOrderDatas);
+    inputReceive.ref.current.resetForm();
   };
 
-  const onAppend = () => {
+  const openCreatableOrderModal = () => {
     setNewPopupVisible(true);
   };
 
-  const onEdit = () => {
+  const openEditableOrderModal = () => {
     setEditPopupVisible(true);
   };
 
-  const onDelete = () => {
+  const openDeleteDialog = () => {
     onDefaultGridSave(
       'basic',
       gridRef,
@@ -1548,7 +1499,6 @@ export const PgPrdNajsOrder = () => {
       },
     );
   };
-  //#endregion
 
   const HeaderGridElement = useMemo(() => {
     const gridMode = !permissions?.delete_fg ? 'view' : 'delete';
@@ -1559,54 +1509,53 @@ export const PgPrdNajsOrder = () => {
     <Spin spinning={true} tip="권한 정보를 가져오고 있습니다." />
   ) : (
     <>
-      <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
-        <CaretRightOutlined />
-        지시이력
-      </Typography.Title>
-      <Divider style={{ marginBottom: 10 }} />
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: '7px',
+        }}
+      >
+        <Button
+          btnType="buttonFill"
+          widthSize="medium"
+          heightSize="small"
+          fontSize="small"
+          ImageType="delete"
+          colorType="delete"
+          onClick={openDeleteDialog}
+          disabled={!permissions?.delete_fg}
+        >
+          삭제
+        </Button>
+        <Button
+          btnType="buttonFill"
+          widthSize="medium"
+          heightSize="small"
+          fontSize="small"
+          ImageType="edit"
+          colorType="blue"
+          onClick={openEditableOrderModal}
+          disabled={!permissions?.update_fg}
+        >
+          수정
+        </Button>
+        <Button
+          btnType="buttonFill"
+          widthSize="large"
+          heightSize="small"
+          fontSize="small"
+          ImageType="add"
+          colorType="blue"
+          onClick={openCreatableOrderModal}
+          disabled={!permissions?.create_fg}
+        >
+          신규 추가
+        </Button>
+      </div>
       <Container>
-        <div style={{ width: '100%', display: 'inline-block' }}>
-          <Space size={[6, 0]} align="start"></Space>
-          <Space size={[6, 0]} style={{ float: 'right' }}>
-            <Button
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="delete"
-              colorType="blue"
-              onClick={onDelete}
-              disabled={!permissions?.delete_fg}
-            >
-              삭제
-            </Button>
-            <Button
-              btnType="buttonFill"
-              widthSize="medium"
-              heightSize="small"
-              fontSize="small"
-              ImageType="edit"
-              colorType="blue"
-              onClick={onEdit}
-              disabled={!permissions?.update_fg}
-            >
-              수정
-            </Button>
-            <Button
-              btnType="buttonFill"
-              widthSize="large"
-              heightSize="small"
-              fontSize="small"
-              ImageType="add"
-              colorType="blue"
-              onClick={onAppend}
-              disabled={!permissions?.create_fg}
-            >
-              신규 추가
-            </Button>
-          </Space>
-        </div>
-        <div style={{ maxWidth: 500, marginTop: -33, marginLeft: -6 }}>
+        <div style={{ maxWidth: 500 }}>
           <Searchbox
             id="prod_order_search"
             innerRef={searchRef}
@@ -1631,4 +1580,3 @@ export const PgPrdNajsOrder = () => {
     </>
   );
 };
-//#endregion
