@@ -797,7 +797,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
             el['editor'] = {
               type: 'checkbox',
               options: {
-                listItems,
+                listItems: listItems ?? [],
               },
             };
           }
