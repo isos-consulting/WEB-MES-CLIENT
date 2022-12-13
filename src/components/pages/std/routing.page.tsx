@@ -24,6 +24,72 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
 
+const WORKING_INPUT_ITEMS: IInputGroupboxItem[] = [
+  {
+    type: 'text',
+    id: 'prod_uuid',
+    label: '품목UUID',
+    disabled: true,
+    hidden: true,
+    default: null,
+  },
+  {
+    type: 'text',
+    id: 'prod_no',
+    label: '품번',
+    disabled: true,
+    default: null,
+  },
+  {
+    type: 'text',
+    id: 'prod_nm',
+    label: '품명',
+    disabled: true,
+    default: null,
+  },
+  {
+    type: 'text',
+    id: 'prod_std',
+    label: '규격',
+    disabled: true,
+    default: null,
+  },
+];
+
+const ROUTING_RESOURCES_INPUT_ITEMS: IInputGroupboxItem[] = [
+  {
+    type: 'text',
+    id: 'routing_uuid',
+    label: '라우팅UUID',
+    disabled: true,
+    hidden: true,
+    default: null,
+  },
+  {
+    type: 'text',
+    id: 'proc_no',
+    label: '공정순서',
+    disabled: true,
+    default: null,
+  },
+  {
+    type: 'text',
+    id: 'proc_nm',
+    label: '공정명',
+    disabled: true,
+    default: null,
+  },
+  { type: 'text', id: 'prod_no', label: '품번', disabled: true, default: null },
+  { type: 'text', id: 'prod_nm', label: '품명', disabled: true, default: null },
+  {
+    type: 'text',
+    id: 'prod_std',
+    label: '규격',
+    disabled: true,
+    default: null,
+  },
+];
+
 /** BOM 관리 */
 export const PgStdRouting = () => {
   /** 페이지 제목 */
@@ -63,7 +129,6 @@ export const PgStdRouting = () => {
     useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
-
   const [workingsGridPopupVisible, setWorkingsGridPopupVisible] =
     useState<boolean>(false);
   const [workingsGridPopupCreateVisible, setWorkingsGridPopupCreateVisible] =
@@ -86,6 +151,13 @@ export const PgStdRouting = () => {
 
   const [workingsData, setWorkingsData] = useState([]);
   const [resourcesData, setResourcesData] = useState([]);
+
+  const [routingResourcesItems, setRoutingResourcesItems] = useState<
+    IInputGroupboxItem[]
+  >(ROUTING_RESOURCES_INPUT_ITEMS);
+
+  const [workingItems, setWorkingItems] =
+    useState<IInputGroupboxItem[]>(WORKING_INPUT_ITEMS);
 
   const onSetProdInfo = async prodInfo => {
     setProdInfo(prodInfo);
@@ -118,21 +190,6 @@ export const PgStdRouting = () => {
     'EDIT_DATA_POPUP_INPUTBOX',
     detailInputInfo.props.inputItems,
   );
-
-  const ROUTING_RESOURCES_INPUT_ITEMS: IInputGroupboxItem[] = [
-    {
-      type: 'text',
-      id: 'routing_uuid',
-      label: '라우팅UUID',
-      disabled: true,
-      hidden: true,
-    },
-    { type: 'text', id: 'proc_no', label: '공정순서', disabled: true },
-    { type: 'text', id: 'proc_nm', label: '공정명', disabled: true },
-    { type: 'text', id: 'prod_no', label: '품번', disabled: true },
-    { type: 'text', id: 'prod_nm', label: '품명', disabled: true },
-    { type: 'text', id: 'prod_std', label: '규격', disabled: true },
-  ];
   //#endregion
 
   //#region 🔶그리드 상태 관리
@@ -228,10 +285,6 @@ export const PgStdRouting = () => {
               ...selectedHeaderRow,
             }).then(() => {
               setResourcesGridPopupVisible(true);
-              inputRefResources?.current?.setValues({
-                ...props?.grid?.store?.data?.rawData[props?.rowKey],
-                ...selectedHeaderRow,
-              });
             });
           },
         },
@@ -338,21 +391,29 @@ export const PgStdRouting = () => {
   };
 
   useLayoutEffect(() => {
+    setWorkingItems(() =>
+      workingItems.map(item => ({
+        ...item,
+        default: prodInfo[item.id],
+      })),
+    );
+  }, [prodInfo]);
+
+  useLayoutEffect(() => {
+    setRoutingResourcesItems(() =>
+      routingResourcesItems.map(item => ({
+        ...item,
+        default: routingInfo[item.id],
+      })),
+    );
+  }, [routingInfo]);
+
+  useLayoutEffect(() => {
     if (
       (workingsGridPopupVisible && !workingsGridPopupCreateVisible) ||
       workingsGridPopupUpdateVisible
     ) {
       getWorkingsData();
-    }
-
-    if (workingsGridPopupCreateVisible === true) {
-      inputRefCreateWorkings?.current?.setValues(
-        inputRefWorkings?.current?.values,
-      );
-    } else if (workingsGridPopupUpdateVisible === true) {
-      inputRefUpdateWorkings?.current?.setValues(
-        inputRefWorkings?.current?.values,
-      );
     }
   }, [
     workingsGridPopupVisible,
@@ -366,16 +427,6 @@ export const PgStdRouting = () => {
       resourcesGridPopupUpdateVisible
     ) {
       getResourcesData();
-    }
-
-    if (resourcesGridPopupCreateVisible === true) {
-      inputRefCreateResources?.current?.setValues(
-        inputRefResources?.current?.values,
-      );
-    } else if (resourcesGridPopupUpdateVisible === true) {
-      inputRefUpdateResources?.current?.setValues(
-        inputRefResources?.current?.values,
-      );
     }
   }, [
     resourcesGridPopupVisible,
@@ -447,7 +498,7 @@ export const PgStdRouting = () => {
 
       inputProps: {
         id: 'ROUTING_WORKINGS_GRID_INPUT',
-        inputItems: detailInputInfo.props.inputItems,
+        inputItems: workingItems,
         innerRef: inputRefWorkings,
       },
       gridMode: 'delete',
@@ -532,7 +583,7 @@ export const PgStdRouting = () => {
       gridMode: 'create',
       inputProps: {
         id: 'ROUTING_WORKINGS_GRID_CREATE_INPUT',
-        inputItems: detailInputInfo.props.inputItems,
+        inputItems: workingItems,
         innerRef: inputRefCreateWorkings,
       },
       searchUriPath: null,
@@ -604,7 +655,7 @@ export const PgStdRouting = () => {
       data: workingsData,
       inputProps: {
         id: 'ROUTING_WORKINGS_GRID_UPDATE_INPUT',
-        inputItems: detailInputInfo.props.inputItems,
+        inputItems: workingItems,
         innerRef: inputRefUpdateWorkings,
       },
       searchUriPath: null,
@@ -631,7 +682,7 @@ export const PgStdRouting = () => {
 
       inputProps: {
         id: 'ROUTING_RESOURCES_GRID_INPUT',
-        inputItems: ROUTING_RESOURCES_INPUT_ITEMS,
+        inputItems: routingResourcesItems,
         innerRef: inputRefResources,
       },
       gridMode: 'delete',
@@ -682,7 +733,7 @@ export const PgStdRouting = () => {
       gridMode: 'create',
       inputProps: {
         id: 'ROUTING_RESOURCES_GRID_CREATE_INPUT',
-        inputItems: ROUTING_RESOURCES_INPUT_ITEMS,
+        inputItems: routingResourcesItems,
         innerRef: inputRefCreateResources,
       },
       searchUriPath: null,
@@ -706,7 +757,7 @@ export const PgStdRouting = () => {
       data: resourcesData,
       inputProps: {
         id: 'ROUTING_RESOURCES_GRID_UPDATE_INPUT',
-        inputItems: ROUTING_RESOURCES_INPUT_ITEMS,
+        inputItems: routingResourcesItems,
         innerRef: inputRefUpdateResources,
       },
       searchUriPath: null,
