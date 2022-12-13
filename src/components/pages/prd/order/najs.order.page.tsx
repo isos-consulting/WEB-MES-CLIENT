@@ -1,5 +1,5 @@
 import Grid from '@toast-ui/react-grid';
-import { Modal, Spin, message } from 'antd';
+import { Modal, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -11,6 +11,7 @@ import {
   getPopupForm,
   GridPopup,
   IGridColumn,
+  IGridPopupColumnInfo,
   IGridPopupInfo,
   IPopupItemsRetrunProps,
   Result,
@@ -19,12 +20,8 @@ import {
 } from '~/components/UI';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
-import {
-  IInputGroupboxItem,
-  InputGroupbox,
-  useInputGroup,
-} from '~/components/UI/input-groupbox';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { InputGroupbox } from '~/components/UI/input-groupbox';
+import { ENUM_WIDTH } from '~/enums';
 import {
   getData,
   getModifiedRows,
@@ -38,6 +35,48 @@ import { v4 as uuidv4 } from 'uuid';
 import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 
+type WorkPlanRowAddPopupInfo = {
+  popupKey: TPopupKey;
+  columns: IGridColumn[];
+  dataApiSettings: {
+    uriPath: string;
+    params: { start_date: string; end_date: string; wait_task_fg: boolean };
+  };
+  onInterlock: () => void;
+  onAfterOk: () => void;
+  onBeforeOk: () => void;
+  columnNames: unknown[];
+  gridMode: string;
+};
+
+const getWorkPlayRowAddPopupInfo = (
+  columnNamesInOrderAddRowPopupInfo: IGridPopupColumnInfo[],
+) => ({
+  popupKey: null,
+  columns: ColumnStore.DAILY_WORK_PLAN,
+  dataApiSettings: {
+    uriPath: '/prd/plan-daily',
+    params: {
+      start_date: getToday(-7),
+      end_date: getToday(),
+      wait_task_fg: true,
+    },
+  },
+  onInterlock: null,
+  onAfterOk: null,
+  onBeforeOk: null,
+  columnNames: columnNamesInOrderAddRowPopupInfo.concat([
+    { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
+  ]),
+  gridMode: 'multi-select',
+});
+
+const onAddPopupRow = async ({ childGridRef, columns, gridRef, props }) => {
+  const rowAddPopupInfo: WorkPlanRowAddPopupInfo = getWorkPlayRowAddPopupInfo(
+    [],
+  );
+};
+
 export const PgPrdNajsOrder = () => {
   const title = getPageName();
   const permissions = getPermissions(title);
@@ -45,18 +84,6 @@ export const PgPrdNajsOrder = () => {
 
   const searchRef = useRef<FormikProps<FormikValues>>();
   const searchParams = searchRef?.current?.values;
-
-  const INPUT_ITEMS_RECIEVE: IInputGroupboxItem[] = [
-    { id: 'order_no', label: '지시번호', type: 'text', disabled: true },
-    { id: 'reg_date', label: '지시일', type: 'date', disabled: true },
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'rev', label: '리비전', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'qty', label: '입하수량', type: 'number', disabled: true },
-  ];
-
-  const inputReceive = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_RECIEVE);
 
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
@@ -319,34 +346,6 @@ export const PgPrdNajsOrder = () => {
     },
     {
       columnNames: [
-        { original: 'mold_uuid', popup: 'mold_uuid' },
-        { original: 'mold_nm', popup: 'mold_nm' },
-        { original: 'mold_no', popup: 'mold_no' },
-        { original: 'mold_cavity', popup: 'mold_cavity' },
-      ],
-      columns: getPopupForm('금형관리')?.datagridProps?.columns,
-      dataApiSettings: (el: any) => {
-        const rowKey = el.rowKey;
-        const rowData = el?.instance?.store?.data?.rawData.find(
-          el => el.rowKey === rowKey,
-        );
-        return {
-          uriPath: getPopupForm('금형관리')?.uriPath,
-          params: {},
-          onInterlock: () => {
-            let complete: boolean = rowData?.complete_fg;
-            console.log(complete);
-            if (complete) {
-              message.warn('작업이 마감되어 금형을 수정할 수 없습니다.');
-            }
-            return !complete;
-          },
-        };
-      },
-      gridMode: 'select',
-    },
-    {
-      columnNames: [
         { original: 'workings_uuid', popup: 'workings_uuid' },
         { original: 'workings_cd', popup: 'workings_cd' },
         { original: 'workings_nm', popup: 'workings_nm' },
@@ -384,228 +383,63 @@ export const PgPrdNajsOrder = () => {
   const newPopupGridRef = useRef<Grid>();
   const [newPopupVisible, setNewPopupVisible] = useState(false);
 
+  const openCreatableOrderModal = () => {
+    setNewPopupVisible(true);
+  };
+
+  const closeCreatableOrderModal = () => {
+    setNewPopupVisible(false);
+  };
+
+  const newModalDatagridColumnProps = {
+    hidden: ['order_state', 'order_no'],
+    readOnly: [],
+    noSave: [
+      'working_nm',
+      'prod_no',
+      'prod_nm',
+      'prod_type_nm',
+      'item_type_nm',
+      'model_nm',
+      'rev',
+      'prod_std',
+      'unit_nm',
+      'shift_nm',
+    ],
+    multiSelect: ['worker_nm'],
+  };
+
+  const dataGridColumnsInNewModal = ColumnStore.NAJS_PROD_ORDER.map(
+    ({ name, ...columnOpts }) => {
+      const columnInEditModal = { name, ...columnOpts };
+
+      if (newModalDatagridColumnProps.hidden.includes(name)) {
+        columnInEditModal.hidden = true;
+      }
+
+      if (newModalDatagridColumnProps.readOnly.includes(name)) {
+        columnInEditModal.editable = true;
+      }
+
+      if (newModalDatagridColumnProps.noSave.includes(name)) {
+        columnInEditModal.noSave = true;
+      }
+
+      if (newModalDatagridColumnProps.multiSelect.includes(name)) {
+        columnInEditModal.format = 'multi-select';
+      }
+
+      return columnInEditModal;
+    },
+  );
+
   /** 신규 항목 추가 팝업 속성 */
   const newGridPopupInfo: IGridPopupProps = {
     ...gridInfo,
     gridId: 'ORDER_NEW_GRID',
     ref: newPopupGridRef,
     gridMode: 'create',
-    columns: [
-      {
-        header: '작업지시UUID',
-        name: 'order_uuid',
-        alias: 'uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '우선순위',
-        name: 'priority',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
-        filter: 'number',
-      },
-      {
-        header: '지시일',
-        name: 'reg_date',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'date',
-        filter: 'date',
-        requiredField: true,
-      },
-      {
-        header: '공정UUID',
-        name: 'proc_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '공정순서',
-        name: 'proc_no',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '공정',
-        name: 'proc_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        requiredField: true,
-      },
-      {
-        header: '작업장UUID',
-        name: 'workings_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '작업장',
-        name: 'workings_nm',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'popup',
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '품목UUID',
-        name: 'prod_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '품번',
-        name: 'prod_no',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '품목',
-        name: 'prod_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '제품유형',
-        name: 'prod_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '품목유형',
-        name: 'item_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '모델',
-        name: 'model_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: 'Rev',
-        name: 'rev',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '규격',
-        name: 'prod_std',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '단위',
-        name: 'unit_nm',
-        width: ENUM_WIDTH.S,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '계획수량',
-        name: 'plan_qty',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
-      },
-      {
-        header: '지시수량',
-        name: 'qty',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
-        requiredField: true,
-      },
-      { header: '지시순번', name: 'seq', width: ENUM_WIDTH.M, hidden: true },
-      {
-        header: '작업교대UUID',
-        name: 'shift_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '작업교대',
-        name: 'shift_nm',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'combo',
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '작업조UUID',
-        name: 'worker_group_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '작업조',
-        name: 'worker_group_nm',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'combo',
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '수주상세UUID',
-        name: 'sal_order_detail_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '비고',
-        name: 'remark',
-        width: ENUM_WIDTH.XL,
-        editable: true,
-        filter: 'text',
-      },
-      {
-        header: '작업자',
-        name: 'worker_nm',
-        width: ENUM_WIDTH.XXL,
-        editable: true,
-        format: 'multi-select',
-      },
-      {
-        header: '설비UUID',
-        name: 'equip_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '설비명',
-        name: 'equip_nm',
-        width: ENUM_WIDTH.L,
-        editable: true,
-        hidden: false,
-        format: 'popup',
-      },
-    ],
+    columns: dataGridColumnsInNewModal,
     defaultData: [],
     data: null,
     height: null,
@@ -627,22 +461,20 @@ export const PgPrdNajsOrder = () => {
       ).then(({ success }) => {
         if (!success) return;
         onSearch(searchParams);
-        setNewPopupVisible(false);
+        closeCreatableOrderModal();
       });
     },
     cancelText: '취소',
-    onCancel: () => {
-      setNewPopupVisible(false);
-    },
+    onCancel: closeCreatableOrderModal,
     parentGridRef: gridRef,
     saveType: 'basic',
     saveUriPath: gridInfo.saveUriPath,
     searchUriPath: gridInfo.searchUriPath,
     defaultVisible: false,
     visible: newPopupVisible,
-    onAfterOk: (isSuccess, savedData) => {
+    onAfterOk: isSuccess => {
       if (!isSuccess) return;
-      setNewPopupVisible(false);
+      closeCreatableOrderModal();
       onSearch(searchParams);
     },
     extraButtons: [
@@ -878,24 +710,37 @@ export const PgPrdNajsOrder = () => {
                         return;
                     }
 
-                    rows?.forEach(row => {
-                      let newRow = {};
-                      if (typeof row === 'object') {
-                        updateColumns.forEach(columnName => {
-                          const column = columns.filter(
-                            el => el.name === columnName.original,
-                          )[0];
-                          newRow[columnName.original] =
-                            row[columnName.popup] != null
-                              ? row[columnName.popup]
-                              : typeof column?.defaultValue === 'function'
-                              ? column?.defaultValue(props, row)
-                              : column?.defaultValue;
-                        });
+                    console.log({ rows });
+                    const prodUUID = rows.reduce(
+                      (acc, cur) => `${acc}${cur.prod_uuid},`,
+                      '',
+                    );
 
-                        onAppendRow(newRow);
-                      }
-                    });
+                    if (prodUUID.length > 0) {
+                      getData(
+                        { prod_uuid: prodUUID.slice(0, -1) },
+                        '/std/routings/integrated-actived-prod',
+                      );
+                    }
+
+                    // rows?.forEach(row => {
+                    //   let newRow = {};
+                    //   if (typeof row === 'object') {
+                    //     updateColumns.forEach(columnName => {
+                    //       const column = columns.filter(
+                    //         el => el.name === columnName.original,
+                    //       )[0];
+                    //       newRow[columnName.original] =
+                    //         row[columnName.popup] != null
+                    //           ? row[columnName.popup]
+                    //           : typeof column?.defaultValue === 'function'
+                    //           ? column?.defaultValue(props, row)
+                    //           : column?.defaultValue;
+                    //     });
+
+                    //     onAppendRow(newRow);
+                    //   }
+                    // });
 
                     if (onAfterOk != null) {
                       onAfterOk(
@@ -928,7 +773,15 @@ export const PgPrdNajsOrder = () => {
   const editPopupGridRef = useRef<Grid>();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
 
-  const editModalDatagridProps = {
+  const openEditableOrderModal = () => {
+    setEditPopupVisible(true);
+  };
+
+  const closeEditableOrderModal = () => {
+    setEditPopupVisible(false);
+  };
+
+  const editModalDatagridColumnProps = {
     hidden: ['order_state'],
     readOnly: ['reg_date'],
     noSave: [
@@ -943,20 +796,28 @@ export const PgPrdNajsOrder = () => {
       'unit_nm',
       'shift_nm',
     ],
+    multiSelect: ['worker_nm'],
   };
 
   const dataGridColumnsInEditModal = ColumnStore.NAJS_PROD_ORDER.map(
     ({ name, ...columnOpts }) => {
       const columnInEditModal = { name, ...columnOpts };
 
-      if (editModalDatagridProps.hidden.includes(name))
+      if (editModalDatagridColumnProps.hidden.includes(name)) {
         columnInEditModal.hidden = true;
+      }
 
-      if (editModalDatagridProps.readOnly.includes(name))
+      if (editModalDatagridColumnProps.readOnly.includes(name)) {
         columnInEditModal.editable = true;
+      }
 
-      if (editModalDatagridProps.noSave.includes(name))
+      if (editModalDatagridColumnProps.noSave.includes(name)) {
         columnInEditModal.noSave = true;
+      }
+
+      if (editModalDatagridColumnProps.multiSelect.includes(name)) {
+        columnInEditModal.format = 'multi-select';
+      }
 
       return columnInEditModal;
     },
@@ -988,22 +849,20 @@ export const PgPrdNajsOrder = () => {
       ).then(({ success }) => {
         if (!success) return;
         onSearch(searchParams);
-        setEditPopupVisible(false);
+        closeEditableOrderModal();
       });
     },
     cancelText: '취소',
-    onCancel: () => {
-      setEditPopupVisible(false);
-    },
+    onCancel: closeEditableOrderModal,
     parentGridRef: gridRef,
     saveType: 'basic',
     saveUriPath: gridInfo.saveUriPath,
     searchUriPath: gridInfo.searchUriPath,
     defaultVisible: false,
     visible: editPopupVisible,
-    onAfterOk: (isSuccess, savedData) => {
+    onAfterOk: isSuccess => {
       if (!isSuccess) return;
-      setEditPopupVisible(false);
+      closeEditableOrderModal();
       onSearch(searchParams);
     },
   };
@@ -1019,15 +878,6 @@ export const PgPrdNajsOrder = () => {
       )) ?? [];
 
     setData(findedOrderDatas);
-    inputReceive.ref.current.resetForm();
-  };
-
-  const openCreatableOrderModal = () => {
-    setNewPopupVisible(true);
-  };
-
-  const openEditableOrderModal = () => {
-    setEditPopupVisible(true);
   };
 
   const openDeleteDialog = () => {
