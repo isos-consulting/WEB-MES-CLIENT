@@ -33,6 +33,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 import ModalStore from '~/constants/modals';
+import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
 
 type WorkPlanRowAddPopupInfo = {
   popupKey: TPopupKey;
@@ -166,24 +167,10 @@ const getDailyWorkPlanModalProps = async ({
         '/std/routings/integrated-actived-prod',
       );
 
-      let classNames = { column: {} };
-
-      columns.forEach(column => {
-        if (column.name != COLUMN_CODE.EDIT)
-          classNames['column'][column.name] = [props.gridMode];
-
-        if (column?.editable === true && column.name !== COLUMN_CODE.EDIT)
-          classNames['column'][column.name] = [
-            ...classNames['column'][column.name],
-            'editor',
-          ];
-
-        if (column?.editable === true && column?.format === 'popup')
-          classNames['column'][column.name] = [
-            ...classNames['column'][column.name],
-            'popup',
-          ];
-      });
+      const classNames = injectClassNameAttributesInColumn(
+        columns,
+        props.gridMode,
+      );
 
       const acceptableProdOrders = prodOrdersIncludesBom.map(prodOrder => {
         let newProdOrdersIncludesBom = {};
@@ -205,7 +192,7 @@ const getDailyWorkPlanModalProps = async ({
         return {
           ...newProdOrdersIncludesBom,
           [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
-          _attributes: { classNames: classNames },
+          _attributes: { classNames },
         };
       });
 
