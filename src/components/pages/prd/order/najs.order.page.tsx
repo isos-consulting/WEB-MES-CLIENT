@@ -11,6 +11,7 @@ import {
   getPopupForm,
   GridPopup,
   IGridColumn,
+  IGridPopupColumnInfo,
   IGridPopupInfo,
   IPopupItemsRetrunProps,
   Searchbox,
@@ -43,7 +44,7 @@ type WorkPlanRowAddPopupInfo = {
   onInterlock: () => void;
   onAfterOk: () => void;
   onBeforeOk: () => void;
-  columnNames: unknown[];
+  columnNames: IGridPopupColumnInfo[];
   gridMode: string;
 };
 
@@ -54,6 +55,7 @@ const getDailyWorkPlanModalProps = async ({
   props,
 }) => {
   const {
+    columnNames,
     searchProps,
     params,
     uriPath,
@@ -148,19 +150,66 @@ const getDailyWorkPlanModalProps = async ({
         />
       </>
     ),
-    onOk: () => {
+    onOk: async () => {
       const dailyWorkPlanGridInstance = childGridRef.current.getInstance();
       const prodOrderGridInstanceInNewModal = gridRef.current.getInstance();
       const selectedDailyWorkPlans = dailyWorkPlanGridInstance.getCheckedRows();
 
       const dailyWorkPlanUuids = selectedDailyWorkPlans
-        .reduce((acc, cur) => `${acc}${cur.plan_daily_uuid}`, '')
+        .reduce((acc, cur) => `${acc}${cur.plan_daily_uuid},`, '')
         .slice(0, -1);
 
-      getData(
-        { prod_uuid: dailyWorkPlanUuids },
+      if (dailyWorkPlanUuids.length === 0) return;
+
+      const prodOrdersIncludesBom = await getData(
+        { plan_daily_uuid: dailyWorkPlanUuids },
         '/std/routings/integrated-actived-prod',
       );
+
+      let classNames = { column: {} };
+
+      columns.forEach(column => {
+        if (column.name != COLUMN_CODE.EDIT)
+          classNames['column'][column.name] = [props.gridMode];
+
+        if (column?.editable === true && column.name !== COLUMN_CODE.EDIT)
+          classNames['column'][column.name] = [
+            ...classNames['column'][column.name],
+            'editor',
+          ];
+
+        if (column?.editable === true && column?.format === 'popup')
+          classNames['column'][column.name] = [
+            ...classNames['column'][column.name],
+            'popup',
+          ];
+      });
+
+      const acceptableProdOrders = prodOrdersIncludesBom.map(prodOrder => {
+        let newProdOrdersIncludesBom = {};
+
+        if (typeof prodOrdersIncludesBom === 'object') {
+          columnNames.forEach(columnName => {
+            const column = columns.filter(
+              el => el.name === columnName.original,
+            )[0];
+            newProdOrdersIncludesBom[columnName.original] =
+              prodOrder[columnName.popup] != null
+                ? prodOrder[columnName.popup]
+                : typeof column?.defaultValue === 'function'
+                ? column?.defaultValue(props, prodOrder)
+                : column.defaultValue;
+          });
+        }
+
+        return {
+          ...newProdOrdersIncludesBom,
+          [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
+          _attributes: { classNames: classNames },
+        };
+      });
+
+      prodOrderGridInstanceInNewModal.resetData(acceptableProdOrders);
     },
   };
 };
@@ -387,49 +436,49 @@ export const PgPrdNajsOrder = () => {
         buttonProps: { text: '생산계획 불러오기', children: '' },
         buttonAction: (_ev, props, options) => {
           const { childGridRef, columns, gridRef } = options;
-          const onAppendRow = (newRow: object = {}) => {
-            let classNames = { column: {} };
+          // const onAppendRow = (newRow: object = {}) => {
+          //   let classNames = { column: {} };
 
-            columns?.forEach(column => {
-              if (column.name !== COLUMN_CODE.EDIT)
-                classNames['column'][column.name] = [props.gridMode];
+          //   columns?.forEach(column => {
+          //     if (column.name !== COLUMN_CODE.EDIT)
+          //       classNames['column'][column.name] = [props.gridMode];
 
-              if (
-                column?.editable === true &&
-                column.name !== COLUMN_CODE.EDIT
-              ) {
-                classNames['column'][column.name] = [
-                  ...classNames['column'][column.name],
-                  'editor',
-                ];
-              }
+          //     if (
+          //       column?.editable === true &&
+          //       column.name !== COLUMN_CODE.EDIT
+          //     ) {
+          //       classNames['column'][column.name] = [
+          //         ...classNames['column'][column.name],
+          //         'editor',
+          //       ];
+          //     }
 
-              if (column?.editable === true && column?.format === 'popup') {
-                classNames['column'][column.name] = [
-                  ...classNames['column'][column.name],
-                  'popup',
-                ];
-              }
+          //     if (column?.editable === true && column?.format === 'popup') {
+          //       classNames['column'][column.name] = [
+          //         ...classNames['column'][column.name],
+          //         'popup',
+          //       ];
+          //     }
 
-              if (column?.defaultValue != null) {
-                newRow[column.name] =
-                  newRow[column.name] != null
-                    ? newRow[column.name]
-                    : typeof column?.defaultValue === 'function'
-                    ? column?.defaultValue(props, newRow)
-                    : column?.defaultValue;
-              }
-            });
+          //     if (column?.defaultValue != null) {
+          //       newRow[column.name] =
+          //         newRow[column.name] != null
+          //           ? newRow[column.name]
+          //           : typeof column?.defaultValue === 'function'
+          //           ? column?.defaultValue(props, newRow)
+          //           : column?.defaultValue;
+          //     }
+          //   });
 
-            gridRef.current.getInstance().appendRow(
-              {
-                ...newRow,
-                [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
-                _attributes: { className: classNames },
-              },
-              { focus: true },
-            );
-          };
+          //   gridRef.current.getInstance().appendRow(
+          //     {
+          //       ...newRow,
+          //       [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
+          //       _attributes: { className: classNames },
+          //     },
+          //     { focus: true },
+          //   );
+          // };
 
           // const onAddPopupRow = async ({
           //   childGridRef,
