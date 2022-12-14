@@ -11,16 +11,13 @@ import {
   getPopupForm,
   GridPopup,
   IGridColumn,
-  IGridPopupColumnInfo,
   IGridPopupInfo,
   IPopupItemsRetrunProps,
-  Result,
   Searchbox,
   TPopupKey,
 } from '~/components/UI';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
-import { InputGroupbox } from '~/components/UI/input-groupbox';
 import { ENUM_WIDTH } from '~/enums';
 import {
   getData,
@@ -34,6 +31,7 @@ import { onDefaultGridSave } from './order.page.util';
 import { v4 as uuidv4 } from 'uuid';
 import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
+import ModalStore from '~/constants/modals';
 
 type WorkPlanRowAddPopupInfo = {
   popupKey: TPopupKey;
@@ -49,32 +47,122 @@ type WorkPlanRowAddPopupInfo = {
   gridMode: string;
 };
 
-const getWorkPlayRowAddPopupInfo = (
-  columnNamesInOrderAddRowPopupInfo: IGridPopupColumnInfo[],
-) => ({
-  popupKey: null,
-  columns: ColumnStore.DAILY_WORK_PLAN,
-  dataApiSettings: {
-    uriPath: '/prd/plan-daily',
+const getDailyWorkPlanModalProps = async ({
+  childGridRef,
+  columns,
+  gridRef,
+  props,
+}) => {
+  const {
+    searchProps,
+    params,
+    uriPath,
+    modalProps,
+    datagridProps,
+    gridMode,
+  }: IPopupItemsRetrunProps &
+    WorkPlanRowAddPopupInfo & {
+      params: WorkPlanRowAddPopupInfo['dataApiSettings']['params'];
+    } = {
+    columnNames: ModalStore.ORDER_ADD_ROW_POPUP_INFO.columnNames.concat([
+      { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
+    ]),
+    columns: ColumnStore.DAILY_WORK_PLAN,
+    dataApiSettings: {
+      uriPath: '/prd/plan-daily',
+      params: {
+        start_date: getToday(-7),
+        end_date: getToday(),
+        wait_task_fg: true,
+      },
+    },
+    datagridProps: {
+      gridId: null,
+      columns: ColumnStore.DAILY_WORK_PLAN,
+    },
+    gridMode: 'multi-select',
+    modalProps: {
+      title: '생산계획 - 다중선택',
+    },
+    onAfterOk: null,
+    onBeforeOk: null,
+    onInterlock: null,
     params: {
       start_date: getToday(-7),
       end_date: getToday(),
       wait_task_fg: true,
     },
-  },
-  onInterlock: null,
-  onAfterOk: null,
-  onBeforeOk: null,
-  columnNames: columnNamesInOrderAddRowPopupInfo.concat([
-    { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
-  ]),
-  gridMode: 'multi-select',
-});
+    popupKey: null,
+    searchProps: {
+      id: 'workPlanSearch',
+      searchItems: [
+        {
+          type: 'date',
+          id: 'start_date',
+          label: '지시기간',
+          default: getToday(-7),
+        },
+        {
+          type: 'date',
+          id: 'end_date',
+          default: getToday(),
+        },
+      ],
+      onSearch: async (
+        dailyWorkPlanConditions: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
+      ) => {
+        const dailyWorkPlans = await getData(
+          { ...dailyWorkPlanConditions },
+          '/prd/plan-daily',
+        );
 
-const onAddPopupRow = async ({ childGridRef, columns, gridRef, props }) => {
-  const rowAddPopupInfo: WorkPlanRowAddPopupInfo = getWorkPlayRowAddPopupInfo(
-    [],
-  );
+        childGridRef.current.getInstance().resetData(dailyWorkPlans);
+      },
+      boxShadow: false,
+    },
+    uriPath: '/prd/plan-daily',
+  };
+
+  const dailyWrokPlans = await getData(params, uriPath);
+
+  if (typeof dailyWrokPlans === 'undefined') {
+    throw new Error('에러가 발생되었습니다.');
+  }
+
+  return {
+    title: modalProps.title,
+    width: '80%',
+    icon: null,
+    okText: '선택',
+    cancelText: '취소',
+    maskClosable: false,
+    content: (
+      <>
+        <Searchbox {...searchProps} />
+        <Datagrid
+          ref={childGridRef}
+          gridId={uuidv4()}
+          columns={datagridProps.columns}
+          gridMode={gridMode}
+          data={dailyWrokPlans}
+        />
+      </>
+    ),
+    onOk: () => {
+      const dailyWorkPlanGridInstance = childGridRef.current.getInstance();
+      const prodOrderGridInstanceInNewModal = gridRef.current.getInstance();
+      const selectedDailyWorkPlans = dailyWorkPlanGridInstance.getCheckedRows();
+
+      const dailyWorkPlanUuids = selectedDailyWorkPlans
+        .reduce((acc, cur) => `${acc}${cur.plan_daily_uuid}`, '')
+        .slice(0, -1);
+
+      getData(
+        { prod_uuid: dailyWorkPlanUuids },
+        '/std/routings/integrated-actived-prod',
+      );
+    },
+  };
 };
 
 export const PgPrdNajsOrder = () => {
@@ -88,189 +176,6 @@ export const PgPrdNajsOrder = () => {
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const ORDER_ADD_ROW_POPUP_INFO: IGridPopupInfo = {
-    columnNames: [
-      { original: 'routing_uuid', popup: 'routing_uuid' },
-      { original: 'proc_uuid', popup: 'proc_uuid' },
-      { original: 'proc_no', popup: 'proc_no' },
-      { original: 'proc_nm', popup: 'proc_nm' },
-      { original: 'workings_uuid', popup: 'workings_uuid' },
-      { original: 'workings_nm', popup: 'workings_nm' },
-      { original: 'item_type_uuid', popup: 'item_type_uuid' },
-      { original: 'item_type_nm', popup: 'item_type_nm' },
-      { original: 'prod_type_uuid', popup: 'prod_type_uuid' },
-      { original: 'prod_type_nm', popup: 'prod_type_nm' },
-      { original: 'prod_uuid', popup: 'prod_uuid' },
-      { original: 'prod_no', popup: 'prod_no' },
-      { original: 'prod_nm', popup: 'prod_nm' },
-      { original: 'model_uuid', popup: 'model_uuid' },
-      { original: 'model_nm', popup: 'model_nm' },
-      { original: 'rev', popup: 'rev' },
-      { original: 'prod_std', popup: 'prod_std' },
-      { original: 'unit_uuid', popup: 'unit_uuid' },
-      { original: 'unit_nm', popup: 'unit_nm' },
-      { original: 'auto_work_fg', popup: 'auto_work_fg' },
-      { original: 'plan_qty', popup: 'plan_daily_qty' },
-      { original: 'qty', popup: 'balance' },
-    ],
-    columns: [
-      {
-        header: '라우팅UUID',
-        name: 'routing_uuid',
-        alias: 'uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '공정UUID',
-        name: 'proc_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '공정순서',
-        name: 'proc_no',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '공정',
-        name: 'proc_nm',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '작업장UUID',
-        name: 'workings_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '작업장',
-        name: 'workings_nm',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '품목유형UUID',
-        name: 'item_type_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '품목유형',
-        name: 'item_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '제품유형UUID',
-        name: 'prod_type_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '제품유형',
-        name: 'prod_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '품목UUID',
-        name: 'prod_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '품번',
-        name: 'prod_no',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '품목',
-        name: 'prod_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '모델UUID',
-        name: 'model_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '모델',
-        name: 'model_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: 'Rev',
-        name: 'rev',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '규격',
-        name: 'prod_std',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '단위UUID',
-        name: 'unit_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '단위',
-        name: 'unit_nm',
-        width: ENUM_WIDTH.S,
-        filter: 'text',
-        hidden: false,
-        format: 'text',
-      },
-      {
-        header: '자동 실적처리유무',
-        name: 'auto_work_fg',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        format: 'text',
-      },
-    ],
-    dataApiSettings: {
-      uriPath: '/std/routings/actived-prod',
-      params: {},
-    },
-    gridMode: 'select',
-  };
   const ORDER_POPUP_INFO: IGridPopupInfo[] = [
     {
       columnNames: [
@@ -369,7 +274,7 @@ export const PgPrdNajsOrder = () => {
     columns: ColumnStore.NAJS_PROD_ORDER,
     data: data,
     rowAddPopupInfo: {
-      ...ORDER_ADD_ROW_POPUP_INFO,
+      ...ModalStore.ORDER_ADD_ROW_POPUP_INFO,
       gridMode: 'multi-select',
     },
     gridPopupInfo: ORDER_POPUP_INFO,
@@ -526,245 +431,200 @@ export const PgPrdNajsOrder = () => {
             );
           };
 
-          const onAddPopupRow = async ({
+          // const onAddPopupRow = async ({
+          //   childGridRef,
+          //   columns,
+          //   gridRef,
+          //   props,
+          // }) => {
+          // const {
+          //   rowAddPopupInfo,
+          // }: {
+          //   rowAddPopupInfo: {
+          //     popupKey: TPopupKey;
+          //     columns: IGridColumn[];
+          //     dataApiSettings: any;
+          //     onInterlock: () => void;
+          //     onAfterOk: () => void;
+          //     onBeforeOk: () => void;
+          //     columnNames: any;
+          //     gridMode: string;
+          //   };
+          // } = {
+          //   rowAddPopupInfo: {
+          //     popupKey: null,
+          //     columns: [...ColumnStore.DAILY_WORK_PLAN],
+          //     dataApiSettings: {
+          //       uriPath: '/prd/plan-daily',
+          //       params: {
+          //         start_date: getToday(-7),
+          //         end_date: getToday(),
+          //         wait_task_fg: true,
+          //       },
+          //     },
+          //     onInterlock: null,
+          //     onAfterOk: null,
+          //     onBeforeOk: null,
+          //     columnNames: [
+          //       ...ModalStore.ORDER_ADD_ROW_POPUP_INFO.columnNames,
+          //     ].concat([
+          //       { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
+          //     ]),
+          //     gridMode: 'multi-select',
+          //   },
+          // };
+          // let popupContent: IPopupItemsRetrunProps = {
+          //   datagridProps: {
+          //     gridId: null,
+          //     columns: null,
+          //   },
+          //   uriPath: null,
+          //   params: null,
+          //   modalProps: null,
+          // };
+          // let onBeforeOk = null;
+          // let onAfterOk = null;
+          // popupContent['datagridProps']['columns'] = rowAddPopupInfo.columns;
+          // console.log({
+          //   popupContent: { ...popupContent },
+          //   rowAddPopupInfo: { ...rowAddPopupInfo },
+          // });
+          // popupContent = {
+          //   ...popupContent,
+          //   ...rowAddPopupInfo,
+          //   ...rowAddPopupInfo.dataApiSettings,
+          //   searchProps: {
+          //     searchItems: [
+          //       {
+          //         type: 'date',
+          //         id: 'start_date',
+          //         label: '지시기간',
+          //         default: getToday(-7),
+          //       },
+          //       { type: 'date', id: 'end_date', default: getToday() },
+          //     ],
+          //     onSearch: dailyWorkPlanCondition => {
+          //       getData(
+          //         { ...dailyWorkPlanCondition, wait_task_fg: true },
+          //         '/prd/plan-daily',
+          //       ).then(res =>
+          //         childGridRef.current.getInstance().resetData(res),
+          //       );
+          //     },
+          //     boxShadow: false,
+          //   },
+          // };
+          // console.log({ updatedPopupContent: { ...popupContent } });
+          // const updateColumns: { original: string; popup: string }[] =
+          //   rowAddPopupInfo.columnNames;
+          // const childGridId = uuidv4();
+          // let title = popupContent?.modalProps?.title;
+          // const word = '다중선택';
+          // if (title != null && String(title).length > 0) {
+          //   title += ' - ' + word;
+          // } else {
+          //   title = word;
+          // }
+          // await getData(popupContent.params, popupContent.uriPath)
+          //   .then(res => {
+          //     if (typeof res === 'undefined') {
+          //       throw new Error('에러가 발생되었습니다.');
+          //     }
+          //     modal.confirm({
+          //       title,
+          //       width: '80%',
+          //       content: (
+          //         <>
+          //           {popupContent?.searchProps ? (
+          //             <Searchbox {...popupContent.searchProps} />
+          //           ) : null}
+          //           {popupContent?.inputGroupProps ? (
+          //             <InputGroupbox {...popupContent.inputGroupProps} />
+          //           ) : null}
+          //           <Datagrid
+          //             ref={childGridRef}
+          //             gridId={childGridId}
+          //             columns={popupContent.datagridProps.columns}
+          //             gridMode="multi-select"
+          //             data={res}
+          //           />
+          //         </>
+          //       ),
+          //       icon: null,
+          //       okText: '선택',
+          //       onOk: () => {
+          //         const child = childGridRef.current.getInstance();
+          //         const $this = gridRef.current.getInstance();
+          //         const rows = child.getCheckedRows();
+          //         if (onBeforeOk != null) {
+          //           if (
+          //             !onBeforeOk(
+          //               {
+          //                 popupGrid: { ...child },
+          //                 parentGrid: { ...$this },
+          //                 ev: {},
+          //               },
+          //               rows,
+          //             )
+          //           )
+          //             return;
+          //         }
+          //         const planDailyUuid = rows.reduce(
+          //           (acc, cur) => `${acc}${cur.plan_daily_uuid},`,
+          //           '',
+          //         );
+          //         if (planDailyUuid.length > 0) {
+          //           getData(
+          //             { prod_uuid: planDailyUuid.slice(0, -1) },
+          //             '/std/routings/integrated-actived-prod',
+          //           );
+          //         }
+          // rows?.forEach(row => {
+          //   let newRow = {};
+          //   if (typeof row === 'object') {
+          //     updateColumns.forEach(columnName => {
+          //       const column = columns.filter(
+          //         el => el.name === columnName.original,
+          //       )[0];
+          //       newRow[columnName.original] =
+          //         row[columnName.popup] != null
+          //           ? row[columnName.popup]
+          //           : typeof column?.defaultValue === 'function'
+          //           ? column?.defaultValue(props, row)
+          //           : column?.defaultValue;
+          //     });
+          //     onAppendRow(newRow);
+          //   }
+          // });
+          //           if (onAfterOk != null) {
+          //             onAfterOk(
+          //               {
+          //                 popupGrid: { ...child },
+          //                 parentGrid: { ...$this },
+          //                 ev: {},
+          //               },
+          //               rows,
+          //             );
+          //           }
+          //         },
+          //         cancelText: '취소',
+          //         maskClosable: false,
+          //       });
+          //     })
+          //     .catch(e => {
+          //       modal.error({
+          //         icon: null,
+          //         content: <Result type="loadFailed" />,
+          //       });
+          //     });
+          // };
+
+          getDailyWorkPlanModalProps({
             childGridRef,
             columns,
             gridRef,
             props,
-          }) => {
-            const {
-              rowAddPopupInfo,
-            }: {
-              rowAddPopupInfo: {
-                popupKey: TPopupKey;
-                columns: IGridColumn[];
-                dataApiSettings: any;
-                onInterlock: () => void;
-                onAfterOk: () => void;
-                onBeforeOk: () => void;
-                columnNames: any;
-                gridMode: string;
-              };
-            } = {
-              rowAddPopupInfo: {
-                popupKey: null,
-                columns: [...ColumnStore.DAILY_WORK_PLAN],
-                dataApiSettings: {
-                  uriPath: '/prd/plan-daily',
-                  params: {
-                    start_date: getToday(-7),
-                    end_date: getToday(),
-                    wait_task_fg: true,
-                  },
-                },
-                onInterlock: null,
-                onAfterOk: null,
-                onBeforeOk: null,
-                columnNames: [...ORDER_ADD_ROW_POPUP_INFO.columnNames].concat([
-                  { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
-                ]),
-                gridMode: 'multi-select',
-              },
-            };
-
-            let popupContent: IPopupItemsRetrunProps = {
-              datagridProps: {
-                gridId: null,
-                columns: null,
-              },
-              uriPath: null,
-              params: null,
-              modalProps: null,
-            };
-
-            let onBeforeOk = null;
-            let onAfterOk = null;
-
-            if (rowAddPopupInfo.popupKey == null) {
-              popupContent['datagridProps']['columns'] =
-                rowAddPopupInfo.columns;
-            } else {
-              popupContent = getPopupForm(rowAddPopupInfo.popupKey);
-              popupContent['params'] = {};
-            }
-
-            if (typeof rowAddPopupInfo.dataApiSettings === 'function') {
-              const apiSettings = rowAddPopupInfo.dataApiSettings();
-              popupContent = {
-                ...popupContent,
-                ...rowAddPopupInfo,
-                ...apiSettings,
-              };
-
-              if (apiSettings?.onInterlock != null) {
-                const showModal: boolean = apiSettings?.onInterlock();
-                if (!showModal) return;
-              }
-
-              if (apiSettings?.onBeforeOk != null) {
-                onBeforeOk = apiSettings.onBeforeOk;
-              }
-
-              if (apiSettings?.onAfterOk != null) {
-                onAfterOk = apiSettings.onAfterOk;
-              }
-            } else {
-              popupContent = {
-                ...popupContent,
-                ...rowAddPopupInfo,
-                ...rowAddPopupInfo.dataApiSettings,
-                searchProps: {
-                  searchItems: [
-                    {
-                      type: 'date',
-                      id: 'start_date',
-                      label: '지시기간',
-                      default: getToday(-7),
-                    },
-                    { type: 'date', id: 'end_date', default: getToday() },
-                  ],
-                  onSearch: dailyWorkPlanCondition => {
-                    getData(
-                      { ...dailyWorkPlanCondition, wait_task_fg: true },
-                      '/prd/plan-daily',
-                    ).then(res =>
-                      childGridRef.current.getInstance().resetData(res),
-                    );
-                  },
-                  boxShadow: false,
-                },
-              };
-
-              if (rowAddPopupInfo.dataApiSettings?.onInterlock != null) {
-                const showModal: boolean =
-                  rowAddPopupInfo.dataApiSettings?.onInterlock();
-                if (!showModal) return;
-              }
-
-              if (rowAddPopupInfo.dataApiSettings?.onBeforeOk != null) {
-                onBeforeOk = rowAddPopupInfo.dataApiSettings.onBeforeOk;
-              }
-
-              if (rowAddPopupInfo.dataApiSettings?.onAfterOk != null) {
-                onAfterOk = rowAddPopupInfo.dataApiSettings.onAfterOk;
-              }
-            }
-
-            const updateColumns: { original: string; popup: string }[] =
-              rowAddPopupInfo.columnNames;
-            const childGridId = uuidv4();
-
-            let title = popupContent?.modalProps?.title;
-            const word = '다중선택';
-
-            if (title != null && String(title).length > 0) {
-              title += ' - ' + word;
-            } else {
-              title = word;
-            }
-
-            await getData(popupContent.params, popupContent.uriPath)
-              .then(res => {
-                if (typeof res === 'undefined') {
-                  throw new Error('에러가 발생되었습니다.');
-                }
-
-                modal.confirm({
-                  title,
-                  width: '80%',
-                  content: (
-                    <>
-                      {popupContent?.searchProps ? (
-                        <Searchbox {...popupContent.searchProps} />
-                      ) : null}
-                      {popupContent?.inputGroupProps ? (
-                        <InputGroupbox {...popupContent.inputGroupProps} />
-                      ) : null}
-                      <Datagrid
-                        ref={childGridRef}
-                        gridId={childGridId}
-                        columns={popupContent.datagridProps.columns}
-                        gridMode="multi-select"
-                        data={res}
-                      />
-                    </>
-                  ),
-                  icon: null,
-                  okText: '선택',
-                  onOk: () => {
-                    const child = childGridRef.current.getInstance();
-                    const $this = gridRef.current.getInstance();
-                    const rows = child.getCheckedRows();
-
-                    if (onBeforeOk != null) {
-                      if (
-                        !onBeforeOk(
-                          {
-                            popupGrid: { ...child },
-                            parentGrid: { ...$this },
-                            ev: {},
-                          },
-                          rows,
-                        )
-                      )
-                        return;
-                    }
-
-                    console.log({ rows });
-                    const prodUUID = rows.reduce(
-                      (acc, cur) => `${acc}${cur.prod_uuid},`,
-                      '',
-                    );
-
-                    if (prodUUID.length > 0) {
-                      getData(
-                        { prod_uuid: prodUUID.slice(0, -1) },
-                        '/std/routings/integrated-actived-prod',
-                      );
-                    }
-
-                    // rows?.forEach(row => {
-                    //   let newRow = {};
-                    //   if (typeof row === 'object') {
-                    //     updateColumns.forEach(columnName => {
-                    //       const column = columns.filter(
-                    //         el => el.name === columnName.original,
-                    //       )[0];
-                    //       newRow[columnName.original] =
-                    //         row[columnName.popup] != null
-                    //           ? row[columnName.popup]
-                    //           : typeof column?.defaultValue === 'function'
-                    //           ? column?.defaultValue(props, row)
-                    //           : column?.defaultValue;
-                    //     });
-
-                    //     onAppendRow(newRow);
-                    //   }
-                    // });
-
-                    if (onAfterOk != null) {
-                      onAfterOk(
-                        {
-                          popupGrid: { ...child },
-                          parentGrid: { ...$this },
-                          ev: {},
-                        },
-                        rows,
-                      );
-                    }
-                  },
-                  cancelText: '취소',
-                  maskClosable: false,
-                });
-              })
-              .catch(e => {
-                modal.error({
-                  icon: null,
-                  content: <Result type="loadFailed" />,
-                });
-              });
-          };
-          onAddPopupRow({ childGridRef, columns, gridRef, props });
+          }).then(modal.confirm);
         },
       },
     ],
