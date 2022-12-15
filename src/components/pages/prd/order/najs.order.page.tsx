@@ -1,5 +1,5 @@
 import Grid from '@toast-ui/react-grid';
-import { Modal, Spin } from 'antd';
+import { message, Modal, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -311,7 +311,15 @@ export const PgPrdNajsOrder = () => {
     data: data,
     rowAddPopupInfo: {
       ...ModalStore.ORDER_ADD_ROW_POPUP_INFO,
-      gridMode: 'multi-select',
+      dataApiSettings: {
+        ...ModalStore.ORDER_ADD_ROW_POPUP_INFO.dataApiSettings,
+        onInterlock: () => {
+          message.warn(
+            '통합 작업지시 등록화면은 생산계획 불러오기를 이용해주세요',
+          );
+          return false;
+        },
+      },
     },
     gridPopupInfo: ORDER_POPUP_INFO,
     gridComboInfo: [
@@ -588,18 +596,6 @@ export const PgPrdNajsOrder = () => {
           disabled={!permissions?.delete_fg}
         >
           삭제
-        </Button>
-        <Button
-          btnType="buttonFill"
-          widthSize="medium"
-          heightSize="small"
-          fontSize="small"
-          ImageType="edit"
-          colorType="blue"
-          onClick={openEditableOrderModal}
-          disabled={!permissions?.update_fg}
-        >
-          수정
         </Button>
         <Button
           btnType="buttonFill"
