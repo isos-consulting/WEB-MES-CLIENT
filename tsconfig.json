@@ -44,14 +44,13 @@
     "scripts",
     "webpack",
     "jest",
-    "snippets",
-    "tests",
-    "**/*.test.ts"
+    "snippets"
   ],
   "include": [
     // 컴파일할 항목들을 지정합니다.
     "src/typings",
-    "src/**/*"
+    "src/**/*",
+    "tests/**/*"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

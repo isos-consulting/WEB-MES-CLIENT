@@ -7,7 +7,7 @@ const config: Config = {
   verbose: true,
   testEnvironment: 'node',
   transform: {
-    '^.+\\.ts?$': 'ts-jest',
+    '^.+\\.ts?$': '@swc/jest',
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/',
