@@ -19,4 +19,8 @@ export enum WORD {
   UPLOAD = '업로드',
   ECOUNT_INCOME = '구매',
   ECOUNT_OUTGO = '생산 불출',
+  ORDER_DATE_RANGE = '지시기간',
+  WORK_PLAN_DATE_RANGE = '생산계획기간',
+  SELECT = '선택',
+  MULTI_SELECT = '다중선택',
 }

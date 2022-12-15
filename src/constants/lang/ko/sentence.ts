@@ -27,4 +27,9 @@ export enum SENTENCE {
   CLICK_DATA_VALIDATION_BUTTON_BEFORE_UPLOAD = '데이터 검증 버튼을 클릭해주세요',
   CHECK_ERROR_COLUMN_CAUSED_BY_INVALID_DATA = '데이터 검증 결과 오류가 발생한 열을 확인해주세요',
   UPLOAD_COMPLETE = '업로드가 완료되었습니다',
+  WORK_PLAN_LOAD = '생산계획 불러오기',
+  PLEASE_DO_WORK_PLAN_LOAD = '통합 작업지시 등록 화면은 "생산계획 불러오기" 기능을 이용해주세요',
+  PROD_ORDER_REGISTER = '생산계획 등록',
+  LOADING_PERMISSION_INFO = '권한 정보를 불러오는 중입니다',
+  ERROR_OCCURRED = '오류가 발생했습니다',
 }

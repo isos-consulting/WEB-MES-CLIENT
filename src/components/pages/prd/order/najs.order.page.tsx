@@ -32,6 +32,7 @@ import ComboStore from '~/constants/combos';
 import ModalStore from '~/constants/modals';
 import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
 import { FieldStore } from '~/constants/fields';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 type WorkPlanRowAddPopupInfo = {
   popupKey: TPopupKey;
@@ -92,7 +93,7 @@ const getDailyWorkPlanModalProps = async ({
     },
     gridMode: 'multi-select',
     modalProps: {
-      title: '생산계획 - 다중선택',
+      title: `${WORD.WORK_PLAN} - ${WORD.MULTI_SELECT}`,
     },
     onAfterOk: null,
     onBeforeOk: null,
@@ -106,7 +107,7 @@ const getDailyWorkPlanModalProps = async ({
     searchProps: {
       id: 'workPlanSearch',
       searchItems: FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) =>
-        putDueDateFielLabel(field, index, '생산계획일자'),
+        putDueDateFielLabel(field, index, WORD.WORK_PLAN_DATE_RANGE),
       ),
       onSearch: async (
         dailyWorkPlanConditions: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
@@ -126,15 +127,15 @@ const getDailyWorkPlanModalProps = async ({
   const dailyWrokPlans = await getData(params, uriPath);
 
   if (typeof dailyWrokPlans === 'undefined') {
-    throw new Error('에러가 발생되었습니다.');
+    throw new Error(SENTENCE.ERROR_OCCURRED);
   }
 
   return {
     title: modalProps.title,
     width: '80%',
     icon: null,
-    okText: '선택',
-    cancelText: '취소',
+    okText: WORD.SELECT,
+    cancelText: WORD.CANCEL,
     maskClosable: false,
     content: (
       <>
@@ -242,9 +243,7 @@ export const PgPrdNajsOrder = () => {
       dataApiSettings: {
         ...ModalStore.ORDER_ADD_ROW_POPUP_INFO.dataApiSettings,
         onInterlock: () => {
-          message.warn(
-            '통합 작업지시 등록화면은 "생산계획 불러오기" 기능을 이용해주세요',
-          );
+          message.warn(SENTENCE.PLEASE_DO_WORK_PLAN_LOAD);
           return false;
         },
       },
@@ -325,8 +324,8 @@ export const PgPrdNajsOrder = () => {
     onAfterClick: null,
     disabledAutoDateColumn: true,
     popupId: 'NAJS_PROD_ORDER_NEW_MODAL',
-    title: '작업지시 등록',
-    okText: '저장하기',
+    title: SENTENCE.PROD_ORDER_REGISTER,
+    okText: SENTENCE.SAVE_DATA,
     onOk: gridRef => {
       saveGridData(
         getModifiedRows(
@@ -343,7 +342,7 @@ export const PgPrdNajsOrder = () => {
         closeCreatableOrderModal();
       });
     },
-    cancelText: '취소',
+    cancelText: WORD.CANCEL,
     onCancel: closeCreatableOrderModal,
     parentGridRef: gridRef,
     saveType: 'basic',
@@ -358,7 +357,7 @@ export const PgPrdNajsOrder = () => {
     },
     extraButtons: [
       {
-        buttonProps: { text: '생산계획 불러오기', children: '' },
+        buttonProps: { text: SENTENCE.WORK_PLAN_LOAD, children: '' },
         buttonAction: (_ev, props, options) => {
           const { childGridRef, columns, gridRef } = options;
 
@@ -407,7 +406,7 @@ export const PgPrdNajsOrder = () => {
   }, [gridRef, data, permissions]);
 
   return !permissions ? (
-    <Spin spinning={true} tip="권한 정보를 가져오고 있습니다." />
+    <Spin spinning={true} tip={SENTENCE.LOADING_PERMISSION_INFO} />
   ) : (
     <>
       <div
@@ -428,7 +427,7 @@ export const PgPrdNajsOrder = () => {
           onClick={openDeleteDialog}
           disabled={!permissions?.delete_fg}
         >
-          삭제
+          {WORD.DELETE}
         </Button>
         <Button
           btnType="buttonFill"
@@ -440,14 +439,14 @@ export const PgPrdNajsOrder = () => {
           onClick={openCreatableOrderModal}
           disabled={!permissions?.create_fg}
         >
-          신규 추가
+          {SENTENCE.ADD_RECORD}
         </Button>
       </div>
       <Searchbox
         id="prod_order_search"
         innerRef={searchRef}
         searchItems={FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) =>
-          putDueDateFielLabel(field, index, '지시기간'),
+          putDueDateFielLabel(field, index, WORD.ORDER_DATE_RANGE),
         )}
         onSearch={onSearch}
         boxShadow={false}
