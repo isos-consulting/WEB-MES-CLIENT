@@ -102,7 +102,7 @@ const getDailyWorkPlanModalProps = async ({
         {
           type: 'date',
           id: 'start_date',
-          label: '지시기간',
+          label: '생산계획기간',
           default: getToday(-7),
         },
         {
@@ -334,7 +334,7 @@ export const PgPrdNajsOrder = () => {
         ...ModalStore.ORDER_ADD_ROW_POPUP_INFO.dataApiSettings,
         onInterlock: () => {
           message.warn(
-            '통합 작업지시 등록화면은 생산계획 불러오기를 이용해주세요',
+            '통합 작업지시 등록화면은 "생산계획 불러오기" 기능을 이용해주세요',
           );
           return false;
         },
