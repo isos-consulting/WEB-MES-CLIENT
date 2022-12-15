@@ -50,6 +50,15 @@ type WorkPlanRowAddPopupInfo = {
   gridMode: string;
 };
 
+const putDueDateFielLabel = (field, index, replacedLabel) => {
+  if (index === 0)
+    return {
+      ...field,
+      label: replacedLabel,
+    };
+  return field;
+};
+
 const getDailyWorkPlanModalProps = async ({
   childGridRef,
   columns,
@@ -99,14 +108,9 @@ const getDailyWorkPlanModalProps = async ({
     popupKey: null,
     searchProps: {
       id: 'workPlanSearch',
-      searchItems: FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) => {
-        if (index === 0)
-          return {
-            ...field,
-            label: '생산계획기간',
-          };
-        return field;
-      }),
+      searchItems: FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) =>
+        putDueDateFielLabel(field, index, '생산계획일자'),
+      ),
       onSearch: async (
         dailyWorkPlanConditions: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
       ) => {
@@ -624,14 +628,9 @@ export const PgPrdNajsOrder = () => {
       <Searchbox
         id="prod_order_search"
         innerRef={searchRef}
-        searchItems={FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) => {
-          if (index === 0)
-            return {
-              ...field,
-              label: '지시기간',
-            };
-          return field;
-        })}
+        searchItems={FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) =>
+          putDueDateFielLabel(field, index, '지시기간'),
+        )}
         onSearch={onSearch}
         boxShadow={false}
       />
