@@ -8,18 +8,15 @@ import {
   Container,
   Datagrid,
   EDIT_ACTION_CODE,
-  getPopupForm,
   GridPopup,
   IGridColumn,
   IGridPopupColumnInfo,
-  IGridPopupInfo,
   IPopupItemsRetrunProps,
   Searchbox,
   TPopupKey,
 } from '~/components/UI';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
-import { ENUM_WIDTH } from '~/enums';
 import {
   getData,
   getModifiedRows,
@@ -232,98 +229,9 @@ export const PgPrdNajsOrder = () => {
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const ORDER_POPUP_INFO: IGridPopupInfo[] = [
-    {
-      columnNames: [
-        { original: 'routing_resource_uuid', popup: 'routing_resource_uuid' },
-        { original: 'equip_uuid', popup: 'equip_uuid' },
-        { original: 'equip_cd', popup: 'equip_cd' },
-        { original: 'equip_nm', popup: 'equip_nm' },
-      ],
-      columns: [
-        {
-          header: '생산자원UUID',
-          name: 'routing_resource_uuid',
-          alias: 'uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '공장UUID',
-          name: 'factory_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '라우팅UUID',
-          name: 'routing_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '자원 유형',
-          name: 'resource_type',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: '설비UUID',
-          name: 'equip_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '설비명',
-          name: 'equip_nm',
-          width: ENUM_WIDTH.L,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: '인원',
-          name: 'emp_cnt',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: 'Cycle Time',
-          name: 'cycle_time',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-      ],
-      dataApiSettings: {
-        uriPath: 'std/equips',
-        params: {},
-      },
-      gridMode: 'select',
-    },
-    {
-      columnNames: [
-        { original: 'workings_uuid', popup: 'workings_uuid' },
-        { original: 'workings_cd', popup: 'workings_cd' },
-        { original: 'workings_nm', popup: 'workings_nm' },
-      ],
-      columns: getPopupForm('작업장관리')?.datagridProps?.columns,
-      dataApiSettings: {
-        uriPath: getPopupForm('작업장관리')?.uriPath,
-        params: {},
-      },
-      gridMode: 'select',
-    },
-  ];
-
   const gridInfo: IDatagridProps = {
     gridId: 'ORDER_GRID',
     ref: gridRef,
-    height: 300,
     gridMode: 'delete',
     saveUriPath: '/prd/orders',
     searchUriPath: '/prd/orders',
@@ -341,7 +249,10 @@ export const PgPrdNajsOrder = () => {
         },
       },
     },
-    gridPopupInfo: ORDER_POPUP_INFO,
+    gridPopupInfo: [
+      ModalStore.EQUIP_POPUP_INFO,
+      ModalStore.WORKINGS_POPUP_INFO,
+    ],
     gridComboInfo: [
       ComboStore.SHIFT,
       ComboStore.WORKER_GROUP,
@@ -402,7 +313,6 @@ export const PgPrdNajsOrder = () => {
     },
   );
 
-  /** 신규 항목 추가 팝업 속성 */
   const newGridPopupInfo: IGridPopupProps = {
     ...gridInfo,
     gridId: 'ORDER_NEW_GRID',
@@ -461,99 +371,6 @@ export const PgPrdNajsOrder = () => {
         },
       },
     ],
-  };
-
-  const editPopupGridRef = useRef<Grid>();
-  const [editPopupVisible, setEditPopupVisible] = useState(false);
-
-  const closeEditableOrderModal = () => {
-    setEditPopupVisible(false);
-  };
-
-  const editModalDatagridColumnProps = {
-    hidden: ['order_state'],
-    readOnly: ['reg_date'],
-    noSave: [
-      'working_nm',
-      'prod_no',
-      'prod_nm',
-      'prod_type_nm',
-      'item_type_nm',
-      'model_nm',
-      'rev',
-      'prod_std',
-      'unit_nm',
-      'shift_nm',
-    ],
-    multiSelect: ['worker_nm'],
-  };
-
-  const dataGridColumnsInEditModal = ColumnStore.NAJS_PROD_ORDER.map(
-    ({ name, ...columnOpts }) => {
-      const columnInEditModal = { name, ...columnOpts };
-
-      if (editModalDatagridColumnProps.hidden.includes(name)) {
-        columnInEditModal.hidden = true;
-      }
-
-      if (editModalDatagridColumnProps.readOnly.includes(name)) {
-        columnInEditModal.editable = true;
-      }
-
-      if (editModalDatagridColumnProps.noSave.includes(name)) {
-        columnInEditModal.noSave = true;
-      }
-
-      if (editModalDatagridColumnProps.multiSelect.includes(name)) {
-        columnInEditModal.format = 'multi-select';
-      }
-
-      return columnInEditModal;
-    },
-  );
-
-  const editGridPopupInfo: IGridPopupProps = {
-    ...gridInfo,
-    gridId: 'ORDER_EDIT_GRID',
-    ref: editPopupGridRef,
-    gridMode: 'update',
-    columns: dataGridColumnsInEditModal,
-    defaultData: data,
-    data: data,
-    height: null,
-    onAfterClick: null,
-    popupId: 'NAJS_PROD_ORDER_EDIT_MODAL',
-    title: '작업지시 수정',
-    okText: '저장하기',
-    onOk: () => {
-      saveGridData(
-        getModifiedRows(
-          editPopupGridRef,
-          editGridPopupInfo.columns,
-          editGridPopupInfo.data,
-        ),
-        editGridPopupInfo.columns,
-        editGridPopupInfo.saveUriPath,
-        editGridPopupInfo.saveOptionParams,
-      ).then(({ success }) => {
-        if (!success) return;
-        onSearch(searchParams);
-        closeEditableOrderModal();
-      });
-    },
-    cancelText: '취소',
-    onCancel: closeEditableOrderModal,
-    parentGridRef: gridRef,
-    saveType: 'basic',
-    saveUriPath: gridInfo.saveUriPath,
-    searchUriPath: gridInfo.searchUriPath,
-    defaultVisible: false,
-    visible: editPopupVisible,
-    onAfterOk: isSuccess => {
-      if (!isSuccess) return;
-      closeEditableOrderModal();
-      onSearch(searchParams);
-    },
   };
 
   const onSearch = async (orderSearchParams: Record<string, string>) => {
@@ -637,7 +454,6 @@ export const PgPrdNajsOrder = () => {
       />
       <Container>{HeaderGridElement}</Container>
       {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
-      {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
       {contextHolder}
     </>
   );
