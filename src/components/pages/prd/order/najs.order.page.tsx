@@ -172,31 +172,50 @@ const getDailyWorkPlanModalProps = async ({
         props.gridMode,
       );
 
-      const acceptableProdOrders = prodOrdersIncludesBom.map(prodOrder => {
-        let newProdOrdersIncludesBom = {};
-
-        if (typeof prodOrdersIncludesBom === 'object') {
-          columnNames.forEach(columnName => {
-            const column = columns.filter(
-              el => el.name === columnName.original,
-            )[0];
-            newProdOrdersIncludesBom[columnName.original] =
-              prodOrder[columnName.popup] != null
-                ? prodOrder[columnName.popup]
-                : typeof column?.defaultValue === 'function'
-                ? column?.defaultValue(props, prodOrder)
-                : column.defaultValue;
-          });
+      const newProdOrdersIncludesBom = prodOrdersIncludesBom.map(prodOrder => {
+        if (typeof prodOrder !== 'object') {
+          return {
+            [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
+            _attributes: { classNames },
+          };
         }
 
+        const newProdOrder = columnNames.reduce(
+          (newProdOrder, { original, popup }) => {
+            if (popup != null) {
+              return {
+                ...newProdOrder,
+                [original]: prodOrder[popup],
+              };
+            }
+
+            const column = columns.filter(el => el.name === original)[0];
+
+            if (column == null) return newProdOrder;
+            if (column.defaultValue == null) return newProdOrder;
+            if (typeof column.defaultValue === 'function') {
+              return {
+                ...newProdOrder,
+                [original]: column.defaultValue(props, prodOrder),
+              };
+            }
+
+            return {
+              ...newProdOrder,
+              [original]: column.defaultValue,
+            };
+          },
+          {},
+        );
+
         return {
-          ...newProdOrdersIncludesBom,
+          ...newProdOrder,
           [COLUMN_CODE.EDIT]: EDIT_ACTION_CODE.CREATE,
           _attributes: { classNames },
         };
       });
 
-      prodOrderGridInstanceInNewModal.resetData(acceptableProdOrders);
+      prodOrderGridInstanceInNewModal.resetData(newProdOrdersIncludesBom);
     },
   };
 };
@@ -445,10 +464,6 @@ export const PgPrdNajsOrder = () => {
 
   const editPopupGridRef = useRef<Grid>();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
-
-  const openEditableOrderModal = () => {
-    setEditPopupVisible(true);
-  };
 
   const closeEditableOrderModal = () => {
     setEditPopupVisible(false);
