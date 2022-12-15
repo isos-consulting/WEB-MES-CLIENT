@@ -234,7 +234,7 @@ export const PgPrdNajsOrder = () => {
     gridId: 'ORDER_GRID',
     ref: gridRef,
     gridMode: 'delete',
-    saveUriPath: '/prd/orders',
+    saveUriPath: '/prd/orders/total',
     searchUriPath: '/prd/orders',
     columns: ColumnStore.NAJS_PROD_ORDER,
     data: data,
@@ -327,12 +327,20 @@ export const PgPrdNajsOrder = () => {
     title: SENTENCE.PROD_ORDER_REGISTER,
     okText: SENTENCE.SAVE_DATA,
     onOk: gridRef => {
+      const modifiedRows = getModifiedRows(
+        gridRef,
+        newGridPopupInfo.columns,
+        newGridPopupInfo.data,
+      );
+
       saveGridData(
-        getModifiedRows(
-          gridRef,
-          newGridPopupInfo.columns,
-          newGridPopupInfo.data,
-        ),
+        {
+          ...modifiedRows,
+          createdRows: modifiedRows.createdRows.map(row => ({
+            ...row,
+            worker_nm: row.worker_nm?.split(','),
+          })),
+        },
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
         newGridPopupInfo.saveOptionParams,

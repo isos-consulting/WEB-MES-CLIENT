@@ -1619,6 +1619,7 @@ export const ColumnStore: { [key: string]: IGridColumn[] } = {
       name: 'worker_nm',
       width: ENUM_WIDTH.XXL,
       editable: true,
+      alias: 'emp_uuid',
     },
     {
       header: '설비UUID',
