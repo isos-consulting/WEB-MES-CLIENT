@@ -338,7 +338,7 @@ export const PgPrdNajsOrder = () => {
           ...modifiedRows,
           createdRows: modifiedRows.createdRows.map(row => ({
             ...row,
-            worker_nm: row.worker_nm?.split(','),
+            worker_nm: row.worker_nm?.split(',') ?? [],
           })),
         },
         newGridPopupInfo.columns,
