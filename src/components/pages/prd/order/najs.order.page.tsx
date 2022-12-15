@@ -333,7 +333,7 @@ export const PgPrdNajsOrder = () => {
         newGridPopupInfo.data,
       );
 
-      const workerNameSplitedRows = createdRows.createdRows.map(row => ({
+      const workerNameSplitedRows = createdRows.map(row => ({
         ...row,
         worker_nm: row.worker_nm?.split(',') ?? [],
       }));
