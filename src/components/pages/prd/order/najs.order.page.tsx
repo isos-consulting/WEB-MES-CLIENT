@@ -324,7 +324,7 @@ export const PgPrdNajsOrder = () => {
     onAfterClick: null,
     disabledAutoDateColumn: true,
     popupId: 'NAJS_PROD_ORDER_NEW_MODAL',
-    title: SENTENCE.PROD_ORDER_REGISTER,
+    title: SENTENCE.CHILD_PROD_ORDER_REGISTER,
     okText: SENTENCE.SAVE_DATA,
     onOk: gridRef => {
       const { createdRows, ...otherRows } = getModifiedRows(

@@ -30,6 +30,7 @@ export enum SENTENCE {
   WORK_PLAN_LOAD = '생산계획 불러오기',
   PLEASE_DO_WORK_PLAN_LOAD = '통합 작업지시 등록 화면은 "생산계획 불러오기" 기능을 이용해주세요',
   PROD_ORDER_REGISTER = '작업지시 등록',
+  CHILD_PROD_ORDER_REGISTER = '하위작업지시 등록',
   LOADING_PERMISSION_INFO = '권한 정보를 불러오는 중입니다',
   ERROR_OCCURRED = '오류가 발생했습니다',
 }
