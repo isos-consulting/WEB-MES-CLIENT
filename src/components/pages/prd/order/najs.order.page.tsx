@@ -191,8 +191,9 @@ const getDailyWorkPlanModalProps = async ({
 
             const column = columns.filter(el => el.name === original)[0];
 
-            if (column == null) return newProdOrder;
-            if (column.defaultValue == null) return newProdOrder;
+            if (column == null) throw new Error('DataGrid Column null');
+            if (column.defaultValue == null)
+              throw new Error('DataGrid Column defaultValue Key null');
             if (typeof column.defaultValue === 'function') {
               return {
                 ...newProdOrder,
