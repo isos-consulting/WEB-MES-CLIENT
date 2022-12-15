@@ -34,6 +34,7 @@ import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 import ModalStore from '~/constants/modals';
 import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
+import { FieldStore } from '~/constants/fields';
 
 type WorkPlanRowAddPopupInfo = {
   popupKey: TPopupKey;
@@ -98,19 +99,14 @@ const getDailyWorkPlanModalProps = async ({
     popupKey: null,
     searchProps: {
       id: 'workPlanSearch',
-      searchItems: [
-        {
-          type: 'date',
-          id: 'start_date',
-          label: '생산계획기간',
-          default: getToday(-7),
-        },
-        {
-          type: 'date',
-          id: 'end_date',
-          default: getToday(),
-        },
-      ],
+      searchItems: FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) => {
+        if (index === 0)
+          return {
+            ...field,
+            label: '생산계획기간',
+          };
+        return field;
+      }),
       onSearch: async (
         dailyWorkPlanConditions: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
       ) => {
@@ -628,15 +624,14 @@ export const PgPrdNajsOrder = () => {
       <Searchbox
         id="prod_order_search"
         innerRef={searchRef}
-        searchItems={[
-          {
-            type: 'date',
-            id: 'start_date',
-            label: '지시기간',
-            default: getToday(-7),
-          },
-          { type: 'date', id: 'end_date', default: getToday() },
-        ]}
+        searchItems={FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) => {
+          if (index === 0)
+            return {
+              ...field,
+              label: '지시기간',
+            };
+          return field;
+        })}
         onSearch={onSearch}
         boxShadow={false}
       />
