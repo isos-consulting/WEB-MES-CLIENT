@@ -327,19 +327,21 @@ export const PgPrdNajsOrder = () => {
     title: SENTENCE.PROD_ORDER_REGISTER,
     okText: SENTENCE.SAVE_DATA,
     onOk: gridRef => {
-      const modifiedRows = getModifiedRows(
+      const { createdRows, ...otherRows } = getModifiedRows(
         gridRef,
         newGridPopupInfo.columns,
         newGridPopupInfo.data,
       );
 
+      const workerNameSplitedRows = createdRows.createdRows.map(row => ({
+        ...row,
+        worker_nm: row.worker_nm?.split(',') ?? [],
+      }));
+
       saveGridData(
         {
-          ...modifiedRows,
-          createdRows: modifiedRows.createdRows.map(row => ({
-            ...row,
-            worker_nm: row.worker_nm?.split(',') ?? [],
-          })),
+          ...otherRows,
+          createdRows: workerNameSplitedRows,
         },
         newGridPopupInfo.columns,
         newGridPopupInfo.saveUriPath,
@@ -398,7 +400,7 @@ export const PgPrdNajsOrder = () => {
       'basic',
       gridRef,
       gridInfo.columns,
-      gridInfo.saveUriPath,
+      '/prd/orders',
       gridInfo.saveOptionParams,
       modal,
       ({ success }) => {
