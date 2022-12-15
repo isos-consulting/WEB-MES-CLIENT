@@ -8,6 +8,13 @@ type ClassNames = {
   column: object;
 };
 
+const getColumnAttributesValues = (gridMode, editable, format) => {
+  if (editable === false || editable == null) return [gridMode];
+  if (format === 'popup') return [gridMode, 'editor', 'popup'];
+
+  return [gridMode, 'editor'];
+};
+
 export const injectClassNameAttributesInColumn = (
   columns: IGridColumn[],
   gridMode: TGridMode,
@@ -16,20 +23,10 @@ export const injectClassNameAttributesInColumn = (
     (columnAttributes, { name, editable, format }) => {
       if (name === COLUMN_CODE.EDIT) return columnAttributes;
 
-      if (editable === false || editable == null) {
-        columnAttributes[name] = [gridMode];
-        return columnAttributes;
-      }
-
-      if (format === 'popup') {
-        columnAttributes[name] = [gridMode, 'editor', 'popup'];
-
-        return columnAttributes;
-      }
-
-      columnAttributes[name] = [gridMode, 'editor'];
-
-      return columnAttributes;
+      return {
+        ...columnAttributes,
+        [name]: getColumnAttributesValues(gridMode, editable, format),
+      };
     },
     {},
   );
