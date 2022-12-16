@@ -367,6 +367,7 @@ export const PgPrdNajsOrder = () => {
     },
     extraButtons: [
       {
+        align: 'right',
         buttonProps: { text: SENTENCE.WORK_PLAN_LOAD, children: '' },
         buttonAction: (_ev, props, options) => {
           const { childGridRef, columns, gridRef } = options;
@@ -377,6 +378,35 @@ export const PgPrdNajsOrder = () => {
             gridRef,
             props,
           }).then(modal.confirm);
+        },
+      },
+      {
+        align: 'right',
+        buttonProps: { text: '행취소' },
+        buttonAction: (_ev, props, { gridRef }) => {
+          const prodOrderGrid = gridRef.current.getInstance();
+          const { rowKey, columnName } = prodOrderGrid.getFocusedCell();
+          const rowIndex = prodOrderGrid.getIndexOfRow(rowKey);
+          const columns = prodOrderGrid.store.column.visibleColumns;
+          const columnIndex = columns.findIndex(
+            column => column.name === columnName,
+          );
+
+          if (rowKey == null) {
+            message.warn('취소할 행을 선택해주세요');
+            return;
+          }
+
+          prodOrderGrid.removeRow(rowKey, { removeOriginalData: false });
+
+          if (prodOrderGrid.getRowCount() <= 0) return;
+
+          if (Number(rowIndex) - 1 < 0) {
+            prodOrderGrid.focusAt(0, columnIndex);
+            return;
+          }
+
+          prodOrderGrid.focusAt(Number(rowIndex) - 1, columnIndex);
         },
       },
     ],
@@ -496,7 +526,9 @@ export const PgPrdNajsOrder = () => {
         boxShadow={false}
       />
       <Container>{HeaderGridElement}</Container>
-      {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
+      {newPopupVisible ? (
+        <GridPopup {...{ ...newGridPopupInfo, hiddenActionButtons: true }} />
+      ) : null}
       {contextHolder}
     </>
   );
