@@ -1,7 +1,25 @@
 import { IGridColumn } from '~/components/UI';
 import { ENUM_WIDTH, ENUM_DECIMAL } from '~/enums';
 
-export const ColumnStore: { [key: string]: IGridColumn[] } = {
+type ColumnRecordKeys =
+  | 'WORK_TYPE'
+  | 'WORK_CALENDAR'
+  | 'WORK_TIME_TYPE'
+  | 'WORK_TIME'
+  | 'WORK_PERFORMANCE'
+  | 'PROD_ORDER'
+  | 'WORK_ROUTING_HISTORY'
+  | 'WORK_PLAN'
+  | 'DAILY_WORK_PLAN'
+  | 'INSP_CLONE'
+  | 'INCOME_STORE_ECOUNT_INTERFACE'
+  | 'OUT_STORE_ECOUNT_INTERFACE'
+  | 'REWORK_REPORT_HEADER'
+  | 'REWORK_REPORT_DETAIL'
+  | 'EXCEL_INVALID_ERROR'
+  | 'NAJS_PROD_ORDER';
+
+export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
   WORK_TYPE: [
     {
       header: '',
