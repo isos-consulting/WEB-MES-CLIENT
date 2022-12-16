@@ -392,7 +392,41 @@ export const PgPrdNajsOrder = () => {
         gridInfo.searchUriPath,
       )) ?? [];
 
-    setData(findedOrderDatas);
+    if (!findedOrderDatas.length) {
+      setData([]);
+      return;
+    }
+
+    const orderUuids = `${findedOrderDatas.reduce(
+      (orderUuid, order) => `${orderUuid}${order.order_uuid},`,
+      '',
+    )}`.slice(0, -1);
+
+    const workers = await getData(
+      { order_uuid: orderUuids },
+      'prd/order-workers/total',
+    );
+
+    if (workers.length === 0) {
+      setData(findedOrderDatas);
+      return;
+    }
+
+    const workerInjectedOrders = findedOrderDatas.map(order => {
+      const findedWorkers = workers?.filter(
+        worker => worker.order_uuid === order.order_uuid,
+      );
+      const workerNames = findedWorkers
+        ?.map(worker => worker.emp_nm)
+        ?.join(',');
+
+      return {
+        ...order,
+        worker_nm: workerNames,
+      };
+    });
+
+    setData(workerInjectedOrders);
   };
 
   const openDeleteDialog = () => {
