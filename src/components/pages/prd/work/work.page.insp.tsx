@@ -24,7 +24,7 @@ import {
   IInputGroupboxItem,
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
-import { ENUM_DECIMAL } from '~/enums';
+import { ColumnStore } from '~/constants/columns';
 import {
   cloneObject,
   executeData,
@@ -76,111 +76,10 @@ export const INSP = () => {
   const SAVE_URI_PATH = '/qms/proc/insp-results';
 
   // 팝업 관련 설정
-  // const popupGridRef = useRef<Grid>();
-  // const popupInputRef = useRef<FormikProps<FormikValues>>();
   const [createPopupVisible, setCreatePopupVisible] = useState<boolean>(false);
   const [editPopupVisible, setEditPopupVisible] = useState<boolean>(false);
 
   //#endregion
-
-  //#region 🚫컬럼정보
-  const INSP_COLUMNS: IGridColumn[] = [
-    {
-      header: '검사성적서UUID',
-      name: 'insp_result_uuid',
-      alias: 'uuid',
-      width: 200,
-      hidden: true,
-    },
-    { header: '검사유형코드', name: 'insp_type_cd', width: 200, hidden: true },
-    { header: '검사유형명', name: 'insp_type_nm', width: 120, hidden: true },
-    {
-      header: '검사유형',
-      name: 'insp_detail_type_nm',
-      width: 120,
-      hidden: false,
-    },
-    { header: '생산실적UUID', name: 'work_uuid', width: 200, hidden: true },
-    { header: '차수', name: 'seq', width: 80, hidden: false },
-    { header: '검사기준서UUID', name: 'insp_uuid', width: 200, hidden: true },
-    { header: '검사기준서 번호', name: 'insp_no', width: 200, hidden: true },
-    { header: '검사일시', name: 'reg_date', width: 100, hidden: false },
-    { header: '검사자UUID', name: 'emp_uuid', width: 100, hidden: true },
-    { header: '검사자', name: 'emp_nm', width: 100, hidden: false },
-    { header: '판정여부', name: 'insp_result_fg', width: 100, hidden: true },
-    { header: '판정', name: 'insp_result_state', width: 100, hidden: false },
-    { header: '비고', name: 'remark', width: 150, hidden: false },
-  ];
-
-  const INSP_DETAIL_BASIC_COLUMNS: IGridColumn[] = [
-    {
-      header: '검사성적서 상세정보UUID',
-      name: 'insp_result_detail_info_uuid',
-      alias: 'uuid',
-      width: 200,
-      hidden: true,
-    },
-    {
-      header: '검사성적서UUID',
-      name: 'insp_result_uuid',
-      width: 200,
-      hidden: true,
-    },
-    {
-      header: '검사기준서 상세UUID',
-      name: 'insp_detail_uuid',
-      width: 200,
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형UUID',
-      name: 'insp_item_type_uuid',
-      width: 200,
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형명',
-      name: 'insp_item_type_nm',
-      width: 120,
-      hidden: false,
-    },
-    {
-      header: '검사항목UUID',
-      name: 'insp_item_uuid',
-      width: 200,
-      hidden: true,
-    },
-    { header: '검사항목명', name: 'insp_item_nm', width: 120, hidden: false },
-    { header: '검사 기준', name: 'spec_std', width: 120, hidden: false },
-    {
-      header: '최소 값',
-      name: 'spec_min',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
-    },
-    {
-      header: '최대 값',
-      name: 'spec_max',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
-    },
-    {
-      header: '검사방법UUID',
-      name: 'insp_method_uuid',
-      width: 120,
-      hidden: true,
-    },
-    { header: '검사방법명', name: 'insp_method_nm', width: 120, hidden: false },
-    { header: '검사구UUID', name: 'insp_tool_uuid', width: 120, hidden: true },
-    { header: '검사구명', name: 'insp_tool_nm', width: 120, hidden: false },
-    { header: '정렬', name: 'sortby', width: 120, hidden: true },
-    { header: '시료 수량', name: 'sample_cnt', width: 100, hidden: false },
-    { header: '검사 주기', name: 'insp_cycle', width: 100, hidden: false },
-  ];
 
   const INSP_DETAIL_HEADER = {
     height: 60,
@@ -200,7 +99,7 @@ export const INSP = () => {
 
   const detailGrid = useGrid(
     'WORK_INSP_DETAIL_GRID',
-    INSP_DETAIL_BASIC_COLUMNS,
+    ColumnStore.WORK_INSP_DETAIL,
     {
       gridMode: defaultDetailGridMode,
       header: INSP_DETAIL_HEADER,
@@ -208,7 +107,7 @@ export const INSP = () => {
   );
 
   const createInspDetailColumns = (maxSampleCnt: number) => {
-    let items: IGridColumn[] = cloneDeep(INSP_DETAIL_BASIC_COLUMNS);
+    let items: IGridColumn[] = cloneDeep(ColumnStore.WORK_INSP_DETAIL);
 
     if (maxSampleCnt > 0) {
       //시료수 최대값에 따라 컬럼 생성
@@ -505,7 +404,7 @@ export const INSP = () => {
   );
   const createPopupGrid = useGrid(
     'WORK_INSP_CREATE_POPUP_GRID',
-    INSP_DETAIL_BASIC_COLUMNS,
+    ColumnStore.WORK_INSP_DETAIL,
     {
       header: INSP_DETAIL_HEADER,
       hiddenActionButtons: true,
@@ -521,7 +420,7 @@ export const INSP = () => {
   );
   const editPopupGrid = useGrid(
     'WORK_INSP_EDIT_POPUP_GRID',
-    INSP_DETAIL_BASIC_COLUMNS,
+    ColumnStore.WORK_INSP_DETAIL,
     {
       header: INSP_DETAIL_HEADER,
       hiddenActionButtons: true,
@@ -604,7 +503,7 @@ export const INSP = () => {
     onDefaultGridSave(
       'basic',
       gridRef,
-      INSP_COLUMNS,
+      ColumnStore.WORK_INSP,
       SAVE_URI_PATH,
       {},
       modal,
@@ -802,8 +701,6 @@ export const INSP = () => {
         setSelectedRow(row);
       } catch (e) {
         console.log(e);
-      } finally {
-        // this is for the case when the user clicks on the header row
       }
     }
   };
@@ -856,14 +753,13 @@ export const INSP = () => {
             </Button>
           </Space>
         </div>
-        <p />
         <Row gutter={[16, 0]} style={{ minHeight: 452, maxHeight: 452 }}>
           <Col span={8}>
             <Datagrid
               gridId={TAB_CODE.workInsp + '_GRID'}
               ref={gridRef}
               gridMode={headerGridMode}
-              columns={INSP_COLUMNS}
+              columns={ColumnStore.WORK_INSP}
               data={headerData}
               height={420}
               onAfterChange={ev =>
@@ -987,31 +883,22 @@ export const INSP = () => {
 
   return {
     component,
-
     onReset,
     onSearch,
-
     gridRef,
     detailGrid,
-
     headerGridMode,
     setHeaderGridMode,
-
     detailGridMode: detailGrid.gridInfo.gridMode,
     setDetailGridMode: detailGrid.setGridMode,
-
     headerData,
     setHeaderData,
-
     detailData: detailGrid.gridInfo.data,
     setDetailData: detailGrid.setGridData,
-
     headerSaveOptionParams,
     setHeaderSaveOptionParams,
-
     detailSaveOptionParams,
     setDetailSaveOptionParams,
-
     HEADER_SEARCH_URI_PATH,
     DETAIL_STD_SEARCH_URI_PATH,
     DETAIL_SEARCH_URI_PATH,

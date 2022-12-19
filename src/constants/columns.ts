@@ -17,7 +17,9 @@ type ColumnRecordKeys =
   | 'REWORK_REPORT_HEADER'
   | 'REWORK_REPORT_DETAIL'
   | 'EXCEL_INVALID_ERROR'
-  | 'NAJS_PROD_ORDER';
+  | 'NAJS_PROD_ORDER'
+  | 'WORK_INSP'
+  | 'WORK_INSP_DETAIL';
 
 export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
   WORK_TYPE: [
@@ -1674,5 +1676,101 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       hidden: true,
       format: 'check',
     },
+  ],
+  WORK_INSP: [
+    {
+      header: '검사성적서UUID',
+      name: 'insp_result_uuid',
+      alias: 'uuid',
+      width: 200,
+      hidden: true,
+    },
+    { header: '검사유형코드', name: 'insp_type_cd', width: 200, hidden: true },
+    { header: '검사유형명', name: 'insp_type_nm', width: 120, hidden: true },
+    {
+      header: '검사유형',
+      name: 'insp_detail_type_nm',
+      width: 120,
+      hidden: false,
+    },
+    { header: '생산실적UUID', name: 'work_uuid', width: 200, hidden: true },
+    { header: '차수', name: 'seq', width: 80, hidden: false },
+    { header: '검사기준서UUID', name: 'insp_uuid', width: 200, hidden: true },
+    { header: '검사기준서 번호', name: 'insp_no', width: 200, hidden: true },
+    { header: '검사일시', name: 'reg_date', width: 100, hidden: false },
+    { header: '검사자UUID', name: 'emp_uuid', width: 100, hidden: true },
+    { header: '검사자', name: 'emp_nm', width: 100, hidden: false },
+    { header: '판정여부', name: 'insp_result_fg', width: 100, hidden: true },
+    { header: '판정', name: 'insp_result_state', width: 100, hidden: false },
+    { header: '비고', name: 'remark', width: 150, hidden: false },
+  ],
+  WORK_INSP_DETAIL: [
+    {
+      header: '검사성적서 상세정보UUID',
+      name: 'insp_result_detail_info_uuid',
+      alias: 'uuid',
+      width: 200,
+      hidden: true,
+    },
+    {
+      header: '검사성적서UUID',
+      name: 'insp_result_uuid',
+      width: 200,
+      hidden: true,
+    },
+    {
+      header: '검사기준서 상세UUID',
+      name: 'insp_detail_uuid',
+      width: 200,
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형UUID',
+      name: 'insp_item_type_uuid',
+      width: 200,
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형명',
+      name: 'insp_item_type_nm',
+      width: 120,
+      hidden: false,
+    },
+    {
+      header: '검사항목UUID',
+      name: 'insp_item_uuid',
+      width: 200,
+      hidden: true,
+    },
+    { header: '검사항목명', name: 'insp_item_nm', width: 120, hidden: false },
+    { header: '검사 기준', name: 'spec_std', width: 120, hidden: false },
+    {
+      header: '최소 값',
+      name: 'spec_min',
+      width: 100,
+      hidden: false,
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
+    },
+    {
+      header: '최대 값',
+      name: 'spec_max',
+      width: 100,
+      hidden: false,
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
+    },
+    {
+      header: '검사방법UUID',
+      name: 'insp_method_uuid',
+      width: 120,
+      hidden: true,
+    },
+    { header: '검사방법명', name: 'insp_method_nm', width: 120, hidden: false },
+    { header: '검사구UUID', name: 'insp_tool_uuid', width: 120, hidden: true },
+    { header: '검사구명', name: 'insp_tool_nm', width: 120, hidden: false },
+    { header: '정렬', name: 'sortby', width: 120, hidden: true },
+    { header: '시료 수량', name: 'sample_cnt', width: 100, hidden: false },
+    { header: '검사 주기', name: 'insp_cycle', width: 100, hidden: false },
   ],
 };
