@@ -166,8 +166,16 @@ export const INSP = () => {
     return items;
   };
 
-  const onAfterChange = (ev: any, { gridInstance, inputInstance }) => {
-    const { origin, changes, instance } = ev;
+  type InsepctionDataGridOnChangeEvent = {
+    origin: string;
+    changes: Array<{ columnName: string; rowKey: number; value: any }>;
+    instance: any;
+  };
+
+  const calculateResultForInspectionSample = (
+    { origin, changes, instance }: InsepctionDataGridOnChangeEvent,
+    { gridInstance, inputInstance },
+  ) => {
     if (changes.length === 0) return;
 
     const { columnName, rowKey, value } = changes[0];
@@ -184,7 +192,7 @@ export const INSP = () => {
     const specMin = rowData?.spec_min;
     const specMax = rowData?.spec_max;
 
-    let sampleCnt: any = rowData?.sample_cnt; //입력 가능한 시료수
+    let sampleCnt: any = rowData?.sample_cnt;
     let nullFg: boolean = true;
     let resultFg: boolean = true;
     let emptyFg: boolean;
@@ -763,7 +771,7 @@ export const INSP = () => {
               data={headerData}
               height={420}
               onAfterChange={ev =>
-                onAfterChange(ev, {
+                calculateResultForInspectionSample(ev, {
                   gridInstance: gridRef?.current?.getInstance(),
                   inputInstance: inputRef?.current,
                 })
@@ -818,7 +826,7 @@ export const INSP = () => {
             innerRef: createPopupInput.ref,
           }}
           onAfterChange={ev =>
-            onAfterChange(ev, {
+            calculateResultForInspectionSample(ev, {
               gridInstance: createPopupGrid.gridInstance,
               inputInstance: createPopupInput.instance,
             })
@@ -863,7 +871,7 @@ export const INSP = () => {
             innerRef: editPopupInput.ref,
           }}
           onAfterChange={ev =>
-            onAfterChange(ev, {
+            calculateResultForInspectionSample(ev, {
               gridInstance: editPopupGrid.gridInstance,
               inputInstance: editPopupInput.instance,
             })
