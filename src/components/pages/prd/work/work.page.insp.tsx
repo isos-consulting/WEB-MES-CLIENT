@@ -39,6 +39,10 @@ import {
   isNumber,
 } from '~/functions';
 import { onDefaultGridSave } from '.';
+import {
+  extract_insp_ItemEntriesAtCounts,
+  isColumnNameNotIncludes_insp_value,
+} from './proc-inspection/proc-inspection-service';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
 //#region 🔶🚫공정검사
@@ -176,15 +180,12 @@ export const INSP = () => {
     { origin, changes, instance }: InsepctionDataGridOnChangeEvent,
     { gridInstance, inputInstance },
   ) => {
-    if (changes.length === 0) return;
+    if (isColumnNameNotIncludes_insp_value(changes)) return;
+
+    const inspections = instance.getData();
+    const extractedInspections = extract_insp_ItemEntriesAtCounts(inspections);
 
     const { columnName, rowKey, value } = changes[0];
-
-    if (
-      !['cell', 'delete', 'paste'].includes(origin) ||
-      !columnName?.includes('_insp_value')
-    )
-      return;
 
     const { rawData } = instance?.store?.data;
     const rowData = rawData[rowKey];
