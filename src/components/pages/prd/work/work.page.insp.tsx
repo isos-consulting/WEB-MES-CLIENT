@@ -41,7 +41,12 @@ import {
 import { onDefaultGridSave } from '.';
 import {
   extract_insp_ItemEntriesAtCounts,
-  isColumnNameNotIncludes_insp_value,
+  getInspectItems,
+  getInspectResult,
+  getInspectSamples,
+  getSampleIndex,
+  isColumnNameEndWith_insp_value,
+  isColumnNamesNotEndWith_insp_value,
 } from './proc-inspection/proc-inspection-service';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -180,11 +185,28 @@ export const INSP = () => {
     { origin, changes, instance }: InsepctionDataGridOnChangeEvent,
     { gridInstance, inputInstance },
   ) => {
-    if (isColumnNameNotIncludes_insp_value(changes)) return;
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
     const inspections = instance.getData();
+    const ranges = inspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
     const extractedInspections = extract_insp_ItemEntriesAtCounts(inspections);
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      ranges,
+    );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
+    changes.forEach(({ rowKey, columnName }) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const cellIndex = getSampleIndex(columnName);
+
+        console.log('sampleResult', inspectionSampleResults[rowKey][cellIndex]);
+      }
+    });
     const { columnName, rowKey, value } = changes[0];
 
     const { rawData } = instance?.store?.data;
