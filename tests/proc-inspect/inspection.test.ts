@@ -2,7 +2,10 @@ import {
   extract_insp_ItemEntriesAtCounts,
   getInspectItems,
   getInspectResult,
+  getInspectResultText,
   getInspectSamples,
+  getInspectTool,
+  getRangeNumberResults,
   getSampleIndex,
   isColumnNamesNotEndWith_insp_value,
 } from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
@@ -143,4 +146,37 @@ test('검사 시료 x1_insp_value의 인덱스는 0을 반환한다', () => {
   const zeroIndex = getSampleIndex(zeroIndexSample);
 
   expect(zeroIndex).toEqual(0);
+});
+
+test('검사 결과가 null이면 검사 결과 텍스트는 null을 반환한다', () => {
+  const nullResult = null;
+
+  const nullResultText = getInspectResultText(nullResult);
+
+  expect(nullResultText).toEqual(null);
+});
+
+test('검사 결과가 true이면 검사 결과 텍스트는 "합격"을 반환한다', () => {
+  const trueResult = true;
+
+  const trueResultText = getInspectResultText(trueResult);
+
+  expect(trueResultText).toEqual('합격');
+});
+
+test('검사 결과가 false이면 검사 결과 텍스트는 "불합격"을 반환한다', () => {
+  const falseResult = false;
+
+  const falseResultText = getInspectResultText(falseResult);
+
+  expect(falseResultText).toEqual('불합격');
+});
+
+test('검사 범위의 최소값과 최대값이 전부 숫자가 아니면 육안 검사 도구를 반환한다', () => {
+  const nonNumericRange = getRangeNumberResults({ min: 'x', max: 'a' });
+  console.log({ nonNumericRange });
+
+  const nonNumericRangeTool = getInspectTool(nonNumericRange);
+
+  expect(nonNumericRangeTool).toEqual('string');
 });

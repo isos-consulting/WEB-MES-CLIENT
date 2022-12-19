@@ -29,24 +29,24 @@ import {
   cloneObject,
   executeData,
   getData,
-  getInspCheckResultInfo,
-  getInspCheckResultTotal,
-  getInspCheckResultValue,
   getPageName,
   getPermissions,
   getToday,
   getUserFactoryUuid,
-  isNumber,
 } from '~/functions';
 import { onDefaultGridSave } from '.';
 import {
   extract_insp_ItemEntriesAtCounts,
+  getEyeInspectionValueText,
   getInspectItems,
   getInspectResult,
+  getInspectResultText,
   getInspectSamples,
+  getRangeNumberResults,
   getSampleIndex,
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
+  isRangeAllNotNumber,
 } from './proc-inspection/proc-inspection-service';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -177,13 +177,18 @@ export const INSP = () => {
 
   type InsepctionDataGridOnChangeEvent = {
     origin: string;
-    changes: Array<{ columnName: string; rowKey: number; value: any }>;
+    changes: { columnName: string; rowKey: number; value: any }[];
     instance: any;
   };
 
+  type InspectionSampleComponentInstances = {
+    gridInstance: any;
+    inputInstance: any;
+  };
+
   const calculateResultForInspectionSample = (
-    { origin, changes, instance }: InsepctionDataGridOnChangeEvent,
-    { gridInstance, inputInstance },
+    { changes, instance }: InsepctionDataGridOnChangeEvent,
+    { inputInstance }: InspectionSampleComponentInstances,
   ) => {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
@@ -200,115 +205,40 @@ export const INSP = () => {
     const inspectionItemResults = getInspectItems(inspectionSampleResults);
     const inspectionResult = getInspectResult(inspectionItemResults);
 
-    changes.forEach(({ rowKey, columnName }) => {
+    for (const { rowKey, columnName } of changes) {
       if (isColumnNameEndWith_insp_value(columnName)) {
-        const cellIndex = getSampleIndex(columnName);
+        const sampleIndex = getSampleIndex(columnName);
+        const result = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberMinMaxFlags = getRangeNumberResults(ranges[rowKey]);
+        const eyeInsectValueText = getEyeInspectionValueText(result);
 
-        console.log('sampleResult', inspectionSampleResults[rowKey][cellIndex]);
+        const uiMappableModel = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: result,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(result),
+        };
+
+        for (const [key, value] of Object.entries(uiMappableModel)) {
+          instance.setValue(rowKey, key, value);
+        }
+
+        if (isRangeAllNotNumber(isNumberMinMaxFlags) && eyeInsectValueText) {
+          instance.setValue(rowKey, columnName, eyeInsectValueText);
+        }
       }
+    }
+
+    inspectionItemResults.forEach((item, index) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
     });
-    const { columnName, rowKey, value } = changes[0];
 
-    const { rawData } = instance?.store?.data;
-    const rowData = rawData[rowKey];
-
-    const specMin = rowData?.spec_min;
-    const specMax = rowData?.spec_max;
-
-    let sampleCnt: any = rowData?.sample_cnt;
-    let nullFg: boolean = true;
-    let resultFg: boolean = true;
-    let emptyFg: boolean;
-
-    const popupGridInstance = gridInstance;
-    const popupInputboxInstance = inputInstance;
-
-    //#region ✅CELL단위 합/불 판정
-    [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-    const cellFlagColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_fg',
+    inputInstance.setFieldValue('insp_result_fg', inspectionResult);
+    inputInstance.setFieldValue(
+      'insp_result_state',
+      getInspectResultText(inspectionResult),
     );
-    const cellStateColumnName = String(columnName)?.replace(
-      '_insp_value',
-      '_insp_result_state',
-    );
-    const cellFlagResultValue = nullFg ? null : resultFg;
-    const cellStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    if (!isNumber(specMin) && !isNumber(specMax)) {
-      if (resultFg === true) {
-        popupGridInstance?.setValue(rowKey, columnName, 'OK');
-      } else if (resultFg === false) {
-        popupGridInstance?.setValue(rowKey, columnName, 'NG');
-      }
-    }
-
-    popupGridInstance?.setValue(
-      rowKey,
-      cellFlagColumnName,
-      cellFlagResultValue,
-    );
-    popupGridInstance?.setValue(
-      rowKey,
-      cellStateColumnName,
-      cellStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅ROW단위 합/불 판정
-    if (resultFg === true) {
-      // 현재 값이 합격일 경우만 다른 cell의 판정값 체크
-      [nullFg, resultFg] = getInspCheckResultInfo(rowData, rowKey, {
-        maxCnt: sampleCnt,
-      });
-    }
-
-    const rowFlagColumnName = 'insp_result_fg';
-    const rowStateColumnName = 'insp_result_state';
-    const rowFlagResultValue = nullFg ? null : resultFg;
-    const rowStateResultValue = nullFg ? '' : resultFg ? '합격' : '불합격';
-
-    popupGridInstance?.setValue(rowKey, rowFlagColumnName, rowFlagResultValue);
-    popupGridInstance?.setValue(
-      rowKey,
-      rowStateColumnName,
-      rowStateResultValue,
-    );
-    //#endregion
-
-    //#region ✅최종 합/불 판정
-    const maxRowCnt = popupGridInstance?.getRowCount() - 1;
-    if (resultFg === true) {
-      [nullFg, resultFg, emptyFg] = getInspCheckResultTotal(rawData, maxRowCnt);
-    } else {
-      [nullFg, resultFg] = [false, false];
-    }
-
-    const flagInputboxName = rowFlagColumnName;
-    const stateInputboxName = rowStateColumnName;
-    const flagInputboxValue = emptyFg
-      ? null
-      : !resultFg
-      ? false
-      : nullFg
-      ? null
-      : resultFg;
-    const stateInputboxValue = emptyFg
-      ? ''
-      : !resultFg
-      ? '불합격'
-      : nullFg
-      ? '진행중'
-      : '합격';
-
-    popupInputboxInstance?.setFieldValue(flagInputboxName, flagInputboxValue);
-    popupInputboxInstance?.setFieldValue(stateInputboxName, stateInputboxValue);
-    //#endregion
   };
-
-  //#endregion
 
   type GetMaxSampleCntParams = {
     insp_detail_type_uuid: string;
