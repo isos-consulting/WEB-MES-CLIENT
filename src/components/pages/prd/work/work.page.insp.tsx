@@ -1,6 +1,5 @@
 import Grid from '@toast-ui/react-grid';
-import { Space, Col, Row, message, Spin, Modal } from 'antd';
-import dayjs from 'dayjs';
+import { Col, message, Modal, Row, Space, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
 import React, {
@@ -37,6 +36,8 @@ import {
 import { onDefaultGridSave } from '.';
 import {
   extract_insp_ItemEntriesAtCounts,
+  getDateFormat,
+  getDateTimeFormat,
   getEyeInspectionValueText,
   getInspectItems,
   getInspectResult,
@@ -44,6 +45,7 @@ import {
   getInspectSamples,
   getRangeNumberResults,
   getSampleIndex,
+  getTimeFormat,
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
@@ -514,31 +516,22 @@ export const INSP = () => {
     });
   };
 
-  const onSave = async (gridRef, inputRef) => {
+  type SaveApiMethod = 'delete' | 'post' | 'put' | 'patch';
+  const onSave = async (
+    saveGridRef: MutableRefObject<Grid>,
+    saveInputRef: MutableRefObject<FormikProps<FormikValues>>,
+  ) => {
     try {
-      const saveGridRef: MutableRefObject<Grid> = gridRef;
-      const saveInputRef: MutableRefObject<FormikProps<FormikValues>> =
-        inputRef;
-
-      const methodType: 'delete' | 'post' | 'put' | 'patch' = createPopupVisible
-        ? 'post'
-        : 'put';
-      let headerData: object;
-      let detailDatas: object[] = [];
-
+      const methodType: SaveApiMethod = createPopupVisible ? 'post' : 'put';
       const saveGridInstance = saveGridRef?.current?.getInstance();
-
       const saveInputValues = saveInputRef?.current?.values;
-      const regDate = dayjs(saveInputValues?.reg_date).isValid()
-        ? dayjs(saveInputValues?.reg_date).format('YYYY-MM-DD')
-        : saveInputValues?.reg_date;
-      const regTime = dayjs(saveInputValues?.reg_date_time).isValid()
-        ? dayjs(saveInputValues?.reg_date_time).format('HH:mm:ss')
-        : saveInputValues?.reg_date_time;
-      const regDateTime = dayjs(regDate + ' ' + regTime).format(
-        'YYYY-MM-DD HH:mm:ss',
+      const { reg_date, reg_date_time } = saveInputValues;
+
+      const regDateTime = getDateTimeFormat(
+        `${getDateFormat(reg_date)} ${getTimeFormat(reg_date_time)}`,
       );
-      headerData = {
+
+      const headerData = {
         factory_uuid: getUserFactoryUuid(),
         work_uuid: (headerSaveOptionParams as any)?.work_uuid,
         insp_type_uuid: saveInputValues?.insp_type_uuid,
@@ -567,6 +560,8 @@ export const INSP = () => {
       ];
 
       compareRequiredData(headerData, requiredFileds);
+
+      const detailDatas: object[] = [];
 
       for (let i = 0; i <= saveGridInstance.getRowCount() - 1; i++) {
         const values: object[] = [];

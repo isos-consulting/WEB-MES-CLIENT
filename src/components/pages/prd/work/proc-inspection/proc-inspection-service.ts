@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { isNumber } from '~/functions/number';
 
 type ColumnNames = { columnName: string }[];
@@ -131,4 +132,28 @@ export const getEyeInspectionValueText = (result: boolean) => {
   if (result === true) return 'OK';
   if (result === false) return 'NG';
   return null;
+};
+
+export const getDateFormat = (date: string) => {
+  if (dayjs(date).isValid()) {
+    return dayjs(date).format('YYYY-MM-DD');
+  }
+
+  return date;
+};
+
+export const getTimeFormat = (tiemIncludedDate: string) => {
+  if (dayjs(tiemIncludedDate).isValid()) {
+    return dayjs(tiemIncludedDate).format('HH:mm:ss');
+  }
+
+  return tiemIncludedDate;
+};
+
+export const getDateTimeFormat = (dateTime: string) => {
+  if (dayjs(dateTime).isValid()) {
+    return dayjs(dateTime).format('YYYY-MM-DD HH:mm:ss');
+  }
+
+  return dateTime;
 };

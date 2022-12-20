@@ -1,5 +1,7 @@
 import {
   extract_insp_ItemEntriesAtCounts,
+  getDateFormat,
+  getDateTimeFormat,
   getInspectItems,
   getInspectResult,
   getInspectResultText,
@@ -7,6 +9,7 @@ import {
   getInspectTool,
   getRangeNumberResults,
   getSampleIndex,
+  getTimeFormat,
   isColumnNamesNotEndWith_insp_value,
 } from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
 
@@ -179,4 +182,28 @@ test('검사 범위의 최소값과 최대값이 전부 숫자가 아니면 육�
   const nonNumericRangeTool = getInspectTool(nonNumericRange);
 
   expect(nonNumericRangeTool).toEqual('string');
+});
+
+test('생성일자는 YYYY-MM-DD 형식의 문자열이다', () => {
+  const date = new Date().toString();
+
+  const dateText = getDateFormat(date);
+
+  expect(dateText).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+});
+
+test('시간은 HH:mm:ss 형식의 문자열이다', () => {
+  const time = new Date().toString();
+
+  const timeText = getTimeFormat(time);
+
+  expect(timeText).toMatch(/^\d{2}:\d{2}:\d{2}$/);
+});
+
+test('일시는 YYYY-MM-DD HH:mm:ss 형식의 문자열이다', () => {
+  const datetime = new Date().toString();
+
+  const datetimeText = getDateTimeFormat(datetime);
+
+  expect(datetimeText).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
 });
