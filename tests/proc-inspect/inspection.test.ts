@@ -7,6 +7,7 @@ import {
   getInspectResultText,
   getInspectSamples,
   getInspectTool,
+  getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
   getTimeFormat,
@@ -206,4 +207,28 @@ test('일시는 YYYY-MM-DD HH:mm:ss 형식의 문자열이다', () => {
   const datetimeText = getDateTimeFormat(datetime);
 
   expect(datetimeText).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+});
+
+test('0번쨰 시료 결과 값이 null이면 결측치 검사는 true를 반환한다', () => {
+  const nullSample = [null, true, false];
+
+  const nullSampleResult = getMissingValueInspectResult(nullSample);
+
+  expect(nullSampleResult).toEqual(true);
+});
+
+test('0번째와 2번째 시료는 결과 값이 있지만 1번째 시료에 결과 값이 null이면 결측치 검사는 true를 반환한다', () => {
+  const nullSample = [true, null, false];
+
+  const nullSampleResult = getMissingValueInspectResult(nullSample);
+
+  expect(nullSampleResult).toEqual(true);
+});
+
+test('시료 결과 값이 전부 입력되어 있으면 결측치 검사는 false를 반환한다', () => {
+  const allInputSample = [true, true, true];
+
+  const allInputSampleResult = getMissingValueInspectResult(allInputSample);
+
+  expect(allInputSampleResult).toEqual(false);
 });

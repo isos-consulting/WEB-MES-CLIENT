@@ -157,3 +157,13 @@ export const getDateTimeFormat = (dateTime: string) => {
 
   return dateTime;
 };
+
+export const getMissingValueInspectResult = (result: InspectionResult[]) => {
+  if (result[0] == null) return true;
+
+  for (let index = 1; index < result.length; index++) {
+    if (result[index - 1] == null && result[index] != null) return true;
+  }
+
+  return false;
+};
