@@ -334,6 +334,25 @@ export const INSP = () => {
                 header?.insp_type_uuid,
               );
               createPopupGrid.setGridColumns(newColumns);
+
+              details.forEach((detail, disabledRowIndex) => {
+                for (
+                  let cellIndex = detail.sample_cnt + 1;
+                  cellIndex <= maxSampleCnt;
+                  cellIndex++
+                ) {
+                  createPopupGrid.gridRef.current
+                    .getInstance()
+                    .disableCell(disabledRowIndex, `x${cellIndex}_insp_value`);
+                  createPopupGrid.gridRef.current
+                    .getInstance()
+                    .removeCellClassName(
+                      disabledRowIndex,
+                      `x${cellIndex}_insp_value`,
+                      'editor',
+                    );
+                }
+              });
             }
           });
         } else {
