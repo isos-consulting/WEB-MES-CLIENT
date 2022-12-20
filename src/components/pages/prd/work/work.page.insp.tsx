@@ -43,6 +43,7 @@ import {
   getInspectResult,
   getInspectResultText,
   getInspectSamples,
+  getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
   getTimeFormat,
@@ -561,34 +562,60 @@ export const INSP = () => {
 
       const methodType: SaveApiMethod = createPopupVisible ? 'post' : 'put';
       const saveGridInstance = saveGridRef?.current?.getInstance();
-      const detailDatas: object[] = [];
+      const inspections = saveGridInstance.getData();
+      const ranges = inspections.map((item: any) => ({
+        min: item.spec_min,
+        max: item.spec_max,
+      }));
 
-      for (let i = 0; i <= saveGridInstance.getRowCount() - 1; i++) {
-        const values: object[] = [];
-        const row = saveGridInstance?.getRow(i);
-        const inspResultDetailInfoUuid =
-          methodType === 'post' ? null : row?.insp_result_detail_info_uuid;
+      const inspectionSampleResults = getInspectSamples(
+        extract_insp_ItemEntriesAtCounts(inspections),
+        ranges,
+      );
 
-        for (let k = 1; k <= row.sample_cnt; k++) {
-          const value: any = row?.['x' + k + '_insp_value'];
-          if (value) {
-            values.push({
-              uuid: inspResultDetailInfoUuid,
-              sample_no: k,
-              insp_result_fg: row?.['x' + k + '_insp_result_fg'],
-              insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
-            });
-          }
-        }
+      const isMissingValue = inspectionSampleResults.some(
+        getMissingValueInspectResult,
+      );
 
-        detailDatas.push({
-          values,
-          factory_uuid: getUserFactoryUuid(),
-          insp_result_fg: row?.insp_result_fg,
-          insp_detail_uuid: row?.insp_detail_uuid,
-          remark: row?.remark,
-        });
+      if (isMissingValue === true) {
+        throw new Error('결측치가 존재합니다. 검사 시료를 확인해주세요.');
       }
+
+      const detailDatas: object[] = inspections.map(
+        (
+          {
+            insp_result_detail_info_uuid,
+            sample_cnt,
+            insp_result_fg,
+            insp_detail_uuid,
+            remark,
+            ...inspectionItem
+          },
+          itemIndex,
+        ) => {
+          const values = [];
+
+          for (let k = 1; k <= sample_cnt; k++) {
+            const value = inspectionItem['x' + k + '_insp_value'];
+            if (value) {
+              values.push({
+                uuid: insp_result_detail_info_uuid,
+                sample_no: k,
+                insp_result_fg: inspectionSampleResults[itemIndex][k - 1],
+                insp_value: value === 'OK' ? 1 : value === 'NG' ? 0 : value,
+              });
+            }
+          }
+
+          return {
+            values,
+            factory_uuid: getUserFactoryUuid(),
+            insp_result_fg,
+            insp_detail_uuid,
+            remark,
+          };
+        },
+      );
 
       const saveData: object = {
         header: headerData,
