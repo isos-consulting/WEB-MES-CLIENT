@@ -517,13 +517,11 @@ export const INSP = () => {
   };
 
   type SaveApiMethod = 'delete' | 'post' | 'put' | 'patch';
-  const onSave = async (
+  const saveInspectionDatas = async (
     saveGridRef: MutableRefObject<Grid>,
     saveInputRef: MutableRefObject<FormikProps<FormikValues>>,
   ) => {
     try {
-      const methodType: SaveApiMethod = createPopupVisible ? 'post' : 'put';
-      const saveGridInstance = saveGridRef?.current?.getInstance();
       const saveInputValues = saveInputRef?.current?.values;
       const { reg_date, reg_date_time } = saveInputValues;
 
@@ -561,6 +559,8 @@ export const INSP = () => {
 
       compareRequiredData(headerData, requiredFileds);
 
+      const methodType: SaveApiMethod = createPopupVisible ? 'post' : 'put';
+      const saveGridInstance = saveGridRef?.current?.getInstance();
       const detailDatas: object[] = [];
 
       for (let i = 0; i <= saveGridInstance.getRowCount() - 1; i++) {
@@ -745,7 +745,9 @@ export const INSP = () => {
         <GridPopup
           {...createPopupGrid.gridInfo}
           title="데이터 추가"
-          onOk={() => onSave(createPopupGrid.gridRef, createPopupInput.ref)}
+          onOk={() =>
+            saveInspectionDatas(createPopupGrid.gridRef, createPopupInput.ref)
+          }
           okText="저장하기"
           cancelText="취소"
           onCancel={() => {
@@ -790,7 +792,9 @@ export const INSP = () => {
         <GridPopup
           {...editPopupGrid.gridInfo}
           title="데이터 수정"
-          onOk={() => onSave(editPopupGrid.gridRef, editPopupInput.ref)}
+          onOk={() =>
+            saveInspectionDatas(editPopupGrid.gridRef, editPopupInput.ref)
+          }
           okText="저장하기"
           cancelText="취소"
           onCancel={() => {
