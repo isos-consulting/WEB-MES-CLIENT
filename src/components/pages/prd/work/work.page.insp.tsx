@@ -433,34 +433,36 @@ export const INSP = () => {
     }
   }, [createPopupVisible]);
 
-  //#region 🚫함수
-  const onSearch = (headerSaveOptionParams: {
+  type HeaderSaveOptionParams = {
     work_uuid?: string;
     prod_uuid?: string;
     lot_no?: string;
-  }) => {
-    const { work_uuid, prod_uuid, lot_no } = headerSaveOptionParams;
-    if (work_uuid) {
-      getData(
-        {
-          work_uuid: String(work_uuid),
-        },
-        HEADER_SEARCH_URI_PATH,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        { disabledZeroMessage: true },
-      ).then(res => {
-        setHeaderData(res);
+  };
 
-        setHeaderSaveOptionParams({
-          work_uuid,
-          prod_uuid,
-          lot_no,
-        });
-      });
-    }
+  const onSearch = async ({
+    work_uuid,
+    ...saveOptions
+  }: HeaderSaveOptionParams) => {
+    if (work_uuid == null) return;
+
+    const procInspections = await getData(
+      { work_uuid },
+      HEADER_SEARCH_URI_PATH,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {
+        disabledZeroMessage: true,
+      },
+    );
+
+    setHeaderData(procInspections);
+
+    setHeaderSaveOptionParams({
+      work_uuid,
+      ...saveOptions,
+    });
   };
 
   const onReset = () => {
