@@ -920,8 +920,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
       return;
     }
+
     if (userDefinedInspectionSaveOption[0].value === 2) {
-      return Modal.confirm({
+      Modal.confirm({
         title: '',
         content:
           '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
@@ -933,7 +934,9 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           // this function will be executed when cancel button is clicked
         },
       });
+      return;
     }
+    throw new Error('알 수 없는 수입 검사 성적서 수정 API 예외가 발생했습니다');
   };
 
   const onCancel = ev => {
