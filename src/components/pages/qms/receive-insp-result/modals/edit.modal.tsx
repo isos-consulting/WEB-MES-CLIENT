@@ -21,6 +21,19 @@ import {
 } from './constants';
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
+import {
+  extract_insp_ItemEntriesAtCounts,
+  getEyeInspectionValueText,
+  getInspectItems,
+  getInspectResult,
+  getInspectResultText,
+  getInspectSamples,
+  getRangeNumberResults,
+  getSampleIndex,
+  isColumnNameEndWith_insp_value,
+  isColumnNamesNotEndWith_insp_value,
+  isRangeAllNotNumber,
+} from '~/functions/qms/inspection';
 
 export const INSP_RESULT_EDIT_POPUP = (props: {
   inspResultUuid: string;
@@ -592,118 +605,63 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
   const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
     keys.slice(0, at);
 
-  const recordChecker = (record: Array<Array<boolean>>): Array<boolean> =>
-    record.map(cellCheckList => {
-      if (cellCheckList.every(checkItem => checkItem === null)) {
-        return null;
-      }
+  const onAfterChange = ({ changes, instance }: any) => {
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-      if (cellCheckList.some(checkItem => checkItem === false)) {
-        return false;
-      }
-
-      return true;
-    });
-
-  const totalChecker = (records: Array<boolean>): boolean => {
-    if (records.some(key => key === null)) {
-      return null;
-    }
-
-    if (records.some(key => key === false)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkUIProtocol = (check: boolean): string =>
-    check === null ? null : check === true ? '합격' : '불합격';
-
-  const eyeCellUIProtocol = (check: boolean): string =>
-    check === null ? null : check === true ? 'OK' : 'NG';
-
-  const onAfterChange = (ev: any) => {
-    const { changes, instance } = ev;
-    const datas = instance.getData();
-
-    if (changes.some(change => !change.columnName.includes('_insp_value')))
-      return;
-
-    const keys = cellKeys(datas, '_insp_value');
-
-    const definedCountKeys = keys.map((item: Array<string>, index: number) =>
-      sliceKeys(item, datas[index].sample_cnt),
+    const receiveInspections = instance.getData();
+    const inspectionItemRanges = receiveInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+    const extractedInspections =
+      extract_insp_ItemEntriesAtCounts(receiveInspections);
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      inspectionItemRanges,
     );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
-    const cellCheckers = definedCountKeys.map((inspections, index) =>
-      inspections.map(inspectionKey =>
-        datas[index][inspectionKey] == null ||
-        datas[index][inspectionKey] === ''
-          ? inspectionCheck(EmptyInspectionChecker, null)
-          : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
-          ? inspectionCheck(NumberInspectionChecker, {
-              value: datas[index][inspectionKey] * 1,
-              min: datas[index].spec_min * 1,
-              max: datas[index].spec_max * 1,
-            })
-          : inspectionCheck(EyeInspectionChecker, {
-              value: datas[index][inspectionKey],
-            }),
-      ),
-    );
-
-    const records = recordChecker(cellCheckers);
-
-    const finalChecker = totalChecker(records);
-
-    changes.forEach((change: any) => {
-      if (change.columnName.includes('_insp_value')) {
-        const changedCellIndex = keys[change.rowKey].findIndex(
-          inspValue => inspValue === change.columnName,
+    changes.forEach(({ rowKey, columnName }: any) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const sampleIndex = getSampleIndex(columnName);
+        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberFlagsInItemRange = getRangeNumberResults(
+          inspectionItemRanges[rowKey],
         );
+        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
 
-        instance.setValue(
-          change.rowKey,
-          change.columnName.replace('_insp_value', '_insp_result_fg'),
-          cellCheckers[change.rowKey][changedCellIndex],
-        );
-        instance.setValue(
-          change.rowKey,
-          change.columnName.replace('_insp_value', '_insp_result_state'),
-          checkUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
-        );
+        const uiMappedSampleInfo = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(sampleResult),
+        };
+
+        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
+          instance.setValue(rowKey, key, value);
+        }
+
         if (
-          !(
-            isNumber(datas[change.rowKey].spec_min) &&
-            isNumber(datas[change.rowKey].spec_max)
-          )
+          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
+          eyeInspectValueText
         ) {
-          instance.setValue(
-            change.rowKey,
-            change.columnName,
-            eyeCellUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
-          );
+          instance.setValue(rowKey, columnName, eyeInspectValueText);
         }
       }
     });
 
-    datas.forEach((data: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', records[index]);
-      instance.setValue(
-        index,
-        'insp_result_state',
-        checkUIProtocol(records[index]),
-      );
+    inspectionItemResults.forEach((item: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
     });
 
-    inputInspResult.setFieldValue('insp_result_fg', finalChecker);
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
     inputInspResult.setFieldValue(
       'insp_result_state',
-      checkUIProtocol(finalChecker),
+      getInspectResultText(inspectionResult),
     );
 
-    if (finalChecker === null || finalChecker === true) {
+    if (inspectionResult === null || inspectionResult === true) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
@@ -711,16 +669,17 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
 
     let _inspHandlingCd: string;
 
-    if (finalChecker === true) {
+    if (inspectionResult === true) {
       _inspHandlingCd = 'INCOME';
       changeInspResult('INCOME');
-    } else if (finalChecker === false) {
+    } else if (inspectionResult === false) {
       _inspHandlingCd = 'RETURN';
       changeInspResult('RETURN');
     } else {
       _inspHandlingCd = '';
       changeInspResult('');
     }
+
     if (_inspHandlingCd === '') {
       inputInspResult.setFieldValue('insp_handling_type', '');
     } else {
