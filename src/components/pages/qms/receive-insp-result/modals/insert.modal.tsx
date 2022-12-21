@@ -3,8 +3,18 @@ import { message, Modal } from 'antd';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   extract_insp_ItemEntriesAtCounts,
+  getEyeInspectionValueText,
+  getInspectItems,
+  getInspectResult,
+  getInspectResultText,
   getInspectSamples,
   getMissingValueInspectResult,
+  getRangeNumberResults,
+  getSampleIndex,
+  getSampleOkOrNgOrDefaultSampleValue,
+  isColumnNameEndWith_insp_value,
+  isColumnNamesNotEndWith_insp_value,
+  isRangeAllNotNumber,
 } from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
@@ -15,15 +25,8 @@ import {
   getData,
   getToday,
   getUserFactoryUuid,
-  isNumber,
 } from '~/functions';
 import { InputForm, QuantityField } from '../models/fields';
-import {
-  EmptyInspectionChecker,
-  EyeInspectionChecker,
-  InspectionConcreate,
-  NumberInspectionChecker,
-} from '../models/inspection-checker';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import {
   INFO_INPUT_ITEMS,
@@ -239,143 +242,74 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     setReceiveInspDetailData([]);
   };
 
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
+  const onAfterChange = ({ changes, instance }: any) => {
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-  const cellKeys = (
-    records: Array<any>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
+    const receiveInspections = instance.getData();
+    const inspectionItemRanges = receiveInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+    const extractedInspections =
+      extract_insp_ItemEntriesAtCounts(receiveInspections);
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      inspectionItemRanges,
     );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
-  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
-    keys.slice(0, at);
-
-  const recordChecker = (record: Array<Array<boolean>>): Array<boolean> =>
-    record.map(cellCheckList => {
-      if (cellCheckList.every(checkItem => checkItem === null)) {
-        return null;
-      }
-
-      if (cellCheckList.some(checkItem => checkItem === false)) {
-        return false;
-      }
-
-      return true;
-    });
-
-  const totalChecker = (records: Array<boolean>): boolean => {
-    if (records.some(key => key === null)) {
-      return null;
-    }
-
-    if (records.some(key => key === false)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkUIProtocol = (check: boolean): string =>
-    check === null ? null : check === true ? '합격' : '불합격';
-
-  const eyeCellUIProtocol = (check: boolean): string =>
-    check === null ? null : check === true ? 'OK' : 'NG';
-
-  const onAfterChange = (ev: any) => {
-    const { changes, instance } = ev;
-    const datas = instance.getData();
-
-    if (changes.some(change => !change.columnName.includes('_insp_value')))
-      return;
-
-    const keys = cellKeys(datas, '_insp_value');
-
-    const definedCountKeys = keys.map((item: Array<string>, index: number) =>
-      sliceKeys(item, datas[index].sample_cnt),
-    );
-
-    const cellCheckers = definedCountKeys.map((inspections, index) =>
-      inspections.map(inspectionKey =>
-        datas[index][inspectionKey] == null ||
-        datas[index][inspectionKey] === ''
-          ? inspectionCheck(EmptyInspectionChecker, null)
-          : isNumber(datas[index].spec_min) && isNumber(datas[index].spec_max)
-          ? inspectionCheck(NumberInspectionChecker, {
-              value: datas[index][inspectionKey] * 1,
-              min: datas[index].spec_min * 1,
-              max: datas[index].spec_max * 1,
-            })
-          : inspectionCheck(EyeInspectionChecker, {
-              value: datas[index][inspectionKey],
-            }),
-      ),
-    );
-
-    const records = recordChecker(cellCheckers);
-
-    const finalChecker = totalChecker(records);
-
-    changes.forEach((change: any) => {
-      if (change.columnName.includes('_insp_value')) {
-        const changedCellIndex = keys[change.rowKey].findIndex(
-          inspValue => inspValue === change.columnName,
+    changes.forEach(({ rowKey, columnName }: any) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const sampleIndex = getSampleIndex(columnName);
+        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberFlagsInItemRange = getRangeNumberResults(
+          inspectionItemRanges[rowKey],
         );
+        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
 
-        instance.setValue(
-          change.rowKey,
-          change.columnName.replace('_insp_value', '_insp_result_fg'),
-          cellCheckers[change.rowKey][changedCellIndex],
-        );
-        instance.setValue(
-          change.rowKey,
-          change.columnName.replace('_insp_value', '_insp_result_state'),
-          checkUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
-        );
+        const uiMappedSampleInfo = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(sampleResult),
+        };
+
+        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
+          instance.setValue(rowKey, key, value);
+        }
+
         if (
-          !(
-            isNumber(datas[change.rowKey].spec_min) &&
-            isNumber(datas[change.rowKey].spec_max)
-          )
+          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
+          eyeInspectValueText
         ) {
-          instance.setValue(
-            change.rowKey,
-            change.columnName,
-            eyeCellUIProtocol(cellCheckers[change.rowKey][changedCellIndex]),
-          );
+          instance.setValue(rowKey, columnName, eyeInspectValueText);
         }
       }
     });
 
-    datas.forEach((data: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', records[index]);
-      instance.setValue(
-        index,
-        'insp_result_state',
-        checkUIProtocol(records[index]),
-      );
+    inspectionItemResults.forEach((item: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
     });
 
-    inputInspResult.setFieldValue('insp_result_fg', finalChecker);
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
     inputInspResult.setFieldValue(
       'insp_result_state',
-      checkUIProtocol(finalChecker),
+      getInspectResultText(inspectionResult),
     );
 
-    if (finalChecker === null || finalChecker === true) {
+    if (inspectionResult === null || inspectionResult === true) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
     }
 
     const inspectionHandlingTypeCode: string =
-      finalChecker === true ? 'INCOME' : finalChecker === false ? 'RETURN' : '';
+      inspectionResult === true
+        ? 'INCOME'
+        : inspectionResult === false
+        ? 'RETURN'
+        : '';
 
     handleInspectionHandlingTypeChange(
       inspectionHandlingTypeCode,
@@ -391,7 +325,6 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const saveInspectionData = inspectionGridInstance => {
-    const inspectionDatas = inspectionGridInstance.getData();
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInspResultIncomeValues =
@@ -435,34 +368,47 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    const inspectionItems: InspectionPostPayloadDetails[] = cellKeys(
-      inspectionDatas,
-      '_insp_value',
-    )
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, inspectionDatas[index].sample_cnt),
-      )
-      .map((definedCountKeys, index) => ({
-        factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
-        insp_result_fg: inspectionDatas[index].insp_result_fg,
-        remark: inspectionDatas[index].remark,
-        values: definedCountKeys
-          .map((key, keyIndex) => ({
-            sample_no: keyIndex + 1,
-            insp_result_fg:
-              inspectionDatas[index][
-                key.replace('_insp_value', '_insp_result_fg')
-              ],
-            insp_value:
-              inspectionDatas[index][key] === 'OK'
-                ? 1
-                : inspectionDatas[index][key] === 'NG'
-                ? 0
-                : inspectionDatas[index][key],
-          }))
-          .filter(inspectionCell => inspectionCell.insp_result_fg !== null),
-      }));
+    const inspectionDatas = inspectionGridInstance.getData();
+    const inspectionItemRanges = inspectionDatas.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(inspectionDatas),
+      inspectionItemRanges,
+    );
+
+    const inspectionItems: InspectionPostPayloadDetails[] =
+      inspectionSampleResults.map((item, itemIndex) => {
+        const notNullSamples = item.reduce(
+          (samples, currentSample, sampleIndex) => {
+            if (currentSample === null) {
+              return samples;
+            }
+
+            return [
+              ...samples,
+              {
+                sample_no: sampleIndex + 1,
+                insp_result_fg: currentSample,
+                insp_value: getSampleOkOrNgOrDefaultSampleValue(
+                  inspectionDatas[itemIndex][`x${sampleIndex + 1}_insp_value`],
+                ),
+              },
+            ];
+          },
+          [],
+        );
+
+        return {
+          factory_uuid: getUserFactoryUuid(),
+          insp_detail_uuid: inspectionDatas[itemIndex].insp_detail_uuid,
+          insp_result_fg: inspectionDatas[itemIndex].insp_result_fg,
+          remark: inspectionDatas[itemIndex].remark,
+          values: notNullSamples,
+        };
+      });
 
     return {
       header: inspectionHeader,
