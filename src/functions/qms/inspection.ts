@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { isNumber } from '~/functions/number';
+import { isNumber } from '../number';
 
 type ColumnNames = { columnName: string }[];
 type InspectionItem = { [key: string]: any };

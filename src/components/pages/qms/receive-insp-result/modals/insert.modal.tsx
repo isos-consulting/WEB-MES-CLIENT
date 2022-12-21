@@ -15,7 +15,7 @@ import {
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
-} from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
+} from '~/functions/qms/inspection';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { SENTENCE } from '~/constants/lang/ko';

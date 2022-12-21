@@ -50,7 +50,7 @@ import {
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
-} from './proc-inspection/proc-inspection-service';
+} from '~/functions/qms/inspection';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
 //#region 🔶🚫공정검사

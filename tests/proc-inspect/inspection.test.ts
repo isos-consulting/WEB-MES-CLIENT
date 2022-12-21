@@ -12,7 +12,7 @@ import {
   getSampleIndex,
   getTimeFormat,
   isColumnNamesNotEndWith_insp_value,
-} from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
+} from '~/functions/qms/inspection';
 
 test('x1_insp_value 문자열은 거짓을 반환한다', () => {
   const x1_insp_value = 'x1_insp_value';
