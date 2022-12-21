@@ -906,13 +906,21 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     );
 
     if (userDefinedInspectionSaveOption.length === 0) {
-      throw new Error('검사 결과 저장 옵션을 찾을 수 없습니다.');
+      throw new Error(
+        '검사성적서 결과값 전체등록 여부 옵션을 찾을 수 없습니다.',
+      );
+    }
+
+    if (userDefinedInspectionSaveOption[0].value === 0) {
+      saveData(inspectionGridRef.current.getInstance());
+      return;
     }
 
     if (userDefinedInspectionSaveOption[0].value === 1) {
       message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
       return;
-    } else if (userDefinedInspectionSaveOption[0].value === 2) {
+    }
+    if (userDefinedInspectionSaveOption[0].value === 2) {
       return Modal.confirm({
         title: '',
         content:
