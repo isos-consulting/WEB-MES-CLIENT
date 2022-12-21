@@ -523,47 +523,57 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       cells.every(cell => cell !== null),
     );
 
+    const saveData = saveInspectionData(
+      inspectionGridRef.current.getInstance(),
+    );
+
+    if (isUserInputAllCell === true) {
+      callInspectionCreateAPI(saveData);
+      return;
+    }
+
     const userDefinedInspectionSaveOption = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
     );
 
-    const saveData = saveInspectionData(
-      inspectionGridRef.current.getInstance(),
-    );
-
     if (userDefinedInspectionSaveOption.length === 0) {
-      return callInspectionCreateAPI(saveData);
+      throw new Error(
+        '검사성적서 결과값 전체등록 여부 옵션을 찾을 수 없습니다.',
+      );
     }
 
-    if (isUserInputAllCell === false) {
-      if (userDefinedInspectionSaveOption[0].value === 1) {
-        message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
-        return;
-      }
-
-      if (userDefinedInspectionSaveOption[0].value === 2) {
-        Modal.confirm({
-          title: '',
-          content:
-            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
-          onOk: async close => {
-            const saveData = saveInspectionData(
-              inspectionGridRef.current.getInstance(),
-            );
-            await callInspectionCreateAPI(saveData);
-            close();
-          },
-          onCancel: () => {
-            // this function will be executed when cancel button is clicked
-          },
-        });
-
-        return;
-      }
+    if (userDefinedInspectionSaveOption[0].value === 0) {
+      callInspectionCreateAPI(saveData);
+      return;
     }
 
-    return callInspectionCreateAPI(saveData);
+    if (userDefinedInspectionSaveOption[0].value === 1) {
+      message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
+      return;
+    }
+
+    if (userDefinedInspectionSaveOption[0].value === 2) {
+      Modal.confirm({
+        title: '',
+        content:
+          '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+        onOk: async close => {
+          const saveData = saveInspectionData(
+            inspectionGridRef.current.getInstance(),
+          );
+          await callInspectionCreateAPI(saveData);
+          close();
+        },
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
+      });
+
+      return;
+    }
+
+    throw new Error('알 수 없는 수입 검사 성적서 저장 API 예외가 발생했습니다');
   };
 
   const onCancel = ev => {
