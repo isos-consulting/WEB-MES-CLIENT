@@ -1,5 +1,40 @@
-import React, { useRef, useState, useMemo, useLayoutEffect } from 'react';
 import Grid from '@toast-ui/react-grid';
+import { message, Modal } from 'antd';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  extract_insp_ItemEntriesAtCounts,
+  getInspectSamples,
+  getMissingValueInspectResult,
+} from '~/components/pages/prd/work/proc-inspection/proc-inspection-service';
+import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { SENTENCE } from '~/constants/lang/ko';
+import {
+  blankThenNull,
+  executeData,
+  getData,
+  getToday,
+  getUserFactoryUuid,
+  isNumber,
+} from '~/functions';
+import { InputForm, QuantityField } from '../models/fields';
+import {
+  EmptyInspectionChecker,
+  EyeInspectionChecker,
+  InspectionConcreate,
+  NumberInspectionChecker,
+} from '../models/inspection-checker';
+import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
+import {
+  INFO_INPUT_ITEMS,
+  INPUT_ITEMS_INSP_RESULT,
+  INPUT_ITEMS_INSP_RESULT_INCOME,
+  INPUT_ITEMS_INSP_RESULT_RETURN,
+  inspectionCheckCells,
+  inspectionItemResultCells,
+  INSP_DETAIL_COLUMNS,
+} from './constants/columns';
+import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
 import {
   InspectionHandlingTypeCodeSet,
   InspectionHandlingTypeUuidSet,
@@ -10,36 +45,6 @@ import {
   TReceiveInspDetail,
   TReceiveInspHeader,
 } from './types';
-import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
-import {
-  blankThenNull,
-  executeData,
-  getData,
-  getToday,
-  getUserFactoryUuid,
-  isNumber,
-} from '~/functions';
-import { message, Modal } from 'antd';
-import { InputForm, QuantityField } from '../models/fields';
-import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
-import {
-  INFO_INPUT_ITEMS,
-  INPUT_ITEMS_INSP_RESULT,
-  INPUT_ITEMS_INSP_RESULT_INCOME,
-  INPUT_ITEMS_INSP_RESULT_RETURN,
-  inspectionCheckCells,
-  inspectionItemResultCells,
-  INSP_DETAIL_COLUMNS,
-} from './constants/columns';
-import {
-  EmptyInspectionChecker,
-  EyeInspectionChecker,
-  InspectionConcreate,
-  NumberInspectionChecker,
-} from '../models/inspection-checker';
-import { SENTENCE } from '~/constants/lang/ko';
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
@@ -484,65 +489,91 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       });
 
   const onSave = async inspectionGridRef => {
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const { insp_handling_type, emp_uuid, reg_date_time, insp_result_fg } =
+      inputInspResult?.ref?.current?.values;
+    const { reject_qty, reject_uuid, reject_store_uuid } =
+      inputInspResultReject?.ref?.current?.values;
+    const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
 
-    if (inputInspResultValues.insp_handling_type === '') {
-      return message.warn('처리결과를 등록해주세요.');
-    } else if (!inputInspResultValues?.emp_uuid) {
-      return message.warn('검사자를 등록해주세요.');
-    } else if (!inputInspResultValues?.reg_date_time) {
-      return message.warn('검사시간을 등록해주세요.');
+    if (insp_handling_type === '') {
+      message.warn('처리결과를 등록해주세요.');
+      return;
+    }
+    if (emp_uuid == null) {
+      message.warn('검사자를 등록해주세요.');
+      return;
+    }
+    if (reg_date_time == null) {
+      message.warn('검사시간을 등록해주세요.');
+      return;
     }
 
-    if (
-      inputInspResultValues.insp_result_fg === true &&
-      JSON.parse(inputInspResultValues.insp_handling_type)
-        .insp_handling_type_cd !== 'INCOME'
-    ) {
-      return message.warn('최종 판정이 합격일 경우 입고만 처리 할 수 있습니다');
+    const { insp_handling_type_cd } = JSON.parse(insp_handling_type);
+
+    if (insp_result_fg === true && insp_handling_type_cd !== 'INCOME') {
+      message.warn('최종 판정이 합격일 경우 입고만 처리 할 수 있습니다');
+      return;
+    }
+
+    if (insp_handling_type_cd === 'INCOME') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn('입고창고를 등록해주세요.');
+        return;
+      }
+    }
+
+    if (insp_handling_type_cd === 'RETURN') {
+      if (reject_uuid == null) {
+        message.warn('불량유형을 등록해주세요.');
+        return;
+      }
+
+      if (reject_store_uuid == null || reject_store_uuid === '') {
+        message.warn('불량창고를 등록해주세요.');
+        return;
+      }
+    }
+
+    if (insp_handling_type_cd === 'SELECTION') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn('입고창고를 등록해주세요.');
+        return;
+      }
+
+      if (reject_qty > 0) {
+        if (reject_uuid == null) {
+          message.warn('불량유형을 등록해주세요.');
+          return;
+        }
+
+        if (reject_store_uuid == null || reject_store_uuid === '') {
+          message.warn('불량창고를 등록해주세요.');
+          return;
+        }
+      }
     }
 
     const inspectionDatas = inspectionGridRef.current.getInstance().getData();
-    const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, inspectionDatas[index].sample_cnt),
-      )
-      .map((inspections, index) =>
-        inspections.map(inspectionKey =>
-          inspectionDatas[index][inspectionKey] == null ||
-          inspectionDatas[index][inspectionKey] === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(inspectionDatas[index].spec_min) &&
-              isNumber(inspectionDatas[index].spec_max)
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey] * 1,
-                min: inspectionDatas[index].spec_min * 1,
-                max: inspectionDatas[index].spec_max * 1,
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey],
-              }),
-        ),
-      );
+    const inspectionItemRanges = inspectionDatas.map(item => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
 
-    const sequencialMissingValueState = cellCheckers.some(
-      (cells: Array<boolean>) => {
-        if (cells[0] === null) return true;
-
-        if (cells.length > 1) {
-          for (let index = 1; index < cells.length; index++) {
-            if (cells[index - 1] === null && cells[index] !== null) return true;
-          }
-        }
-      },
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(inspectionDatas),
+      inspectionItemRanges,
     );
 
-    if (sequencialMissingValueState === true) {
+    const isMissingValue = inspectionSampleResults.some(
+      getMissingValueInspectResult,
+    );
+
+    if (isMissingValue === true) {
       message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
       return;
     }
 
-    const isUserInputAllCell = cellCheckers.every(cells =>
+    const isUserInputAllCell = inspectionSampleResults.every(cells =>
       cells.every(cell => cell !== null),
     );
 
@@ -559,31 +590,31 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       return callInspectionCreateAPI(saveData);
     }
 
-    if (
-      isUserInputAllCell === false &&
-      userDefinedInspectionSaveOption[0].value === 1
-    ) {
-      message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
-      return;
-    } else if (
-      isUserInputAllCell === false &&
-      userDefinedInspectionSaveOption[0].value === 2
-    ) {
-      return Modal.confirm({
-        title: '',
-        content:
-          '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
-        onOk: async close => {
-          const saveData = saveInspectionData(
-            inspectionGridRef.current.getInstance(),
-          );
-          await callInspectionCreateAPI(saveData);
-          close();
-        },
-        onCancel: () => {
-          // this function will be executed when cancel button is clicked
-        },
-      });
+    if (isUserInputAllCell === false) {
+      if (userDefinedInspectionSaveOption[0].value === 1) {
+        message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
+        return;
+      }
+
+      if (userDefinedInspectionSaveOption[0].value === 2) {
+        Modal.confirm({
+          title: '',
+          content:
+            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+          onOk: async close => {
+            const saveData = saveInspectionData(
+              inspectionGridRef.current.getInstance(),
+            );
+            await callInspectionCreateAPI(saveData);
+            close();
+          },
+          onCancel: () => {
+            // this function will be executed when cancel button is clicked
+          },
+        });
+
+        return;
+      }
     }
 
     return callInspectionCreateAPI(saveData);
