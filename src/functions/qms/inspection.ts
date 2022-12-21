@@ -34,7 +34,7 @@ export const getInspectSamples = (
     return items.map(([_key, sample]) => {
       if (sample == null) return null;
 
-      if (typeof sample !== 'string')
+      if (typeof sample !== 'string' && typeof sample !== 'number')
         throw new Error('unexpected type of inpsection sample');
 
       if (sample === '') return null;
