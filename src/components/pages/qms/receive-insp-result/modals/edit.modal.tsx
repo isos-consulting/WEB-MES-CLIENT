@@ -1,26 +1,20 @@
-import React, { useRef, useState, useMemo, useLayoutEffect } from 'react';
 import Grid from '@toast-ui/react-grid';
-import { TReceiveInspDetail, TReceiveInspHeader } from './types';
+import { message, Modal } from 'antd';
+import dayjs from 'dayjs';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
 import {
   IInputGroupboxItem,
   useInputGroup,
 } from '~/components/UI/input-groupbox';
+import { ENUM_WIDTH } from '~/enums';
 import {
   blankThenNull,
   executeData,
   getData,
   getToday,
   getUserFactoryUuid,
-  isNumber,
 } from '~/functions';
-import {
-  URI_PATH_GET_QMS_RECEIVE_INSP_RESULT_INCLUDE_DETAILS,
-  URI_PATH_PUT_QMS_RECEIVE_INSP_RESULTS,
-} from './constants';
-import { message, Modal } from 'antd';
-import dayjs from 'dayjs';
 import {
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
@@ -31,10 +25,16 @@ import {
   getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
+  getSampleOkOrNgOrDefaultSampleValue,
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import {
+  URI_PATH_GET_QMS_RECEIVE_INSP_RESULT_INCLUDE_DETAILS,
+  URI_PATH_PUT_QMS_RECEIVE_INSP_RESULTS,
+} from './constants';
+import { TReceiveInspDetail, TReceiveInspHeader } from './types';
 
 export const INSP_RESULT_EDIT_POPUP = (props: {
   inspResultUuid: string;
@@ -547,54 +547,6 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     });
   };
 
-  interface InspectionChecker {
-    check: (...arg: any) => boolean;
-  }
-
-  interface InspectionConcreate {
-    new (): InspectionChecker;
-  }
-
-  class EmptyInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return null;
-    }
-  }
-
-  class NumberInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return this.innerRange(arg);
-    }
-    innerRange({
-      value,
-      min,
-      max,
-    }: {
-      value: number;
-      min: number;
-      max: number;
-    }) {
-      return value >= min && value <= max;
-    }
-  }
-
-  class EyeInspectionChecker implements InspectionChecker {
-    check(arg: any) {
-      return this.isOK(arg);
-    }
-
-    isOK({ value }) {
-      return value.toUpperCase() === 'OK';
-    }
-  }
-
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
-
   const cellKeys = (
     records: Array<any>,
     cellKey: string,
@@ -693,7 +645,6 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
   };
 
   const saveData = async inspectionGridInstance => {
-    const inspectionDatas = inspectionGridInstance.getData();
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInspResultIncomeValues =
@@ -730,60 +681,77 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    const inspectionItems = cellKeys(inspectionDatas, '_insp_value')
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, inspectionDatas[index].sample_cnt),
-      )
-      .map((definedCountKeys, index) => ({
+    const inspectionDatas = inspectionGridInstance.getData();
+    const inspectionItemRanges = inspectionDatas.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(inspectionDatas),
+      inspectionItemRanges,
+    );
+
+    const inspectionItems = inspectionSampleResults.map((item, itemIndex) => {
+      const editedSamples = item.reduce(
+        (samples, currentSample, sampleIndex) => {
+          const sampleUuid =
+            inspectionDatas[itemIndex][
+              `x${sampleIndex + 1}_insp_result_detail_value_uuid`
+            ];
+          if (sampleUuid == null) {
+            if (currentSample == null) return samples;
+
+            return [
+              ...samples,
+              {
+                uuid: sampleUuid,
+                delete_fg: false,
+                sample_no: sampleIndex + 1,
+                insp_result_ft: currentSample,
+                insp_value: getSampleOkOrNgOrDefaultSampleValue(
+                  inspectionDatas[itemIndex][`x${sampleIndex + 1}_insp_value`],
+                ),
+              },
+            ];
+          }
+
+          if (currentSample == null) {
+            return [
+              ...samples,
+              {
+                uuid: sampleUuid,
+                delete_fg: true,
+                sample_no: sampleIndex + 1,
+              },
+            ];
+          }
+
+          return [
+            ...samples,
+            {
+              uuid: sampleUuid,
+              delete_fg: false,
+              sample_no: sampleIndex + 1,
+              insp_result_fg: currentSample,
+              insp_value: getSampleOkOrNgOrDefaultSampleValue(
+                inspectionDatas[itemIndex][`x${sampleIndex + 1}_insp_value`],
+              ),
+            },
+          ];
+        },
+        [],
+      );
+
+      return {
         factory_uuid: getUserFactoryUuid(),
-        uuid: inspectionDatas[index].insp_result_detail_info_uuid,
-        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
-        insp_result_fg: inspectionDatas[index].insp_result_fg,
-        remark: inspectionDatas[index].remark,
-        values: definedCountKeys
-          .map((key, keyIndex) => {
-            const result = {
-              uuid: inspectionDatas[index][
-                key.replace('_insp_value', '_insp_result_detail_value_uuid')
-              ],
-              delete_fg:
-                inspectionDatas[index][
-                  key.replace('_insp_value', '_insp_result_fg')
-                ] === null
-                  ? true
-                  : false,
-              sample_no: keyIndex + 1,
-            };
-
-            if (
-              inspectionDatas[index][
-                key.replace('_insp_value', '_insp_result_fg')
-              ] !== null
-            ) {
-              return {
-                ...result,
-                insp_result_fg:
-                  inspectionDatas[index][
-                    key.replace('_insp_value', '_insp_result_fg')
-                  ],
-                insp_value:
-                  inspectionDatas[index][key] === 'OK'
-                    ? 1
-                    : inspectionDatas[index][key] === 'NG'
-                    ? 0
-                    : inspectionDatas[index][key],
-              };
-            }
-            return result;
-          })
-          .filter(inspectionCell => {
-            if (inspectionCell.uuid != null) {
-              return true;
-            }
-
-            return inspectionCell.delete_fg === false ? true : false;
-          }),
-      }));
+        uuid: inspectionDatas[itemIndex].insp_result_detail_info_uuid,
+        insp_detail_uuid: inspectionDatas[itemIndex].insp_detail_uuid,
+        insp_result_fg: inspectionDatas[itemIndex].insp_result_fg,
+        remark: inspectionDatas[itemIndex].remark,
+        values: editedSamples,
+      };
+    });
 
     const saveData: object = {
       header: inspectionHeader,
