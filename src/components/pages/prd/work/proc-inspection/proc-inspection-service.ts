@@ -167,3 +167,9 @@ export const getMissingValueInspectResult = (result: InspectionResult[]) => {
 
   return false;
 };
+
+export const getSampleOkOrNgOrDefaultSampleValue = (sample: string) => {
+  if (sample === 'OK') return 1;
+  if (sample === 'NG') return 0;
+  return sample;
+};
