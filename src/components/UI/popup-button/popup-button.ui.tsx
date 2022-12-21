@@ -21,17 +21,31 @@ const setPopupButtonData = (props: Props) => {
   const { dataApiSettings, datagridSettings } = props;
   const modalSettings = props?.modalSettings;
 
-  let dataApiInfo = {};
   if (typeof dataApiSettings === 'function') {
-    dataApiInfo = dataApiSettings(props);
-  } else {
-    dataApiInfo = dataApiSettings;
+    return {
+      modalProps: modalSettings,
+      datagridProps: datagridSettings,
+      ...dataApiSettings(props),
+    };
   }
-
   return {
     modalProps: modalSettings,
     datagridProps: datagridSettings,
-    ...dataApiInfo,
+    ...dataApiSettings,
+  };
+};
+
+const getPopupButtonForm = ({ popupKey, params, props }) => {
+  if (popupKey == null)
+    return {
+      ...setPopupButtonData(props),
+    };
+
+  if (getPopupForm(popupKey) == null) return null;
+
+  return {
+    ...getPopupForm(popupKey),
+    params,
   };
 };
 
@@ -99,24 +113,19 @@ const PopupButton: React.FC<Props> = props => {
             'multi-select': '다중선택',
           };
 
-          let popupContent = getPopupForm(props.popupKey);
-          popupContent['params'] = props.params;
-
-          if (props.popupKey == null) popupContent = setPopupButtonData(props);
+          const popupContent = getPopupButtonForm({
+            popupKey: props.popupKey,
+            params: props.params,
+            props,
+          });
 
           if (popupContent == null) return;
 
           const childGridId = uuidv4();
 
-          if (
-            (
-              popupContent?.onInterlock ??
-              function () {
-                return true;
-              }
-            )() === false
-          )
-            return;
+          if (popupContent?.onInterlock) {
+            if (popupContent.onInterlock() === false) return;
+          }
 
           const { gridMode } = popupContent?.datagridProps;
           const { title } = popupContent?.modalProps;
