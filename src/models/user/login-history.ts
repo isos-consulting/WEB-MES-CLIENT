@@ -1,7 +1,7 @@
 export interface LoginHistoryApiResponse {
-  user_id: string;
+  id: string;
   user_nm: string;
-  logged_at: string;
+  created_at: string;
 }
 
 class UserLoginHistory {
@@ -9,17 +9,17 @@ class UserLoginHistory {
   private readonly userName: string;
   private readonly accessDateTime: string;
 
-  constructor({ user_id, user_nm, logged_at }: LoginHistoryApiResponse) {
-    this.userId = user_id;
+  constructor({ id, user_nm, created_at }: LoginHistoryApiResponse) {
+    this.userId = id;
     this.userName = user_nm;
-    this.accessDateTime = logged_at;
+    this.accessDateTime = created_at;
   }
 
   info(): LoginHistoryApiResponse {
     return {
-      user_id: this.userId,
+      id: this.userId,
       user_nm: this.userName,
-      logged_at: this.accessDateTime,
+      created_at: this.accessDateTime,
     };
   }
 }
