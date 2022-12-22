@@ -58,6 +58,7 @@ import {
   getInspectResult,
   getInspectResultText,
   getInspectSamples,
+  getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
   getSampleOkOrNgOrDefaultSampleValue,
@@ -1063,24 +1064,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     setInspIncludeDetails({});
   };
 
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
-
-  const cellKeys = (
-    records: Array<object>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
-    );
-
-  const sliceKeys = (keys: Array<string>, slicePoint: number) =>
-    keys.slice(0, slicePoint);
-
   const onAfterChange = ({ changes, instance }: any) => {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
@@ -1291,175 +1274,145 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const onSave = async (
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const fetchOptionFilledQualityAllInspectionResultFlags = getData(
-      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
-      '/std/tenant-opts',
-    );
+    const { insp_handling_type, emp_uuid, reg_date_time, insp_result_fg } =
+      inputInspResult?.ref?.current?.values;
+    const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
+    const { reject_qty, reject_uuid, reject_store_uuid } =
+      inputInspResultReject?.ref?.current?.values;
 
-    if (
-      inputInspResultValues.insp_handling_type === '' ||
-      inputInspResultValues.insp_handling_type == null
-    ) {
+    if (insp_handling_type === '' || insp_handling_type == null) {
       message.warn('처리결과를 등록해주세요.');
       return;
     }
-    if (inputInspResultValues.emp_uuid == null) {
+    if (emp_uuid == null) {
       message.warn(SENTENCE.INPUT_INSPECTOR);
       return;
     }
-    if (inputInspResultValues.reg_date_time == null) {
+    if (reg_date_time == null) {
       message.warn(SENTENCE.INPUT_INSPECT_TIME);
       return;
     }
 
-    const { insp_handling_type_cd } = JSON.parse(
-      inputInspResultValues.insp_handling_type,
-    );
+    const { insp_handling_type_cd } = JSON.parse(insp_handling_type);
 
-    if (
-      inputInspResultValues.insp_result_fg === true &&
-      insp_handling_type_cd !== 'INCOME'
-    ) {
+    if (insp_result_fg === true && insp_handling_type_cd !== 'INCOME') {
       return message.warn(
         '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
       );
     }
 
-    const inspectionGridInstance = inspectionGridRef.current.getInstance();
-
-    const inspectionSampleResultFlagStore = cellKeys(
-      inspectionGridInstance.getData(),
-      '_insp_value',
-    )
-      .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
-        sliceKeys(
-          inspectionKeys,
-          Number(
-            inspectionGridInstance.getValue(inspectionItemIndex, 'sample_cnt'),
-          ),
-        ),
-      )
-      .map(
-        (
-          definedInspectionKeysBySampleCount: Array<string>,
-          inspectionItemIndex: number,
-        ) =>
-          definedInspectionKeysBySampleCount.map(inspectionKey =>
-            inspectionGridInstance.getValue(
-              inspectionItemIndex,
-              inspectionKey,
-            ) == null ||
-            inspectionGridInstance.getValue(
-              inspectionItemIndex,
-              inspectionKey,
-            ) === ''
-              ? inspectionCheck(EmptyInspectionChecker, null)
-              : isNumber(
-                  `${inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'spec_min',
-                  )}`,
-                ) &&
-                isNumber(
-                  `${inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'spec_max',
-                  )}`,
-                )
-              ? inspectionCheck(NumberInspectionChecker, {
-                  value: Number(
-                    inspectionGridInstance.getValue(
-                      inspectionItemIndex,
-                      inspectionKey,
-                    ),
-                  ),
-                  min: Number(
-                    inspectionGridInstance.getValue(
-                      inspectionItemIndex,
-                      'spec_min',
-                    ),
-                  ),
-                  max: Number(
-                    inspectionGridInstance.getValue(
-                      inspectionItemIndex,
-                      'spec_max',
-                    ),
-                  ),
-                })
-              : inspectionCheck(EyeInspectionChecker, {
-                  value: inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    inspectionKey,
-                  ),
-                }),
-          ),
-      );
-
-    const sequencialMissingValueState = inspectionSampleResultFlagStore.some(
-      (sampleResultFlags: Array<boolean>) => {
-        if (sampleResultFlags[0] === null) return true;
-
-        if (sampleResultFlags.length > 1) {
-          for (
-            let sampleIndex = 1;
-            sampleIndex < sampleResultFlags.length;
-            sampleIndex++
-          ) {
-            if (
-              sampleResultFlags[sampleIndex - 1] === null &&
-              sampleResultFlags[sampleIndex] !== null
-            )
-              return true;
-          }
-        }
-      },
-    );
-
-    if (sequencialMissingValueState === true) {
-      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
+    if (insp_handling_type_cd === 'INCOME') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn('입고창고를 등록해주세요.');
+        return;
+      }
     }
 
-    const isFilledAllInspectionSample = inspectionSampleResultFlagStore.every(
-      (sampleResultFlags: Array<boolean>) =>
-        sampleResultFlags.every((resultFlag: boolean) => resultFlag !== null),
+    if (insp_handling_type_cd === 'RETURN') {
+      if (reject_uuid == null) {
+        message.warn('불량유형을 등록해주세요.');
+        return;
+      }
+
+      if (reject_store_uuid == null || reject_store_uuid === '') {
+        message.warn('불량창고를 등록해주세요.');
+        return;
+      }
+    }
+
+    if (insp_handling_type_cd === 'SELECTION') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn('입고창고를 등록해주세요.');
+        return;
+      }
+
+      if (reject_qty > 0) {
+        if (reject_uuid == null) {
+          message.warn('불량유형을 등록해주세요.');
+          return;
+        }
+
+        if (reject_store_uuid == null || reject_store_uuid === '') {
+          message.warn('불량창고를 등록해주세요.');
+          return;
+        }
+      }
+    }
+
+    const finalInspections = inspectionGridRef.current.getInstance().getData();
+    const inspectionItemRanges = finalInspections.map(item => ({
+      min: String(item.spec_min),
+      max: String(item.spec_max),
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(finalInspections),
+      inspectionItemRanges,
+    );
+
+    const isMissingValue = inspectionSampleResults.some(
+      getMissingValueInspectResult,
+    );
+
+    if (isMissingValue === true) {
+      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
+      return;
+    }
+
+    const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
+      item.every(sampleResult => sampleResult !== null),
     );
 
     const inspectionPostApiPayload: TPostQmsFinalInspResults =
-      createInspectionPostApiPayload(inspectionGridInstance);
+      createInspectionPostApiPayload(inspectionGridRef.current.getInstance());
 
-    if (isFilledAllInspectionSample === false) {
-      let qualityInspectionFilledOption = 0;
-      await fetchOptionFilledQualityAllInspectionResultFlags.then(options => {
-        if (options.length > 0) {
-          qualityInspectionFilledOption = options[0].value;
-        }
-      });
-
-      if (qualityInspectionFilledOption === 1) {
-        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
-      } else if (qualityInspectionFilledOption === 2) {
-        return Modal.confirm({
-          title: '',
-          content:
-            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
-          onOk: async (close: () => void) => {
-            const inspectionPostApiPayload = createInspectionPostApiPayload(
-              inspectionGridInstance,
-            );
-
-            await fetchInsepctionPostAPI(inspectionPostApiPayload);
-            close();
-          },
-          onCancel: () => {
-            // this function will be executed when cancel button is clicked
-          },
-        });
-      }
-
-      return fetchInsepctionPostAPI(inspectionPostApiPayload);
+    if (isFilledAllInspectionSample === true) {
+      fetchInsepctionPostAPI(inspectionPostApiPayload);
+      return;
     }
-    return fetchInsepctionPostAPI(inspectionPostApiPayload);
+
+    const fetchOptionFilledQualityAllInspectionResultFlags = await getData(
+      { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+      '/std/tenant-opts',
+    );
+
+    if (fetchOptionFilledQualityAllInspectionResultFlags.length === 0) {
+      throw new Error(
+        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
+      );
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 0) {
+      fetchInsepctionPostAPI(inspectionPostApiPayload);
+      return;
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 1) {
+      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
+      return;
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 2) {
+      Modal.confirm({
+        title: '',
+        content:
+          SENTENCE.CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
+        onOk: async (close: () => void) => {
+          const inspectionPostApiPayload = createInspectionPostApiPayload(
+            inspectionGridRef.current.getInstance(),
+          );
+
+          await fetchInsepctionPostAPI(inspectionPostApiPayload);
+          close();
+        },
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
+      });
+      return;
+    }
+
+    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
   };
 
   const onCancel = ev => {
