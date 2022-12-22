@@ -47,7 +47,7 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
-import { WORD } from '~/constants/lang/ko';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { FieldStore } from '~/constants/fields';
 import { ColumnStore } from '~/constants/columns';
 import { InputGroupBoxStore } from '~/constants/input-groupboxes';
@@ -554,7 +554,7 @@ export const PgQmsFinalInspResult = () => {
     <>
       <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
         <CaretRightOutlined />
-        최종검사 이력
+        {WORD.FINAL_INSP_HISTORY}
       </Typography.Title>
       <Divider style={{ marginBottom: 10 }} />
       <Container>
@@ -570,13 +570,13 @@ export const PgQmsFinalInspResult = () => {
               onClick={onCreate}
               disabled={!permissions?.create_fg}
             >
-              신규 추가
+              {SENTENCE.ADD_RECORD}
             </Button>
           </Space>
         </div>
         <div style={{ maxWidth: 700, marginTop: -20, marginLeft: -6 }}>
           <Searchbox
-            id="receive_insp_result_search"
+            id="FINAL_INSP_RESULT_SEARCH"
             innerRef={searchRef}
             searchItems={SEARCH_ITEMS}
             onSearch={onSearch}
@@ -584,9 +584,9 @@ export const PgQmsFinalInspResult = () => {
           />
         </div>
         <Datagrid
-          gridId={'FINAL_INSP_RESULTS'}
+          gridId="FINAL_INSP_RESULTS"
           ref={gridRef}
-          gridMode={'view'}
+          gridMode="view"
           columns={ColumnStore.FINAL_INSP_HISTORY}
           height={300}
           data={finalInspResults}
@@ -612,7 +612,7 @@ export const PgQmsFinalInspResult = () => {
             style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
           >
             <CaretRightOutlined />
-            검사 품목 정보
+            {WORD.INSP_ITEM_INFO}
           </Typography.Title>
           <Divider style={{ marginTop: 2, marginBottom: 10 }} />
           <Row gutter={[16, 16]}>
@@ -625,7 +625,7 @@ export const PgQmsFinalInspResult = () => {
         style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
       >
         <CaretRightOutlined />
-        검사정보
+        {WORD.INSP_INFO}
       </Typography.Title>
       <Divider style={{ marginBottom: 10 }} />
       {INSP_RESULT_DETAIL_GRID.component}
