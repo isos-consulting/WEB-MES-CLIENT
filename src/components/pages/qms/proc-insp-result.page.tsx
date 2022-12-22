@@ -54,7 +54,6 @@ dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
-//#region ✅전역 변수 URI Path, Type ...
 const URI_PATH_GET_PRD_WORKS = '/prd/works';
 const URI_PATH_GET_QMS_PROC_INSP_INCLUDE_DETAILS =
   '/qms/proc/insp/include-details';
@@ -362,42 +361,26 @@ type TPutQmsFinalInspResult = {
   header?: TPutQmsProcInspResultsHeader;
   details?: TPutQmsProcInspResultsDetail[];
 };
-//#endregion
 
-//#region 🔶공정검사 성적서
 export const PgQmsProcInspResult = () => {
-  /** 페이지 제목 */
   const title = getPageName();
 
-  /** 권한 관련 */
   const permissions = getPermissions(title);
 
-  //#region ✅설정값
   const [, contextHolder] = Modal.useModal();
   const INSP_RESULT_DETAIL_GRID = INSP_RESULT_DETAIL_GRID_INFO();
-  //#region Ref 관리
   const searchRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();
-  //#endregion
 
-  //#region 상태관리
   const [createPopupVisible, setCreatePopupVisible] = useState(false);
-  //#endregion
-
-  //#region 데이터 관리
   const [works, setWorks] = useState<TGetPrdWork[]>([]);
-
   const [workData, setWorkData] = useState<TGetPrdWork>({});
-  //#endregion
 
-  //#region ✅조회조건
   const SEARCH_ITEMS: ISearchItem[] = [
     { type: 'date', id: 'start_date', label: '작업일', default: getToday(-7) },
     { type: 'date', id: 'end_date', default: getToday() },
   ];
-  //#endregion
 
-  //#region 그리드 컬럼세팅
   const COLUMNS_WORKS: IGridColumn[] = [
     {
       header: '생산실적UUID',
@@ -623,9 +606,7 @@ export const PgQmsProcInspResult = () => {
       format: 'text',
     },
   ];
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
     { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
     { id: 'prod_no', label: '품번', type: 'text', disabled: true },
@@ -637,9 +618,7 @@ export const PgQmsProcInspResult = () => {
   ];
 
   const inputWork = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_WORK);
-  //#endregion
 
-  //#region 함수
   const onSearch = () => {
     const { values } = searchRef?.current;
     const searchParams = values;
@@ -648,7 +627,6 @@ export const PgQmsProcInspResult = () => {
 
     getData(searchParams, URI_PATH_GET_PRD_WORKS).then(res => {
       setWorks(res);
-      // 입하정보 및 실적정보 초기화
       inputWork.ref.current.resetForm();
     });
   };
@@ -660,18 +638,13 @@ export const PgQmsProcInspResult = () => {
     }
     setCreatePopupVisible(true);
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (workData && !createPopupVisible) {
       INSP_RESULT_DETAIL_GRID.onSearch(workData);
     }
   }, [workData, createPopupVisible]);
 
-  //#endregion
-
-  //#region 렌더부
   return (
     <>
       <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
@@ -717,7 +690,6 @@ export const PgQmsProcInspResult = () => {
         />
       </Container>
       <Row gutter={[16, 0]}>
-        {/* 품목 정보 */}
         <Col span={24} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Typography.Title
             level={5}
@@ -770,38 +742,22 @@ export const PgQmsProcInspResult = () => {
       {contextHolder}
     </>
   );
-  //#endregion
 };
-//#endregion
 
-//#region 공정검사 결과
 const INSP_RESULT_DETAIL_GRID_INFO = () => {
-  /** 페이지 제목 */
   const title = getPageName();
-
-  /** 권한 관련 */
   const permissions = getPermissions(title);
 
-  //#region Ref 관리
   const procInspResultsGridRef = useRef<Grid>();
   const procInspResultDetailsGridRef = useRef<Grid>();
-  //#endregion
-
-  //#region 상태관리
   const [editPopupVisible, setEditPopupVisible] = useState(false);
-  //#endregion
-
-  //#region 데이터 관리
   const [workData, setWorkData] = useState<TGetPrdWork>({});
   const [procInspResults, setProcInspResults] = useState<
     TGetQmsProcInspResult[]
   >([]);
   const [procInspResultIncludeDetails, setProcInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
-  //const [procInspResults, setProcInspResults] = useState<TGetQmsFinalInspResultIncludeDetails>({});
-  //#endregion
 
-  //#region 그리드 컬럼세팅
   const COLUMNS_INSP_RESULTS: IGridColumn[] = [
     {
       header: '검사성적서UUID',
@@ -1010,9 +966,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
 
     return items;
   }, [procInspResultIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
     {
       label: '최종판정',
@@ -1038,9 +992,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     INPUT_ITEMS_INSP_RESULT,
     { title: '검사정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onEdit = ev => {
     if (!procInspResultIncludeDetails?.header?.insp_result_uuid) {
       message.warning('수정 할 성적서를 선택 후 수정기능을 이용해주세요.');
@@ -1145,17 +1097,13 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
         message.error('에러');
       });
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (!editPopupVisible) {
       onSearch(workData);
     }
   }, [editPopupVisible]);
-  //#endregion
 
-  //#region 렌더부
   const component = (
     <>
       <Container>
@@ -1245,32 +1193,16 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
 
     component,
   };
-
-  //#endregion
 };
-//#endregion
 
-//#region 성적서 신규 팝업
 const INSP_RESULT_CREATE_POPUP = (props: {
   workData: TGetPrdWork;
   popupVisible: boolean;
   setPopupVisible: (value?) => void;
 }) => {
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
-
-  //#region 상태관리
-
-  //#endregion
-
-  //#region 데이터 관리
   const [inspIncludeDetails, setInspIncludeDetails] =
     useState<TGetQmsProcInspIncludeDetails>({});
-  //#endregion
-
-  //#region 그리드 컬럼세팅
-
   const COLUMNS_INSP_DETAILS: IGridColumn[] = [
     {
       header: '검사기준서 상세UUID',
@@ -1442,9 +1374,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
     return items;
   }, [inspIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
     { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
     { id: 'prod_no', label: '품번', type: 'text', disabled: true },
@@ -1515,9 +1445,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     INPUT_ITEMS_INSP_RESULT,
     { title: '검사정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onClear = () => {
     inputWork.ref.current.resetForm();
     inputInspResult.ref.current.resetForm();
@@ -1885,16 +1813,13 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       }
     }
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     if (props?.workData && props.popupVisible) {
       inputWork.setValues(props.workData);
       inputInspResult.setFieldValue('reg_date', getToday());
     }
   }, [props?.workData, props?.popupVisible]);
-  //#endregion
 
   useLayoutEffect(() => {
     Promise.resolve({ ...inspIncludeDetails }).then(processInspectionInfo => {
@@ -1918,7 +1843,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     });
   }, [inspIncludeDetails]);
 
-  //#region 컴포넌트 rander
   return (
     <GridPopup
       title="데이터 추가하기"
@@ -1941,9 +1865,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       visible={props.popupVisible}
     />
   );
-  //#endregion
 };
-//#endregion
 
 const INSP_RESULT_EDIT_POPUP = (props: {
   workData: TGetPrdWork;
