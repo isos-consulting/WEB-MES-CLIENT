@@ -11,7 +11,10 @@ type InputGroupBoxRecordKeys =
   | 'PROC_INSP_ITEM_WORK'
   | 'PROC_INSP_RESULT_DETAIL_ITEM'
   | 'PROC_INSP_RESULT'
-  | 'FINAL_INSP_ITEM';
+  | 'FINAL_INSP_ITEM'
+  | 'FINAL_INSP_RESULT'
+  | 'FINAL_INSP_RESULT_INCOME'
+  | 'FINAL_INSP_RESULT_REJECT';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -317,5 +320,45 @@ export const InputGroupBoxStore: Record<
     { id: 'from_location_nm', label: '출고위치', type: 'text', disabled: true },
     { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
     { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
+  ],
+  FINAL_INSP_RESULT: [
+    {
+      id: 'insp_result_state',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+    },
+    { id: 'reg_date', label: '검사일', type: 'date', disabled: true },
+    { id: 'reg_date_time', label: '검사시간', type: 'time', disabled: true },
+    { id: 'emp_nm', label: '검사자', type: 'text', disabled: true },
+    {
+      id: 'insp_handling_type_nm',
+      label: '처리결과',
+      type: 'text',
+      disabled: true,
+    },
+    { id: 'remark', label: '비고', type: 'text', disabled: true },
+    { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
+  ],
+  FINAL_INSP_RESULT_INCOME: [
+    { id: 'pass_qty', label: '입고수량', type: 'number', disabled: true },
+    { id: 'to_store_nm', label: '입고창고', type: 'text', disabled: true },
+    { id: 'to_location_nm', label: '입고위치', type: 'text', disabled: true },
+  ],
+  FINAL_INSP_RESULT_REJECT: [
+    { id: 'reject_qty', label: '부적합수량', type: 'number', disabled: true },
+    { id: 'reject_nm', label: '불량유형', type: 'text', disabled: true },
+    {
+      id: 'reject_store_nm',
+      label: '부적합창고',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'reject_location_nm',
+      label: '부적합위치',
+      type: 'text',
+      disabled: true,
+    },
   ],
 };

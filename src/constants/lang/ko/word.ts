@@ -31,4 +31,6 @@ export enum WORD {
   INSP_DATE = '검사일',
   FINAL_INSP_HISTORY = '최종검사이력',
   INSP_ITEM_INFO = '검사품목정보',
+  INCOME_INFO = '입고정보',
+  REJECT_INFO = '부적합정보',
 }

@@ -655,146 +655,48 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
   const [finalInspResultIncludeDetails, setFinalInspResultIncludeDetails] =
     useState<TGetQmsFinalInspResultIncludeDetails>({});
 
-  const COLUMNS_FINAL_INSP_RESULT_DETAILS: IGridColumn[] = [
-    {
-      header: '검사기준서 상세UUID',
-      name: 'insp_detail_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형UUID',
-      name: 'insp_item_type_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형명',
-      name: 'insp_item_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사항목UUID',
-      name: 'insp_item_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목명',
-      name: 'insp_item_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사 기준',
-      name: 'spec_std',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '최소 값',
-      name: 'spec_min',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '최대 값',
-      name: 'spec_max',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사방법UUID',
-      name: 'insp_method_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사방법명',
-      name: 'insp_method_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사구UUID',
-      name: 'insp_tool_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사구명',
-      name: 'insp_tool_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '정렬',
-      name: 'sortby',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '시료 수량',
-      name: 'sample_cnt',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사 주기',
-      name: 'insp_cycle',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-  ];
-
   const COLUMNS_FINAL_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = COLUMNS_FINAL_INSP_RESULT_DETAILS;
+    const finalInspResultDetailColumn = [...ColumnStore.RECEIVE_INSP_DETAIL];
+    const finalInspMaxSampleCount =
+      finalInspResultIncludeDetails?.header?.max_sample_cnt;
 
-    if (finalInspResultIncludeDetails?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
+    if (finalInspMaxSampleCount > 0) {
       for (
-        let i = 1;
-        i <= finalInspResultIncludeDetails?.header?.max_sample_cnt;
-        i++
+        let sampleIndex = 1;
+        sampleIndex <= finalInspMaxSampleCount;
+        sampleIndex++
       ) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
+        finalInspResultDetailColumn.push({
+          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
+          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
+        finalInspResultDetailColumn.push({
+          header: `x${sampleIndex}_sample_no`,
+          name: `x${sampleIndex}_sample_no`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
+        finalInspResultDetailColumn.push({
+          header: `x${sampleIndex}`,
+          name: `x${sampleIndex}_insp_value`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           editable: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
+        finalInspResultDetailColumn.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_fg`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
+        finalInspResultDetailColumn.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_state`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
@@ -802,91 +704,30 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
       }
     }
 
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
+    finalInspResultDetailColumn.push(...ColumnStore.INSP_ITEM_RESULT);
 
-    return items;
+    return finalInspResultDetailColumn;
   }, [finalInspResultIncludeDetails]);
-
-  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
-    {
-      id: 'insp_result_state',
-      label: '최종판정',
-      type: 'text',
-      disabled: true,
-    },
-    { id: 'reg_date', label: '검사일', type: 'date', disabled: true },
-    { id: 'reg_date_time', label: '검사시간', type: 'time', disabled: true },
-    { id: 'emp_nm', label: '검사자', type: 'text', disabled: true },
-    {
-      id: 'insp_handling_type_nm',
-      label: '처리결과',
-      type: 'text',
-      disabled: true,
-    },
-    { id: 'remark', label: '비고', type: 'text', disabled: true },
-    { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
-  ];
-
-  const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
-    { id: 'pass_qty', label: '입고수량', type: 'number', disabled: true },
-    { id: 'to_store_nm', label: '입고창고', type: 'text', disabled: true },
-    { id: 'to_location_nm', label: '입고위치', type: 'text', disabled: true },
-  ];
-
-  const INPUT_ITEMS_INSP_RESULT_REJECT: IInputGroupboxItem[] = [
-    { id: 'reject_qty', label: '부적합수량', type: 'number', disabled: true },
-    { id: 'reject_nm', label: '불량유형', type: 'text', disabled: true },
-    {
-      id: 'reject_store_nm',
-      label: '부적합창고',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      id: 'reject_location_nm',
-      label: '부적합위치',
-      type: 'text',
-      disabled: true,
-    },
-  ];
 
   const inputInspResult = useInputGroup(
     'INPUT_INSP_RESULT',
-    INPUT_ITEMS_INSP_RESULT,
-    { title: '검사정보' },
+    InputGroupBoxStore.FINAL_INSP_RESULT,
+    { title: WORD.INSP_INFO },
   );
   const inputInspResultIncome = useInputGroup(
     'INPUT_INSP_RESULT_INCOME',
-    INPUT_ITEMS_INSP_RESULT_INCOME,
-    { title: '입고정보' },
+    InputGroupBoxStore.FINAL_INSP_RESULT_INCOME,
+    { title: WORD.INCOME_INFO },
   );
   const inputInspResultReject = useInputGroup(
     'INPUT_INSP_RESULT_REJECT',
-    INPUT_ITEMS_INSP_RESULT_REJECT,
-    { title: '부적합정보' },
+    InputGroupBoxStore.FINAL_INSP_RESULT_REJECT,
+    { title: WORD.REJECT_INFO },
   );
 
   const onEdit = ev => {
     if (!finalInspResultIncludeDetails?.header?.insp_result_uuid) {
-      message.warning('수정 할 성적서를 선택 후 수정기능을 이용해주세요.');
+      message.warning(SENTENCE.BEFORE_SELECT_INSP_REPORT_AND_EDIT);
       return;
     }
     setEditPopupVisible(true);
@@ -894,14 +735,14 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
 
   const onDelete = async ev => {
     if (!finalInspResultIncludeDetails?.header?.insp_result_uuid) {
-      message.warn('삭제 할 성적서를 선택 후 다시 시도해주세요..');
+      message.warn(SENTENCE.BEFORE_SELECT_INSP_REPORT_AND_DELETE);
       return;
     }
 
     Modal.confirm({
       icon: null,
-      title: '삭제',
-      content: '성적서를 삭제하시겠습니까?',
+      title: WORD.DELETE,
+      content: SENTENCE.DELETE_CONFIRM,
       onOk: async () => {
         await executeData(
           [{ uuid: finalInspResultIncludeDetails?.header?.insp_result_uuid }],
@@ -913,7 +754,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
             if (!value) return;
             onClear();
             props.onAfterSave();
-            message.info('저장되었습니다.');
+            message.info(SENTENCE.DELETE_COMPLETE);
           })
           .catch(e => {
             console.log(e);
@@ -922,8 +763,8 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
       onCancel: () => {
         // this function will be executed when cancel button is clicked
       },
-      okText: '예',
-      cancelText: '아니오',
+      okText: WORD.YES,
+      cancelText: WORD.NO,
     });
   };
 
@@ -963,7 +804,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
         })
         .catch(err => {
           onClear();
-          message.error('에러');
+          message.error(SENTENCE.ERROR_OCCURRED);
         });
     } else {
       onClear();
@@ -985,7 +826,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
               onClick={onEdit}
               disabled={!permissions?.update_fg}
             >
-              수정
+              {WORD.EDIT}
             </Button>
             <Button
               btnType="buttonFill"
@@ -997,7 +838,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
               onClick={onDelete}
               disabled={!permissions?.delete_fg}
             >
-              삭제
+              {WORD.DELETE}
             </Button>
           </Space>
         </div>
@@ -1015,9 +856,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
             <p />
             <Datagrid
               height={250}
-              gridId={'FINAL_INSP_RESULT_DETAILS_INCLUDE_VALUES'}
+              gridId="FINAL_INSP_RESULT_DETAILS_INCLUDE_VALUES"
               ref={gridRef}
-              gridMode={'view'}
+              gridMode="view"
               columns={COLUMNS_FINAL_INSP_RESULT_DETAILS_INCLUDE_VALUES}
               data={finalInspResultIncludeDetails?.details}
             />
