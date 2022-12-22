@@ -547,17 +547,6 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     });
   };
 
-  const cellKeys = (
-    records: Array<any>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
-    );
-
-  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
-    keys.slice(0, at);
-
   const onAfterChange = ({ changes, instance }: any) => {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
