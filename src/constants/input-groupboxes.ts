@@ -6,7 +6,8 @@ type InputGroupBoxRecordKeys =
   | 'RECEIVE_INSP_ITEM'
   | 'RECEIVE_INSP_RESULT'
   | 'RECEIVE_INSP_RESULT_INCOME'
-  | 'RECEIVE_INSP_RESULT_RETURN';
+  | 'RECEIVE_INSP_RESULT_RETURN'
+  | 'PROC_INSP_ITEM_WORK';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -223,5 +224,14 @@ export const InputGroupBoxStore: Record<
         // this is a workaround for the combo box not updating the value
       },
     },
+  ],
+  PROC_INSP_ITEM_WORK: [
+    { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
+    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
+    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
+    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
+    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
+    { id: 'proc_nm', label: '공정', type: 'text', disabled: true },
+    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
   ],
 };

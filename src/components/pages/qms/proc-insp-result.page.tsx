@@ -42,6 +42,9 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
 import TuiGrid from 'tui-grid';
+import { ColumnStore } from '~/constants/columns';
+import { FieldStore } from '~/constants/fields';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -376,248 +379,20 @@ export const PgQmsProcInspResult = () => {
   const [works, setWorks] = useState<TGetPrdWork[]>([]);
   const [workData, setWorkData] = useState<TGetPrdWork>({});
 
-  const SEARCH_ITEMS: ISearchItem[] = [
-    { type: 'date', id: 'start_date', label: '작업일', default: getToday(-7) },
-    { type: 'date', id: 'end_date', default: getToday() },
-  ];
+  const SEARCH_ITEMS: ISearchItem[] = FieldStore.DUE_DATE_RANGE_SEVEN.reduce(
+    (fields, dateField, fieldIndex) => {
+      if (fieldIndex === 0)
+        return [...fields, { ...dateField, label: '작업일' }];
 
-  const COLUMNS_WORKS: IGridColumn[] = [
-    {
-      header: '생산실적UUID',
-      name: 'work_uuid',
-      alias: 'uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
+      return [...fields, { ...dateField }];
     },
-    {
-      header: '작업구분',
-      name: 'complete_state',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '실적 일시',
-      name: 'reg_date',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업지시UUID',
-      name: 'order_uuid',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '지시번호',
-      name: 'order_no',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '생산실적 순번',
-      name: 'seq',
-      width: 200,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '공정',
-      name: 'proc_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업장',
-      name: 'workings_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '설비',
-      name: 'equip_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품목유형',
-      name: 'item_type_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '제품유형',
-      name: 'prod_type_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품번',
-      name: 'prod_no',
-      width: 150,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '품명',
-      name: 'prod_nm',
-      width: 150,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '모델',
-      name: 'model_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    { header: 'Rev', name: 'rev', width: 100, hidden: false, format: 'text' },
-    {
-      header: '규격',
-      name: 'prod_std',
-      width: 100,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '단위',
-      name: 'unit_nm',
-      width: 80,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: 'LOT NO',
-      name: 'lot_no',
-      width: 100,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '지시 수량',
-      name: 'order_qty',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '생산 수량',
-      name: 'total_qty',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '양품 수량',
-      name: 'qty',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '부적합 수량',
-      name: 'reject_qty',
-      width: 100,
-      hidden: false,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '생산시작 일시',
-      name: 'start_date',
-      width: 100,
-      hidden: false,
-      format: 'datetime',
-    },
-    {
-      header: '생산종료 일시',
-      name: 'end_date',
-      width: 100,
-      hidden: false,
-      format: 'datetime',
-    },
-    {
-      header: '작업시간',
-      name: 'work_time',
-      width: 80,
-      hidden: true,
-      format: 'text',
-    },
-    {
-      header: '작업교대명',
-      name: 'shift_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업자수',
-      name: 'worker_cnt',
-      width: 100,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '작업자명',
-      name: 'worker_nm',
-      width: 100,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '입고 창고',
-      name: 'to_store_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '입고 위치',
-      name: 'to_location_nm',
-      width: 120,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '지시 비고',
-      name: 'order_remark',
-      width: 150,
-      hidden: false,
-      format: 'text',
-    },
-    {
-      header: '생산 비고',
-      name: 'remark',
-      width: 150,
-      hidden: false,
-      format: 'text',
-    },
-  ];
+    [],
+  );
 
-  const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
-    { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
-    { id: 'proc_nm', label: '공정', type: 'text', disabled: true },
-    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
-  ];
-
-  const inputWork = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_WORK);
+  const inputWork = useInputGroup(
+    'INPUT_ITEMS_WORK',
+    InputGroupBoxStore.PROC_INSP_ITEM_WORK,
+  );
 
   const onSearch = () => {
     const { values } = searchRef?.current;
@@ -666,7 +441,7 @@ export const PgQmsProcInspResult = () => {
           gridId={'FINAL_INSP_RESULTS'}
           ref={gridRef}
           gridMode={'view'}
-          columns={COLUMNS_WORKS}
+          columns={ColumnStore.PROC_INSP_HISTORY}
           height={300}
           data={works}
           onAfterClick={ev => {
@@ -682,8 +457,6 @@ export const PgQmsProcInspResult = () => {
                 INSP_RESULT_DETAIL_GRID.onClearResultDetail();
               } catch (e) {
                 console.log(e);
-              } finally {
-                // 그리드 셀 클릭 후 처리할 코드 작성
               }
             }
           }}
