@@ -438,7 +438,7 @@ export const PgQmsProcInspResult = () => {
           />
         </div>
         <Datagrid
-          gridId={'FINAL_INSP_RESULTS'}
+          gridId={'PROC_INSP_RESULTS'}
           ref={gridRef}
           gridMode={'view'}
           columns={ColumnStore.PROC_INSP_HISTORY}
