@@ -1,5 +1,6 @@
 import { URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING } from '~/components/pages/qms/receive-insp-result/modals/constants';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
+import { getToday } from '~/functions';
 import { ColumnStore } from './columns';
 
 type InputGroupBoxRecordKeys =
@@ -8,7 +9,8 @@ type InputGroupBoxRecordKeys =
   | 'RECEIVE_INSP_RESULT_INCOME'
   | 'RECEIVE_INSP_RESULT_RETURN'
   | 'PROC_INSP_ITEM_WORK'
-  | 'PROC_INSP_RESULT_DETAIL_ITEM';
+  | 'PROC_INSP_RESULT_DETAIL_ITEM'
+  | 'PROC_INSP_RESULT';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -253,5 +255,56 @@ export const InputGroupBoxStore: Record<
       disabled: true,
     },
     { label: '비고', id: 'remark', type: 'text', disabled: true },
+  ],
+  PROC_INSP_RESULT: [
+    {
+      id: 'insp_uuid',
+      label: '검사기준서UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_fg',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_state',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'insp_detail_type_uuid',
+      label: '검사유형',
+      type: 'combo',
+      dataSettingOptions: {
+        codeName: 'insp_detail_type_uuid',
+        textName: 'insp_detail_type_nm',
+        uriPath: '/adm/insp-detail-types',
+        params: {
+          insp_type_cd: 'PROC_INSP',
+        },
+      },
+      onAfterChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
+    { id: 'reg_date_time', label: '검사시간', type: 'time' },
+    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
+    {
+      id: 'emp_nm',
+      label: '검사자',
+      type: 'text',
+      usePopup: true,
+      popupKey: '사원관리',
+      popupKeys: ['emp_nm', 'emp_uuid'],
+      params: { emp_status: 'incumbent' },
+    },
+    { id: 'remark', label: '비고', type: 'text' },
   ],
 };
