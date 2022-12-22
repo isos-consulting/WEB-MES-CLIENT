@@ -39,10 +39,12 @@ export enum SENTENCE {
   CONFIRM_TO_INSP_REPORT_DELETE = '검사 성적서를 삭제하시겠습니까?',
   INPUT_INSPECTOR = '검사자를 입력해주세요',
   INPUT_INSPECT_TIME = '검사 시간을 입력해주세요',
+  INPUT_INSPECT_DATE = '검사 일자를 입력해주세요',
   EXIST_INSPECT_MISSING_VALUE = '결측치가 존재합니다. 확인 후 다시 저장해주세요',
   CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION = '검사성적서 결과값 전체등록 여부 옵션을 찾을 수 없습니다',
   INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT = '검사 결과값을 시료 수 만큼 입력해주세요',
   CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT = '검사 결과값을 시료 수 만큼 입력하지 않았습니다. 저장하시겠습니까?',
   UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT = '검사 성적서 저장 중 알 수 없는 오류가 발생했습니다',
   DO_ADD_DATA = '데이터 추가하기',
+  DO_UPDATE_DATA = '데이터 수정하기',
 }

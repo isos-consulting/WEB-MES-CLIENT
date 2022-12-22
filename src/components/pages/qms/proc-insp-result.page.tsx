@@ -1,9 +1,16 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, Space, Typography, Modal, Col, Row, message } from 'antd';
+import { Col, Divider, message, Modal, Row, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import localeData from 'dayjs/plugin/localeData';
+import weekday from 'dayjs/plugin/weekday';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import weekYear from 'dayjs/plugin/weekYear';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import TuiGrid from 'tui-grid';
 import {
   Button,
   Container,
@@ -13,10 +20,16 @@ import {
   ISearchItem,
   Searchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
 import {
   IInputGroupboxItem,
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
+import { ColumnStore } from '~/constants/columns';
+import { FieldStore } from '~/constants/fields';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { ENUM_WIDTH } from '~/enums';
 import {
   executeData,
   getData,
@@ -24,28 +37,7 @@ import {
   getPermissions,
   getToday,
   getUserFactoryUuid,
-  isNumber,
 } from '~/functions';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import localeData from 'dayjs/plugin/localeData';
-import weekday from 'dayjs/plugin/weekday';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import {
-  EmptyInspectionChecker,
-  EyeInspectionChecker,
-  InspectionConcreate,
-  NumberInspectionChecker,
-} from './receive-insp-result/models/inspection-checker';
-import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
-import TuiGrid from 'tui-grid';
-import { ColumnStore } from '~/constants/columns';
-import { FieldStore } from '~/constants/fields';
-import { InputGroupBoxStore } from '~/constants/input-groupboxes';
-import { SENTENCE, WORD } from '~/constants/lang/ko';
 import {
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
@@ -61,6 +53,7 @@ import {
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -1361,24 +1354,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     setInspResultIncludeDetails({});
   };
 
-  const cellKeys = (
-    records: Array<any>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
-    );
-
-  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
-    keys.slice(0, at);
-
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
-
   const onAfterChange = ({ changes, instance }: any) => {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
@@ -1490,10 +1465,12 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                 `x${sampleIndex + 1}_insp_value`
               ].toString();
 
+            const uuid = sampleUuid == null ? null : `${sampleUuid}`;
+
             return [
               ...samples,
               {
-                uuid: `${sampleUuid}`,
+                uuid,
                 delete_fg: false,
                 sample_no: sampleIndex + 1,
                 insp_result_fg: currentSample,
@@ -1510,7 +1487,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             itemIndex
           ].insp_result_detail_info_uuid.toString(),
           insp_result_fg: Boolean(inspectionDatas[itemIndex].insp_result_fg),
-          remark: inspectionDatas[itemIndex].remark.toString(),
+          remark:
+            inputInspResultValues?.remark == null
+              ? null
+              : `${inspectionDatas[itemIndex].remark}`,
           values: editedSamples,
         };
       });
@@ -1549,155 +1529,98 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const onSave = async (
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const fetchOptionFilledQualityAllInspectionResult = getData(
+    const { emp_uuid, reg_date, reg_date_time } =
+      inputInspResult?.ref?.current?.values;
+
+    if (emp_uuid == null) {
+      message.warn(SENTENCE.INPUT_INSPECTOR);
+      return;
+    }
+    if (reg_date == null) {
+      message.warn(SENTENCE.INPUT_INSPECT_DATE);
+      return;
+    }
+    if (reg_date_time == null) {
+      message.warn(SENTENCE.INPUT_INSPECT_TIME);
+      return;
+    }
+
+    const updatedProcInspections = inspectionGridRef.current
+      .getInstance()
+      .getData();
+    const procInspectionItemRanges = updatedProcInspections.map(item => ({
+      min: String(item.spec_min),
+      max: String(item.spec_max),
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(updatedProcInspections),
+      procInspectionItemRanges,
+    );
+
+    const isMissingValue = inspectionSampleResults.some(
+      getMissingValueInspectResult,
+    );
+
+    if (isMissingValue === true) {
+      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
+      return;
+    }
+
+    const isFilledAllInspectionSample = inspectionSampleResults.every(
+      sampleResults => sampleResults.every(result => result !== null),
+    );
+
+    const fetchOptionFilledQualityAllInspectionResult = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
     );
 
-    if (inputInspResultValues?.emp_uuid == null) {
-      return message.warn('검사자를 등록해주세요.');
-    } else if (inputInspResultValues?.reg_date == null) {
-      return message.warn('검사일자를 등록해주세요.');
-    } else if (inputInspResultValues?.reg_date_time == null) {
-      return message.warn('검사시간을 등록해주세요.');
-    }
-
-    const inspectionGridInstance = inspectionGridRef.current.getInstance();
-    const inspectionGridInstanceData = inspectionGridInstance.getData();
-
-    const inspectionSampleResultStore = cellKeys(
-      inspectionGridInstanceData,
-      '_insp_value',
-    )
-      .map((inspectionItemKeys: Array<string>, inspectionItemIndex: number) =>
-        sliceKeys(
-          inspectionItemKeys,
-          Number(
-            inspectionGridInstance.getValue(inspectionItemIndex, 'sample_cnt'),
-          ),
-        ),
-      )
-      .map((inspectionItemSampleKeys, inspectionItemSampleIndex) =>
-        inspectionItemSampleKeys.map(sampleKey =>
-          inspectionGridInstance.getValue(
-            inspectionItemSampleIndex,
-            sampleKey,
-          ) == null ||
-          inspectionGridInstance.getValue(
-            inspectionItemSampleIndex,
-            sampleKey,
-          ) === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(
-                `${inspectionGridInstance.getValue(
-                  inspectionItemSampleIndex,
-                  'spec_min',
-                )}`,
-              ) &&
-              isNumber(
-                `${inspectionGridInstance.getValue(
-                  inspectionItemSampleIndex,
-                  'spec_max',
-                )}`,
-              )
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemSampleIndex,
-                    sampleKey,
-                  ),
-                ),
-                min: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemSampleIndex,
-                    'spec_min',
-                  ),
-                ),
-                max: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemSampleIndex,
-                    'spec_max',
-                  ),
-                ),
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: inspectionGridInstance.getValue(
-                  inspectionItemSampleIndex,
-                  sampleKey,
-                ),
-              }),
-        ),
-      );
-
-    const isSequenceMissingValue = inspectionSampleResultStore.some(
-      (inspectionSampleResults: Array<boolean>) => {
-        if (inspectionSampleResults[0] === null) return true;
-
-        if (inspectionSampleResults.length > 1) {
-          for (
-            let inspectionItemIndex = 1;
-            inspectionItemIndex < inspectionSampleResults.length;
-            inspectionItemIndex++
-          ) {
-            if (
-              inspectionSampleResults[inspectionItemIndex - 1] === null &&
-              inspectionSampleResults[inspectionItemIndex] !== null
-            )
-              return true;
-          }
-        }
-
-        return false;
-      },
-    );
-
-    if (isSequenceMissingValue === true) {
-      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요.');
-    }
-
-    const isFilledAllInspectionSample = inspectionSampleResultStore.every(
-      (sampleResults: Array<boolean>) =>
-        sampleResults.every((result: boolean) => result !== null),
-    );
-
     const inspectionPutApiPayload = createInspectionPutApiPayload(
-      inspectionGridInstance,
+      inspectionGridRef.current.getInstance(),
     );
 
-    if (isFilledAllInspectionSample === false) {
-      const qualityInspectionFilledOption =
-        (await (async () => fetchOptionFilledQualityAllInspectionResult)())
-          .length > 0
-          ? (
-              await (async () => fetchOptionFilledQualityAllInspectionResult)()
-            )[0].value
-          : 0;
-
-      if (qualityInspectionFilledOption === 1) {
-        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
-      } else if (qualityInspectionFilledOption === 2) {
-        return Modal.confirm({
-          title: '',
-          content:
-            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
-          onOk: async (close: () => void) => {
-            const inspectionPutApiPayload = createInspectionPutApiPayload(
-              inspectionGridInstance,
-            );
-            await fetchInsepctionPutAPI(inspectionPutApiPayload);
-            close();
-          },
-          onCancel: () => {
-            // this function will be executed when cancel button is clicked
-          },
-        });
-      }
-
-      return fetchInsepctionPutAPI(inspectionPutApiPayload);
+    if (isFilledAllInspectionSample === true) {
+      fetchInsepctionPutAPI(inspectionPutApiPayload);
+      return;
     }
 
-    return fetchInsepctionPutAPI(inspectionPutApiPayload);
+    if (fetchOptionFilledQualityAllInspectionResult.length === 0) {
+      throw new Error(
+        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
+      );
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 0) {
+      fetchInsepctionPutAPI(inspectionPutApiPayload);
+      return;
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 1) {
+      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
+      return;
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 2) {
+      Modal.confirm({
+        title: '',
+        content:
+          SENTENCE.CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
+        onOk: async (close: () => void) => {
+          const inspectionPutApiPayload = createInspectionPutApiPayload(
+            inspectionGridRef.current.getInstance(),
+          );
+          await fetchInsepctionPutAPI(inspectionPutApiPayload);
+          close();
+        },
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
+      });
+      return;
+    }
+
+    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
   };
 
   const onCancel = ev => {
@@ -1752,7 +1675,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         })
         .catch(err => {
           onClear();
-          message.error('에러');
+          message.error(SENTENCE.ERROR_OCCURRED);
         });
     } else {
       onClear();
@@ -1761,10 +1684,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
   return (
     <GridPopup
-      title="공정검사 성적서 수정"
+      title={SENTENCE.DO_UPDATE_DATA}
       onOk={onSave}
-      okText="저장"
-      cancelText="취소"
+      okText={WORD.SAVE}
+      cancelText={WORD.CANCEL}
       onCancel={onCancel}
       gridMode="update"
       popupId={'INSP_EDIT_POPUP'}
