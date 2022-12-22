@@ -10,7 +10,8 @@ type InputGroupBoxRecordKeys =
   | 'RECEIVE_INSP_RESULT_RETURN'
   | 'PROC_INSP_ITEM_WORK'
   | 'PROC_INSP_RESULT_DETAIL_ITEM'
-  | 'PROC_INSP_RESULT';
+  | 'PROC_INSP_RESULT'
+  | 'FINAL_INSP_ITEM';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -306,5 +307,15 @@ export const InputGroupBoxStore: Record<
       params: { emp_status: 'incumbent' },
     },
     { id: 'remark', label: '비고', type: 'text' },
+  ],
+  FINAL_INSP_ITEM: [
+    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
+    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
+    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
+    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
+    { id: 'from_store_nm', label: '출고창고', type: 'text', disabled: true },
+    { id: 'from_location_nm', label: '출고위치', type: 'text', disabled: true },
+    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
+    { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
   ],
 };

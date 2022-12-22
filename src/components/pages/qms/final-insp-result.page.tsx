@@ -47,11 +47,13 @@ import {
 } from './receive-insp-result/models/inspection-checker';
 import TuiGrid from 'tui-grid';
 import { GridEventProps } from 'tui-grid/types/event';
+import { WORD } from '~/constants/lang/ko';
+import { FieldStore } from '~/constants/fields';
+import { ColumnStore } from '~/constants/columns';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 
-// 날짜 로케일 설정
 dayjs.locale('ko-kr');
 
-// moment 타입과 호환시키기 위한 행위
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 dayjs.extend(weekday);
@@ -59,7 +61,6 @@ dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
-//#region ✅전역 변수 URI Path, Type ...
 const URI_PATH_GET_INV_STORES_STOCKS = getPopupForm('재고관리').uriPath;
 const URI_PATH_GET_QMS_INSPS = '/qms/insps';
 const URI_PATH_GET_QMS_INSP_INCLUDE_DETAILS =
@@ -479,230 +480,42 @@ type TPutQmsFinalInspResults = {
   header: TPutQmsFinalInspResultsHeader;
   details: TPutQmsFinalInspResultsDetails[];
 };
-//#endregion
 
-//#region 🔶최종검사 성적서
-/** 최종검사 성적서 리스트 */
 export const PgQmsFinalInspResult = () => {
-  /** 페이지 제목 */
   const title = getPageName();
-
-  /** 권한 관련 */
   const permissions = getPermissions(title);
 
-  //#region ✅설정값
   const [, contextHolder] = Modal.useModal();
 
-  //#region Ref 관리
   const searchRef = useRef<FormikProps<FormikValues>>();
   const gridRef = useRef<Grid>();
-  //#endregion
 
-  //#region 상태관리
   const [createPopupVisible, setCreatePopupVisible] = useState(false);
-  //#endregion
-
-  //#region 데이터 관리
   const [finalInspResults, setFinalInspResults] = useState<
     TGetQmsFinalInspResult[]
   >([]);
   const [inspHandlingType, setInspHandlingType] = useState([]);
-  //#endregion
 
-  //#region ✅조회조건
-  const SEARCH_ITEMS: ISearchItem[] = [
-    { type: 'date', id: 'start_date', label: '검사일', default: getToday(-7) },
-    { type: 'date', id: 'end_date', default: getToday() },
-  ];
-  //#endregion
+  const SEARCH_ITEMS: ISearchItem[] = FieldStore.DUE_DATE_RANGE_SEVEN.reduce(
+    (fields, dateField, fieldIndex) => {
+      if (fieldIndex === 0)
+        return [...fields, { ...dateField, label: WORD.INSP_DATE }];
 
-  //#region 그리드 컬럼세팅
-  const COLUMNS_FINAL_INSP_RESULT: IGridColumn[] = [
-    {
-      header: '성적서UUID',
-      name: 'insp_result_uuid',
-      alias: 'uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
+      return [...fields, { ...dateField }];
     },
-    {
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-    },
-    {
-      header: '처리결과',
-      name: 'insp_handling_type_nm',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '품목유형명',
-      name: 'item_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '제품유형명',
-      name: 'prod_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    { header: '품번', name: 'prod_no', width: ENUM_WIDTH.L, filter: 'text' },
-    { header: '품목명', name: 'prod_nm', width: ENUM_WIDTH.L, filter: 'text' },
-    { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
-    { header: '모델명', name: 'model_nm', width: ENUM_WIDTH.L, filter: 'text' },
-    { header: '단위명', name: 'unit_nm', width: ENUM_WIDTH.L, filter: 'text' },
-    { header: '규격', name: 'prod_std', width: ENUM_WIDTH.L, filter: 'text' },
-    {
-      header: '안전재고',
-      name: 'safe_stock',
-      width: ENUM_WIDTH.M,
-      filter: 'number',
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    { header: 'LOT NO', name: 'lot_no', width: ENUM_WIDTH.M, filter: 'text' },
-    {
-      header: '검사 수량',
-      name: 'insp_qty',
-      width: ENUM_WIDTH.M,
-      filter: 'number',
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '합격 수량',
-      name: 'pass_qty',
-      width: ENUM_WIDTH.M,
-      filter: 'number',
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '부적합 수량',
-      name: 'reject_qty',
-      width: ENUM_WIDTH.M,
-      filter: 'number',
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
-    },
-    {
-      header: '입고 창고UUID',
-      name: 'to_store_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '입고 창고',
-      name: 'to_store_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '입고 위치UUID',
-      name: 'to_location_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '입고 위치',
-      name: 'to_location_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '출고 창고UUID',
-      name: 'from_store_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '출고 창고',
-      name: 'from_store_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '출고 위치UUID',
-      name: 'from_location_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '출고 위치',
-      name: 'from_location_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '부적합 창고UUID',
-      name: 'reject_store_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '부적합 창고',
-      name: 'reject_store_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '부적합 위치UUID',
-      name: 'reject_location_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '부적합 위치',
-      name: 'reject_location_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    { header: '비고', name: 'remark', width: ENUM_WIDTH.XL, filter: 'text' },
-    {
-      header: '바코드',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-      hidden: true,
-    },
-  ];
-  //#endregion
-
-  //#region inputbox 세팅
-  const INPUT_ITEMS_FINAL_INSP_RESULT: IInputGroupboxItem[] = [
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
-    { id: 'from_store_nm', label: '출고창고', type: 'text', disabled: true },
-    { id: 'from_location_nm', label: '출고위치', type: 'text', disabled: true },
-    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
-    { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
-  ];
+    [],
+  );
 
   const inputInspResult = useInputGroup(
     'INPUT_ITEMS_FINAL_INSP_RESULT',
-    INPUT_ITEMS_FINAL_INSP_RESULT,
+    InputGroupBoxStore.FINAL_INSP_ITEM,
   );
-  //#endregion
 
-  //#region 함수
   const onSearch = () => {
     const { values } = searchRef?.current;
     const searchParams = values;
     getData(searchParams, URI_PATH_GET_QMS_FINAL_INSP_RESULTS).then(res => {
       setFinalInspResults(res || []);
-      // 입하정보 및 실적정보 초기화
       inputInspResult.ref.current.resetForm();
       INSP_RESULT_DETAIL_GRID.onClear();
     });
@@ -711,14 +524,11 @@ export const PgQmsFinalInspResult = () => {
   const onCreate = ev => {
     setCreatePopupVisible(true);
   };
-  //#endregion
 
-  //#region 추가 컴포넌트
   const INSP_RESULT_DETAIL_GRID = INSP_RESULT_DETAIL_GRID_INFO({
     inspHandlingType: inspHandlingType,
     onAfterSave: onSearch,
-  }); //props:{onAftetSave={onSearch}});
-  //#endregion
+  });
 
   useLayoutEffect(() => {
     const _inspHandlingType: object[] = [];
@@ -740,7 +550,6 @@ export const PgQmsFinalInspResult = () => {
     });
   }, []);
 
-  //#region 렌더부
   return (
     <>
       <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
@@ -778,7 +587,7 @@ export const PgQmsFinalInspResult = () => {
           gridId={'FINAL_INSP_RESULTS'}
           ref={gridRef}
           gridMode={'view'}
-          columns={COLUMNS_FINAL_INSP_RESULT}
+          columns={ColumnStore.FINAL_INSP_HISTORY}
           height={300}
           data={finalInspResults}
           onAfterClick={ev => {
@@ -791,15 +600,12 @@ export const PgQmsFinalInspResult = () => {
                 INSP_RESULT_DETAIL_GRID.onSearch(row?.insp_result_uuid);
               } catch (e) {
                 console.log(e);
-              } finally {
-                // 그리드 셀 클릭 후 처리할 코드 작성
               }
             }
           }}
         />
       </Container>
       <Row gutter={[16, 0]}>
-        {/* 검사 품목 정보 */}
         <Col span={24} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Typography.Title
             level={5}
@@ -808,11 +614,6 @@ export const PgQmsFinalInspResult = () => {
             <CaretRightOutlined />
             검사 품목 정보
           </Typography.Title>
-          <div
-            style={{ width: '100%', display: 'inline-block', marginTop: -26 }}
-          >
-            {' '}
-          </div>
           <Divider style={{ marginTop: 2, marginBottom: 10 }} />
           <Row gutter={[16, 16]}>
             <InputGroupbox boxShadow={false} {...inputInspResult.props} />
@@ -836,39 +637,24 @@ export const PgQmsFinalInspResult = () => {
           onAfterSave={onSearch}
         />
       ) : null}
-
       {contextHolder}
     </>
   );
-  //#endregion
 };
-//#endregion
 
-//#region 최종검사 결과
 const INSP_RESULT_DETAIL_GRID_INFO = (props: {
   inspHandlingType: any;
   onAfterSave: () => void;
 }) => {
-  /** 페이지 제목 */
   const title = getPageName();
-
-  /** 권한 관련 */
   const permissions = getPermissions(title);
 
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
 
-  //#region 상태관리
   const [editPopupVisible, setEditPopupVisible] = useState(false);
-  //#endregion
-
-  //#region 데이터 관리
   const [finalInspResultIncludeDetails, setFinalInspResultIncludeDetails] =
     useState<TGetQmsFinalInspResultIncludeDetails>({});
-  //#endregion
 
-  //#region 그리드 컬럼세팅
   const COLUMNS_FINAL_INSP_RESULT_DETAILS: IGridColumn[] = [
     {
       header: '검사기준서 상세UUID',
@@ -1038,9 +824,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
 
     return items;
   }, [finalInspResultIncludeDetails]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
     {
       id: 'insp_result_state',
@@ -1099,9 +883,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
     INPUT_ITEMS_INSP_RESULT_REJECT,
     { title: '부적합정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onEdit = ev => {
     if (!finalInspResultIncludeDetails?.header?.insp_result_uuid) {
       message.warning('수정 할 성적서를 선택 후 수정기능을 이용해주세요.');
@@ -1187,13 +969,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
       onClear();
     }
   };
-  //#endregion
 
-  //#region Hook 함수
-
-  //#endregion
-
-  //#region 렌더부
   const component = (
     <>
       <Container>
@@ -1261,7 +1037,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
       ) : null}
     </>
   );
-  //#endregion
 
   return {
     onSearch,
@@ -1269,7 +1044,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
     component,
   };
 };
-//#endregion
 
 const INSP_RESULT_CREATE_POPUP = (props: {
   popupVisible: boolean;
@@ -2522,7 +2296,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   );
 };
 
-//#region 성적서 수정 팝업
 const INSP_RESULT_EDIT_POPUP = (props: {
   inspResultUuid: string;
   inspHandlingType: any;
@@ -2530,21 +2303,14 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   setPopupVisible: (value?) => void;
   onAfterCloseSearch?: (insp_result_uuid: string) => void;
 }) => {
-  //#region Ref 관리
   const gridRef = useRef<Grid>();
-  //#endregion
 
-  //#region 상태관리
   const [changeIncomeQtyFg, setChangeIncomeQtyFg] = useState(false);
   const [changeRejectQtyFg, setChangeRejectQtyFg] = useState(false);
-  //#endregion
 
-  //#region 데이터 관리
   const [inspResult, setInspResult] =
     useState<TGetQmsFinalInspResultIncludeDetails>({});
-  //#endregion
 
-  //#region 그리드 컬럼세팅
   const COLUMNS_FINAL_INSP_DETAILS: IGridColumn[] = [
     {
       header: '검사성적서 상세UUID',
@@ -2717,9 +2483,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     return items;
   }, [inspResult]);
-  //#endregion
 
-  //#region inputbox 세팅
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [
     { id: 'prod_uuid', label: '품목UUID', type: 'text', hidden: true },
     { id: 'prod_no', label: '품번', type: 'text', disabled: true },
@@ -2964,9 +2728,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     INPUT_ITEMS_INSP_RESULT_RETURN,
     { title: '부적합정보' },
   );
-  //#endregion
 
-  //#region 함수
   const onClear = () => {
     inputInputItems?.ref?.current?.resetForm();
     inputInspResult?.ref?.current?.resetForm();
@@ -3717,9 +3479,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         message.error('에러');
       });
   };
-  //#endregion
 
-  //#region Hook 함수
   useLayoutEffect(() => {
     handleLoadData();
     return () => {
@@ -3780,9 +3540,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     }
     setChangeRejectQtyFg(false);
   }, [changeRejectQtyFg]);
-  //#endregion
 
-  //#region 컴포넌트 rander
   return (
     <GridPopup
       title="최종검사 성적서 수정"
@@ -3810,6 +3568,4 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       visible={props.popupVisible}
     />
   );
-  //#endregion
 };
-//#endregion

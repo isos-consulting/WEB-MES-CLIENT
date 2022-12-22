@@ -27,7 +27,8 @@ type ColumnRecordKeys =
   | 'PROC_INSP_HISTORY'
   | 'PROC_INSP_RESULT_DETAIL_HEADER'
   | 'PROC_INSP_RESULT_DETAIL_ITEM'
-  | 'EDITABLE_PROC_INSP_RESULT_DETAIL';
+  | 'EDITABLE_PROC_INSP_RESULT_DETAIL'
+  | 'FINAL_INSP_HISTORY';
 
 export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
   WORK_TYPE: [
@@ -2502,6 +2503,165 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       name: 'insp_cycle',
       width: ENUM_WIDTH.M,
       filter: 'text',
+    },
+  ],
+  FINAL_INSP_HISTORY: [
+    {
+      header: '성적서UUID',
+      name: 'insp_result_uuid',
+      alias: 'uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '판정',
+      name: 'insp_result_state',
+      width: ENUM_WIDTH.S,
+      filter: 'text',
+    },
+    {
+      header: '처리결과',
+      name: 'insp_handling_type_nm',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '품목유형명',
+      name: 'item_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '제품유형명',
+      name: 'prod_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    { header: '품번', name: 'prod_no', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '품목명', name: 'prod_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
+    { header: '모델명', name: 'model_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '단위명', name: 'unit_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '규격', name: 'prod_std', width: ENUM_WIDTH.L, filter: 'text' },
+    {
+      header: '안전재고',
+      name: 'safe_stock',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    { header: 'LOT NO', name: 'lot_no', width: ENUM_WIDTH.M, filter: 'text' },
+    {
+      header: '검사 수량',
+      name: 'insp_qty',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    {
+      header: '합격 수량',
+      name: 'pass_qty',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    {
+      header: '부적합 수량',
+      name: 'reject_qty',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    {
+      header: '입고 창고UUID',
+      name: 'to_store_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '입고 창고',
+      name: 'to_store_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '입고 위치UUID',
+      name: 'to_location_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '입고 위치',
+      name: 'to_location_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '출고 창고UUID',
+      name: 'from_store_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '출고 창고',
+      name: 'from_store_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '출고 위치UUID',
+      name: 'from_location_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '출고 위치',
+      name: 'from_location_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '부적합 창고UUID',
+      name: 'reject_store_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '부적합 창고',
+      name: 'reject_store_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '부적합 위치UUID',
+      name: 'reject_location_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '부적합 위치',
+      name: 'reject_location_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    { header: '비고', name: 'remark', width: ENUM_WIDTH.XL, filter: 'text' },
+    {
+      header: '바코드',
+      name: 'remark',
+      width: ENUM_WIDTH.XL,
+      filter: 'text',
+      hidden: true,
     },
   ],
 };

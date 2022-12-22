@@ -28,4 +28,5 @@ export enum WORD {
   INSP_INFO = '검사정보',
   WORK_DATE = '작업일',
   PERFORMANCE_INFO = '실적정보',
+  INSP_DATE = '검사일',
 }
