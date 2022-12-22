@@ -33,4 +33,5 @@ export enum SENTENCE {
   CHILD_PROD_ORDER_REGISTER = '하위작업지시 등록',
   LOADING_PERMISSION_INFO = '권한 정보를 불러오는 중입니다',
   ERROR_OCCURRED = '오류가 발생했습니다',
+  BEFORE_INPUT_WORK_AND_PUT_ADD_RECORD = '실적을 입력하고 신규 항목 추가 버튼을 눌러주세요',
 }

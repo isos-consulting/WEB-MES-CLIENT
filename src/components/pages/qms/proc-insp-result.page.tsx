@@ -45,6 +45,7 @@ import TuiGrid from 'tui-grid';
 import { ColumnStore } from '~/constants/columns';
 import { FieldStore } from '~/constants/fields';
 import { InputGroupBoxStore } from '~/constants/input-groupboxes';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -382,7 +383,7 @@ export const PgQmsProcInspResult = () => {
   const SEARCH_ITEMS: ISearchItem[] = FieldStore.DUE_DATE_RANGE_SEVEN.reduce(
     (fields, dateField, fieldIndex) => {
       if (fieldIndex === 0)
-        return [...fields, { ...dateField, label: '작업일' }];
+        return [...fields, { ...dateField, label: WORD.WORK_DATE }];
 
       return [...fields, { ...dateField }];
     },
@@ -408,7 +409,7 @@ export const PgQmsProcInspResult = () => {
 
   const onCreate = ev => {
     if (!workData) {
-      message.warning('실적을 입력 후 등록 버튼을 눌러주세요.');
+      message.warning(SENTENCE.BEFORE_INPUT_WORK_AND_PUT_ADD_RECORD);
       return;
     }
     setCreatePopupVisible(true);
@@ -424,13 +425,13 @@ export const PgQmsProcInspResult = () => {
     <>
       <Typography.Title level={5} style={{ marginBottom: -16, fontSize: 14 }}>
         <CaretRightOutlined />
-        공정검사 이력
+        {WORD.PROC_INSP_HISTORY}
       </Typography.Title>
       <Divider style={{ marginBottom: 10 }} />
       <Container>
         <div>
           <Searchbox
-            id="receive_insp_result_search"
+            id="PROC_INSP_RESULT_SEARCH"
             innerRef={searchRef}
             searchItems={SEARCH_ITEMS}
             onSearch={onSearch}
@@ -438,9 +439,9 @@ export const PgQmsProcInspResult = () => {
           />
         </div>
         <Datagrid
-          gridId={'PROC_INSP_RESULTS'}
+          gridId="PROC_INSP_RESULTS"
           ref={gridRef}
-          gridMode={'view'}
+          gridMode="view"
           columns={ColumnStore.PROC_INSP_HISTORY}
           height={300}
           data={works}
@@ -469,7 +470,7 @@ export const PgQmsProcInspResult = () => {
             style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
           >
             <CaretRightOutlined />
-            실적 정보
+            {WORD.WORK_INFO}
           </Typography.Title>
           <div
             style={{ width: '100%', display: 'inline-block', marginTop: -26 }}
@@ -485,7 +486,7 @@ export const PgQmsProcInspResult = () => {
                 onClick={onCreate}
                 disabled={!permissions?.create_fg}
               >
-                신규 추가
+                {SENTENCE.ADD_RECORD}
               </Button>
             </Space>
           </div>
@@ -500,7 +501,7 @@ export const PgQmsProcInspResult = () => {
         style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
       >
         <CaretRightOutlined />
-        검사정보
+        {WORD.INSP_INFO}
       </Typography.Title>
       <Divider style={{ marginBottom: 10 }} />
       {INSP_RESULT_DETAIL_GRID.component}

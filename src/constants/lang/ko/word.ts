@@ -23,4 +23,8 @@ export enum WORD {
   WORK_PLAN_DATE_RANGE = '생산계획기간',
   SELECT = '선택',
   MULTI_SELECT = '다중선택',
+  PROC_INSP_HISTORY = '공정검사이력',
+  WORK_INFO = '실적정보',
+  INSP_INFO = '검사정보',
+  WORK_DATE = '작업일',
 }
