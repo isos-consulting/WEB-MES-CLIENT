@@ -409,7 +409,7 @@ export const PgQmsProcInspResult = () => {
 
   const onCreate = ev => {
     if (!workData) {
-      message.warning(SENTENCE.BEFORE_INPUT_WORK_AND_PUT_ADD_RECORD);
+      message.warning(SENTENCE.BEFORE_INPUT_WORK_AND_ADD_RECORD);
       return;
     }
     setCreatePopupVisible(true);
@@ -596,7 +596,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
 
   const onEdit = ev => {
     if (!procInspResultIncludeDetails?.header?.insp_result_uuid) {
-      message.warning('수정 할 성적서를 선택 후 수정기능을 이용해주세요.');
+      message.warning(SENTENCE.BEFORE_SELECT_INSP_REPORT_AND_EDIT);
       return;
     }
     setEditPopupVisible(true);
@@ -604,13 +604,13 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
 
   const onDelete = async ev => {
     if (!procInspResultIncludeDetails?.header?.insp_result_uuid) {
-      message.warn('삭제 할 성적서를 선택 후 다시 시도해주세요..');
+      message.warn(SENTENCE.BEFORE_SELECT_INSP_REPORT_AND_DELETE);
       return;
     }
     Modal.confirm({
       icon: null,
-      title: '삭제',
-      content: '성적서를 삭제하시겠습니까?',
+      title: WORD.DELETE,
+      content: SENTENCE.CONFIRM_TO_INSP_REPORT_DELETE,
       onOk: async () => {
         await executeData(
           [{ uuid: procInspResultIncludeDetails?.header?.insp_result_uuid }],
@@ -622,7 +622,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
             if (!value) return;
             onSearch(workData);
             onClearResultDetail();
-            message.info('저장되었습니다.');
+            message.info(SENTENCE.SAVE_COMPLETE);
           })
           .catch(e => {
             console.log(e);
@@ -631,8 +631,8 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
       onCancel: () => {
         // this function will be executed when cancel button is clicked
       },
-      okText: '예',
-      cancelText: '아니오',
+      okText: WORD.YES,
+      cancelText: WORD.NO,
     });
   };
 
@@ -664,7 +664,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
         })
         .catch(err => {
           onClear();
-          message.error('에러');
+          message.error(SENTENCE.ERROR_OCCURRED);
         });
     } else {
       onClear();
@@ -695,7 +695,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
       .catch(err => {
         inputInspResult.ref.current.resetForm();
         setProcInspResultIncludeDetails({});
-        message.error('에러');
+        message.error(SENTENCE.ERROR_OCCURRED);
       });
   };
 
@@ -720,7 +720,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
               onClick={onEdit}
               disabled={!permissions?.update_fg}
             >
-              수정
+              {WORD.EDIT}
             </Button>
             <Button
               btnType="buttonFill"
@@ -732,7 +732,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
               onClick={onDelete}
               disabled={!permissions?.delete_fg}
             >
-              삭제
+              {WORD.DELETE}
             </Button>
           </Space>
         </div>
@@ -743,9 +743,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
           <Col span={8} style={{ overflow: 'auto' }}>
             <Datagrid
               height={560}
-              gridId={'INSP_RESULTS'}
+              gridId="PROC_INSP_RESULT_DETAILS"
               ref={procInspResultsGridRef}
-              gridMode={'view'}
+              gridMode="view"
               columns={ColumnStore.PROC_INSP_RESULT_DETAIL_HEADER}
               data={procInspResults}
               onAfterClick={ev => {
@@ -765,9 +765,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
             <p />
             <Datagrid
               height={350}
-              gridId={'INSP_RESULT_INCLUDE_VALUES'}
+              gridId="PROC_INSP_RESULT_INCLUDE_VALUES"
               ref={procInspResultDetailsGridRef}
-              gridMode={'view'}
+              gridMode="view"
               columns={COLUMNS_INSP_RESULT_DETAILS_INCLUDE_VALUES}
               data={procInspResultIncludeDetails?.details}
             />
@@ -791,7 +791,6 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
   return {
     onSearch,
     onClearResultDetail,
-
     component,
   };
 };

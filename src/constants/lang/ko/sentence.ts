@@ -33,5 +33,8 @@ export enum SENTENCE {
   CHILD_PROD_ORDER_REGISTER = '하위작업지시 등록',
   LOADING_PERMISSION_INFO = '권한 정보를 불러오는 중입니다',
   ERROR_OCCURRED = '오류가 발생했습니다',
-  BEFORE_INPUT_WORK_AND_PUT_ADD_RECORD = '실적을 입력하고 신규 항목 추가 버튼을 눌러주세요',
+  BEFORE_INPUT_WORK_AND_ADD_RECORD = '작업을 입력하고 추가 버튼을 눌러주세요',
+  BEFORE_SELECT_INSP_REPORT_AND_EDIT = '검사 성적서를 선택하고 수정 버튼을 눌러주세요',
+  BEFORE_SELECT_INSP_REPORT_AND_DELETE = '검사 성적서를 선택하고 삭제 버튼을 눌러주세요',
+  CONFIRM_TO_INSP_REPORT_DELETE = '검사 성적서를 삭제하시겠습니까?',
 }
