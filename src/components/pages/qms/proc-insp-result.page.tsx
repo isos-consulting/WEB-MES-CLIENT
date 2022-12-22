@@ -1439,8 +1439,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
   const createInspectionPutApiPayload = (inspectionGridInstance: TuiGrid) => {
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const inspectionGridInstanceData = inspectionGridInstance.getData();
-
     const processInspectionPayloadHeader: TPutQmsProcInspResultsHeader = {
       uuid: `${inputInspResultValues?.insp_result_uuid}`,
       emp_uuid: `${inputInspResultValues?.emp_uuid}`,
@@ -1454,144 +1452,72 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           : `${inputInspResultValues?.remark}`,
     };
 
-    const processInspectionPayloadDetails: Array<TPutQmsProcInspResultsDetail> =
-      cellKeys(inspectionGridInstanceData, '_insp_value')
-        .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
-          sliceKeys(
-            inspectionKeys,
-            Number(
-              inspectionGridInstance.getValue(
-                inspectionItemIndex,
-                'sample_cnt',
-              ),
-            ),
-          ),
-        )
-        .map(
-          (
-            inspectionSampleKeys: Array<string>,
-            inspectionItemIndex: number,
-          ) => ({
-            factory_uuid: getUserFactoryUuid(),
-            uuid: `${inspectionGridInstance.getValue(
-              inspectionItemIndex,
-              'insp_result_detail_info_uuid',
-            )}`,
-            insp_result_fg: Boolean(
-              inspectionGridInstance.getValue(
-                inspectionItemIndex,
-                'insp_result_fg',
-              ),
-            ),
-            remark:
-              inspectionGridInstance.getValue(inspectionItemIndex, 'remark') ===
-              null
-                ? null
-                : `${inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'remark',
-                  )}`,
-            values: inspectionSampleKeys
-              .map((inspectionSampleKey: string, sampleKeyIndex: number) => {
-                const inspectionSample: TPutQmsProcInspDeleteResultsDetailValue =
-                  {
-                    sample_no: sampleKeyIndex + 1,
-                    uuid:
-                      inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey.replace(
-                          '_insp_value',
-                          '_insp_result_detail_value_uuid',
-                        ),
-                      ) == null
-                        ? null
-                        : `${inspectionGridInstance.getValue(
-                            inspectionItemIndex,
-                            inspectionSampleKey.replace(
-                              '_insp_value',
-                              '_insp_result_detail_value_uuid',
-                            ),
-                          )}`,
-                    delete_fg:
-                      inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey.replace(
-                          '_insp_value',
-                          '_insp_result_fg',
-                        ),
-                      ) === null
-                        ? true
-                        : false,
-                  };
+    const inspectionDatas = inspectionGridInstance.getData();
+    const inspectionItemRanges = inspectionDatas.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
 
-                if (
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    inspectionSampleKey.replace(
-                      '_insp_value',
-                      '_insp_result_fg',
-                    ),
-                  ) !== null
-                ) {
-                  return {
-                    ...inspectionSample,
-                    insp_result_fg:
-                      inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey.replace(
-                          '_insp_value',
-                          '_insp_result_fg',
-                        ),
-                      ) === null
-                        ? null
-                        : Boolean(
-                            inspectionGridInstance.getValue(
-                              inspectionItemIndex,
-                              inspectionSampleKey.replace(
-                                '_insp_value',
-                                '_insp_result_fg',
-                              ),
-                            ),
-                          ),
-                    insp_value:
-                      inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey,
-                      ) === 'OK'
-                        ? 1
-                        : inspectionGridInstance.getValue(
-                            inspectionItemIndex,
-                            inspectionSampleKey,
-                          ) === 'NG'
-                        ? 0
-                        : inspectionGridInstance.getValue(
-                            inspectionItemIndex,
-                            inspectionSampleKey,
-                          ) === null
-                        ? null
-                        : Number(
-                            inspectionGridInstance.getValue(
-                              inspectionItemIndex,
-                              inspectionSampleKey,
-                            ),
-                          ),
-                  };
-                }
-                return inspectionSample;
-              })
-              .filter(({ uuid, delete_fg }) => {
-                if (uuid !== null) {
-                  return true;
-                }
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(inspectionDatas),
+      inspectionItemRanges,
+    );
 
-                return delete_fg === false ? true : false;
-              }),
-          }),
+    const procInsptionsPayloadDetails: TPutQmsProcInspResultsDetail[] =
+      inspectionSampleResults.map((item, itemIndex) => {
+        const editedSamples:
+          | TPutQmsProcInspResultsDetailValue[]
+          | TPutQmsProcInspDeleteResultsDetailValue[] = item.reduce(
+          (samples, currentSample, sampleIndex) => {
+            const sampleUuid =
+              inspectionDatas[itemIndex][
+                `x${sampleIndex + 1}_insp_result_detail_value_uuid`
+              ];
+
+            if (sampleUuid == null && currentSample == null) return samples;
+            if (currentSample == null)
+              return [
+                ...samples,
+                {
+                  uuid: `${sampleUuid}`,
+                  delete_fg: true,
+                  sample_no: sampleIndex + 1,
+                },
+              ];
+
+            const sampleValue =
+              inspectionDatas[itemIndex][
+                `x${sampleIndex + 1}_insp_value`
+              ].toString();
+
+            return [
+              ...samples,
+              {
+                uuid: `${sampleUuid}`,
+                delete_fg: false,
+                sample_no: sampleIndex + 1,
+                insp_result_fg: currentSample,
+                insp_value: getSampleOkOrNgOrDefaultSampleValue(sampleValue),
+              },
+            ];
+          },
+          [],
         );
+
+        return {
+          factory_uuid: getUserFactoryUuid(),
+          uuid: inspectionDatas[
+            itemIndex
+          ].insp_result_detail_info_uuid.toString(),
+          insp_result_fg: Boolean(inspectionDatas[itemIndex].insp_result_fg),
+          remark: inspectionDatas[itemIndex].remark.toString(),
+          values: editedSamples,
+        };
+      });
 
     return {
       header: processInspectionPayloadHeader,
-      details: processInspectionPayloadDetails,
+      details: procInsptionsPayloadDetails,
     };
   };
 
@@ -1606,7 +1532,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     )
       .then(value => {
         if (!value) return;
-        message.info('저장되었습니다.');
+        message.info(SENTENCE.SAVE_COMPLETE);
         props.onAfterCloseSearch(props?.inspResultUuid);
         onClear();
         props.setPopupVisible(false);
@@ -1735,8 +1661,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         sampleResults.every((result: boolean) => result !== null),
     );
 
-    const inspectionPutApiPayload: TPutQmsFinalInspResult =
-      createInspectionPutApiPayload(inspectionGridInstance);
+    const inspectionPutApiPayload = createInspectionPutApiPayload(
+      inspectionGridInstance,
+    );
 
     if (isFilledAllInspectionSample === false) {
       const qualityInspectionFilledOption =
@@ -1755,8 +1682,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           content:
             '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
           onOk: async (close: () => void) => {
-            const inspectionPutApiPayload: TPutQmsFinalInspResult =
-              createInspectionPutApiPayload(inspectionGridInstance);
+            const inspectionPutApiPayload = createInspectionPutApiPayload(
+              inspectionGridInstance,
+            );
             await fetchInsepctionPutAPI(inspectionPutApiPayload);
             close();
           },
