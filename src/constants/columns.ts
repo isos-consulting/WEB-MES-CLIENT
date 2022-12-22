@@ -19,7 +19,11 @@ type ColumnRecordKeys =
   | 'EXCEL_INVALID_ERROR'
   | 'NAJS_PROD_ORDER'
   | 'WORK_INSP'
-  | 'WORK_INSP_DETAIL';
+  | 'WORK_INSP_DETAIL'
+  | 'RECEIVE'
+  | 'RECEIVE_INSP_DETAIL'
+  | 'INSP_CHECK_CELL'
+  | 'INSP_ITEM_RESULT';
 
 export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
   WORK_TYPE: [
@@ -1772,5 +1776,256 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
     { header: '정렬', name: 'sortby', width: 120, hidden: true },
     { header: '시료 수량', name: 'sample_cnt', width: 100, hidden: false },
     { header: '검사 주기', name: 'insp_cycle', width: 100, hidden: false },
+  ],
+  RECEIVE: [
+    {
+      header: '세부입하UUID',
+      name: 'receive_detail_uuid',
+      width: ENUM_WIDTH.L,
+      hidden: true,
+    },
+    {
+      header: '세부입하전표번호',
+      name: 'stmt_no_sub',
+      width: ENUM_WIDTH.L,
+      hidden: true,
+    },
+    {
+      header: '입하구분코드',
+      name: 'insp_detail_type_uuid',
+      width: ENUM_WIDTH.M,
+      hidden: true,
+    },
+    { header: '입하구분', name: 'insp_detail_type_nm', width: ENUM_WIDTH.M },
+    {
+      header: '입하일자',
+      name: 'reg_date',
+      width: ENUM_WIDTH.M,
+      format: 'date',
+      filter: 'text',
+    },
+    {
+      header: '거래처명',
+      name: 'partner_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '품목유형명',
+      name: 'item_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '제품유형명',
+      name: 'prod_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    { header: '품번', name: 'prod_no', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '품목명', name: 'prod_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S, filter: 'text' },
+    { header: '모델명', name: 'model_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '단위명', name: 'unit_nm', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: '규격', name: 'prod_std', width: ENUM_WIDTH.L, filter: 'text' },
+    { header: 'LOT NO', name: 'lot_no', width: ENUM_WIDTH.L, filter: 'text' },
+    {
+      header: '입하 수량',
+      name: 'qty',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    {
+      header: '안전재고',
+      name: 'inv_safe_qty',
+      width: ENUM_WIDTH.M,
+      filter: 'number',
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    },
+    {
+      header: '입고 창고UUID',
+      name: 'to_store_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '입고 창고',
+      name: 'to_store_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '입고 위치UUID',
+      name: 'to_location_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '입고 위치',
+      name: 'to_location_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+  ],
+  RECEIVE_INSP_DETAIL: [
+    {
+      header: '검사기준서 상세UUID',
+      name: 'insp_detail_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형UUID',
+      name: 'insp_item_type_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형명',
+      name: 'insp_item_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사항목UUID',
+      name: 'insp_item_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목명',
+      name: 'insp_item_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사 기준',
+      name: 'spec_std',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '최소 값',
+      name: 'spec_min',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '최대 값',
+      name: 'spec_max',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '검사방법UUID',
+      name: 'insp_method_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사방법명',
+      name: 'insp_method_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사구UUID',
+      name: 'insp_tool_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사구명',
+      name: 'insp_tool_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '정렬',
+      name: 'sortby',
+      width: ENUM_WIDTH.S,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '시료 수량',
+      name: 'sample_cnt',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '검사 주기',
+      name: 'insp_cycle',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+  ],
+  INSP_CHECK_CELL: [
+    {
+      header: '_insp_result_detail_value_uuid',
+      name: '_insp_result_detail_value_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '_sample_no',
+      name: '_sample_no',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '',
+      name: '_insp_value',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      editable: true,
+    },
+    {
+      header: '_판정',
+      name: '_insp_result_fg',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '_판정',
+      name: '_insp_result_state',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+      hidden: true,
+    },
+  ],
+  INSP_ITEM_RESULT: [
+    {
+      header: '합격여부',
+      name: 'insp_result_fg',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '판정',
+      name: 'insp_result_state',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '비고',
+      name: 'remark',
+      width: ENUM_WIDTH.XL,
+      filter: 'text',
+    },
   ],
 };

@@ -28,15 +28,6 @@ import {
 } from '~/functions';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
-import {
-  INFO_INPUT_ITEMS,
-  INPUT_ITEMS_INSP_RESULT,
-  INPUT_ITEMS_INSP_RESULT_INCOME,
-  INPUT_ITEMS_INSP_RESULT_RETURN,
-  inspectionCheckCells,
-  inspectionItemResultCells,
-  INSP_DETAIL_COLUMNS,
-} from './constants/columns';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
 import {
   InspectionHandlingTypeCodeSet,
@@ -48,6 +39,8 @@ import {
   TReceiveInspDetail,
   TReceiveInspHeader,
 } from './types';
+import { ColumnStore } from '~/constants/columns';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
@@ -66,43 +59,52 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   >([]);
 
   const initialize = () => {
-    const stmtNoSubField = INFO_INPUT_ITEMS.find(
+    const stmtNoSubField = InputGroupBoxStore.RECEIVE_INSP_ITEM.find(
       inputItemsField => inputItemsField.id === 'stmt_no_sub',
     );
 
-    const regDateField = INPUT_ITEMS_INSP_RESULT.find(
+    const regDateField = InputGroupBoxStore.RECEIVE_INSP_RESULT.find(
       inspectionResultField => inspectionResultField.id === 'reg_date',
     );
 
-    const inspectionHandlingTypeField = INPUT_ITEMS_INSP_RESULT.find(
-      inspectionResultField =>
-        inspectionResultField.id === 'insp_handling_type',
-    );
+    const inspectionHandlingTypeField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT.find(
+        inspectionResultField =>
+          inspectionResultField.id === 'insp_handling_type',
+      );
 
-    const inspectionIncomeQuantityField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-      inspectionIncomeField => inspectionIncomeField.id === 'qty',
-    );
+    const inspectionIncomeQuantityField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_INCOME.find(
+        inspectionIncomeField => inspectionIncomeField.id === 'qty',
+      );
 
-    const inspectionIncomeStoreField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-      inspectionIncomeField => inspectionIncomeField.id === 'to_store_uuid',
-    );
+    const inspectionIncomeStoreField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_INCOME.find(
+        inspectionIncomeField => inspectionIncomeField.id === 'to_store_uuid',
+      );
 
-    const inspectionIncomeLocationField = INPUT_ITEMS_INSP_RESULT_INCOME.find(
-      inspectionIncomeField => inspectionIncomeField.id === 'to_location_uuid',
-    );
+    const inspectionIncomeLocationField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_INCOME.find(
+        inspectionIncomeField =>
+          inspectionIncomeField.id === 'to_location_uuid',
+      );
 
-    const inspectionRejectQuantityField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-      inspectionRejectField => inspectionRejectField.id === 'reject_qty',
-    );
+    const inspectionRejectQuantityField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_RETURN.find(
+        inspectionRejectField => inspectionRejectField.id === 'reject_qty',
+      );
 
-    const inspectionRejectStoreField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-      inspectionRejectField => inspectionRejectField.id === 'reject_store_uuid',
-    );
+    const inspectionRejectStoreField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_RETURN.find(
+        inspectionRejectField =>
+          inspectionRejectField.id === 'reject_store_uuid',
+      );
 
-    const inspectionRejectLocationField = INPUT_ITEMS_INSP_RESULT_RETURN.find(
-      inspectionRejectField =>
-        inspectionRejectField.id === 'reject_location_uuid',
-    );
+    const inspectionRejectLocationField =
+      InputGroupBoxStore.RECEIVE_INSP_RESULT_RETURN.find(
+        inspectionRejectField =>
+          inspectionRejectField.id === 'reject_location_uuid',
+      );
 
     stmtNoSubField.handleChange = values => setReceiveInputData(values);
     regDateField.default = getToday();
@@ -193,43 +195,45 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    let items: IGridColumn[] = [...INSP_DETAIL_COLUMNS];
+    let items: IGridColumn[] = [...ColumnStore.RECEIVE_INSP_DETAIL];
 
     if (receiveInspHeaderData?.max_sample_cnt > 0) {
       for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
-        const inspectionCheckCellColumns = inspectionCheckCells.map(cell => ({
-          ...cell,
-          header: `x${i}${cell.header}`,
-          name: `x${i}${cell.name}`,
-        }));
+        const inspectionCheckCellColumns = ColumnStore.INSP_CHECK_CELL.map(
+          cell => ({
+            ...cell,
+            header: `x${i}${cell.header}`,
+            name: `x${i}${cell.name}`,
+          }),
+        );
 
         items.push(...inspectionCheckCellColumns);
       }
     }
 
-    items.push(...inspectionItemResultCells);
+    items.push(...ColumnStore.INSP_ITEM_RESULT);
 
     return items;
   }, [receiveInspHeaderData]);
 
   const inputInputItems = useInputGroup(
     'INPUT_CREATE_POPUP_INFO',
-    INFO_INPUT_ITEMS,
+    InputGroupBoxStore.RECEIVE_INSP_ITEM,
     { title: '입하정보' },
   );
   const inputInspResult = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT',
-    INPUT_ITEMS_INSP_RESULT,
+    InputGroupBoxStore.RECEIVE_INSP_RESULT,
     { title: '검사정보' },
   );
   const inputInspResultIncome = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT_INCOME',
-    INPUT_ITEMS_INSP_RESULT_INCOME,
+    InputGroupBoxStore.RECEIVE_INSP_RESULT_INCOME,
     { title: '입고정보' },
   );
   const inputInspResultReject = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT_REJECT',
-    INPUT_ITEMS_INSP_RESULT_RETURN,
+    InputGroupBoxStore.RECEIVE_INSP_RESULT_RETURN,
     { title: '부적합정보' },
   );
 
