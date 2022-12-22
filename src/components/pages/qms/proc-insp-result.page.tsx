@@ -1334,7 +1334,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           },
         ];
       }
-      return procInspectGroupBox;
+      return [...procInspectGroupBox, field];
     }, []);
 
   const inputWork = useInputGroup(
