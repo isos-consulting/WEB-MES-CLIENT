@@ -688,24 +688,8 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
             inspectionDatas[itemIndex][
               `x${sampleIndex + 1}_insp_result_detail_value_uuid`
             ];
-          if (sampleUuid == null) {
-            if (currentSample == null) return samples;
-
-            return [
-              ...samples,
-              {
-                uuid: sampleUuid,
-                delete_fg: false,
-                sample_no: sampleIndex + 1,
-                insp_result_ft: currentSample,
-                insp_value: getSampleOkOrNgOrDefaultSampleValue(
-                  inspectionDatas[itemIndex][`x${sampleIndex + 1}_insp_value`],
-                ),
-              },
-            ];
-          }
-
-          if (currentSample == null) {
+          if (sampleUuid == null && currentSample == null) return samples;
+          if (currentSample == null)
             return [
               ...samples,
               {
@@ -714,7 +698,6 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
                 sample_no: sampleIndex + 1,
               },
             ];
-          }
 
           return [
             ...samples,
