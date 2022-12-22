@@ -28,7 +28,8 @@ type ColumnRecordKeys =
   | 'PROC_INSP_RESULT_DETAIL_HEADER'
   | 'PROC_INSP_RESULT_DETAIL_ITEM'
   | 'EDITABLE_PROC_INSP_RESULT_DETAIL'
-  | 'FINAL_INSP_HISTORY';
+  | 'FINAL_INSP_HISTORY'
+  | 'FINAL_INSP_RESULT_DETAIL_ITEM';
 
 export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
   WORK_TYPE: [
@@ -2662,6 +2663,104 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.XL,
       filter: 'text',
       hidden: true,
+    },
+  ],
+  FINAL_INSP_RESULT_DETAIL_ITEM: [
+    {
+      header: '검사기준서 상세UUID',
+      name: 'insp_detail_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형UUID',
+      name: 'insp_item_type_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목 유형명',
+      name: 'insp_item_type_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사항목UUID',
+      name: 'insp_item_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사항목명',
+      name: 'insp_item_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사 기준',
+      name: 'spec_std',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '최소 값',
+      name: 'spec_min',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '최대 값',
+      name: 'spec_max',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '검사방법UUID',
+      name: 'insp_method_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사방법명',
+      name: 'insp_method_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '검사구UUID',
+      name: 'insp_tool_uuid',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '검사구명',
+      name: 'insp_tool_nm',
+      width: ENUM_WIDTH.L,
+      filter: 'text',
+    },
+    {
+      header: '정렬',
+      name: 'sortby',
+      width: ENUM_WIDTH.S,
+      filter: 'text',
+      hidden: true,
+    },
+    {
+      header: '시료 수량',
+      name: 'sample_cnt',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
+    },
+    {
+      header: '검사 주기',
+      name: 'insp_cycle',
+      width: ENUM_WIDTH.M,
+      filter: 'text',
     },
   ],
 };

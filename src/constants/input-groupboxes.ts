@@ -1,4 +1,5 @@
 import { URI_PATH_GET_QMS_RECEIVE_INSP_RESULTS_WAITING } from '~/components/pages/qms/receive-insp-result/modals/constants';
+import { getPopupForm } from '~/components/UI';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
 import { getToday } from '~/functions';
 import { ColumnStore } from './columns';
@@ -14,7 +15,11 @@ type InputGroupBoxRecordKeys =
   | 'FINAL_INSP_ITEM'
   | 'FINAL_INSP_RESULT'
   | 'FINAL_INSP_RESULT_INCOME'
-  | 'FINAL_INSP_RESULT_REJECT';
+  | 'FINAL_INSP_RESULT_REJECT'
+  | 'FINAL_INSP_RESULT_ITEM'
+  | 'CREATE_FINAL_INSP_RESULT'
+  | 'CREATE_FINAL_INSP_RESULT_INCOME'
+  | 'CREATE_FINAL_INSP_RESULT_REJECT';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -359,6 +364,259 @@ export const InputGroupBoxStore: Record<
       label: '부적합위치',
       type: 'text',
       disabled: true,
+    },
+  ],
+  FINAL_INSP_RESULT_ITEM: [
+    {
+      id: 'prod_uuid',
+      label: '품목UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'prod_no',
+      label: '품번',
+      type: 'text',
+      readOnly: true,
+      usePopup: true,
+      popupKeys: [
+        'prod_uuid',
+        'prod_no',
+        'prod_nm',
+        'prod_std',
+        'unit_nm',
+        'store_uuid',
+        'store_nm',
+        'location_uuid',
+        'location_nm',
+        'lot_no',
+        'qty',
+      ],
+      popupButtonSettings: {
+        dataApiSettings: {
+          uriPath: getPopupForm('재고관리').uriPath,
+          params: {
+            stock_type: 'finalInsp',
+            grouped_type: 'all',
+            price_type: 'all',
+            exclude_zero_fg: true,
+            exclude_minus_fg: true,
+            reg_date: getToday(),
+          },
+        },
+        datagridSettings: {
+          gridId: null,
+          columns: getPopupForm('재고관리').datagridProps.columns,
+        },
+        modalSettings: { title: '출하검사 대상 재고' },
+      },
+      handleChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+    {
+      id: 'prod_nm',
+      label: '품명',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'prod_std',
+      label: '규격',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'unit_nm',
+      label: '단위',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'store_uuid',
+      label: '출고창고UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'store_nm',
+      label: '출고창고',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'location_uuid',
+      label: '출고위치UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'location_nm',
+      label: '출고위치',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'lot_no',
+      label: 'LOT NO',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'qty',
+      label: '검사수량',
+      type: 'number',
+      onAfterChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+  ],
+  CREATE_FINAL_INSP_RESULT: [
+    {
+      id: 'insp_uuid',
+      label: '검사기준서UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_fg',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_state',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+    },
+    {
+      id: 'reg_date',
+      label: '검사일자',
+      type: 'date',
+      default: getToday(),
+    },
+    {
+      id: 'reg_date_time',
+      label: '검사시간',
+      type: 'time',
+    },
+    {
+      id: 'emp_uuid',
+      label: '검사자UUID',
+      type: 'text',
+      hidden: true,
+    },
+    {
+      id: 'emp_nm',
+      label: '검사자',
+      type: 'text',
+      usePopup: true,
+      popupKey: '사원관리',
+      popupKeys: ['emp_nm', 'emp_uuid'],
+      params: { emp_status: 'incumbent' },
+    },
+    {
+      id: 'insp_handling_type',
+      label: '처리결과',
+      type: 'combo',
+      firstItemType: 'empty',
+      options: [],
+      disabled: true,
+      onAfterChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+    {
+      id: 'remark',
+      label: '비고',
+      type: 'text',
+    },
+  ],
+  CREATE_FINAL_INSP_RESULT_INCOME: [
+    {
+      id: 'qty',
+      label: '입고수량',
+      type: 'number',
+      disabled: true,
+      onAfterChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+    {
+      id: 'to_store_uuid',
+      label: '입고창고',
+      type: 'combo',
+      firstItemType: 'empty',
+      dataSettingOptions: {
+        codeName: 'store_uuid',
+        textName: 'store_nm',
+        uriPath: getPopupForm('창고관리')?.uriPath,
+        params: {
+          store_type: 'available',
+        },
+      },
+    },
+    {
+      id: 'to_location_uuid',
+      label: '입고위치',
+      type: 'combo',
+      firstItemType: 'empty',
+      dataSettingOptions: {
+        codeName: 'location_uuid',
+        textName: 'location_nm',
+        uriPath: getPopupForm('위치관리')?.uriPath,
+      },
+    },
+  ],
+  CREATE_FINAL_INSP_RESULT_REJECT: [
+    {
+      id: 'reject_qty',
+      label: '부적합수량',
+      type: 'number',
+      disabled: true,
+      onAfterChange: () => {
+        // this is a workaround for the combo box not updating the value
+      },
+    },
+    { id: 'reject_uuid', label: '불량유형UUID', type: 'text', hidden: true },
+    {
+      id: 'reject_nm',
+      label: '불량유형',
+      type: 'text',
+      usePopup: true,
+      popupKey: '부적합관리',
+      popupKeys: ['reject_nm', 'reject_uuid'],
+    },
+    {
+      id: 'reject_store_uuid',
+      label: '반출창고',
+      type: 'combo',
+      firstItemType: 'empty',
+      dataSettingOptions: {
+        codeName: 'store_uuid',
+        textName: 'store_nm',
+        uriPath: getPopupForm('창고관리')?.uriPath,
+        params: {
+          store_type: 'reject',
+        },
+      },
+    },
+    {
+      id: 'reject_location_uuid',
+      label: '반출위치',
+      type: 'combo',
+      firstItemType: 'empty',
+      dataSettingOptions: {
+        codeName: 'location_uuid',
+        textName: 'location_nm',
+        uriPath: getPopupForm('위치관리')?.uriPath,
+      },
     },
   ],
 };
