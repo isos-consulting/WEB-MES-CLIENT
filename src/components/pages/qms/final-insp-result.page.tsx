@@ -60,6 +60,7 @@ import {
   getInspectSamples,
   getRangeNumberResults,
   getSampleIndex,
+  getSampleOkOrNgOrDefaultSampleValue,
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
@@ -1167,7 +1168,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const createInspectionPostApiPayload = (
     inspectionGridInstance: TuiGrid,
   ): TPostQmsFinalInspResults => {
-    const inspectionGridInstanceData = inspectionGridInstance.getData();
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
     const inputInputItemsValues = inputInputItems?.ref?.current?.values;
     const inputInspResultIncomeValues =
@@ -1210,90 +1210,52 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       remark: inputInspResultValues?.remark,
     };
 
-    const finalInspectionPayloadDetails: Array<TPostQmsFinalInspResultsDetails> =
-      cellKeys(inspectionGridInstanceData, '_insp_value')
-        .map((inspectionKeys: Array<string>, inspectionItemIndex: number) =>
-          sliceKeys(
-            inspectionKeys,
-            Number(
-              inspectionGridInstance.getValue(
-                inspectionItemIndex,
-                'sample_cnt',
-              ),
-            ),
-          ),
-        )
-        .map(
-          (
-            definedInspectionKeysBySampleCount: Array<string>,
-            inspectionItemIndex: number,
-          ) => ({
-            factory_uuid: `${getUserFactoryUuid()}`,
-            insp_detail_uuid: `${inspectionGridInstance.getValue(
-              inspectionItemIndex,
-              'insp_detail_uuid',
-            )}`,
-            insp_result_fg: Boolean(
-              inspectionGridInstance.getValue(
-                inspectionItemIndex,
-                'insp_result_fg',
-              ),
-            ),
-            remark:
-              inspectionGridInstance.getValue(inspectionItemIndex, 'remark') ===
-              null
-                ? null
-                : `${inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'remark',
-                  )}`,
-            values: definedInspectionKeysBySampleCount
-              .map((inspectionSampleKey: string, sampleKeyIndex: number) => ({
-                sample_no: sampleKeyIndex + 1,
-                insp_result_fg:
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    inspectionSampleKey.replace(
-                      '_insp_value',
-                      '_insp_result_fg',
-                    ),
-                  ) === null
-                    ? null
-                    : Boolean(
-                        inspectionGridInstance.getValue(
-                          inspectionItemIndex,
-                          inspectionSampleKey.replace(
-                            '_insp_value',
-                            '_insp_result_fg',
-                          ),
-                        ),
-                      ),
-                insp_value:
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    inspectionSampleKey,
-                  ) === 'OK'
-                    ? 1
-                    : inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey,
-                      ) === 'NG'
-                    ? 0
-                    : inspectionGridInstance.getValue(
-                        inspectionItemIndex,
-                        inspectionSampleKey,
-                      ) === null
-                    ? null
-                    : Number(
-                        inspectionGridInstance.getValue(
-                          inspectionItemIndex,
-                          inspectionSampleKey,
-                        ),
-                      ),
-              }))
-              .filter(({ insp_result_fg }) => insp_result_fg !== null),
-          }),
+    const finalInspections = inspectionGridInstance.getData();
+    const inspectionItemRanges = finalInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(finalInspections),
+      inspectionItemRanges,
+    );
+
+    const finalInspectionPayloadDetails: TPostQmsFinalInspResultsDetails[] =
+      inspectionSampleResults.map((item, itemIndex) => {
+        const notNullSample = item.reduce(
+          (samples, currentSample, sampleIndex) => {
+            if (currentSample == null) {
+              return samples;
+            }
+
+            return [
+              ...samples,
+              {
+                sample_no: sampleIndex + 1,
+                insp_result_fg: currentSample,
+                insp_value: getSampleOkOrNgOrDefaultSampleValue(
+                  finalInspections[itemIndex][
+                    `x${sampleIndex + 1}_insp_value`
+                  ].toString(),
+                ),
+              },
+            ];
+          },
+          [],
         );
+
+        return {
+          factory_uuid: getUserFactoryUuid(),
+          insp_detail_uuid: `${finalInspections[itemIndex].insp_detail_uuid}`,
+          insp_result_fg: Boolean(finalInspections[itemIndex].insp_result_fg),
+          remark:
+            finalInspections[itemIndex].remark == null
+              ? null
+              : `${finalInspections[itemIndex].remark}`,
+          values: notNullSample,
+        };
+      });
 
     return {
       header: finalInspectionPayloadHeader,
@@ -1312,7 +1274,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     )
       .then(value => {
         if (!value) return;
-        message.info('저장되었습니다.');
+        message.info(SENTENCE.SAVE_COMPLETE);
         onClear();
         props.setPopupVisible(false);
         props.onAfterSave();
@@ -1339,11 +1301,16 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResultValues.insp_handling_type === '' ||
       inputInspResultValues.insp_handling_type == null
     ) {
-      return message.warn('처리결과를 등록해주세요.');
-    } else if (inputInspResultValues.emp_uuid == null) {
-      return message.warn('검사자를 등록해주세요.');
-    } else if (inputInspResultValues.reg_date_time == null) {
-      return message.warn('검사시간을 등록해주세요.');
+      message.warn('처리결과를 등록해주세요.');
+      return;
+    }
+    if (inputInspResultValues.emp_uuid == null) {
+      message.warn(SENTENCE.INPUT_INSPECTOR);
+      return;
+    }
+    if (inputInspResultValues.reg_date_time == null) {
+      message.warn(SENTENCE.INPUT_INSPECT_TIME);
+      return;
     }
 
     const { insp_handling_type_cd } = JSON.parse(
