@@ -485,7 +485,7 @@ export const PgQmsProcInspResult = () => {
             style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
           >
             <CaretRightOutlined />
-            {WORD.WORK_INFO}
+            {WORD.PERFORMANCE_INFO}
           </Typography.Title>
           <div
             style={{ width: '100%', display: 'inline-block', marginTop: -26 }}
@@ -606,7 +606,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
   const inputInspResult = useInputGroup(
     'INPUT_INSP_RESULT',
     InputGroupBoxStore.PROC_INSP_RESULT_DETAIL_ITEM,
-    { title: '검사정보' },
+    { title: WORD.INSP_INFO },
   );
 
   const onEdit = ev => {
@@ -826,7 +826,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const inspectMaxSampleCount = inspIncludeDetails?.header?.max_sample_cnt;
 
     if (inspectMaxSampleCount > 0) {
-      //시료수 최대값에 따라 컬럼 생성
       for (
         let sampleIndex = 1;
         sampleIndex <= inspectMaxSampleCount;
@@ -895,13 +894,13 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     'INPUT_CREATE_ITEMS_WORK',
     InputGroupBoxStore.PROC_INSP_ITEM_WORK,
     {
-      title: '작업 정보',
+      title: WORD.WORK_INFO,
     },
   );
   const inputInspResult = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT',
     INPUT_ITEMS_INSP_RESULT,
-    { title: '검사정보' },
+    { title: WORD.INSP_INFO },
   );
 
   const onClear = () => {
@@ -1073,7 +1072,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     )
       .then(value => {
         if (!value) return;
-        message.info('저장되었습니다.');
+        message.info(SENTENCE.SAVE_COMPLETE);
         onClear();
         props.setPopupVisible(false);
       })
@@ -1085,11 +1084,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const { emp_uuid, reg_date_time } = inputInspResult?.ref?.current?.values;
 
     if (emp_uuid == null) {
-      message.warn('검사자를 등록해주세요.');
+      message.warn(SENTENCE.INPUT_INSPECTOR);
       return;
     }
     if (reg_date_time == null) {
-      message.warn('검사시간을 등록해주세요.');
+      message.warn(SENTENCE.INPUT_INSPECT_TIME);
       return;
     }
 
@@ -1111,7 +1110,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
 
     if (isMissingValue === true) {
-      message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
+      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
       return;
     }
 
@@ -1135,7 +1134,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
     if (userDefinedInspectionSaveOption.length === 0) {
       throw new Error(
-        '검사성적서 결과값 전체등록 여부 옵션을 찾을 수 없습니다.',
+        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
       );
     }
 
@@ -1145,7 +1144,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (userDefinedInspectionSaveOption[0].value === 1) {
-      message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
+      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
       return;
     }
 
@@ -1153,7 +1152,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       Modal.confirm({
         title: '',
         content:
-          '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장 하시겠습니까?',
+          SENTENCE.CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
         onOk: async close => {
           const saveData = saveInspectionData(
             inspectionGridRef.current.getInstance(),
@@ -1169,7 +1168,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       return;
     }
 
-    throw new Error('알 수 없는 수입 검사 성적서 저장 API 예외가 발생했습니다');
+    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
   };
 
   const onCancel = ev => {
@@ -1197,7 +1196,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           })
           .catch(err => {
             onClear();
-            message.error('에러');
+            message.error(SENTENCE.ERROR_OCCURRED);
           });
       } else {
         setInspIncludeDetails({});
@@ -1236,10 +1235,10 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
   return (
     <GridPopup
-      title="데이터 추가하기"
+      title={SENTENCE.DO_ADD_DATA}
       onOk={onSave}
-      okText="저장"
-      cancelText="취소"
+      okText={WORD.SAVE}
+      cancelText={WORD.CANCEL}
       onCancel={onCancel}
       gridMode="update"
       popupId={'INSP_CREATE_POPUP'}

@@ -24,7 +24,8 @@ export enum WORD {
   SELECT = '선택',
   MULTI_SELECT = '다중선택',
   PROC_INSP_HISTORY = '공정검사이력',
-  WORK_INFO = '실적정보',
+  WORK_INFO = '작업정보',
   INSP_INFO = '검사정보',
   WORK_DATE = '작업일',
+  PERFORMANCE_INFO = '실적정보',
 }
