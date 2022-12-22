@@ -1267,158 +1267,51 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const gridRef = useRef<Grid>();
   const [inspResultIncludeDetails, setInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
-  const COLUMNS_INSP_RESULT_DETAILS: IGridColumn[] = [
-    {
-      header: '검사성적서 상세UUID',
-      name: 'insp_result_detail_info_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사기준서 상세UUID',
-      name: 'insp_detail_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형UUID',
-      name: 'insp_item_type_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형명',
-      name: 'insp_item_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사항목UUID',
-      name: 'insp_item_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목명',
-      name: 'insp_item_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '상세검사내용',
-      name: 'insp_item_desc',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    },
-    {
-      header: '검사 기준',
-      name: 'spec_std',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '최소 값',
-      name: 'spec_min',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '최대 값',
-      name: 'spec_max',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사방법UUID',
-      name: 'insp_method_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사방법명',
-      name: 'insp_method_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사구UUID',
-      name: 'insp_tool_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사구명',
-      name: 'insp_tool_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '정렬',
-      name: 'sortby',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '시료 수량',
-      name: 'sample_cnt',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사 주기',
-      name: 'insp_cycle',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-  ];
-
   const COLUMNS_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = COLUMNS_INSP_RESULT_DETAILS;
+    const editableProcInspDetails: IGridColumn[] = [
+      ...ColumnStore.EDITABLE_PROC_INSP_RESULT_DETAIL,
+    ];
 
-    if (inspResultIncludeDetails?.header?.max_sample_cnt > 0) {
+    const procInspectMaxSampleCount =
+      inspResultIncludeDetails?.header?.max_sample_cnt;
+
+    if (procInspectMaxSampleCount > 0) {
       for (
-        let i = 1;
-        i <= inspResultIncludeDetails?.header?.max_sample_cnt;
-        i++
+        let sampleIndex = 1;
+        sampleIndex <= inspResultIncludeDetails?.header?.max_sample_cnt;
+        sampleIndex++
       ) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
+        editableProcInspDetails.push({
+          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
+          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
+        editableProcInspDetails.push({
+          header: `x${sampleIndex}_sample_no`,
+          name: `x${sampleIndex}_sample_no`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
+        editableProcInspDetails.push({
+          header: `x${sampleIndex}`,
+          name: `x${sampleIndex}_insp_value`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           editable: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
+        editableProcInspDetails.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_fg`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
+        editableProcInspDetails.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_state`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
@@ -1426,122 +1319,40 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       }
     }
 
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
+    editableProcInspDetails.push(...ColumnStore.INSP_ITEM_RESULT);
 
-    return items;
+    return editableProcInspDetails;
   }, [inspResultIncludeDetails]);
 
-  const INPUT_ITEMS_WORK: IInputGroupboxItem[] = [
-    { id: 'reg_date', label: '실적일시', type: 'date', disabled: true },
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
-    { id: 'proc_nm', label: '공정', type: 'text', disabled: true },
-    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
-  ];
-
-  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
-    {
-      id: 'insp_uuid',
-      label: '검사기준서UUID',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      id: 'insp_result_fg',
-      label: '최종판정',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      id: 'insp_result_state',
-      label: '최종판정',
-      type: 'text',
-      disabled: true,
-    },
-    {
-      id: 'seq',
-      label: '검사차수',
-      type: 'number',
-      disabled: true,
-    },
-    {
-      id: 'insp_detail_type_uuid',
-      label: '검사유형',
-      type: 'combo',
-      disabled: true,
-      dataSettingOptions: {
-        codeName: 'insp_detail_type_uuid',
-        textName: 'insp_detail_type_nm',
-        uriPath: '/adm/insp-detail-types',
-        params: {
-          insp_type_cd: 'PROC_INSP',
-        },
-      },
-    },
-    {
-      id: 'reg_date',
-      label: '검사일자',
-      type: 'date',
-      default: getToday(),
-    },
-    {
-      id: 'reg_date_time',
-      label: '검사시간',
-      type: 'time',
-    },
-    {
-      id: 'emp_uuid',
-      label: '검사자UUID',
-      type: 'text',
-      hidden: true,
-    },
-    {
-      id: 'emp_nm',
-      label: '검사자',
-      type: 'text',
-      usePopup: true,
-      popupKey: '사원관리',
-      popupKeys: ['emp_nm', 'emp_uuid'],
-      params: { emp_status: 'incumbent' },
-    },
-    {
-      id: 'remark',
-      label: '비고',
-      type: 'text',
-    },
-  ];
+  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] =
+    InputGroupBoxStore.PROC_INSP_RESULT.reduce((procInspectGroupBox, field) => {
+      if (field.id === 'insp_detail_type_uuid') {
+        return [
+          ...procInspectGroupBox,
+          {
+            id: 'seq',
+            label: '검사차수',
+            type: 'number',
+            disabled: true,
+          },
+          {
+            ...field,
+            disabled: true,
+          },
+        ];
+      }
+      return procInspectGroupBox;
+    }, []);
 
   const inputWork = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT',
-    INPUT_ITEMS_WORK,
-    { title: '작업 정보' },
+    InputGroupBoxStore.PROC_INSP_ITEM_WORK,
+    { title: WORD.WORK_INFO },
   );
   const inputInspResult = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT',
     INPUT_ITEMS_INSP_RESULT,
-    { title: '검사 정보' },
+    { title: WORD.INSP_INFO },
   );
 
   const onClear = () => {
@@ -1568,177 +1379,61 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     return new checker().check(arg);
   };
 
-  const recordChecker = (
-    inspectionItems: Array<Array<boolean>>,
-  ): Array<boolean> =>
-    inspectionItems.map((inspectionItem: Array<boolean>) => {
-      if (
-        inspectionItem.every(
-          inspectionSampleResultFlag => inspectionSampleResultFlag === null,
-        )
-      ) {
-        return null;
-      }
+  const onAfterChange = ({ changes, instance }: any) => {
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-      if (
-        inspectionItem.some(
-          inspectionSampleResultFlag => inspectionSampleResultFlag === false,
-        )
-      ) {
-        return false;
-      }
+    const procInspections = instance.getData();
+    const inspectionItemRanges = procInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+    const extractedInspections =
+      extract_insp_ItemEntriesAtCounts(procInspections);
 
-      return true;
-    });
-
-  const totalChecker = (inspectionItems: Array<boolean>): boolean => {
-    if (
-      inspectionItems.some((inspectionItem: boolean) => inspectionItem === null)
-    ) {
-      return null;
-    }
-
-    if (inspectionItems.includes(false)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkUIProtocol = (sampleResultFlag: boolean): string =>
-    sampleResultFlag === null
-      ? null
-      : sampleResultFlag === true
-      ? '합격'
-      : '불합격';
-
-  const eyeCellUIProtocol = (eyeSampleResultFlag: boolean): string =>
-    eyeSampleResultFlag === null
-      ? null
-      : eyeSampleResultFlag === true
-      ? 'OK'
-      : 'NG';
-
-  const onAfterChange = (ev: any) => {
-    const { changes, instance } = ev;
-    const processInspectionGridInstanceData = instance.getData();
-
-    if (
-      changes.some(
-        inspectionSample =>
-          !inspectionSample.columnName.includes('_insp_value'),
-      )
-    )
-      return;
-
-    const processInspectionSampleKeyStore = cellKeys(
-      processInspectionGridInstanceData,
-      '_insp_value',
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      inspectionItemRanges,
     );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
-    const enableInspectionSampleKeyStroe = processInspectionSampleKeyStore.map(
-      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
-        sliceKeys(
-          inspectionItem,
-          processInspectionGridInstanceData[inspectionItemIndex].sample_cnt,
-        ),
-    );
-
-    const inspectionSamplelResultStore = enableInspectionSampleKeyStroe.map(
-      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
-        inspectionItem.map(inspectionSampleKey =>
-          instance.getValue(inspectionItemIndex, inspectionSampleKey) == null ||
-          instance.getValue(inspectionItemIndex, inspectionSampleKey) === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(instance.getValue(inspectionItemIndex, 'spec_min')) &&
-              isNumber(instance.getValue(inspectionItemIndex, 'spec_max'))
-            ? inspectionCheck(NumberInspectionChecker, {
-                value:
-                  instance.getValue(inspectionItemIndex, inspectionSampleKey) *
-                  1,
-                min: instance.getValue(inspectionItemIndex, 'spec_min') * 1,
-                max: instance.getValue(inspectionItemIndex, 'spec_max') * 1,
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: instance.getValue(
-                  inspectionItemIndex,
-                  inspectionSampleKey,
-                ),
-              }),
-        ),
-    );
-
-    const inspectionItemResultStore = recordChecker(
-      inspectionSamplelResultStore,
-    );
-
-    const inspectionResultFlag = totalChecker(inspectionItemResultStore);
-
-    changes.forEach((inspectionSample: any) => {
-      if (inspectionSample.columnName.includes('_insp_value')) {
-        const changedSampleIndex = processInspectionSampleKeyStore[
-          inspectionSample.rowKey
-        ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
-
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
-          inspectionSamplelResultStore[inspectionSample.rowKey][
-            changedSampleIndex
-          ],
+    changes.forEach(({ rowKey, columnName }: any) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const sampleIndex = getSampleIndex(columnName);
+        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberFlagsInItemRange = getRangeNumberResults(
+          inspectionItemRanges[rowKey],
         );
+        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
 
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace(
-            '_insp_value',
-            '_insp_result_state',
-          ),
-          checkUIProtocol(
-            inspectionSamplelResultStore[inspectionSample.rowKey][
-              changedSampleIndex
-            ],
-          ),
-        );
+        const uiMappedSampleInfo = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(sampleResult),
+        };
+
+        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
+          instance.setValue(rowKey, key, value);
+        }
 
         if (
-          !(
-            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_min')) &&
-            isNumber(instance.getValue(inspectionSample.rowKey, 'spec_max'))
-          )
+          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
+          eyeInspectValueText
         ) {
-          instance.setValue(
-            inspectionSample.rowKey,
-            inspectionSample.columnName,
-            eyeCellUIProtocol(
-              inspectionSamplelResultStore[inspectionSample.rowKey][
-                changedSampleIndex
-              ],
-            ),
-          );
+          instance.setValue(rowKey, columnName, eyeInspectValueText);
         }
       }
     });
 
-    processInspectionGridInstanceData.forEach(
-      (_: any, inspectionItemIndex: number) => {
-        instance.setValue(
-          inspectionItemIndex,
-          `insp_result_fg`,
-          inspectionItemResultStore[inspectionItemIndex],
-        );
-        instance.setValue(
-          inspectionItemIndex,
-          `insp_result_state`,
-          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
-        );
-      },
-    );
+    inspectionItemResults.forEach((item: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
+    });
 
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResultFlag);
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
     inputInspResult.setFieldValue(
       'insp_result_state',
-      checkUIProtocol(inspectionResultFlag),
+      getInspectResultText(inspectionResult),
     );
   };
 
