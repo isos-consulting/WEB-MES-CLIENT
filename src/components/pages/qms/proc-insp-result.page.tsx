@@ -56,6 +56,7 @@ import {
   getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
+  getSampleOkOrNgOrDefaultSampleValue,
   isColumnNameEndWith_insp_value,
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
@@ -909,24 +910,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     setInspIncludeDetails({});
   };
 
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
-
-  const cellKeys = (
-    records: Array<any>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
-    );
-
-  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
-    keys.slice(0, at);
-
   const onAfterChange = ({ changes, instance }: any) => {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
@@ -1003,7 +986,6 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   }
 
   const saveInspectionData = inspectionGridInstance => {
-    const inspectionDatas = inspectionGridInstance.getData();
     const inputInspResultValues = inputInspResult?.ref?.current?.values;
 
     const inspectionHeader: ManufacturingProcessInspectionPostAPIPayloadHeader =
@@ -1028,34 +1010,46 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         remark: inputInspResultValues?.remark,
       };
 
-    const inspectionItems: InspectionPostPayloadDetails[] = cellKeys(
-      inspectionDatas,
-      '_insp_value',
-    )
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, inspectionDatas[index].sample_cnt),
-      )
-      .map((definedCountKeys, index) => ({
+    const inspectionDatas = inspectionGridInstance.getData();
+    const inspectionItemRanges = inspectionDatas.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(inspectionDatas),
+      inspectionItemRanges,
+    );
+
+    const inspectionItems = inspectionSampleResults.map((item, itemIndex) => {
+      const notNullSamples = item.reduce(
+        (samples, currentSample, sampleIndex) => {
+          if (currentSample === null) {
+            return samples;
+          }
+
+          return [
+            ...samples,
+            {
+              sample_no: sampleIndex + 1,
+              insp_result_fg: currentSample,
+              insp_value: getSampleOkOrNgOrDefaultSampleValue(
+                inspectionDatas[itemIndex][`x${sampleIndex + 1}_insp_value`],
+              ),
+            },
+          ];
+        },
+        [],
+      );
+
+      return {
         factory_uuid: getUserFactoryUuid(),
-        insp_detail_uuid: inspectionDatas[index].insp_detail_uuid,
-        insp_result_fg: inspectionDatas[index].insp_result_fg,
-        remark: inspectionDatas[index].remark,
-        values: definedCountKeys
-          .map((key, keyIndex) => ({
-            sample_no: keyIndex + 1,
-            insp_result_fg:
-              inspectionDatas[index][
-                key.replace('_insp_value', '_insp_result_fg')
-              ],
-            insp_value:
-              inspectionDatas[index][key] === 'OK'
-                ? 1
-                : inspectionDatas[index][key] === 'NG'
-                ? 0
-                : inspectionDatas[index][key],
-          }))
-          .filter(inspectionCell => inspectionCell.insp_result_fg !== null),
-      }));
+        insp_detail_uuid: inspectionDatas[itemIndex].insp_detail_uuid,
+        insp_result_fg: inspectionDatas[itemIndex].insp_result_fg,
+        remark: inspectionDatas[itemIndex].remark,
+        values: notNullSamples,
+      };
+    });
 
     return {
       header: inspectionHeader,
