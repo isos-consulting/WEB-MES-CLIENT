@@ -53,6 +53,7 @@ import {
   getInspectResult,
   getInspectResultText,
   getInspectSamples,
+  getMissingValueInspectResult,
   getRangeNumberResults,
   getSampleIndex,
   isColumnNameEndWith_insp_value,
@@ -1087,56 +1088,40 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       });
 
   const onSave = async inspectionGridRef => {
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
+    const { emp_uuid, reg_date_time } = inputInspResult?.ref?.current?.values;
 
-    if (!inputInspResultValues?.emp_uuid) {
+    if (emp_uuid == null) {
       message.warn('검사자를 등록해주세요.');
       return;
-    } else if (!inputInspResultValues?.reg_date_time) {
-      return message.warn('검사시간을 등록해주세요.');
+    }
+    if (reg_date_time == null) {
+      message.warn('검사시간을 등록해주세요.');
+      return;
     }
 
-    const inspectionDatas = inspectionGridRef.current.getInstance().getData();
-    const cellCheckers = cellKeys(inspectionDatas, '_insp_value')
-      .map((item: Array<string>, index: number) =>
-        sliceKeys(item, inspectionDatas[index].sample_cnt),
-      )
-      .map((inspections, index) =>
-        inspections.map(inspectionKey =>
-          inspectionDatas[index][inspectionKey] == null ||
-          inspectionDatas[index][inspectionKey] === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(inspectionDatas[index].spec_min) &&
-              isNumber(inspectionDatas[index].spec_max)
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey] * 1,
-                min: inspectionDatas[index].spec_min * 1,
-                max: inspectionDatas[index].spec_max * 1,
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: inspectionDatas[index][inspectionKey],
-              }),
-        ),
-      );
+    const savedProcInspectionDatas = inspectionGridRef.current
+      .getInstance()
+      .getData();
+    const procInspectionItemRanges = savedProcInspectionDatas.map(item => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
 
-    const sequencialMissingValueState = cellCheckers.some(
-      (cells: Array<boolean>) => {
-        if (cells[0] === null) return true;
-
-        if (cells.length > 1) {
-          for (let index = 1; index < cells.length; index++) {
-            if (cells[index - 1] === null && cells[index] !== null) return true;
-          }
-        }
-      },
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(savedProcInspectionDatas),
+      procInspectionItemRanges,
     );
 
-    if (sequencialMissingValueState === true) {
+    const isMissingValue = inspectionSampleResults.some(
+      getMissingValueInspectResult,
+    );
+
+    if (isMissingValue === true) {
       message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
       return;
     }
 
-    const isUserInputAllCell = cellCheckers.every(cells =>
+    const isUserInputAllCell = inspectionSampleResults.every(cells =>
       cells.every(cell => cell !== null),
     );
 
@@ -1149,20 +1134,28 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inspectionGridRef.current.getInstance(),
     );
 
-    if (userDefinedInspectionSaveOption.length === 0) {
-      return callInspectionCreateAPI(saveData);
+    if (isUserInputAllCell === true) {
+      callInspectionCreateAPI(saveData);
+      return;
     }
 
-    if (
-      isUserInputAllCell === false &&
-      userDefinedInspectionSaveOption[0].value === 1
-    ) {
+    if (userDefinedInspectionSaveOption.length === 0) {
+      throw new Error(
+        '검사성적서 결과값 전체등록 여부 옵션을 찾을 수 없습니다.',
+      );
+    }
+
+    if (userDefinedInspectionSaveOption[0].value === 0) {
+      callInspectionCreateAPI(saveData);
+      return;
+    }
+
+    if (userDefinedInspectionSaveOption[0].value === 1) {
       message.warn('검사 결과 값을 시료 수 만큼 입력해주세요');
       return;
-    } else if (
-      isUserInputAllCell === false &&
-      userDefinedInspectionSaveOption[0].value === 2
-    ) {
+    }
+
+    if (userDefinedInspectionSaveOption[0].value === 2) {
       Modal.confirm({
         title: '',
         content:
@@ -1178,9 +1171,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           // this function will be executed when cancel button is clicked
         },
       });
+
+      return;
     }
 
-    return callInspectionCreateAPI(saveData);
+    throw new Error('알 수 없는 수입 검사 성적서 저장 API 예외가 발생했습니다');
   };
 
   const onCancel = ev => {
