@@ -532,185 +532,50 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
   const [procInspResultIncludeDetails, setProcInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
 
-  const COLUMNS_INSP_RESULTS: IGridColumn[] = [
-    {
-      header: '검사성적서UUID',
-      name: 'insp_result_uuid',
-      alias: 'uuid',
-      width: 200,
-      hidden: true,
-    },
-    {
-      header: '검사유형코드',
-      name: 'insp_type_uuid',
-      width: 200,
-      hidden: true,
-    },
-    { header: '검사유형명', name: 'insp_type_nm', width: 120, hidden: true },
-    {
-      header: '검사유형',
-      name: 'insp_detail_type_nm',
-      width: 120,
-      hidden: false,
-    },
-    { header: '생산실적UUID', name: 'work_uuid', width: 200, hidden: true },
-    { header: '차수', name: 'seq', width: 80, hidden: false },
-    { header: '검사기준서UUID', name: 'insp_uuid', width: 200, hidden: true },
-    { header: '검사기준서 번호', name: 'insp_no', width: 200, hidden: true },
-    { header: '검사일시', name: 'reg_date', width: 100, hidden: false },
-    { header: '검사자UUID', name: 'emp_uuid', width: 100, hidden: true },
-    { header: '검사자', name: 'emp_nm', width: 100, hidden: false },
-    { header: '판정여부', name: 'insp_result_fg', width: 100, hidden: true },
-    { header: '판정', name: 'insp_result_state', width: 100, hidden: false },
-    { header: '비고', name: 'remark', width: 150, hidden: false },
-  ];
-
-  const COLUMNS_INSP_RESULT_DETAILS: IGridColumn[] = [
-    {
-      header: '검사기준서 상세UUID',
-      name: 'insp_detail_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형UUID',
-      name: 'insp_item_type_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형명',
-      name: 'insp_item_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사항목UUID',
-      name: 'insp_item_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목명',
-      name: 'insp_item_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '상세검사내용',
-      name: 'insp_item_desc',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    },
-    {
-      header: '검사 기준',
-      name: 'spec_std',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '최소 값',
-      name: 'spec_min',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '최대 값',
-      name: 'spec_max',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사방법UUID',
-      name: 'insp_method_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사방법명',
-      name: 'insp_method_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사구UUID',
-      name: 'insp_tool_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사구명',
-      name: 'insp_tool_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '정렬',
-      name: 'sortby',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '시료 수량',
-      name: 'sample_cnt',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사 주기',
-      name: 'insp_cycle',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-  ];
-
   const COLUMNS_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = COLUMNS_INSP_RESULT_DETAILS;
+    const procInspResultDetailItem = [
+      ...ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM,
+    ];
+    const procInspMaxSampleCount =
+      procInspResultIncludeDetails?.header?.max_sample_cnt;
 
-    if (procInspResultIncludeDetails?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
+    if (procInspMaxSampleCount > 0) {
       for (
-        let i = 1;
-        i <= procInspResultIncludeDetails?.header?.max_sample_cnt;
-        i++
+        let sampleIndex = 1;
+        sampleIndex <= procInspMaxSampleCount;
+        sampleIndex++
       ) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
+        procInspResultDetailItem.push({
+          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
+          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
+        procInspResultDetailItem.push({
+          header: `x${sampleIndex}_sample_no`,
+          name: `x${sampleIndex}_sample_no`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
+        procInspResultDetailItem.push({
+          header: `x${sampleIndex}`,
+          name: `x${sampleIndex}_insp_value`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           editable: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
+        procInspResultDetailItem.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_fg`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
+        procInspResultDetailItem.push({
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_state`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
@@ -718,52 +583,14 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
       }
     }
 
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
+    procInspResultDetailItem.push(...ColumnStore.INSP_ITEM_RESULT);
 
-    return items;
+    return procInspResultDetailItem;
   }, [procInspResultIncludeDetails]);
-
-  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
-    {
-      label: '최종판정',
-      id: 'insp_result_state',
-      type: 'text',
-      disabled: true,
-    },
-    { label: '검사차수', id: 'seq', type: 'number', disabled: true },
-    { label: '검사일', id: 'reg_date', type: 'date', disabled: true },
-    { label: '검사시간', id: 'reg_date_time', type: 'time', disabled: true },
-    { label: '검사자', id: 'emp_nm', type: 'text', disabled: true },
-    {
-      label: '검사유형',
-      id: 'insp_detail_type_nm',
-      type: 'text',
-      disabled: true,
-    },
-    { label: '비고', id: 'remark', type: 'text', disabled: true },
-  ];
 
   const inputInspResult = useInputGroup(
     'INPUT_INSP_RESULT',
-    INPUT_ITEMS_INSP_RESULT,
+    InputGroupBoxStore.PROC_INSP_RESULT_DETAIL_ITEM,
     { title: '검사정보' },
   );
 
@@ -919,7 +746,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
               gridId={'INSP_RESULTS'}
               ref={procInspResultsGridRef}
               gridMode={'view'}
-              columns={COLUMNS_INSP_RESULTS}
+              columns={ColumnStore.PROC_INSP_RESULT_DETAIL_HEADER}
               data={procInspResults}
               onAfterClick={ev => {
                 const { rowKey, targetType } = ev;

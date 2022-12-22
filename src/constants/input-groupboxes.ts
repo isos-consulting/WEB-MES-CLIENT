@@ -7,7 +7,8 @@ type InputGroupBoxRecordKeys =
   | 'RECEIVE_INSP_RESULT'
   | 'RECEIVE_INSP_RESULT_INCOME'
   | 'RECEIVE_INSP_RESULT_RETURN'
-  | 'PROC_INSP_ITEM_WORK';
+  | 'PROC_INSP_ITEM_WORK'
+  | 'PROC_INSP_RESULT_DETAIL_ITEM';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -233,5 +234,24 @@ export const InputGroupBoxStore: Record<
     { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
     { id: 'proc_nm', label: '공정', type: 'text', disabled: true },
     { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
+  ],
+  PROC_INSP_RESULT_DETAIL_ITEM: [
+    {
+      label: '최종판정',
+      id: 'insp_result_state',
+      type: 'text',
+      disabled: true,
+    },
+    { label: '검사차수', id: 'seq', type: 'number', disabled: true },
+    { label: '검사일', id: 'reg_date', type: 'date', disabled: true },
+    { label: '검사시간', id: 'reg_date_time', type: 'time', disabled: true },
+    { label: '검사자', id: 'emp_nm', type: 'text', disabled: true },
+    {
+      label: '검사유형',
+      id: 'insp_detail_type_nm',
+      type: 'text',
+      disabled: true,
+    },
+    { label: '비고', id: 'remark', type: 'text', disabled: true },
   ],
 };
