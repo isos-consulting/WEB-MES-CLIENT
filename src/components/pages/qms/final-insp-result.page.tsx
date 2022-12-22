@@ -51,6 +51,19 @@ import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { FieldStore } from '~/constants/fields';
 import { ColumnStore } from '~/constants/columns';
 import { InputGroupBoxStore } from '~/constants/input-groupboxes';
+import {
+  extract_insp_ItemEntriesAtCounts,
+  getEyeInspectionValueText,
+  getInspectItems,
+  getInspectResult,
+  getInspectResultText,
+  getInspectSamples,
+  getRangeNumberResults,
+  getSampleIndex,
+  isColumnNameEndWith_insp_value,
+  isColumnNamesNotEndWith_insp_value,
+  isRangeAllNotNumber,
+} from '~/functions/qms/inspection';
 
 dayjs.locale('ko-kr');
 
@@ -1067,171 +1080,73 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const sliceKeys = (keys: Array<string>, slicePoint: number) =>
     keys.slice(0, slicePoint);
 
-  const recordChecker = (
-    inspectionSampleResultFlagStore: Array<Array<boolean>>,
-  ): Array<boolean> =>
-    inspectionSampleResultFlagStore.map(flags => {
-      if (flags.every(flag => flag === null)) {
-        return null;
-      }
+  const onAfterChange = ({ changes, instance }: any) => {
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-      if (flags.includes(false)) {
-        return false;
-      }
+    const finalInspections = instance.getData();
+    const inspectionItemRanges = finalInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
+    const extractedInspections =
+      extract_insp_ItemEntriesAtCounts(finalInspections);
 
-      return true;
-    });
-
-  const totalChecker = (inspectionItemResultFlags: Array<boolean>): boolean => {
-    if (inspectionItemResultFlags.includes(null)) {
-      return null;
-    }
-
-    if (inspectionItemResultFlags.includes(false)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkUIProtocol = (inspectResultFlag: boolean): string =>
-    inspectResultFlag === null
-      ? null
-      : inspectResultFlag === true
-      ? '합격'
-      : '불합격';
-
-  const eyeCellUIProtocol = (eyeInspectionResultFlag: boolean): string =>
-    eyeInspectionResultFlag === null
-      ? null
-      : eyeInspectionResultFlag === true
-      ? 'OK'
-      : 'NG';
-
-  const onAfterChange = (ev: any) => {
-    const { changes, instance } = ev;
-    const finalInspectorGridInstanceData = instance.getData();
-
-    if (changes.some(change => !change.columnName.includes('_insp_value')))
-      return;
-
-    const inspectionKeyStore = cellKeys(
-      finalInspectorGridInstanceData,
-      '_insp_value',
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      inspectionItemRanges,
     );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
-    const definedInsepctionKeysBySampleCount = inspectionKeyStore.map(
-      (inspectionKeys: Array<string>, index: number) =>
-        sliceKeys(
-          inspectionKeys,
-          finalInspectorGridInstanceData[index].sample_cnt,
-        ),
-    );
-
-    const inspectionSampleResultStore = definedInsepctionKeysBySampleCount.map(
-      (inspectionKeys, rowIndex) =>
-        inspectionKeys.map(inspectionKey =>
-          finalInspectorGridInstanceData[rowIndex][inspectionKey] == null ||
-          finalInspectorGridInstanceData[rowIndex][inspectionKey] === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(finalInspectorGridInstanceData[rowIndex].spec_min) &&
-              isNumber(finalInspectorGridInstanceData[rowIndex].spec_max)
-            ? inspectionCheck(NumberInspectionChecker, {
-                value:
-                  finalInspectorGridInstanceData[rowIndex][inspectionKey] * 1,
-                min: finalInspectorGridInstanceData[rowIndex].spec_min * 1,
-                max: finalInspectorGridInstanceData[rowIndex].spec_max * 1,
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: finalInspectorGridInstanceData[rowIndex][inspectionKey],
-              }),
-        ),
-    );
-
-    const inspectionItemResultStore = recordChecker(
-      inspectionSampleResultStore,
-    );
-
-    const inspectionFinalResultFlag = totalChecker(inspectionItemResultStore);
-
-    changes.forEach(inspectionSample => {
-      if (inspectionSample.columnName.includes('_insp_value')) {
-        const sampleIndex = inspectionKeyStore[
-          inspectionSample.rowKey
-        ].findIndex(sampleKey => sampleKey === inspectionSample.columnName);
-
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
-          inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
+    changes.forEach(({ rowKey, columnName }: any) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const sampleIndex = getSampleIndex(columnName);
+        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberFlagsInItemRange = getRangeNumberResults(
+          inspectionItemRanges[rowKey],
         );
+        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
 
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace(
-            '_insp_value',
-            '_insp_result_state',
-          ),
-          checkUIProtocol(
-            inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
-          ),
-        );
+        const uiMappedSampleInfo = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(sampleResult),
+        };
+
+        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
+          instance.setValue(rowKey, key, value);
+        }
 
         if (
-          !(
-            isNumber(
-              finalInspectorGridInstanceData[inspectionSample.rowKey].spec_min,
-            ) &&
-            isNumber(
-              finalInspectorGridInstanceData[inspectionSample.rowKey].spec_max,
-            )
-          )
+          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
+          eyeInspectValueText
         ) {
-          instance.setValue(
-            inspectionSample.rowKey,
-            inspectionSample.columnName,
-            eyeCellUIProtocol(
-              inspectionSampleResultStore[inspectionSample.rowKey][sampleIndex],
-            ),
-          );
+          instance.setValue(rowKey, columnName, eyeInspectValueText);
         }
       }
     });
 
-    finalInspectorGridInstanceData.forEach(
-      (_: unknown, inspectionItemIndex: number) => {
-        instance.setValue(
-          inspectionItemIndex,
-          'insp_result_fg',
-          inspectionItemResultStore[inspectionItemIndex],
-        );
-        instance.setValue(
-          inspectionItemIndex,
-          'insp_result_state',
-          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
-        );
-      },
-    );
+    inspectionItemResults.forEach((item: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
+    });
 
-    inputInspResult.setFieldValue('insp_result_fg', inspectionFinalResultFlag);
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
     inputInspResult.setFieldValue(
       'insp_result_state',
-      checkUIProtocol(inspectionFinalResultFlag),
+      getInspectResultText(inspectionResult),
     );
 
-    if (
-      inspectionFinalResultFlag === null ||
-      inspectionFinalResultFlag === true
-    ) {
+    if (inspectionResult === null || inspectionResult === true) {
       inputInspResult.setFieldDisabled({ insp_handling_type: true });
     } else {
       inputInspResult.setFieldDisabled({ insp_handling_type: false });
     }
 
     const inspectionHandlingTypeCode: string =
-      inspectionFinalResultFlag === true
+      inspectionResult === true
         ? 'INCOME'
-        : inspectionFinalResultFlag === false
+        : inspectionResult === false
         ? 'RETURN'
         : '';
 
