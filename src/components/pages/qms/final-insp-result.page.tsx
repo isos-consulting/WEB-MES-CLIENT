@@ -1281,7 +1281,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResultReject?.ref?.current?.values;
 
     if (insp_handling_type === '' || insp_handling_type == null) {
-      message.warn('처리결과를 등록해주세요.');
+      message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
       return;
     }
     if (emp_uuid == null) {
@@ -1296,44 +1296,42 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const { insp_handling_type_cd } = JSON.parse(insp_handling_type);
 
     if (insp_result_fg === true && insp_handling_type_cd !== 'INCOME') {
-      return message.warn(
-        '최종 판정이 합격일 경우 입고만 처리만 할 수 있습니다.',
-      );
+      return message.warn(SENTENCE.INSPECT_RESULT_FLAG_TRUE_CAN_BE_INCOME);
     }
 
     if (insp_handling_type_cd === 'INCOME') {
       if (to_store_uuid == null || to_store_uuid === '') {
-        message.warn('입고창고를 등록해주세요.');
+        message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'RETURN') {
       if (reject_uuid == null) {
-        message.warn('불량유형을 등록해주세요.');
+        message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
         return;
       }
 
       if (reject_store_uuid == null || reject_store_uuid === '') {
-        message.warn('불량창고를 등록해주세요.');
+        message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
       if (to_store_uuid == null || to_store_uuid === '') {
-        message.warn('입고창고를 등록해주세요.');
+        message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
 
       if (reject_qty > 0) {
         if (reject_uuid == null) {
-          message.warn('불량유형을 등록해주세요.');
+          message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
           return;
         }
 
         if (reject_store_uuid == null || reject_store_uuid === '') {
-          message.warn('불량창고를 등록해주세요.');
+          message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
           return;
         }
       }
@@ -1483,14 +1481,10 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       )
         .then(res => {
           if (res.length === 0) {
-            message.error(
-              '적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.',
-            );
+            message.error(SENTENCE.CHECK_YOUR_ADAPTABLE_INSPECT_BASE_REPORT);
             onClear();
           } else if (res[0].apply_fg === false) {
-            message.error(
-              '적용중인 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.',
-            );
+            message.error(SENTENCE.CHECK_YOUR_ADAPTABLE_INSPECT_BASE_REPORT);
             onClear();
           } else {
             setInsp(res[0]);
@@ -1498,7 +1492,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         })
         .catch(err => {
           onClear();
-          message.error('에러');
+          message.error(SENTENCE.ERROR_OCCURRED);
         });
     }
   }, [storesStocks]);
@@ -1587,9 +1581,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
 
     if (receiveQty - incomeQty < 0) {
-      message.warn(
-        '입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.',
-      );
+      message.warn(SENTENCE.RECEIVE_QTY_OVER_THEN_INCOME_QTY);
       inputInspResultIncome.setFieldValue('qty', receiveQty - rejectQty);
     } else {
       inputInspResultReject.setFieldValue('reject_qty', receiveQty - incomeQty);
@@ -1609,9 +1601,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     );
 
     if (receiveQty - rejectQty < 0) {
-      message.warn(
-        '입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.',
-      );
+      message.warn(SENTENCE.RECEIVE_QTY_OVER_THEN_INCOME_QTY);
       inputInspResultReject.setFieldValue('reject_qty', receiveQty - incomeQty);
     } else {
       inputInspResultIncome.setFieldValue('qty', receiveQty - rejectQty);
@@ -1625,14 +1615,14 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
   return (
     <GridPopup
-      title="데이터 추가하기"
+      title={SENTENCE.DO_ADD_DATA}
       onOk={onSave}
-      okText="저장"
-      cancelText="취소"
+      okText={WORD.SAVE}
+      cancelText={WORD.CANCEL}
       onCancel={onCancel}
       gridMode="update"
-      popupId={'INSP_CREATE_POPUP'}
-      gridId={'INSP_CREATE_POPUP_GRID'}
+      popupId="INSP_CREATE_POPUP"
+      gridId="INSP_CREATE_POPUP_GRID"
       ref={gridRef}
       columns={COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES}
       inputProps={[

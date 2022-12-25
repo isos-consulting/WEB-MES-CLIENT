@@ -47,4 +47,11 @@ export enum SENTENCE {
   UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT = '검사 성적서 저장 중 알 수 없는 오류가 발생했습니다',
   DO_ADD_DATA = '데이터 추가하기',
   DO_UPDATE_DATA = '데이터 수정하기',
+  CHECK_YOUR_ADAPTABLE_INSPECT_BASE_REPORT = '적용중인 검사 기준서가 없습니다. 기준서를 확인 후 다시 시도해주세요.',
+  BEFORE_INPUT_HADLING_TYPE = '처리유형을 입력해주세요',
+  INSPECT_RESULT_FLAG_TRUE_CAN_BE_INCOME = '검사 결과가 "합격"일 경우 입고가 가능합니다',
+  BEFORE_INPUT_INCOME_STORE = '입고 창고를 입력해주세요',
+  BEFORE_INPUT_REJECT_TYPE = '불량유형을 입력해주세요',
+  BEFORE_INPUT_REJECT_STORE = '불량 창고를 입력해주세요',
+  RECEIVE_QTY_OVER_THEN_INCOME_QTY = '판정 수량이 입고 수량보다 많습니다. 확인 후 다시 시도해주세요',
 }
