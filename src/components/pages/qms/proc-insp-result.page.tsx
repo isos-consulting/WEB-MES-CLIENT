@@ -915,70 +915,23 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       });
 
   const onSave = async inspectionGridRef => {
-    const { emp_uuid, reg_date_time } = inputInspResult?.ref?.current?.values;
-
-    if (emp_uuid == null) {
-      message.warn(SENTENCE.INPUT_INSPECTOR);
-      return;
-    }
-    if (reg_date_time == null) {
-      message.warn(SENTENCE.INPUT_INSPECT_TIME);
-      return;
-    }
-
-    const savedProcInspectionDatas = inspectionGridRef.current
-      .getInstance()
-      .getData();
-    const procInspectionItemRanges = savedProcInspectionDatas.map(item => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-
-    const inspectionSampleResults = getInspectSamples(
-      extract_insp_ItemEntriesAtCounts(savedProcInspectionDatas),
-      procInspectionItemRanges,
-    );
-
-    const isMissingValue = inspectionSampleResults.some(
-      getMissingValueInspectResult,
-    );
-
-    if (isMissingValue === true) {
-      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
-      return;
-    }
-
-    const isUserInputAllCell = inspectionSampleResults.every(cells =>
-      cells.every(cell => cell !== null),
-    );
-
     const userDefinedInspectionSaveOption = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
+    );
+
+    viewController.validate(
+      inputInspResult?.ref?.current?.values,
+      inspectionGridRef.current.getInstance().getData(),
+      userDefinedInspectionSaveOption,
     );
 
     const saveData = saveInspectionData(
       inspectionGridRef.current.getInstance(),
     );
 
-    if (isUserInputAllCell === true) {
-      callInspectionCreateAPI(saveData);
-      return;
-    }
-
-    if (userDefinedInspectionSaveOption.length === 0) {
-      throw new Error(
-        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
-      );
-    }
-
     if (userDefinedInspectionSaveOption[0].value === 0) {
       callInspectionCreateAPI(saveData);
-      return;
-    }
-
-    if (userDefinedInspectionSaveOption[0].value === 1) {
-      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
       return;
     }
 
@@ -1002,7 +955,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       return;
     }
 
-    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
+    callInspectionCreateAPI(saveData);
   };
 
   const onCancel = ev => {
@@ -1267,75 +1220,23 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const onSave = async (
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
-    const { emp_uuid, reg_date, reg_date_time } =
-      inputInspResult?.ref?.current?.values;
-
-    if (emp_uuid == null) {
-      message.warn(SENTENCE.INPUT_INSPECTOR);
-      return;
-    }
-    if (reg_date == null) {
-      message.warn(SENTENCE.INPUT_INSPECT_DATE);
-      return;
-    }
-    if (reg_date_time == null) {
-      message.warn(SENTENCE.INPUT_INSPECT_TIME);
-      return;
-    }
-
-    const updatedProcInspections = inspectionGridRef.current
-      .getInstance()
-      .getData();
-    const procInspectionItemRanges = updatedProcInspections.map(item => ({
-      min: String(item.spec_min),
-      max: String(item.spec_max),
-    }));
-
-    const inspectionSampleResults = getInspectSamples(
-      extract_insp_ItemEntriesAtCounts(updatedProcInspections),
-      procInspectionItemRanges,
-    );
-
-    const isMissingValue = inspectionSampleResults.some(
-      getMissingValueInspectResult,
-    );
-
-    if (isMissingValue === true) {
-      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
-      return;
-    }
-
-    const isFilledAllInspectionSample = inspectionSampleResults.every(
-      sampleResults => sampleResults.every(result => result !== null),
-    );
-
     const fetchOptionFilledQualityAllInspectionResult = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
+    );
+
+    viewController.validate(
+      inputInspResult?.ref?.current?.values,
+      inspectionGridRef.current.getInstance().getData(),
+      fetchOptionFilledQualityAllInspectionResult,
     );
 
     const inspectionPutApiPayload = createInspectionPutApiPayload(
       inspectionGridRef.current.getInstance(),
     );
 
-    if (isFilledAllInspectionSample === true) {
-      fetchInsepctionPutAPI(inspectionPutApiPayload);
-      return;
-    }
-
-    if (fetchOptionFilledQualityAllInspectionResult.length === 0) {
-      throw new Error(
-        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
-      );
-    }
-
     if (fetchOptionFilledQualityAllInspectionResult[0].value === 0) {
       fetchInsepctionPutAPI(inspectionPutApiPayload);
-      return;
-    }
-
-    if (fetchOptionFilledQualityAllInspectionResult[0].value === 1) {
-      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
       return;
     }
 
@@ -1358,7 +1259,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       return;
     }
 
-    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
+    fetchInsepctionPutAPI(inspectionPutApiPayload);
   };
 
   const onCancel = ev => {
