@@ -216,3 +216,15 @@ export const getInspSampleResultState = (value: boolean, index: number) => {
     [`x${index + 1}_insp_result_state`, getInspectResultText(value)],
   ];
 };
+
+export const getInspectionHandlingTypeCode = (value: boolean) => {
+  if (value === true) {
+    return 'INCOME';
+  }
+
+  if (value === false) {
+    return 'RETURN';
+  }
+
+  return '';
+};

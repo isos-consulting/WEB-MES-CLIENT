@@ -92,6 +92,10 @@ class InspectionReportService {
     this.form.setFieldValue('insp_result_fg', result);
     this.form.setFieldValue('insp_result_state', getInspectResultText(result));
   }
+
+  public disableHandlingType(value: boolean) {
+    this.form.setFieldDisabled({ insp_handling_type: value });
+  }
 }
 
 export default InspectionReportService;

@@ -16,19 +16,12 @@ import {
 import {
   createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
-  getEyeInspectionValueText,
-  getInspectItems,
-  getInspectResult,
-  getInspectResultText,
+  getInspectionHandlingTypeCode,
   getInspectSamples,
   getMissingValueInspectResult,
-  getRangeNumberResults,
-  getSampleIndex,
   getSampleOkOrNgOrDefaultSampleValue,
-  isColumnNameEndWith_insp_value,
-  isColumnNamesNotEndWith_insp_value,
-  isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
@@ -58,6 +51,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   const [receiveInspDetailData, setReceiveInspDetailData] = useState<
     TReceiveInspDetail[]
   >([]);
+  const viewController = new ReceiveInspectionReportViewController();
 
   const initialize = () => {
     const stmtNoSubField = InputGroupBoxStore.RECEIVE_INSP_ITEM.find(
@@ -235,73 +229,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const onAfterChange = ({ changes, instance }: any) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
+    viewController.dataGridChange(changes, instance, inputInspResult);
 
-    const receiveInspections = instance.getData();
-    const inspectionItemRanges = receiveInspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-    const extractedInspections =
-      extract_insp_ItemEntriesAtCounts(receiveInspections);
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      inspectionItemRanges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
+    const result = viewController.getReportResult(instance, inputInspResult);
 
-    changes.forEach(({ rowKey, columnName }: any) => {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberFlagsInItemRange = getRangeNumberResults(
-          inspectionItemRanges[rowKey],
-        );
-        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
-
-        const uiMappedSampleInfo = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(sampleResult),
-        };
-
-        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (
-          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
-          eyeInspectValueText
-        ) {
-          instance.setValue(rowKey, columnName, eyeInspectValueText);
-        }
-      }
-    });
-
-    inspectionItemResults.forEach((item: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
-    inputInspResult.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
-
-    if (inspectionResult === null || inspectionResult === true) {
-      inputInspResult.setFieldDisabled({ insp_handling_type: true });
-    } else {
-      inputInspResult.setFieldDisabled({ insp_handling_type: false });
-    }
-
-    const inspectionHandlingTypeCode: string =
-      inspectionResult === true
-        ? 'INCOME'
-        : inspectionResult === false
-        ? 'RETURN'
-        : '';
+    const inspectionHandlingTypeCode = getInspectionHandlingTypeCode(result);
 
     handleInspectionHandlingTypeChange(
       inspectionHandlingTypeCode,
@@ -698,8 +630,8 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       cancelText="취소"
       onCancel={onCancel}
       gridMode="update"
-      popupId={'INSP_CREATE_POPUP'}
-      gridId={'INSP_CREATE_POPUP_GRID'}
+      popupId="INSP_CREATE_POPUP"
+      gridId="INSP_CREATE_POPUP_GRID"
       ref={gridRef}
       columns={CREATE_POPUP_DETAIL_COLUMNS}
       inputProps={[
