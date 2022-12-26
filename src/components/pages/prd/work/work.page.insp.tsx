@@ -42,11 +42,15 @@ import {
   getMissingValueInspectResult,
   getTimeFormat,
 } from '~/functions/qms/inspection';
-import InspectionReportViewController, {
-  InsepctionDataGridChange,
-  InspectionDataGrid,
-  InspectionInputForm,
-} from '~/functions/qms/InspectionReportViewController';
+import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
+import { SaveApiMethod } from '~/types/api/api.type';
+import {
+  GetMaxSampleCntParams,
+  GetMaxSampleCntResponse,
+  HeaderSaveOptionParams,
+  InsepctionDataGridOnChangeEvent,
+  InspectionSampleComponentInstances,
+} from '~/types/qms/inspection.type';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
@@ -112,16 +116,6 @@ export const INSP = () => {
     },
   );
 
-  type InsepctionDataGridOnChangeEvent = {
-    changes: InsepctionDataGridChange[];
-    instance: InspectionDataGrid;
-  };
-
-  type InspectionSampleComponentInstances = {
-    gridInstance: any;
-    inputInstance: InspectionInputForm;
-  };
-
   const calculateResultForInspectionSample = (
     { changes, instance }: InsepctionDataGridOnChangeEvent,
     { inputInstance }: InspectionSampleComponentInstances,
@@ -129,16 +123,6 @@ export const INSP = () => {
     viewController.dataGridChange(changes, instance, inputInstance);
   };
 
-  type GetMaxSampleCntParams = {
-    insp_detail_type_uuid: string;
-    work_uuid: string;
-  };
-  type GetMaxSampleCntResponse = {
-    datas: any;
-    header: any;
-    details: any;
-    maxSampleCnt: number;
-  };
   const getMaxSampleCnt = async (
     params: GetMaxSampleCntParams,
   ): Promise<GetMaxSampleCntResponse> => {
@@ -308,12 +292,6 @@ export const INSP = () => {
     }
   }, [createPopupVisible]);
 
-  type HeaderSaveOptionParams = {
-    work_uuid?: string;
-    prod_uuid?: string;
-    lot_no?: string;
-  };
-
   const onSearch = async ({
     work_uuid,
     ...saveOptions
@@ -413,7 +391,6 @@ export const INSP = () => {
     });
   };
 
-  type SaveApiMethod = 'delete' | 'post' | 'put' | 'patch';
   const saveInspectionDatas = async (
     saveGridRef: MutableRefObject<Grid>,
     saveInputRef: MutableRefObject<FormikProps<FormikValues>>,
