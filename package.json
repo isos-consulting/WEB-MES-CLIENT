@@ -73,7 +73,8 @@
     "test:coverage": "jest --config config/jest.config.ts --coverage",
     "e2e:test": "npx playwright test",
     "e2e:codegen-dev": "npx playwright codegen http://191.1.70.232:3000/",
-    "e2e:report": "npx playwright show-report"
+    "e2e:report": "npx playwright show-report",
+    "tsc": "tsc --project tsconfig.build.json"
   },
   "browser": {
     "dom-storage": false
