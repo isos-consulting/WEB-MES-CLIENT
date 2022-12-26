@@ -38,33 +38,27 @@ import {
   extract_insp_ItemEntriesAtCounts,
   getDateFormat,
   getDateTimeFormat,
-  getEyeInspectionValueText,
-  getInspectItems,
-  getInspectResult,
-  getInspectResultText,
   getInspectSamples,
   getMissingValueInspectResult,
-  getRangeNumberResults,
-  getSampleIndex,
   getTimeFormat,
-  isColumnNameEndWith_insp_value,
-  isColumnNamesNotEndWith_insp_value,
-  isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import InspectionReportViewController, {
+  InsepctionDataGridOnChange,
+  InspectionDataGrid,
+  InspectionInputForm,
+} from '~/functions/qms/InspectionReportViewController';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
-//#region 🔶🚫공정검사
 export const INSP = () => {
-  /** 페이지 제목 */
   const title = getPageName();
 
-  /** 권한 관련 */
   const permissions = getPermissions(title);
+
+  const viewController = new InspectionReportViewController();
 
   const [modal, modalContext] = Modal.useModal();
 
-  //#region ✅설정값
   const gridRef = useRef<Grid>();
   const inputRef = useRef<FormikProps<FormikValues>>();
 
@@ -85,7 +79,6 @@ export const INSP = () => {
   const HEADER_SEARCH_URI_PATH = '/qms/proc/insp-results';
   const DETAIL_STD_SEARCH_URI_PATH = '/qms/proc/insp/include-details';
   const DETAIL_SEARCH_URI_PATH = '/qms/proc/insp-result/$/include-details';
-
   const SAVE_URI_PATH = '/qms/proc/insp-results';
 
   // 팝업 관련 설정
@@ -120,68 +113,20 @@ export const INSP = () => {
   );
 
   type InsepctionDataGridOnChangeEvent = {
-    origin: string;
-    changes: { columnName: string; rowKey: number; value: any }[];
-    instance: any;
+    changes: InsepctionDataGridOnChange[];
+    instance: InspectionDataGrid;
   };
 
   type InspectionSampleComponentInstances = {
     gridInstance: any;
-    inputInstance: any;
+    inputInstance: InspectionInputForm;
   };
 
   const calculateResultForInspectionSample = (
     { changes, instance }: InsepctionDataGridOnChangeEvent,
     { inputInstance }: InspectionSampleComponentInstances,
   ) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
-
-    const inspections = instance.getData();
-    const ranges = inspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-    const extractedInspections = extract_insp_ItemEntriesAtCounts(inspections);
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      ranges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
-
-    for (const { rowKey, columnName } of changes) {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const result = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberMinMaxFlags = getRangeNumberResults(ranges[rowKey]);
-        const eyeInsectValueText = getEyeInspectionValueText(result);
-
-        const uiMappableModel = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: result,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(result),
-        };
-
-        for (const [key, value] of Object.entries(uiMappableModel)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (isRangeAllNotNumber(isNumberMinMaxFlags) && eyeInsectValueText) {
-          instance.setValue(rowKey, columnName, eyeInsectValueText);
-        }
-      }
-    }
-
-    inspectionItemResults.forEach((item, index) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInstance.setFieldValue('insp_result_fg', inspectionResult);
-    inputInstance.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
+    viewController.dataGridChange(changes, instance, inputInstance);
   };
 
   type GetMaxSampleCntParams = {
@@ -321,7 +266,7 @@ export const INSP = () => {
     },
     { id: 'remark', label: '비고', type: 'text', disabled: true },
   ];
-  //#endregion
+
   const createPopupInput = useInputGroup(
     'WORK_INSP_CREATE_POPUP_INPUTBOX',
     INSP_INPUT_ITEMS,
@@ -357,20 +302,6 @@ export const INSP = () => {
 
   useLayoutEffect(() => {
     if (createPopupVisible && createPopupInput) {
-      // createPopupInput?.instance?.resetForm();
-      // getMaxSampleCnt({
-      //   insp_detail_type_uuid: 'selfProc',
-      //   work_uuid: (headerSaveOptionParams as any)?.work_uuid
-      // }).then(({
-      //   maxSampleCnt,
-      //   details
-      // }) => {
-      //   const columns = createInspDetailColumns(maxSampleCnt);
-      //   createPopupGrid.setGridColumns(columns);
-      //   createPopupGrid.setGridData(details);
-      // }).finally(() => {
-      //   onSearch(headerSaveOptionParams);
-      // })
     } else {
       createPopupInput?.instance?.resetForm();
       onSearch(headerSaveOptionParams);
@@ -666,17 +597,13 @@ export const INSP = () => {
       message.warn(e.message);
     }
   };
-  //#endregion
 
-  //#region ✅사이드 이펙트
-  // 헤더 데이터가 없으면 우측 데이터들 초기화
   useEffect(() => {
     if (headerData?.length === 0) {
       inputRef?.current?.resetForm();
       detailGrid.setGridData([]);
     }
   }, [headerData]);
-  //#endregion
 
   useLayoutEffect(() => {
     if (Object.keys(selectedRow)?.length > 0 && selectedRow) {
@@ -684,7 +611,7 @@ export const INSP = () => {
         const insp_result_uuid = selectedRow?.insp_result_uuid;
         const work_uuid = selectedRow?.work_uuid;
         const URI_PATH = DETAIL_SEARCH_URI_PATH.replace('$', insp_result_uuid);
-        // 공정검사 상세 데이터 조회
+
         getData({}, URI_PATH, 'header-details', null, null, null, {
           disabledZeroMessage: true,
         }).then(res => {
@@ -722,7 +649,6 @@ export const INSP = () => {
     }
   };
 
-  //#region 🚫렌더부
   const component = !permissions ? (
     <Spin spinning={true} tip="권한 정보를 가져오고 있습니다." />
   ) : (
@@ -900,7 +826,6 @@ export const INSP = () => {
       {modalContext}
     </>
   );
-  //#endregion
 
   return {
     component,
@@ -925,4 +850,3 @@ export const INSP = () => {
     DETAIL_SEARCH_URI_PATH,
   };
 };
-//#endregion

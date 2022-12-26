@@ -1,6 +1,9 @@
 import { ColumnStore } from '~/constants/columns';
 import { ENUM_WIDTH } from '~/enums';
-import { createInspectionReportColumns } from '~/functions/qms/inspection';
+import {
+  createInspectionReportColumns,
+  getInspSampleResultState,
+} from '~/functions/qms/inspection';
 
 test('검사 시료의 개수가 0개이면 [합격 여부, 판정, 비고] 배열만 반환한다', () => {
   const emptyArray = [];
@@ -196,4 +199,50 @@ test('검사 시료의 개수가 1개이면 [공정 검사 컬럼, x1, x1_판정
       filter: 'text',
     },
   ]);
+});
+
+test('0번째 시료의 판정 결과가 null이면 판정 결과와 상태 모두 null을 반환한다', () => {
+  const firstSampleNullResult = null;
+
+  const result = getInspSampleResultState(firstSampleNullResult, 0);
+
+  expect(result).toEqual([
+    ['x1_insp_result_fg', null],
+    ['x1_insp_result_state', null],
+  ]);
+});
+
+test('0번째 시료의 판정 결과가 true이면 판정 결과는 true 상태는 합격을 반환한다', () => {
+  const passedFirstSample = true;
+
+  const passedState = getInspSampleResultState(passedFirstSample, 0);
+
+  expect(passedState).toEqual([
+    ['x1_insp_result_fg', true],
+    ['x1_insp_result_state', '합격'],
+  ]);
+});
+
+test('0번째 시료의 판정 결과가 false면 판정 결과는 false 상태는 불합격을 반환한다', () => {
+  const rejectedFirstSample = false;
+
+  const rejectedState = getInspSampleResultState(rejectedFirstSample, 0);
+
+  expect(rejectedState).toEqual([
+    ['x1_insp_result_fg', false],
+    ['x1_insp_result_state', '불합격'],
+  ]);
+});
+
+test('검사 시료 상태의 iterable for of 테스트', () => {
+  const rejectedFirstSample = false;
+
+  const inspectedList = getInspSampleResultState(rejectedFirstSample, 0);
+
+  const inspectResultFlag = [[...inspectedList[0]]];
+
+  for (const [key, value] of inspectResultFlag) {
+    expect(key).toBe('x1_insp_result_fg');
+    expect(value).toBe(false);
+  }
 });

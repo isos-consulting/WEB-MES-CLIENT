@@ -6,7 +6,7 @@ import { isNumber } from '../number';
 type ColumnNames = { columnName: string }[];
 type InspectionItem = { [key: string]: any };
 type InspectionItemEntries = [string, any][];
-type SampleRange = { min: string; max: string };
+export type SampleRange = { min: string; max: string };
 type InspectionResult = boolean | null;
 type InspectResults = InspectionResult[][];
 type InspectResultText = '합격' | '불합격';
@@ -208,4 +208,11 @@ export const createInspectionReportColumns = (
   const samples = createInspectionSamples(max);
 
   return [...columns, ...samples, ...ColumnStore.INSP_ITEM_RESULT];
+};
+
+export const getInspSampleResultState = (value: boolean, index: number) => {
+  return [
+    [`x${index + 1}_insp_result_fg`, value],
+    [`x${index + 1}_insp_result_state`, getInspectResultText(value)],
+  ];
 };
