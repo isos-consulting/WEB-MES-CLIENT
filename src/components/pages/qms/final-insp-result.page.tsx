@@ -1912,57 +1912,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     return new checker().check(arg);
   };
 
-  const recordChecker = (
-    inspectionItems: Array<Array<boolean>>,
-  ): Array<boolean> =>
-    inspectionItems.map((inspectionItem: Array<boolean>) => {
-      if (
-        inspectionItem.every(
-          inspectionSampleResultFlag => inspectionSampleResultFlag === null,
-        )
-      ) {
-        return null;
-      }
-
-      if (
-        inspectionItem.some(
-          inspectionSampleResultFlag => inspectionSampleResultFlag === false,
-        )
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-
-  const totalChecker = (inspectionItems: Array<boolean>): boolean => {
-    if (
-      inspectionItems.some((inspectionItem: boolean) => inspectionItem === null)
-    ) {
-      return null;
-    }
-
-    if (inspectionItems.includes(false)) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkUIProtocol = (sampleResultFlag: boolean): string =>
-    sampleResultFlag === null
-      ? null
-      : sampleResultFlag === true
-      ? '합격'
-      : '불합격';
-
-  const eyeCellUIProtocol = (eyeSampleResultFlag: boolean): string =>
-    eyeSampleResultFlag === null
-      ? null
-      : eyeSampleResultFlag === true
-      ? 'OK'
-      : 'NG';
-
   interface InspectionSampleAfterChangeProps extends GridEventProps {
     instance: TuiGrid;
   }
@@ -1971,142 +1920,71 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     changes,
     instance,
   }: InspectionSampleAfterChangeProps) => {
-    const finalInspectionGridInstanceData = instance.getData();
+    if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-    if (
-      changes.some(
-        inspectionSample =>
-          !inspectionSample.columnName.includes('_insp_value'),
-      )
-    )
-      return;
+    const finalInspections = instance.getData();
+    const inspectionItemRanges = finalInspections.map((item: any) => ({
+      min: item.spec_min,
+      max: item.spec_max,
+    }));
 
-    const finalInspectionSampleKeyStore = cellKeys(
-      finalInspectionGridInstanceData,
-      '_insp_value',
+    const extractedInspections =
+      extract_insp_ItemEntriesAtCounts(finalInspections);
+
+    const inspectionSampleResults = getInspectSamples(
+      extractedInspections,
+      inspectionItemRanges,
     );
+    const inspectionItemResults = getInspectItems(inspectionSampleResults);
+    const inspectionResult = getInspectResult(inspectionItemResults);
 
-    const enableInspectionSampleKeyStroe = finalInspectionSampleKeyStore.map(
-      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
-        sliceKeys(
-          inspectionItem,
-          Number(
-            finalInspectionGridInstanceData[inspectionItemIndex].sample_cnt,
-          ),
-        ),
-    );
-
-    const inspectionSamplelResultStore = enableInspectionSampleKeyStroe.map(
-      (inspectionItem: Array<string>, inspectionItemIndex: number) =>
-        inspectionItem.map(inspectionSampleKey =>
-          instance.getValue(inspectionItemIndex, inspectionSampleKey) == null ||
-          instance.getValue(inspectionItemIndex, inspectionSampleKey) === ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(
-                `${instance.getValue(inspectionItemIndex, 'spec_min')}`,
-              ) &&
-              isNumber(`${instance.getValue(inspectionItemIndex, 'spec_max')}`)
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: Number(
-                  instance.getValue(inspectionItemIndex, inspectionSampleKey),
-                ),
-                min: Number(instance.getValue(inspectionItemIndex, 'spec_min')),
-                max: Number(instance.getValue(inspectionItemIndex, 'spec_max')),
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: instance.getValue(
-                  inspectionItemIndex,
-                  inspectionSampleKey,
-                ),
-              }),
-        ),
-    );
-
-    const inspectionItemResultStore = recordChecker(
-      inspectionSamplelResultStore,
-    );
-
-    const inspectionResultFlag = totalChecker(inspectionItemResultStore);
-
-    changes.forEach(inspectionSample => {
-      if (inspectionSample.columnName.includes('insp_value')) {
-        const sampleIndex = finalInspectionSampleKeyStore[
-          inspectionSample.rowKey
-        ].findIndex(
-          inspectionSampleKey =>
-            inspectionSampleKey === inspectionSample.columnName,
+    changes.forEach(({ rowKey, columnName }) => {
+      if (isColumnNameEndWith_insp_value(columnName)) {
+        const sampleIndex = getSampleIndex(columnName);
+        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
+        const isNumberFlagsInItemRange = getRangeNumberResults(
+          inspectionItemRanges[rowKey],
         );
+        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
 
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace('_insp_value', '_insp_result_fg'),
-          inspectionSamplelResultStore[inspectionSample.rowKey][sampleIndex],
-        );
+        const uiMappedSampleInfo = {
+          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
+          [`x${sampleIndex + 1}_insp_result_state`]:
+            getInspectResultText(sampleResult),
+        };
 
-        instance.setValue(
-          inspectionSample.rowKey,
-          inspectionSample.columnName.replace(
-            '_insp_value',
-            '_insp_result_state',
-          ),
-          checkUIProtocol(
-            inspectionSamplelResultStore[inspectionSample.rowKey][sampleIndex],
-          ),
-        );
+        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
+          instance.setValue(rowKey, key, value);
+        }
 
         if (
-          !(
-            isNumber(
-              `${instance.getValue(inspectionSample.rowKey, 'spec_min')}`,
-            ) &&
-            isNumber(
-              `${instance.getValue(inspectionSample.rowKey, 'spec_max')}`,
-            )
-          )
+          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
+          eyeInspectValueText
         ) {
-          instance.setValue(
-            inspectionSample.rowKey,
-            inspectionSample.columnName,
-            eyeCellUIProtocol(
-              inspectionSamplelResultStore[inspectionSample.rowKey][
-                sampleIndex
-              ],
-            ),
-          );
+          instance.setValue(rowKey, columnName, eyeInspectValueText);
         }
       }
     });
 
-    finalInspectionGridInstanceData.forEach(
-      (_, inspectionItemIndex: number) => {
-        instance.setValue(
-          inspectionItemIndex,
-          'insp_result_fg',
-          inspectionItemResultStore[inspectionItemIndex],
-        );
+    inspectionItemResults.forEach((item: any, index: number) => {
+      instance.setValue(index, 'insp_result_fg', item);
+      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
+    });
 
-        instance.setValue(
-          inspectionItemIndex,
-          'insp_result_state',
-          checkUIProtocol(inspectionItemResultStore[inspectionItemIndex]),
-        );
-      },
-    );
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResultFlag);
+    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
     inputInspResult.setFieldValue(
       'insp_result_state',
-      checkUIProtocol(inspectionResultFlag),
+      getInspectResultText(inspectionResult),
     );
 
     inputInspResult.setFieldDisabled({
-      insp_handling_type: inspectionResultFlag ?? true,
+      insp_handling_type: inspectionResult ?? true,
     });
 
     let inspectionHandlingTypeCode =
-      inspectionResultFlag === true
+      inspectionResult === true
         ? 'INCOME'
-        : inspectionResultFlag === false
+        : inspectionResult === false
         ? 'RETURN'
         : '';
 
@@ -2115,12 +1993,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     if (inspectionHandlingTypeCode === '') {
       inputInspResult.setFieldValue('insp_handling_type', '');
     } else {
-      props.inspHandlingType.forEach(el => {
-        if (
-          JSON.parse(el.code).insp_handling_type_cd ===
-          inspectionHandlingTypeCode
-        ) {
-          inputInspResult.setFieldValue('insp_handling_type', el.code);
+      props.inspHandlingType.forEach(({ code }) => {
+        const { insp_handling_type_cd } = JSON.parse(code);
+        if (insp_handling_type_cd === inspectionHandlingTypeCode) {
+          inputInspResult.setFieldValue('insp_handling_type', code);
         }
       });
     }
