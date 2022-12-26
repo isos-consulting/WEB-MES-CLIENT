@@ -43,7 +43,7 @@ import {
   getTimeFormat,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController, {
-  InsepctionDataGridOnChange,
+  InsepctionDataGridChange,
   InspectionDataGrid,
   InspectionInputForm,
 } from '~/functions/qms/InspectionReportViewController';
@@ -113,7 +113,7 @@ export const INSP = () => {
   );
 
   type InsepctionDataGridOnChangeEvent = {
-    changes: InsepctionDataGridOnChange[];
+    changes: InsepctionDataGridChange[];
     instance: InspectionDataGrid;
   };
 

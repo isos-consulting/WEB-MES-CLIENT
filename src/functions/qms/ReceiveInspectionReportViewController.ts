@@ -6,7 +6,7 @@ import {
 } from './inspection';
 import InspectionReportService from './InspectionReportService';
 import InspectionReportViewController, {
-  InsepctionDataGridOnChange,
+  InsepctionDataGridChange,
   InspectionDataGrid,
   InspectionInputForm,
 } from './InspectionReportViewController';
@@ -17,7 +17,7 @@ class ReceiveInspectionReportViewController extends InspectionReportViewControll
   }
 
   public dataGridChange(
-    changes: InsepctionDataGridOnChange[],
+    changes: InsepctionDataGridChange[],
     datagrid: InspectionDataGrid,
     inputform: InspectionInputForm,
   ) {

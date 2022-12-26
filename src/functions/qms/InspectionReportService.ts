@@ -8,9 +8,10 @@ import {
   isRangeAllNotNumber,
   SampleRange,
 } from './inspection';
+import { InsepctionDataGridChange } from './InspectionReportViewController';
 
 type InsepctionSampleArgs = {
-  changes: { columnName: string; rowKey: number; value: any }[];
+  changes: InsepctionDataGridChange[];
   samples: boolean[][];
   ranges: SampleRange[];
 };

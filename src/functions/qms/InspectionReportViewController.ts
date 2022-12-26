@@ -7,7 +7,7 @@ import {
 } from './inspection';
 import InspectionReportService from './InspectionReportService';
 
-export type InsepctionDataGridOnChange = {
+export type InsepctionDataGridChange = {
   columnName: string;
   rowKey: number;
   value: any;
@@ -19,7 +19,7 @@ class InspectionReportViewController {
   constructor() {}
 
   public dataGridChange(
-    changes: InsepctionDataGridOnChange[],
+    changes: InsepctionDataGridChange[],
     datagrid: InspectionDataGrid,
     inputform: InspectionInputForm,
   ) {

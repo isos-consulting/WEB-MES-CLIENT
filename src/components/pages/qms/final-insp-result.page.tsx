@@ -42,19 +42,13 @@ import {
 import {
   createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
-  getEyeInspectionValueText,
-  getInspectItems,
-  getInspectResult,
-  getInspectResultText,
+  getInspectionHandlingTypeCode,
   getInspectSamples,
   getMissingValueInspectResult,
-  getRangeNumberResults,
-  getSampleIndex,
   getSampleOkOrNgOrDefaultSampleValue,
-  isColumnNameEndWith_insp_value,
-  isColumnNamesNotEndWith_insp_value,
-  isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import { InsepctionDataGridChange } from '~/functions/qms/InspectionReportViewController';
+import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
 import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
 import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
 import { InputForm, QuantityField } from './receive-insp-result/models/fields';
@@ -861,6 +855,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const [insp, setInsp] = useState<TGetQmsInsp>({});
   const [inspIncludeDetails, setInspIncludeDetails] =
     useState<TGetQmsInspIncludeDetails>({});
+  const viewController = new ReceiveInspectionReportViewController();
 
   const COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
     return createInspectionReportColumns(
@@ -968,74 +963,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const onAfterChange = ({ changes, instance }: any) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
+    viewController.dataGridChange(changes, instance, inputInspResult);
 
-    const finalInspections = instance.getData();
-    const inspectionItemRanges = finalInspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-    const extractedInspections =
-      extract_insp_ItemEntriesAtCounts(finalInspections);
+    const result = viewController.getReportResult(instance, inputInspResult);
 
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      inspectionItemRanges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
-
-    changes.forEach(({ rowKey, columnName }: any) => {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberFlagsInItemRange = getRangeNumberResults(
-          inspectionItemRanges[rowKey],
-        );
-        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
-
-        const uiMappedSampleInfo = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(sampleResult),
-        };
-
-        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (
-          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
-          eyeInspectValueText
-        ) {
-          instance.setValue(rowKey, columnName, eyeInspectValueText);
-        }
-      }
-    });
-
-    inspectionItemResults.forEach((item: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
-    inputInspResult.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
-
-    if (inspectionResult === null || inspectionResult === true) {
-      inputInspResult.setFieldDisabled({ insp_handling_type: true });
-    } else {
-      inputInspResult.setFieldDisabled({ insp_handling_type: false });
-    }
-
-    const inspectionHandlingTypeCode: string =
-      inspectionResult === true
-        ? 'INCOME'
-        : inspectionResult === false
-        ? 'RETURN'
-        : '';
+    const inspectionHandlingTypeCode = getInspectionHandlingTypeCode(result);
 
     triggerInspectionHandlingTypeChanged(
       inspectionHandlingTypeCode,
@@ -1560,6 +1492,8 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const [inspResult, setInspResult] =
     useState<TGetQmsFinalInspResultIncludeDetails>({});
 
+  const viewController = new ReceiveInspectionReportViewController();
+
   const COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
     return createInspectionReportColumns(
       ColumnStore.EDITABLE_FINAL_INSP_RESULT_DETAIL,
@@ -1750,6 +1684,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   };
 
   interface InspectionSampleAfterChangeProps extends GridEventProps {
+    changes: InsepctionDataGridChange[];
     instance: TuiGrid;
   }
 
@@ -1757,73 +1692,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     changes,
     instance,
   }: InspectionSampleAfterChangeProps) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
+    viewController.dataGridChange(changes, instance, inputInspResult);
 
-    const finalInspections = instance.getData();
-    const inspectionItemRanges = finalInspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-
-    const extractedInspections =
-      extract_insp_ItemEntriesAtCounts(finalInspections);
-
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      inspectionItemRanges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
-
-    changes.forEach(({ rowKey, columnName }) => {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberFlagsInItemRange = getRangeNumberResults(
-          inspectionItemRanges[rowKey],
-        );
-        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
-
-        const uiMappedSampleInfo = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(sampleResult),
-        };
-
-        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (
-          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
-          eyeInspectValueText
-        ) {
-          instance.setValue(rowKey, columnName, eyeInspectValueText);
-        }
-      }
-    });
-
-    inspectionItemResults.forEach((item: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
-    inputInspResult.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
-
-    inputInspResult.setFieldDisabled({
-      insp_handling_type: inspectionResult ?? true,
-    });
-
-    let inspectionHandlingTypeCode =
-      inspectionResult === true
-        ? 'INCOME'
-        : inspectionResult === false
-        ? 'RETURN'
-        : '';
+    const result = viewController.getReportResult(instance, inputInspResult);
+    const inspectionHandlingTypeCode = getInspectionHandlingTypeCode(result);
 
     changeInspResult(inspectionHandlingTypeCode);
 
