@@ -24,6 +24,7 @@ import {
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
 import { ColumnStore } from '~/constants/columns';
+import { SENTENCE } from '~/constants/lang/ko';
 import {
   cloneObject,
   executeData,
@@ -33,7 +34,6 @@ import {
   getToday,
   getUserFactoryUuid,
 } from '~/functions';
-import { onDefaultGridSave } from '.';
 import {
   extract_insp_ItemEntriesAtCounts,
   getDateFormat,
@@ -51,6 +51,7 @@ import {
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 
 //#region 🔶🚫공정검사
@@ -599,7 +600,7 @@ export const INSP = () => {
       );
 
       if (isMissingValue === true) {
-        throw new Error('결측치가 존재합니다. 검사 시료를 확인해주세요.');
+        throw new Error(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
       }
 
       const detailDatas: object[] = inspections.map(
@@ -642,16 +643,82 @@ export const INSP = () => {
         header: headerData,
         details: detailDatas,
       };
-      await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
-        .then(value => {
-          if (!value) return;
-          message.info('저장되었습니다.');
-          setCreatePopupVisible(false);
-          setEditPopupVisible(false);
-        })
-        .catch(e => {
-          console.log(e);
+
+      const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
+        item.every(sampleResult => sampleResult !== null),
+      );
+
+      if (isFilledAllInspectionSample === true) {
+        await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
+          .then(value => {
+            if (!value) return;
+            message.info(SENTENCE.SAVE_COMPLETE);
+            setCreatePopupVisible(false);
+            setEditPopupVisible(false);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        return;
+      }
+
+      const fetchOptionFilledQualityAllInspectionResultFlags = await getData(
+        { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
+        '/std/tenant-opts',
+      );
+
+      if (fetchOptionFilledQualityAllInspectionResultFlags.length === 0) {
+        throw new Error(
+          SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
+        );
+      }
+
+      if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 0) {
+        await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
+          .then(value => {
+            if (!value) return;
+            message.info(SENTENCE.SAVE_COMPLETE);
+            setCreatePopupVisible(false);
+            setEditPopupVisible(false);
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        return;
+      }
+
+      if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 1) {
+        throw new Error(
+          SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
+        );
+      }
+
+      if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 2) {
+        Modal.confirm({
+          title: '',
+          content:
+            SENTENCE.CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
+          onOk: async (close: () => void) => {
+            await executeData(saveData, SAVE_URI_PATH, methodType, 'success')
+              .then(value => {
+                if (!value) return;
+                message.info(SENTENCE.SAVE_COMPLETE);
+                setCreatePopupVisible(false);
+                setEditPopupVisible(false);
+              })
+              .catch(e => {
+                console.log(e);
+              });
+            close();
+          },
+          onCancel: () => {
+            // this function will be executed when cancel button is clicked
+          },
         });
+        return;
+      }
+
+      throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
     } catch (e) {
       message.warn(e.message);
     }
