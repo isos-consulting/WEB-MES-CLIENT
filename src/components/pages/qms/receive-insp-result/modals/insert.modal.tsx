@@ -1,7 +1,20 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { getPopupForm, GridPopup } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { ColumnStore } from '~/constants/columns';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import {
+  blankThenNull,
+  executeData,
+  getData,
+  getToday,
+  getUserFactoryUuid,
+} from '~/functions';
+import {
+  createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
   getInspectItems,
@@ -16,16 +29,6 @@ import {
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
-import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { SENTENCE } from '~/constants/lang/ko';
-import {
-  blankThenNull,
-  executeData,
-  getData,
-  getToday,
-  getUserFactoryUuid,
-} from '~/functions';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
@@ -39,8 +42,6 @@ import {
   TReceiveInspDetail,
   TReceiveInspHeader,
 } from './types';
-import { ColumnStore } from '~/constants/columns';
-import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 
 export const INSP_RESULT_CREATE_POPUP = (props: {
   inspHandlingType: InspectionHandlingTypeCodeSet<InspectionHandlingTypeUuidSet>[];
@@ -195,46 +196,33 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    let items: IGridColumn[] = [...ColumnStore.RECEIVE_INSP_DETAIL];
+    const receiveInspectionReportColumns = createInspectionReportColumns(
+      ColumnStore.RECEIVE_INSP_DETAIL,
+      receiveInspHeaderData?.max_sample_cnt,
+    );
 
-    if (receiveInspHeaderData?.max_sample_cnt > 0) {
-      for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
-        const inspectionCheckCellColumns = ColumnStore.INSP_CHECK_CELL.map(
-          cell => ({
-            ...cell,
-            header: `x${i}${cell.header}`,
-            name: `x${i}${cell.name}`,
-          }),
-        );
-
-        items.push(...inspectionCheckCellColumns);
-      }
-    }
-
-    items.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return items;
+    return receiveInspectionReportColumns;
   }, [receiveInspHeaderData]);
 
   const inputInputItems = useInputGroup(
     'INPUT_CREATE_POPUP_INFO',
     InputGroupBoxStore.RECEIVE_INSP_ITEM,
-    { title: '입하정보' },
+    { title: WORD.RECEIVE_INFO },
   );
   const inputInspResult = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT',
     InputGroupBoxStore.RECEIVE_INSP_RESULT,
-    { title: '검사정보' },
+    { title: WORD.INSP_INFO },
   );
   const inputInspResultIncome = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT_INCOME',
     InputGroupBoxStore.RECEIVE_INSP_RESULT_INCOME,
-    { title: '입고정보' },
+    { title: WORD.INCOME_INFO },
   );
   const inputInspResultReject = useInputGroup(
     'INPUT_CREATE_POPUP_INSP_RESULT_REJECT',
     InputGroupBoxStore.RECEIVE_INSP_RESULT_RETURN,
-    { title: '부적합정보' },
+    { title: WORD.REJECT_INFO },
   );
 
   const resetInspectionDatas = () => {

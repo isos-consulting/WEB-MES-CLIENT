@@ -33,4 +33,5 @@ export enum WORD {
   INSP_ITEM_INFO = '검사품목정보',
   INCOME_INFO = '입고정보',
   REJECT_INFO = '부적합정보',
+  RECEIVE_INFO = '입하정보',
 }

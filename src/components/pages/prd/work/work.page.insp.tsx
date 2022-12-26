@@ -14,7 +14,6 @@ import {
   Container,
   Datagrid,
   GridPopup,
-  IGridColumn,
   TGridMode,
   useGrid,
 } from '~/components/UI';
@@ -35,6 +34,7 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import {
+  createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
   getDateFormat,
   getDateTimeFormat,
@@ -118,66 +118,6 @@ export const INSP = () => {
       header: INSP_DETAIL_HEADER,
     },
   );
-
-  const createInspDetailColumns = (maxSampleCnt: number) => {
-    let items: IGridColumn[] = cloneDeep(ColumnStore.WORK_INSP_DETAIL);
-
-    if (maxSampleCnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
-      for (let i = 1; i <= maxSampleCnt; i++) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
-          width: 80,
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
-          width: 80,
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
-          width: 80,
-          hidden: false,
-          editable: true,
-          align: 'center',
-        });
-        items.push({
-          header: 'x' + i + '_insp_result_fg',
-          name: 'x' + i + '_insp_result_fg',
-          width: 80,
-          format: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_insp_result_state',
-          name: 'x' + i + '_insp_result_state',
-          width: 80,
-          format: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: 120,
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: 100,
-      hidden: false,
-    });
-    items.push({ header: '비고', name: 'remark', width: 150, hidden: false });
-
-    return items;
-  };
 
   type InsepctionDataGridOnChangeEvent = {
     origin: string;
@@ -324,7 +264,10 @@ export const INSP = () => {
             insp_detail_type_uuid: ev,
             work_uuid: (headerSaveOptionParams as any)?.work_uuid,
           }).then(({ datas, maxSampleCnt, header, details }) => {
-            const newColumns = createInspDetailColumns(maxSampleCnt);
+            const newColumns = createInspectionReportColumns(
+              ColumnStore.WORK_INSP_DETAIL,
+              maxSampleCnt,
+            );
             detailGrid.setGridColumns(newColumns);
 
             if (createPopupVisible) {
@@ -748,7 +691,10 @@ export const INSP = () => {
           const header = res?.['header'];
           const details = res?.['details'];
           const maxSampleCnt = header?.max_sample_cnt;
-          const columns = createInspDetailColumns(maxSampleCnt);
+          const columns = createInspectionReportColumns(
+            ColumnStore.WORK_INSP_DETAIL,
+            maxSampleCnt,
+          );
 
           inputRef?.current?.setValues({
             ...header,

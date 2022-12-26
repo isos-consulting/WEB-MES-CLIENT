@@ -16,7 +16,6 @@ import {
   Container,
   Datagrid,
   GridPopup,
-  IGridColumn,
   ISearchItem,
   Searchbox,
 } from '~/components/UI';
@@ -29,7 +28,6 @@ import { ColumnStore } from '~/constants/columns';
 import { FieldStore } from '~/constants/fields';
 import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { ENUM_WIDTH } from '~/enums';
 import {
   executeData,
   getData,
@@ -39,6 +37,7 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import {
+  createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
   getInspectItems,
@@ -541,59 +540,10 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     useState<TGetQmsProcInspResultIncludeDetails>({});
 
   const COLUMNS_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    const procInspResultDetailItem = [
-      ...ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM,
-    ];
-    const procInspMaxSampleCount =
-      procInspResultIncludeDetails?.header?.max_sample_cnt;
-
-    if (procInspMaxSampleCount > 0) {
-      for (
-        let sampleIndex = 1;
-        sampleIndex <= procInspMaxSampleCount;
-        sampleIndex++
-      ) {
-        procInspResultDetailItem.push({
-          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItem.push({
-          header: `x${sampleIndex}_sample_no`,
-          name: `x${sampleIndex}_sample_no`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItem.push({
-          header: `x${sampleIndex}`,
-          name: `x${sampleIndex}_insp_value`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        procInspResultDetailItem.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_fg`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItem.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_state`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    procInspResultDetailItem.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return procInspResultDetailItem;
+    return createInspectionReportColumns(
+      ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM,
+      procInspResultIncludeDetails?.header?.max_sample_cnt,
+    );
   }, [procInspResultIncludeDetails]);
 
   const inputInspResult = useInputGroup(
@@ -813,58 +763,10 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     useState<TGetQmsProcInspIncludeDetails>({});
 
   const COLUMNS_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    const procInspResultDetailItems = [
-      ...ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM,
-    ];
-    const inspectMaxSampleCount = inspIncludeDetails?.header?.max_sample_cnt;
-
-    if (inspectMaxSampleCount > 0) {
-      for (
-        let sampleIndex = 1;
-        sampleIndex <= inspectMaxSampleCount;
-        sampleIndex++
-      ) {
-        procInspResultDetailItems.push({
-          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItems.push({
-          header: `x${sampleIndex}_sample_no`,
-          name: `x${sampleIndex}_sample_no`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItems.push({
-          header: `x${sampleIndex}`,
-          name: `x${sampleIndex}_insp_value`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        procInspResultDetailItems.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_fg`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        procInspResultDetailItems.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_state`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    procInspResultDetailItems.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return procInspResultDetailItems;
+    return createInspectionReportColumns(
+      ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM,
+      inspIncludeDetails?.header?.max_sample_cnt,
+    );
   }, [inspIncludeDetails]);
 
   const INPUT_ITEMS_INSP_RESULT = InputGroupBoxStore.PROC_INSP_RESULT.map(
@@ -1261,60 +1163,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const [inspResultIncludeDetails, setInspResultIncludeDetails] =
     useState<TGetQmsProcInspResultIncludeDetails>({});
   const COLUMNS_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    const editableProcInspDetails: IGridColumn[] = [
-      ...ColumnStore.EDITABLE_PROC_INSP_RESULT_DETAIL,
-    ];
-
-    const procInspectMaxSampleCount =
-      inspResultIncludeDetails?.header?.max_sample_cnt;
-
-    if (procInspectMaxSampleCount > 0) {
-      for (
-        let sampleIndex = 1;
-        sampleIndex <= inspResultIncludeDetails?.header?.max_sample_cnt;
-        sampleIndex++
-      ) {
-        editableProcInspDetails.push({
-          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        editableProcInspDetails.push({
-          header: `x${sampleIndex}_sample_no`,
-          name: `x${sampleIndex}_sample_no`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        editableProcInspDetails.push({
-          header: `x${sampleIndex}`,
-          name: `x${sampleIndex}_insp_value`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        editableProcInspDetails.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_fg`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        editableProcInspDetails.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_state`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    editableProcInspDetails.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return editableProcInspDetails;
+    return createInspectionReportColumns(
+      ColumnStore.EDITABLE_PROC_INSP_RESULT_DETAIL,
+      inspResultIncludeDetails?.header?.max_sample_cnt,
+    );
   }, [inspResultIncludeDetails]);
 
   const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] =

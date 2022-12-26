@@ -17,7 +17,6 @@ import {
   Container,
   Datagrid,
   GridPopup,
-  IGridColumn,
   ISearchItem,
   Searchbox,
 } from '~/components/UI';
@@ -30,7 +29,7 @@ import { ColumnStore } from '~/constants/columns';
 import { FieldStore } from '~/constants/fields';
 import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
+import { URL_PATH_ADM } from '~/enums';
 import {
   blankThenNull,
   executeData,
@@ -41,6 +40,7 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import {
+  createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
   getInspectItems,
@@ -662,57 +662,10 @@ const INSP_RESULT_DETAIL_GRID_INFO = (props: {
     useState<TGetQmsFinalInspResultIncludeDetails>({});
 
   const COLUMNS_FINAL_INSP_RESULT_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    const finalInspResultDetailColumn = [...ColumnStore.RECEIVE_INSP_DETAIL];
-    const finalInspMaxSampleCount =
-      finalInspResultIncludeDetails?.header?.max_sample_cnt;
-
-    if (finalInspMaxSampleCount > 0) {
-      for (
-        let sampleIndex = 1;
-        sampleIndex <= finalInspMaxSampleCount;
-        sampleIndex++
-      ) {
-        finalInspResultDetailColumn.push({
-          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        finalInspResultDetailColumn.push({
-          header: `x${sampleIndex}_sample_no`,
-          name: `x${sampleIndex}_sample_no`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        finalInspResultDetailColumn.push({
-          header: `x${sampleIndex}`,
-          name: `x${sampleIndex}_insp_value`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        finalInspResultDetailColumn.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_fg`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        finalInspResultDetailColumn.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_state`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    finalInspResultDetailColumn.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return finalInspResultDetailColumn;
+    return createInspectionReportColumns(
+      ColumnStore.RECEIVE_INSP_DETAIL,
+      finalInspResultIncludeDetails?.header?.max_sample_cnt,
+    );
   }, [finalInspResultIncludeDetails]);
 
   const inputInspResult = useInputGroup(
@@ -910,51 +863,10 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     useState<TGetQmsInspIncludeDetails>({});
 
   const COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = [...ColumnStore.FINAL_INSP_RESULT_DETAIL_ITEM];
-
-    if (inspIncludeDetails?.header?.max_sample_cnt > 0) {
-      for (let i = 1; i <= inspIncludeDetails?.header?.max_sample_cnt; i++) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    items.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return items;
+    return createInspectionReportColumns(
+      ColumnStore.FINAL_INSP_RESULT_DETAIL_ITEM,
+      inspIncludeDetails?.header?.max_sample_cnt,
+    );
   }, [inspIncludeDetails]);
 
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] =
@@ -1649,58 +1561,10 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     useState<TGetQmsFinalInspResultIncludeDetails>({});
 
   const COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = [
-      ...ColumnStore.EDITABLE_FINAL_INSP_RESULT_DETAIL,
-    ];
-    const finalInspectMaxSampleCount = inspResult?.header?.max_sample_cnt;
-
-    if (finalInspectMaxSampleCount > 0) {
-      for (
-        let sampleIndex = 1;
-        sampleIndex <= finalInspectMaxSampleCount;
-        sampleIndex++
-      ) {
-        items.push({
-          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: `x${sampleIndex}_sample_no`,
-          name: `x${sampleIndex}_sample_no`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: `x${sampleIndex}`,
-          name: `x${sampleIndex}_insp_value`,
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        items.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_fg`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: `x${sampleIndex}_판정`,
-          name: `x${sampleIndex}_insp_result_state`,
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    items.push(...ColumnStore.INSP_ITEM_RESULT);
-
-    return items;
+    return createInspectionReportColumns(
+      ColumnStore.EDITABLE_FINAL_INSP_RESULT_DETAIL,
+      inspResult?.header?.max_sample_cnt,
+    );
   }, [inspResult]);
 
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] =

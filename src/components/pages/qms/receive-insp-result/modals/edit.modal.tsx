@@ -7,6 +7,7 @@ import {
   IInputGroupboxItem,
   useInputGroup,
 } from '~/components/UI/input-groupbox';
+import { WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
 import {
   blankThenNull,
@@ -16,6 +17,7 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import {
+  createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
   getInspectItems,
@@ -159,69 +161,12 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
   ];
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    let items: IGridColumn[] = INSP_DETAIL_COLUMNS;
+    const receiveInspectionReportColumns = createInspectionReportColumns(
+      INSP_DETAIL_COLUMNS,
+      receiveInspHeaderData?.max_sample_cnt,
+    );
 
-    if (receiveInspHeaderData?.max_sample_cnt > 0) {
-      for (let i = 1; i <= receiveInspHeaderData?.max_sample_cnt; i++) {
-        items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
-          width: ENUM_WIDTH.L,
-          filter: 'text',
-          editable: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-        items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
-          width: ENUM_WIDTH.M,
-          filter: 'text',
-          hidden: true,
-        });
-      }
-    }
-
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
-
-    return items;
+    return receiveInspectionReportColumns;
   }, [receiveInspHeaderData]);
 
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [
@@ -469,22 +414,22 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
   const inputInputItems = useInputGroup(
     'INPUT_EDIT_POPUP_INFO',
     INFO_INPUT_ITEMS,
-    { title: '입하정보' },
+    { title: WORD.RECEIVE_INFO },
   );
   const inputInspResult = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT',
     INPUT_ITEMS_INSP_RESULT,
-    { title: '검사정보' },
+    { title: WORD.INSP_INFO },
   );
   const inputInspResultIncome = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT_INCOME',
     INPUT_ITEMS_INSP_RESULT_INCOME,
-    { title: '입고정보' },
+    { title: WORD.INCOME_INFO },
   );
   const inputInspResultReject = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT_REJECT',
     INPUT_ITEMS_INSP_RESULT_RETURN,
-    { title: '부적합정보' },
+    { title: WORD.REJECT_INFO },
   );
 
   const onClear = () => {

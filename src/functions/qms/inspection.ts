@@ -1,4 +1,6 @@
 import dayjs from 'dayjs';
+import { IGridColumn } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import { isNumber } from '../number';
 
 type ColumnNames = { columnName: string }[];
@@ -172,4 +174,38 @@ export const getSampleOkOrNgOrDefaultSampleValue = (sample: string) => {
   if (sample === 'OK') return 1;
   if (sample === 'NG') return 0;
   return sample;
+};
+
+const createInspectionSamples = sampleCount => {
+  const samples: IGridColumn[] = [];
+
+  for (let sampleIndex = 1; sampleIndex <= sampleCount; sampleIndex++) {
+    const sampleColumns = ColumnStore.INSP_CHECK_CELL.map(
+      ({ header, name, ...resetedSample }) => {
+        return createSample({ header, name, ...resetedSample }, sampleIndex);
+      },
+    );
+
+    samples.push(...sampleColumns);
+  }
+
+  return samples;
+};
+
+const createSample = (
+  { header, name, ...resetedSample },
+  sampleIndex,
+): IGridColumn => ({
+  ...resetedSample,
+  header: `x${sampleIndex}${header}`,
+  name: `x${sampleIndex}${name}`,
+});
+
+export const createInspectionReportColumns = (
+  columns: IGridColumn[],
+  max: number,
+) => {
+  const samples = createInspectionSamples(max);
+
+  return [...columns, ...samples, ...ColumnStore.INSP_ITEM_RESULT];
 };
