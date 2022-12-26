@@ -1,23 +1,36 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, Space, Typography, Modal, Col, Row, message } from 'antd';
+import { Col, Divider, message, Modal, Row, Space, Typography } from 'antd';
 import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import localeData from 'dayjs/plugin/localeData';
+import weekday from 'dayjs/plugin/weekday';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import weekYear from 'dayjs/plugin/weekYear';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import TuiGrid from 'tui-grid';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
   Button,
   Container,
   Datagrid,
-  getPopupForm,
   GridPopup,
   IGridColumn,
   ISearchItem,
   Searchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
 import {
   IInputGroupboxItem,
   InputGroupbox,
 } from '~/components/UI/input-groupbox/input-groupbox.ui';
+import { ColumnStore } from '~/constants/columns';
+import { FieldStore } from '~/constants/fields';
+import { InputGroupBoxStore } from '~/constants/input-groupboxes';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import {
   blankThenNull,
   executeData,
@@ -26,31 +39,7 @@ import {
   getPermissions,
   getToday,
   getUserFactoryUuid,
-  isNumber,
 } from '~/functions';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import localeData from 'dayjs/plugin/localeData';
-import weekday from 'dayjs/plugin/weekday';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import weekYear from 'dayjs/plugin/weekYear';
-import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
-import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
-import { InputForm, QuantityField } from './receive-insp-result/models/fields';
-import {
-  EmptyInspectionChecker,
-  EyeInspectionChecker,
-  InspectionConcreate,
-  NumberInspectionChecker,
-} from './receive-insp-result/models/inspection-checker';
-import TuiGrid from 'tui-grid';
-import { GridEventProps } from 'tui-grid/types/event';
-import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { FieldStore } from '~/constants/fields';
-import { ColumnStore } from '~/constants/columns';
-import { InputGroupBoxStore } from '~/constants/input-groupboxes';
 import {
   extract_insp_ItemEntriesAtCounts,
   getEyeInspectionValueText,
@@ -66,6 +55,9 @@ import {
   isColumnNamesNotEndWith_insp_value,
   isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
+import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
+import { InputForm, QuantityField } from './receive-insp-result/models/fields';
 
 dayjs.locale('ko-kr');
 
@@ -76,7 +68,6 @@ dayjs.extend(localeData);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
 
-const URI_PATH_GET_INV_STORES_STOCKS = getPopupForm('재고관리').uriPath;
 const URI_PATH_GET_QMS_INSPS = '/qms/insps';
 const URI_PATH_GET_QMS_INSP_INCLUDE_DETAILS =
   '/qms/insp/{uuid}/include-details';
@@ -1894,24 +1885,6 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     });
   };
 
-  const cellKeys = (
-    records: Array<any>,
-    cellKey: string,
-  ): Array<Array<string>> =>
-    records.map(record =>
-      Object.keys(record).filter(key => key.includes(cellKey)),
-    );
-
-  const sliceKeys = (keys: Array<string>, at: number): Array<string> =>
-    keys.slice(0, at);
-
-  const inspectionCheck = <T extends InspectionConcreate>(
-    checker: T,
-    arg: any,
-  ) => {
-    return new checker().check(arg);
-  };
-
   interface InspectionSampleAfterChangeProps extends GridEventProps {
     instance: TuiGrid;
   }
@@ -2375,7 +2348,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       })
       .catch(err => {
         onClear();
-        message.error('에러');
+        message.error(SENTENCE.ERROR_OCCURRED);
       });
   };
 
@@ -2406,9 +2379,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     );
 
     if (receiveQty - incomeQty < 0) {
-      message.warn(
-        '입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.',
-      );
+      message.warn(SENTENCE.RECEIVE_QTY_OVER_THEN_INCOME_QTY);
       inputInspResultIncome.setFieldValue('qty', receiveQty - rejectQty);
     } else {
       inputInspResultReject.setFieldValue('reject_qty', receiveQty - incomeQty);
@@ -2430,9 +2401,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     );
 
     if (receiveQty - rejectQty < 0) {
-      message.warn(
-        '입하수량보다 판정수량이 많습니다. 확인 후 다시 입력해주세요.',
-      );
+      message.warn(SENTENCE.RECEIVE_QTY_OVER_THEN_INCOME_QTY);
       inputInspResultReject.setFieldValue('reject_qty', receiveQty - incomeQty);
     } else {
       inputInspResultIncome.setFieldValue('qty', receiveQty - rejectQty);
@@ -2442,14 +2411,14 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
   return (
     <GridPopup
-      title="최종검사 성적서 수정"
+      title={SENTENCE.DO_UPDATE_DATA}
       onOk={onSave}
-      okText="저장"
-      cancelText="취소"
+      okText={WORD.SAVE}
+      cancelText={WORD.CANCEL}
       onCancel={onCancel}
       gridMode="update"
-      popupId={'INSP_EDIT_POPUP'}
-      gridId={'INSP_EDIT_POPUP_GRID'}
+      popupId="INSP_EDIT_POPUP"
+      gridId="INSP_EDIT_POPUP_GRID"
       ref={gridRef}
       columns={COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES}
       inputProps={[
