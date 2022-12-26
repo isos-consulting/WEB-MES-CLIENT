@@ -39,19 +39,11 @@ import {
 import {
   createInspectionReportColumns,
   extract_insp_ItemEntriesAtCounts,
-  getEyeInspectionValueText,
-  getInspectItems,
-  getInspectResult,
-  getInspectResultText,
   getInspectSamples,
   getMissingValueInspectResult,
-  getRangeNumberResults,
-  getSampleIndex,
   getSampleOkOrNgOrDefaultSampleValue,
-  isColumnNameEndWith_insp_value,
-  isColumnNamesNotEndWith_insp_value,
-  isRangeAllNotNumber,
 } from '~/functions/qms/inspection';
+import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
 import { InspectionPostPayloadDetails } from './receive-insp-result/modals/types';
 
 // 날짜 로케일 설정
@@ -761,6 +753,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   const gridRef = useRef<Grid>();
   const [inspIncludeDetails, setInspIncludeDetails] =
     useState<TGetQmsProcInspIncludeDetails>({});
+  const viewController = new InspectionReportViewController();
 
   const COLUMNS_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
     return createInspectionReportColumns(
@@ -805,61 +798,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const onAfterChange = ({ changes, instance }: any) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
-
-    const procInspections = instance.getData();
-    const inspectionItemRanges = procInspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-    const extractedInspections =
-      extract_insp_ItemEntriesAtCounts(procInspections);
-
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      inspectionItemRanges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
-
-    changes.forEach(({ rowKey, columnName }: any) => {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberFlagsInItemRange = getRangeNumberResults(
-          inspectionItemRanges[rowKey],
-        );
-        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
-
-        const uiMappedSampleInfo = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(sampleResult),
-        };
-
-        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (
-          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
-          eyeInspectValueText
-        ) {
-          instance.setValue(rowKey, columnName, eyeInspectValueText);
-        }
-      }
-    });
-
-    inspectionItemResults.forEach((item: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
-    inputInspResult.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
+    viewController.dataGridChange(changes, instance, inputInspResult);
   };
 
   interface ManufacturingProcessInspectionPostAPIPayloadHeader {
@@ -1168,6 +1107,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       inspResultIncludeDetails?.header?.max_sample_cnt,
     );
   }, [inspResultIncludeDetails]);
+  const viewController = new InspectionReportViewController();
 
   const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] =
     InputGroupBoxStore.PROC_INSP_RESULT.reduce((procInspectGroupBox, field) => {
@@ -1207,61 +1147,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   };
 
   const onAfterChange = ({ changes, instance }: any) => {
-    if (isColumnNamesNotEndWith_insp_value(changes)) return;
-
-    const procInspections = instance.getData();
-    const inspectionItemRanges = procInspections.map((item: any) => ({
-      min: item.spec_min,
-      max: item.spec_max,
-    }));
-    const extractedInspections =
-      extract_insp_ItemEntriesAtCounts(procInspections);
-
-    const inspectionSampleResults = getInspectSamples(
-      extractedInspections,
-      inspectionItemRanges,
-    );
-    const inspectionItemResults = getInspectItems(inspectionSampleResults);
-    const inspectionResult = getInspectResult(inspectionItemResults);
-
-    changes.forEach(({ rowKey, columnName }: any) => {
-      if (isColumnNameEndWith_insp_value(columnName)) {
-        const sampleIndex = getSampleIndex(columnName);
-        const sampleResult = inspectionSampleResults[rowKey][sampleIndex];
-        const isNumberFlagsInItemRange = getRangeNumberResults(
-          inspectionItemRanges[rowKey],
-        );
-        const eyeInspectValueText = getEyeInspectionValueText(sampleResult);
-
-        const uiMappedSampleInfo = {
-          [`x${sampleIndex + 1}_insp_result_fg`]: sampleResult,
-          [`x${sampleIndex + 1}_insp_result_state`]:
-            getInspectResultText(sampleResult),
-        };
-
-        for (const [key, value] of Object.entries(uiMappedSampleInfo)) {
-          instance.setValue(rowKey, key, value);
-        }
-
-        if (
-          isRangeAllNotNumber(isNumberFlagsInItemRange) &&
-          eyeInspectValueText
-        ) {
-          instance.setValue(rowKey, columnName, eyeInspectValueText);
-        }
-      }
-    });
-
-    inspectionItemResults.forEach((item: any, index: number) => {
-      instance.setValue(index, 'insp_result_fg', item);
-      instance.setValue(index, 'insp_result_state', getInspectResultText(item));
-    });
-
-    inputInspResult.setFieldValue('insp_result_fg', inspectionResult);
-    inputInspResult.setFieldValue(
-      'insp_result_state',
-      getInspectResultText(inspectionResult),
-    );
+    viewController.dataGridChange(changes, instance, inputInspResult);
   };
 
   const createInspectionPutApiPayload = (inspectionGridInstance: TuiGrid) => {
