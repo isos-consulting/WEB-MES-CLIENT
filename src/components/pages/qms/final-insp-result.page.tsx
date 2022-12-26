@@ -2133,7 +2133,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         props.onAfterCloseSearch(props?.inspResultUuid);
         onClear();
         props.setPopupVisible(false);
-        message.info('저장되었습니다.');
+        message.info(SENTENCE.SAVE_COMPLETE);
       })
       .catch(e => {
         console.log(e);
@@ -2143,155 +2143,143 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const onSave = async (
     inspectionGridRef: InspectionGridInstanceReference<Grid>,
   ) => {
-    const inputInspResultValues = inputInspResult?.ref?.current?.values;
-    const fetchOptionFilledQualityAllInspectionResult = getData(
+    const { insp_handling_type, emp_uuid, reg_date_time, insp_result_fg } =
+      inputInspResult?.ref?.current?.values;
+    const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
+    const { reject_qty, reject_uuid, reject_store_uuid } =
+      inputInspResultReject?.ref?.current?.values;
+
+    if (insp_handling_type === '' || insp_handling_type == null) {
+      message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
+      return;
+    }
+    if (emp_uuid == null) {
+      message.warn(SENTENCE.INPUT_INSPECTOR);
+      return;
+    }
+    if (reg_date_time == null || reg_date_time === 'Invalid Date') {
+      message.warn(SENTENCE.INPUT_INSPECT_TIME);
+      return;
+    }
+
+    const { insp_handling_type_cd } = JSON.parse(insp_handling_type);
+
+    if (insp_result_fg === true && insp_handling_type_cd !== 'INCOME') {
+      return message.warn(SENTENCE.INSPECT_RESULT_FLAG_TRUE_CAN_BE_INCOME);
+    }
+
+    if (insp_handling_type_cd === 'INCOME') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
+        return;
+      }
+    }
+
+    if (insp_handling_type_cd === 'RETURN') {
+      if (reject_uuid == null) {
+        message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
+        return;
+      }
+
+      if (reject_store_uuid == null || reject_store_uuid === '') {
+        message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
+        return;
+      }
+    }
+
+    if (insp_handling_type_cd === 'SELECTION') {
+      if (to_store_uuid == null || to_store_uuid === '') {
+        message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
+        return;
+      }
+
+      if (reject_qty > 0) {
+        if (reject_uuid == null) {
+          message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
+          return;
+        }
+
+        if (reject_store_uuid == null || reject_store_uuid === '') {
+          message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
+          return;
+        }
+      }
+    }
+    const finalInspections = inspectionGridRef.current.getInstance().getData();
+    const inspectionItemRanges = finalInspections.map(item => ({
+      min: String(item.spec_min),
+      max: String(item.spec_max),
+    }));
+
+    const inspectionSampleResults = getInspectSamples(
+      extract_insp_ItemEntriesAtCounts(finalInspections),
+      inspectionItemRanges,
+    );
+
+    const isMissingValue = inspectionSampleResults.some(
+      getMissingValueInspectResult,
+    );
+
+    if (isMissingValue === true) {
+      message.warn(SENTENCE.EXIST_INSPECT_MISSING_VALUE);
+      return;
+    }
+
+    const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
+      item.every(sampleResult => sampleResult !== null),
+    );
+
+    const inspectionPutApiPayload: TPutQmsFinalInspResults =
+      createInspectionPutApiPayload(inspectionGridRef.current.getInstance());
+
+    if (isFilledAllInspectionSample === true) {
+      fetchInspectionPutAPI(inspectionPutApiPayload);
+      return;
+    }
+
+    const fetchOptionFilledQualityAllInspectionResult = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
     );
 
-    if (inputInspResultValues?.insp_handling_type === '') {
-      return message.warn('처리결과를 등록해주세요.');
-    } else if (inputInspResultValues?.emp_uuid == null) {
-      return message.warn('검사자를 등록해주세요.');
-    } else if (
-      inputInspResultValues?.reg_date_time == null ||
-      inputInspResultValues?.reg_date_time === 'Invalid Date'
-    ) {
-      return message.warn('검사시간을 등록해주세요.');
-    }
-
-    const inspectionGridInstance = inspectionGridRef.current.getInstance();
-    const inspectionGridInstanceData = inspectionGridInstance.getData();
-    const inspectionSampleResultStore = cellKeys(
-      inspectionGridInstanceData,
-      '_insp_value',
-    )
-      .map(
-        (
-          inspectionSampleKeys: Array<string>,
-          inspectionSampleItemIndex: number,
-        ) =>
-          sliceKeys(
-            inspectionSampleKeys,
-            Number(
-              inspectionGridInstance.getValue(
-                inspectionSampleItemIndex,
-                'sample_cnt',
-              ),
-            ),
-          ),
-      )
-      .map((inspectionItem, inspectionItemIndex) =>
-        inspectionItem.map(sampleKey =>
-          inspectionGridInstance.getValue(inspectionItemIndex, sampleKey) ==
-            null ||
-          inspectionGridInstance.getValue(inspectionItemIndex, sampleKey) == ''
-            ? inspectionCheck(EmptyInspectionChecker, null)
-            : isNumber(
-                `${inspectionGridInstance.getValue(
-                  inspectionItemIndex,
-                  'spec_min',
-                )}`,
-              ) &&
-              isNumber(
-                `${inspectionGridInstance.getValue(
-                  inspectionItemIndex,
-                  'spec_max',
-                )}`,
-              )
-            ? inspectionCheck(NumberInspectionChecker, {
-                value: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    sampleKey,
-                  ),
-                ),
-                min: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'spec_min',
-                  ),
-                ),
-                max: Number(
-                  inspectionGridInstance.getValue(
-                    inspectionItemIndex,
-                    'spec_max',
-                  ),
-                ),
-              })
-            : inspectionCheck(EyeInspectionChecker, {
-                value: `${inspectionGridInstance.getValue(
-                  inspectionItemIndex,
-                  sampleKey,
-                )}`,
-              }),
-        ),
+    if (fetchOptionFilledQualityAllInspectionResult.length === 0) {
+      throw new Error(
+        SENTENCE.CANNOT_FOUND_INSP_REPORT_RESULT_VALUE_TO_SAVE_OPTION,
       );
-
-    const isSequenceMissingValue = inspectionSampleResultStore.some(
-      (inspectionSampleResults: Array<boolean>) => {
-        if (inspectionSampleResults[0] === null) return true;
-
-        if (inspectionSampleResults.length > 1) {
-          for (
-            let inspectionItemIndex = 1;
-            inspectionItemIndex < inspectionSampleResults.length;
-            inspectionItemIndex++
-          ) {
-            if (
-              inspectionSampleResults[inspectionItemIndex - 1] === null &&
-              inspectionSampleResults[inspectionItemIndex] !== null
-            )
-              return true;
-          }
-        }
-      },
-    );
-
-    if (isSequenceMissingValue === true) {
-      return message.warn('결측치가 존재합니다. 확인 후 다시 저장해주세요');
     }
 
-    const isFilledAllInspectionSample = inspectionSampleResultStore.every(
-      (sampleResults: Array<boolean>) =>
-        sampleResults.every((result: boolean) => result !== null),
-    );
-
-    const inspectionPutApiPayload: TPutQmsFinalInspResults =
-      createInspectionPutApiPayload(inspectionGridInstance);
-
-    if (isFilledAllInspectionSample === false) {
-      const qualityInspectionFilledOption =
-        (await (async () => fetchOptionFilledQualityAllInspectionResult)())
-          .length > 0
-          ? (
-              await (async () => fetchOptionFilledQualityAllInspectionResult)()
-            )[0].value
-          : 0;
-
-      if (qualityInspectionFilledOption === 1) {
-        return message.warn('검사 결과 값을 시료 수 만큼 입력해주세요.');
-      } else if (qualityInspectionFilledOption === 2) {
-        return Modal.confirm({
-          title: '',
-          content:
-            '검사 결과 시료 수 만큼 등록되지 않았습니다. 저장하시겠습니까?',
-          onOk: async (close: () => void) => {
-            const inspectionPutApiPayload: TPutQmsFinalInspResults =
-              createInspectionPutApiPayload(inspectionGridInstance);
-
-            await fetchInspectionPutAPI(inspectionPutApiPayload);
-            close();
-          },
-          onCancel: () => {
-            // this function will be executed when cancel button is clicked
-          },
-        });
-      }
-      return fetchInspectionPutAPI(inspectionPutApiPayload);
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 0) {
+      fetchInspectionPutAPI(inspectionPutApiPayload);
+      return;
     }
 
-    return fetchInspectionPutAPI(inspectionPutApiPayload);
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 1) {
+      message.warn(SENTENCE.INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT);
+      return;
+    }
+
+    if (fetchOptionFilledQualityAllInspectionResult[0].value === 2) {
+      Modal.confirm({
+        title: '',
+        content:
+          SENTENCE.CONFIRM_TO_SAVE_NOT_INPUT_INSPECT_RESULT_VALUE_AS_MUCH_AS_SAMPLE_COUNT,
+        onOk: async (close: () => void) => {
+          const inspectionPutApiPayload: TPutQmsFinalInspResults =
+            createInspectionPutApiPayload(
+              inspectionGridRef.current.getInstance(),
+            );
+
+          await fetchInspectionPutAPI(inspectionPutApiPayload);
+          close();
+        },
+        onCancel: () => {
+          // this function will be executed when cancel button is clicked
+        },
+      });
+      return;
+    }
+
+    throw new Error(SENTENCE.UNKNOWN_ERROR_OCCURRED_WHEN_SAVE_INSP_REPORT);
   };
 
   const onCancel = ev => {
