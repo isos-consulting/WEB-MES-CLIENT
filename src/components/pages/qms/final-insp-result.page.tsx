@@ -1657,149 +1657,49 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   const [inspResult, setInspResult] =
     useState<TGetQmsFinalInspResultIncludeDetails>({});
 
-  const COLUMNS_FINAL_INSP_DETAILS: IGridColumn[] = [
-    {
-      header: '검사성적서 상세UUID',
-      name: 'insp_result_detail_info_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사기준서 상세UUID',
-      name: 'insp_detail_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형UUID',
-      name: 'insp_item_type_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목 유형명',
-      name: 'insp_item_type_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사항목UUID',
-      name: 'insp_item_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사항목명',
-      name: 'insp_item_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사 기준',
-      name: 'spec_std',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '최소 값',
-      name: 'spec_min',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '최대 값',
-      name: 'spec_max',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사방법UUID',
-      name: 'insp_method_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사방법명',
-      name: 'insp_method_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '검사구UUID',
-      name: 'insp_tool_uuid',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '검사구명',
-      name: 'insp_tool_nm',
-      width: ENUM_WIDTH.L,
-      filter: 'text',
-    },
-    {
-      header: '정렬',
-      name: 'sortby',
-      width: ENUM_WIDTH.S,
-      filter: 'text',
-      hidden: true,
-    },
-    {
-      header: '시료 수량',
-      name: 'sample_cnt',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '검사 주기',
-      name: 'insp_cycle',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-  ];
-
   const COLUMNS_FINAL_INSP_DETAILS_INCLUDE_VALUES = useMemo(() => {
-    let items: IGridColumn[] = COLUMNS_FINAL_INSP_DETAILS;
+    let items: IGridColumn[] = [
+      ...ColumnStore.EDITABLE_FINAL_INSP_RESULT_DETAIL,
+    ];
+    const finalInspectMaxSampleCount = inspResult?.header?.max_sample_cnt;
 
-    if (inspResult?.header?.max_sample_cnt > 0) {
-      //시료수 최대값에 따라 컬럼 생성
-      for (let i = 1; i <= inspResult?.header?.max_sample_cnt; i++) {
+    if (finalInspectMaxSampleCount > 0) {
+      for (
+        let sampleIndex = 1;
+        sampleIndex <= finalInspectMaxSampleCount;
+        sampleIndex++
+      ) {
         items.push({
-          header: 'x' + i + '_insp_result_detail_value_uuid',
-          name: 'x' + i + '_insp_result_detail_value_uuid',
+          header: `x${sampleIndex}_insp_result_detail_value_uuid`,
+          name: `x${sampleIndex}_insp_result_detail_value_uuid`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           hidden: true,
         });
         items.push({
-          header: 'x' + i + '_sample_no',
-          name: 'x' + i + '_sample_no',
+          header: `x${sampleIndex}_sample_no`,
+          name: `x${sampleIndex}_sample_no`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
         items.push({
-          header: 'x' + i,
-          name: 'x' + i + '_insp_value',
+          header: `x${sampleIndex}`,
+          name: `x${sampleIndex}_insp_value`,
           width: ENUM_WIDTH.L,
           filter: 'text',
           editable: true,
         });
         items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_fg',
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_fg`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
         });
         items.push({
-          header: 'x' + i + '_판정',
-          name: 'x' + i + '_insp_result_state',
+          header: `x${sampleIndex}_판정`,
+          name: `x${sampleIndex}_insp_result_state`,
           width: ENUM_WIDTH.M,
           filter: 'text',
           hidden: true,
@@ -1807,272 +1707,132 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       }
     }
 
-    items.push({
-      header: '합격여부',
-      name: 'insp_result_fg',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-      hidden: true,
-    });
-    items.push({
-      header: '판정',
-      name: 'insp_result_state',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    });
-    items.push({
-      header: '비고',
-      name: 'remark',
-      width: ENUM_WIDTH.XL,
-      filter: 'text',
-    });
+    items.push(...ColumnStore.INSP_ITEM_RESULT);
 
     return items;
   }, [inspResult]);
 
-  const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [
-    { id: 'prod_uuid', label: '품목UUID', type: 'text', hidden: true },
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'unit_nm', label: '단위', type: 'text', disabled: true },
-    {
-      id: 'store_uuid',
-      label: '출고창고UUID',
-      type: 'text',
+  const INFO_INPUT_ITEMS: IInputGroupboxItem[] =
+    InputGroupBoxStore.FINAL_INSP_RESULT_ITEM.map(field => ({
+      ...field,
       disabled: true,
-      hidden: true,
-    },
-    { id: 'store_nm', label: '출고창고', type: 'text', disabled: true },
-    {
-      id: 'location_uuid',
-      label: '출고위치UUID',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    { id: 'location_nm', label: '출고위치', type: 'text', disabled: true },
-    { id: 'lot_no', label: 'LOT NO', type: 'text', disabled: true },
-    { id: 'insp_qty', label: '검사수량', type: 'number', disabled: true },
-  ];
+    }));
 
-  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] = [
-    {
-      id: 'insp_uuid',
-      label: '검사기준서UUID',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      id: 'insp_result_uuid',
-      label: '검사성적서UUID',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      id: 'insp_result_fg',
-      label: '최종판정',
-      type: 'text',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      id: 'insp_result_state',
-      label: '최종판정',
-      type: 'text',
-      disabled: true,
-    },
-    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
-    { id: 'reg_date_time', label: '검사시간', type: 'time' },
-    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
-    {
-      id: 'emp_nm',
-      label: '검사자',
-      type: 'text',
-      usePopup: true,
-      popupKey: '사원관리',
-      popupKeys: ['emp_nm', 'emp_uuid'],
-      params: { emp_status: 'incumbent' },
-    },
-    {
-      id: 'insp_handling_type',
-      label: '처리결과',
-      type: 'combo',
-      firstItemType: 'empty',
-      options: props.inspHandlingType,
-      disabled: true,
-      onAfterChange: (stringifiedInspectionHandlingType: string) => {
-        const selectedInspHandlingType =
-          stringifiedInspectionHandlingType === ''
-            ? { insp_handling_type_cd: '' }
-            : JSON.parse(stringifiedInspectionHandlingType);
-        const inputQty = inputInputItems.ref.current.values.insp_qty;
+  const INPUT_ITEMS_INSP_RESULT: IInputGroupboxItem[] =
+    InputGroupBoxStore.EDITABLE_INPUT_ITEMS_INSP_RESULT.map(field => {
+      if (field.id === 'insp_handling_type') {
+        return {
+          ...field,
+          options: props.inspHandlingType,
+          onAfterChange: (stringifiedInspectionHandlingType: string) => {
+            const selectedInspHandlingType =
+              stringifiedInspectionHandlingType === ''
+                ? { insp_handling_type_cd: '' }
+                : JSON.parse(stringifiedInspectionHandlingType);
+            const inputQty = inputInputItems.ref.current.values.insp_qty;
 
-        let incomeDisabled: boolean = true;
-        let rejectDisabled: boolean = true;
-        let qtyDisabled: boolean = true;
-        if (
-          ['INCOME', 'SELECTION'].includes(
-            selectedInspHandlingType.insp_handling_type_cd,
-          )
-        ) {
-          incomeDisabled = false;
-        }
-        if (
-          ['RETURN', 'SELECTION'].includes(
-            selectedInspHandlingType.insp_handling_type_cd,
-          )
-        ) {
-          rejectDisabled = false;
-        }
+            let incomeDisabled: boolean = true;
+            let rejectDisabled: boolean = true;
+            let qtyDisabled: boolean = true;
+            if (
+              ['INCOME', 'SELECTION'].includes(
+                selectedInspHandlingType.insp_handling_type_cd,
+              )
+            ) {
+              incomeDisabled = false;
+            }
+            if (
+              ['RETURN', 'SELECTION'].includes(
+                selectedInspHandlingType.insp_handling_type_cd,
+              )
+            ) {
+              rejectDisabled = false;
+            }
 
-        if (incomeDisabled) {
-          inputInspResultIncome.setFieldValue('qty', 0);
-        }
-        if (rejectDisabled) {
-          inputInspResultReject.setFieldValue('reject_qty', 0);
-        }
+            if (incomeDisabled) {
+              inputInspResultIncome.setFieldValue('qty', 0);
+            }
+            if (rejectDisabled) {
+              inputInspResultReject.setFieldValue('reject_qty', 0);
+            }
 
-        if (!incomeDisabled) {
-          inputInspResultIncome.setFieldValue('qty', inputQty);
-          inputInspResultReject.setFieldValue('reject_qty', 0);
-        } else if (!rejectDisabled) {
-          inputInspResultReject.setFieldValue('reject_qty', inputQty);
-        }
+            if (!incomeDisabled) {
+              inputInspResultIncome.setFieldValue('qty', inputQty);
+              inputInspResultReject.setFieldValue('reject_qty', 0);
+            } else if (!rejectDisabled) {
+              inputInspResultReject.setFieldValue('reject_qty', inputQty);
+            }
 
-        if (selectedInspHandlingType.insp_handling_type_cd === 'SELECTION') {
-          qtyDisabled = false;
-        }
+            if (
+              selectedInspHandlingType.insp_handling_type_cd === 'SELECTION'
+            ) {
+              qtyDisabled = false;
+            }
 
-        inputInspResultIncome.setFieldDisabled({
-          qty: qtyDisabled,
-          to_store_uuid: incomeDisabled,
-          to_location_uuid: incomeDisabled,
-        });
-        inputInspResultReject.setFieldDisabled({
-          reject_qty: true,
-          reject_nm: rejectDisabled,
-          reject_store_uuid: rejectDisabled,
-          reject_location_uuid: rejectDisabled,
-        });
-      },
-    },
-    { id: 'remark', label: '비고', type: 'text' },
-  ];
+            inputInspResultIncome.setFieldDisabled({
+              qty: qtyDisabled,
+              to_store_uuid: incomeDisabled,
+              to_location_uuid: incomeDisabled,
+            });
+            inputInspResultReject.setFieldDisabled({
+              reject_qty: true,
+              reject_nm: rejectDisabled,
+              reject_store_uuid: rejectDisabled,
+              reject_location_uuid: rejectDisabled,
+            });
+          },
+        };
+      }
+      return { ...field };
+    });
 
   const INPUT_ITEMS_INSP_RESULT_INCOME: IInputGroupboxItem[] = [
-    {
-      id: 'qty',
-      label: '입고수량',
-      type: 'number',
-      disabled: true,
-      onAfterChange: () => {
-        setChangeIncomeQtyFg(true);
-      },
-    },
-    {
-      id: 'to_store_uuid',
-      label: '입고창고',
-      type: 'combo',
-      firstItemType: 'empty',
-      dataSettingOptions: {
-        codeName: 'store_uuid',
-        textName: 'store_nm',
-        uriPath: getPopupForm('창고관리')?.uriPath,
-        params: {
-          store_type: 'available',
+    ...InputGroupBoxStore.CREATE_FINAL_INSP_RESULT_INCOME,
+  ].map(field => {
+    if (field.id === 'qty') {
+      return {
+        ...field,
+        onAfterChange: () => {
+          setChangeIncomeQtyFg(true);
         },
-      },
-      onAfterChange: ev => {
-        // this function is called when the value of the combo is changed
-      },
-    },
-    {
-      id: 'to_location_uuid',
-      label: '입고위치',
-      type: 'combo',
-      firstItemType: 'empty',
-      dataSettingOptions: {
-        codeName: 'location_uuid',
-        textName: 'location_nm',
-        uriPath: getPopupForm('위치관리')?.uriPath,
-      },
-      onAfterChange: ev => {
-        // this function is called when the value of the combo is changed
-      },
-    },
-  ];
+      };
+    }
+    return field;
+  });
 
   const INPUT_ITEMS_INSP_RESULT_RETURN: IInputGroupboxItem[] = [
-    {
-      id: 'reject_qty',
-      label: '부적합수량',
-      type: 'number',
-      disabled: true,
-      onAfterChange: () => {
-        setChangeRejectQtyFg(true);
-      },
-    },
-    { id: 'reject_uuid', label: '불량유형UUID', type: 'text', hidden: true },
-    {
-      id: 'reject_nm',
-      label: '불량유형',
-      type: 'text',
-      usePopup: true,
-      popupKey: '부적합관리',
-      popupKeys: ['reject_nm', 'reject_uuid'],
-    },
-    {
-      id: 'reject_store_uuid',
-      label: '반출창고',
-      type: 'combo',
-      firstItemType: 'empty',
-      dataSettingOptions: {
-        codeName: 'store_uuid',
-        textName: 'store_nm',
-        uriPath: getPopupForm('창고관리')?.uriPath,
-        params: {
-          store_type: 'reject',
+    ...InputGroupBoxStore.CREATE_FINAL_INSP_RESULT_REJECT,
+  ].map(field => {
+    if (field.id === 'reject_qty') {
+      return {
+        ...field,
+        onAfterChange: () => {
+          setChangeRejectQtyFg(true);
         },
-      },
-    },
-    {
-      id: 'reject_location_uuid',
-      label: '반출위치',
-      type: 'combo',
-      firstItemType: 'empty',
-      dataSettingOptions: {
-        codeName: 'location_uuid',
-        textName: 'location_nm',
-        uriPath: getPopupForm('위치관리')?.uriPath,
-      },
-      onAfterChange: ev => {
-        // this function is called when the value of the combo is changed
-      },
-    },
-  ];
+      };
+    }
+    return field;
+  });
 
   const inputInputItems = useInputGroup(
     'INPUT_EDIT_POPUP_INFO',
     INFO_INPUT_ITEMS,
-    { title: '입하정보' },
+    { title: WORD.INSP_ITEM_INFO },
   );
   const inputInspResult = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT',
     INPUT_ITEMS_INSP_RESULT,
-    { title: '검사정보' },
+    { title: WORD.INSP_INFO },
   );
   const inputInspResultIncome = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT_INCOME',
     INPUT_ITEMS_INSP_RESULT_INCOME,
-    { title: '입고정보' },
+    { title: WORD.INCOME_INFO },
   );
   const inputInspResultReject = useInputGroup(
     'INPUT_EDIT_POPUP_INSP_RESULT_REJECT',
     INPUT_ITEMS_INSP_RESULT_RETURN,
-    { title: '부적합정보' },
+    { title: WORD.REJECT_INFO },
   );
 
   const onClear = () => {

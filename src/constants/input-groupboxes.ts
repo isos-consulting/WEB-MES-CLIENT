@@ -19,7 +19,8 @@ type InputGroupBoxRecordKeys =
   | 'FINAL_INSP_RESULT_ITEM'
   | 'CREATE_FINAL_INSP_RESULT'
   | 'CREATE_FINAL_INSP_RESULT_INCOME'
-  | 'CREATE_FINAL_INSP_RESULT_REJECT';
+  | 'CREATE_FINAL_INSP_RESULT_REJECT'
+  | 'EDITABLE_INPUT_ITEMS_INSP_RESULT';
 
 export const InputGroupBoxStore: Record<
   InputGroupBoxRecordKeys,
@@ -618,5 +619,56 @@ export const InputGroupBoxStore: Record<
         uriPath: getPopupForm('위치관리')?.uriPath,
       },
     },
+  ],
+  EDITABLE_INPUT_ITEMS_INSP_RESULT: [
+    {
+      id: 'insp_uuid',
+      label: '검사기준서UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_uuid',
+      label: '검사성적서UUID',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_fg',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+      hidden: true,
+    },
+    {
+      id: 'insp_result_state',
+      label: '최종판정',
+      type: 'text',
+      disabled: true,
+    },
+    { id: 'reg_date', label: '검사일자', type: 'date', default: getToday() },
+    { id: 'reg_date_time', label: '검사시간', type: 'time' },
+    { id: 'emp_uuid', label: '검사자UUID', type: 'text', hidden: true },
+    {
+      id: 'emp_nm',
+      label: '검사자',
+      type: 'text',
+      usePopup: true,
+      popupKey: '사원관리',
+      popupKeys: ['emp_nm', 'emp_uuid'],
+      params: { emp_status: 'incumbent' },
+    },
+    {
+      id: 'insp_handling_type',
+      label: '처리결과',
+      type: 'combo',
+      firstItemType: 'empty',
+      options: [],
+      disabled: true,
+      onAfterChange: () => {},
+    },
+    { id: 'remark', label: '비고', type: 'text' },
   ],
 };
