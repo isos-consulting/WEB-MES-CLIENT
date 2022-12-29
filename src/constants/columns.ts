@@ -1590,6 +1590,15 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
     },
     { header: '단위', name: 'unit_nm', width: ENUM_WIDTH.S, filter: 'text' },
     {
+      header: '계획잔량',
+      name: 'monthly_balance',
+      width: ENUM_WIDTH.M,
+      editable: false,
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+      hidden: true,
+    },
+    {
       header: '계획수량',
       name: 'plan_qty',
       width: ENUM_WIDTH.M,

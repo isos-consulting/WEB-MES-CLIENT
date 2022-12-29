@@ -286,6 +286,7 @@ export const PgPrdNajsOrder = () => {
       'shift_nm',
     ],
     multiSelect: ['worker_nm'],
+    visible: ['monthly_balance'],
   };
 
   const dataGridColumnsInNewModal = ColumnStore.NAJS_PROD_ORDER.map(
@@ -306,6 +307,10 @@ export const PgPrdNajsOrder = () => {
 
       if (newModalDatagridColumnProps.multiSelect.includes(name)) {
         columnInEditModal.format = 'multi-select';
+      }
+
+      if (newModalDatagridColumnProps.visible.includes(name)) {
+        columnInEditModal.hidden = false;
       }
 
       return columnInEditModal;
