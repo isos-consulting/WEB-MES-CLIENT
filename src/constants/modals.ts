@@ -40,6 +40,7 @@ const ModalStore: Record<ModalRecordKeys, IGridPopupInfo> = {
       { original: 'auto_work_fg', popup: 'auto_work_fg' },
       { original: 'plan_qty', popup: 'plan_daily_qty' },
       { original: 'qty', popup: 'balance' },
+      { original: 'monthly_balance', popup: 'monthly_balance' },
     ],
     columns: [
       {
