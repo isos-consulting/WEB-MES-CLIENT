@@ -247,7 +247,11 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   const onOk = useMemo(() => {
     if (props.onOk) {
       // 사용자 지정 액션 적용
-      return () => props.onOk(gridRef);
+      return () => {
+        const instance = gridRef?.current?.getInstance();
+        instance?.finishEditing();
+        props.onOk(gridRef);
+      };
     } else {
       // 기본 동작 액션
       switch (props.gridMode) {
