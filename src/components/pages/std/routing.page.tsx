@@ -100,7 +100,7 @@ export const PgStdRouting = () => {
 
   /** INIT */
   const headerDefaultGridMode = 'view';
-  const headerSearchUriPath = '/std/prods';
+  const headerSearchUriPath = '/std/prods/workings';
 
   const detailDefaultGridMode = 'delete';
   const detailSearchUriPath = '/std/routings';
@@ -199,11 +199,15 @@ export const PgStdRouting = () => {
     [
       {
         header: '작업장',
-        name: '_routing_working_btn',
+        name: 'workings_nm',
         format: 'button',
         width: ENUM_WIDTH.S,
         options: {
-          value: '등록',
+          formatter: props => {
+            const { grid, rowKey, columnInfo } = props;
+
+            return grid.getValue(rowKey, columnInfo.name) ?? '등록';
+          },
           onClick: (ev, props) => {
             onSetProdInfo(
               props?.grid?.store?.data?.rawData[props?.rowKey],
@@ -277,8 +281,11 @@ export const PgStdRouting = () => {
         format: 'button',
         width: ENUM_WIDTH.S,
         options: {
-          value: '등록',
-          formatter: props => props.columnInfo.name + ' ' + props.rowKey,
+          formatter: props => {
+            const { grid, rowKey, columnInfo } = props;
+
+            return grid.getValue(rowKey, columnInfo.name) ?? '등록';
+          },
           onClick: (ev, props) => {
             onSetRoutingInfo({
               ...props?.grid?.store?.data?.rawData[props?.rowKey],
