@@ -208,14 +208,11 @@ export const PgStdRouting = () => {
 
             return grid.getValue(rowKey, columnInfo.name) ?? '등록';
           },
-          onClick: (ev, props) => {
-            onSetProdInfo(
-              props?.grid?.store?.data?.rawData[props?.rowKey],
-            ).then(() => {
+          onClick: (_ev, props) => {
+            const selectedRoutingHeader = props?.grid?.getRow(props?.rowKey);
+            onSetProdInfo(selectedRoutingHeader).then(() => {
               setWorkingsGridPopupVisible(true);
-              inputRefWorkings?.current?.setValues(
-                props?.grid?.store?.data?.rawData[props?.rowKey],
-              );
+              inputRefWorkings?.current?.setValues(selectedRoutingHeader);
             });
           },
         },
@@ -288,7 +285,7 @@ export const PgStdRouting = () => {
           },
           onClick: (ev, props) => {
             onSetRoutingInfo({
-              ...props?.grid?.store?.data?.rawData[props?.rowKey],
+              ...props?.grid?.getRow(props?.rowKey),
               ...selectedHeaderRow,
             }).then(() => {
               setResourcesGridPopupVisible(true);
@@ -844,7 +841,7 @@ export const PgStdRouting = () => {
   /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
-    const headerRow = instance?.store?.data?.rawData[rowKey];
+    const headerRow = instance?.getRow(rowKey);
 
     if (targetType !== 'cell') return;
     setSelectedHeaderRow(headerRow);
