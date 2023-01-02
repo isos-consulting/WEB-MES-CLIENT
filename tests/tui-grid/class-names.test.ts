@@ -27,6 +27,7 @@ test('class-names 단위 테스트', () => {
       item_type_uuid: ['create'],
       item_type_nm: ['create'],
       model_uuid: ['create'],
+      monthly_balance: ['create'],
       model_nm: ['create'],
       rev: ['create'],
       prod_std: ['create'],
