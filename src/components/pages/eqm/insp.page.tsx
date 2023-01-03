@@ -20,6 +20,7 @@ import {
 import { EqmInspDetail } from './insp/detail/eqm-insp-detail';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
+import { EqmInspDetailSub } from './insp/detail/sub/eqm-insp-detail-sub';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
 import eqmInspDetailSubInputboxes from './insp/detail/sub/eqm-insp-detail-sub-inputboxes';
 import { EqmInspHeader } from './insp/header/eqm-insp-header';
@@ -722,7 +723,7 @@ export const PgEqmInsp = () => {
         onSearch: () => onSearchDetailSub(selectedDetailRow?.insp_uuid),
       },
     ],
-    inputProps: [null, detailInputInfo?.props, detailSubInputInfo?.props],
+    inputProps: [null, null, null],
     popupVisibles: [
       newDataPopupGridVisible,
       addDataPopupGridVisible,
@@ -750,36 +751,46 @@ export const PgEqmInsp = () => {
     onAfterOkNewDataPopup: onAfterSaveNewData,
     onAfterOkEditDataPopup: onAfterSaveEditData,
     onAfterOkAddDataPopup: onAfterSaveAddData,
-
-    btnProps: {
-      create: {
-        text: '신규 기준서 등록',
-      },
-      edit: {
-        text: '수정/개정',
-        widthSize: 'auto',
-      },
-    },
   };
 
   return (
     <>
-      <EqmInspHeader
-        gridRef={headerGrid.gridRef}
-        columns={headerGrid.gridInfo.columns}
-        data={headerGrid.gridInfo.data}
-        gridMode={headerGrid.gridInfo.gridMode}
-        onAfterClick={onClickHeader}
-      />
-      <EqmInspDetail
-        inputProps={detailInputInfo.props}
-        gridRef={detailGrid.gridRef}
-        columns={detailGrid.gridInfo.columns}
-        data={detailGrid.gridInfo.data}
-        gridMode={detailGrid.gridInfo.gridMode}
-        onAfterClick={onClickDetail}
-      />
-      <TpTripleGrid {...props} />;
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ width: 'Calc(30% - 10px)' }}>
+          <EqmInspHeader
+            gridRef={headerGrid.gridRef}
+            columns={headerGrid.gridInfo.columns}
+            data={headerGrid.gridInfo.data}
+            gridMode={headerGrid.gridInfo.gridMode}
+            onAfterClick={onClickHeader}
+            onSearch={buttonActions.search}
+            onCreate={buttonActions.create}
+          />
+          <EqmInspDetail
+            inputProps={detailInputInfo.props}
+            gridRef={detailGrid.gridRef}
+            columns={detailGrid.gridInfo.columns}
+            data={detailGrid.gridInfo.data}
+            gridMode={detailGrid.gridInfo.gridMode}
+            onAfterClick={onClickDetail}
+          />
+        </div>
+        <div style={{ width: '70%' }}>
+          <EqmInspDetailSub
+            inputProps={detailSubInputInfo.props}
+            gridRef={detailSubGrid.gridRef}
+            columns={detailSubGrid.gridInfo.columns}
+            data={detailSubGrid.gridInfo.data}
+            gridMode={detailSubGrid.gridInfo.gridMode}
+            onCreateDetail={buttonActions.createDetail}
+            onUpdate={buttonActions.update}
+            onDelete={buttonActions.delete}
+          />
+        </div>
+      </div>
+      <div style={{ display: 'none' }}>
+        <TpTripleGrid {...props} />;
+      </div>
     </>
   );
 };
