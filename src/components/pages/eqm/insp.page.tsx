@@ -1,5 +1,12 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
+import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, useGrid, useSearchbox } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { URL_PATH_ADM, URL_PATH_EQM, URL_PATH_STD } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -11,19 +18,9 @@ import {
   isModified,
   onAsyncFunction,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
-import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import {
-  ENUM_DECIMAL,
-  ENUM_WIDTH,
-  URL_PATH_ADM,
-  URL_PATH_EQM,
-  URL_PATH_STD,
-} from '~/enums';
-import { cloneDeep } from 'lodash';
+import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
+import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
+import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
 
 /** 설비기준서관리 */
 export const PgEqmInsp = () => {
@@ -94,6 +91,21 @@ export const PgEqmInsp = () => {
     });
   };
 
+  const eqmInspDetailColumnsWithApply = eqmInspDetailColumns.map(
+    detailColumn => {
+      if (detailColumn.name === 'apply_fg') {
+        return {
+          ...detailColumn,
+          options: {
+            ...detailColumn.options,
+            onClick: onApplyInsp,
+          },
+        };
+      }
+      return detailColumn;
+    },
+  );
+
   const onAfterSaveApply = async () => {
     const headerRow = await cloneDeep(selectedHeaderRow);
     const detailRow = await cloneDeep(selectedDetailRow);
@@ -127,256 +139,26 @@ export const PgEqmInsp = () => {
 
   //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
-  const headerGrid = useGrid(
-    'HEADER_GRID',
-    [
-      {
-        header: '설비UUID',
-        name: 'equip_uuid',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        hidden: true,
-      },
-      {
-        header: '설비코드',
-        name: 'equip_cd',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-      },
-      {
-        header: '설비명',
-        name: 'equip_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-      },
-    ],
-    {
-      searchUriPath: headerSearchUriPath,
-      searchParams: {
-        use_fg: true,
-      },
-      saveUriPath: null,
-      gridMode: headerDefaultGridMode,
+  const headerGrid = useGrid('HEADER_GRID', eqmInspHeaderColumns, {
+    searchUriPath: headerSearchUriPath,
+    searchParams: {
+      use_fg: true,
     },
-  );
+    saveUriPath: null,
+    gridMode: headerDefaultGridMode,
+  });
 
-  const detailGrid = useGrid(
-    'DETAIL_GRID',
-    [
-      {
-        header: '적용',
-        name: 'apply_fg',
-        width: ENUM_WIDTH.S,
-        format: 'button',
-        options: {
-          formatter: props => {
-            const { rowKey, grid } = props;
-            const row = grid?.store?.data?.rawData[rowKey];
-            return row['apply_fg'] === true ? '해제' : '적용';
-          },
-          onClick: onApplyInsp,
-        },
-      },
-      {
-        header: '기준서UUID',
-        name: 'insp_uuid',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: true,
-      },
-      {
-        header: '설비UUID',
-        name: 'equip_uuid',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: true,
-      },
-      {
-        header: '기준서번호',
-        name: 'insp_no',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-      },
-      {
-        header: '개정내용',
-        name: 'contents',
-        width: ENUM_WIDTH.XL,
-        filter: 'text',
-      },
-      { header: '비고', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
-    ],
-    {
-      searchUriPath: detailSearchUriPath,
-      saveUriPath: detailSaveUriPath,
-      gridMode: detailDefaultGridMode,
-    },
-  );
+  const detailGrid = useGrid('DETAIL_GRID', eqmInspDetailColumnsWithApply, {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    gridMode: detailDefaultGridMode,
+  });
 
-  const detailSubGrid = useGrid(
-    'DETAIL_SUB_GRID',
-    [
-      {
-        header: '세부기준서UUID',
-        name: 'insp_detail_uuid',
-        alias: 'uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '세부기준서번호',
-        name: 'insp_no_sub',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '정기점검',
-        name: 'periodicity_fg',
-        width: ENUM_WIDTH.M,
-        format: 'check',
-        editable: true,
-        requiredField: true,
-      },
-      {
-        header: '검사기준UUID',
-        name: 'insp_item_type_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '검사항목UUID',
-        name: 'insp_item_uuid',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        hidden: true,
-      },
-      {
-        header: '검사유형',
-        name: 'insp_item_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-      },
-      {
-        header: '검사항목',
-        name: 'insp_item_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        requiredField: true,
-      },
-      {
-        header: '상세검사내용',
-        name: 'insp_item_desc',
-        width: ENUM_WIDTH.XL,
-        filter: 'text',
-      },
-      {
-        header: '기준',
-        name: 'spec_std',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        requiredField: true,
-      },
-      {
-        header: 'MIN',
-        name: 'spec_min',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
-        filter: 'number',
-      },
-      {
-        header: 'MAX',
-        name: 'spec_max',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_INSPECT_SPEC,
-        filter: 'number',
-      },
-      {
-        header: '검사방법UUID',
-        name: 'insp_method_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '검사방법',
-        name: 'insp_method_nm',
-        width: ENUM_WIDTH.M,
-        format: 'popup',
-        filter: 'text',
-        editable: true,
-      },
-      {
-        header: '검사구UUID',
-        name: 'insp_tool_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '검사구',
-        name: 'insp_tool_nm',
-        width: ENUM_WIDTH.M,
-        format: 'popup',
-        filter: 'text',
-        editable: true,
-      },
-      {
-        header: '주기 기준일',
-        name: 'base_date',
-        width: ENUM_WIDTH.M,
-        format: 'date',
-        editable: true,
-      },
-      {
-        header: '일상점검주기UUID',
-        name: 'daily_insp_cycle_uuid',
-        width: 200,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '일상점검주기명',
-        name: 'daily_insp_cycle_nm',
-        width: 80,
-        editable: true,
-        format: 'combo',
-      },
-      {
-        header: '주기단위UUID',
-        name: 'cycle_unit_uuid',
-        width: 200,
-        hidden: true,
-        format: 'text',
-      },
-      {
-        header: '주기단위',
-        name: 'cycle_unit_nm',
-        width: 80,
-        editable: true,
-        format: 'combo',
-      },
-      {
-        header: '점검주기',
-        name: 'cycle',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
-        filter: 'number',
-      },
-      {
-        header: '비고',
-        name: 'remark',
-        width: ENUM_WIDTH.L,
-        editable: true,
-        filter: 'text',
-      },
-    ],
-    {
-      searchUriPath: detailSubSearchUriPath,
-      saveUriPath: detailSubSaveUriPath,
-      gridMode: detailDefaultGridMode,
-    },
-  );
+  const detailSubGrid = useGrid('DETAIL_SUB_GRID', eqmInspDetailSubColumns, {
+    searchUriPath: detailSubSearchUriPath,
+    saveUriPath: detailSubSaveUriPath,
+    gridMode: detailDefaultGridMode,
+  });
 
   /** 팝업 Grid View */
   const newDataPopupGrid = useGrid(
