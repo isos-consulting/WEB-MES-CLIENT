@@ -17,16 +17,20 @@ import {
   isModified,
   onAsyncFunction,
 } from '~/functions';
+import { EqmInspDetail } from './insp/detail/eqm-insp-detail';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
 import eqmInspDetailSubInputboxes from './insp/detail/sub/eqm-insp-detail-sub-inputboxes';
+import { EqmInspHeader } from './insp/header/eqm-insp-header';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
 import eqmInspDetailSubModalInputboxes from './insp/modal/eqm-insp-detail-sub-modal-inputboxes';
 import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-comboboxes';
 import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
 import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
 import eqmInspNewModalInputboxes from './insp/modal/eqm-insp-new-modal-inputboxes';
+
+type TPopup = 'new' | 'add' | 'edit' | null;
 
 export const PgEqmInsp = () => {
   const title = getPageName();
@@ -35,12 +39,10 @@ export const PgEqmInsp = () => {
 
   const headerSearchUriPath = URL_PATH_STD.EQUIP.GET.EQUIPS;
 
-  const detailDefaultGridMode = 'delete';
   const detailSearchUriPath = URL_PATH_EQM.INSP.GET.INSPS;
   const detailSaveUriPath = URL_PATH_EQM.INSP.POST.INSPS;
 
   const detailSubSearchUriPath = URL_PATH_EQM.INSP.GET.DETAILS;
-  const detailSubSaveUriPath = URL_PATH_EQM.INSP.POST.INSPS;
 
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
     useState<boolean>(false);
@@ -145,13 +147,13 @@ export const PgEqmInsp = () => {
   const detailGrid = useGrid('DETAIL_GRID', eqmInspDetailColumnsWithApply, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
-    gridMode: detailDefaultGridMode,
+    gridMode: 'delete',
   });
 
   const detailSubGrid = useGrid('DETAIL_SUB_GRID', eqmInspDetailSubColumns, {
     searchUriPath: detailSubSearchUriPath,
-    saveUriPath: detailSubSaveUriPath,
-    gridMode: detailDefaultGridMode,
+    saveUriPath: URL_PATH_EQM.INSP.POST.INSPS,
+    gridMode: 'delete',
   });
 
   const dataPopupColumns = eqmInspDetailSubColumns.map(el => {
@@ -528,8 +530,6 @@ export const PgEqmInsp = () => {
     );
   };
 
-  type TPopup = 'new' | 'add' | 'edit' | null;
-
   const onAmendInsp = (type: '개정' | '수정', popupType: TPopup) => {
     const grid =
       popupType === 'add'
@@ -762,5 +762,24 @@ export const PgEqmInsp = () => {
     },
   };
 
-  return <TpTripleGrid {...props} />;
+  return (
+    <>
+      <EqmInspHeader
+        gridRef={headerGrid.gridRef}
+        columns={headerGrid.gridInfo.columns}
+        data={headerGrid.gridInfo.data}
+        gridMode={headerGrid.gridInfo.gridMode}
+        onAfterClick={onClickHeader}
+      />
+      <EqmInspDetail
+        inputProps={detailInputInfo.props}
+        gridRef={detailGrid.gridRef}
+        columns={detailGrid.gridInfo.columns}
+        data={detailGrid.gridInfo.data}
+        gridMode={detailGrid.gridInfo.gridMode}
+        onAfterClick={onClickDetail}
+      />
+      <TpTripleGrid {...props} />;
+    </>
+  );
 };
