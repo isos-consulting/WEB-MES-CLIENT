@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
 import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
 import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
-import { Button, getPopupForm, useGrid, useSearchbox } from '~/components/UI';
+import { Button, useGrid, useSearchbox } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { URL_PATH_EQM, URL_PATH_STD } from '~/enums';
 import {
@@ -14,16 +14,19 @@ import {
   getData,
   getModifiedRows,
   getPageName,
-  getToday,
   isModified,
   onAsyncFunction,
 } from '~/functions';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
+import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
+import eqmInspDetailSubInputboxes from './insp/detail/sub/eqm-insp-detail-sub-inputboxes';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
+import eqmInspDetailSubModalInputboxes from './insp/modal/eqm-insp-detail-sub-modal-inputboxes';
 import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-comboboxes';
 import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
 import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
+import eqmInspNewModalInputboxes from './insp/modal/eqm-insp-new-modal-inputboxes';
 
 export const PgEqmInsp = () => {
   const title = getPageName();
@@ -274,110 +277,27 @@ export const PgEqmInsp = () => {
     reloadDetailSubGrid(uuid);
   };
 
-  const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
-    {
-      type: 'text',
-      id: 'equip_uuid',
-      label: '설비UUID',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      type: 'text',
-      id: 'equip_cd',
-      label: '설비코드',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      type: 'text',
-      id: 'equip_nm',
-      label: '설비명',
-      disabled: true,
-      hidden: true,
-    },
-  ]);
+  const detailInputInfo = useInputGroup(
+    'DETAIL_INPUTBOX',
+    eqmInspDetailInputboxes,
+  );
 
-  const EQUIP_POPUP = getPopupForm('설비관리');
-  const equipApiSettings = () => {
-    const params = { use_fg: true };
-
-    return {
-      uriPath: EQUIP_POPUP.uriPath,
-      params: params,
-    };
-  };
-  const equipPopupButtonSettings = {
-    dataApiSettings: equipApiSettings,
-    datagridSettings: EQUIP_POPUP.datagridProps,
-    modalSettings: {
-      title: '품목관리',
-    },
-  };
-
-  const detailSubInputInfo = useInputGroup('DETAIL_SUB_INPUTBOX', [
-    {
-      type: 'text',
-      id: 'insp_uuid',
-      alias: 'uuid',
-      label: '기준서UUID',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      type: 'text',
-      id: 'equip_uuid',
-      label: '설비UUID',
-      disabled: true,
-      hidden: true,
-    },
-    {
-      type: 'text',
-      id: 'equip_cd',
-      label: '설비코드',
-      disabled: true,
-      usePopup: true,
-      popupKeys: ['equip_uuid', 'equip_cd', 'equip_nm'],
-      popupButtonSettings: equipPopupButtonSettings,
-    },
-    { type: 'text', id: 'equip_cd', label: '설비', disabled: true },
-    { type: 'text', id: 'insp_no', label: '기준서 번호', disabled: true },
-    {
-      type: 'date',
-      id: 'reg_date',
-      label: '생성일자',
-      disabled: true,
-      default: getToday(0, { format: 'YYYY-MM-DD' }),
-      required: true,
-    },
-    { type: 'text', id: 'contents', label: '개정내역', disabled: true },
-    { type: 'text', id: 'remark', label: '비고', disabled: true },
-  ]);
+  const detailSubInputInfo = useInputGroup(
+    'DETAIL_SUB_INPUTBOX',
+    eqmInspDetailSubInputboxes,
+  );
 
   const newDataPopupInputInfo = useInputGroup(
     'NEW_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(el => {
-      if (['insp_no'].includes(el?.id)) {
-        // 기준서 번호 입력창 설정
-      } else {
-        el['disabled'] = false;
-      }
-      return el;
-    }),
+    eqmInspNewModalInputboxes,
   );
   const addDataPopupInputInfo = useInputGroup(
     'ADD_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(el => {
-      if (['contents', 'remark'].includes(el?.id)) el['disabled'] = false;
-      return el;
-    }),
+    eqmInspDetailSubModalInputboxes,
   );
   const editDataPopupInputInfo = useInputGroup(
     'EDIT_DATA_POPUP_INPUTBOX',
-    cloneDeep(detailSubInputInfo?.props?.inputItems)?.map(el => {
-      if (['contents', 'remark'].includes(el?.id)) el['disabled'] = false;
-      return el;
-    }),
+    eqmInspDetailSubModalInputboxes,
   );
 
   const onReset = async () => {
