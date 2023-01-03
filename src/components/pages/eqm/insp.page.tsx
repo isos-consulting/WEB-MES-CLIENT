@@ -27,7 +27,6 @@ export const PgEqmInsp = () => {
 
   const [modal, modalContext] = Modal.useModal();
 
-  const headerDefaultGridMode = 'view';
   const headerSearchUriPath = URL_PATH_STD.EQUIP.GET.EQUIPS;
 
   const detailDefaultGridMode = 'delete';
@@ -135,7 +134,7 @@ export const PgEqmInsp = () => {
       use_fg: true,
     },
     saveUriPath: null,
-    gridMode: headerDefaultGridMode,
+    gridMode: 'view',
   });
 
   const detailGrid = useGrid('DETAIL_GRID', eqmInspDetailColumnsWithApply, {
@@ -150,117 +149,107 @@ export const PgEqmInsp = () => {
     gridMode: detailDefaultGridMode,
   });
 
-  const newDataPopupGrid = useGrid(
-    'NEW_DATA_POPUP_GRID',
-    cloneDeep(detailSubGrid.gridInfo.columns)?.map(el => {
-      if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) === false) {
-        el['editable'] = true;
-      }
-      return el;
-    }),
-    {
-      searchUriPath: detailSearchUriPath,
-      saveUriPath: detailSaveUriPath,
-      saveParams: { apply_fg: true },
-      header: detailSubGrid?.gridInfo?.header,
-      gridComboInfo: [
-        {
-          columnNames: [
-            {
-              codeColName: {
-                original: 'daily_insp_cycle_uuid',
-                popup: 'daily_insp_cycle_uuid',
-              },
-              textColName: {
-                original: 'daily_insp_cycle_nm',
-                popup: 'daily_insp_cycle_nm',
-              },
-            },
-          ],
-          dataApiSettings: {
-            uriPath: URL_PATH_ADM.DAILY_INSP_CYCLE.GET.DAILY_INSP_CYCLES,
-            params: {},
-          },
-        },
-        {
-          columnNames: [
-            {
-              codeColName: {
-                original: 'cycle_unit_uuid',
-                popup: 'cycle_unit_uuid',
-              },
-              textColName: {
-                original: 'cycle_unit_nm',
-                popup: 'cycle_unit_nm',
-              },
-            },
-          ],
-          dataApiSettings: {
-            uriPath: URL_PATH_ADM.CYCLE_UNIT.GET.CYCLE_UNITS,
-            params: {},
-          },
-        },
-      ],
-      rowAddPopupInfo: {
+  const dataPopupColumns = eqmInspDetailSubColumns.map(el => {
+    if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) === false) {
+      el['editable'] = true;
+    }
+    return el;
+  });
+
+  const newDataPopupGrid = useGrid('NEW_DATA_POPUP_GRID', dataPopupColumns, {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    saveParams: { apply_fg: true },
+    header: detailSubGrid?.gridInfo?.header,
+    gridComboInfo: [
+      {
         columnNames: [
-          { original: 'insp_item_type_uuid', popup: 'insp_item_type_uuid' },
-          { original: 'insp_item_type_nm', popup: 'insp_item_type_nm' },
-          { original: 'insp_item_uuid', popup: 'insp_item_uuid' },
-          { original: 'insp_item_nm', popup: 'insp_item_nm' },
+          {
+            codeColName: {
+              original: 'daily_insp_cycle_uuid',
+              popup: 'daily_insp_cycle_uuid',
+            },
+            textColName: {
+              original: 'daily_insp_cycle_nm',
+              popup: 'daily_insp_cycle_nm',
+            },
+          },
         ],
-        columns: INSP_POPUP?.datagridProps?.columns,
         dataApiSettings: {
-          uriPath: INSP_POPUP?.uriPath,
-          params: { type: 'eqm' },
+          uriPath: URL_PATH_ADM.DAILY_INSP_CYCLE.GET.DAILY_INSP_CYCLES,
+          params: {},
         },
-        gridMode: 'multi-select',
       },
-      gridPopupInfo: [
-        {
-          columnNames: [
-            { original: 'insp_method_uuid', popup: 'insp_method_uuid' },
-            { original: 'insp_method_nm', popup: 'insp_method_nm' },
-          ],
-          popupKey: '검사방법관리',
-          gridMode: 'select',
+      {
+        columnNames: [
+          {
+            codeColName: {
+              original: 'cycle_unit_uuid',
+              popup: 'cycle_unit_uuid',
+            },
+            textColName: {
+              original: 'cycle_unit_nm',
+              popup: 'cycle_unit_nm',
+            },
+          },
+        ],
+        dataApiSettings: {
+          uriPath: URL_PATH_ADM.CYCLE_UNIT.GET.CYCLE_UNITS,
+          params: {},
         },
-        {
-          columnNames: [
-            { original: 'insp_tool_uuid', popup: 'insp_tool_uuid' },
-            { original: 'insp_tool_nm', popup: 'insp_tool_nm' },
-          ],
-          popupKey: '검사구관리',
-          gridMode: 'select',
-        },
+      },
+    ],
+    rowAddPopupInfo: {
+      columnNames: [
+        { original: 'insp_item_type_uuid', popup: 'insp_item_type_uuid' },
+        { original: 'insp_item_type_nm', popup: 'insp_item_type_nm' },
+        { original: 'insp_item_uuid', popup: 'insp_item_uuid' },
+        { original: 'insp_item_nm', popup: 'insp_item_nm' },
       ],
+      columns: INSP_POPUP?.datagridProps?.columns,
+      dataApiSettings: {
+        uriPath: INSP_POPUP?.uriPath,
+        params: { type: 'eqm' },
+      },
+      gridMode: 'multi-select',
     },
-  );
+    gridPopupInfo: [
+      {
+        columnNames: [
+          { original: 'insp_method_uuid', popup: 'insp_method_uuid' },
+          { original: 'insp_method_nm', popup: 'insp_method_nm' },
+        ],
+        popupKey: '검사방법관리',
+        gridMode: 'select',
+      },
+      {
+        columnNames: [
+          { original: 'insp_tool_uuid', popup: 'insp_tool_uuid' },
+          { original: 'insp_tool_nm', popup: 'insp_tool_nm' },
+        ],
+        popupKey: '검사구관리',
+        gridMode: 'select',
+      },
+    ],
+  });
 
-  const addDataPopupGrid = useGrid(
-    'ADD_DATA_POPUP_GRID',
-    newDataPopupGrid.gridInfo.columns,
-    {
-      searchUriPath: detailSearchUriPath,
-      saveUriPath: detailSaveUriPath,
-      header: detailSubGrid?.gridInfo?.header,
-      gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
-      rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
-      gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
-    },
-  );
+  const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', dataPopupColumns, {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    header: detailSubGrid?.gridInfo?.header,
+    gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
+    rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
+    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+  });
 
-  const editDataPopupGrid = useGrid(
-    'EDIT_DATA_POPUP_GRID',
-    newDataPopupGrid.gridInfo.columns,
-    {
-      searchUriPath: detailSearchUriPath,
-      saveUriPath: detailSaveUriPath,
-      header: detailSubGrid?.gridInfo?.header,
-      gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
-      rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
-      gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
-    },
-  );
+  const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', dataPopupColumns, {
+    searchUriPath: detailSearchUriPath,
+    saveUriPath: detailSaveUriPath,
+    header: detailSubGrid?.gridInfo?.header,
+    gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
+    rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
+    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+  });
 
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
