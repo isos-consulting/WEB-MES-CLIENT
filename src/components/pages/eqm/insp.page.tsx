@@ -6,7 +6,7 @@ import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.tem
 import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, getPopupForm, useGrid, useSearchbox } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
-import { URL_PATH_ADM, URL_PATH_EQM, URL_PATH_STD } from '~/enums';
+import { URL_PATH_EQM, URL_PATH_STD } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -21,6 +21,9 @@ import {
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
+import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-comboboxes';
+import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
+import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
 
 export const PgEqmInsp = () => {
   const title = getPageName();
@@ -35,7 +38,6 @@ export const PgEqmInsp = () => {
 
   const detailSubSearchUriPath = URL_PATH_EQM.INSP.GET.DETAILS;
   const detailSubSaveUriPath = URL_PATH_EQM.INSP.POST.INSPS;
-  const INSP_POPUP = getPopupForm('검사기준관리');
 
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
     useState<boolean>(false);
@@ -161,112 +163,40 @@ export const PgEqmInsp = () => {
     saveUriPath: detailSaveUriPath,
     saveParams: { apply_fg: true },
     header: detailSubGrid?.gridInfo?.header,
-    gridComboInfo: [
-      {
-        columnNames: [
-          {
-            codeColName: {
-              original: 'daily_insp_cycle_uuid',
-              popup: 'daily_insp_cycle_uuid',
-            },
-            textColName: {
-              original: 'daily_insp_cycle_nm',
-              popup: 'daily_insp_cycle_nm',
-            },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: URL_PATH_ADM.DAILY_INSP_CYCLE.GET.DAILY_INSP_CYCLES,
-          params: {},
-        },
-      },
-      {
-        columnNames: [
-          {
-            codeColName: {
-              original: 'cycle_unit_uuid',
-              popup: 'cycle_unit_uuid',
-            },
-            textColName: {
-              original: 'cycle_unit_nm',
-              popup: 'cycle_unit_nm',
-            },
-          },
-        ],
-        dataApiSettings: {
-          uriPath: URL_PATH_ADM.CYCLE_UNIT.GET.CYCLE_UNITS,
-          params: {},
-        },
-      },
-    ],
-    rowAddPopupInfo: {
-      columnNames: [
-        { original: 'insp_item_type_uuid', popup: 'insp_item_type_uuid' },
-        { original: 'insp_item_type_nm', popup: 'insp_item_type_nm' },
-        { original: 'insp_item_uuid', popup: 'insp_item_uuid' },
-        { original: 'insp_item_nm', popup: 'insp_item_nm' },
-      ],
-      columns: INSP_POPUP?.datagridProps?.columns,
-      dataApiSettings: {
-        uriPath: INSP_POPUP?.uriPath,
-        params: { type: 'eqm' },
-      },
-      gridMode: 'multi-select',
-    },
-    gridPopupInfo: [
-      {
-        columnNames: [
-          { original: 'insp_method_uuid', popup: 'insp_method_uuid' },
-          { original: 'insp_method_nm', popup: 'insp_method_nm' },
-        ],
-        popupKey: '검사방법관리',
-        gridMode: 'select',
-      },
-      {
-        columnNames: [
-          { original: 'insp_tool_uuid', popup: 'insp_tool_uuid' },
-          { original: 'insp_tool_nm', popup: 'insp_tool_nm' },
-        ],
-        popupKey: '검사구관리',
-        gridMode: 'select',
-      },
-    ],
+    gridComboInfo: eqmInspModalGridComboboxes,
+    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    gridPopupInfo: eqmInspModalGridPopups,
   });
 
   const addDataPopupGrid = useGrid('ADD_DATA_POPUP_GRID', dataPopupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     header: detailSubGrid?.gridInfo?.header,
-    gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
-    rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+    gridComboInfo: eqmInspModalGridComboboxes,
+    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    gridPopupInfo: eqmInspModalGridPopups,
   });
 
   const editDataPopupGrid = useGrid('EDIT_DATA_POPUP_GRID', dataPopupColumns, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
     header: detailSubGrid?.gridInfo?.header,
-    gridComboInfo: newDataPopupGrid?.gridInfo?.gridComboInfo,
-    rowAddPopupInfo: newDataPopupGrid?.gridInfo?.rowAddPopupInfo,
-    gridPopupInfo: newDataPopupGrid?.gridInfo?.gridPopupInfo,
+    gridComboInfo: eqmInspModalGridComboboxes,
+    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    gridPopupInfo: eqmInspModalGridPopups,
   });
 
-  const onClickHeader = ev => {
-    const { targetType, rowKey, instance } = ev;
-    const headerRow = instance?.store?.data?.rawData[rowKey];
-
+  const onClickHeader = ({ targetType, rowKey, instance }) => {
     if (targetType !== 'cell') return;
-    setSelectedHeaderRow(headerRow);
+
+    setSelectedHeaderRow(instance?.getRow(rowKey));
   };
 
-  const onClickDetail = ev => {
-    const { targetType, rowKey, instance, columnName } = ev;
+  const onClickDetail = ({ targetType, rowKey, instance, columnName }) => {
     if (columnName === 'apply_fg') return;
-
-    const detailRow = instance?.store?.data?.rawData[rowKey];
-
     if (targetType !== 'cell') return;
-    setSelectedDetailRow(detailRow);
+
+    setSelectedDetailRow(instance?.getRow(rowKey));
   };
 
   const reloadDetailGrid = async uuid => {
