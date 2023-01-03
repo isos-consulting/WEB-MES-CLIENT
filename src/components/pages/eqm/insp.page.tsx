@@ -22,15 +22,11 @@ import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
 
-/** 설비기준서관리 */
 export const PgEqmInsp = () => {
-  /** 페이지 제목 */
   const title = getPageName();
 
-  /** 모달 DOM */
   const [modal, modalContext] = Modal.useModal();
 
-  /** INIT */
   const headerDefaultGridMode = 'view';
   const headerSearchUriPath = URL_PATH_STD.EQUIP.GET.EQUIPS;
 
@@ -42,7 +38,6 @@ export const PgEqmInsp = () => {
   const detailSubSaveUriPath = URL_PATH_EQM.INSP.POST.INSPS;
   const INSP_POPUP = getPopupForm('검사기준관리');
 
-  /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
     useState<boolean>(false);
   const [addDataPopupGridVisible, setAddDataPopupGridVisible] =
@@ -50,22 +45,19 @@ export const PgEqmInsp = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
 
-  /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
   const [selectedDetailRow, setSelectedDetailRow] = useState(null);
   const [, setEditInspNo] = useState(null);
 
   const [applyFg, setApplyFg] = useState(false);
 
-  /** 기준서 적용(또는 해제) */
   const onApplyInsp = (ev, props) => {
-    // 적용 이벤트
     const { value, rowKey, grid } = props;
     const row = grid?.store?.data?.rawData[rowKey];
 
     const applyUriPath = URL_PATH_EQM.INSP.PUT.APPLY;
     const cancelApplyUriPath = URL_PATH_EQM.INSP.PUT.CANCEL_APPLY;
-    const uuid = row?.insp_uuid; //기준서uuid
+    const uuid = row?.insp_uuid;
 
     if (!uuid) {
       message.error('기준서 ' + (value ? '해제' : '적용') + ' 실패');
@@ -137,8 +129,6 @@ export const PgEqmInsp = () => {
     setApplyFg(false);
   }, [applyFg]);
 
-  //#region 🔶그리드 상태 관리
-  /** 화면 Grid View */
   const headerGrid = useGrid('HEADER_GRID', eqmInspHeaderColumns, {
     searchUriPath: headerSearchUriPath,
     searchParams: {
@@ -160,7 +150,6 @@ export const PgEqmInsp = () => {
     gridMode: detailDefaultGridMode,
   });
 
-  /** 팝업 Grid View */
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
     cloneDeep(detailSubGrid.gridInfo.columns)?.map(el => {
@@ -176,7 +165,6 @@ export const PgEqmInsp = () => {
       header: detailSubGrid?.gridInfo?.header,
       gridComboInfo: [
         {
-          // 투입단위 콤보박스
           columnNames: [
             {
               codeColName: {
@@ -195,7 +183,6 @@ export const PgEqmInsp = () => {
           },
         },
         {
-          // 투입단위 콤보박스
           columnNames: [
             {
               codeColName: {
@@ -230,7 +217,6 @@ export const PgEqmInsp = () => {
       },
       gridPopupInfo: [
         {
-          //검사방법관리
           columnNames: [
             { original: 'insp_method_uuid', popup: 'insp_method_uuid' },
             { original: 'insp_method_nm', popup: 'insp_method_nm' },
@@ -239,7 +225,6 @@ export const PgEqmInsp = () => {
           gridMode: 'select',
         },
         {
-          //검사구관리
           columnNames: [
             { original: 'insp_tool_uuid', popup: 'insp_tool_uuid' },
             { original: 'insp_tool_nm', popup: 'insp_tool_nm' },
@@ -277,7 +262,6 @@ export const PgEqmInsp = () => {
     },
   );
 
-  /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {
     const { targetType, rowKey, instance } = ev;
     const headerRow = instance?.store?.data?.rawData[rowKey];
@@ -286,7 +270,6 @@ export const PgEqmInsp = () => {
     setSelectedHeaderRow(headerRow);
   };
 
-  /** 디테일 클릭 이벤트 */
   const onClickDetail = ev => {
     const { targetType, rowKey, instance, columnName } = ev;
     if (columnName === 'apply_fg') return;
@@ -297,7 +280,6 @@ export const PgEqmInsp = () => {
     setSelectedDetailRow(detailRow);
   };
 
-  /** 상세 그리드 데이터 세팅 */
   const reloadDetailGrid = async uuid => {
     if (!uuid) return;
 
@@ -317,7 +299,6 @@ export const PgEqmInsp = () => {
     });
   };
 
-  /** 상세 그리드 데이터 세팅 */
   const reloadDetailSubGrid = async uuid => {
     if (!uuid) {
       detailSubGrid.setGridData([]);
@@ -330,10 +311,7 @@ export const PgEqmInsp = () => {
       detailSubGrid.setGridData(res || []);
     });
   };
-  //#endregion
 
-  //#region 🔶조회조건 관리
-  /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
   const detailSearchInfo = null;
   const detailSubSearchInfo = null;
@@ -342,7 +320,6 @@ export const PgEqmInsp = () => {
   const addDataPopupSearchInfo = null;
   const editDataPopupSearchInfo = null;
 
-  /** 조회조건 Event */
   const onSearchHeader = async values => {
     const searchParams: any = cleanupKeyOfObject(
       values,
@@ -377,9 +354,7 @@ export const PgEqmInsp = () => {
     if (uuid == null) return;
     reloadDetailSubGrid(uuid);
   };
-  //#endregion
 
-  //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {
       type: 'text',
@@ -493,9 +468,7 @@ export const PgEqmInsp = () => {
     detailInputInfo?.setValues({});
     detailSubInputInfo?.setValues({});
   };
-  //#endregion
 
-  //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
     if (selectedHeaderRow == null) return;
     detailInputInfo.setValues(selectedHeaderRow);
@@ -518,7 +491,6 @@ export const PgEqmInsp = () => {
 
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
-      // ❗ 세부 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
       addDataPopupInputInfo?.setValues(
         cloneDeep(detailInputInfo.ref.current.values),
       );
@@ -529,7 +501,6 @@ export const PgEqmInsp = () => {
 
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
-      // ❗ 수정 팝업이 켜진 후, detailInfo 데이터를 삽입합니다.
       editDataPopupInputInfo?.setValues(
         cloneDeep(detailInputInfo.ref.current.values),
       );
@@ -543,8 +514,6 @@ export const PgEqmInsp = () => {
     detailSubInputInfo.values,
     detailSubGrid.gridInfo.data,
   ]);
-
-  //#endregion
 
   const onSave = () => {
     const { gridRef, setGridMode } = detailSubGrid;
@@ -569,7 +538,6 @@ export const PgEqmInsp = () => {
       detailSubInputInfo.values,
       modal,
       async res => {
-        // 헤더 그리드 재조회
         const headerRow = cloneDeep(selectedHeaderRow);
         const detailRow = cloneDeep(selectedDetailRow);
 
@@ -594,21 +562,17 @@ export const PgEqmInsp = () => {
     return true;
   };
 
-  //#region 🔶작동될 버튼들의 기능 정의 (By Template)
   const buttonActions = {
-    /** 조회 */
     search: () => {
       onSearchHeader(headerSearchInfo?.values);
     },
 
-    /** 수정 */
     update: () => {
       if (!onCheckUuid()) return;
       setEditInspNo(detailSubInputInfo?.values?.insp_no);
       setEditDataPopupGridVisible(true);
     },
 
-    /** 삭제 */
     delete: () => {
       if (
         getModifiedRows(
@@ -622,29 +586,24 @@ export const PgEqmInsp = () => {
       onSave();
     },
 
-    /** 신규 추가 */
     create: () => {
       setNewDataPopupGridVisible(true);
     },
 
-    /** 상세 신규 추가 */
     createDetail: () => {
       if (!onCheckUuid()) return;
       setAddDataPopupGridVisible(true);
     },
 
-    /** 저장(수정, 삭제) */
     save: () => {
       onSave();
     },
 
-    /** 편집 취소 */
     cancelEdit: () => {
       const { gridRef, setGridMode } = detailGrid;
       const { columns } = detailGrid.gridInfo;
 
       if (detailInputInfo.isModified || isModified(gridRef, columns)) {
-        // 편집 이력이 있는 경우
         modal.confirm({
           title: '편집 취소',
           content: '편집된 이력이 있습니다. 편집을 취소하시겠습니까?',
@@ -659,30 +618,25 @@ export const PgEqmInsp = () => {
           cancelText: '아니오',
         });
       } else {
-        // 편집 이력이 없는 경우
         setGridMode('view');
       }
     },
 
     printExcel: dataGridEvents.printExcel,
   };
-  //#endregion
 
-  /** 신규 저장 이후 수행될 함수 ✅ */
   const onAfterSaveNewData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
     await onReset();
     const headerRow = newDataPopupInputInfo?.values;
 
-    // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then(searchResult => {
       onAfterSaveAction(searchResult, headerRow?.qeuip_uuid, null);
     });
     setNewDataPopupGridVisible(false);
   };
 
-  /** 세부 저장 이후 수행될 함수 ✅ */
   const onAfterSaveAddData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
@@ -690,7 +644,6 @@ export const PgEqmInsp = () => {
     const headerRow = cloneDeep(selectedHeaderRow);
     const detailRow = cloneDeep(selectedDetailRow);
 
-    // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then(searchResult => {
       onAfterSaveAction(
         searchResult,
@@ -701,7 +654,6 @@ export const PgEqmInsp = () => {
     setAddDataPopupGridVisible(false);
   };
 
-  /** 세부항목 수정 이후 수행될 함수 ✅ */
   const onAfterSaveEditData = async (isSuccess, savedData?) => {
     if (!isSuccess) return;
 
@@ -709,7 +661,6 @@ export const PgEqmInsp = () => {
     const headerRow = cloneDeep(selectedHeaderRow);
     const detailRow = cloneDeep(selectedDetailRow);
 
-    // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then(searchResult => {
       onAfterSaveAction(
         searchResult,
@@ -720,7 +671,6 @@ export const PgEqmInsp = () => {
     setEditDataPopupGridVisible(false);
   };
 
-  // 사용자가 저장한 데이터의 결과를 찾아서 보여줍니다.
   const onAfterSaveAction = async (searchResult, header_uuid, detail_uuid) => {
     let selectedHeaderRow = searchResult?.find(
       el => el?.equip_uuid === header_uuid,
@@ -739,10 +689,8 @@ export const PgEqmInsp = () => {
     );
   };
 
-  //#region 🔶 팝업 Footer 관련
   type TPopup = 'new' | 'add' | 'edit' | null;
 
-  /** 기준서 개정 또는 수정 */
   const onAmendInsp = (type: '개정' | '수정', popupType: TPopup) => {
     const grid =
       popupType === 'add'
@@ -783,7 +731,6 @@ export const PgEqmInsp = () => {
     };
 
     if (methodType === 'post') {
-      // post로 저장할 경우 uuid키를 제거
       delete optionSaveParams['uuid'];
       delete optionSaveParams['insp_no'];
 
@@ -826,7 +773,6 @@ export const PgEqmInsp = () => {
     );
   };
 
-  /** 팝업 Footer */
   const popupFooter = () => {
     const popupType: TPopup = addDataPopupGridVisible
       ? 'add'
@@ -885,9 +831,7 @@ export const PgEqmInsp = () => {
       </div>
     );
   };
-  //#endregion
 
-  //#region 🔶템플릿에 값 전달
   const props: ITpTripleGridProps = {
     title,
     dataSaveType: 'headerInclude',
@@ -978,7 +922,6 @@ export const PgEqmInsp = () => {
       },
     },
   };
-  //#endregion
 
   return <TpTripleGrid {...props} />;
 };
