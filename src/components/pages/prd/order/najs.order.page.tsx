@@ -77,6 +77,7 @@ const getDailyWorkPlanModalProps = async ({
     } = {
     columnNames: ModalStore.ORDER_ADD_ROW_POPUP_INFO.columnNames.concat([
       { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
+      { original: 'lv', popup: 'lv' },
     ]),
     columns: ColumnStore.DAILY_WORK_PLAN,
     dataApiSettings: {
@@ -338,10 +339,20 @@ export const PgPrdNajsOrder = () => {
         newGridPopupInfo.data,
       );
 
-      const workerNameSplitedRows = createdRows.map(row => ({
-        ...row,
-        worker_nm: row.worker_nm?.split(',') ?? [],
-      }));
+      const workerNameSplitedRows = createdRows.map(row => {
+        if (row.lv === '0') {
+          return {
+            ...row,
+            worker_nm: row.worker_nm?.split(',') ?? [],
+          };
+        }
+
+        return {
+          ...row,
+          worker_nm: row.worker_nm?.split(',') ?? [],
+          plan_daily_uuid: null,
+        };
+      });
 
       saveGridData(
         {
