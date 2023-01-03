@@ -53,7 +53,7 @@ export const PgEqmInsp = () => {
 
   const onApplyInsp = (ev, props) => {
     const { value, rowKey, grid } = props;
-    const row = grid?.store?.data?.rawData[rowKey];
+    const row = grid?.getRow(rowKey);
 
     const applyUriPath = URL_PATH_EQM.INSP.PUT.APPLY;
     const cancelApplyUriPath = URL_PATH_EQM.INSP.PUT.CANCEL_APPLY;
