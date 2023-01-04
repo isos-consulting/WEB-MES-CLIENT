@@ -13,20 +13,15 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
 
-/** 품목관리 */
 export const PgStdProd = () => {
-  /** 페이지 제목 */
   const title = getPageName();
 
-  /** 모달 DOM */
   const [modal, modalContext] = Modal.useModal();
 
-  /** INIT */
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = '/std/prods';
   const saveUriPath = '/std/prods';
 
-  /** 그리드 상태를 관리 */
   const grid = useGrid(
     'GRID',
     [
@@ -517,7 +512,6 @@ export const PgStdProd = () => {
       },
       gridPopupInfo: [
         {
-          // 품목유형팝업
           columnNames: [
             { original: 'item_type_uuid', popup: 'item_type_uuid' },
             { original: 'item_type_cd', popup: 'item_type_cd' },
@@ -552,7 +546,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 제품유형팝업
           columnNames: [
             { original: 'prod_type_uuid', popup: 'prod_type_uuid' },
             { original: 'prod_type_cd', popup: 'prod_type_cd' },
@@ -586,7 +579,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 모델팝업
           columnNames: [
             { original: 'model_uuid', popup: 'model_uuid' },
             { original: 'model_cd', popup: 'model_cd' },
@@ -620,7 +612,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 단위팝업
           columnNames: [
             { original: 'unit_uuid', popup: 'unit_uuid' },
             { original: 'unit_cd', popup: 'unit_cd' },
@@ -655,7 +646,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // BOM유형팝업
           columnNames: [
             { original: 'bom_type_uuid', popup: 'bom_type_uuid' },
             { original: 'bom_type_cd', popup: 'bom_type_cd' },
@@ -689,7 +679,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 계획유형(MPS/MRP)팝업
           columnNames: [
             { original: 'prd_plan_type_uuid', popup: 'prd_plan_type_uuid' },
             { original: 'prd_plan_type_cd', popup: 'prd_plan_type_cd' },
@@ -723,7 +712,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 창고팝업
           columnNames: [
             { original: 'inv_to_store_uuid', popup: 'store_uuid' },
             { original: 'inv_to_store_cd', popup: 'store_cd' },
@@ -757,7 +745,6 @@ export const PgStdProd = () => {
           gridMode: 'select',
         },
         {
-          // 위치팝업
           columnNames: [
             { original: 'inv_to_location_uuid', popup: 'location_uuid' },
             { original: 'inv_to_location_cd', popup: 'location_cd' },
@@ -826,15 +813,12 @@ export const PgStdProd = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
 
-  /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', null);
 
-  /** 입력상자 관리 */
   const inputInfo = null;
   const newDataPopupInputInfo = null;
   const editDataPopupInputInfo = null;
 
-  /** 검색 */
   const onSearch = values => {
     const searchParams = {};
 
@@ -850,7 +834,6 @@ export const PgStdProd = () => {
       });
   };
 
-  /** UPDATE / DELETE 저장 기능 */
   const onSave = () => {
     const { gridRef, setGridMode } = grid;
     const { columns, saveUriPath } = grid.gridInfo;
@@ -870,19 +853,15 @@ export const PgStdProd = () => {
     );
   };
 
-  /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {
-    /** 조회 */
     search: () => {
       onSearch(searchInfo?.values);
     },
 
-    /** 수정 */
     update: () => {
       setEditDataPopupGridVisible(true);
     },
 
-    /** 삭제 */
     delete: () => {
       if (
         getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows
@@ -894,19 +873,16 @@ export const PgStdProd = () => {
       onSave();
     },
 
-    /** 신규 추가 */
     create: () => {
       newDataPopupInputInfo?.instance?.resetForm();
       newDataPopupGrid?.setGridData([]);
       setNewDataPopupGridVisible(true);
     },
 
-    /** 저장 */
     save: () => {
       onSave();
     },
 
-    /** 편집 취소 */
     cancelEdit: () => {
       const { gridRef, setGridMode } = grid;
       const { columns } = grid.gridInfo;
@@ -916,7 +892,6 @@ export const PgStdProd = () => {
     printExcel: dataGridEvents.printExcel,
   };
 
-  /** 템플릿에 전달할 값 */
   const props: ITpSingleGridProps = {
     title,
     dataSaveType: 'basic',
