@@ -1,9 +1,6 @@
-import { message } from 'antd';
-import Modal from 'antd/lib/modal/Modal';
+import { message, Modal } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
-import { TpTripleGrid } from '~/components/templates/grid-triple/grid-triple.template';
-import ITpTripleGridProps from '~/components/templates/grid-triple/grid-triple.template.type';
 import { Button, useGrid, useSearchbox } from '~/components/UI';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { URL_PATH_EQM, URL_PATH_STD } from '~/enums';
@@ -30,6 +27,9 @@ import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-combobo
 import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
 import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
 import eqmInspNewModalInputboxes from './insp/modal/eqm-insp-new-modal-inputboxes';
+import { EquipInspDetailEditModal } from './insp/modal/equip-insp-detail-edit-modal';
+import { EquipInspDetailNewModal } from './insp/modal/equip-insp-detail-new-modal';
+import { EquipInspNewModal } from './insp/modal/equip-insp-new-modal';
 
 type TPopup = 'new' | 'add' | 'edit' | null;
 
@@ -238,8 +238,6 @@ export const PgEqmInsp = () => {
   };
 
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', []);
-  const detailSearchInfo = null;
-  const detailSubSearchInfo = null;
 
   const newDataPopupSearchInfo = null;
   const addDataPopupSearchInfo = null;
@@ -333,9 +331,9 @@ export const PgEqmInsp = () => {
 
   useLayoutEffect(() => {
     if (addDataPopupGridVisible === true) {
-      addDataPopupInputInfo?.setValues(
-        cloneDeep(detailInputInfo.ref.current.values),
-      );
+      addDataPopupInputInfo?.setValues({
+        ...detailSubInputInfo.ref.current.values,
+      });
     } else {
       addDataPopupInputInfo?.setValues({});
     }
@@ -343,9 +341,9 @@ export const PgEqmInsp = () => {
 
   useLayoutEffect(() => {
     if (editDataPopupGridVisible === true) {
-      editDataPopupInputInfo?.setValues(
-        cloneDeep(detailInputInfo.ref.current.values),
-      );
+      editDataPopupInputInfo?.setValues({
+        ...detailSubInputInfo.ref.current.values,
+      });
       editDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
     } else {
       editDataPopupInputInfo?.setValues({});
@@ -362,7 +360,7 @@ export const PgEqmInsp = () => {
     const { columns, saveUriPath } = detailSubGrid?.gridInfo;
 
     if (
-      !detailInputInfo.isModified &&
+      !detailSubInputInfo.isModified &&
       !isModified(detailSubGrid?.gridRef, detailSubGrid?.gridInfo?.columns)
     ) {
       message.warn('편집된 데이터가 없습니다.');
@@ -377,7 +375,7 @@ export const PgEqmInsp = () => {
         columns,
         saveUriPath,
       },
-      detailSubInputInfo.values,
+      detailSubInputInfo.props.innerRef.current.values,
       modal,
       async res => {
         const headerRow = cloneDeep(selectedHeaderRow);
@@ -465,6 +463,10 @@ export const PgEqmInsp = () => {
     },
 
     printExcel: dataGridEvents.printExcel,
+
+    cancelNewDataPopup: () => {
+      setNewDataPopupGridVisible(false);
+    },
   };
 
   const onAfterSaveNewData = async (isSuccess, savedData?) => {
@@ -574,7 +576,9 @@ export const PgEqmInsp = () => {
       delete optionSaveParams['uuid'];
       delete optionSaveParams['insp_no'];
 
-      modifiedData.createdRows = grid?.gridInstance.getData();
+      modifiedData.createdRows = grid?.gridRef?.current
+        ?.getInstance()
+        ?.getData();
     } else {
       modifiedData = null;
     }
@@ -672,87 +676,6 @@ export const PgEqmInsp = () => {
     );
   };
 
-  const props: ITpTripleGridProps = {
-    title,
-    dataSaveType: 'headerInclude',
-    templateOrientation: 'filledLayoutRight',
-    gridRefs: [
-      headerGrid?.gridRef,
-      detailGrid?.gridRef,
-      detailSubGrid?.gridRef,
-    ],
-    gridInfos: [
-      {
-        ...headerGrid?.gridInfo,
-        onAfterClick: onClickHeader,
-      },
-      {
-        ...detailGrid?.gridInfo,
-        onAfterClick: onClickDetail,
-      },
-      detailSubGrid?.gridInfo,
-    ],
-    popupGridRefs: [
-      newDataPopupGrid?.gridRef,
-      addDataPopupGrid?.gridRef,
-      editDataPopupGrid?.gridRef,
-    ],
-    popupGridInfos: [
-      newDataPopupGrid?.gridInfo,
-      {
-        ...addDataPopupGrid?.gridInfo,
-        saveParams: {},
-        footer: popupFooter(),
-      },
-      {
-        ...editDataPopupGrid?.gridInfo,
-        footer: popupFooter(),
-      },
-    ],
-    searchProps: [
-      {
-        ...headerSearchInfo?.props,
-        onSearch: onSearchHeader,
-      },
-      {
-        ...detailSearchInfo?.props,
-        onSearch: () => onSearchDetail(selectedHeaderRow?.equip_uuid),
-      },
-      {
-        ...detailSubSearchInfo?.props,
-        onSearch: () => onSearchDetailSub(selectedDetailRow?.insp_uuid),
-      },
-    ],
-    inputProps: [null, null, null],
-    popupVisibles: [
-      newDataPopupGridVisible,
-      addDataPopupGridVisible,
-      editDataPopupGridVisible,
-    ],
-    setPopupVisibles: [
-      setNewDataPopupGridVisible,
-      setAddDataPopupGridVisible,
-      setEditDataPopupGridVisible,
-    ],
-    popupSearchProps: [
-      newDataPopupSearchInfo?.props,
-      addDataPopupSearchInfo?.props,
-      editDataPopupSearchInfo?.props,
-    ],
-    popupInputProps: [
-      newDataPopupInputInfo?.props,
-      addDataPopupInputInfo?.props,
-      editDataPopupInputInfo?.props,
-    ],
-
-    buttonActions,
-    modalContext,
-
-    onAfterOkNewDataPopup: onAfterSaveNewData,
-    onAfterOkEditDataPopup: onAfterSaveEditData,
-    onAfterOkAddDataPopup: onAfterSaveAddData,
-  };
-
   return (
     <>
       <div style={{ display: 'flex', gap: '10px' }}>
@@ -788,9 +711,76 @@ export const PgEqmInsp = () => {
           />
         </div>
       </div>
-      <div style={{ display: 'none' }}>
-        <TpTripleGrid {...props} />;
-      </div>
+      <EquipInspNewModal
+        gridId={newDataPopupGrid.gridInfo.gridId}
+        title={`${title} - 신규 항목 추가`}
+        visible={newDataPopupGridVisible}
+        onAfterApiExecuted={onAfterSaveNewData}
+        onCancel={buttonActions.cancelNewDataPopup}
+        modalRef={newDataPopupGrid?.gridRef}
+        parentGridRef={headerGrid?.gridRef}
+        gridMode="create"
+        defaultData={[]}
+        columns={newDataPopupGrid.gridInfo.columns}
+        searchUriPath={newDataPopupGrid.gridInfo.searchUriPath}
+        searchParams={newDataPopupGrid.gridInfo.searchParams}
+        saveUriPath={newDataPopupGrid.gridInfo.saveUriPath}
+        saveParams={newDataPopupGrid.gridInfo.saveParams}
+        searchProps={newDataPopupSearchInfo?.props}
+        inputProps={newDataPopupInputInfo.props}
+        gridComboInfo={newDataPopupGrid.gridInfo.gridComboInfo}
+        gridPopupInfo={newDataPopupGrid.gridInfo.gridPopupInfo}
+        rowAddPopupInfo={newDataPopupGrid.gridInfo.rowAddPopupInfo}
+      />
+      <EquipInspDetailNewModal
+        gridId={addDataPopupGrid.gridInfo.gridId}
+        title={`${title} -세부 항목 추가`}
+        visible={addDataPopupGridVisible}
+        onAfterApiExecuted={onAfterSaveAddData}
+        onCancel={() => {
+          setAddDataPopupGridVisible(false);
+        }}
+        modalRef={addDataPopupGrid?.gridRef}
+        parentGridRef={detailGrid?.gridRef}
+        gridMode="create"
+        defaultData={[]}
+        columns={addDataPopupGrid.gridInfo.columns}
+        searchUriPath={addDataPopupGrid.gridInfo.searchUriPath}
+        searchParams={addDataPopupGrid.gridInfo.searchParams}
+        saveUriPath={addDataPopupGrid.gridInfo.saveUriPath}
+        saveParams={{}}
+        searchProps={addDataPopupSearchInfo?.props}
+        inputProps={addDataPopupInputInfo.props}
+        gridComboInfo={addDataPopupGrid.gridInfo.gridComboInfo}
+        gridPopupInfo={addDataPopupGrid.gridInfo.gridPopupInfo}
+        rowAddPopupInfo={addDataPopupGrid.gridInfo.rowAddPopupInfo}
+        popupFooter={popupFooter()}
+      />
+      <EquipInspDetailEditModal
+        gridId={editDataPopupGrid.gridInfo.gridId}
+        title={`${title} -수정 / 개정`}
+        visible={editDataPopupGridVisible}
+        onAfterApiExecuted={onAfterSaveEditData}
+        onCancel={() => {
+          setEditDataPopupGridVisible(false);
+        }}
+        modalRef={editDataPopupGrid?.gridRef}
+        parentGridRef={detailGrid?.gridRef}
+        gridMode="update"
+        defaultData={detailSubGrid.gridInfo.data}
+        columns={editDataPopupGrid.gridInfo.columns}
+        searchUriPath={editDataPopupGrid.gridInfo.searchUriPath}
+        searchParams={editDataPopupGrid.gridInfo.searchParams}
+        saveUriPath={editDataPopupGrid.gridInfo.saveUriPath}
+        saveParams={{}}
+        searchProps={editDataPopupSearchInfo?.props}
+        inputProps={editDataPopupInputInfo.props}
+        gridComboInfo={editDataPopupGrid.gridInfo.gridComboInfo}
+        gridPopupInfo={editDataPopupGrid.gridInfo.gridPopupInfo}
+        rowAddPopupInfo={editDataPopupGrid.gridInfo.rowAddPopupInfo}
+        popupFooter={popupFooter()}
+      />
+      {modalContext}
     </>
   );
 };
