@@ -575,9 +575,6 @@ export const PgEqmInsp = () => {
     };
 
     if (methodType === 'post') {
-      delete optionSaveParams['uuid'];
-      delete optionSaveParams['insp_no'];
-
       modifiedData.createdRows = grid?.gridRef?.current
         ?.getInstance()
         ?.getData();
