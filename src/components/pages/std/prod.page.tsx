@@ -432,6 +432,15 @@ export const PgStdProd = () => {
         filter: 'text',
         editable: true,
       },
+      {
+        header: '생산원가',
+        name: 'work_price',
+        width: ENUM_WIDTH.M,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
+        filter: 'text',
+        editable: true,
+      },
     ],
     {
       searchUriPath: searchUriPath,
