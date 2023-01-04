@@ -114,13 +114,7 @@ export const PgEqmInsp = () => {
         onAsyncFunction(onClickHeader, {
           targetType: 'cell',
           rowKey: headerRow?.rowKey || 0,
-          instance: {
-            store: {
-              data: {
-                rawData: res,
-              },
-            },
-          },
+          instance: headerGrid.gridRef.current.getInstance(),
         });
       })
       .finally(() => {
@@ -192,16 +186,24 @@ export const PgEqmInsp = () => {
     gridPopupInfo: eqmInspModalGridPopups,
   });
 
-  const onClickHeader = ({ targetType, rowKey, instance }) => {
+  const onClickHeader = ({ targetType, rowKey, instance, ...rest }) => {
     if (targetType !== 'cell') return;
 
+    console.log({ instance, rest });
     setSelectedHeaderRow(instance?.getRow(rowKey));
   };
 
-  const onClickDetail = ({ targetType, rowKey, instance, columnName }) => {
+  const onClickDetail = ({
+    targetType,
+    rowKey,
+    instance,
+    columnName,
+    ...rest
+  }) => {
     if (columnName === 'apply_fg') return;
     if (targetType !== 'cell') return;
 
+    console.log({ instance, rest });
     setSelectedDetailRow(instance?.getRow(rowKey));
   };
 
