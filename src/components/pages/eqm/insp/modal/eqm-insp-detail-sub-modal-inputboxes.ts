@@ -36,7 +36,7 @@ export default [
       },
     },
   },
-  { type: 'text', id: 'equip_cd', label: '설비', disabled: true },
+  { type: 'text', id: 'equip_nm', label: '설비', disabled: true },
   { type: 'text', id: 'insp_no', label: '기준서 번호', disabled: true },
   {
     type: 'date',
