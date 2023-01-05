@@ -23,28 +23,8 @@ import {
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
 import eqmInspResultGridPopups from './insp/result/eqm-insp-result-grid-popups';
-
-const SAVE_DATA = {
-  post: [
-    'factory_uuid',
-    'insp_detail_uuid',
-    'emp_uuid',
-    'emp_nm',
-    'insp_value',
-    'insp_result_fg',
-    'remark',
-  ],
-  put: [
-    'insp_result_uuid',
-    'emp_uuid',
-    'emp_nm',
-    'reg_date',
-    'insp_value',
-    'insp_result_fg',
-    'remark',
-  ],
-  del: ['insp_result_uuid'],
-};
+import eqmInspResultEditModalColumns from './insp/result/modal/eqm-insp-result-edit-modal-columns';
+import eqmInspResultNewModalColumns from './insp/result/modal/eqm-insp-result-new-modal-columns';
 
 export const PgEqmInspResult = () => {
   const title = getPageName();
@@ -68,94 +48,29 @@ export const PgEqmInspResult = () => {
     gridComboInfo: eqmInspResultGridComboboxes,
   });
 
-  const newDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.map(
-    column => {
-      if (SAVE_DATA.post.includes(column?.name)) {
-        column['noSave'] = false;
-        column['editable'] = true;
-      }
-
-      if (['reg_date'].includes(column?.name)) {
-        column['hidden'] = true;
-      }
-
-      if (['insp_result_fg'].includes(column?.name)) {
-        column['editable'] = false;
-      }
-
-      if (['emp_nm'].includes(column?.name)) {
-        column['editable'] = true;
-      }
-
-      if (['emp_nm', 'insp_value', 'insp_result_fg'].includes(column?.name)) {
-        column['requiredField'] = true;
-      }
-
-      if (['equip_type_nm', 'equip_nm'].includes(column?.name)) {
-        column['hidden'] = true;
-      }
-
-      return column;
-    },
-  );
-
   const [newDataSaveParams, setNewDataSaveParams] = useState();
+
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
-    newDataPopupGridColumns,
+    eqmInspResultNewModalColumns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo.gridPopupInfo,
-      gridComboInfo: grid.gridInfo.gridComboInfo,
+      gridPopupInfo: eqmInspResultGridPopups,
+      gridComboInfo: eqmInspResultGridComboboxes,
       saveParams: newDataSaveParams,
       hiddenActionButtons: true,
     },
   );
 
-  const editDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.map(
-    column => {
-      if (SAVE_DATA.put.includes(column?.name)) {
-        column['noSave'] = false;
-        column['editable'] = true;
-      }
-
-      if (['reg_date'].includes(column?.name)) {
-        column['editable'] = false;
-      }
-
-      if (['insp_result_fg'].includes(column?.name)) {
-        column['editable'] = false;
-      }
-
-      if (['emp_nm'].includes(column?.name)) {
-        column['editable'] = true;
-      }
-
-      if (
-        ['emp_nm', 'reg_date', 'insp_value', 'insp_result_fg'].includes(
-          column?.name,
-        )
-      ) {
-        column['requiredField'] = true;
-      }
-
-      if (['equip_type_nm', 'equip_nm'].includes(column?.name)) {
-        column['hidden'] = false;
-      }
-
-      return column;
-    },
-  );
-
   const editDataPopupGrid = useGrid(
     'EDIT_POPUP_GRID',
-    editDataPopupGridColumns,
+    eqmInspResultEditModalColumns,
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      gridPopupInfo: grid.gridInfo.gridPopupInfo,
-      gridComboInfo: grid.gridInfo.gridComboInfo,
+      gridPopupInfo: eqmInspResultGridPopups,
+      gridComboInfo: eqmInspResultGridComboboxes,
       hiddenActionButtons: true,
     },
   );
