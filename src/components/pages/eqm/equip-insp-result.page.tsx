@@ -1,7 +1,5 @@
-import { message } from 'antd';
-import { Modal } from 'antd';
-import dayjs from 'dayjs';
-import React, { useLayoutEffect, useEffect, useState } from 'react';
+import { message, Modal } from 'antd';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import {
