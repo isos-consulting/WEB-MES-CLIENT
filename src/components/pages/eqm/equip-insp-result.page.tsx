@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { Modal } from 'antd';
-import React, { useLayoutEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import {
@@ -16,6 +17,7 @@ import {
   getData,
   getModifiedRows,
   getPageName,
+  getToday,
 } from '~/functions';
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
@@ -76,10 +78,114 @@ export const PgEqmInspResult = () => {
 
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', eqmInspResultSearchboxes);
 
-  const inputInfo = null;
+  const createEquipInspResultNewModalInputValues = () => ({
+    reg_date: getToday(),
+    equip_nm: null,
+    equip_uuid: null,
+    insp_type: 'daily',
+  });
+
+  const [
+    equipInspResultNewModalInputValues,
+    setEquipInspResultNewModalInputValues,
+  ] = useState(createEquipInspResultNewModalInputValues);
+
+  const updateEquipRegDate = updatedRegDate => {
+    setEquipInspResultNewModalInputValues(beforeUpdatedInputValues => {
+      return {
+        ...beforeUpdatedInputValues,
+        reg_date: dayjs(updatedRegDate).format('YYYY-MM-DD'),
+      };
+    });
+  };
+
+  const updateEquipPopupData = selectedEquipment => {
+    setEquipInspResultNewModalInputValues(beforeUpdatedInputValues => {
+      return {
+        ...beforeUpdatedInputValues,
+        equip_uuid: selectedEquipment.equip_uuid,
+        equip_nm: selectedEquipment.equip_nm,
+      };
+    });
+  };
+
+  const updateInspectionType = selectedInspectionType => {
+    setEquipInspResultNewModalInputValues(beforeUpdatedInputValues => {
+      return {
+        ...beforeUpdatedInputValues,
+        insp_type: selectedInspectionType,
+      };
+    });
+  };
+
+  const getEquipInspectionDatas = async (equip_uuid, insp_type) => {
+    const equipInspection = await getData(
+      { equip_uuid, apply_fg: true },
+      '/eqm/insps',
+    );
+
+    if (equipInspection.length > 0) {
+      const { insp_uuid } = equipInspection[0];
+
+      const { details } = (await getData(
+        { insp_type },
+        `/eqm/insp/${insp_uuid}/include-details`,
+        'header-details',
+      )) as { header: any; details: any };
+
+      const equipInspectionItems = details.map(row => ({
+        ...row,
+        _edit: EDIT_ACTION_CODE.CREATE,
+      }));
+
+      newDataPopupGrid?.setGridData(equipInspectionItems);
+    } else {
+      newDataPopupGrid?.setGridData([]);
+    }
+  };
+
+  useEffect(() => {
+    const { equip_uuid, insp_type } = equipInspResultNewModalInputValues;
+
+    if (equip_uuid == null) return;
+
+    getEquipInspectionDatas(equip_uuid, insp_type);
+  }, [equipInspResultNewModalInputValues]);
+
+  useEffect(() => {
+    setEquipInspResultNewModalInputValues(
+      createEquipInspResultNewModalInputValues,
+    );
+  }, [newDataPopupGridVisible]);
+
+  const allocatedEqmInspResultNewModalInputboxes =
+    eqmInspResultNewModalInputboxes.map(inputbox => {
+      if (inputbox.name === 'reg_date') {
+        return {
+          ...inputbox,
+          default: equipInspResultNewModalInputValues.reg_date,
+          onAfterChange: updateEquipRegDate,
+        };
+      }
+
+      if (inputbox.name === 'equip_nm') {
+        return {
+          ...inputbox,
+          default: equipInspResultNewModalInputValues.equip_nm,
+          handleChange: updateEquipPopupData,
+        };
+      }
+
+      return {
+        ...inputbox,
+        default: equipInspResultNewModalInputValues.insp_type,
+        onAfterChange: updateInspectionType,
+      };
+    });
+
   const newDataPopupInputInfo = useInputGroup(
     'EDOT_DATA_POPUP_INPUT_BOX',
-    eqmInspResultNewModalInputboxes,
+    allocatedEqmInspResultNewModalInputboxes,
   );
 
   const changeNewDataPopupInputValues = async values => {
@@ -113,10 +219,7 @@ export const PgEqmInspResult = () => {
       searchParams.equip_uuid = null;
     }
 
-    getData(searchParams, searchUriPath).then(res => {
-      inputInfo?.instance?.resetForm();
-      grid.setGridData(res);
-    });
+    getData(searchParams, searchUriPath).then(grid.setGridData);
   };
 
   const onSave = () => {
@@ -132,7 +235,7 @@ export const PgEqmInspResult = () => {
         saveUriPath,
         defaultGridMode,
       },
-      inputInfo?.values,
+      null,
       modal,
       () => onSearch(searchInfo?.values),
     );
@@ -166,9 +269,7 @@ export const PgEqmInspResult = () => {
       setNewDataPopupGridVisible(true);
     },
 
-    save: () => {
-      onSave();
-    },
+    save: () => null,
 
     cancelEdit: () => {
       const { gridRef, setGridMode } = grid;

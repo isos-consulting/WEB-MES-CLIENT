@@ -9,7 +9,6 @@ export default [
     alias: 'uuid',
     width: ENUM_WIDTH.L,
     hidden: true,
-    noSave: true,
   },
   {
     header: '설비검사 기준서 번호',
