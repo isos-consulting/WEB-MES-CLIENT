@@ -1,6 +1,5 @@
 import { message } from 'antd';
-import Modal from 'antd/lib/modal/Modal';
-import { cloneDeep } from 'lodash';
+import { Modal } from 'antd';
 import React, { useLayoutEffect, useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
@@ -83,28 +82,24 @@ export const PgEqmInspResult = () => {
     eqmInspResultNewModalInputboxes,
   );
 
-  async function changeNewDataPopupInputValues(values) {
-    if (
-      values?.['equip_uuid'] === undefined ||
-      values?.['insp_type'] === undefined
-    )
-      return;
+  const changeNewDataPopupInputValues = async values => {
+    if (values == null) return;
+    if (values.equip_uuid == null) return;
+    if (values.insp_type == null) return;
 
-    const data = await getData(
-      {
-        equip_uuid: values?.['equip_uuid'],
-        insp_type: values?.['insp_type'],
-      },
+    const data = (await getData(
+      values,
       '/eqm/insps/include-details-by-equip',
       'header-details',
-    );
+    )) as { details?: any[] };
 
-    const details = data?.['details'].map(row => ({
+    const details = data?.details.map(row => ({
       ...row,
       _edit: EDIT_ACTION_CODE.CREATE,
     }));
+
     newDataPopupGrid?.setGridData(details);
-  }
+  };
 
   useLayoutEffect(() => {
     setNewDataSaveParams(newDataPopupInputInfo.values);
@@ -112,22 +107,16 @@ export const PgEqmInspResult = () => {
   }, [newDataPopupInputInfo.values]);
 
   const onSearch = values => {
-    let temp = cloneDeep(values);
-    if (temp?.['equip_uuid'] === 'all') {
-      temp['equip_uuid'] = null;
+    const searchParams = { ...values };
+
+    if (searchParams.equip_uuid === 'all') {
+      searchParams.equip_uuid = null;
     }
 
-    const searchParams = temp;
-
-    let data = [];
-    getData(searchParams, searchUriPath)
-      .then(res => {
-        data = res;
-      })
-      .finally(() => {
-        inputInfo?.instance?.resetForm();
-        grid.setGridData(data);
-      });
+    getData(searchParams, searchUriPath).then(res => {
+      inputInfo?.instance?.resetForm();
+      grid.setGridData(res);
+    });
   };
 
   const onSave = () => {
@@ -159,10 +148,12 @@ export const PgEqmInspResult = () => {
     },
 
     delete: () => {
-      if (
-        getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows
-          ?.length === 0
-      ) {
+      const { deletedRows } = getModifiedRows(
+        grid.gridRef,
+        grid.gridInfo.columns,
+      );
+
+      if (deletedRows?.length === 0) {
         message.warn('편집된 데이터가 없습니다.');
         return;
       }
