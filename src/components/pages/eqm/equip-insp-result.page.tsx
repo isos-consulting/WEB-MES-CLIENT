@@ -1,4 +1,9 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { TpSingleGrid } from '~/components/templates';
+import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import {
   EDIT_ACTION_CODE,
   getPopupForm,
@@ -6,62 +11,18 @@ import {
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { URL_PATH_EQM } from '~/enums';
 import {
   dataGridEvents,
   getData,
-  getInspCheckResultValue,
   getModifiedRows,
   getPageName,
   getToday,
-  isNumber,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH, URL_PATH_EQM } from '~/enums';
-import { message } from 'antd';
-import { cloneDeep } from 'lodash';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-
-// 검사값 판정
-const inspValueFormula = (params, props) => {
-  const { value, targetValues, columnName, rowKey } = params;
-  const instance = props?.parentGridRef?.current?.getInstance();
-
-  const specMin = targetValues['spec_min'];
-  const specMax = targetValues['spec_max'];
-  let nullFg: boolean = true;
-  let resultFg: boolean = true;
-
-  [nullFg, resultFg] = getInspCheckResultValue(value, { specMin, specMax });
-
-  console.log(nullFg, resultFg);
-  const cellFlagResultValue = nullFg ? null : resultFg;
-  console.log('cellFlagResultValue', cellFlagResultValue);
-
-  if (!isNumber(specMin) && !isNumber(specMax)) {
-    if (resultFg === true) {
-      instance?.setValue(rowKey, columnName, 'OK');
-    } else if (resultFg === false) {
-      instance?.setValue(rowKey, columnName, 'NG');
-    }
-  }
-
-  return cellFlagResultValue;
-};
-
-const inspResultCondition = [
-  {
-    value: false,
-    text: '불합격',
-    color: 'red',
-  },
-  {
-    value: true,
-    text: '합격',
-    color: 'blue',
-  },
-];
+import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
+import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
+import eqmInspResultGridPopups from './insp/result/eqm-insp-result-grid-popups';
 
 const SAVE_DATA = {
   post: [
@@ -106,344 +67,13 @@ export const PgEqmInspResult = () => {
     useState<boolean>(false);
 
   /** 그리드 상태를 관리 */
-  const grid = useGrid(
-    'GRID',
-    [
-      {
-        header: '설비검사 성적서UUID',
-        name: 'insp_result_uuid',
-        alias: 'uuid',
-        width: ENUM_WIDTH.L,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비검사 기준서 번호',
-        name: 'insp_no',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비검사 기준서 상세UUID',
-        name: 'insp_detail_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '상세기준서번호',
-        name: 'insp_no_sub',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사항목 유형UUID',
-        name: 'insp_item_type_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사항목 유형코드',
-        name: 'insp_item_type_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사항목 유형',
-        name: 'insp_item_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사항목 상세내용',
-        name: 'insp_item_desc',
-        width: ENUM_WIDTH.XL,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사 기준',
-        name: 'spec_std',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '최소 값',
-        name: 'spec_min',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '최대 값',
-        name: 'spec_max',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사구UUID',
-        name: 'insp_tool_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사구코드',
-        name: 'insp_tool_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사구',
-        name: 'insp_tool_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사방법UUID',
-        name: 'insp_method_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사방법코드',
-        name: 'insp_method_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사방법',
-        name: 'insp_method_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '일상점검주기UUID',
-        name: 'daily_insp_cycle_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '일상점검주기코드',
-        name: 'daily_insp_cycle_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '일상점검주기',
-        name: 'daily_insp_cycle_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '주기단위UUID',
-        name: 'cycle_unit_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '주기단위코드',
-        name: 'cycle_unit_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '주기단위',
-        name: 'cycle_unit_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '주기 기준일',
-        name: 'base_date',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '점검주기',
-        name: 'cycle',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '설비유형UUID',
-        name: 'equip_type_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비유형코드',
-        name: 'equip_type_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비유형',
-        name: 'equip_type_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '설비UUID',
-        name: 'equip_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비코드',
-        name: 'equip_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '설비',
-        name: 'equip_nm',
-        width: ENUM_WIDTH.XL,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사자UUID',
-        name: 'emp_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사자코드',
-        name: 'emp_cd',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        noSave: true,
-      },
-      {
-        header: '검사자',
-        name: 'emp_nm',
-        width: ENUM_WIDTH.M,
-        format: 'popup',
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '등록일시',
-        name: 'reg_date',
-        width: ENUM_WIDTH.L,
-        format: 'date',
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '검사 값',
-        name: 'insp_value',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-        formula: {
-          targetColumnNames: ['spec_min', 'spec_max'],
-          resultColumnName: 'insp_result_fg',
-          formula: inspValueFormula,
-        },
-      },
-      {
-        header: '합격여부',
-        name: 'insp_result_fg',
-        width: ENUM_WIDTH.M,
-        format: 'tag',
-        options: { conditions: inspResultCondition },
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '비고',
-        name: 'remark',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-    ],
-    {
-      searchUriPath: searchUriPath,
-      saveUriPath: saveUriPath,
-      gridMode: defaultGridMode,
-      gridPopupInfo: [
-        {
-          // 검사자
-          columnNames: [
-            { original: 'emp_uuid', popup: 'emp_uuid' },
-            { original: 'emp_nm', popup: 'emp_nm' },
-          ],
-          columns: [
-            {
-              header: '사원UUID',
-              name: 'emp_uuid',
-              width: ENUM_WIDTH.L,
-              filter: 'text',
-              hidden: true,
-            },
-            {
-              header: '사원명',
-              name: 'emp_nm',
-              width: ENUM_WIDTH.M,
-              filter: 'text',
-            },
-          ],
-          dataApiSettings: {
-            uriPath: '/std/emps',
-            params: {
-              emp_status: 'incumbent',
-            },
-          },
-          gridMode: 'select',
-        },
-      ],
-      gridComboInfo: [
-        // 합격여부
-        {
-          columnNames: [
-            {
-              codeColName: {
-                original: 'insp_result_fg',
-                popup: 'insp_result_fg',
-              },
-              textColName: {
-                original: 'insp_result_state',
-                popup: 'insp_result_state',
-              },
-            },
-          ],
-          itemList: [
-            { code: false, text: '불합격' },
-            { code: true, text: '합격' },
-          ],
-        },
-      ],
-    },
-  );
+  const grid = useGrid('GRID', eqmInspResultColumns, {
+    searchUriPath: searchUriPath,
+    saveUriPath: saveUriPath,
+    gridMode: defaultGridMode,
+    gridPopupInfo: eqmInspResultGridPopups,
+    gridComboInfo: eqmInspResultGridComboboxes,
+  });
 
   const newDataPopupGridColumns = cloneDeep(grid.gridInfo.columns)?.map(
     column => {
