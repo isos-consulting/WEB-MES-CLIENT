@@ -290,7 +290,7 @@ export default [
     },
   },
   {
-    header: '검사 값',
+    header: '실제 검사 값(UI에 보이지 않음)',
     name: 'insp_value',
     width: ENUM_WIDTH.M,
     filter: 'text',

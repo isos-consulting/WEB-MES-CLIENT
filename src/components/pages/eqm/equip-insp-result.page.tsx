@@ -18,6 +18,7 @@ import {
   getModifiedRows,
   getPageName,
   getToday,
+  isNumber,
 } from '~/functions';
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
@@ -219,7 +220,38 @@ export const PgEqmInspResult = () => {
       searchParams.equip_uuid = null;
     }
 
-    getData(searchParams, searchUriPath).then(grid.setGridData);
+    getData(searchParams, searchUriPath).then(
+      equipInspectionResultResponses => {
+        const equipInspectionResults = equipInspectionResultResponses.map(
+          ({
+            insp_value,
+            spec_min,
+            spec_max,
+            ...equipInspectionResultRest
+          }) => {
+            if (!isNumber(spec_min) && !isNumber(spec_max)) {
+              const insp_ui_value = insp_value === '1' ? 'OK' : 'NG';
+              return {
+                insp_ui_value,
+                insp_value,
+                spec_min,
+                spec_max,
+                ...equipInspectionResultRest,
+              };
+            }
+
+            return {
+              insp_ui_value: insp_value,
+              insp_value,
+              spec_min,
+              spec_max,
+              ...equipInspectionResultRest,
+            };
+          },
+        );
+        grid.setGridData(equipInspectionResults);
+      },
+    );
   };
 
   const onSave = () => {

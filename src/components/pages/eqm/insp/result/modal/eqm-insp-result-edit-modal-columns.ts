@@ -261,7 +261,7 @@ export default [
   },
   {
     header: '검사 값',
-    name: 'insp_value',
+    name: 'insp_ui_value',
     width: ENUM_WIDTH.M,
     filter: 'text',
     noSave: false,
@@ -269,32 +269,66 @@ export default [
     requiredField: true,
     formula: {
       targetColumnNames: ['spec_min', 'spec_max'],
-      resultColumnName: 'insp_result_fg',
-      formula: (params, props) => {
-        const { value, targetValues, columnName, rowKey } = params;
-        const instance = props?.parentGridRef?.current?.getInstance();
+      resultColumnName: 'insp_value',
+      formula: params => {
+        const { value, targetValues } = params;
 
         const specMin = targetValues['spec_min'];
         const specMax = targetValues['spec_max'];
-        let nullFg: boolean = true;
-        let resultFg: boolean = true;
-
-        [nullFg, resultFg] = getInspCheckResultValue(value, {
-          specMin,
-          specMax,
-        });
-
-        const cellFlagResultValue = nullFg ? null : resultFg;
 
         if (!isNumber(specMin) && !isNumber(specMax)) {
-          if (resultFg === true) {
-            instance?.setValue(rowKey, columnName, 'OK');
-          } else if (resultFg === false) {
-            instance?.setValue(rowKey, columnName, 'NG');
+          if (value === '') {
+            return value;
           }
+          if (value?.toLowerCase() === 'ok') {
+            return 1;
+          }
+          return 0;
         }
 
-        return cellFlagResultValue;
+        return value;
+      },
+    },
+  },
+  {
+    header: '실제 검사 값(UI에 보이지 않음)',
+    name: 'insp_value',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+    noSave: false,
+    editable: true,
+    requiredField: true,
+    hidden: true,
+    formula: {
+      targetColumnNames: ['spec_min', 'spec_max'],
+      resultColumnName: 'insp_result_fg',
+      formula: params => {
+        const { value, targetValues } = params;
+
+        const specMin = targetValues['spec_min'];
+        const specMax = targetValues['spec_max'];
+        const isNotNumber = !isNumber(specMin) && !isNumber(specMax);
+
+        if (isNotNumber) {
+          const inspValue = value === 1 ? 'OK' : value === 0 ? 'NG' : value;
+          const [nullFg, resultFg] = getInspCheckResultValue(inspValue, {
+            specMin,
+            specMax,
+          });
+
+          const cellFlagResultValue = nullFg ? null : resultFg;
+
+          return cellFlagResultValue;
+        } else {
+          const [nullFg, resultFg] = getInspCheckResultValue(value, {
+            specMin,
+            specMax,
+          });
+
+          const cellFlagResultValue = nullFg ? null : resultFg;
+
+          return cellFlagResultValue;
+        }
       },
     },
   },
