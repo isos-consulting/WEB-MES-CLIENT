@@ -1,12 +1,10 @@
 import { getPopupForm } from '~/components/UI';
 import { IInputGroupboxItem } from '~/components/UI/input-groupbox';
-import { getToday } from '~/functions';
 
 export default [
   {
     id: 'reg_date',
     name: 'reg_date',
-    default: getToday(),
     type: 'date',
     label: '검사일',
   },
@@ -36,7 +34,7 @@ export default [
     name: 'insp_type',
     type: 'combo',
     label: '검사유형',
-    firstItemType: 'empty',
+    firstItemType: 'none',
     options: [
       {
         code: 'daily',
