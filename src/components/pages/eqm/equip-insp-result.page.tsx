@@ -28,10 +28,8 @@ const SAVE_DATA = {
   post: [
     'factory_uuid',
     'insp_detail_uuid',
-    // 'equip_uuid',
     'emp_uuid',
     'emp_nm',
-    // 'reg_date',
     'insp_value',
     'insp_result_fg',
     'remark',
@@ -48,15 +46,11 @@ const SAVE_DATA = {
   del: ['insp_result_uuid'],
 };
 
-/** 설비점검성적서 */
 export const PgEqmInspResult = () => {
-  /** 페이지 제목 */
   const title = getPageName();
 
-  /** 모달 DOM */
   const [modal, modalContext] = Modal.useModal();
 
-  /** INIT */
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath = URL_PATH_EQM.INSP_RESULT.GET.INSP_RESULTS;
   const saveUriPath = URL_PATH_EQM.INSP_RESULT.POST.INSP_RESULTS;
@@ -66,7 +60,6 @@ export const PgEqmInspResult = () => {
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
     useState<boolean>(false);
 
-  /** 그리드 상태를 관리 */
   const grid = useGrid('GRID', eqmInspResultColumns, {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
@@ -167,7 +160,6 @@ export const PgEqmInspResult = () => {
     },
   );
 
-  /** 조회조건 관리 */
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
     {
       id: 'reg_date',
@@ -213,7 +205,6 @@ export const PgEqmInspResult = () => {
     },
   ]);
 
-  /** 입력상자 관리 */
   const inputInfo = null;
   const newDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', [
     {
@@ -241,9 +232,6 @@ export const PgEqmInspResult = () => {
         },
         modalSettings: {
           title: '설비관리',
-          // onOk: (ev) => {
-          //   console.log('왜안타ㅏ', ev);
-          // }
         },
       },
     },
@@ -295,9 +283,6 @@ export const PgEqmInspResult = () => {
     changeNewDataPopupInputValues(newDataPopupInputInfo.values);
   }, [newDataPopupInputInfo.values]);
 
-  /** 액션 관리 */
-
-  /** 검색 */
   const onSearch = values => {
     let temp = cloneDeep(values);
     if (temp?.['equip_uuid'] === 'all') {
@@ -317,7 +302,6 @@ export const PgEqmInspResult = () => {
       });
   };
 
-  /** UPDATE / DELETE 저장 기능 */
   const onSave = () => {
     const { gridRef, setGridMode } = grid;
     const { columns, saveUriPath } = grid.gridInfo;
@@ -337,19 +321,15 @@ export const PgEqmInspResult = () => {
     );
   };
 
-  /** 템플릿에서 작동될 버튼들의 기능 정의 */
   const buttonActions = {
-    /** 조회 */
     search: () => {
       onSearch(searchInfo?.values);
     },
 
-    /** 수정 */
     update: () => {
       setEditDataPopupGridVisible(true);
     },
 
-    /** 삭제 */
     delete: () => {
       if (
         getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows
@@ -361,19 +341,16 @@ export const PgEqmInspResult = () => {
       onSave();
     },
 
-    /** 신규 추가 */
     create: () => {
       newDataPopupInputInfo?.instance?.resetForm();
       newDataPopupGrid?.setGridData([]);
       setNewDataPopupGridVisible(true);
     },
 
-    /** 저장 */
     save: () => {
       onSave();
     },
 
-    /** 편집 취소 */
     cancelEdit: () => {
       const { gridRef, setGridMode } = grid;
       const { columns } = grid.gridInfo;
@@ -383,7 +360,6 @@ export const PgEqmInspResult = () => {
     printExcel: dataGridEvents.printExcel,
   };
 
-  /** 템플릿에 전달할 값 */
   const props: ITpSingleGridProps = {
     title,
     dataSaveType: 'basic',
