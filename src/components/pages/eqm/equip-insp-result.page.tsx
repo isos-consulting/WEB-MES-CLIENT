@@ -80,7 +80,6 @@ export const PgEqmInspResult = () => {
   const searchInfo = useSearchbox('SEARCH_INPUTBOX', eqmInspResultSearchboxes);
 
   const createEquipInspResultNewModalInputValues = () => ({
-    reg_date: getToday(),
     equip_nm: null,
     equip_uuid: null,
     insp_type: 'daily',
@@ -90,15 +89,6 @@ export const PgEqmInspResult = () => {
     equipInspResultNewModalInputValues,
     setEquipInspResultNewModalInputValues,
   ] = useState(createEquipInspResultNewModalInputValues);
-
-  const updateEquipRegDate = updatedRegDate => {
-    setEquipInspResultNewModalInputValues(beforeUpdatedInputValues => {
-      return {
-        ...beforeUpdatedInputValues,
-        reg_date: dayjs(updatedRegDate).format('YYYY-MM-DD'),
-      };
-    });
-  };
 
   const updateEquipPopupData = selectedEquipment => {
     setEquipInspResultNewModalInputValues(beforeUpdatedInputValues => {
@@ -164,8 +154,7 @@ export const PgEqmInspResult = () => {
       if (inputbox.name === 'reg_date') {
         return {
           ...inputbox,
-          default: equipInspResultNewModalInputValues.reg_date,
-          onAfterChange: updateEquipRegDate,
+          default: getToday(),
         };
       }
 
