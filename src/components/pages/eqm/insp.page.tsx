@@ -189,7 +189,6 @@ export const PgEqmInsp = () => {
   const onClickHeader = ({ targetType, rowKey, instance, ...rest }) => {
     if (targetType !== 'cell') return;
 
-    console.log({ instance, rest });
     setSelectedHeaderRow(instance?.getRow(rowKey));
   };
 
@@ -203,7 +202,6 @@ export const PgEqmInsp = () => {
     if (columnName === 'apply_fg') return;
     if (targetType !== 'cell') return;
 
-    console.log({ instance, rest });
     setSelectedDetailRow(instance?.getRow(rowKey));
   };
 
