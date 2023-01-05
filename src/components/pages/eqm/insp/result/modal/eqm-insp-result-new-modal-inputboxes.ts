@@ -36,8 +36,7 @@ export default [
     name: 'insp_type',
     type: 'combo',
     label: '검사유형',
-    firstItemType: 'none',
-    default: 'daily',
+    firstItemType: 'empty',
     options: [
       {
         code: 'daily',
