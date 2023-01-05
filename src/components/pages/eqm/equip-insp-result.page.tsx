@@ -6,7 +6,6 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import {
   EDIT_ACTION_CODE,
-  getPopupForm,
   TGridMode,
   useGrid,
   useSearchbox,
@@ -18,13 +17,14 @@ import {
   getData,
   getModifiedRows,
   getPageName,
-  getToday,
 } from '~/functions';
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
 import eqmInspResultGridPopups from './insp/result/eqm-insp-result-grid-popups';
+import eqmInspResultSearchboxes from './insp/result/eqm-insp-result-searchboxes';
 import eqmInspResultEditModalColumns from './insp/result/modal/eqm-insp-result-edit-modal-columns';
 import eqmInspResultNewModalColumns from './insp/result/modal/eqm-insp-result-new-modal-columns';
+import eqmInspResultNewModalInputboxes from './insp/result/modal/eqm-insp-result-new-modal-inputboxes';
 
 export const PgEqmInspResult = () => {
   const title = getPageName();
@@ -75,100 +75,13 @@ export const PgEqmInspResult = () => {
     },
   );
 
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', [
-    {
-      id: 'reg_date',
-      ids: ['start_date', 'end_date'],
-      names: ['start_date', 'end_date'],
-      defaults: [getToday(-6), getToday()],
-      type: 'daterange',
-      label: '기간',
-    },
-    {
-      id: 'equip_uuid',
-      name: 'equip_uuid',
-      type: 'combo',
-      label: '설비',
-      firstItemType: 'all',
-      default: 'all',
-      dataSettingOptions: {
-        codeName: 'equip_uuid',
-        textName: 'equip_nm',
-        uriPath: getPopupForm('설비관리')?.uriPath,
-        params: {
-          store_type: 'all',
-        },
-      },
-    },
-    {
-      id: 'insp_type',
-      name: 'insp_type',
-      type: 'combo',
-      label: '검사유형',
-      firstItemType: 'all',
-      default: 'all',
-      options: [
-        {
-          code: 'daily',
-          text: '일상점검',
-        },
-        {
-          code: 'periodicity',
-          text: '정기점검',
-        },
-      ],
-    },
-  ]);
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', eqmInspResultSearchboxes);
 
   const inputInfo = null;
-  const newDataPopupInputInfo = useInputGroup('EDOT_DATA_POPUP_INPUT_BOX', [
-    {
-      id: 'reg_date',
-      name: 'reg_date',
-      default: getToday(),
-      type: 'date',
-      label: '검사일',
-    },
-    {
-      id: 'equip_nm',
-      name: 'equip_nm',
-      type: 'text',
-      usePopup: true,
-      label: '설비',
-      popupKeys: ['equip_uuid', 'equip_nm'],
-      popupButtonSettings: {
-        dataApiSettings: {
-          uriPath: getPopupForm('설비관리').uriPath,
-          params: {},
-        },
-        datagridSettings: {
-          gridId: null,
-          columns: getPopupForm('설비관리').datagridProps.columns,
-        },
-        modalSettings: {
-          title: '설비관리',
-        },
-      },
-    },
-    {
-      id: 'insp_type',
-      name: 'insp_type',
-      type: 'combo',
-      label: '검사유형',
-      firstItemType: 'none',
-      default: 'daily',
-      options: [
-        {
-          code: 'daily',
-          text: '일상점검',
-        },
-        {
-          code: 'periodicity',
-          text: '정기점검',
-        },
-      ],
-    },
-  ]);
+  const newDataPopupInputInfo = useInputGroup(
+    'EDOT_DATA_POPUP_INPUT_BOX',
+    eqmInspResultNewModalInputboxes,
+  );
 
   async function changeNewDataPopupInputValues(values) {
     if (
