@@ -8,6 +8,7 @@ import {
 } from '~/components/UI';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { encryptedString } from '~/functions/encrypt';
 
 type BasicModalContextProps<T> = {
   title: string;
@@ -57,7 +58,7 @@ class BasicModalContext<T> implements BasicGridPopupProps {
     gridComboInfo,
     onOk,
   }: BasicModalContextProps<T>) {
-    const uniqueKey = (Math.random() * 100).toString();
+    const uniqueKey = encryptedString();
     this.popupId = `${title}-popup-${uniqueKey}`;
     this.gridId = `${title}-grid-${uniqueKey}`;
     this.saveUriPath = '';

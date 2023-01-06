@@ -9,6 +9,7 @@ import {
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { IInputGroupboxProps } from '~/components/UI/input-groupbox';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
+import { encryptedString } from '~/functions/encrypt';
 
 type HeaderIncludedModalContextProps<T> = {
   title: string;
@@ -56,7 +57,7 @@ export class HeaderIncludedModalContext<T>
     onOk,
     inputProps,
   }: HeaderIncludedModalContextProps<T>) {
-    const uniqueKey = (Math.random() * 100).toString();
+    const uniqueKey = encryptedString();
     this.popupId = `${title}-popup-${uniqueKey}`;
     this.gridId = `${title}-grid-${uniqueKey}`;
     this.saveUriPath = '';

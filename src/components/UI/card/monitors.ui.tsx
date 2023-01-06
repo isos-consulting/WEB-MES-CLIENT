@@ -3,6 +3,7 @@ import MonitorCard, {
   ICreateMonitorProps,
   IDefineMonitorProps,
 } from '~/components/UI/card/monitor.ui';
+import { encryptedString } from '~/functions/encrypt';
 
 export interface ITpMonitorCardsProps {
   equips: IDefineMonitorProps[];
@@ -14,7 +15,7 @@ export const MonitorCards: React.FC<ITpMonitorCardsProps> = (
   const equips: ICreateMonitorProps[] = props.equips.map(
     (defineEquipProps: IDefineMonitorProps) => {
       const createEquipProps: ICreateMonitorProps = {
-        key: Math.random().toString(),
+        key: encryptedString(),
         ...defineEquipProps,
       };
 

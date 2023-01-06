@@ -135,16 +135,6 @@ export const getCurrentRoute = (): string => {
 };
 
 /**
- * 랜덤 숫자 뽑기
- * @param min 최솟값
- * @param max 최댓값
- */
-export const getRandNum = (min: number, max: number) => {
-  const rand = min + Math.random() * (max - min);
-  return Math.floor(rand);
-};
-
-/**
  * 숫자 구문점 정규식 (숫자에 쉼표 붙이는 수량 및 금액에 주로 사용)
  * @param num 변형할 숫자 값
  * @param digit 숫자를 세는 단위 (default: 3)

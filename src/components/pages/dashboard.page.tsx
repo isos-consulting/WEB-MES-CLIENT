@@ -5,6 +5,7 @@ import { PieGraph } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
+import { encryptedString } from '~/functions/encrypt';
 
 export const Dashboard = () => {
   const [current, chageTarget] = useState<string>('byDay');
@@ -129,6 +130,15 @@ const RealTimeCharts = ({ data }) => {
 };
 
 const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
+  const pieData = [
+    ...data,
+    {
+      id: encryptedString(),
+      value: 100 - data[0].value,
+    },
+  ];
+
+  console.log(pieData);
   return (
     /*  @ts-ignore */
     <Card headStyle={{}}>
@@ -136,13 +146,7 @@ const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
         <Col span={24} style={{ height: '100%' }}>
           <PieGraph
             maxVal={0}
-            data={[
-              ...data,
-              {
-                id: Math.random() * 100,
-                value: 100 - data[0].value,
-              },
-            ]}
+            data={pieData}
             centerStr={`${data[0].value}${data[0].unit}`}
             isInteractive={false}
             valueFormat=" >-.2%"
