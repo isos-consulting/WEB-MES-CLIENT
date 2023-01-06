@@ -31,7 +31,9 @@ const hiddenWorkPlanModal = new BasicModalContext({
   data: [],
   gridPopupInfo: [],
   gridComboInfo: [],
-  onOk: () => {},
+  onOk: () => {
+    // This is intentional
+  },
 });
 
 export const PgDailyWorkPlan = () => {

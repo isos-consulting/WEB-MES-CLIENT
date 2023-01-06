@@ -667,7 +667,9 @@ export const InputGroupBoxStore: Record<
       firstItemType: 'empty',
       options: [],
       disabled: true,
-      onAfterChange: () => {},
+      onAfterChange: () => {
+        // this function will defined in final-insp-result.page.tsx file
+      },
     },
     { id: 'remark', label: '비고', type: 'text' },
   ],

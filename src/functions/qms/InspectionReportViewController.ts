@@ -23,7 +23,9 @@ export type InspectionValidationResult = {
 };
 
 class InspectionReportViewController {
-  constructor() {}
+  constructor() {
+    // This is intentional
+  }
 
   public dataGridChange(
     changes: InsepctionDataGridChange[],

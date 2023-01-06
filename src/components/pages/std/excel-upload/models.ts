@@ -27,7 +27,9 @@ export class UserSelectableMenu {
 
   constructor() {
     this.item = null;
-    this.selectMenu = () => {};
+    this.selectMenu = () => {
+      // This is intentional
+    };
   }
 
   allocateSelectMenu(trigger: Function) {

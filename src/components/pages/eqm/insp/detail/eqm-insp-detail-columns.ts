@@ -13,7 +13,9 @@ export default [
         const row = grid?.store?.data?.rawData[rowKey];
         return row['apply_fg'] === true ? '해제' : '적용';
       },
-      onClick: () => {},
+      onClick: () => {
+        // this function will be defined at eqm/insp.page.tsx
+      },
     },
   },
   {
