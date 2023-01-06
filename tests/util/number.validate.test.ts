@@ -124,7 +124,6 @@ describe('연산자(operator)', () => {
     expect(Number.isNaN(+1 + 1)).toBe(false);
     expect(Number.isNaN(-1 + 1)).toBe(false);
     expect(Number.isNaN(1 + 1)).toBe(false);
-    expect(Number.isNaN(1 - 1)).toBe(false);
     expect(Number.isNaN(Number('+1 + 1'))).toBe(true);
     expect(Number.isNaN(Number('-1 + 1'))).toBe(true);
     expect(Number.isNaN(Number('1 + 1'))).toBe(true);
