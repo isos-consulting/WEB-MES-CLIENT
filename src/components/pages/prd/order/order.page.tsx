@@ -816,14 +816,12 @@ export const PgPrdOrder = () => {
         buttonAction: (_ev, props, options) => {
           const { childGridRef, columns, gridRef } = options;
           const onAppendRow = (newRow: object = {}) => {
-            // Todo: 새로운 행 추가
             let classNames = { column: {} };
 
             columns?.forEach(column => {
               if (column.name !== COLUMN_CODE.EDIT)
                 classNames['column'][column.name] = [props.gridMode];
 
-              // editor 클래스명 삽입
               if (
                 column?.editable === true &&
                 column.name !== COLUMN_CODE.EDIT
@@ -834,7 +832,6 @@ export const PgPrdOrder = () => {
                 ];
               }
 
-              // editor 클래스명 삽입
               if (column?.editable === true && column?.format === 'popup') {
                 classNames['column'][column.name] = [
                   ...classNames['column'][column.name],
@@ -842,7 +839,6 @@ export const PgPrdOrder = () => {
                 ];
               }
 
-              // 기본값 삽입
               if (column?.defaultValue != null) {
                 newRow[column.name] =
                   newRow[column.name] != null
@@ -853,7 +849,6 @@ export const PgPrdOrder = () => {
               }
             });
 
-            // 행 추가할때 코드 값과 클래스명 넣어주기
             gridRef.current.getInstance().appendRow(
               {
                 ...newRow,

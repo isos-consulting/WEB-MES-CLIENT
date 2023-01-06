@@ -107,25 +107,25 @@ export const PgQmsReworkReport = () => {
     },
 
     update: () => {
-      // todo: 현황 화면은 수정 기능이 필요 없음
+      // 현황 화면은 수정 기능이 필요 없음
     },
 
     delete: () => {
-      // todo: 현황 화면은 삭제 기능이 필요 없음
+      // 현황 화면은 삭제 기능이 필요 없음
     },
 
     create: () => {
-      // todo: 현황 화면은 신규 추가 기능이 필요 없음
+      // 현황 화면은 신규 추가 기능이 필요 없음
     },
 
     createDetail: null,
 
     save: () => {
-      // todo: 현황 화면은 저장 기능이 필요 없음
+      // 현황 화면은 저장 기능이 필요 없음
     },
 
     cancelEdit: () => {
-      // todo: 현황 화면은 편집 취소 기능이 필요 없음
+      // 현황 화면은 편집 취소 기능이 필요 없음
     },
 
     printExcel: dataGridEvents.printExcel,
