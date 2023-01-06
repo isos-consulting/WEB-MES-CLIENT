@@ -60,6 +60,7 @@ import {
   getFilterdDataForDateFormat,
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
+import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -1898,12 +1899,10 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
               const columns = props.gridPopupInfo[i].columnNames;
               updateColumns = columns;
 
-              for (let z = 0; z < columns.length; z++) {
-                if (columns[z].original === columnName) {
-                  popupInfo = props.gridPopupInfo[i];
-                  break;
-                }
+              if (isOriginalsIncludesColumnName(columns, columnName)) {
+                popupInfo = props.gridPopupInfo[i];
               }
+
               if (popupInfo != null) {
                 break;
               }
