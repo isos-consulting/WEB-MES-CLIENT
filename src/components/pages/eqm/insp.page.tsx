@@ -23,12 +23,14 @@ import eqmInspDetailSubInputboxes from './insp/detail/sub/eqm-insp-detail-sub-in
 import { EqmInspHeader } from './insp/header/eqm-insp-header';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
 import eqmInspDetailSubModalInputboxes from './insp/modal/eqm-insp-detail-sub-modal-inputboxes';
+import eqmInspDetailSubReviseModalInputboxes from './insp/modal/eqm-insp-detail-sub-revise-modal-inputboxes';
 import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-comboboxes';
 import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
 import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
 import eqmInspNewModalInputboxes from './insp/modal/eqm-insp-new-modal-inputboxes';
 import { EquipInspDetailEditModal } from './insp/modal/equip-insp-detail-edit-modal';
 import { EquipInspDetailNewModal } from './insp/modal/equip-insp-detail-new-modal';
+import { EquipInspDetailReviseModal } from './insp/modal/equip-insp-detail-revise-modal';
 import { EquipInspNewModal } from './insp/modal/equip-insp-new-modal';
 
 type TPopup = 'new' | 'add' | 'edit' | null;
@@ -50,6 +52,8 @@ export const PgEqmInsp = () => {
   const [addDataPopupGridVisible, setAddDataPopupGridVisible] =
     useState<boolean>(false);
   const [editDataPopupGridVisible, setEditDataPopupGridVisible] =
+    useState<boolean>(false);
+  const [reviseDataPopupGridVisible, setReviseDataPopupGridVisible] =
     useState<boolean>(false);
 
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
@@ -142,7 +146,7 @@ export const PgEqmInsp = () => {
   const detailGrid = useGrid('DETAIL_GRID', eqmInspDetailColumnsWithApply, {
     searchUriPath: detailSearchUriPath,
     saveUriPath: detailSaveUriPath,
-    gridMode: 'delete',
+    gridMode: 'view',
   });
 
   const detailSubGrid = useGrid('DETAIL_SUB_GRID', eqmInspDetailSubColumns, {
@@ -185,6 +189,19 @@ export const PgEqmInsp = () => {
     rowAddPopupInfo: eqmInspModalGridRowaddpopups,
     gridPopupInfo: eqmInspModalGridPopups,
   });
+
+  const reviseDataPopupGrid = useGrid(
+    'REVISE_DATA_POPUP_GRID',
+    dataPopupColumns,
+    {
+      searchUriPath: detailSearchUriPath,
+      saveUriPath: detailSaveUriPath,
+      header: detailSubGrid?.gridInfo?.header,
+      gridComboInfo: eqmInspModalGridComboboxes,
+      rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+      gridPopupInfo: eqmInspModalGridPopups,
+    },
+  );
 
   const onClickHeader = ({ targetType, rowKey, instance, ...rest }) => {
     if (targetType !== 'cell') return;
@@ -300,6 +317,10 @@ export const PgEqmInsp = () => {
     'EDIT_DATA_POPUP_INPUTBOX',
     eqmInspDetailSubModalInputboxes,
   );
+  const reviseDataPopupInputInfo = useInputGroup(
+    'REVISE_DATA_POPUP_INPUTBOX',
+    eqmInspDetailSubReviseModalInputboxes,
+  );
 
   const onReset = async () => {
     headerGrid?.setGridData([]);
@@ -351,6 +372,22 @@ export const PgEqmInsp = () => {
     }
   }, [
     editDataPopupGridVisible,
+    detailSubInputInfo.values,
+    detailSubGrid.gridInfo.data,
+  ]);
+
+  useLayoutEffect(() => {
+    if (reviseDataPopupGridVisible === true) {
+      reviseDataPopupInputInfo?.setValues({
+        ...detailSubInputInfo.ref.current.values,
+      });
+      reviseDataPopupGrid?.setGridData(detailSubGrid?.gridInfo?.data);
+    } else {
+      reviseDataPopupInputInfo?.setValues({});
+      reviseDataPopupGrid?.setGridData([]);
+    }
+  }, [
+    reviseDataPopupGridVisible,
     detailSubInputInfo.values,
     detailSubGrid.gridInfo.data,
   ]);
@@ -466,6 +503,10 @@ export const PgEqmInsp = () => {
 
     cancelNewDataPopup: () => {
       setNewDataPopupGridVisible(false);
+    },
+
+    revise: () => {
+      setReviseDataPopupGridVisible(true);
     },
   };
 
@@ -632,9 +673,6 @@ export const PgEqmInsp = () => {
     const onCancel = () => {
       setVisible(false);
     };
-    const onAmend = () => {
-      onAmendInsp('개정', popupType);
-    };
     const onEdit = () => {
       onAmendInsp('수정', popupType);
     };
@@ -649,16 +687,6 @@ export const PgEqmInsp = () => {
         >
           취소
         </Button>
-        {/* <Button
-          btnType="buttonFill"
-          widthSize="medium"
-          heightSize="small"
-          fontSize="small"
-          colorType="delete"
-          onClick={onAmend}
-        >
-          개정하기
-        </Button> */}
         <Button
           btnType="buttonFill"
           widthSize="medium"
@@ -668,6 +696,79 @@ export const PgEqmInsp = () => {
           onClick={onEdit}
         >
           수정하기
+        </Button>
+      </div>
+    );
+  };
+
+  const reviseModalFooter = () => {
+    const onCancel = () => {
+      setReviseDataPopupGridVisible(false);
+    };
+    const onAmend = () => {
+      const { gridRef, gridInfo } = reviseDataPopupGrid;
+
+      let modifiedData: any = {
+        createdRows: gridRef?.current?.getInstance()?.getData(),
+        updatedRows: [],
+        deletedRows: [],
+      };
+
+      dataGridEvents.onSave(
+        'headerInclude',
+        {
+          gridRef: gridRef,
+          setGridMode: null,
+          columns: gridInfo?.columns,
+          saveUriPath: gridInfo?.saveUriPath,
+          methodType: 'post',
+          modifiedData,
+        },
+        {
+          ...reviseDataPopupInputInfo.props.innerRef.current.values,
+          uuid: null,
+          insp_no: null,
+        },
+        modal,
+        async ({ success }) => {
+          if (success) {
+            setReviseDataPopupGridVisible(false);
+
+            await onReset();
+            onSearchHeader(headerSearchInfo?.values).then(
+              async searchResult => {
+                await onAfterSaveAction(
+                  searchResult,
+                  selectedHeaderRow.equip_uuid,
+                  selectedDetailRow.insp_uuid,
+                );
+              },
+            );
+          }
+        },
+        true,
+      );
+    };
+
+    return (
+      <div>
+        <Button
+          widthSize="small"
+          heightSize="small"
+          fontSize="small"
+          onClick={onCancel}
+        >
+          취소
+        </Button>
+        <Button
+          btnType="buttonFill"
+          widthSize="medium"
+          heightSize="small"
+          fontSize="small"
+          colorType="basic"
+          onClick={onAmend}
+        >
+          개정하기
         </Button>
       </div>
     );
@@ -685,6 +786,7 @@ export const PgEqmInsp = () => {
             onAfterClick={onClickHeader}
             onSearch={buttonActions.search}
             onCreate={buttonActions.create}
+            onRevise={buttonActions.revise}
           />
           <EqmInspDetail
             inputProps={detailInputInfo.props}
@@ -776,6 +878,30 @@ export const PgEqmInsp = () => {
         gridPopupInfo={editDataPopupGrid.gridInfo.gridPopupInfo}
         rowAddPopupInfo={editDataPopupGrid.gridInfo.rowAddPopupInfo}
         popupFooter={popupFooter()}
+      />
+      <EquipInspDetailReviseModal
+        gridId={reviseDataPopupGrid.gridInfo.gridId}
+        title={`${title} - 개정`}
+        visible={reviseDataPopupGridVisible}
+        onAfterApiExecuted={onAfterSaveEditData}
+        onCancel={() => {
+          setReviseDataPopupGridVisible(false);
+        }}
+        modalRef={reviseDataPopupGrid?.gridRef}
+        parentGridRef={detailGrid?.gridRef}
+        gridMode="create"
+        defaultData={detailSubGrid.gridInfo.data}
+        columns={reviseDataPopupGrid.gridInfo.columns}
+        searchUriPath={reviseDataPopupGrid.gridInfo.searchUriPath}
+        searchParams={reviseDataPopupGrid.gridInfo.searchParams}
+        saveUriPath={reviseDataPopupGrid.gridInfo.saveUriPath}
+        saveParams={{}}
+        searchProps={editDataPopupSearchInfo?.props}
+        inputProps={reviseDataPopupInputInfo.props}
+        gridComboInfo={reviseDataPopupGrid.gridInfo.gridComboInfo}
+        gridPopupInfo={reviseDataPopupGrid.gridInfo.gridPopupInfo}
+        rowAddPopupInfo={reviseDataPopupGrid.gridInfo.rowAddPopupInfo}
+        popupFooter={reviseModalFooter()}
       />
       {modalContext}
     </>
