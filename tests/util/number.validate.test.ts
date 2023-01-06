@@ -158,8 +158,6 @@ describe('공백 문자(blank)', () => {
 });
 
 describe('널(null)', () => {
-  test('isNumber은 첫번째 매개변수를 null로 타입에러를 발생하기 때문에 입력할 수 없다', () => {});
-
   test('javascript 내장 객체 null 테스트', () => {
     expect(Number.isNaN(Number(null))).toBe(false);
     expect(Number(null)).toBe(0);
@@ -167,8 +165,6 @@ describe('널(null)', () => {
 });
 
 describe('불리언(boolean)', () => {
-  test('isNumber은 첫번째 매개변수를 boolean타입을 전달할 때 타입에러를 발생하기 때문에 입력할 수 없다', () => {});
-
   test('javascript 내장 객체 불리언 테스트', () => {
     expect(Number.isNaN(Number(true))).toBe(false);
     expect(Number.isNaN(Number(false))).toBe(false);
