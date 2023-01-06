@@ -10,6 +10,7 @@ type EqmInspHeaderProps = {
   onAfterClick: (ev: any) => void;
   onSearch: () => void;
   onCreate: () => void;
+  onRevise: () => void;
 };
 
 export const EqmInspHeader = ({
@@ -20,6 +21,7 @@ export const EqmInspHeader = ({
   onAfterClick,
   onSearch,
   onCreate,
+  onRevise,
 }: EqmInspHeaderProps) => {
   return (
     <>
@@ -46,6 +48,17 @@ export const EqmInspHeader = ({
             onClick={onCreate}
           >
             신규 기준서 등록
+          </Button>
+          <Button
+            btnType="buttonFill"
+            widthSize="medium"
+            heightSize="small"
+            fontSize="small"
+            ImageType="edit"
+            colorType="blue"
+            onClick={onRevise}
+          >
+            개정
           </Button>
         </div>
       </div>
