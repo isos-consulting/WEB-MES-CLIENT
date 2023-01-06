@@ -1,11 +1,12 @@
-import React, { useMemo, useState, useCallback, useLayoutEffect } from 'react';
 import { Select, Space } from 'antd';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import Props, { IComboboxItem } from './combobox.ui.type';
-import { ScCombobox } from './combobox.ui.styled';
+import { getData } from '~/functions';
+import { getCodeTextPairList } from '~/functions/combobox.function';
 import { afStringState } from '~recoils/recoil.atom-family';
 import { Label } from '../label';
-import { getData } from '~/functions';
+import { ScCombobox } from './combobox.ui.styled';
+import Props from './combobox.ui.type';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
@@ -59,20 +60,11 @@ const Combobox: React.FC<Props> = props => {
     const { uriPath, params, codeName, textName } = props?.dataSettingOptions;
 
     getData<any[]>(params, uriPath).then(options => {
-      const comboData: IComboboxItem[] = options.reduce((datas, option) => {
-        const comboEntry = {
-          code: option[codeName],
-          text: option[textName],
-        };
-
-        if (comboEntry.code && comboEntry.text) {
-          return [...datas, comboEntry];
-        }
-
-        return datas;
-      }, []);
-
-      console.log(comboData);
+      const comboData = getCodeTextPairList({
+        codeName,
+        textName,
+        options,
+      });
 
       setOptions(comboData);
     });

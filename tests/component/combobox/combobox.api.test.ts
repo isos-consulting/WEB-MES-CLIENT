@@ -1,3 +1,5 @@
+import { getCodeTextPairList } from '~/functions/combobox.function';
+
 const fakeApiPromise = (params, uri) =>
   Promise.resolve([
     { userId: 'john', userNm: 'John Doe' },
@@ -7,20 +9,7 @@ const fakeApiPromise = (params, uri) =>
 const getComboDatasFake = async (codeName, textName, params, uri) => {
   const options = await fakeApiPromise(params, uri);
 
-  const res = options.reduce((resOptions, option) => {
-    const optionEntry = {
-      code: option[codeName],
-      text: option[textName],
-    };
-
-    if (optionEntry.code && optionEntry.text) {
-      return resOptions.concat(optionEntry);
-    }
-
-    return resOptions;
-  }, []);
-
-  return res;
+  return getCodeTextPairList({ codeName, textName, options });
 };
 
 describe('getComboDatas 함수는 react 내장 훅으로 정의되어 있으므로 가짜 함수를 이용한다', () => {
