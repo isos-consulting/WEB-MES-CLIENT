@@ -123,7 +123,8 @@ export const saveGridData = async (
             const { value } = datas;
             if (!success) resultChk = false;
 
-            resultData.concat(value);
+            // 기능 파악이 완료될 떄까지 해당 코드는 주석 처리하여 비활성함
+            // resultData.concat(value);
             resultCount += value?.count || 0;
           })
           .catch(e => {
