@@ -649,7 +649,7 @@ export const PgEqmInsp = () => {
         >
           취소
         </Button>
-        <Button
+        {/* <Button
           btnType="buttonFill"
           widthSize="medium"
           heightSize="small"
@@ -658,7 +658,7 @@ export const PgEqmInsp = () => {
           onClick={onAmend}
         >
           개정하기
-        </Button>
+        </Button> */}
         <Button
           btnType="buttonFill"
           widthSize="medium"
@@ -755,7 +755,7 @@ export const PgEqmInsp = () => {
       />
       <EquipInspDetailEditModal
         gridId={editDataPopupGrid.gridInfo.gridId}
-        title={`${title} -수정 / 개정`}
+        title={`${title} - 수정`}
         visible={editDataPopupGridVisible}
         onAfterApiExecuted={onAfterSaveEditData}
         onCancel={() => {
