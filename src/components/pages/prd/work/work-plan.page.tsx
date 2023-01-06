@@ -183,7 +183,6 @@ export const PgWorkPlan = () => {
         columns: ColumnStore.WORK_PLAN,
         gridPopupInfo: [
           {
-            // 작업장 관리
             columnNames: [
               { original: 'workings_uuid', popup: 'workings_uuid' },
               { original: 'workings_cd', popup: 'workings_cd' },

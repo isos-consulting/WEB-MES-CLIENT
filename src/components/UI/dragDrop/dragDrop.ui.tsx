@@ -11,6 +11,7 @@ import { executeData, getStorageValue } from '~/functions';
 import { Button } from '..';
 import './dragDrop.ui.styled.scss';
 import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
+import { WORD } from '~/constants/lang/ko';
 
 interface IFileTypes {
   id: number;
@@ -191,18 +192,10 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
           input.multiple = true;
           input.onchange = onChangeFiles;
           input.click();
-          //191.1.70.235:3002
         }}
       >
-        불러오기
+        {WORD.LOAD}
       </Button>
-      {/* <label
-        className={isDragging ? "DragDrop-File-Dragging" : "DragDrop-File"}
-        htmlFor="fileUpload"
-        ref={dragRef}
-      >
-        <div>파일 첨부</div>
-      </label> */}
 
       <div className="DragDrop-Files">
         {files.length > 0 &&

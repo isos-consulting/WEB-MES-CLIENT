@@ -1376,7 +1376,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         })
         .catch(err => {
           onClear();
-          message.error('에러');
+          message.error(SENTENCE.ERROR_OCCURRED);
         });
     }
   }, [insp]);

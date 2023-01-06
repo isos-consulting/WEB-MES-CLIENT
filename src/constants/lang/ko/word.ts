@@ -34,4 +34,5 @@ export enum WORD {
   INCOME_INFO = '입고정보',
   REJECT_INFO = '부적합정보',
   RECEIVE_INFO = '입하정보',
+  LOAD = '불러오기',
 }
