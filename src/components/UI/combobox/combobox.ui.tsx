@@ -57,30 +57,22 @@ const Combobox: React.FC<Props> = props => {
   /** 서버 데이터로 콤보박스 데이터 구성 */
   const getComboDatas = () => {
     const { uriPath, params, codeName, textName } = props?.dataSettingOptions;
-    let comboData: IComboboxItem[] = [];
 
-    getData<any[]>(params, uriPath).then(res => {
-      res?.forEach(el => {
-        const keys = Object.keys(el);
+    getData<any[]>(params, uriPath).then(options => {
+      const comboData: IComboboxItem[] = options.reduce((datas, option) => {
+        const comboEntry = {
+          code: option[codeName],
+          text: option[textName],
+        };
 
-        let code = null;
-        let text = null;
-
-        for (let i = 0; i < keys.length; i++) {
-          if (codeName === keys[i]) {
-            code = el[keys[i]];
-          }
-
-          if (textName === keys[i]) {
-            text = el[keys[i]];
-          }
-
-          if (code != null && text != null) {
-            comboData.push({ code, text });
-            break;
-          }
+        if (comboEntry.code && comboEntry.text) {
+          return [...datas, comboEntry];
         }
-      });
+
+        return datas;
+      }, []);
+
+      console.log(comboData);
 
       setOptions(comboData);
     });
