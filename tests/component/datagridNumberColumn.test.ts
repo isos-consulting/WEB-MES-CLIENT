@@ -10,13 +10,11 @@ class Datagrid implements GridProps {
   constructor(props: GridProps) {
     this.format = props.format;
 
-    switch (props.format) {
-      case 'number':
-        if (props.decimal == null) {
-          errorRequireDecimal.generate();
-        }
-        this.decimal = props.decimal;
-        break;
+    if (props.format === 'number') {
+      if (props.decimal == null) {
+        errorRequireDecimal.generate();
+      }
+      this.decimal = props.decimal;
     }
   }
 }
