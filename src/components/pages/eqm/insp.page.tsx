@@ -203,19 +203,13 @@ export const PgEqmInsp = () => {
     },
   );
 
-  const onClickHeader = ({ targetType, rowKey, instance, ...rest }) => {
+  const onClickHeader = ({ targetType, rowKey, instance }) => {
     if (targetType !== 'cell') return;
 
     setSelectedHeaderRow(instance?.getRow(rowKey));
   };
 
-  const onClickDetail = ({
-    targetType,
-    rowKey,
-    instance,
-    columnName,
-    ...rest
-  }) => {
+  const onClickDetail = ({ targetType, rowKey, instance, columnName }) => {
     if (columnName === 'apply_fg') return;
     if (targetType !== 'cell') return;
 
@@ -695,7 +689,7 @@ export const PgEqmInsp = () => {
           colorType="basic"
           onClick={onEdit}
         >
-          수정하기
+          저장하기
         </Button>
       </div>
     );
