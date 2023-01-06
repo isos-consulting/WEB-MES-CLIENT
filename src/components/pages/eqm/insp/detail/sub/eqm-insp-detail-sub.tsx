@@ -44,14 +44,14 @@ export const EqmInspDetailSub = ({
           </Button>
           <Button
             btnType="buttonFill"
-            widthSize="large"
+            widthSize="medium"
             heightSize="small"
             fontSize="small"
             ImageType="edit"
             colorType="blue"
             onClick={onUpdate}
           >
-            수정 / 개정
+            수정
           </Button>
           <Button
             btnType="buttonFill"
