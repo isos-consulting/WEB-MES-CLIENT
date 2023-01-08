@@ -377,8 +377,7 @@ export const getModifiedRows = (
       _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE) ??
       instance?.updatedRows,
   };
-  // 생성
-  const createdRows = (modifiedData?.createdRows as any)?.filter(el => {
+  const createdRows = modifiedData?.createdRows?.filter(el => {
     _columns.forEach(column => {
       if (
         column?.noSave === true ||
@@ -391,8 +390,7 @@ export const getModifiedRows = (
     return el;
   });
 
-  // 삭제
-  const deletedRows = (modifiedData?.deletedRows as any)?.filter(el => {
+  const deletedRows = modifiedData?.deletedRows?.filter(el => {
     _columns.forEach(column => {
       if (
         column?.noSave === true ||
@@ -405,8 +403,7 @@ export const getModifiedRows = (
     return el;
   });
 
-  // 수정
-  const updatedRows = (modifiedData?.updatedRows as any)?.filter(el => {
+  const updatedRows = modifiedData?.updatedRows?.filter(el => {
     _columns.forEach(column => {
       if (
         column?.noSave === true ||

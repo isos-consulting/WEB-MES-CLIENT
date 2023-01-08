@@ -122,7 +122,7 @@ export const PgDefectRateReport = () => {
       datasets: [
         {
           label: '불량율',
-          data: Object.values(
+          data: Object.values<number>(
             defects.reduce(
               (acc, cur, idx) => {
                 Object.entries(acc).forEach(([key, value]) => {
@@ -146,7 +146,7 @@ export const PgDefectRateReport = () => {
                   return acc;
                 }, {}),
             ),
-          ) as number[],
+          ),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
       ],

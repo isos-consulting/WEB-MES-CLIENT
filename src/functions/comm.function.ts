@@ -661,9 +661,9 @@ export const getMenus = async () => {
       rawData?.forEach((level1: ILevel1Info) => {
         if (level1.menu_type === 'page') {
           result[level1.menu_nm] = {
-            uuid: level1.menu_uuid as string,
-            path: level1.menu_uri as string,
-            title: level1.menu_nm as string,
+            uuid: level1.menu_uuid,
+            path: level1.menu_uri,
+            title: level1.menu_nm,
             component: Pages[level1.component_nm] as () => JSXElement,
             description: null,
             permissions: {
@@ -675,18 +675,15 @@ export const getMenus = async () => {
           };
         }
 
-        if (
-          level1.menu_type === 'menu' &&
-          (level1.sub_menu?.length as number) > 0
-        ) {
+        if (level1.menu_type === 'menu' && level1.sub_menu?.length > 0) {
           level1?.sub_menu?.forEach((level2: ILevel2Info) => {
             if (level2.menu_type === 'page') {
               result[level2.menu_nm] = {
-                uuid: level2.menu_uuid as string,
-                path: level2.menu_uri as string,
-                title: level2.menu_nm as string,
+                uuid: level2.menu_uuid,
+                path: level2.menu_uri,
+                title: level2.menu_nm,
                 component: Pages[level2.component_nm] as () => JSXElement,
-                description: level1.menu_nm as string,
+                description: level1.menu_nm,
                 permissions: {
                   create_fg: level2.create_fg,
                   read_fg: level2.read_fg,
@@ -696,20 +693,15 @@ export const getMenus = async () => {
               };
             }
 
-            if (
-              level2.menu_type === 'menu' &&
-              (level2.sub_menu?.length as number) > 0
-            ) {
+            if (level2.menu_type === 'menu' && level2.sub_menu?.length > 0) {
               level2?.sub_menu?.forEach((level3: ILevel3Info) => {
                 if (level3.menu_type === 'page') {
                   result[level3.menu_nm] = {
-                    uuid: level3.menu_uuid as string,
-                    path: level3.menu_uri as string,
-                    title: level3.menu_nm as string,
+                    uuid: level3.menu_uuid,
+                    path: level3.menu_uri,
+                    title: level3.menu_nm,
                     component: Pages[level3.component_nm] as () => JSXElement,
-                    description: (level1.menu_nm +
-                      ' > ' +
-                      level2.menu_nm) as string,
+                    description: level1.menu_nm + ' > ' + level2.menu_nm,
                     permissions: {
                       create_fg: level3.create_fg,
                       read_fg: level3.read_fg,

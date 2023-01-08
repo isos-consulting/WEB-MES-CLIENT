@@ -68,7 +68,7 @@ const SideNavbar: React.FC<Props> = props => {
     <ScContainer {...props}>
       <Flexbox>
         <Level1
-          selectedLevel1={menuState.selectedLevel1 as string}
+          selectedLevel1={menuState.selectedLevel1}
           onChangeLevel1State={onChangeLevel1State}
         />
         <Level2
@@ -161,10 +161,7 @@ const Level2: React.FC<ILevel2Props> = ({ active }) => {
       }}
     >
       {menuRawData?.map((level1: ILevel1Info) => {
-        if (
-          level1?.menu_type === 'menu' &&
-          (level1?.sub_menu?.length as number) > 0
-        ) {
+        if (level1?.menu_type === 'menu' && level1?.sub_menu?.length > 0) {
           if (menuState.selectedLevel1 === level1.menu_uri) {
             return (
               <React.Fragment key={level1.menu_uuid}>
@@ -188,7 +185,7 @@ const Level2: React.FC<ILevel2Props> = ({ active }) => {
                       );
                     } else if (
                       level2?.menu_type === 'menu' &&
-                      (level2?.sub_menu?.length as number) > 0
+                      level2?.sub_menu?.length > 0
                     ) {
                       let subMenu = level2?.sub_menu?.map(
                         (level3: ILevel3Info) => {

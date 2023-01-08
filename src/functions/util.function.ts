@@ -34,7 +34,7 @@ export const convExcelToJson = async (
 
   try {
     const buffer = bufferData;
-    await wb.xlsx.load(buffer as any).then(workbook => {
+    await wb.xlsx.load(buffer).then(workbook => {
       workbook.eachSheet((sheet, id) => {
         // 우선 첫번째 시트만 읽도록 하였음
         if (id !== 1) return;
@@ -487,7 +487,7 @@ export const cloneObject = (obj: object | any[]): any => {
     const cloneObjArray = JSON.parse(JSON.stringify(obj));
 
     // function check
-    (obj as any[])?.forEach((el, index) => {
+    obj?.forEach((el, index) => {
       const objValues: any[] = Object.values(el);
       if (objValues?.length > 0) {
         for (const key in el) {
