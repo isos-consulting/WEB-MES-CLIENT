@@ -59,11 +59,11 @@ const Combobox: React.FC<Props> = props => {
   const getComboDatas = () => {
     const { uriPath, params, codeName, textName } = props?.dataSettingOptions;
 
-    getData<any[]>(params, uriPath).then(options => {
+    getData<any[]>(params, uriPath).then(apiResponseOptions => {
       const comboData = getCodeTextPairList({
         codeName,
         textName,
-        options,
+        options: apiResponseOptions,
       });
 
       setOptions(comboData);

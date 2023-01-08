@@ -1,6 +1,6 @@
 import { getCodeTextPairList } from '~/functions/combobox.function';
 
-const fakeApiPromise = (params, uri) =>
+const fakeApiPromise = (_params, _uri) =>
   Promise.resolve([
     { userId: 'john', userNm: 'John Doe' },
     { userId: 'kim', userNm: 'min-su' },
