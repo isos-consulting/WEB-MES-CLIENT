@@ -86,7 +86,6 @@ export const PgStdWorkCalendar = () => {
   };
 
   const searchWorkCalendarDatas = () => {
-    console.log(workMonth);
     fetchWorkCalendarGetApi({
       start_date: `${workMonth.format('YYYY-MM')}-01`,
       end_date: `${workMonth.format('YYYY-MM')}-${workMonth

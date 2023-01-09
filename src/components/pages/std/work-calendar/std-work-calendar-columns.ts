@@ -36,7 +36,7 @@ export default <IGridColumn[]>[
     name: 'week_no',
     width: ENUM_WIDTH.S,
     editable: false,
-    format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    align: 'center',
+    formatter: ({ value }) => `${value}주차`,
   },
 ];
