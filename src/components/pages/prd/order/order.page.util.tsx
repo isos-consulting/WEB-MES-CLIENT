@@ -17,14 +17,12 @@ export const TAB_CODE = {
 };
 
 export const onErrorMessage = type => {
-  switch (type) {
-    case '하위이력작업시도':
-      message.warn('지시이력을 선택한 후 다시 시도해주세요.');
-      break;
-
-    default:
-      break;
+  if (type === '하위이력작업시도') {
+    message.warn('지시이력을 선택한 후 다시 시도해주세요.');
+    return;
   }
+
+  return;
 };
 
 //#region 🔶그리드 공통 이벤트 함수 정의 (나중에 옮길거임)
