@@ -708,10 +708,10 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 }}
                                 dataSettingOptions={
                                   typeof item?.dataSettingOptions === 'function'
-                                    ? (item.dataSettingOptions({
+                                    ? item.dataSettingOptions({
                                         item,
                                         props,
-                                      }) as any)
+                                      })
                                     : item.dataSettingOptions
                                 }
                                 firstItemType={item?.firstItemType}
@@ -737,10 +737,10 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 options={item.options as IComboboxItem[]}
                                 dataSettingOptions={
                                   typeof item?.dataSettingOptions === 'function'
-                                    ? (item.dataSettingOptions({
+                                    ? item.dataSettingOptions({
                                         item,
                                         props,
-                                      }) as any)
+                                      })
                                     : item.dataSettingOptions
                                 }
                               />
@@ -1200,10 +1200,10 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     dataSettingOptions={
                                       typeof item?.dataSettingOptions ===
                                       'function'
-                                        ? (item.dataSettingOptions({
+                                        ? item.dataSettingOptions({
                                             item,
                                             props,
-                                          }) as any)
+                                          })
                                         : item.dataSettingOptions
                                     }
                                     firstItemType={item?.firstItemType}

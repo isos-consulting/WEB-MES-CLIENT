@@ -47,7 +47,7 @@ const InputPopup: React.FC<Props> = (props, visible) => {
   return (
     <AntForm.Provider
       onFormFinish={(name, { values, forms }) => {
-        props.modalProps.onOk(values as any);
+        props.modalProps.onOk(values);
       }}
     >
       <Modal {...props.modalProps} onOk={onOk}>

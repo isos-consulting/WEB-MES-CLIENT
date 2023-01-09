@@ -61,7 +61,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
         <>
           {inputItems.length > 0
             ? inputItems.map((value: IInputUiGroupItem, index: number) => {
-                let disabled: boolean = value?.disabled as boolean;
+                let disabled: boolean = value?.disabled;
 
                 if (
                   props.insertType === 'create' &&
@@ -77,7 +77,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
                       <Textbox
                         {...value}
                         id={value.id as string}
-                        name={value.name as string}
+                        name={value.name}
                         value={value?.value}
                         inputType={value?.format as any}
                         placeholder={value?.placeholder as string}
