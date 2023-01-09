@@ -1,15 +1,16 @@
-import TuiGrid from 'tui-grid';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
+import dayjs from 'dayjs';
 import moment from 'moment';
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+import TuiGrid from 'tui-grid';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
-import { ColumnStore } from '~/constants/columns';
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
 import { executeData, getData, getToday } from '~/functions';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
+import stdWorkCalendarColumns from './work-calendar/std-work-calendar-columns';
 
 const fetchWorkCalendarGetApi = ({
   start_date,
@@ -26,13 +27,28 @@ const fetchWorkCalendarGetApi = ({
     '/std/work-calendars',
   );
 
-const workCalendarLists = (userSelectedLastMonth: number) =>
-  [...Array(userSelectedLastMonth)].map((_, i) => ({
-    day_no: i > 8 ? i + 1 : `0${i + 1}`,
-    work_type_uuid: null,
-    work_type_nm: null,
-    day_value: null,
-  }));
+const workCalendarLists = (userSelectedLastMonth: moment.Moment) => {
+  const lastDayOfMonth = Number(
+    userSelectedLastMonth.endOf('month').format('DD'),
+  );
+
+  return new Array(lastDayOfMonth).fill(1).map((entry, i) => {
+    const currentDay = i > 8 ? entry + i : `0${entry + i}`;
+    const currentWeek = dayjs(
+      `${userSelectedLastMonth.year()}-${
+        userSelectedLastMonth.month() + entry
+      }-${entry + i}`,
+    ).week();
+
+    return {
+      day_no: currentDay,
+      work_type_uuid: null,
+      work_type_nm: null,
+      day_value: null,
+      week_no: currentWeek,
+    };
+  });
+};
 
 const syncWorkCalendar = () => {
   const initilizedMonth = moment(getToday()).format('YYYY-MM');
@@ -53,9 +69,7 @@ export const PgStdWorkCalendar = () => {
   const workCalendarDataGridRef = useRef<Grid>(null);
 
   const setWorkCalendarDatas = workCalendarApiResponseList => {
-    const copyWorkCalendarData = workCalendarLists(
-      Number(workMonth.endOf('month').format('DD')),
-    );
+    const copyWorkCalendarData = workCalendarLists(workMonth);
     const getDayToYMDFormatDate = (YMDFormatDate: string) =>
       YMDFormatDate.substring(YMDFormatDate.length - 2);
 
@@ -79,6 +93,7 @@ export const PgStdWorkCalendar = () => {
   };
 
   const saveWorkCalendarDatas = () => {
+    workCalendarDataGridRef.current.getInstance().finishEditing();
     const updatedWorkCalendarDatas = workCalendarDataGridRef.current
       .getInstance()
       .getModifiedRows().updatedRows;
@@ -98,6 +113,7 @@ export const PgStdWorkCalendar = () => {
     executeData(
       updatedWorkCalendarDatas.map(
         ({ day_no, day_value, work_type_uuid, ...workDayRest }) => {
+          console.log({ workDayRest });
           if (work_type_uuid == null)
             return {
               day_no: `${workMonth.format('YYYY-MM')}-${day_no}`,
@@ -163,6 +179,8 @@ export const PgStdWorkCalendar = () => {
 
   useEffect(searchWorkCalendarDatas, [workMonth]);
 
+  console.log({ stdWorkCalendarColumns });
+
   return (
     <>
       <Header>
@@ -207,17 +225,17 @@ export const PgStdWorkCalendar = () => {
           gridMode="update"
           height={700}
           columns={[
-            ...ColumnStore.WORK_CALENDAR.map(
-              ({ name, ...workCalendarDataGridColumnProps }) => {
+            ...stdWorkCalendarColumns.map(
+              ({ name, ...workCalendarColumnsRest }) => {
                 if (name === 'work_type_nm') {
                   return {
-                    ...workCalendarDataGridColumnProps,
+                    ...workCalendarColumnsRest,
                     name,
                     onAfterChange: handleChangeWorkTypeNameCombobox,
                   };
                 }
                 return {
-                  ...workCalendarDataGridColumnProps,
+                  ...workCalendarColumnsRest,
                   name,
                 };
               },
