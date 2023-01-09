@@ -3,7 +3,6 @@ import { ENUM_WIDTH, ENUM_DECIMAL } from '~/enums';
 
 type ColumnRecordKeys =
   | 'WORK_TYPE'
-  | 'WORK_CALENDAR'
   | 'WORK_TIME_TYPE'
   | 'WORK_TIME'
   | 'WORK_PERFORMANCE'
@@ -146,34 +145,6 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       format: 'time',
       editable: true,
       requiredField: true,
-    },
-  ],
-  WORK_CALENDAR: [
-    {
-      header: '일자',
-      name: 'day_no',
-      width: ENUM_WIDTH.S,
-    },
-    {
-      header: '',
-      name: 'work_type_uuid',
-      editable: false,
-      hidden: true,
-    },
-    {
-      header: '근무유형',
-      name: 'work_type_nm',
-      width: ENUM_WIDTH.M,
-      editable: true,
-      format: 'combo',
-    },
-    {
-      header: 'hour',
-      name: 'day_value',
-      width: ENUM_WIDTH.M,
-      editable: true,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
     },
   ],
   WORK_PERFORMANCE: [
