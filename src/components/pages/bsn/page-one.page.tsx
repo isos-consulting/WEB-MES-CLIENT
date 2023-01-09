@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BarGraph, Container, Datagrid } from '~/components/UI';
 
 export const PgBsnPageOne = () => {
+  const [year, setYear] = useState(
+    new Array(12).fill(1).map((_, i) => i * Math.random()),
+  );
+  const [week, setWeek] = useState([]);
   return (
     <>
       <Container>
@@ -19,6 +23,11 @@ export const PgBsnPageOne = () => {
                 plugins: {
                   legend: { position: 'top' },
                   title: { display: true, text: '월별' },
+                },
+                onClick: (chartClickEvent, selectedBarData) => {
+                  setWeek(
+                    new Array(4).fill(1).map((_, i) => i * Math.random()),
+                  );
                 },
               }}
               data={{
@@ -39,7 +48,7 @@ export const PgBsnPageOne = () => {
                 datasets: [
                   {
                     label: '달성율',
-                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                    data: year,
                     backgroundColor: 'blue',
                   },
                 ],
@@ -60,7 +69,7 @@ export const PgBsnPageOne = () => {
                 datasets: [
                   {
                     label: '달성율',
-                    data: [1, 2, 3, 4],
+                    data: week,
                     backgroundColor: 'blue',
                   },
                 ],
@@ -113,10 +122,9 @@ export const PgBsnPageOne = () => {
                 datasets: [
                   {
                     label: '달성율',
-                    data: [
-                      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                      18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-                    ],
+                    data: new Array(31)
+                      .fill(1)
+                      .map((_, i) => i * Math.random()),
                     backgroundColor: 'blue',
                   },
                 ],
@@ -126,16 +134,12 @@ export const PgBsnPageOne = () => {
         </div>
       </Container>
       <Container>
-        <Datagrid columns={[]} data={[]} />
-      </Container>
-      <Container>
-        <Datagrid columns={[]} data={[]} />
-      </Container>
-      <Container>
-        <Datagrid columns={[]} data={[]} />
-      </Container>
-      <Container>
-        <Datagrid columns={[]} data={[]} />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Datagrid columns={[]} data={[]} height={80} />
+          <Datagrid columns={[]} data={[]} height={80} />
+          <Datagrid columns={[]} data={[]} height={80} />
+          <Datagrid columns={[]} data={[]} height={80} />
+        </div>
       </Container>
     </>
   );

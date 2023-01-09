@@ -11,6 +11,7 @@ type BarGraphPlugins = {
 type BarGraphOptions = {
   responsive: boolean;
   plugins: BarGraphPlugins;
+  onClick?: (event: any, elements: any) => void;
 };
 
 type BarGraphData = {
