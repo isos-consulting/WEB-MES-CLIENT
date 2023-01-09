@@ -41,6 +41,8 @@ export default {
       { original: 'plan_qty', popup: 'plan_daily_qty' },
       { original: 'qty', popup: 'balance' },
       { original: 'monthly_balance', popup: 'monthly_balance' },
+      { original: 'shift_uuid', popup: 'shift_uuid' },
+      { original: 'shift_nm', popup: 'shift_nm' },
     ],
     columns: [
       {
