@@ -1,7 +1,6 @@
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import dayjs from 'dayjs';
-import moment from 'moment';
 import React, { useEffect, useRef } from 'react';
 import TuiGrid from 'tui-grid';
 import { Container, Datagrid, DatePicker } from '~/components/UI';
@@ -27,7 +26,7 @@ const fetchWorkCalendarGetApi = ({
     '/std/work-calendars',
   );
 
-const workCalendarLists = (userSelectedLastMonth: moment.Moment) => {
+const workCalendarLists = (userSelectedLastMonth: dayjs.Dayjs) => {
   const lastDayOfMonth = Number(
     userSelectedLastMonth.endOf('month').format('DD'),
   );
@@ -51,10 +50,11 @@ const workCalendarLists = (userSelectedLastMonth: moment.Moment) => {
 };
 
 const syncWorkCalendar = () => {
-  const initilizedMonth = moment(getToday()).format('YYYY-MM');
+  const initilizedMonth = dayjs(getToday()).format('YYYY-MM');
+
   return fetchWorkCalendarGetApi({
     start_date: `${initilizedMonth}-01`,
-    end_date: `${initilizedMonth}-${moment(initilizedMonth)
+    end_date: `${initilizedMonth}-${dayjs(initilizedMonth)
       .endOf('month')
       .format('DD')}`,
   });
@@ -64,7 +64,9 @@ const fetchWorkHoursGetApi = ({ work_type_uuid }: { work_type_uuid: string }) =>
   getData({ work_type_uuid }, 'std/worktimes/work-hours');
 
 export const PgStdWorkCalendar = () => {
-  const [workMonth, setWorkMonth] = React.useState(moment(getToday()));
+  const [workMonth, setWorkMonth] = React.useState<dayjs.Dayjs>(
+    dayjs(getToday()),
+  );
   const [workCalendarData, setWorkCalendarData] = React.useState([]);
   const workCalendarDataGridRef = useRef<Grid>(null);
 
@@ -84,6 +86,7 @@ export const PgStdWorkCalendar = () => {
   };
 
   const searchWorkCalendarDatas = () => {
+    console.log(workMonth);
     fetchWorkCalendarGetApi({
       start_date: `${workMonth.format('YYYY-MM')}-01`,
       end_date: `${workMonth.format('YYYY-MM')}-${workMonth
