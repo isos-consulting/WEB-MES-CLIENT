@@ -7,7 +7,7 @@ type ModalRecordKeys =
   | 'EQUIP_POPUP_INFO'
   | 'WORKINGS_POPUP_INFO';
 
-const ModalStore: Record<ModalRecordKeys, IGridPopupInfo> = {
+export default {
   autMenu: {
     columnNames: [
       { original: 'menuUuid', popup: 'menu_uuid' },
@@ -285,6 +285,4 @@ const ModalStore: Record<ModalRecordKeys, IGridPopupInfo> = {
     },
     gridMode: 'select',
   },
-};
-
-export default ModalStore;
+} as Record<ModalRecordKeys, IGridPopupInfo>;

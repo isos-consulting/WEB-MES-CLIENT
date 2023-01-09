@@ -474,6 +474,4 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
   );
 });
 
-const GridPopup = React.memo(BaseGridPopup);
-
-export default GridPopup;
+export default React.memo(BaseGridPopup);

@@ -5,7 +5,7 @@ import { ScPieGraph } from './graph-pie.ui.styled';
 import { setNumberToDigit } from '~functions/util.function';
 
 /** 파이 그래프 */
-const PieGraph: React.FC<Props> = props => {
+export default props => {
   const responseivePieProps = {
     theme: props.theme || {
       fontSize: 14,
@@ -74,7 +74,5 @@ const PieGraph: React.FC<Props> = props => {
         ''
       )}
     </div>
-  );
+  ) as React.FC<Props>;
 };
-
-export default PieGraph;

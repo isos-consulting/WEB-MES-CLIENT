@@ -9,7 +9,7 @@ import { Profile } from '~/models/user/profile';
 import { ico_lock } from '~/images';
 import { SENTENCE } from '~/constants/lang/ko';
 
-const PgUpdatePassword = ({
+export default ({
   profile,
   authenticatedCallback,
 }: {
@@ -270,5 +270,3 @@ const PasswordConfirm = () => {
 };
 
 Password.Confirm = PasswordConfirm;
-
-export default PgUpdatePassword;

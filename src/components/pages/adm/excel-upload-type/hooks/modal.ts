@@ -32,7 +32,7 @@ type EditBasicModalContextProps<T> = Omit<
 
 interface BasicGridPopupProps extends IGridPopupProps {}
 
-class BasicModalContext<T> implements BasicGridPopupProps {
+export default class BasicModalContext<T> implements BasicGridPopupProps {
   readonly popupId: string;
   readonly saveUriPath: string;
   readonly columns: IGridColumn[];
@@ -133,5 +133,3 @@ class BasicModalContext<T> implements BasicGridPopupProps {
     });
   }
 }
-
-export default BasicModalContext;

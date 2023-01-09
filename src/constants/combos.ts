@@ -4,7 +4,7 @@ interface ComboStoreProps {
   [combo: string]: IGridComboInfo;
 }
 
-const ComboStore: ComboStoreProps = {
+export default {
   formType: {
     columnNames: [
       {
@@ -106,6 +106,4 @@ const ComboStore: ComboStoreProps = {
       params: { emp_status: 'incumbent', worker_fg: true },
     },
   },
-};
-
-export default ComboStore;
+} as ComboStoreProps;

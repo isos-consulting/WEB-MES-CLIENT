@@ -1,4 +1,4 @@
-const EXPRESSSIONS = {
+export default {
   HOUR_MINUTE: /^([1-9]|[01]\d|2[0-3]):([0-5]\d)$/,
   HOUR_MINUTE_SECOND: /^([1-9]|[01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/,
   NON_DIGIT_GLOBAL: /\D/g,
@@ -8,5 +8,3 @@ const EXPRESSSIONS = {
   DECIMAL_OPTIONAL_DOT: /^\d+(\.\d+)?$/,
   COMMA_GLOBAL: /,/g,
 };
-
-export default EXPRESSSIONS;
