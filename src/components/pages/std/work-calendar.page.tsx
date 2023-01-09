@@ -113,7 +113,6 @@ export const PgStdWorkCalendar = () => {
     executeData(
       updatedWorkCalendarDatas.map(
         ({ day_no, day_value, work_type_uuid, ...workDayRest }) => {
-          console.log({ workDayRest });
           if (work_type_uuid == null)
             return {
               day_no: `${workMonth.format('YYYY-MM')}-${day_no}`,
@@ -178,8 +177,6 @@ export const PgStdWorkCalendar = () => {
   }, []);
 
   useEffect(searchWorkCalendarDatas, [workMonth]);
-
-  console.log({ stdWorkCalendarColumns });
 
   return (
     <>
