@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   dataGridEvents,
+  executeData,
   getData,
   getModifiedRows,
   getPageName,
+  getUserFactoryUuid,
 } from '~/functions';
 import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
@@ -68,6 +70,36 @@ export const PgStdShift = () => {
         format: 'time',
         editable: true,
         requiredField: true,
+      },
+      {
+        header: '기본값 적용',
+        name: 'default_fg',
+        width: ENUM_WIDTH.M,
+        format: 'button',
+        options: {
+          formatter: ({ value }) => {
+            if (value === true) return '해제';
+
+            return '적용';
+          },
+          onClick: (clickEvent, { grid, rowKey }) => {
+            const defaultFlag = grid.getValue(rowKey, 'default_fg');
+            const defaultFlagApi = defaultFlag
+              ? '/std/shifts/cancel-default'
+              : '/std/shifts/default';
+
+            executeData(
+              [
+                {
+                  uuid: grid.getValue(rowKey, 'shift_uuid'),
+                  factory_uuid: getUserFactoryUuid(),
+                },
+              ],
+              defaultFlagApi,
+              'put',
+            ).then(buttonActions.search);
+          },
+        },
       },
     ],
     {
