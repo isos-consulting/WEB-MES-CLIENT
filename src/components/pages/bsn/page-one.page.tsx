@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BarGraph, Container, Datagrid } from '~/components/UI';
 
 export const PgBsnPageOne = () => {
-  const [year, setYear] = useState(
+  const [year, _setYear] = useState(
     new Array(12).fill(1).map((_, i) => i * Math.random()),
   );
   const [week, setWeek] = useState([]);
