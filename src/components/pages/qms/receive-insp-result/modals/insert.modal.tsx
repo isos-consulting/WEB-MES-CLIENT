@@ -190,12 +190,10 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   };
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    const receiveInspectionReportColumns = createInspectionReportColumns(
+    return createInspectionReportColumns(
       ColumnStore.RECEIVE_INSP_DETAIL,
       receiveInspHeaderData?.max_sample_cnt,
     );
-
-    return receiveInspectionReportColumns;
   }, [receiveInspHeaderData]);
 
   const inputInputItems = useInputGroup(

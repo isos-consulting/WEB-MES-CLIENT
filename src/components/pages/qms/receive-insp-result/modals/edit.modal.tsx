@@ -155,12 +155,10 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
   ];
 
   const CREATE_POPUP_DETAIL_COLUMNS = useMemo(() => {
-    const receiveInspectionReportColumns = createInspectionReportColumns(
+    return createInspectionReportColumns(
       INSP_DETAIL_COLUMNS,
       receiveInspHeaderData?.max_sample_cnt,
     );
-
-    return receiveInspectionReportColumns;
   }, [receiveInspHeaderData]);
 
   const INFO_INPUT_ITEMS: IInputGroupboxItem[] = [

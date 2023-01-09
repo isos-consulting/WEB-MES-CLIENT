@@ -315,18 +315,14 @@ export default [
             specMax,
           });
 
-          const cellFlagResultValue = nullFg ? null : resultFg;
-
-          return cellFlagResultValue;
+          return nullFg ? null : resultFg;
         } else {
           const [nullFg, resultFg] = getInspCheckResultValue(value, {
             specMin,
             specMax,
           });
 
-          const cellFlagResultValue = nullFg ? null : resultFg;
-
-          return cellFlagResultValue;
+          return nullFg ? null : resultFg;
         }
       },
     },
