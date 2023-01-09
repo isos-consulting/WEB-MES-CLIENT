@@ -158,7 +158,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
   });
   const [modalContextStore, setModalContextStore] =
     useState<IGridPopupProps>(basicModalContext);
-  console.log(columns);
+
   return (
     <>
       {modalContextStore.visible === true ? (
