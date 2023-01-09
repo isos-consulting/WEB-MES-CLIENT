@@ -130,7 +130,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (e.dataTransfer!.files) {
+    if (e.dataTransfer?.files) {
       setIsDragging(true);
     }
   }, []);
