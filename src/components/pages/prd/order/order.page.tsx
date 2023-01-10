@@ -27,6 +27,7 @@ import {
   saveGridData,
 } from '~/functions';
 import { orderInput, orderRoute, TAB_CODE } from '../order';
+import prdOrderEditModalColumns from './modal/prd-order-edit-modal-columns';
 import prdOrderNewModalColumns from './modal/prd-order-new-modal-columns';
 import { onDefaultGridSave } from './order.page.util';
 import { orderWorker } from './order.page.worker';
@@ -348,194 +349,21 @@ export const PgPrdOrder = () => {
     ],
   };
 
-  //#region 🔶수정 팝업 관련
   const editPopupGridRef = useRef<Grid>();
   const [editPopupVisible, setEditPopupVisible] = useState(false);
 
-  /** 항목 수정 팝업 속성 */
   const editGridPopupInfo: IGridPopupProps = {
     ...gridInfo,
     gridId: 'ORDER_EDIT_GRID',
     ref: editPopupGridRef,
     gridMode: 'update',
-    columns: [
-      {
-        header: '작업지시UUID',
-        name: 'order_uuid',
-        alias: 'uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '우선순위',
-        name: 'priority',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
-        filter: 'number',
-      },
-      {
-        header: '지시일',
-        name: 'reg_date',
-        width: ENUM_WIDTH.M,
-        format: 'date',
-        filter: 'date',
-        requiredField: true,
-      },
-      {
-        header: '지시번호',
-        name: 'order_no',
-        width: ENUM_WIDTH.M,
-        editable: true,
-      },
-      {
-        header: '작업장UUID',
-        name: 'workings_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '작업장',
-        name: 'workings_nm',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'popup',
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '품목UUID',
-        name: 'prod_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '품번',
-        name: 'prod_no',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '품목',
-        name: 'prod_nm',
-        width: ENUM_WIDTH.L,
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '제품유형',
-        name: 'prod_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '품목유형',
-        name: 'item_type_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '모델',
-        name: 'model_nm',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: 'Rev',
-        name: 'rev',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '규격',
-        name: 'prod_std',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '단위',
-        name: 'unit_nm',
-        width: ENUM_WIDTH.S,
-        filter: 'text',
-        noSave: true,
-      },
-      {
-        header: '계획수량',
-        name: 'plan_qty',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
-      },
-      {
-        header: '지시수량',
-        name: 'qty',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
-        requiredField: true,
-      },
-      {
-        header: '지시순번',
-        name: 'seq',
-        width: ENUM_WIDTH.S,
-        editable: true,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
-        hidden: true,
-      },
-      {
-        header: '작업교대UUID',
-        name: 'shift_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-        requiredField: true,
-      },
-      {
-        header: '작업교대',
-        name: 'shift_nm',
-        width: ENUM_WIDTH.M,
-        editable: true,
-        format: 'combo',
-        filter: 'text',
-        requiredField: true,
-        noSave: true,
-      },
-      {
-        header: '수주상세UUID',
-        name: 'sal_order_detail_uuid',
-        width: ENUM_WIDTH.M,
-        hidden: true,
-      },
-      {
-        header: '비고',
-        name: 'remark',
-        width: ENUM_WIDTH.XL,
-        editable: true,
-        filter: 'text',
-      },
-    ],
+    columns: prdOrderEditModalColumns,
     defaultData: data,
     data: data,
     height: null,
     onAfterClick: null,
-    /** 팝업 아이디 */
     popupId: 'ORDER_EDIT_GRID_POPUP',
-    /** 팝업 제목 */
     title: '작업지시 수정',
-    /** 포지티브 버튼 글자 */
     okText: '저장하기',
     onOk: () => {
       saveGridData(
@@ -553,24 +381,15 @@ export const PgPrdOrder = () => {
         setEditPopupVisible(false);
       });
     },
-    /** 네거티브 버튼 글자 */
     cancelText: '취소',
     onCancel: () => {
       setEditPopupVisible(false);
     },
-    /** 부모 참조 */
     parentGridRef: gridRef,
-    /** 저장 유형 */
     saveType: 'basic',
-    /** 저장 END POINT */
     saveUriPath: gridInfo.saveUriPath,
-    /** 조회 END POINT */
     searchUriPath: gridInfo.searchUriPath,
-    /** 추가 저장 값 */
-    // saveOptionParams: saveOptionParams,
-    /** 최초 visible 상태 */
     defaultVisible: false,
-    /** visible 상태값 */
     visible: editPopupVisible,
     onAfterOk: (isSuccess, savedData) => {
       if (!isSuccess) return;
@@ -578,7 +397,6 @@ export const PgPrdOrder = () => {
       onSearch(searchParams);
     },
   };
-  //#endregion
 
   const onSearch = values => {
     getData(
@@ -593,7 +411,6 @@ export const PgPrdOrder = () => {
         inputReceive.ref.current.resetForm();
       })
       .finally(() => {
-        // 지시이력 조회되면서 하위 데이터 초기화
         ORDER_INPUT.setSaveOptionParams({});
         ORDER_WORKER.setSaveOptionParams({});
         ORDER_ROUTE.setSaveOptionParams({});
@@ -626,8 +443,6 @@ export const PgPrdOrder = () => {
     );
   };
 
-  //#endregion
-
   const HeaderGridElement = useMemo(() => {
     const gridMode = !permissions?.delete_fg ? 'view' : 'delete';
     return <Datagrid {...gridInfo} gridMode={gridMode} />;
@@ -644,13 +459,6 @@ export const PgPrdOrder = () => {
       <Divider style={{ marginBottom: 10 }} />
       <Container>
         <div style={{ width: '100%', display: 'inline-block' }}>
-          <Space size={[6, 0]} align="start">
-            {/* <Input.Search
-              placeholder='전체 검색어를 입력하세요.'
-              enterButton
-              onSearch={onAllFiltered}/> */}
-            {/* <Button btnType='buttonFill' widthSize='small' ImageType='search' colorType='blue' onClick={onSearch}>조회</Button> */}
-          </Space>
           <Space size={[6, 0]} style={{ float: 'right' }}>
             <Button
               btnType="buttonFill"
