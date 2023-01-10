@@ -10,11 +10,11 @@ import {
   TPopupKey,
 } from '~/components/UI';
 import { IPopupItemsRetrunProps } from '~/components/UI/popup/popup.ui.type';
-import { ColumnStore } from '~/constants/columns';
 import { FieldStore } from '~/constants/fields';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { getData, getToday } from '~/functions';
 import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
+import prdDailyWorkPlanColumns from '../../work/plan/daily/prd-daily-work-plan-columns';
 import prdLoadWorkPlanColumnNames from './prd-load-work-plan-column-names';
 
 type WorkPlanRowAddPopupInfo = {
@@ -48,6 +48,15 @@ const putDueDateFielLabel = (field, index, replacedLabel) => {
   return field;
 };
 
+const getDailyWorkPlans = async (dailyWorkPlanConditions, childGridRef) => {
+  const dailyWorkPlans = await getData(
+    { ...dailyWorkPlanConditions },
+    '/prd/plan-daily',
+  );
+
+  childGridRef.current.getInstance().resetData(dailyWorkPlans);
+};
+
 export const getDailyWorkPlanModalProps = async ({
   childGridRef,
   columns,
@@ -66,7 +75,7 @@ export const getDailyWorkPlanModalProps = async ({
     WorkPlanRowAddPopupInfo &
     WorkPlanRowAddPopupDataApiSettingParams = {
     columnNames: prdLoadWorkPlanColumnNames,
-    columns: ColumnStore.DAILY_WORK_PLAN,
+    columns: prdDailyWorkPlanColumns,
     dataApiSettings: {
       uriPath: '/prd/plan-daily',
       params: {
@@ -77,7 +86,7 @@ export const getDailyWorkPlanModalProps = async ({
     },
     datagridProps: {
       gridId: null,
-      columns: ColumnStore.DAILY_WORK_PLAN,
+      columns: prdDailyWorkPlanColumns,
     },
     gridMode: 'multi-select',
     modalProps: {
@@ -106,15 +115,10 @@ export const getDailyWorkPlanModalProps = async ({
           hidden: true,
         },
       ],
-      onSearch: async (
-        dailyWorkPlanConditions: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
+      onSearch: (
+        condition: WorkPlanRowAddPopupInfo['dataApiSettings']['params'],
       ) => {
-        const dailyWorkPlans = await getData(
-          { ...dailyWorkPlanConditions },
-          '/prd/plan-daily',
-        );
-
-        childGridRef.current.getInstance().resetData(dailyWorkPlans);
+        getDailyWorkPlans(condition, childGridRef);
       },
       boxShadow: false,
     },

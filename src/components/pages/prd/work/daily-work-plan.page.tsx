@@ -22,6 +22,7 @@ import {
 } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
+import prdDailyWorkPlanColumns from './plan/daily/prd-daily-work-plan-columns';
 
 const hiddenWorkPlanModal = new BasicModalContext({
   title: '',
@@ -186,7 +187,7 @@ export const PgDailyWorkPlan = () => {
     modalContextSwitch({
       ...BasicModalContext.add({
         title: `${workPlanSearchInfo.ref.current.values.plan_date} ${title}`,
-        columns: ColumnStore.DAILY_WORK_PLAN,
+        columns: prdDailyWorkPlanColumns,
         gridPopupInfo: [
           {
             columnNames: [
@@ -248,7 +249,7 @@ export const PgDailyWorkPlan = () => {
     modalContextSwitch(
       BasicModalContext.edit({
         title,
-        columns: ColumnStore.DAILY_WORK_PLAN.map<IGridColumn>(column => {
+        columns: prdDailyWorkPlanColumns.map<IGridColumn>(column => {
           if (column.name === 'plan_daily_qty') {
             return {
               ...column,
@@ -298,7 +299,7 @@ export const PgDailyWorkPlan = () => {
           <Datagrid
             ref={workPlanDataGridRef}
             data={workPlanData}
-            columns={ColumnStore.DAILY_WORK_PLAN}
+            columns={prdDailyWorkPlanColumns}
             gridMode="delete"
           />
         </Container>
