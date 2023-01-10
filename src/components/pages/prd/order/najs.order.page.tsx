@@ -25,6 +25,7 @@ import {
 } from '~/functions';
 import { onDefaultGridSave } from './order.page.util';
 import { getDailyWorkPlanModalProps } from './plan/prd-load-work-plan';
+import prdOrderRowAddpopups from './prd-order-row-addpopups';
 
 const putDueDateFielLabel = (field, index, replacedLabel) => {
   if (index === 0)
@@ -55,14 +56,7 @@ export const PgPrdNajsOrder = () => {
     columns: ColumnStore.NAJS_PROD_ORDER,
     data: data,
     rowAddPopupInfo: {
-      ...ModalStore.ORDER_ADD_ROW_POPUP_INFO,
-      dataApiSettings: {
-        ...ModalStore.ORDER_ADD_ROW_POPUP_INFO.dataApiSettings,
-        onInterlock: () => {
-          message.warn(SENTENCE.PLEASE_DO_WORK_PLAN_LOAD);
-          return false;
-        },
-      },
+      ...prdOrderRowAddpopups,
     },
     gridPopupInfo: [
       ModalStore.EQUIP_POPUP_INFO,

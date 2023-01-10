@@ -14,14 +14,9 @@ import {
   Tabs,
 } from '~/components/UI';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
-import {
-  IInputGroupboxItem,
-  InputGroupbox,
-  useInputGroup,
-} from '~/components/UI/input-groupbox';
+import { InputGroupbox, useInputGroup } from '~/components/UI/input-groupbox';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE } from '~/constants/lang/ko';
-import ModalStore from '~/constants/modals';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   getData,
@@ -35,16 +30,13 @@ import { orderInput, orderRoute, TAB_CODE } from '../order';
 import { onDefaultGridSave } from './order.page.util';
 import { orderWorker } from './order.page.worker';
 import { getDailyWorkPlanModalProps } from './plan/prd-load-work-plan';
+import prdOrderInputReceiveInputboxes from './prd-order-input-receive-inputboxes';
+import prdOrderRowAddpopups from './prd-order-row-addpopups';
 
-/** 작업지시 */
 export const PgPrdOrder = () => {
-  /** 페이지 제목 */
   const title = getPageName();
-
-  /** 권한 관련 */
   const permissions = getPermissions(title);
 
-  //#region 🔶 작업지시이력 관련
   const [modal, contextHolder] = Modal.useModal();
 
   const searchRef = useRef<FormikProps<FormikValues>>();
@@ -54,27 +46,16 @@ export const PgPrdOrder = () => {
   const ORDER_WORKER = orderWorker();
   const ORDER_ROUTE = orderRoute();
 
-  const INPUT_ITEMS_RECIEVE: IInputGroupboxItem[] = [
-    { id: 'order_no', label: '지시번호', type: 'text', disabled: true },
-    { id: 'reg_date', label: '지시일', type: 'date', disabled: true },
-    { id: 'prod_no', label: '품번', type: 'text', disabled: true },
-    { id: 'prod_nm', label: '품명', type: 'text', disabled: true },
-    { id: 'rev', label: '리비전', type: 'text', disabled: true },
-    { id: 'prod_std', label: '규격', type: 'text', disabled: true },
-    { id: 'qty', label: '입하수량', type: 'number', disabled: true },
-  ];
+  const inputReceive = useInputGroup(
+    'INPUT_ITEMS_WORK',
+    prdOrderInputReceiveInputboxes,
+  );
 
-  const inputReceive = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_RECIEVE);
-
-  //#region 🔶메인 그리드 관련
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const ORDER_ADD_ROW_POPUP_INFO: IGridPopupInfo =
-    ModalStore.ORDER_ADD_ROW_POPUP_INFO;
   const ORDER_POPUP_INFO: IGridPopupInfo[] = [
     {
-      // 생산자원정보 (리소스) 팝업 불러오기
       columnNames: [
         { original: 'routing_resource_uuid', popup: 'routing_resource_uuid' },
         { original: 'equip_uuid', popup: 'equip_uuid' },
@@ -463,7 +444,7 @@ export const PgPrdOrder = () => {
     data: data,
     /** 행추가팝업 */
     rowAddPopupInfo: {
-      ...ORDER_ADD_ROW_POPUP_INFO,
+      ...prdOrderRowAddpopups,
       gridMode: 'multi-select',
     },
     /** 수정팝업 */

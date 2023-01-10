@@ -13,9 +13,9 @@ import { IPopupItemsRetrunProps } from '~/components/UI/popup/popup.ui.type';
 import { ColumnStore } from '~/constants/columns';
 import { FieldStore } from '~/constants/fields';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
-import ModalStore from '~/constants/modals';
 import { getData, getToday } from '~/functions';
 import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
+import prdLoadWorkPlanColumnNames from './prd-load-work-plan-column-names';
 
 type WorkPlanRowAddPopupInfo = {
   popupKey: TPopupKey;
@@ -65,10 +65,7 @@ export const getDailyWorkPlanModalProps = async ({
   }: IPopupItemsRetrunProps &
     WorkPlanRowAddPopupInfo &
     WorkPlanRowAddPopupDataApiSettingParams = {
-    columnNames: ModalStore.ORDER_ADD_ROW_POPUP_INFO.columnNames.concat([
-      { original: 'plan_daily_uuid', popup: 'plan_daily_uuid' },
-      { original: 'lv', popup: 'lv' },
-    ]),
+    columnNames: prdLoadWorkPlanColumnNames,
     columns: ColumnStore.DAILY_WORK_PLAN,
     dataApiSettings: {
       uriPath: '/prd/plan-daily',
