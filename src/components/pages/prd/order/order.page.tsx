@@ -1,15 +1,13 @@
 import { CaretRightOutlined } from '@ant-design/icons';
 import Grid from '@toast-ui/react-grid';
-import { Divider, message, Modal, Space, Spin, Typography } from 'antd';
+import { Divider, Modal, Space, Spin, Typography } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import {
   Button,
   Container,
   Datagrid,
-  getPopupForm,
   GridPopup,
-  IGridPopupInfo,
   Searchbox,
   Tabs,
 } from '~/components/UI';
@@ -17,7 +15,6 @@ import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import { InputGroupbox, useInputGroup } from '~/components/UI/input-groupbox';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE } from '~/constants/lang/ko';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   getData,
   getModifiedRows,
@@ -34,6 +31,7 @@ import { orderWorker } from './order.page.worker';
 import { getDailyWorkPlanModalProps } from './plan/prd-load-work-plan';
 import prdOrderHeaderColumns from './prd-order-header-columns';
 import prdOrderInputReceiveInputboxes from './prd-order-input-receive-inputboxes';
+import prdOrderPopups from './prd-order-popups';
 import prdOrderRowAddpopups from './prd-order-row-addpopups';
 
 export const PgPrdOrder = () => {
@@ -57,126 +55,6 @@ export const PgPrdOrder = () => {
   const gridRef = useRef<Grid>();
   const [data, setData] = useState([]);
 
-  const ORDER_POPUP_INFO: IGridPopupInfo[] = [
-    {
-      columnNames: [
-        { original: 'routing_resource_uuid', popup: 'routing_resource_uuid' },
-        { original: 'equip_uuid', popup: 'equip_uuid' },
-        { original: 'equip_cd', popup: 'equip_cd' },
-        { original: 'equip_nm', popup: 'equip_nm' },
-      ],
-      columns: [
-        {
-          header: '생산자원UUID',
-          name: 'routing_resource_uuid',
-          alias: 'uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '공장UUID',
-          name: 'factory_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '라우팅UUID',
-          name: 'routing_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '자원 유형',
-          name: 'resource_type',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: '설비UUID',
-          name: 'equip_uuid',
-          width: ENUM_WIDTH.M,
-          hidden: true,
-          format: 'text',
-        },
-        {
-          header: '설비명',
-          name: 'equip_nm',
-          width: ENUM_WIDTH.L,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: '인원',
-          name: 'emp_cnt',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-        {
-          header: 'Cycle Time',
-          name: 'cycle_time',
-          width: ENUM_WIDTH.M,
-          hidden: false,
-          format: 'text',
-        },
-      ],
-      dataApiSettings: {
-        uriPath: '/std/routing-resources',
-        params: {
-          resource_type: 'equip',
-        },
-      },
-      gridMode: 'select',
-    },
-    {
-      // 금형관리
-      columnNames: [
-        { original: 'mold_uuid', popup: 'mold_uuid' },
-        { original: 'mold_nm', popup: 'mold_nm' },
-        { original: 'mold_no', popup: 'mold_no' },
-        { original: 'mold_cavity', popup: 'mold_cavity' },
-      ],
-      columns: getPopupForm('금형관리')?.datagridProps?.columns,
-      dataApiSettings: (el: any) => {
-        const rowKey = el.rowKey;
-        const rowData = el?.instance?.store?.data?.rawData.find(
-          el => el.rowKey === rowKey,
-        );
-        return {
-          uriPath: getPopupForm('금형관리')?.uriPath,
-          params: {},
-          onInterlock: () => {
-            let complete: boolean = rowData?.complete_fg;
-            console.log(complete);
-            if (complete) {
-              message.warn('작업이 마감되어 금형을 수정할 수 없습니다.');
-            }
-            return !complete;
-          },
-        };
-      },
-      gridMode: 'select',
-    },
-    {
-      // 작업장 관리
-      columnNames: [
-        { original: 'workings_uuid', popup: 'workings_uuid' },
-        { original: 'workings_cd', popup: 'workings_cd' },
-        { original: 'workings_nm', popup: 'workings_nm' },
-      ],
-      columns: getPopupForm('작업장관리')?.datagridProps?.columns,
-      dataApiSettings: {
-        uriPath: getPopupForm('작업장관리')?.uriPath,
-        params: {},
-      },
-      gridMode: 'select',
-    },
-  ];
-
   const gridInfo: IDatagridProps = {
     gridId: 'ORDER_GRID',
     ref: gridRef,
@@ -190,7 +68,7 @@ export const PgPrdOrder = () => {
       ...prdOrderRowAddpopups,
       gridMode: 'multi-select',
     },
-    gridPopupInfo: ORDER_POPUP_INFO,
+    gridPopupInfo: prdOrderPopups,
     gridComboInfo: [
       {
         columnNames: [
@@ -515,11 +393,8 @@ export const PgPrdOrder = () => {
             boxShadow={false}
           />
         </div>
-        {/* <p/> */}
         {HeaderGridElement}
       </Container>
-
-      {/* 지시정보 */}
       <Typography.Title
         level={5}
         style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
@@ -532,7 +407,6 @@ export const PgPrdOrder = () => {
       </div>
       <Divider style={{ marginTop: 2, marginBottom: 10 }} />
       <InputGroupbox {...inputReceive.props} />
-
       <Typography.Title
         level={5}
         style={{ marginTop: 30, marginBottom: -16, fontSize: 14 }}
@@ -582,13 +456,9 @@ export const PgPrdOrder = () => {
           },
         ]}
       />
-
       {newPopupVisible ? <GridPopup {...newGridPopupInfo} /> : null}
       {editPopupVisible ? <GridPopup {...editGridPopupInfo} /> : null}
-
       {contextHolder}
     </>
   );
 };
-
-//#endregion
