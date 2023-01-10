@@ -1,5 +1,5 @@
 import { IGridColumn } from '~/components/UI';
-import { ENUM_WIDTH } from '~/enums';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 
 export default <IGridColumn[]>[
   {
