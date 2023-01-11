@@ -1,5 +1,6 @@
 import {
   getRangeDateAtFiftyThreeWeeks,
+  getRangeDateAtMonth,
   getRangeDateAtMonthForWeek,
   getWeeksAtMonth,
 } from '~/functions/date.function';
@@ -62,4 +63,13 @@ test('getRangeDateAtMonthForWeek 함수는 week 인자가 없으면 에러를 �
   expect(() => getRangeDateAtMonthForWeek(2023, 1, null)).toThrowError(
     'week is null or undefined',
   );
+});
+
+test('2023년 1월은 1~31일을 포함한 배열을 반환한다', () => {
+  const dates = getRangeDateAtMonth('2023-01');
+
+  expect(dates).toEqual([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+  ]);
 });

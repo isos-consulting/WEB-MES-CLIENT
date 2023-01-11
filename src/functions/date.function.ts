@@ -109,3 +109,30 @@ export const getRangeDateAtFiftyThreeWeeks = year => {
 
   return dates.map(date => date.date());
 };
+
+export const getRangeDateAtMonth = month => {
+  if (month == null) throw new DateArgumentsNullPointException(DateType.month);
+
+  const momentConvertedMonth = moment(month);
+
+  if (momentConvertedMonth.isValid() === false)
+    throw new MonthInvalidException();
+
+  const startOfDateForMonth = momentConvertedMonth
+    .startOf('month')
+    .format('YYYY-MM-DD');
+
+  const endOfDateForMonth = momentConvertedMonth
+    .endOf('month')
+    .format('YYYY-MM-DD');
+
+  const momentDurationAsDays = moment
+    .duration(moment(endOfDateForMonth).diff(moment(startOfDateForMonth)))
+    .asDays();
+
+  const dates = Array.from({ length: momentDurationAsDays + 1 }, (_v, i) =>
+    moment(startOfDateForMonth).add(i, 'days'),
+  );
+
+  return dates.map(date => date.date());
+};
