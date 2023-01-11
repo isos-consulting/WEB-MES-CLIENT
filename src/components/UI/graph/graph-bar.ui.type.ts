@@ -9,7 +9,8 @@ type BarGraphPlugins = {
 };
 
 type BarGraphOptions = {
-  responsive: boolean;
+  responsive?: boolean;
+  maintainAspectRatio?: boolean;
   plugins: BarGraphPlugins;
   onClick?: (event: any, elements: any) => void;
 };
