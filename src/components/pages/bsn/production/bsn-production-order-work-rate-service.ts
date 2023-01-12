@@ -115,16 +115,15 @@ export class BsnProductionOrderWorkRateService {
       return `${week}주(${dates[0]})`;
     });
 
-    const weekColumns = weekHeaders.map((weekHeader, i): IGridColumn => {
-      const weekKey = weeks[i] > 9 ? `${weeks[i]}` : `0${weeks[i]}`;
-      return {
+    const weekColumns = weekHeaders.map(
+      (weekHeader, i): IGridColumn => ({
         header: weekHeader,
-        name: weekKey,
+        name: `${weeks[i]}`,
         format: 'number',
         decimal: ENUM_DECIMAL.DEC_PRICE,
         sortable: false,
-      };
-    });
+      }),
+    );
 
     return [
       {
