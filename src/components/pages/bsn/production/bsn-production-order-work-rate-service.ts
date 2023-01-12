@@ -30,6 +30,13 @@ export class BsnProductionOrderWorkRateService {
     }, 0);
   }
 
+  private workRate(plan, actual) {
+    if (plan === 0) return 0;
+    if (actual === 0) return 0;
+
+    return (actual / plan) * 100;
+  }
+
   monthColumn(): IGridColumn[] {
     const year = this.getCastedYearForNumber();
     const monthColumns = Array(12)
@@ -70,12 +77,12 @@ export class BsnProductionOrderWorkRateService {
     const service = new BsnProductionOrderWorkRateService('');
     const planTotalPrice = service.calcTotal(data[0]);
     const actualTotalPrice = service.calcTotal(data[1]);
-    const rate = (actualTotalPrice / planTotalPrice) * 100;
+    const rate = this.workRate(planTotalPrice, actualTotalPrice);
 
     return [
-      { ...data[0], total: planTotalPrice },
-      { ...data[1], total: actualTotalPrice },
-      { ...data[2], total: rate },
+      { ...data[0], total: planTotalPrice.toString() },
+      { ...data[1], total: actualTotalPrice.toString() },
+      { ...data[2], total: rate.toString() },
     ];
   }
 
@@ -141,12 +148,12 @@ export class BsnProductionOrderWorkRateService {
   weekData(data) {
     const planTotalPrice = this.calcTotal(data[0]);
     const actualTotalPrice = this.calcTotal(data[1]);
-    const rate = (actualTotalPrice / planTotalPrice) * 100;
+    const rate = this.workRate(planTotalPrice, actualTotalPrice);
 
     return [
-      { ...data[0], total: planTotalPrice },
-      { ...data[1], total: actualTotalPrice },
-      { ...data[2], total: rate },
+      { ...data[0], total: planTotalPrice.toString() },
+      { ...data[1], total: actualTotalPrice.toString() },
+      { ...data[2], total: rate.toString() },
     ];
   }
 
@@ -218,12 +225,12 @@ export class BsnProductionOrderWorkRateService {
   dateData(data) {
     const planTotalPrice = this.calcTotal(data[0]);
     const actualTotalPrice = this.calcTotal(data[1]);
-    const rate = (actualTotalPrice / planTotalPrice) * 100;
+    const rate = this.workRate(planTotalPrice, actualTotalPrice);
 
     return [
-      { ...data[0], total: planTotalPrice },
-      { ...data[1], total: actualTotalPrice },
-      { ...data[2], total: rate },
+      { ...data[0], total: planTotalPrice.toString() },
+      { ...data[1], total: actualTotalPrice.toString() },
+      { ...data[2], total: rate.toString() },
     ];
   }
 
