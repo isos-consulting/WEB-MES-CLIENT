@@ -36,7 +36,7 @@ const getDailyProductionOrderWorkRate = month => {
   );
 };
 
-export const PgBsnPageOne = () => {
+export const PgBsnProductionOrderWorkRate = () => {
   const [layoutState] = useRecoilState(layoutStore.state);
   const [isDecrease, toggleDecrease] = useState(true);
   const [year, setYear] = useState([]);
@@ -494,6 +494,7 @@ export const PgBsnPageOne = () => {
               {
                 header: '합계',
                 name: 'total',
+                width: ENUM_WIDTH.M,
                 format: 'number',
                 decimal: ENUM_DECIMAL.DEC_PRICE,
                 sortable: false,
