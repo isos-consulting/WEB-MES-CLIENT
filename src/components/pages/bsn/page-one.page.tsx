@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
-  BarGraph,
   Container,
   Datagrid,
   IGridColumn,
   layoutStore,
+  Searchbox,
 } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { getData, isNumber } from '~/functions';
+import { getData, getToday, isNumber } from '~/functions';
 import {
   getRangeDateAtMonth,
   getRangeDateAtMonthForWeek,
   getWeeksAtMonth,
 } from '~/functions/date.function';
+import { BsnProductionOrderWorkRateChart } from './production/bsn-production-order-work-rate-chart';
 
 const getWeeklyProductionOrderWorkRate = month => {
   return getData(
@@ -37,9 +38,7 @@ const getDailyProductionOrderWorkRate = month => {
 
 export const PgBsnPageOne = () => {
   const [layoutState] = useRecoilState(layoutStore.state);
-  const [yearChartWidth, setYearChartWidth] = useState(0);
-  const [weekchartWidth, setWeekChartWidth] = useState(0);
-  const [datechartWidth, setDateChartWidth] = useState(0);
+  const [isDecrease, toggleDecrease] = useState(true);
   const [year, setYear] = useState([]);
   const [week, setWeek] = useState([]);
   const [date, setDate] = useState([]);
@@ -52,9 +51,206 @@ export const PgBsnPageOne = () => {
   const [dateLastHalfColumns, setDateLastHalfColumns] = useState([]);
   const [dateData, setDateData] = useState([]);
 
+  const fnc = async reg_month => {
+    const month = Number(reg_month.substring(5, 7));
+
+    const weeks = getWeeksAtMonth(reg_month);
+
+    const weeksHeaders = weeks.map(week => {
+      const dates = getRangeDateAtMonthForWeek(2023, month, week);
+
+      if (dates.length > 2) {
+        return `${week}주`.concat(`(${dates[0]} ~ ${dates[dates.length - 1]})`);
+      }
+
+      return `${week}주`.concat(`(${dates[0]})`);
+    });
+
+    const weeksColumns: IGridColumn[] = weeksHeaders.map((weekHeader, i) => {
+      const weekKey = weeks[i] > 9 ? `${weeks[i]}` : `0${weeks[i]}`;
+      return {
+        header: weekHeader,
+        name: weekKey,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
+        sortable: false,
+      };
+    });
+
+    const weeklyProductionOrderWorkRate =
+      await getWeeklyProductionOrderWorkRate(reg_month);
+
+    setWeekColumns([
+      {
+        header: '구분',
+        name: 'fg',
+        width: ENUM_WIDTH.M,
+        sortable: false,
+      },
+      ...weeksColumns,
+      {
+        header: '합계',
+        name: 'total',
+        width: ENUM_WIDTH.M,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
+        sortable: false,
+      },
+    ]);
+    setWeekData(
+      weeklyProductionOrderWorkRate.map(
+        (weekProductionOrderWorkRate, index) => {
+          if (index < 2) {
+            const total = Object.values<string>(
+              weekProductionOrderWorkRate,
+            ).reduce((acc: number, cur) => {
+              if (cur == null) return acc;
+
+              if (isNumber(cur)) return acc + Number(cur);
+
+              return acc;
+            }, 0);
+
+            return {
+              ...weekProductionOrderWorkRate,
+              total,
+            };
+          }
+
+          const planPrice = Object.values<string>(
+            weeklyProductionOrderWorkRate[0],
+          ).reduce((acc: number, cur) => {
+            if (cur == null) return acc;
+
+            if (isNumber(cur)) return acc + Number(cur);
+
+            return acc;
+          }, 0);
+
+          const actualPrice: number = Object.values<string>(
+            weeklyProductionOrderWorkRate[1],
+          ).reduce((acc: number, cur) => {
+            if (cur == null) return acc;
+
+            if (isNumber(cur)) return acc + Number(cur);
+
+            return acc;
+          }, 0);
+
+          return {
+            ...weekProductionOrderWorkRate,
+            total: (actualPrice / planPrice) * 100,
+          };
+        },
+      ),
+    );
+    setWeekLabel(weeks.map(week => `${week}주`));
+    setWeek(
+      Object.keys(weeklyProductionOrderWorkRate[2])
+        .filter(key => key !== 'fg')
+        .map(key => weeklyProductionOrderWorkRate[2][key]),
+    );
+
+    const dates = getRangeDateAtMonth(reg_month);
+
+    const datesColumns = dates.map(date => {
+      const dateKey = date > 9 ? `${date}` : `0${date}`;
+
+      return {
+        header: `${date}`,
+        name: `${reg_month}-${dateKey}`,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
+        sortable: false,
+      };
+    });
+
+    setDateFirstHalfColumns([
+      {
+        header: '구분',
+        name: 'fg',
+        width: ENUM_WIDTH.M,
+        sortable: false,
+      },
+      ...datesColumns.slice(0, datesColumns.length / 2 + 1),
+    ]);
+    setDateLastHalfColumns([
+      {
+        header: '구분',
+        name: 'fg',
+        width: ENUM_WIDTH.M,
+        sortable: false,
+      },
+      ...datesColumns.slice(datesColumns.length / 2 + 1, datesColumns.length),
+      {
+        header: '합계',
+        name: 'total',
+        width: ENUM_WIDTH.M,
+        format: 'number',
+        decimal: ENUM_DECIMAL.DEC_PRICE,
+      },
+    ]);
+
+    const dailyProductionOrderWorkRate = await getDailyProductionOrderWorkRate(
+      reg_month,
+    );
+    setDateData(
+      dailyProductionOrderWorkRate.map((dateProductionOrderWorkRate, index) => {
+        if (index < 2) {
+          const total = Object.values<string>(
+            dateProductionOrderWorkRate,
+          ).reduce((acc: number, cur) => {
+            if (cur == null) return acc;
+
+            if (isNumber(cur)) return acc + Number(cur);
+
+            return acc;
+          }, 0);
+
+          return {
+            ...dateProductionOrderWorkRate,
+            total,
+          };
+        }
+
+        const planPrice = Object.values<string>(
+          dailyProductionOrderWorkRate[0],
+        ).reduce((acc: number, cur) => {
+          if (cur == null) return acc;
+
+          if (isNumber(cur)) return acc + Number(cur);
+
+          return acc;
+        }, 0);
+
+        const actualPrice: number = Object.values<string>(
+          dailyProductionOrderWorkRate[1],
+        ).reduce((acc: number, cur) => {
+          if (cur == null) return acc;
+
+          if (isNumber(cur)) return acc + Number(cur);
+
+          return acc;
+        }, 0);
+
+        return {
+          ...dateProductionOrderWorkRate,
+          total: (actualPrice / planPrice) * 100,
+        };
+      }),
+    );
+    setDateLabel(dates.map(date => `${date}일`));
+    setDate(
+      Object.keys(dailyProductionOrderWorkRate[2])
+        .filter(key => key !== 'fg')
+        .map(key => dailyProductionOrderWorkRate[2][key]),
+    );
+  };
+
   useEffect(() => {
+    const reg_month = getToday().substring(0, 7);
     getData(
-      { reg_date: `2023-01` },
+      { reg_date: reg_month },
       '/kpi/production/order-work-month-rate',
     ).then(productionOrderWorkMonthRates => {
       setYear(
@@ -110,17 +306,11 @@ export const PgBsnPageOne = () => {
         ),
       );
     });
+    fnc(reg_month);
   }, []);
 
   useEffect(() => {
-    const chartWidth =
-      document.querySelector('.chart-container').clientWidth / 3 - 20;
-    const halfChartWidth = chartWidth * 0.5;
-
-    console.log(chartWidth + halfChartWidth);
-    setYearChartWidth(chartWidth);
-    setWeekChartWidth(halfChartWidth);
-    setDateChartWidth(chartWidth + halfChartWidth);
+    toggleDecrease(layoutState.leftSpacing > 200);
 
     setYear(current => current);
     setWeek(current => current);
@@ -128,323 +318,65 @@ export const PgBsnPageOne = () => {
 
   return (
     <>
+      <Searchbox
+        searchItems={[
+          {
+            id: 'reg_date',
+            label: '생산 월',
+            type: 'dateym',
+            default: getToday(),
+          },
+        ]}
+        onSearch={async ({ reg_date }: { reg_date: string }) => {
+          const reg_month = reg_date.substring(0, 7);
+
+          fnc(reg_month);
+          console.log({ reg_month });
+        }}
+      />
       <Container>
         <div
           className="chart-container"
           style={{
             display: 'flex',
-            justifyContent: 'space-around',
+            justifyContent: 'space-evenly',
             gap: '0px 10px',
           }}
         >
-          <div
-            style={{
-              width: yearChartWidth,
-              height: '287px',
-              position: 'relative',
-            }}
-          >
-            <BarGraph
-              options={{
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { position: 'top' },
-                  title: { display: true, text: '월별' },
-                },
-                onClick: async (chartClickEvent, selectedBarData) => {
-                  if (selectedBarData.length === 0) return;
-
-                  const twoSizedCharMonth =
-                    selectedBarData[0].index >= 9
-                      ? `${selectedBarData[0].index + 1}`
-                      : `0${selectedBarData[0].index + 1}`;
-
-                  const selectedMonth = `2023-${twoSizedCharMonth}`;
-
-                  const weeks = getWeeksAtMonth(`2023-${twoSizedCharMonth}`);
-
-                  const weeksHeaders = weeks.map(week => {
-                    const dates = getRangeDateAtMonthForWeek(
-                      2023,
-                      selectedBarData[0].index + 1,
-                      week,
-                    );
-
-                    if (dates.length > 2) {
-                      return `${week}주`.concat(
-                        `(${dates[0]} ~ ${dates[dates.length - 1]})`,
-                      );
-                    }
-
-                    return `${week}주`.concat(`(${dates[0]})`);
-                  });
-
-                  const weeksColumns: IGridColumn[] = weeksHeaders.map(
-                    (weekHeader, i) => {
-                      const weekKey =
-                        weeks[i] > 9 ? `${weeks[i]}` : `0${weeks[i]}`;
-                      return {
-                        header: weekHeader,
-                        name: weekKey,
-                        format: 'number',
-                        decimal: ENUM_DECIMAL.DEC_PRICE,
-                        sortable: false,
-                      };
-                    },
-                  );
-
-                  const weeklyProductionOrderWorkRate =
-                    await getWeeklyProductionOrderWorkRate(selectedMonth);
-
-                  setWeekColumns([
-                    {
-                      header: '구분',
-                      name: 'fg',
-                      width: ENUM_WIDTH.M,
-                      sortable: false,
-                    },
-                    ...weeksColumns,
-                    {
-                      header: '합계',
-                      name: 'total',
-                      width: ENUM_WIDTH.M,
-                      format: 'number',
-                      decimal: ENUM_DECIMAL.DEC_PRICE,
-                      sortable: false,
-                    },
-                  ]);
-                  setWeekData(
-                    weeklyProductionOrderWorkRate.map(
-                      (weekProductionOrderWorkRate, index) => {
-                        if (index < 2) {
-                          const total = Object.values<string>(
-                            weekProductionOrderWorkRate,
-                          ).reduce((acc: number, cur) => {
-                            if (cur == null) return acc;
-
-                            if (isNumber(cur)) return acc + Number(cur);
-
-                            return acc;
-                          }, 0);
-
-                          return {
-                            ...weekProductionOrderWorkRate,
-                            total,
-                          };
-                        }
-
-                        const planPrice = Object.values<string>(
-                          weeklyProductionOrderWorkRate[0],
-                        ).reduce((acc: number, cur) => {
-                          if (cur == null) return acc;
-
-                          if (isNumber(cur)) return acc + Number(cur);
-
-                          return acc;
-                        }, 0);
-
-                        const actualPrice: number = Object.values<string>(
-                          weeklyProductionOrderWorkRate[1],
-                        ).reduce((acc: number, cur) => {
-                          if (cur == null) return acc;
-
-                          if (isNumber(cur)) return acc + Number(cur);
-
-                          return acc;
-                        }, 0);
-
-                        return {
-                          ...weekProductionOrderWorkRate,
-                          total: (actualPrice / planPrice) * 100,
-                        };
-                      },
-                    ),
-                  );
-                  setWeekLabel(weeks.map(week => `${week}주`));
-                  setWeek(
-                    Object.keys(weeklyProductionOrderWorkRate[2])
-                      .filter(key => key !== 'fg')
-                      .map(key => weeklyProductionOrderWorkRate[2][key]),
-                  );
-
-                  const dates = getRangeDateAtMonth(
-                    `2023-${twoSizedCharMonth}`,
-                  );
-
-                  const datesColumns = dates.map(date => {
-                    const dateKey = date > 9 ? `${date}` : `0${date}`;
-
-                    return {
-                      header: `${date}`,
-                      name: `2023-${twoSizedCharMonth}-${dateKey}`,
-                      format: 'number',
-                      decimal: ENUM_DECIMAL.DEC_PRICE,
-                      sortable: false,
-                    };
-                  });
-
-                  setDateFirstHalfColumns([
-                    {
-                      header: '구분',
-                      name: 'fg',
-                      width: ENUM_WIDTH.M,
-                      sortable: false,
-                    },
-                    ...datesColumns.splice(0, datesColumns.length / 2),
-                  ]);
-                  setDateLastHalfColumns([
-                    {
-                      header: '구분',
-                      name: 'fg',
-                      width: ENUM_WIDTH.M,
-                      sortable: false,
-                    },
-                    ...datesColumns.splice(0, datesColumns.length),
-                    {
-                      header: '합계',
-                      name: 'total',
-                      width: ENUM_WIDTH.M,
-                      format: 'number',
-                      decimal: ENUM_DECIMAL.DEC_PRICE,
-                    },
-                  ]);
-
-                  const dailyProductionOrderWorkRate =
-                    await getDailyProductionOrderWorkRate(selectedMonth);
-                  setDateData(
-                    dailyProductionOrderWorkRate.map(
-                      (dateProductionOrderWorkRate, index) => {
-                        if (index < 2) {
-                          const total = Object.values<string>(
-                            dateProductionOrderWorkRate,
-                          ).reduce((acc: number, cur) => {
-                            if (cur == null) return acc;
-
-                            if (isNumber(cur)) return acc + Number(cur);
-
-                            return acc;
-                          }, 0);
-
-                          return {
-                            ...dateProductionOrderWorkRate,
-                            total,
-                          };
-                        }
-
-                        const planPrice = Object.values<string>(
-                          dailyProductionOrderWorkRate[0],
-                        ).reduce((acc: number, cur) => {
-                          if (cur == null) return acc;
-
-                          if (isNumber(cur)) return acc + Number(cur);
-
-                          return acc;
-                        }, 0);
-
-                        const actualPrice: number = Object.values<string>(
-                          dailyProductionOrderWorkRate[1],
-                        ).reduce((acc: number, cur) => {
-                          if (cur == null) return acc;
-
-                          if (isNumber(cur)) return acc + Number(cur);
-
-                          return acc;
-                        }, 0);
-
-                        return {
-                          ...dateProductionOrderWorkRate,
-                          total: (actualPrice / planPrice) * 100,
-                        };
-                      },
-                    ),
-                  );
-                  setDateLabel(dates.map(date => `${date}일`));
-                  setDate(
-                    Object.keys(dailyProductionOrderWorkRate[2])
-                      .filter(key => key !== 'fg')
-                      .map(key => dailyProductionOrderWorkRate[2][key]),
-                  );
-                },
-              }}
-              data={{
-                labels: [
-                  '1월',
-                  '2월',
-                  '3월',
-                  '4월',
-                  '5월',
-                  '6월',
-                  '7월',
-                  '8월',
-                  '9월',
-                  '10월',
-                  '11월',
-                  '12월',
-                ],
-                datasets: [
-                  {
-                    label: '달성율',
-                    data: year,
-                    backgroundColor: 'blue',
-                  },
-                ],
-              }}
-            />
-          </div>
-          <div
-            style={{
-              width: weekchartWidth,
-              height: '287px',
-              position: 'relative',
-            }}
-          >
-            <BarGraph
-              options={{
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { position: 'top' },
-                  title: { display: true, text: '주별' },
-                },
-              }}
-              data={{
-                labels: weekLabel,
-                datasets: [
-                  {
-                    label: '달성율',
-                    data: week,
-                    backgroundColor: 'blue',
-                  },
-                ],
-              }}
-            />
-          </div>
-          <div
-            style={{
-              width: datechartWidth,
-              height: '287px',
-              position: 'relative',
-            }}
-          >
-            <BarGraph
-              options={{
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { position: 'top' },
-                  title: { display: true, text: '일별' },
-                },
-              }}
-              data={{
-                labels: dateLabel,
-                datasets: [
-                  {
-                    label: '달성율',
-                    data: date,
-                    backgroundColor: 'blue',
-                  },
-                ],
-              }}
-            />
-          </div>
+          <BsnProductionOrderWorkRateChart
+            graphLabels={[
+              '1월',
+              '2월',
+              '3월',
+              '4월',
+              '5월',
+              '6월',
+              '7월',
+              '8월',
+              '9월',
+              '10월',
+              '11월',
+              '12월',
+            ]}
+            graphData={year}
+            graphTitle="월별"
+            graphWidth="35%"
+            isDecrease={isDecrease}
+          />
+          <BsnProductionOrderWorkRateChart
+            graphLabels={weekLabel}
+            graphData={week}
+            graphTitle="주별"
+            graphWidth="25%"
+            isDecrease={isDecrease}
+          />
+          <BsnProductionOrderWorkRateChart
+            graphLabels={dateLabel}
+            graphData={date}
+            graphTitle="일별"
+            graphWidth="40%"
+            isDecrease={isDecrease}
+          />
         </div>
       </Container>
       <Container>
