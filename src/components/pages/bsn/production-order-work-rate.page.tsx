@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import {
-  Container,
-  Datagrid,
-  IGridColumn,
-  layoutStore,
-  Searchbox,
-} from '~/components/UI';
+import { Container, Datagrid, layoutStore, Searchbox } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { getToday, isNumber } from '~/functions';
-import {
-  getRangeDateAtMonth,
-  getRangeDateAtMonthForWeek,
-  getWeeksAtMonth,
-} from '~/functions/date.function';
+import { getRangeDateAtMonth } from '~/functions/date.function';
 import {
   getDailyProductionOrderWorkRate,
   getMonthlyProductionOrderWorkRate,
   getWeeklyProductionOrderWorkRate,
 } from './production/bsn-production-order-work-rate-apis';
 import { BsnProductionOrderWorkRateChart } from './production/bsn-production-order-work-rate-chart';
+import { BsnProductionOrderWorkRateService } from './production/bsn-production-order-work-rate-service';
 
 export const PgBsnProductionOrderWorkRate = () => {
   const [layoutState] = useRecoilState(layoutStore.state);
@@ -37,51 +28,15 @@ export const PgBsnProductionOrderWorkRate = () => {
   const [dateData, setDateData] = useState([]);
 
   const fnc = async reg_month => {
-    const month = Number(reg_month.substring(5, 7));
+    const service = new BsnProductionOrderWorkRateService(reg_month);
 
-    const weeks = getWeeksAtMonth(reg_month);
-
-    const weeksHeaders = weeks.map(week => {
-      const dates = getRangeDateAtMonthForWeek(2023, month, week);
-
-      if (dates.length > 2) {
-        return `${week}주`.concat(`(${dates[0]} ~ ${dates[dates.length - 1]})`);
-      }
-
-      return `${week}주`.concat(`(${dates[0]})`);
-    });
-
-    const weeksColumns: IGridColumn[] = weeksHeaders.map((weekHeader, i) => {
-      const weekKey = weeks[i] > 9 ? `${weeks[i]}` : `0${weeks[i]}`;
-      return {
-        header: weekHeader,
-        name: weekKey,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_PRICE,
-        sortable: false,
-      };
-    });
+    const weeksColumns = service.weekColumn();
 
     const weeklyProductionOrderWorkRate =
       await getWeeklyProductionOrderWorkRate(reg_month);
 
-    setWeekColumns([
-      {
-        header: '구분',
-        name: 'fg',
-        width: ENUM_WIDTH.M,
-        sortable: false,
-      },
-      ...weeksColumns,
-      {
-        header: '합계',
-        name: 'total',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_PRICE,
-        sortable: false,
-      },
-    ]);
+    setWeekColumns(weeksColumns);
+    setWeekLabel(service.weekLabel());
     setWeekData(
       weeklyProductionOrderWorkRate.map(
         (weekProductionOrderWorkRate, index) => {
@@ -129,7 +84,6 @@ export const PgBsnProductionOrderWorkRate = () => {
         },
       ),
     );
-    setWeekLabel(weeks.map(week => `${week}주`));
     setWeek(
       Object.keys(weeklyProductionOrderWorkRate[2])
         .filter(key => key !== 'fg')
@@ -297,9 +251,6 @@ export const PgBsnProductionOrderWorkRate = () => {
 
   useEffect(() => {
     toggleDecrease(layoutState.leftSpacing > 200);
-
-    setYear(current => current);
-    setWeek(current => current);
   }, [layoutState.leftSpacing]);
 
   return (
@@ -346,21 +297,21 @@ export const PgBsnProductionOrderWorkRate = () => {
             ]}
             graphData={year}
             graphTitle="월별"
-            graphWidth="35%"
+            graphWidth="30%"
             isDecrease={isDecrease}
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={weekLabel}
             graphData={week}
             graphTitle="주별"
-            graphWidth="25%"
+            graphWidth="20%"
             isDecrease={isDecrease}
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={dateLabel}
             graphData={date}
             graphTitle="일별"
-            graphWidth="40%"
+            graphWidth="50%"
             isDecrease={isDecrease}
           />
         </div>
