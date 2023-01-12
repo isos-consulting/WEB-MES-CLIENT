@@ -12,7 +12,7 @@ const convertGraphWidth = (graphWidth: string) => {
 };
 
 const BarChartWrapper = styled('div')`
-  height: Calc(37vh - 61px);
+  height: Calc(37vh - 102px);
   position: relative;
   ${({ graphWidth }) => {
     const width = convertGraphWidth(graphWidth);
