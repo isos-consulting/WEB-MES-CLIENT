@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Container, Datagrid, layoutStore, Searchbox } from '~/components/UI';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { getToday, isNumber } from '~/functions';
-import { getRangeDateAtMonth } from '~/functions/date.function';
+import { getToday } from '~/functions';
 import {
   getDailyProductionOrderWorkRate,
   getMonthlyProductionOrderWorkRate,
@@ -14,243 +12,81 @@ import { BsnProductionOrderWorkRateService } from './production/bsn-production-o
 
 export const PgBsnProductionOrderWorkRate = () => {
   const [layoutState] = useRecoilState(layoutStore.state);
-  const [isDecrease, toggleDecrease] = useState(true);
-  const [year, setYear] = useState([]);
-  const [week, setWeek] = useState([]);
-  const [date, setDate] = useState([]);
+  const [isRefreshGraph, toggleRefreshGraph] = useState(true);
   const [weekLabel, setWeekLabel] = useState([]);
   const [dateLabel, setDateLabel] = useState([]);
-  const [yearData, setYearData] = useState([]);
+  const [yearData, setYearData] = useState(
+    BsnProductionOrderWorkRateService.emptyData(),
+  );
+  const [monthColumns, setMonthColumns] = useState([]);
   const [weekColumns, setWeekColumns] = useState([]);
-  const [weekData, setWeekData] = useState([]);
+  const [weekData, setWeekData] = useState(
+    BsnProductionOrderWorkRateService.emptyData(),
+  );
   const [dateFirstHalfColumns, setDateFirstHalfColumns] = useState([]);
   const [dateLastHalfColumns, setDateLastHalfColumns] = useState([]);
-  const [dateData, setDateData] = useState([]);
+  const [dateData, setDateData] = useState(
+    BsnProductionOrderWorkRateService.emptyData(),
+  );
 
-  const fnc = async reg_month => {
-    const service = new BsnProductionOrderWorkRateService(reg_month);
+  const setDataGridColumns = month => {
+    const service = new BsnProductionOrderWorkRateService(month);
 
-    const weeksColumns = service.weekColumn();
+    setMonthColumns(service.monthColumn());
+    setWeekColumns(service.weekColumn());
+    setDateFirstHalfColumns(service.firstHalfDateColumn());
+    setDateLastHalfColumns(service.lastHalfDateColumn());
+  };
+
+  const setGraphLabels = month => {
+    const service = new BsnProductionOrderWorkRateService(month);
+
+    setWeekLabel(service.weekGraphLabel());
+    setDateLabel(service.dateGraphLabel());
+  };
+
+  const setDataGridData = async month => {
+    const service = new BsnProductionOrderWorkRateService(month);
+
+    const monthlyproductionOrderWorkRate =
+      await getMonthlyProductionOrderWorkRate(month);
 
     const weeklyProductionOrderWorkRate =
-      await getWeeklyProductionOrderWorkRate(reg_month);
-
-    setWeekColumns(weeksColumns);
-    setWeekLabel(service.weekLabel());
-    setWeekData(
-      weeklyProductionOrderWorkRate.map(
-        (weekProductionOrderWorkRate, index) => {
-          if (index < 2) {
-            const total = Object.values<string>(
-              weekProductionOrderWorkRate,
-            ).reduce((acc: number, cur) => {
-              if (cur == null) return acc;
-
-              if (isNumber(cur)) return acc + Number(cur);
-
-              return acc;
-            }, 0);
-
-            return {
-              ...weekProductionOrderWorkRate,
-              total,
-            };
-          }
-
-          const planPrice = Object.values<string>(
-            weeklyProductionOrderWorkRate[0],
-          ).reduce((acc: number, cur) => {
-            if (cur == null) return acc;
-
-            if (isNumber(cur)) return acc + Number(cur);
-
-            return acc;
-          }, 0);
-
-          const actualPrice: number = Object.values<string>(
-            weeklyProductionOrderWorkRate[1],
-          ).reduce((acc: number, cur) => {
-            if (cur == null) return acc;
-
-            if (isNumber(cur)) return acc + Number(cur);
-
-            return acc;
-          }, 0);
-
-          return {
-            ...weekProductionOrderWorkRate,
-            total: (actualPrice / planPrice) * 100,
-          };
-        },
-      ),
-    );
-    setWeek(
-      Object.keys(weeklyProductionOrderWorkRate[2])
-        .filter(key => key !== 'fg')
-        .map(key => weeklyProductionOrderWorkRate[2][key]),
-    );
-
-    const dates = getRangeDateAtMonth(reg_month);
-
-    const datesColumns = dates.map(date => {
-      const dateKey = date > 9 ? `${date}` : `0${date}`;
-
-      return {
-        header: `${date}`,
-        name: `${reg_month}-${dateKey}`,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_PRICE,
-        sortable: false,
-      };
-    });
-
-    setDateFirstHalfColumns([
-      {
-        header: '구분',
-        name: 'fg',
-        width: ENUM_WIDTH.M,
-        sortable: false,
-      },
-      ...datesColumns.slice(0, datesColumns.length / 2 + 1),
-    ]);
-    setDateLastHalfColumns([
-      {
-        header: '구분',
-        name: 'fg',
-        width: ENUM_WIDTH.M,
-        sortable: false,
-      },
-      ...datesColumns.slice(datesColumns.length / 2 + 1, datesColumns.length),
-      {
-        header: '합계',
-        name: 'total',
-        width: ENUM_WIDTH.M,
-        format: 'number',
-        decimal: ENUM_DECIMAL.DEC_PRICE,
-      },
-    ]);
+      await getWeeklyProductionOrderWorkRate(month);
 
     const dailyProductionOrderWorkRate = await getDailyProductionOrderWorkRate(
-      reg_month,
+      month,
     );
-    setDateData(
-      dailyProductionOrderWorkRate.map((dateProductionOrderWorkRate, index) => {
-        if (index < 2) {
-          const total = Object.values<string>(
-            dateProductionOrderWorkRate,
-          ).reduce((acc: number, cur) => {
-            if (cur == null) return acc;
 
-            if (isNumber(cur)) return acc + Number(cur);
+    if (monthlyproductionOrderWorkRate == null) {
+      setYearData(BsnProductionOrderWorkRateService.emptyData());
+    } else {
+      setYearData(service.monthData(monthlyproductionOrderWorkRate));
+    }
 
-            return acc;
-          }, 0);
+    if (weeklyProductionOrderWorkRate == null) {
+      setWeekData(BsnProductionOrderWorkRateService.emptyData());
+    } else {
+      setWeekData(service.weekData(weeklyProductionOrderWorkRate));
+    }
 
-          return {
-            ...dateProductionOrderWorkRate,
-            total,
-          };
-        }
-
-        const planPrice = Object.values<string>(
-          dailyProductionOrderWorkRate[0],
-        ).reduce((acc: number, cur) => {
-          if (cur == null) return acc;
-
-          if (isNumber(cur)) return acc + Number(cur);
-
-          return acc;
-        }, 0);
-
-        const actualPrice: number = Object.values<string>(
-          dailyProductionOrderWorkRate[1],
-        ).reduce((acc: number, cur) => {
-          if (cur == null) return acc;
-
-          if (isNumber(cur)) return acc + Number(cur);
-
-          return acc;
-        }, 0);
-
-        return {
-          ...dateProductionOrderWorkRate,
-          total: (actualPrice / planPrice) * 100,
-        };
-      }),
-    );
-    setDateLabel(dates.map(date => `${date}일`));
-    setDate(
-      Object.keys(dailyProductionOrderWorkRate[2])
-        .filter(key => key !== 'fg')
-        .map(key => dailyProductionOrderWorkRate[2][key]),
-    );
+    if (dailyProductionOrderWorkRate == null) {
+      setDateData(BsnProductionOrderWorkRateService.emptyData());
+    } else {
+      setDateData(service.dateData(dailyProductionOrderWorkRate));
+    }
   };
 
   useEffect(() => {
     const reg_month = getToday().substring(0, 7);
 
-    getMonthlyProductionOrderWorkRate(reg_month).then(
-      productionOrderWorkMonthRates => {
-        setYear(
-          Object.keys(productionOrderWorkMonthRates[2])
-            .filter(key => key !== 'fg')
-            .map(key => productionOrderWorkMonthRates[2][key]),
-        );
-
-        setYearData(
-          productionOrderWorkMonthRates.map(
-            (productionOrderWorkMonthRate, index) => {
-              if (index < 2) {
-                const total = Object.values<string>(
-                  productionOrderWorkMonthRate,
-                ).reduce((acc: number, cur) => {
-                  if (cur == null) return acc;
-
-                  if (isNumber(cur)) return acc + Number(cur);
-
-                  return acc;
-                }, 0);
-                return {
-                  ...productionOrderWorkMonthRate,
-                  total,
-                };
-              }
-
-              const planOrderWorkMonthRate = Object.values<string>(
-                productionOrderWorkMonthRates[0],
-              ).reduce((acc: number, cur) => {
-                if (cur == null) return acc;
-
-                if (isNumber(cur)) return acc + Number(cur);
-
-                return acc;
-              }, 0);
-
-              const actualOrderWorkMonthRate = Object.values<string>(
-                productionOrderWorkMonthRates[1],
-              ).reduce((acc: number, cur) => {
-                if (cur == null) return acc;
-
-                if (isNumber(cur)) return acc + Number(cur);
-
-                return acc;
-              }, 0);
-
-              return {
-                ...productionOrderWorkMonthRate,
-                total:
-                  (actualOrderWorkMonthRate / planOrderWorkMonthRate) * 100,
-              };
-            },
-          ),
-        );
-      },
-    );
-    fnc(reg_month);
+    setDataGridColumns(reg_month);
+    setGraphLabels(reg_month);
+    setDataGridData(reg_month);
   }, []);
 
   useEffect(() => {
-    toggleDecrease(layoutState.leftSpacing > 200);
+    toggleRefreshGraph(layoutState.leftSpacing > 200);
   }, [layoutState.leftSpacing]);
 
   return (
@@ -267,8 +103,9 @@ export const PgBsnProductionOrderWorkRate = () => {
         onSearch={async ({ reg_date }: { reg_date: string }) => {
           const reg_month = reg_date.substring(0, 7);
 
-          fnc(reg_month);
-          console.log({ reg_month });
+          setDataGridColumns(reg_month);
+          setGraphLabels(reg_month);
+          setDataGridData(reg_month);
         }}
       />
       <Container>
@@ -281,38 +118,31 @@ export const PgBsnProductionOrderWorkRate = () => {
           }}
         >
           <BsnProductionOrderWorkRateChart
-            graphLabels={[
-              '1월',
-              '2월',
-              '3월',
-              '4월',
-              '5월',
-              '6월',
-              '7월',
-              '8월',
-              '9월',
-              '10월',
-              '11월',
-              '12월',
-            ]}
-            graphData={year}
+            graphLabels={BsnProductionOrderWorkRateService.monthGraphLabel()}
+            graphData={BsnProductionOrderWorkRateService.monthGraphData(
+              yearData[2],
+            )}
             graphTitle="월별"
             graphWidth="30%"
-            isDecrease={isDecrease}
+            refreshFlag={isRefreshGraph}
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={weekLabel}
-            graphData={week}
+            graphData={BsnProductionOrderWorkRateService.weekGraphData(
+              weekData[2],
+            )}
             graphTitle="주별"
             graphWidth="20%"
-            isDecrease={isDecrease}
+            refreshFlag={isRefreshGraph}
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={dateLabel}
-            graphData={date}
+            graphData={BsnProductionOrderWorkRateService.dateGraphData(
+              dateData[2],
+            )}
             graphTitle="일별"
             graphWidth="50%"
-            isDecrease={isDecrease}
+            refreshFlag={isRefreshGraph}
           />
         </div>
       </Container>
@@ -337,106 +167,7 @@ export const PgBsnProductionOrderWorkRate = () => {
             height={80}
           />
           <Datagrid
-            columns={[
-              {
-                header: '구분',
-                name: 'fg',
-                width: ENUM_WIDTH.M,
-                sortable: false,
-              },
-              {
-                header: '1월',
-                name: '2023-01',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '2월',
-                name: '2023-02',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '3월',
-                name: '2023-03',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '4월',
-                name: '2023-04',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '5월',
-                name: '2023-05',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '6월',
-                name: '2023-06',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '7월',
-                name: '2023-07',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '8월',
-                name: '2023-08',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '9월',
-                name: '2023-09',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '10월',
-                name: '2023-10',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '11월',
-                name: '2023-11',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '12월',
-                name: '2023-12',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-              {
-                header: '합계',
-                name: 'total',
-                width: ENUM_WIDTH.M,
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_PRICE,
-                sortable: false,
-              },
-            ]}
+            columns={monthColumns}
             data={yearData}
             disabledAutoDateColumn={true}
             height={80}

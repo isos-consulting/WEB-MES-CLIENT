@@ -85,8 +85,12 @@ export class BsnProductionOrderWorkRateService {
       .map((_, i) => `${i + 1}월`);
   }
 
-  static monthGraphData({ fg, ...rest }: { [key: string]: number }) {
+  static monthGraphData({ fg, total, ...rest }: { [key: string]: number }) {
     return Object.values(rest);
+  }
+
+  static emptyData() {
+    return [{}, {}, { fg: null }];
   }
 
   weekColumn(): IGridColumn[] {
@@ -97,7 +101,7 @@ export class BsnProductionOrderWorkRateService {
     const weekHeaders = weeks.map(week => {
       const dates = getRangeDateAtMonthForWeek(year, month, week);
 
-      if (dates.length > 2) {
+      if (dates.length > 1) {
         return `${week}주(${dates[0]} ~ ${dates[dates.length - 1]})`;
       }
 
@@ -150,7 +154,7 @@ export class BsnProductionOrderWorkRateService {
     return getWeeksAtMonth(this.month).map(week => `${week}주`);
   }
 
-  static weekGraphData({ fg, ...rest }: { [key: string]: number }) {
+  static weekGraphData({ fg, total, ...rest }: { [key: string]: number }) {
     return Object.values(rest);
   }
 
@@ -227,7 +231,7 @@ export class BsnProductionOrderWorkRateService {
     return getRangeDateAtMonth(this.month).map(date => `${date}일`);
   }
 
-  static dateGraphData({ fg, ...rest }: { [key: string]: number }) {
+  static dateGraphData({ fg, total, ...rest }: { [key: string]: number }) {
     return Object.values(rest);
   }
 }
