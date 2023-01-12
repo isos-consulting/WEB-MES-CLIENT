@@ -27,14 +27,14 @@ export const BsnProductionOrderWorkRateChart = ({
   graphData,
   graphTitle,
   graphWidth,
-  isDecrease,
+  refreshFlag,
 }) => {
-  const decrease = isDecrease ? 'decrease' : '';
+  const refreshGraphKey = refreshFlag ? 'refresh' : '';
 
   return (
     <BarChartWrapper graphWidth={graphWidth}>
       <BarGraph
-        key={decrease}
+        key={refreshGraphKey}
         options={{
           maintainAspectRatio: false,
           plugins: {
