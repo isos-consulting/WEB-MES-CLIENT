@@ -8,33 +8,18 @@ import {
   Searchbox,
 } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { getData, getToday, isNumber } from '~/functions';
+import { getToday, isNumber } from '~/functions';
 import {
   getRangeDateAtMonth,
   getRangeDateAtMonthForWeek,
   getWeeksAtMonth,
 } from '~/functions/date.function';
+import {
+  getDailyProductionOrderWorkRate,
+  getMonthlyProductionOrderWorkRate,
+  getWeeklyProductionOrderWorkRate,
+} from './production/bsn-production-order-work-rate-apis';
 import { BsnProductionOrderWorkRateChart } from './production/bsn-production-order-work-rate-chart';
-
-const getWeeklyProductionOrderWorkRate = month => {
-  return getData(
-    {
-      reg_date: month,
-      week_fg: true,
-    },
-    '/kpi/production/order-work-rate',
-  );
-};
-
-const getDailyProductionOrderWorkRate = month => {
-  return getData(
-    {
-      reg_date: month,
-      week_fg: false,
-    },
-    '/kpi/production/order-work-rate',
-  );
-};
 
 export const PgBsnProductionOrderWorkRate = () => {
   const [layoutState] = useRecoilState(layoutStore.state);
@@ -249,22 +234,36 @@ export const PgBsnProductionOrderWorkRate = () => {
 
   useEffect(() => {
     const reg_month = getToday().substring(0, 7);
-    getData(
-      { reg_date: reg_month },
-      '/kpi/production/order-work-month-rate',
-    ).then(productionOrderWorkMonthRates => {
-      setYear(
-        Object.keys(productionOrderWorkMonthRates[2])
-          .filter(key => key !== 'fg')
-          .map(key => productionOrderWorkMonthRates[2][key]),
-      );
 
-      setYearData(
-        productionOrderWorkMonthRates.map(
-          (productionOrderWorkMonthRate, index) => {
-            if (index < 2) {
-              const total = Object.values<string>(
-                productionOrderWorkMonthRate,
+    getMonthlyProductionOrderWorkRate(reg_month).then(
+      productionOrderWorkMonthRates => {
+        setYear(
+          Object.keys(productionOrderWorkMonthRates[2])
+            .filter(key => key !== 'fg')
+            .map(key => productionOrderWorkMonthRates[2][key]),
+        );
+
+        setYearData(
+          productionOrderWorkMonthRates.map(
+            (productionOrderWorkMonthRate, index) => {
+              if (index < 2) {
+                const total = Object.values<string>(
+                  productionOrderWorkMonthRate,
+                ).reduce((acc: number, cur) => {
+                  if (cur == null) return acc;
+
+                  if (isNumber(cur)) return acc + Number(cur);
+
+                  return acc;
+                }, 0);
+                return {
+                  ...productionOrderWorkMonthRate,
+                  total,
+                };
+              }
+
+              const planOrderWorkMonthRate = Object.values<string>(
+                productionOrderWorkMonthRates[0],
               ).reduce((acc: number, cur) => {
                 if (cur == null) return acc;
 
@@ -272,40 +271,27 @@ export const PgBsnProductionOrderWorkRate = () => {
 
                 return acc;
               }, 0);
+
+              const actualOrderWorkMonthRate = Object.values<string>(
+                productionOrderWorkMonthRates[1],
+              ).reduce((acc: number, cur) => {
+                if (cur == null) return acc;
+
+                if (isNumber(cur)) return acc + Number(cur);
+
+                return acc;
+              }, 0);
+
               return {
                 ...productionOrderWorkMonthRate,
-                total,
+                total:
+                  (actualOrderWorkMonthRate / planOrderWorkMonthRate) * 100,
               };
-            }
-
-            const planOrderWorkMonthRate = Object.values<string>(
-              productionOrderWorkMonthRates[0],
-            ).reduce((acc: number, cur) => {
-              if (cur == null) return acc;
-
-              if (isNumber(cur)) return acc + Number(cur);
-
-              return acc;
-            }, 0);
-
-            const actualOrderWorkMonthRate = Object.values<string>(
-              productionOrderWorkMonthRates[1],
-            ).reduce((acc: number, cur) => {
-              if (cur == null) return acc;
-
-              if (isNumber(cur)) return acc + Number(cur);
-
-              return acc;
-            }, 0);
-
-            return {
-              ...productionOrderWorkMonthRate,
-              total: (actualOrderWorkMonthRate / planOrderWorkMonthRate) * 100,
-            };
-          },
-        ),
-      );
-    });
+            },
+          ),
+        );
+      },
+    );
     fnc(reg_month);
   }, []);
 
