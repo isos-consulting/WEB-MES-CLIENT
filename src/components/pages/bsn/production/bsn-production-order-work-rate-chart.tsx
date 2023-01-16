@@ -28,6 +28,7 @@ export const BsnProductionOrderWorkRateChart = ({
   graphTitle,
   graphWidth,
   refreshFlag,
+  graphDataLabel,
 }) => {
   const refreshGraphKey = refreshFlag ? 'refresh' : '';
 
@@ -46,7 +47,7 @@ export const BsnProductionOrderWorkRateChart = ({
           labels: graphLabels,
           datasets: [
             {
-              label: '달성율',
+              label: graphDataLabel,
               data: graphData,
               backgroundColor: 'blue',
             },
