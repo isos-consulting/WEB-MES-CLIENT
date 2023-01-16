@@ -110,7 +110,6 @@ export const PgBsnProductionOrderWorkRate = () => {
       />
       <Container>
         <div
-          className="chart-container"
           style={{
             display: 'flex',
             justifyContent: 'space-evenly',
