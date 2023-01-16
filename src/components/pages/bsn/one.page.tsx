@@ -1,10 +1,26 @@
 import React from 'react';
-import { Container, Datagrid } from '~/components/UI';
+import { Container, Datagrid, Searchbox } from '~/components/UI';
 import { PieChart } from '~/components/UI/graph/chart-pie.ui';
+import { getToday } from '~/functions';
 
 export const PgPrdBsnOne = () => {
   return (
     <>
+      <Searchbox
+        searchItems={[
+          {
+            id: 'reg_date',
+            label: '생산 월',
+            type: 'dateym',
+            default: getToday(),
+          },
+        ]}
+        onSearch={async ({ reg_date }: { reg_date: string }) => {
+          const reg_month = reg_date.substring(0, 7);
+
+          console.log({ reg_month });
+        }}
+      />
       <div style={{ display: 'flex', flexDirection: 'row', gap: '0px 15px' }}>
         <Container style={{ width: '50%' }}>
           <Datagrid
