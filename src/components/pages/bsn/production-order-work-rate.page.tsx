@@ -124,6 +124,7 @@ export const PgBsnProductionOrderWorkRate = () => {
             )}
             graphTitle="월별"
             graphWidth="30%"
+            graphDataLabel="달성율"
             refreshFlag={isRefreshGraph}
           />
           <BsnProductionOrderWorkRateChart
@@ -133,6 +134,7 @@ export const PgBsnProductionOrderWorkRate = () => {
             )}
             graphTitle="주별"
             graphWidth="20%"
+            graphDataLabel="달성율"
             refreshFlag={isRefreshGraph}
           />
           <BsnProductionOrderWorkRateChart
@@ -142,6 +144,7 @@ export const PgBsnProductionOrderWorkRate = () => {
             )}
             graphTitle="일별"
             graphWidth="50%"
+            graphDataLabel="달성율"
             refreshFlag={isRefreshGraph}
           />
         </div>
