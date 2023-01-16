@@ -161,3 +161,4 @@ export * from './bsn/production-plan-achievement-rate.page';
 export * from './bsn/worker-productivity.page';
 export * from './bsn/defect-rate.page';
 export * from './bsn/production-order-work-rate.page';
+export * from './bsn/production-worker-work-price.page';
