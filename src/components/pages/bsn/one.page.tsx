@@ -7,6 +7,7 @@ import { getWeeksAtMonth } from '~/functions/date.function';
 
 export const PgPrdBsnOne = () => {
   const [weeklyData, setWeelkyData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
   return (
     <>
       <Searchbox
@@ -91,6 +92,96 @@ export const PgPrdBsnOne = () => {
           });
 
           setWeelkyData(weelkyEquipDownTimeTypesForDataGrid);
+          const months = [
+            '01',
+            '02',
+            '03',
+            '04',
+            '05',
+            '06',
+            '07',
+            '08',
+            '09',
+            '10',
+            '11',
+            '12',
+          ];
+          const monthlyEquipDownTimes = await getData(
+            { reg_date: reg_month },
+            '/kpi/production/equip-downtime-type-month',
+          );
+
+          const monthlyEquipDownTimeTotal = monthlyEquipDownTimes.reduce(
+            (acc, { fg, ...equipDownTimesForMonth }) => {
+              const totalCalculatedData = Object.entries(
+                equipDownTimesForMonth,
+              ).reduce(
+                ({ fg, total, ...datasForMonth }, [month, equipDownTime]) => {
+                  if (datasForMonth.hasOwnProperty(month))
+                    return {
+                      ...datasForMonth,
+                      [month]: datasForMonth[month] + equipDownTime,
+                      total: total + equipDownTime,
+                    };
+                  else
+                    return {
+                      ...datasForMonth,
+                      [month]: equipDownTime,
+                      total: total + equipDownTime,
+                    };
+                },
+                acc,
+              );
+
+              return { fg: '합계', ...totalCalculatedData };
+            },
+            { fg: '합계', total: 0 },
+          );
+
+          setMonthlyData(
+            [...monthlyEquipDownTimes, monthlyEquipDownTimeTotal].map(
+              (data, index) => {
+                const filledMonthlyEquipDownTimeType = months.reduce(
+                  ({ fg, total, ...rest }, month) => {
+                    const downtimeMonth = `${reg_month.substring(
+                      0,
+                      5,
+                    )}${month}`;
+                    if (!data.hasOwnProperty(downtimeMonth)) {
+                      return {
+                        ...rest,
+                        fg,
+                        total: total,
+                        [downtimeMonth]: 0,
+                      };
+                    }
+
+                    return {
+                      ...rest,
+                      fg,
+                      total: total + data[downtimeMonth],
+                      [downtimeMonth]: data[downtimeMonth],
+                    };
+                  },
+                  {
+                    fg: data.fg,
+                    total: 0,
+                  },
+                );
+
+                if (index < weeklyEquipDownTimeTypes.length) {
+                  return {
+                    ...filledMonthlyEquipDownTimeType,
+                    avg:
+                      filledMonthlyEquipDownTimeType.total /
+                      monthlyEquipDownTimeTotal.total,
+                  };
+                }
+
+                return { ...filledMonthlyEquipDownTimeType, avg: 0 };
+              },
+            ),
+          );
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'row', gap: '0px 15px' }}>
@@ -191,26 +282,102 @@ export const PgPrdBsnOne = () => {
           />
         </div>
       </div>
-      <Container style={{ minHeight: '150px' }}>textarea</Container>
+      <Container style={{ minHeight: '150px' }}></Container>
       <Container>
         <Datagrid
-          data={[{}, {}, {}, {}, {}, {}, {}, {}]}
+          data={monthlyData.map(({ fg, avg, ...months }) => {
+            return Object.entries(months).reduce(
+              (acc, [key, value]) => {
+                return {
+                  ...acc,
+                  [key]: `${value}`,
+                  avg: `${avg}`,
+                };
+              },
+              { fg, avg },
+            );
+          })}
           columns={[
-            { header: '원인항목' },
-            { header: '1월' },
-            { header: '2월' },
-            { header: '3월' },
-            { header: '4월' },
-            { header: '5월' },
-            { header: '6월' },
-            { header: '7월' },
-            { header: '8월' },
-            { header: '9월' },
-            { header: '10월' },
-            { header: '11월' },
-            { header: '12월' },
-            { header: '합계' },
-            { header: '점유율' },
+            { header: '원인항목', name: 'fg' },
+            {
+              header: '1월',
+              name: '2023-01',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '2월',
+              name: '2023-02',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '3월',
+              name: '2023-03',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '4월',
+              name: '2023-04',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '5월',
+              name: '2023-05',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '6월',
+              name: '2023-06',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '7월',
+              name: '2023-07',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '8월',
+              name: '2023-08',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '9월',
+              name: '2023-09',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '10월',
+              name: '2023-10',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '11월',
+              name: '2023-11',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '12월',
+              name: '2023-12',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            {
+              header: '합계',
+              name: 'total',
+              format: 'number',
+              decimal: ENUM_DECIMAL.DEC_STCOK,
+            },
+            { header: '점유율', name: 'avg', format: 'percent' },
           ]}
           disabledAutoDateColumn={true}
         />
