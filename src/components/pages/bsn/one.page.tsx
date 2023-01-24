@@ -115,6 +115,76 @@ const shuffle = (array: string[]) => {
   return newArray;
 };
 
+const getEquipDowntimeType = async ({ reg_date }: { reg_date: string }) => {
+  const reg_month = reg_date.substring(0, 7);
+  const weeks = getWeeksAtMonth(reg_month);
+
+  const weeklyEquipDownTimeTypes = await getData(
+    { reg_date: reg_month },
+    '/kpi/production/equip-downtime-type',
+  );
+
+  const weeklyEquipDownTimeTotal = weeklyEquipDownTimeTypes.reduce(
+    (acc, { fg, ...equipDownTimesForWeek }) => {
+      const totalCalculatedData = Object.entries(equipDownTimesForWeek).reduce(
+        ({ fg, total, ...datasForWeek }, [week, equipDownTime]) => {
+          if (datasForWeek.hasOwnProperty(week))
+            return {
+              ...datasForWeek,
+              [week]: datasForWeek[week] + equipDownTime,
+              total: total + equipDownTime,
+            };
+          else
+            return {
+              ...datasForWeek,
+              [week]: equipDownTime,
+              total: total + equipDownTime,
+            };
+        },
+        acc,
+      );
+
+      return { fg: '합계', ...totalCalculatedData };
+    },
+    { fg: '합계', total: 0 },
+  );
+
+  return [...weeklyEquipDownTimeTypes, weeklyEquipDownTimeTotal].map(
+    (weeklyEquipDownTimeType, index) => {
+      const filledWeeklyEquipDownTimeType = weeks.reduce(
+        ({ fg, total, ...datasForWeek }, cur) => {
+          if (!weeklyEquipDownTimeType.hasOwnProperty(cur))
+            return {
+              fg,
+              [cur]: 0,
+              total: total,
+              ...datasForWeek,
+            };
+          else
+            return {
+              fg,
+              [cur]: weeklyEquipDownTimeType[cur],
+              total: total + weeklyEquipDownTimeType[cur],
+              ...datasForWeek,
+            };
+        },
+        { fg: weeklyEquipDownTimeType.fg, total: 0 },
+      );
+
+      if (index < weeklyEquipDownTimeTypes.length) {
+        return {
+          ...filledWeeklyEquipDownTimeType,
+          avg:
+            filledWeeklyEquipDownTimeType.total /
+            weeklyEquipDownTimeTotal.total,
+        };
+      }
+
+      return { ...filledWeeklyEquipDownTimeType, avg: 0 };
+    },
+  );
+};
+
 export const PgPrdBsnOne = () => {
   const [weeklyData, setWeelkyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -134,77 +204,12 @@ export const PgPrdBsnOne = () => {
         ]}
         onSearch={async ({ reg_date }: { reg_date: string }) => {
           const reg_month = reg_date.substring(0, 7);
-          const weeks = getWeeksAtMonth(reg_month);
 
-          const weeklyEquipDownTimeTypes = await getData(
-            { reg_date: reg_month },
-            '/kpi/production/equip-downtime-type',
-          );
-
-          const weeklyEquipDownTimeTotal = weeklyEquipDownTimeTypes.reduce(
-            (acc, { fg, ...equipDownTimesForWeek }) => {
-              const totalCalculatedData = Object.entries(
-                equipDownTimesForWeek,
-              ).reduce(
-                ({ fg, total, ...datasForWeek }, [week, equipDownTime]) => {
-                  if (datasForWeek.hasOwnProperty(week))
-                    return {
-                      ...datasForWeek,
-                      [week]: datasForWeek[week] + equipDownTime,
-                      total: total + equipDownTime,
-                    };
-                  else
-                    return {
-                      ...datasForWeek,
-                      [week]: equipDownTime,
-                      total: total + equipDownTime,
-                    };
-                },
-                acc,
-              );
-
-              return { fg: '합계', ...totalCalculatedData };
-            },
-            { fg: '합계', total: 0 },
-          );
-
-          const weelkyEquipDownTimeTypesForDataGrid = [
-            ...weeklyEquipDownTimeTypes,
-            weeklyEquipDownTimeTotal,
-          ].map((weeklyEquipDownTimeType, index) => {
-            const filledWeeklyEquipDownTimeType = weeks.reduce(
-              ({ fg, total, ...datasForWeek }, cur) => {
-                if (!weeklyEquipDownTimeType.hasOwnProperty(cur))
-                  return {
-                    fg,
-                    [cur]: 0,
-                    total: total,
-                    ...datasForWeek,
-                  };
-                else
-                  return {
-                    fg,
-                    [cur]: weeklyEquipDownTimeType[cur],
-                    total: total + weeklyEquipDownTimeType[cur],
-                    ...datasForWeek,
-                  };
-              },
-              { fg: weeklyEquipDownTimeType.fg, total: 0 },
-            );
-
-            if (index < weeklyEquipDownTimeTypes.length) {
-              return {
-                ...filledWeeklyEquipDownTimeType,
-                avg:
-                  filledWeeklyEquipDownTimeType.total /
-                  weeklyEquipDownTimeTotal.total,
-              };
-            }
-
-            return { ...filledWeeklyEquipDownTimeType, avg: 0 };
-          });
+          const weelkyEquipDownTimeTypesForDataGrid =
+            await getEquipDowntimeType({ reg_date: reg_month });
 
           setWeelkyData(weelkyEquipDownTimeTypesForDataGrid);
+
           const months = [
             '01',
             '02',
@@ -219,6 +224,7 @@ export const PgPrdBsnOne = () => {
             '11',
             '12',
           ];
+
           const monthlyEquipDownTimes = await getData(
             { reg_date: reg_month },
             '/kpi/production/equip-downtime-type-month',
