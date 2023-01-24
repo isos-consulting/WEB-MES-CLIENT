@@ -280,10 +280,48 @@ const getMonthlyEquipDowntimeType = async ({
 };
 
 export const PgPrdBsnOne = () => {
+  const [month, setMonth] = useState(getToday().substring(0, 7));
   const [weeklyData, setWeelkyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
 
   const chartColor = shuffle(ChartColor);
+
+  const weekColumns = getWeeksAtMonth(month).map(week => ({
+    header: `${week}주차`,
+    name: `${week}`,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_STCOK,
+  }));
+
+  const weekColumnsForDataGrid = [
+    { header: '원인항목', name: 'fg' },
+    ...weekColumns,
+    { header: '점유율', name: 'avg', format: 'percent' },
+  ];
+
+  const monthColumns = new Array(12).fill(0).map((_, index) => {
+    const column = {
+      header: `${index + 1}월`,
+      name: `${month.substring(0, 5)}${index + 1}`,
+      format: 'number',
+      decimal: ENUM_DECIMAL.DEC_STCOK,
+    };
+
+    if (index < 9) {
+      return {
+        ...column,
+        name: `${month.substring(0, 5)}0${index + 1}`,
+      };
+    }
+
+    return column;
+  });
+
+  const monthColumnsForDataGrid = [
+    { header: '원인항목', name: 'fg' },
+    ...monthColumns,
+    { header: '점유율', name: 'avg', format: 'percent' },
+  ];
 
   return (
     <>
@@ -298,6 +336,7 @@ export const PgPrdBsnOne = () => {
         ]}
         onSearch={async ({ reg_date }: { reg_date: string }) => {
           const reg_month = reg_date.substring(0, 7);
+          setMonth(reg_month);
 
           const weeklyEquipDownTimeTypesForDataGrid =
             await getWeeklyEquipDowntimeType({ reg_date: reg_month });
@@ -321,46 +360,7 @@ export const PgPrdBsnOne = () => {
                 };
               }, {});
             })}
-            columns={[
-              { header: '원인항목', name: 'fg' },
-              {
-                header: '1주차',
-                name: '1',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              {
-                header: '2주차',
-                name: '2',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              {
-                header: '3주차',
-                name: '3',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              {
-                header: '4주차',
-                name: '4',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              {
-                header: '5주차',
-                name: '5',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              {
-                header: '합계',
-                name: 'total',
-                format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
-              },
-              { header: '점유율', name: 'avg', format: 'percent' },
-            ]}
+            columns={weekColumnsForDataGrid}
             disabledAutoDateColumn={true}
           />
         </Container>
@@ -411,88 +411,7 @@ export const PgPrdBsnOne = () => {
               { fg, avg },
             );
           })}
-          columns={[
-            { header: '원인항목', name: 'fg' },
-            {
-              header: '1월',
-              name: '2023-01',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '2월',
-              name: '2023-02',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '3월',
-              name: '2023-03',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '4월',
-              name: '2023-04',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '5월',
-              name: '2023-05',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '6월',
-              name: '2023-06',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '7월',
-              name: '2023-07',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '8월',
-              name: '2023-08',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '9월',
-              name: '2023-09',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '10월',
-              name: '2023-10',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '11월',
-              name: '2023-11',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '12월',
-              name: '2023-12',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            {
-              header: '합계',
-              name: 'total',
-              format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
-            },
-            { header: '점유율', name: 'avg', format: 'percent' },
-          ]}
+          columns={monthColumnsForDataGrid}
           disabledAutoDateColumn={true}
         />
       </Container>
