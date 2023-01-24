@@ -115,12 +115,15 @@ const shuffle = (array: string[]) => {
   return newArray;
 };
 
-const getEquipDowntimeType = async ({ reg_date }: { reg_date: string }) => {
-  const reg_month = reg_date.substring(0, 7);
-  const weeks = getWeeksAtMonth(reg_month);
+const getWeeklyEquipDowntimeType = async ({
+  reg_date,
+}: {
+  reg_date: string;
+}) => {
+  const weeks = getWeeksAtMonth(reg_date);
 
   const weeklyEquipDownTimeTypes = await getData(
-    { reg_date: reg_month },
+    { reg_date },
     '/kpi/production/equip-downtime-type',
   );
 
@@ -185,6 +188,97 @@ const getEquipDowntimeType = async ({ reg_date }: { reg_date: string }) => {
   );
 };
 
+const getMonthlyEquipDowntimeType = async ({
+  reg_date,
+}: {
+  reg_date: string;
+}) => {
+  const months = [
+    '01',
+    '02',
+    '03',
+    '04',
+    '05',
+    '06',
+    '07',
+    '08',
+    '09',
+    '10',
+    '11',
+    '12',
+  ];
+
+  const monthlyEquipDownTimes = await getData(
+    { reg_date },
+    '/kpi/production/equip-downtime-type-month',
+  );
+
+  const monthlyEquipDownTimeTotal = monthlyEquipDownTimes.reduce(
+    (acc, { fg, ...equipDownTimesForMonth }) => {
+      const totalCalculatedData = Object.entries(equipDownTimesForMonth).reduce(
+        ({ fg, total, ...datasForMonth }, [month, equipDownTime]) => {
+          if (datasForMonth.hasOwnProperty(month))
+            return {
+              ...datasForMonth,
+              [month]: datasForMonth[month] + equipDownTime,
+              total: total + equipDownTime,
+            };
+          else
+            return {
+              ...datasForMonth,
+              [month]: equipDownTime,
+              total: total + equipDownTime,
+            };
+        },
+        acc,
+      );
+
+      return { fg: '합계', ...totalCalculatedData };
+    },
+    { fg: '합계', total: 0 },
+  );
+
+  return [...monthlyEquipDownTimes, monthlyEquipDownTimeTotal].map(
+    (data, index) => {
+      const filledMonthlyEquipDownTimeType = months.reduce(
+        ({ fg, total, ...rest }, month) => {
+          const downtimeMonth = `${reg_date.substring(0, 5)}${month}`;
+          if (!data.hasOwnProperty(downtimeMonth)) {
+            return {
+              ...rest,
+              fg,
+              total: total,
+              [downtimeMonth]: 0,
+            };
+          }
+
+          return {
+            ...rest,
+            fg,
+            total: total + data[downtimeMonth],
+            [downtimeMonth]: data[downtimeMonth],
+          };
+        },
+        {
+          fg: data.fg,
+          total: 0,
+        },
+      );
+
+      if (index < monthlyEquipDownTimes.length) {
+        return {
+          ...filledMonthlyEquipDownTimeType,
+          avg:
+            filledMonthlyEquipDownTimeType.total /
+            monthlyEquipDownTimeTotal.total,
+        };
+      }
+
+      return { ...filledMonthlyEquipDownTimeType, avg: 0 };
+    },
+  );
+};
+
 export const PgPrdBsnOne = () => {
   const [weeklyData, setWeelkyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
@@ -205,102 +299,15 @@ export const PgPrdBsnOne = () => {
         onSearch={async ({ reg_date }: { reg_date: string }) => {
           const reg_month = reg_date.substring(0, 7);
 
-          const weelkyEquipDownTimeTypesForDataGrid =
-            await getEquipDowntimeType({ reg_date: reg_month });
+          const weeklyEquipDownTimeTypesForDataGrid =
+            await getWeeklyEquipDowntimeType({ reg_date: reg_month });
 
-          setWeelkyData(weelkyEquipDownTimeTypesForDataGrid);
+          setWeelkyData(weeklyEquipDownTimeTypesForDataGrid);
 
-          const months = [
-            '01',
-            '02',
-            '03',
-            '04',
-            '05',
-            '06',
-            '07',
-            '08',
-            '09',
-            '10',
-            '11',
-            '12',
-          ];
+          const monthlyEquipDownTimeTypesForDataGrid =
+            await getMonthlyEquipDowntimeType({ reg_date: reg_month });
 
-          const monthlyEquipDownTimes = await getData(
-            { reg_date: reg_month },
-            '/kpi/production/equip-downtime-type-month',
-          );
-
-          const monthlyEquipDownTimeTotal = monthlyEquipDownTimes.reduce(
-            (acc, { fg, ...equipDownTimesForMonth }) => {
-              const totalCalculatedData = Object.entries(
-                equipDownTimesForMonth,
-              ).reduce(
-                ({ fg, total, ...datasForMonth }, [month, equipDownTime]) => {
-                  if (datasForMonth.hasOwnProperty(month))
-                    return {
-                      ...datasForMonth,
-                      [month]: datasForMonth[month] + equipDownTime,
-                      total: total + equipDownTime,
-                    };
-                  else
-                    return {
-                      ...datasForMonth,
-                      [month]: equipDownTime,
-                      total: total + equipDownTime,
-                    };
-                },
-                acc,
-              );
-
-              return { fg: '합계', ...totalCalculatedData };
-            },
-            { fg: '합계', total: 0 },
-          );
-
-          setMonthlyData(
-            [...monthlyEquipDownTimes, monthlyEquipDownTimeTotal].map(
-              (data, index) => {
-                const filledMonthlyEquipDownTimeType = months.reduce(
-                  ({ fg, total, ...rest }, month) => {
-                    const downtimeMonth = `${reg_month.substring(
-                      0,
-                      5,
-                    )}${month}`;
-                    if (!data.hasOwnProperty(downtimeMonth)) {
-                      return {
-                        ...rest,
-                        fg,
-                        total: total,
-                        [downtimeMonth]: 0,
-                      };
-                    }
-
-                    return {
-                      ...rest,
-                      fg,
-                      total: total + data[downtimeMonth],
-                      [downtimeMonth]: data[downtimeMonth],
-                    };
-                  },
-                  {
-                    fg: data.fg,
-                    total: 0,
-                  },
-                );
-
-                if (index < weeklyEquipDownTimeTypes.length) {
-                  return {
-                    ...filledMonthlyEquipDownTimeType,
-                    avg:
-                      filledMonthlyEquipDownTimeType.total /
-                      monthlyEquipDownTimeTotal.total,
-                  };
-                }
-
-                return { ...filledMonthlyEquipDownTimeType, avg: 0 };
-              },
-            ),
-          );
+          setMonthlyData(monthlyEquipDownTimeTypesForDataGrid);
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'row', gap: '0px 15px' }}>
