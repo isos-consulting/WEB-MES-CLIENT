@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Datagrid, Searchbox } from '~/components/UI';
 import { PieChart } from '~/components/UI/graph/chart-pie.ui';
 import { ENUM_DECIMAL } from '~/enums';
@@ -374,6 +374,18 @@ export const PgProductionEquipDowntimeType = () => {
     };
   };
 
+  useEffect(async () => {
+    const weeklyEquipDownTimeTypesForDataGrid =
+      await getWeeklyEquipDowntimeType({ reg_date: month });
+
+    setWeelkyData(weeklyEquipDownTimeTypesForDataGrid);
+
+    const monthlyEquipDownTimeTypesForDataGrid =
+      await getMonthlyEquipDowntimeType({ reg_date: month });
+
+    setMonthlyData(monthlyEquipDownTimeTypesForDataGrid);
+  }, [month]);
+
   return (
     <>
       <Searchbox
@@ -385,19 +397,8 @@ export const PgProductionEquipDowntimeType = () => {
             default: getToday(),
           },
         ]}
-        onSearch={async ({ reg_date }: { reg_date: string }) => {
-          const reg_month = reg_date.substring(0, 7);
-          setMonth(reg_month);
-
-          const weeklyEquipDownTimeTypesForDataGrid =
-            await getWeeklyEquipDowntimeType({ reg_date: reg_month });
-
-          setWeelkyData(weeklyEquipDownTimeTypesForDataGrid);
-
-          const monthlyEquipDownTimeTypesForDataGrid =
-            await getMonthlyEquipDowntimeType({ reg_date: reg_month });
-
-          setMonthlyData(monthlyEquipDownTimeTypesForDataGrid);
+        onSearch={({ reg_date }: { reg_date: string }) => {
+          setMonth(reg_date.substring(0, 7));
         }}
       />
       <div style={{ display: 'flex', flexDirection: 'row', gap: '0px 15px' }}>
