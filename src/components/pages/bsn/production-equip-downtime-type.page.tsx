@@ -296,7 +296,7 @@ const getMonthlyEquipDowntimeType = async ({
   );
 };
 
-export const PgPrdBsnOne = () => {
+export const PgProductionEquipDowntimeType = () => {
   const [month, setMonth] = useState(getToday().substring(0, 7));
   const [weeklyData, setWeelkyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
