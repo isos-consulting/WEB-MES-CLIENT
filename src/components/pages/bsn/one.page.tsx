@@ -175,11 +175,19 @@ const getWeeklyEquipDowntimeType = async ({
       );
 
       if (index < weeklyEquipDownTimeTypes.length) {
+        const avg =
+          filledWeeklyEquipDownTimeType.total / weeklyEquipDownTimeTotal.total;
+
+        if (Number.isNaN(avg)) {
+          return {
+            ...filledWeeklyEquipDownTimeType,
+            avg: 0,
+          };
+        }
+
         return {
           ...filledWeeklyEquipDownTimeType,
-          avg:
-            filledWeeklyEquipDownTimeType.total /
-            weeklyEquipDownTimeTotal.total,
+          avg,
         };
       }
 
@@ -266,11 +274,20 @@ const getMonthlyEquipDowntimeType = async ({
       );
 
       if (index < monthlyEquipDownTimes.length) {
+        const avg =
+          filledMonthlyEquipDownTimeType.total /
+          monthlyEquipDownTimeTotal.total;
+
+        if (Number.isNaN(avg)) {
+          return {
+            ...filledMonthlyEquipDownTimeType,
+            avg: 0,
+          };
+        }
+
         return {
           ...filledMonthlyEquipDownTimeType,
-          avg:
-            filledMonthlyEquipDownTimeType.total /
-            monthlyEquipDownTimeTotal.total,
+          avg,
         };
       }
 
@@ -323,6 +340,40 @@ export const PgPrdBsnOne = () => {
     { header: '점유율', name: 'avg', format: 'percent' },
   ];
 
+  const pieGraphProps = () => {
+    const avgOverZeroData = weeklyData.filter(({ avg }) => avg > 0);
+    const charBackgroundColor = chartColor.map(color =>
+      color.replace(')', ', 0.2)').replace('rgb', 'rgba'),
+    );
+
+    if (avgOverZeroData.length === 0)
+      return {
+        labels: ['분석 데이터가 없습니다'],
+        datasets: [
+          {
+            label: '월 설비가동율 미달성 유형별 분석',
+            data: [100],
+            backgroundColor: charBackgroundColor,
+            borderColor: chartColor,
+            borderWidth: 1,
+          },
+        ],
+      };
+
+    return {
+      labels: avgOverZeroData.map(({ fg }) => fg),
+      datasets: [
+        {
+          label: '월 설비가동율 미달성 유형별 분석',
+          data: avgOverZeroData.map(({ avg }) => avg),
+          backgroundColor: charBackgroundColor,
+          borderColor: chartColor,
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
   return (
     <>
       <Searchbox
@@ -374,26 +425,7 @@ export const PgPrdBsnOne = () => {
             borderColor: '#ffffff',
           }}
         >
-          <PieChart
-            data={{
-              labels: weeklyData
-                .filter(({ avg }) => avg > 0)
-                .map(({ fg }) => fg),
-              datasets: [
-                {
-                  label: 'hello',
-                  data: weeklyData
-                    .filter(({ avg }) => avg > 0)
-                    .map(({ avg }) => avg * 100),
-                  backgroundColor: chartColor.map(color =>
-                    color.replace(')', ', 0.2)').replace('rgb', 'rgba'),
-                  ),
-                  borderColor: chartColor,
-                  borderWidth: 1,
-                },
-              ],
-            }}
-          />
+          <PieChart data={pieGraphProps()} />
         </div>
       </div>
       <Container style={{ minHeight: '150px' }}></Container>
