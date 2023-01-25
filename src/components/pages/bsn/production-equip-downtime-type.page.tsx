@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Datagrid, Searchbox } from '~/components/UI';
 import { PieChart } from '~/components/UI/graph/chart-pie.ui';
 import { ENUM_DECIMAL } from '~/enums';
-import { getData, getToday } from '~/functions';
+import { getToday } from '~/functions';
 import { getWeeksAtMonth } from '~/functions/date.function';
 import { randomNumber } from '~/functions/encrypt';
+import {
+  getMonthlyProductionEquipDowntimeType,
+  getWeeklyProductionEquipDowntimeType,
+} from './production/bsn-production-equip-downtime-apis';
 
 const ChartColor = [
   'rgb(205, 254, 5)',
@@ -122,9 +126,8 @@ const getWeeklyEquipDowntimeType = async ({
 }) => {
   const weeks = getWeeksAtMonth(reg_date);
 
-  const weeklyEquipDownTimeTypes = await getData(
-    { reg_date },
-    '/kpi/production/equip-downtime-type',
+  const weeklyEquipDownTimeTypes = await getWeeklyProductionEquipDowntimeType(
+    reg_date,
   );
 
   const weeklyEquipDownTimeTotal = weeklyEquipDownTimeTypes.reduce(
@@ -216,9 +219,8 @@ const getMonthlyEquipDowntimeType = async ({
     '12',
   ];
 
-  const monthlyEquipDownTimes = await getData(
-    { reg_date },
-    '/kpi/production/equip-downtime-type-month',
+  const monthlyEquipDownTimes = await getMonthlyProductionEquipDowntimeType(
+    reg_date,
   );
 
   const monthlyEquipDownTimeTotal = monthlyEquipDownTimes.reduce(
