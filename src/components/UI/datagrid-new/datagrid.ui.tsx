@@ -61,7 +61,7 @@ import {
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
 import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
-import { isNil, isNull } from '~/helper/common';
+import { isEmpty, isNil, isNull } from '~/helper/common';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -1494,7 +1494,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
     if (instance.getCheckedRowKeys().length >= 1) await onUncheckRows(rowKey);
 
-    if (isNil(editValue) || editValue === '') {
+    if (isEmpty(editValue)) {
       // _edit 컬럼이 빈 값인 경우
       instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.SELECT);
     } else {
@@ -1507,7 +1507,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     const instance = gridRef.current.getInstance();
     const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
 
-    if (isNil(editValue) || editValue === '') {
+    if (isEmpty(editValue)) {
       // _edit 컬럼이 빈 값인 경우
       instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.SELECT);
     } else {
@@ -1530,7 +1530,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       if (targetType === 'cell') {
         if (!isNil(rowKey)) {
           const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
-          if (isNil(editValue) || editValue === '') {
+          if (isEmpty(editValue)) {
             // _edit 컬럼이 빈 값인 경우
             switch (
               props.gridMode // 현재 모드에 따라 _edit 값을 다르게 삽입
@@ -2120,7 +2120,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           .getInstance()
           .getValue(rowKey, COLUMN_CODE.EDIT);
 
-        if (isNil(editValue) || editValue === '') {
+        if (isEmpty(editValue)) {
           // _edit 컬럼이 빈 값인 경우
           switch (
             props.gridMode // 현재 모드에 따라 _edit 값을 다르게 삽입

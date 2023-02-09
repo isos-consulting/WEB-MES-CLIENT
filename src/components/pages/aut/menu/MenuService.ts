@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import { getData } from '~/functions';
-import { isNil } from '~/helper/common';
+import { isEmpty } from '~/helper/common';
 
 type TGridAttributes = {
   expanded?: boolean;
@@ -107,14 +107,11 @@ const MenuService = class {
   };
 
   isNewReocrd = ({ uuid }) => {
-    return isNil(uuid) || uuid === '';
+    return isEmpty(uuid);
   };
 
   isDeleteReocrd = ({ parent_uuid, sortby }) => {
-    return (
-      (isNil(parent_uuid) || parent_uuid === '') &&
-      (isNil(sortby) || sortby === '')
-    );
+    return isEmpty(parent_uuid) && isEmpty(sortby);
   };
 
   inValidError = text => {
@@ -123,11 +120,11 @@ const MenuService = class {
   };
 
   newRecordValid = ({ parent_uuid, menu_nm, menu_uri }, { prefix, surfix }) => {
-    return isNil(parent_uuid) || parent_uuid === ''
+    return isEmpty(parent_uuid)
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
-      : isNil(menu_nm) || menu_nm === ''
+      : isEmpty(menu_nm)
       ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
-      : isNil(menu_uri) || menu_uri === ''
+      : isEmpty(menu_uri)
       ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
       : true;
   };
@@ -141,11 +138,11 @@ const MenuService = class {
     { parent_uuid, menu_nm, menu_uri },
     { prefix, surfix },
   ) => {
-    return isNil(parent_uuid) || parent_uuid === ''
+    return isEmpty(parent_uuid)
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
-      : isNil(menu_nm) || menu_nm === ''
+      : isEmpty(menu_nm)
       ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
-      : isNil(menu_uri) || menu_uri === ''
+      : isEmpty(menu_uri)
       ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
       : true;
   };

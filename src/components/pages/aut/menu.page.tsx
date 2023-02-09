@@ -3,6 +3,7 @@ import { Button, Container, Datagrid, Modal, useGrid } from '~/components/UI';
 import { InputGroupbox, useInputGroup } from '~/components/UI/input-groupbox';
 import { URL_PATH_AUT } from '~/enums';
 import { executeData } from '~/functions';
+import { isEmpty } from '~/helper/common';
 import {
   detailModalButtonProps,
   detailModalProps,
@@ -53,7 +54,7 @@ export const PgAutMenu = () => {
       return (await executeData(
         [record].map(({ menu_type_uuid, ...menu }) => ({
           ...menu,
-          menu_type_uuid: menu_type_uuid === '' ? null : menu_type_uuid,
+          menu_type_uuid: isEmpty(menu_type_uuid) ? null : menu_type_uuid,
         })),
         URL_PATH_AUT.MENU.PUT.MENUS,
         type,

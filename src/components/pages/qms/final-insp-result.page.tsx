@@ -49,7 +49,7 @@ import {
 } from '~/functions/qms/inspection';
 import { InsepctionDataGridChange } from '~/functions/qms/InspectionReportViewController';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
-import { isNil, isNull } from '~/helper/common';
+import { isEmpty, isNil, isNull } from '~/helper/common';
 import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
 import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
 import { InputForm, QuantityField } from './receive-insp-result/models/fields';
@@ -892,7 +892,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           options: props.inspHandlingType,
           onAfterChange: (inspectionHandlingType: string) => {
             const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
-              inspectionHandlingType === ''
+              isEmpty(inspectionHandlingType)
                 ? { insp_handling_type_cd: null }
                 : JSON.parse(inspectionHandlingType);
 
@@ -1115,7 +1115,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const { reject_qty, reject_uuid, reject_store_uuid } =
       inputInspResultReject?.ref?.current?.values;
 
-    if (insp_handling_type === '' || isNil(insp_handling_type)) {
+    if (isEmpty(insp_handling_type)) {
       message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
       return;
     }
@@ -1135,7 +1135,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
@@ -1147,14 +1147,14 @@ const INSP_RESULT_CREATE_POPUP = (props: {
         return;
       }
 
-      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+      if (isEmpty(reject_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
@@ -1165,7 +1165,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           return;
         }
 
-        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+        if (isEmpty(reject_store_uuid)) {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
           return;
         }
@@ -1515,10 +1515,11 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           ...field,
           options: props.inspHandlingType,
           onAfterChange: (stringifiedInspectionHandlingType: string) => {
-            const selectedInspHandlingType =
-              stringifiedInspectionHandlingType === ''
-                ? { insp_handling_type_cd: '' }
-                : JSON.parse(stringifiedInspectionHandlingType);
+            const selectedInspHandlingType = isEmpty(
+              stringifiedInspectionHandlingType,
+            )
+              ? { insp_handling_type_cd: '' }
+              : JSON.parse(stringifiedInspectionHandlingType);
             const inputQty = inputInputItems.ref.current.values.insp_qty;
 
             let incomeDisabled: boolean = true;
@@ -1700,7 +1701,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
 
     changeInspResult(inspectionHandlingTypeCode);
 
-    if (inspectionHandlingTypeCode === '') {
+    if (isEmpty(inspectionHandlingTypeCode)) {
       inputInspResult.setFieldValue('insp_handling_type', '');
     } else {
       props.inspHandlingType.forEach(({ code }) => {
@@ -1856,7 +1857,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     const { reject_qty, reject_uuid, reject_store_uuid } =
       inputInspResultReject?.ref?.current?.values;
 
-    if (insp_handling_type === '' || isNil(insp_handling_type)) {
+    if (isEmpty(insp_handling_type)) {
       message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
       return;
     }
@@ -1876,7 +1877,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
@@ -1888,14 +1889,14 @@ const INSP_RESULT_EDIT_POPUP = (props: {
         return;
       }
 
-      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+      if (isEmpty(reject_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
@@ -1906,7 +1907,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
           return;
         }
 
-        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+        if (isEmpty(reject_store_uuid)) {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
           return;
         }

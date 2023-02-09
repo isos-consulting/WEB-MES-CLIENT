@@ -27,7 +27,7 @@ import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 import { useLoadingState } from '~/hooks';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-import { isNil } from '~/helper/common';
+import { isEmpty, isNil } from '~/helper/common';
 
 const gridPopupUuid = uuidv4();
 
@@ -154,7 +154,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
               if (
                 (column?.disableStringEmpty === true ||
                   column?.format !== 'text') &&
-                detailDatas[i][column?.name] === ''
+                isEmpty(detailDatas[i][column?.name])
               ) {
                 delete detailDatas[i][column?.name];
               } else if (!isNil(column?.alias)) {

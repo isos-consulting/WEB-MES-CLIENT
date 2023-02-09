@@ -1,6 +1,7 @@
 import { IGridColumn } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 import { getInspCheckResultValue, isNumber } from '~/functions';
+import { isEmpty } from '~/helper/common';
 
 export default [
   {
@@ -276,7 +277,7 @@ export default [
         const specMax = targetValues['spec_max'];
 
         if (!isNumber(specMin) && !isNumber(specMax)) {
-          if (value === '') {
+          if (isEmpty(value)) {
             return value;
           }
           if (value?.toLowerCase() === 'ok') {

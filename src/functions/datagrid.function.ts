@@ -1,24 +1,24 @@
-import React, { MutableRefObject } from 'react';
-import { IGridModifiedRows } from '../components/UI/datagrid-new/datagrid.ui.type';
-import { getUserInfoKeys, getUserFactoryUuid } from './storage.function';
-import {
-  cleanupKeyOfObject,
-  getObjectKeyDuplicateCheck,
-} from './util.function';
-import { isNumber } from './number';
-import { executeData, getData } from './comm.function';
-import { message } from 'antd';
 import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
+import React, { MutableRefObject } from 'react';
 import {
   COLUMN_CODE,
   EDIT_ACTION_CODE,
   IGridColumn,
   TGridMode,
 } from '~/components/UI/datagrid-new';
-import dayjs from 'dayjs';
-import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
-import { cloneDeep } from 'lodash';
-import { isNil } from '~/helper/common';
+import { isEmpty, isNil } from '~/helper/common';
+import { IGridModifiedRows } from '../components/UI/datagrid-new/datagrid.ui.type';
+import { executeData, getData } from './comm.function';
+import { isNumber } from './number';
+import { getUserFactoryUuid, getUserInfoKeys } from './storage.function';
+import {
+  cleanupKeyOfObject,
+  getObjectKeyDuplicateCheck,
+} from './util.function';
 
 type ApiMethod = 'post' | 'put' | 'patch' | 'delete';
 
@@ -71,7 +71,7 @@ export const saveGridData = async (
             if (
               (columns[y]?.disableStringEmpty === true ||
                 columns[y]?.format !== 'text') &&
-              saveData[editType[i]][z][columns[y].name] === ''
+              isEmpty(saveData[editType[i]][z][columns[y].name])
             ) {
               delete saveData[editType[i]][z][columns[y].name];
             }
@@ -226,7 +226,7 @@ export const checkGridData = async (
               for (let z = 0; z < chkData[editType[y]]?.length; z++) {
                 const value = chkData[editType[y]][z][chkColumn[i].name];
 
-                if (isNil(value) || String(value).length === 0) {
+                if (isEmpty(value)) {
                   // 숫자 타입이지만 빈 값이면 저장 데이터에 미포함
                   // ❗ 극단적으로 인자값 자체를 바꾸는 형태라 나중에 수정해야할 수도 있음
                   delete data[editType[y]][z][chkColumn[i].name];
@@ -610,7 +610,7 @@ export const dataGridEvents = {
               if (
                 (column?.disableStringEmpty === true ||
                   column?.format !== 'text') &&
-                detailDatas[i][column?.name] === ''
+                isEmpty(detailDatas[i][column?.name])
               ) {
                 delete detailDatas[i][column?.name];
               } else if (!isNil(column?.alias)) {

@@ -8,7 +8,7 @@ import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
 import { executeData, getData, getToday } from '~/functions';
-import { isNil } from '~/helper/common';
+import { isEmpty, isNil } from '~/helper/common';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import stdWorkCalendarColumns from './work-calendar/std-work-calendar-columns';
 
@@ -104,7 +104,7 @@ export const PgStdWorkCalendar = () => {
     if (
       updatedWorkCalendarDatas.some(({ day_value }) => {
         if (isNil(day_value)) return true;
-        if (day_value === '') return true;
+        if (isEmpty(day_value)) return true;
 
         return Number.isNaN(Number(day_value)) === true;
       }) === true

@@ -1,21 +1,21 @@
-import '../styles/axios-progress.style.scss';
+import dayjs, { Dayjs } from 'dayjs';
+import Excel from 'exceljs';
+import { useLocation } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import {
   IGridColumn,
   IGridPopupColumnInfo,
 } from '../components/UI/datagrid-new/datagrid.ui.type';
-import dayjs, { Dayjs } from 'dayjs';
-import Excel from 'exceljs';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   afBooleanState,
-  afStringState,
   afDateState,
+  afStringState,
 } from '../recoils/recoil.atom-family';
-import { atSideNavMenuContent } from '~/components/UI/side-navbar';
-import { useLocation } from 'react-router-dom';
+import '../styles/axios-progress.style.scss';
 
+import { isEmpty, isNil } from '~/helper/common';
 import { isNumber } from './number';
-import { isNil } from '~/helper/common';
 
 /**
  * xlsx => json으로 convert하는 함수입니다.
@@ -522,7 +522,7 @@ export const cloneObject = (obj: object | any[]): any => {
 };
 
 export const blankThenNull = (value: any) => {
-  if (isNil(value) || value === '') {
+  if (isEmpty(value)) {
     return null;
   } else {
     return value;

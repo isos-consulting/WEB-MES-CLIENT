@@ -1,3 +1,6 @@
+import { message } from 'antd';
+import { SENTENCE } from '~/constants/lang/ko';
+import { isEmpty, isNull } from '~/helper/common';
 import {
   extract_insp_ItemEntriesAtCounts,
   getInspectItems,
@@ -7,9 +10,6 @@ import {
   isColumnNamesNotEndWith_insp_value,
 } from './inspection';
 import InspectionReportService from './InspectionReportService';
-import { SENTENCE } from '~/constants/lang/ko';
-import { message } from 'antd';
-import { isNil, isNull } from '~/helper/common';
 
 export type InsepctionDataGridChange = {
   columnName: string;
@@ -58,12 +58,12 @@ class InspectionReportViewController {
   }
 
   public validate(fields, inspections, validateOption) {
-    if (fields.emp_uuid === '' || isNil(fields.emp_uuid)) {
+    if (isEmpty(fields.emp_uuid)) {
       message.warn(SENTENCE.INPUT_INSPECTOR);
       throw new Error(SENTENCE.INPUT_INSPECTOR);
     }
 
-    if (fields.reg_date_time === '' || isNil(fields.reg_date_time)) {
+    if (isEmpty(fields.reg_date_time)) {
       message.warn(SENTENCE.INPUT_INSPECT_TIME);
       throw new Error(SENTENCE.INPUT_INSPECT_TIME);
     }
@@ -72,7 +72,7 @@ class InspectionReportViewController {
       return;
     }
 
-    if (fields.reg_date === '' || isNil(fields.reg_date)) {
+    if (isEmpty(fields.reg_date)) {
       message.warn(SENTENCE.INPUT_INSPECT_DATE);
       throw new Error(SENTENCE.INPUT_INSPECT_DATE);
     }

@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useRecoilState } from 'recoil';
-import { getPopupForm } from '~components/UI/popup/popup.ui.model';
-import { cleanupKeyOfObject, addKeyOfObject, getData } from '~/functions';
-import { IPopupItemsRetrunProps } from '~components/UI/popup/popup.ui.type';
-import { Button } from '~components/UI/button';
-import Props from './popup-button.ui.type';
-import { afPopupReponseRow } from './popup-button.recoil';
-import { v4 as uuidv4 } from 'uuid';
-import Modal from 'antd/lib/modal/Modal';
-import { Datagrid } from '../datagrid-new';
 import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
-import { Result } from '../result';
+import Modal from 'antd/lib/modal/Modal';
+import React, { useEffect, useRef, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
+import { addKeyOfObject, cleanupKeyOfObject, getData } from '~/functions';
 import { nullify } from '~/functions/object';
-import { isNil, isUndefined } from '~/helper/common';
+import { isEmpty, isNil, isUndefined } from '~/helper/common';
+import { Button } from '~components/UI/button';
+import { getPopupForm } from '~components/UI/popup/popup.ui.model';
+import { IPopupItemsRetrunProps } from '~components/UI/popup/popup.ui.type';
+import { Datagrid } from '../datagrid-new';
+import { Result } from '../result';
+import { afPopupReponseRow } from './popup-button.recoil';
+import Props from './popup-button.ui.type';
 
 /** 팝업키를 사용하지 않고 수기로 작성된 정보로 팝업을 설정합니다. */
 const setPopupButtonData = (props: Props) => {
@@ -133,7 +133,7 @@ const PopupButton: React.FC<Props> = props => {
           const word =
             words.hasOwnProperty(gridMode) === true ? words[gridMode] : '';
 
-          if (!isNil(title) && title !== '')
+          if (!isEmpty(title))
             confirmDialogContext.title = `${title} - ${word}`;
           else confirmDialogContext.title = word;
 

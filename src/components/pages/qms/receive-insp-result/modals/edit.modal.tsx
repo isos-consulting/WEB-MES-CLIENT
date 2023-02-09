@@ -1,6 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
+import { isEmpty } from 'lodash';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { getPopupForm, GridPopup, IGridColumn } from '~/components/UI';
 import {
@@ -254,10 +255,11 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       options: props.inspHandlingType,
       disabled: false,
       onAfterChange: stringifiedInspectionHandlingType => {
-        const selectedInspHandlingType =
-          stringifiedInspectionHandlingType === ''
-            ? { insp_handling_type_cd: '' }
-            : JSON.parse(stringifiedInspectionHandlingType);
+        const selectedInspHandlingType = isEmpty(
+          stringifiedInspectionHandlingType,
+        )
+          ? { insp_handling_type_cd: '' }
+          : JSON.parse(stringifiedInspectionHandlingType);
         const inputQty = inputInputItems.ref.current.values.qty;
 
         let incomeDisabled: boolean = true;
@@ -493,7 +495,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
 
     changeInspResult(inspHandlingCd);
 
-    if (inspHandlingCd === '') {
+    if (isEmpty(inspHandlingCd)) {
       inputInspResult.setFieldValue('insp_handling_type', '');
     } else {
       props.inspHandlingType.forEach(el => {
@@ -626,7 +628,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
       inputInspResultReject?.ref?.current?.values;
     const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
 
-    if (insp_handling_type === '') {
+    if (isEmpty(insp_handling_type)) {
       message.warn('처리결과를 등록해주세요.');
       return;
     }
@@ -647,7 +649,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
@@ -659,14 +661,14 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
         return;
       }
 
-      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+      if (isEmpty(reject_store_uuid)) {
         message.warn('불량창고를 등록해주세요.');
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
@@ -677,7 +679,7 @@ export const INSP_RESULT_EDIT_POPUP = (props: {
           return;
         }
 
-        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+        if (isEmpty(reject_store_uuid)) {
           message.warn('불량창고를 등록해주세요.');
           return;
         }

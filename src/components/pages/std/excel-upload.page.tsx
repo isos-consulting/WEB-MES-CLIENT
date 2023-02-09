@@ -22,7 +22,7 @@ import {
   useExcelUploadDataGrid,
 } from './excel-upload/hooks';
 import { message } from 'antd';
-import { isNil } from '~/helper/common';
+import { isEmpty, isNil } from '~/helper/common';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -67,7 +67,7 @@ const importXLSXFile = async (
 };
 
 const gridColumns = async (excelFormCode: string) => {
-  if (excelFormCode === '') {
+  if (isEmpty(excelFormCode)) {
     return [];
   }
 

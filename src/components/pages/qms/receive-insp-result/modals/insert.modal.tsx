@@ -22,7 +22,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
-import { isNil, isNull } from '~/helper/common';
+import { isEmpty, isNil, isNull } from '~/helper/common';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
@@ -109,10 +109,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     inspectionHandlingTypeField.onAfterChange = (
       inspectionHandlingTypeCode: string,
     ) => {
-      const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet =
-        inspectionHandlingTypeCode === ''
-          ? { insp_handling_type_cd: null }
-          : JSON.parse(inspectionHandlingTypeCode);
+      const { insp_handling_type_cd }: InspectionHandlingTypeUuidSet = isEmpty(
+        inspectionHandlingTypeCode,
+      )
+        ? { insp_handling_type_cd: null }
+        : JSON.parse(inspectionHandlingTypeCode);
       const inputQty = inputInputItems.ref.current.values.qty;
 
       handleInspectionHandlingTypeChange(insp_handling_type_cd, inputQty);
@@ -364,7 +365,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResultReject?.ref?.current?.values;
     const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
 
-    if (insp_handling_type === '') {
+    if (isEmpty(insp_handling_type)) {
       message.warn('처리결과를 등록해주세요.');
       return;
     }
@@ -385,7 +386,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
@@ -397,14 +398,14 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
         return;
       }
 
-      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+      if (isEmpty(reject_store_uuid)) {
         message.warn('불량창고를 등록해주세요.');
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (isNil(to_store_uuid) || to_store_uuid === '') {
+      if (isEmpty(to_store_uuid)) {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
@@ -415,7 +416,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
           return;
         }
 
-        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
+        if (isEmpty(reject_store_uuid)) {
           message.warn('불량창고를 등록해주세요.');
           return;
         }

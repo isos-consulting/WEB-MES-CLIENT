@@ -19,7 +19,7 @@ import { CloudTenant } from './enums/types';
 import UserProfile, { Profile } from './models/user/profile';
 import { CurrentUser } from './models/user/user';
 import PgUpdatePassword from './components/pages/aut/update-password.page';
-import { isNil } from './helper/common';
+import { isEmpty, isNil } from './helper/common';
 
 const Layout = lazy(() =>
   import('./components/UI/layout').then(module => ({ default: module.Layout })),
@@ -124,7 +124,7 @@ const App = () => {
       }
     }
 
-    if (useLogPayload.log_action === '') return;
+    if (isEmpty(useLogPayload.log_action)) return;
     if (useLogPayload.log_action === '로그인') return;
 
     executeData([useLogPayload], '/adm/use-log', 'post', 'data', true);
