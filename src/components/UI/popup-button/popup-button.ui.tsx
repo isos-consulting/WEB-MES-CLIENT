@@ -13,6 +13,7 @@ import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import { Result } from '../result';
 import { nullify } from '~/functions/object';
+import { isUndefined } from '~/helper/common';
 
 /** 팝업키를 사용하지 않고 수기로 작성된 정보로 팝업을 설정합니다. */
 const setPopupButtonData = (props: Props) => {
@@ -142,7 +143,7 @@ const PopupButton: React.FC<Props> = props => {
               popupContent.uriPath,
             );
 
-            if (res === undefined) throw new Error('에러가 발생되었습니다.');
+            if (isUndefined(res)) throw new Error('에러가 발생되었습니다.');
 
             if (props?.firstItemEmpty && res?.length > 0)
               res?.unshift(nullify(res[0]));

@@ -1,4 +1,5 @@
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
+import { isUndefined } from '~/helper/common';
 import { IPopupItemOptionProps, IPopupItemsRetrunProps } from './popup.ui.type';
 
 /**
@@ -65,7 +66,7 @@ export const getPopupForm = (
 
   const modelFunction = modalModelMapping.get(popupKey);
 
-  if (modelFunction === undefined) return null;
+  if (isUndefined(modelFunction)) return null;
 
   return modelFunction(option);
 };
