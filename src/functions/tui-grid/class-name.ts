@@ -3,13 +3,14 @@ import {
   IGridColumn,
   TGridMode,
 } from '~/components/UI/datagrid-new/datagrid.ui.type';
+import { isNil } from '~/helper/common';
 
 type ClassNames = {
   column: object;
 };
 
 const getColumnAttributesValues = (gridMode, editable, format) => {
-  if (editable === false || editable == null) return [gridMode];
+  if (editable === false || isNil(editable)) return [gridMode];
   if (format === 'popup') return [gridMode, 'editor', 'popup'];
 
   return [gridMode, 'editor'];

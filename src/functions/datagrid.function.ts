@@ -18,6 +18,7 @@ import {
 import dayjs from 'dayjs';
 import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 type ApiMethod = 'post' | 'put' | 'patch' | 'delete';
 
@@ -56,7 +57,7 @@ export const saveGridData = async (
         // alias 변경
         for (let z = 0; z < saveData[editType[i]]?.length; z++) {
           for (let y = 0; y < columns?.length; y++) {
-            if (columns[y]?.alias != null) {
+            if (!isNil(columns[y]?.alias)) {
               saveData[editType[i]][z][columns[y]?.alias] =
                 saveData[editType[i]][z][columns[y].name];
               delete saveData[editType[i]][z][columns[y].name];
@@ -90,7 +91,7 @@ export const saveGridData = async (
         // 필수값 삽입
         await saveData[editType[i]]?.forEach(value => {
           // session 유저 정보의 키와 params로 넘길 키가 중복되는게 있는지 확인 (중복이면 유저 정보에 있는 키는 사용안함)
-          if (saveData[editType[i]] != null && getUserInfoKeys() != null) {
+          if (!isNil(saveData[editType[i]]) && !isNil(getUserInfoKeys())) {
             if (
               getObjectKeyDuplicateCheck(
                 Object.keys(saveData[editType[i]]),
@@ -105,7 +106,7 @@ export const saveGridData = async (
         const apiPayLoad = saveData[editType[i]];
 
         // 다른 값 덧붙이기
-        if (optionParams != null) {
+        if (!isNil(optionParams)) {
           if (Object.keys(optionParams).length > 0) {
             const tempData = cloneDeep(apiPayLoad);
             apiPayLoad.length = 0;
@@ -209,7 +210,7 @@ export const checkGridData = async (
               for (let z = 0; z < chkData[editType[y]]?.length; z++) {
                 let cellValue = chkData[editType[y]][z][chkColumn[i].name];
                 if (
-                  cellValue == null ||
+                  isNil(cellValue) ||
                   String(cellValue)?.replace(/(\s*)/g, '')?.length === 0
                 ) {
                   resultChk = false;
@@ -225,7 +226,7 @@ export const checkGridData = async (
               for (let z = 0; z < chkData[editType[y]]?.length; z++) {
                 const value = chkData[editType[y]][z][chkColumn[i].name];
 
-                if (value == null || String(value).length === 0) {
+                if (isNil(value) || String(value).length === 0) {
                   // 숫자 타입이지만 빈 값이면 저장 데이터에 미포함
                   // ❗ 극단적으로 인자값 자체를 바꾸는 형태라 나중에 수정해야할 수도 있음
                   delete data[editType[y]][z][chkColumn[i].name];
@@ -527,7 +528,7 @@ export const dataGridEvents = {
         let modifiedRows = null;
 
         // 기본 저장 방식
-        if (saveType == null || saveType === 'basic') {
+        if (isNil(saveType) || saveType === 'basic') {
           if (gridObject.modifiedData) {
             modifiedRows = gridObject.modifiedData;
           } else {
@@ -612,7 +613,7 @@ export const dataGridEvents = {
                 detailDatas[i][column?.name] === ''
               ) {
                 delete detailDatas[i][column?.name];
-              } else if (column?.alias != null) {
+              } else if (!isNil(column?.alias)) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];
               }
@@ -641,7 +642,7 @@ export const dataGridEvents = {
           )
             _methodType = 'put';
 
-          if ((headerData as any)?._saveType != null) {
+          if (!isNil((headerData as any)?._saveType)) {
             _methodType = headerData['_saveType'];
           }
 
@@ -732,7 +733,7 @@ export const setGridFocus = (
   const columnName = info?.columnName ?? cell?.columnName;
   const rowKey = info?.rowKey ?? cell?.rowKey;
 
-  if (columnName == null || rowKey == null) return;
+  if (isNil(columnName) || isNil(rowKey)) return;
 
   instance?.focus(rowKey, columnName);
 };
@@ -807,7 +808,7 @@ export const convDataToSubTotal = (
     groupData.forEach(data => {
       const values = Object.values(data);
 
-      if (values == null) return;
+      if (isNil(values)) return;
       if (
         groupInfos.findIndex(
           el => el.originalValues.join('') === values.join(''),
@@ -848,35 +849,31 @@ export const convDataToSubTotal = (
 
         switch (curlType) {
           case 'max':
-            sumData[groupKey][curlName] =
-              sumData[groupKey][curlName] == null
-                ? currentValue
-                : previousValue > currentValue
-                ? previousValue
-                : currentValue;
+            sumData[groupKey][curlName] = isNil(sumData[groupKey][curlName])
+              ? currentValue
+              : previousValue > currentValue
+              ? previousValue
+              : currentValue;
 
-            total[curlName] =
-              total[curlName] == null
-                ? currentValue
-                : Number(total[curlName]) > currentValue
-                ? Number(total[curlName])
-                : currentValue;
+            total[curlName] = isNil(total[curlName])
+              ? currentValue
+              : Number(total[curlName]) > currentValue
+              ? Number(total[curlName])
+              : currentValue;
             break;
 
           case 'min':
-            sumData[groupKey][curlName] =
-              sumData[groupKey][curlName] == null
-                ? currentValue
-                : previousValue < currentValue
-                ? previousValue
-                : currentValue;
+            sumData[groupKey][curlName] = isNil(sumData[groupKey][curlName])
+              ? currentValue
+              : previousValue < currentValue
+              ? previousValue
+              : currentValue;
 
-            total[curlName] =
-              total[curlName] == null
-                ? currentValue
-                : Number(total[curlName]) < currentValue
-                ? Number(total[curlName])
-                : currentValue;
+            total[curlName] = isNil(total[curlName])
+              ? currentValue
+              : Number(total[curlName]) < currentValue
+              ? Number(total[curlName])
+              : currentValue;
             break;
 
           case 'avg':

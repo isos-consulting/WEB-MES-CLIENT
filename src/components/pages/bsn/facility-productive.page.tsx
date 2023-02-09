@@ -8,6 +8,7 @@ import {
 } from '~/components/UI';
 import { URL_PATH_STD } from '~/enums';
 import { getData, getToday } from '~/functions';
+import { isNil } from '~/helper/common';
 
 const workings_columns = [];
 
@@ -49,7 +50,7 @@ export const PgFacilityProductive = () => {
         'kpi/production/equip-productivity',
       ).then(productivity => {
         setData(productivity);
-        if (innerRef.current.values.workings_uuid == null) {
+        if (isNil(innerRef.current.values.workings_uuid)) {
           setColumns(workings_columns);
         } else {
           setColumns(

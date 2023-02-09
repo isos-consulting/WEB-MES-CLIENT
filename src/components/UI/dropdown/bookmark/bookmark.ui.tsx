@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Menu, SubMenuProps, MenuItemProps } from 'antd';
 import { ScExtendedLink } from '../../side-navbar/side-navbar.ui.styled';
+import { isNil } from '~/helper/common';
 
 interface BookmarkProps extends SubMenuProps {
   key: string;
@@ -44,7 +45,7 @@ const NoitemWrapper = styled.p`
 const MenuItem = (props: BookmarkItemProps) => {
   return (
     <SubMenuItemWrapper {...props}>
-      {props.location == null ? (
+      {isNil(props.location) ? (
         <NoitemWrapper>메뉴가 없습니다</NoitemWrapper>
       ) : (
         <LinkWrapper to={props.location}>{props.title}</LinkWrapper>

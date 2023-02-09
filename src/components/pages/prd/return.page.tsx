@@ -20,6 +20,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
+import { isNil } from '~/helper/common';
 
 /** 자재반납 */
 export const PgPrdReturn = () => {
@@ -310,7 +311,7 @@ export const PgPrdReturn = () => {
               reg_date: reg_date,
             },
             onInterlock: () => {
-              const regDateFg = reg_date != null;
+              const regDateFg = !isNil(reg_date);
               if (!regDateFg) {
                 message.warn('기준일을 선택한 후 다시 시도해주세요.');
                 return false;

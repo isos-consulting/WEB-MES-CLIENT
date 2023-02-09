@@ -27,6 +27,7 @@ import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
 import { useLoadingState } from '~/hooks';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { isNil } from '~/helper/common';
 
 const gridPopupUuid = uuidv4();
 
@@ -96,7 +97,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
               const { success, savedData } = result;
 
               if (success === false) return;
-              if (props?.visible == null) setVisible(false);
+              if (isNil(props?.visible)) setVisible(false);
               if (props?.onAfterOk) props.onAfterOk(true, savedData);
             })
             .catch(e => {
@@ -156,7 +157,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
                 detailDatas[i][column?.name] === ''
               ) {
                 delete detailDatas[i][column?.name];
-              } else if (column?.alias != null) {
+              } else if (!isNil(column?.alias)) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];
               }
@@ -196,7 +197,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             details: detailDatas,
           };
 
-          if (headerData?._saveType != null) {
+          if (!isNil(headerData?._saveType)) {
             methodType = headerData['_saveType'];
           }
 
@@ -209,7 +210,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
               if (success === true) {
                 // 팝업 닫기
-                if (props?.visible == null) setVisible(false);
+                if (isNil(props?.visible)) setVisible(false);
 
                 if (props?.onAfterOk) props.onAfterOk(true, response);
 
@@ -262,7 +263,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
         // 🚫api에 삭제 요청 보내기
         case 'delete':
           return function () {
-            if (props?.visible == null) setVisible(false);
+            if (isNil(props?.visible)) setVisible(false);
           };
 
         // ✅선택된 로우가 하나인지 확인 후 부모 그리드에게 row append
@@ -314,7 +315,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
         // ✅그냥 팝업 닫기
         default:
           return function () {
-            if (props?.visible == null) setVisible(false);
+            if (isNil(props?.visible)) setVisible(false);
           };
       }
     }
@@ -344,7 +345,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
         default:
           // 그냥 팝업 닫기
           return function () {
-            if (props?.visible == null) setVisible(false);
+            if (isNil(props?.visible)) setVisible(false);
           };
       }
     }
@@ -423,10 +424,10 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       destroyOnClose={true}
     >
       <div>
-        {props?.searchProps != null ? (
+        {!isNil(props?.searchProps) ? (
           <Searchbox boxShadow={false} {...props.searchProps} />
         ) : null}
-        {props?.inputProps != null ? (
+        {!isNil(props?.inputProps) ? (
           Array.isArray(props?.inputProps) ? (
             <div style={{ marginTop: -10 }}>
               {props?.inputProps?.map((el, index) => {

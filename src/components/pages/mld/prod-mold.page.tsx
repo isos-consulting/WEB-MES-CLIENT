@@ -15,6 +15,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH, URL_PATH_MLD } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 품목별 금형정보 */
 export const PgMldProdMold = () => {
@@ -393,7 +394,7 @@ export const PgMldProdMold = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -503,7 +504,7 @@ export const PgMldProdMold = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -576,7 +577,7 @@ export const PgMldProdMold = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.prod_uuid == null) {
+    if (isNil(detailInputInfo?.values.prod_uuid)) {
       message.warn('공정을 선택하신 후 다시 시도해 주세요.');
       return false;
     }

@@ -15,6 +15,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 공정별 설비정보 */
 export const PgStdProcEquip = () => {
@@ -273,7 +274,7 @@ export const PgStdProcEquip = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -317,7 +318,7 @@ export const PgStdProcEquip = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -390,7 +391,7 @@ export const PgStdProcEquip = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.proc_uuid == null) {
+    if (isNil(detailInputInfo?.values.proc_uuid)) {
       message.warn('공정을 선택하신 후 다시 시도해 주세요.');
       return false;
     }

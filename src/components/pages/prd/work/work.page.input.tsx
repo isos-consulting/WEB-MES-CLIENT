@@ -28,6 +28,7 @@ import Colors from '~styles/color.style.module.scss';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './work.page.util';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 //#region 🔶🚫투입품목관리
 /** 투입품목관리 */
@@ -257,7 +258,7 @@ export const INPUT = () => {
 
   /** 투입 초기화 */
   const onReset = ev => {
-    if (searchParams?.['work_uuid'] == null) {
+    if (isNil(searchParams?.['work_uuid'])) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -302,7 +303,7 @@ export const INPUT = () => {
   };
 
   const onAppend = ev => {
-    if (searchParams?.['work_uuid'] == null) {
+    if (isNil(searchParams?.['work_uuid'])) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -478,13 +479,13 @@ export const INPUT_POPUP = (props: {
   }, [props.searchParams]);
 
   useLayoutEffect(() => {
-    if (searchParams?.work_uuid == null) return;
+    if (isNil(searchParams?.work_uuid)) return;
     onWorkStandardInputData_Search();
     onWorkInputData_Search();
   }, [searchParams?.['work_uuid']]);
 
   useLayoutEffect(() => {
-    if (searchParams?.work_uuid == null) return;
+    if (isNil(searchParams?.work_uuid)) return;
     if (!inputCreatePopupVisible) {
       onWorkStandardInputData_Search();
       onWorkInputData_Search();
@@ -492,7 +493,7 @@ export const INPUT_POPUP = (props: {
   }, [inputCreatePopupVisible]);
 
   useLayoutEffect(() => {
-    if (searchParams?.work_uuid == null) return;
+    if (isNil(searchParams?.work_uuid)) return;
     if (!inputUpdatePopupVisible) {
       onWorkStandardInputData_Search();
       onWorkInputData_Search();

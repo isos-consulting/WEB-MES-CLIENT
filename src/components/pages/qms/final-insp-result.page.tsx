@@ -49,6 +49,7 @@ import {
 } from '~/functions/qms/inspection';
 import { InsepctionDataGridChange } from '~/functions/qms/InspectionReportViewController';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
+import { isNil, isNull } from '~/helper/common';
 import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
 import { InspectionHandlingTypeUuidSet } from './receive-insp-result/modals/types';
 import { InputForm, QuantityField } from './receive-insp-result/models/fields';
@@ -1043,7 +1044,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inspectionSampleResults.map((item, itemIndex) => {
         const notNullSample = item.reduce(
           (samples, currentSample, sampleIndex) => {
-            if (currentSample == null) {
+            if (isNil(currentSample)) {
               return samples;
             }
 
@@ -1067,10 +1068,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
           factory_uuid: getUserFactoryUuid(),
           insp_detail_uuid: `${finalInspections[itemIndex].insp_detail_uuid}`,
           insp_result_fg: Boolean(finalInspections[itemIndex].insp_result_fg),
-          remark:
-            finalInspections[itemIndex].remark == null
-              ? null
-              : `${finalInspections[itemIndex].remark}`,
+          remark: isNil(finalInspections[itemIndex].remark)
+            ? null
+            : `${finalInspections[itemIndex].remark}`,
           values: notNullSample,
         };
       });
@@ -1115,15 +1115,15 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const { reject_qty, reject_uuid, reject_store_uuid } =
       inputInspResultReject?.ref?.current?.values;
 
-    if (insp_handling_type === '' || insp_handling_type == null) {
+    if (insp_handling_type === '' || isNil(insp_handling_type)) {
       message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
       return;
     }
-    if (emp_uuid == null) {
+    if (isNil(emp_uuid)) {
       message.warn(SENTENCE.INPUT_INSPECTOR);
       return;
     }
-    if (reg_date_time == null) {
+    if (isNil(reg_date_time)) {
       message.warn(SENTENCE.INPUT_INSPECT_TIME);
       return;
     }
@@ -1135,37 +1135,37 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'RETURN') {
-      if (reject_uuid == null) {
+      if (isNil(reject_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
         return;
       }
 
-      if (reject_store_uuid == null || reject_store_uuid === '') {
+      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
 
       if (reject_qty > 0) {
-        if (reject_uuid == null) {
+        if (isNil(reject_uuid)) {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
           return;
         }
 
-        if (reject_store_uuid == null || reject_store_uuid === '') {
+        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
           return;
         }
@@ -1193,7 +1193,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
-      item.every(sampleResult => sampleResult !== null),
+      item.every(sampleResult => !isNull(sampleResult)),
     );
 
     const inspectionPostApiPayload: TPostQmsFinalInspResults =
@@ -1347,7 +1347,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
 
           setInspIncludeDetails(res);
 
-          if (inputInspResult?.ref?.current?.values.reg_date == null)
+          if (isNil(inputInspResult?.ref?.current?.values.reg_date))
             inputInspResult.setFieldValue('reg_date', getToday());
 
           res?.details.forEach((inspectionItem, inspectionRowIndex) => {
@@ -1382,10 +1382,11 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   }, [insp]);
 
   useLayoutEffect(() => {
-    const { insp_handling_type_cd } =
-      inputInspResult?.ref?.current?.values?.insp_handling_type == null
-        ? { insp_handling_type_cd: null }
-        : JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type);
+    const { insp_handling_type_cd } = isNil(
+      inputInspResult?.ref?.current?.values?.insp_handling_type,
+    )
+      ? { insp_handling_type_cd: null }
+      : JSON.parse(inputInspResult?.ref?.current?.values?.insp_handling_type);
 
     triggerInspectionHandlingTypeChanged(
       insp_handling_type_cd,
@@ -1738,10 +1739,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       reject_qty: Number(inputInspResultRejectValues?.reject_qty),
       reject_uuid: blankThenNull(inputInspResultRejectValues?.reject_uuid),
       from_store_uuid: `${inspResult.header.from_store_uuid}`,
-      from_location_uuid:
-        inspResult.header.from_location_uuid == null
-          ? null
-          : `${inspResult.header.from_location_uuid}`,
+      from_location_uuid: isNil(inspResult.header.from_location_uuid)
+        ? null
+        : `${inspResult.header.from_location_uuid}`,
       to_store_uuid: blankThenNull(inputInspResultIncomeValues?.to_store_uuid),
       to_location_uuid: blankThenNull(
         inputInspResultIncomeValues?.to_location_uuid,
@@ -1752,10 +1752,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       reject_location_uuid: blankThenNull(
         inputInspResultRejectValues?.reject_location_uuid,
       ),
-      remark:
-        inputInspResultValues?.remark == null
-          ? null
-          : `${inputInspResultValues?.remark}`,
+      remark: isNil(inputInspResultValues?.remark)
+        ? null
+        : `${inputInspResultValues?.remark}`,
     };
 
     const inspectionDatas = inspectionGridInstance.getData();
@@ -1778,8 +1777,8 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                 `x${sampleIndex + 1}_insp_result_detail_value_uuid`
               ];
 
-            if (sampleUuid == null && currentSample == null) return samples;
-            if (currentSample == null)
+            if (isNil(sampleUuid) && isNil(currentSample)) return samples;
+            if (isNil(currentSample))
               return [
                 ...samples,
                 {
@@ -1794,7 +1793,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                 `x${sampleIndex + 1}_insp_value`
               ].toString();
 
-            const uuid = sampleUuid == null ? null : `${sampleUuid}`;
+            const uuid = isNil(sampleUuid) ? null : `${sampleUuid}`;
 
             return [
               ...samples,
@@ -1814,10 +1813,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             itemIndex
           ].insp_result_detail_info_uuid.toString(),
           insp_result_fg: Boolean(inspectionDatas[itemIndex].insp_result_fg),
-          remark:
-            inputInspResultValues?.remark == null
-              ? null
-              : `${inspectionDatas[itemIndex].remark}`,
+          remark: isNil(inputInspResultValues?.remark)
+            ? null
+            : `${inspectionDatas[itemIndex].remark}`,
           values: editedSamples,
         };
       });
@@ -1858,15 +1856,15 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     const { reject_qty, reject_uuid, reject_store_uuid } =
       inputInspResultReject?.ref?.current?.values;
 
-    if (insp_handling_type === '' || insp_handling_type == null) {
+    if (insp_handling_type === '' || isNil(insp_handling_type)) {
       message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
       return;
     }
-    if (emp_uuid == null) {
+    if (isNil(emp_uuid)) {
       message.warn(SENTENCE.INPUT_INSPECTOR);
       return;
     }
-    if (reg_date_time == null || reg_date_time === 'Invalid Date') {
+    if (isNil(reg_date_time) || reg_date_time === 'Invalid Date') {
       message.warn(SENTENCE.INPUT_INSPECT_TIME);
       return;
     }
@@ -1878,37 +1876,37 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'RETURN') {
-      if (reject_uuid == null) {
+      if (isNil(reject_uuid)) {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
         return;
       }
 
-      if (reject_store_uuid == null || reject_store_uuid === '') {
+      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn(SENTENCE.BEFORE_INPUT_INCOME_STORE);
         return;
       }
 
       if (reject_qty > 0) {
-        if (reject_uuid == null) {
+        if (isNil(reject_uuid)) {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_TYPE);
           return;
         }
 
-        if (reject_store_uuid == null || reject_store_uuid === '') {
+        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
           message.warn(SENTENCE.BEFORE_INPUT_REJECT_STORE);
           return;
         }
@@ -1935,7 +1933,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
     }
 
     const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
-      item.every(sampleResult => sampleResult !== null),
+      item.every(sampleResult => !isNull(sampleResult)),
     );
 
     const inspectionPutApiPayload: TPutQmsFinalInspResults =

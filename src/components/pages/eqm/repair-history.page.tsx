@@ -25,6 +25,7 @@ import {
 import { message } from 'antd';
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
+import { isNil } from '~/helper/common';
 
 /** 설비수리이력관리 */
 export const PgEqmRepairHistory = () => {
@@ -281,7 +282,7 @@ export const PgEqmRepairHistory = () => {
           const getModifiedRows = instance.getModifiedRows();
 
           function MixDateTime(el, dateString, timeString) {
-            if (el[dateString] != null && el[timeString] != null) {
+            if (!isNil(el[dateString]) && !isNil(el[timeString])) {
               let time = el[timeString];
 
               if (String(time)?.length !== 5) {
@@ -500,10 +501,11 @@ export const PgEqmRepairHistory = () => {
                     if (typeof row === 'object') {
                       updateColumns.forEach(columnName => {
                         // 값 설정
-                        newRow[columnName.original] =
-                          row[columnName.popup] != null
-                            ? row[columnName.popup]
-                            : null;
+                        newRow[columnName.original] = !isNil(
+                          row[columnName.popup],
+                        )
+                          ? row[columnName.popup]
+                          : null;
                       });
 
                       // 행 추가
@@ -533,7 +535,7 @@ export const PgEqmRepairHistory = () => {
         const getModifiedRows = instance.getModifiedRows();
 
         function MixDateTime(el, dateString, timeString) {
-          if (el[dateString] != null && el[timeString] != null) {
+          if (!isNil(el[dateString]) && !isNil(el[timeString])) {
             let time = el[timeString];
 
             if (String(time)?.length !== 5) {

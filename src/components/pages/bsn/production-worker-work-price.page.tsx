@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Container, Datagrid, layoutStore, Searchbox } from '~/components/UI';
 import { getToday } from '~/functions';
+import { isNil } from '~/helper/common';
 import { BsnProductionOrderWorkRateChart } from './production/bsn-production-order-work-rate-chart';
 import {
   getDailyProductionWorkerWorkPrices,
@@ -52,19 +53,19 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
     const dailyProductionOrderWorkRate =
       await getDailyProductionWorkerWorkPrices(month);
 
-    if (monthlyproductionOrderWorkRate == null) {
+    if (isNil(monthlyproductionOrderWorkRate)) {
       setYearData(emptyKpiData);
     } else {
       setYearData(service.monthData(monthlyproductionOrderWorkRate));
     }
 
-    if (weeklyProductionOrderWorkRate == null) {
+    if (isNil(weeklyProductionOrderWorkRate)) {
       setWeekData(emptyKpiData);
     } else {
       setWeekData(service.weekData(weeklyProductionOrderWorkRate));
     }
 
-    if (dailyProductionOrderWorkRate == null) {
+    if (isNil(dailyProductionOrderWorkRate)) {
       setDateData(emptyKpiData);
     } else {
       setDateData(service.dateData(dailyProductionOrderWorkRate));

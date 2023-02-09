@@ -14,6 +14,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 그룹별 권한 관리 */
 export const PgAutGroupPermission = () => {
@@ -300,7 +301,7 @@ export const PgAutGroupPermission = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -358,7 +359,7 @@ export const PgAutGroupPermission = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.group_uuid == null) {
+    if (isNil(detailInputInfo?.values.group_uuid)) {
       message.warn('데이터를 조회 후 다시 시도해 주세요.');
       return false;
     }

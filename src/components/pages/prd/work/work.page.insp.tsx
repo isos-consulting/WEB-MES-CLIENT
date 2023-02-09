@@ -1,7 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import { Col, message, Modal, Row, Space, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isNull } from 'lodash';
 import React, {
   MutableRefObject,
   useEffect,
@@ -43,6 +43,7 @@ import {
   getTimeFormat,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
+import { isNil } from '~/helper/common';
 import { SaveApiMethod } from '~/types/api/api.type';
 import {
   GetMaxSampleCntParams,
@@ -296,7 +297,7 @@ export const INSP = () => {
     work_uuid,
     ...saveOptions
   }: HeaderSaveOptionParams) => {
-    if (work_uuid == null) return;
+    if (isNil(work_uuid)) return;
 
     const procInspections = await getData(
       { work_uuid },
@@ -326,7 +327,7 @@ export const INSP = () => {
   };
 
   const onDelete = ev => {
-    if ((headerSaveOptionParams as any)?.work_uuid == null) {
+    if (isNil((headerSaveOptionParams as any)?.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -362,12 +363,12 @@ export const INSP = () => {
   };
 
   const onEdit = ev => {
-    if ((headerSaveOptionParams as any)?.work_uuid == null) {
+    if (isNil((headerSaveOptionParams as any)?.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if (inputRef?.current?.values?.insp_result_uuid == null) {
+    if (isNil(inputRef?.current?.values?.insp_result_uuid)) {
       message.error('검사결과 항목을 선택해주세요.');
       return;
     }
@@ -376,7 +377,7 @@ export const INSP = () => {
   };
 
   const onAppend = ev => {
-    if ((headerSaveOptionParams as any)?.work_uuid == null) {
+    if (isNil((headerSaveOptionParams as any)?.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -496,7 +497,7 @@ export const INSP = () => {
       };
 
       const isFilledAllInspectionSample = inspectionSampleResults.every(item =>
-        item.every(sampleResult => sampleResult !== null),
+        item.every(sampleResult => !isNull(sampleResult)),
       );
 
       if (isFilledAllInspectionSample === true) {

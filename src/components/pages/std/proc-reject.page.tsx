@@ -15,6 +15,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 공정별 불량관리 */
 export const PgStdProcReject = () => {
@@ -289,7 +290,7 @@ export const PgStdProcReject = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -341,7 +342,7 @@ export const PgStdProcReject = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.proc_uuid);
   }, [selectedHeaderRow]);
@@ -411,7 +412,7 @@ export const PgStdProcReject = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.proc_uuid == null) {
+    if (isNil(detailInputInfo?.values.proc_uuid)) {
       message.warn('공정을 선택하신 후 다시 시도해 주세요.');
       return false;
     }

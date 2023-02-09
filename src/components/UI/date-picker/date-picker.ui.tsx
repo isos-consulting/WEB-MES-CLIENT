@@ -12,6 +12,7 @@ import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import timezone from 'dayjs/plugin/timezone';
+import { isNil } from '~/helper/common';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -45,7 +46,7 @@ const BaseDatePicker: React.FC<Props> = props => {
     (date, dateString) => {
       let returnValue = props.returnType === 'dateString' ? dateString : date;
 
-      if ((returnValue === '' || returnValue == null) && props.defaultValue)
+      if ((returnValue === '' || isNil(returnValue)) && props.defaultValue)
         returnValue = props.defaultValue;
 
       if (props.onChange) props.onChange(returnValue);
@@ -77,7 +78,7 @@ const BaseDatePicker: React.FC<Props> = props => {
     }
   }, [props.format, props.picker]);
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     return (
       <Space size={10} wrap>
         <Label text={props.label} important={props.important} />

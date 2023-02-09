@@ -6,6 +6,7 @@ import { afBooleanState } from '~recoils/recoil.atom-family';
 import { Space } from 'antd';
 import { Label } from '../label';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { isNil } from '~/helper/common';
 
 /** 체크박스 */
 const Checkbox: React.FC<Props<CheckboxChangeEvent>> = props => {
@@ -27,7 +28,7 @@ const Checkbox: React.FC<Props<CheckboxChangeEvent>> = props => {
     };
   }, []);
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     /** 라벨이 있는 버전 */
     return (
       <Space size={10}>

@@ -19,6 +19,7 @@ import {
   afStringArrayState,
   afStringState,
 } from '~/recoils/recoil.atom-family';
+import { isNil } from '~/helper/common';
 
 export const sfInputbox = selectorFamily({
   key: 'sfInputbox',
@@ -27,22 +28,21 @@ export const sfInputbox = selectorFamily({
     ({ get }) => {
       const result: object = {};
       ids.forEach(id => {
-        result[id] =
-          get(afStringState(id)) != null
-            ? get(afStringState(id))
-            : get(afStringArrayState(id)) != null
-            ? get(afStringArrayState(id))
-            : get(afAnyArrayState(id)) != null
-            ? get(afAnyArrayState(id))
-            : get(afBooleanState(id)) != null
-            ? get(afBooleanState(id))
-            : get(afDateState(id)) != null
-            ? get(afDateState(id))
-            : get(afObjectState(id)) != null
-            ? get(afObjectState(id))
-            : get(afObjectArrayState(id)) != null
-            ? get(afObjectArrayState(id))
-            : null;
+        result[id] = !isNil(get(afStringState(id)))
+          ? get(afStringState(id))
+          : !isNil(get(afStringArrayState(id)))
+          ? get(afStringArrayState(id))
+          : !isNil(get(afAnyArrayState(id)))
+          ? get(afAnyArrayState(id))
+          : !isNil(get(afBooleanState(id)))
+          ? get(afBooleanState(id))
+          : !isNil(get(afDateState(id)))
+          ? get(afDateState(id))
+          : !isNil(get(afObjectState(id)))
+          ? get(afObjectState(id))
+          : !isNil(get(afObjectArrayState(id)))
+          ? get(afObjectArrayState(id))
+          : null;
       });
 
       return result;

@@ -16,6 +16,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 작업조별 작업자 관리 */
 export const PgStdWorkerGroupWorker = () => {
@@ -250,14 +251,14 @@ export const PgStdWorkerGroupWorker = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -334,7 +335,7 @@ export const PgStdWorkerGroupWorker = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.worker_group_uuid == null) {
+    if (isNil(detailInputInfo?.values.worker_group_uuid)) {
       message.warn('작업조를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

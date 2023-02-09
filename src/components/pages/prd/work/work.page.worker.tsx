@@ -17,6 +17,7 @@ import {
   saveGridData,
 } from '~/functions';
 import { onErrorMessage, TAB_CODE } from './work.page.util';
+import { isNil } from '~/helper/common';
 
 const DATA_PICKUP_INFO = {
   create: [
@@ -283,8 +284,8 @@ export const WORKER = () => {
   /** 조작 가능 여부 판단 */
   const onCheckAccessAllow = (): boolean => {
     if (
-      searchParams?.['work_uuid'] == null ||
-      searchParams?.['work_routing_uuid'] == null
+      isNil(searchParams?.['work_uuid']) ||
+      isNil(searchParams?.['work_routing_uuid'])
     ) {
       onErrorMessage('하위이력작업시도');
       return false;
@@ -383,7 +384,7 @@ export const WORKER = () => {
           };
 
     await saveData[_gridMode + 'dRows']?.forEach(el => {
-      if (el['start_date'] != null && el['start_time'] != null) {
+      if (!isNil(el['start_date']) && !isNil(el['start_time'])) {
         let time = el['start_time'];
 
         if (String(time)?.length !== 5) {
@@ -397,7 +398,7 @@ export const WORKER = () => {
         }
       }
 
-      if (el['end_date'] != null && el['end_time'] != null) {
+      if (!isNil(el['end_date']) && !isNil(el['end_time'])) {
         let time = el['end_time'];
 
         if (String(time)?.length !== 5) {

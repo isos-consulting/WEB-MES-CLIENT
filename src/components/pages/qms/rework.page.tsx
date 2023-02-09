@@ -25,6 +25,7 @@ import ITpDoubleGridProps, {
 } from '~/components/templates/grid-double/grid-double.template.type';
 import { FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 const changeNameToAlias = (data: object, items: any[]) => {
   let newData = cloneDeep(data);
@@ -318,7 +319,7 @@ export const PgQmsRework = () => {
                 store_type: 'all',
               },
               onInterlock: () => {
-                if (rowData?.rework_type_nm == null) {
+                if (isNil(rowData?.rework_type_nm)) {
                   message.warning('부적합판정을 먼저 선택해주세요');
                   return false;
                 }
@@ -674,7 +675,7 @@ export const PgQmsRework = () => {
                 return el;
               });
 
-              const rows = res?.filter(el => el?.reject_uuid != null);
+              const rows = res?.filter(el => !isNil(el?.reject_uuid));
               newDataPopupGrid?.setGridData(rows);
             });
           },
@@ -721,7 +722,7 @@ export const PgQmsRework = () => {
   };
 
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       onSearchDetail(selectedHeaderRow?.rework_uuid);
@@ -755,7 +756,7 @@ export const PgQmsRework = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
 
     const searchParams: any = {
       rework_uuid: uuid,

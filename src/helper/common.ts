@@ -9,3 +9,7 @@ export const isNull = (value: unknown): value is null => {
 export const isBoolean = (value: unknown): value is boolean => {
   return typeof value === 'boolean';
 };
+
+export const isNil = (value: unknown): value is null | undefined => {
+  return isUndefined(value) || isNull(value);
+};

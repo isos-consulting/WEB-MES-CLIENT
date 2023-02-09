@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { isNil } from '~/helper/common';
 
 enum DateType {
   'year' = 'year',
@@ -24,7 +25,7 @@ class MonthInvalidException extends Error {
 }
 
 export const getWeeksAtMonth = month => {
-  if (month == null) throw new DateArgumentsNullPointException(DateType.month);
+  if (isNil(month)) throw new DateArgumentsNullPointException(DateType.month);
   const momentConvertedMonth = moment(month);
 
   if (momentConvertedMonth.isValid() === false)
@@ -43,9 +44,9 @@ export const getWeeksAtMonth = month => {
 };
 
 export const getRangeDateAtMonthForWeek = (year, month, week) => {
-  if (year == null) throw new DateArgumentsNullPointException(DateType.year);
-  if (month == null) throw new DateArgumentsNullPointException(DateType.month);
-  if (week == null) throw new DateArgumentsNullPointException(DateType.week);
+  if (isNil(year)) throw new DateArgumentsNullPointException(DateType.year);
+  if (isNil(month)) throw new DateArgumentsNullPointException(DateType.month);
+  if (isNil(week)) throw new DateArgumentsNullPointException(DateType.week);
   if (week === 53) return getRangeDateAtFiftyThreeWeeks(year);
 
   const momentConvertedWeek = moment().locale('ko').year(year).week(week);
@@ -86,7 +87,7 @@ export const getRangeDateAtMonthForWeek = (year, month, week) => {
 };
 
 export const getRangeDateAtFiftyThreeWeeks = year => {
-  if (year == null) throw new DateArgumentsNullPointException(DateType.year);
+  if (isNil(year)) throw new DateArgumentsNullPointException(DateType.year);
 
   const momentConvertedYear = moment().locale('ko').year(year);
   const momentConvertedLastWeek = moment().locale('ko').year(year).week(52);
@@ -111,7 +112,7 @@ export const getRangeDateAtFiftyThreeWeeks = year => {
 };
 
 export const getRangeDateAtMonth = month => {
-  if (month == null) throw new DateArgumentsNullPointException(DateType.month);
+  if (isNil(month)) throw new DateArgumentsNullPointException(DateType.month);
 
   const momentConvertedMonth = moment(month);
 

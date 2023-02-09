@@ -16,6 +16,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
 const URI_PATH_GET_MAT_RETURNS = '/mat/returns';
@@ -627,7 +628,7 @@ export const PgMatReturn = () => {
             inputValues = addDataPopupInputInfo.ref.current.values;
           }
 
-          if (inputValues != null) {
+          if (!isNil(inputValues)) {
             params = {
               exclude_zero_fg: true,
               exclude_minus_fg: true,
@@ -644,9 +645,9 @@ export const PgMatReturn = () => {
             onInterlock: () => {
               let showPopup: boolean = false;
 
-              if (params?.reg_date == null) {
+              if (isNil(params?.reg_date)) {
                 message.warn('반출일을 입력하신 후 다시 시도해주세요.');
-              } else if (params?.partner_uuid == null) {
+              } else if (isNil(params?.partner_uuid)) {
                 message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               } else {
                 showPopup = true;
@@ -864,7 +865,7 @@ export const PgMatReturn = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -933,7 +934,7 @@ export const PgMatReturn = () => {
         onSearchHeader(headerSearchInfo.values).then(searchResult => {
           const headerRow = datas?.raws[0]?.return?.header[0];
 
-          if (headerRow?.uuid == null) {
+          if (isNil(headerRow?.uuid)) {
             setSelectedHeaderRow(null);
             return;
           }
@@ -946,7 +947,7 @@ export const PgMatReturn = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.return_uuid == null) {
+    if (isNil(detailInputInfo?.values?.return_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

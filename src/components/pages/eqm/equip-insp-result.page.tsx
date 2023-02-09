@@ -18,6 +18,7 @@ import {
   getToday,
   isNumber,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
 import eqmInspResultGridPopups from './insp/result/eqm-insp-result-grid-popups';
@@ -136,7 +137,7 @@ export const PgEqmInspResult = () => {
   useEffect(() => {
     const { equip_uuid, insp_type } = equipInspResultNewModalInputValues;
 
-    if (equip_uuid == null) return;
+    if (isNil(equip_uuid)) return;
 
     getEquipInspectionDatas(equip_uuid, insp_type);
   }, [equipInspResultNewModalInputValues]);
@@ -177,9 +178,9 @@ export const PgEqmInspResult = () => {
   );
 
   const changeNewDataPopupInputValues = async values => {
-    if (values == null) return;
-    if (values.equip_uuid == null) return;
-    if (values.insp_type == null) return;
+    if (isNil(values)) return;
+    if (isNil(values.equip_uuid)) return;
+    if (isNil(values.insp_type)) return;
 
     const data = (await getData(
       values,

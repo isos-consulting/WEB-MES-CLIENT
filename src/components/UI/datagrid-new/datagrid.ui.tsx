@@ -61,7 +61,7 @@ import {
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
 import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
-import { isNull } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -144,7 +144,7 @@ function getGridComboItem(
   let tmp_code = '';
 
   // 고정 리스트로 콤보박스 아이템 생성
-  if (comboInfo.itemList != null) {
+  if (!isNil(comboInfo.itemList)) {
     returnValue = comboInfo.itemList;
 
     // DB데이터 가져와서 동적으로 콤보박스 아이템 생성
@@ -215,12 +215,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       }
 
       // sort 설정
-      if (el?.sortable == null) {
+      if (isNil(el?.sortable)) {
         el['sortable'] = true;
       }
 
       // resizable 설정
-      if (el?.resizable == null) {
+      if (isNil(el?.resizable)) {
         el['resizable'] = true;
       }
 
@@ -237,7 +237,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -246,7 +246,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           // 렌더러
           const fileUploadGridId = uuidv4();
 
-          if (el?.options?.ok_type == null) {
+          if (isNil(el?.options?.ok_type)) {
             if (props.gridMode === 'delete') {
               el['options']['ok_type'] = 'save';
             } else if (props.gridMode === 'create') {
@@ -541,7 +541,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -578,13 +578,13 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
         case 'popup': // 팝업 세팅
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'left';
           }
           break;
 
         case 'number': // 숫자 타입 세팅
-          if (el.decimal == null) {
+          if (isNil(el.decimal)) {
             errorRequireDecimal.generate();
           }
 
@@ -610,7 +610,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'right';
           }
           break;
@@ -638,7 +638,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'right';
           }
           break;
@@ -665,7 +665,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -692,7 +692,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -723,7 +723,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -742,7 +742,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           el['defaultValue'] = false;
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -755,7 +755,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -785,7 +785,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           };
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'center';
           }
           break;
@@ -812,7 +812,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           }
 
           // 정렬
-          if (el?.align == null) {
+          if (isNil(el?.align)) {
             el['align'] = 'left';
           }
           break;
@@ -842,7 +842,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       }
 
       // filter 기본 세팅
-      if (el?.filter != null && typeof el?.filter === 'string') {
+      if (!isNil(el?.filter) && typeof el?.filter === 'string') {
         switch (el?.filter) {
           case 'text':
           case 'number':
@@ -1049,7 +1049,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   const columnOptions = useMemo(() => {
     let result = {};
 
-    if (props.columnOptions == null) {
+    if (isNil(props.columnOptions)) {
       if (['create', 'update'].includes(props.gridMode)) {
         result = {
           frozenCount: 1,
@@ -1157,13 +1157,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           }
 
           // 기본값 삽입
-          if (column?.defaultValue != null) {
-            el[column.name] =
-              el[column.name] != null
-                ? el[column.name]
-                : typeof column?.defaultValue === 'function'
-                ? column?.defaultValue(props, el)
-                : column?.defaultValue;
+          if (!isNil(column?.defaultValue)) {
+            el[column.name] = !isNil(el[column.name])
+              ? el[column.name]
+              : typeof column?.defaultValue === 'function'
+              ? column?.defaultValue(props, el)
+              : column?.defaultValue;
           }
         }
       });
@@ -1224,13 +1223,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         }
 
         // 기본값 삽입
-        if (column?.defaultValue != null) {
-          newRow[column.name] =
-            newRow[column.name] != null
-              ? newRow[column.name]
-              : typeof column?.defaultValue === 'function'
-              ? column?.defaultValue(props)
-              : column?.defaultValue;
+        if (!isNil(column?.defaultValue)) {
+          newRow[column.name] = !isNil(newRow[column.name])
+            ? newRow[column.name]
+            : typeof column?.defaultValue === 'function'
+            ? column?.defaultValue(props)
+            : column?.defaultValue;
         }
       });
       // 행 추가할때 코드 값과 클래스명 넣어주기
@@ -1273,13 +1271,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         }
 
         // 기본값 삽입
-        if (column?.defaultValue != null) {
-          newRow[column.name] =
-            newRow[column.name] != null
-              ? newRow[column.name]
-              : typeof column?.defaultValue === 'function'
-              ? column?.defaultValue(props, newRow)
-              : column?.defaultValue;
+        if (!isNil(column?.defaultValue)) {
+          newRow[column.name] = !isNil(newRow[column.name])
+            ? newRow[column.name]
+            : typeof column?.defaultValue === 'function'
+            ? column?.defaultValue(props, newRow)
+            : column?.defaultValue;
         }
       });
 
@@ -1479,7 +1476,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
    */
   const onUncheckRows = async (rowKey?: number) => {
     const checkRowKeys = gridRef.current.getInstance().getCheckedRowKeys();
-    if (rowKey != null) {
+    if (!isNil(rowKey)) {
       for (let i = 0; i < checkRowKeys?.length; i++) {
         const checkedRowKey = checkRowKeys[i];
         if (rowKey != checkedRowKey)
@@ -1497,7 +1494,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
     if (instance.getCheckedRowKeys().length >= 1) await onUncheckRows(rowKey);
 
-    if (editValue == null || editValue === '') {
+    if (isNil(editValue) || editValue === '') {
       // _edit 컬럼이 빈 값인 경우
       instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.SELECT);
     } else {
@@ -1510,7 +1507,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     const instance = gridRef.current.getInstance();
     const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
 
-    if (editValue == null || editValue === '') {
+    if (isNil(editValue) || editValue === '') {
       // _edit 컬럼이 빈 값인 경우
       instance.setValue(rowKey, COLUMN_CODE.EDIT, EDIT_ACTION_CODE.SELECT);
     } else {
@@ -1531,9 +1528,9 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       const instance = gridRef.current.getInstance();
 
       if (targetType === 'cell') {
-        if (rowKey != null) {
+        if (!isNil(rowKey)) {
           const editValue = instance.getValue(rowKey, COLUMN_CODE.EDIT);
-          if (editValue == null || editValue === '') {
+          if (isNil(editValue) || editValue === '') {
             // _edit 컬럼이 빈 값인 경우
             switch (
               props.gridMode // 현재 모드에 따라 _edit 값을 다르게 삽입
@@ -1580,7 +1577,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       const { rowKey } = ev;
       const rawData = ev?.instance?.store?.data?.rawData[rowKey];
 
-      if (rowKey != null) {
+      if (!isNil(rowKey)) {
         switch (props.gridMode) {
           case 'delete':
             gridRef.current
@@ -1603,7 +1600,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         // 선택된 로우에 클래스네임 적용 (색상 표시 용도)
         // row에 특정 클래스네임이 있는 경우 추가
         const className = rawData?._attributes?.className?.row;
-        if (Array.isArray(className) || className == null) {
+        if (Array.isArray(className) || isNil(className)) {
           if (className?.includes('selected-row') === false) {
             gridRef.current
               .getInstance()
@@ -1623,7 +1620,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       const { rowKey } = ev;
       const rawData = ev?.instance?.store?.data?.rawData[rowKey];
 
-      if (rowKey != null) {
+      if (!isNil(rowKey)) {
         onUnselect(rowKey);
 
         const classNameRow = rawData?._attributes?.className?.row;
@@ -1672,7 +1669,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
           // row에 특정 클래스네임이 있는 경우 추가
           const className = filterdDatas[i]?._attributes?.className?.row;
-          if (Array.isArray(className) || className == null) {
+          if (Array.isArray(className) || isNil(className)) {
             if (className?.includes('selected-row') === false) {
               gridRef.current
                 .getInstance()
@@ -1694,7 +1691,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       if (rowCount > 0) {
         for (let i = 0; i < rowCount; i++) {
           const rowKey = filterdDatas[i]?.rowKey;
-          if (rowKey != null) {
+          if (!isNil(rowKey)) {
             switch (props.gridMode) {
               case 'delete':
               case 'select':
@@ -1729,7 +1726,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     let onBeforeOk = null;
     let onAfterOk = null;
 
-    if (rowAddPopupInfo.popupKey == null) {
+    if (isNil(rowAddPopupInfo.popupKey)) {
       popupContent['datagridProps']['columns'] = rowAddPopupInfo.columns;
     } else {
       popupContent = getPopupForm(rowAddPopupInfo.popupKey);
@@ -1741,18 +1738,18 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       popupContent = { ...popupContent, ...rowAddPopupInfo, ...apiSettings };
 
       // 전처리 함수 실행
-      if (apiSettings?.onInterlock != null) {
+      if (!isNil(apiSettings?.onInterlock)) {
         const showModal: boolean = apiSettings?.onInterlock();
         if (!showModal) return;
       }
 
       // beforeOk
-      if (apiSettings?.onBeforeOk != null) {
+      if (!isNil(apiSettings?.onBeforeOk)) {
         onBeforeOk = apiSettings.onBeforeOk;
       }
 
       // afterOk
-      if (apiSettings?.onAfterOk != null) {
+      if (!isNil(apiSettings?.onAfterOk)) {
         onAfterOk = apiSettings.onAfterOk;
       }
     } else {
@@ -1763,19 +1760,19 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       };
 
       // 전처리 함수 실행
-      if (rowAddPopupInfo.dataApiSettings?.onInterlock != null) {
+      if (!isNil(rowAddPopupInfo.dataApiSettings?.onInterlock)) {
         const showModal: boolean =
           rowAddPopupInfo.dataApiSettings?.onInterlock();
         if (!showModal) return;
       }
 
       // beforeOk
-      if (rowAddPopupInfo.dataApiSettings?.onBeforeOk != null) {
+      if (!isNil(rowAddPopupInfo.dataApiSettings?.onBeforeOk)) {
         onBeforeOk = rowAddPopupInfo.dataApiSettings.onBeforeOk;
       }
 
       // afterOk
-      if (rowAddPopupInfo.dataApiSettings?.onAfterOk != null) {
+      if (!isNil(rowAddPopupInfo.dataApiSettings?.onAfterOk)) {
         onAfterOk = rowAddPopupInfo.dataApiSettings.onAfterOk;
       }
     }
@@ -1787,7 +1784,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     let title = popupContent?.modalProps?.title;
     const word = '다중선택';
 
-    if (title != null && String(title).length > 0) {
+    if (!isNil(title) && String(title).length > 0) {
       title += ' - ' + word;
     } else {
       title = word;
@@ -1827,7 +1824,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
             const $this = gridRef.current.getInstance();
             const rows = child.getCheckedRows();
 
-            if (onBeforeOk != null) {
+            if (!isNil(onBeforeOk)) {
               if (
                 !onBeforeOk(
                   { popupGrid: { ...child }, parentGrid: { ...$this }, ev: {} },
@@ -1847,12 +1844,11 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                   )[0];
 
                   // 값 설정
-                  newRow[columnName.original] =
-                    row[columnName.popup] != null
-                      ? row[columnName.popup]
-                      : typeof column?.defaultValue === 'function'
-                      ? column?.defaultValue(props, row)
-                      : column?.defaultValue;
+                  newRow[columnName.original] = !isNil(row[columnName.popup])
+                    ? row[columnName.popup]
+                    : typeof column?.defaultValue === 'function'
+                    ? column?.defaultValue(props, row)
+                    : column?.defaultValue;
                 });
 
                 // 행 추가
@@ -1860,7 +1856,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
               }
             });
 
-            if (onAfterOk != null) {
+            if (!isNil(onAfterOk)) {
               onAfterOk(
                 { popupGrid: { ...child }, parentGrid: { ...$this }, ev: {} },
                 rows,
@@ -1904,12 +1900,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 popupInfo = props.gridPopupInfo[i];
               }
 
-              if (popupInfo != null) {
+              if (!isNil(popupInfo)) {
                 break;
               }
             }
 
-            if (popupInfo == null) return;
+            if (isNil(popupInfo)) return;
             let popupContent: IPopupItemsRetrunProps = {
               datagridProps: {
                 gridId: null,
@@ -1925,7 +1921,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
             let onAfterOk = null;
 
             // 전처리 함수 실행
-            if (popupInfo?.popupKey == null) {
+            if (isNil(popupInfo?.popupKey)) {
               popupContent['datagridProps']['columns'] = popupInfo.columns;
 
               if (typeof popupInfo.dataApiSettings === 'function') {
@@ -1933,18 +1929,18 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 popupContent['uriPath'] = apiSettings?.uriPath;
                 popupContent['params'] = apiSettings?.params;
                 // 전처리 함수 실행
-                if (apiSettings?.onInterlock != null) {
+                if (!isNil(apiSettings?.onInterlock)) {
                   const showModal: boolean = apiSettings?.onInterlock();
                   if (!showModal) return;
                 }
 
                 // beforeOk
-                if (apiSettings?.onBeforeOk != null) {
+                if (!isNil(apiSettings?.onBeforeOk)) {
                   onBeforeOk = apiSettings.onBeforeOk;
                 }
 
                 // afterOk
-                if (apiSettings?.onAfterOk != null) {
+                if (!isNil(apiSettings?.onAfterOk)) {
                   onAfterOk = apiSettings.onAfterOk;
                 }
               } else {
@@ -1952,19 +1948,19 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 popupContent['params'] = popupInfo.dataApiSettings.params;
 
                 // 전처리 함수 실행
-                if (popupInfo.dataApiSettings?.onInterlock != null) {
+                if (!isNil(popupInfo.dataApiSettings?.onInterlock)) {
                   const showModal: boolean =
                     popupInfo.dataApiSettings?.onInterlock();
                   if (!showModal) return;
                 }
 
                 // beforeOk
-                if (popupInfo.dataApiSettings?.onBeforeOk != null) {
+                if (!isNil(popupInfo.dataApiSettings?.onBeforeOk)) {
                   onBeforeOk = popupInfo.dataApiSettings.onBeforeOk;
                 }
 
                 // afterOk
-                if (popupInfo.dataApiSettings?.onAfterOk != null) {
+                if (!isNil(popupInfo.dataApiSettings?.onAfterOk)) {
                   onAfterOk = popupInfo.dataApiSettings.onAfterOk;
                 }
               }
@@ -1985,7 +1981,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 let title = popupContent?.modalProps?.title;
                 const word = '단일선택';
 
-                if (title != null && String(title).length > 0) {
+                if (!isNil(title) && String(title).length > 0) {
                   title = title + ' - ' + word;
                 } else {
                   title = word;
@@ -2025,7 +2021,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                     const row = child.getCheckedRows()[0];
                     let isClose: boolean = false;
 
-                    if (onBeforeOk != null) {
+                    if (!isNil(onBeforeOk)) {
                       if (
                         !onBeforeOk(
                           { popupGrid: child, parentGrid: instance, ev: ev },
@@ -2050,7 +2046,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
                     instance.refreshLayout();
 
-                    if (onAfterOk != null) {
+                    if (!isNil(onAfterOk)) {
                       onAfterOk(
                         { popupGrid: child, parentGrid: instance, ev: ev },
                         [row],
@@ -2119,12 +2115,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         if (props.gridMode !== 'select' && props.gridMode !== 'multi-select')
           return;
 
-        if (rowKey == null) return;
+        if (isNil(rowKey)) return;
         const editValue = gridRef.current
           .getInstance()
           .getValue(rowKey, COLUMN_CODE.EDIT);
 
-        if (editValue == null || editValue === '') {
+        if (isNil(editValue) || editValue === '') {
           // _edit 컬럼이 빈 값인 경우
           switch (
             props.gridMode // 현재 모드에 따라 _edit 값을 다르게 삽입
@@ -2172,7 +2168,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       const { columnFilterState, type, columnName, instance } = ev;
       const { code, value } = columnFilterState[0];
 
-      if (instance.getFilterState() == null) {
+      if (isNil(instance.getFilterState())) {
         setStoredFilterState([{ columnName, state: columnFilterState }]);
       } else {
         setStoredFilterState(instance.getFilterState() ?? []);
@@ -2332,7 +2328,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                     .original;
               }
 
-              return type != null;
+              return !isNil(type);
             }) !== -1,
         );
 

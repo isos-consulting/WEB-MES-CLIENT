@@ -3,6 +3,7 @@ import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { getData } from '~/functions';
 import { getCodeTextPairList } from '~/functions/combobox.function';
+import { isNil } from '~/helper/common';
 import { afStringState } from '~recoils/recoil.atom-family';
 import { Label } from '../label';
 import { ScCombobox } from './combobox.ui.styled';
@@ -72,7 +73,7 @@ const Combobox: React.FC<Props> = props => {
 
   /** 콤보박스 기본 값 세팅 & 컴포넌트 소멸시 recoil데이터 리셋 */
   useLayoutEffect(() => {
-    if (props?.dataSettingOptions != null) {
+    if (!isNil(props?.dataSettingOptions)) {
       getComboDatas();
     } else {
       setOptions(props.options);

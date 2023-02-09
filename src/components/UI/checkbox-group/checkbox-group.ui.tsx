@@ -5,6 +5,7 @@ import { Checkbox } from '../checkbox';
 import { useRecoilState } from 'recoil';
 import Props from './checkbox-group.ui.type';
 import { afAnyArrayState, afObjectState } from '~recoils/recoil.atom-family';
+import { isNil } from '~/helper/common';
 
 /** 체크박스 그룹 */
 const CheckboxGroup: React.FC<Props> = props => {
@@ -54,7 +55,7 @@ const CheckboxGroup: React.FC<Props> = props => {
     };
   }, []);
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     /** 라벨이 있는 버전 */
     return useMemo(
       () => (

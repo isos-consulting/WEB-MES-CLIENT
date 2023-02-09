@@ -60,9 +60,9 @@ export class DatagridButtonRenderer {
     el.id = gridId + name + rowKey;
     if (onClick) el.addEventListener('click', ev => onClick(ev, props));
 
-    if (value != null) {
+    if (!isNil(value)) {
       el.innerText = value;
-    } else if (formatter != null && typeof formatter === 'function') {
+    } else if (!isNil(formatter) && typeof formatter === 'function') {
       el.innerText = formatter(props);
     } else {
       el.innerText = String(props?.value);

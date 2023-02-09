@@ -84,9 +84,9 @@ export class DatagridCheckboxRenderer {
   render(props, el) {
     const element = document.getElementById(this.state?.elementId);
 
-    if (el != null) {
+    if (!isNil(el)) {
       el.checked = props?.value;
-    } else if (element != null) {
+    } else if (!isNil(element)) {
       element.checked = props?.value;
     }
   }

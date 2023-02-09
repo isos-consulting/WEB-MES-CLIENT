@@ -19,6 +19,7 @@ import {
   getPermissions,
   saveGridData,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import { onDefaultGridSave } from '.';
 import { onErrorMessage, TAB_CODE } from './order.page.util';
 
@@ -558,7 +559,7 @@ export const orderRoute = () => {
   };
 
   const onEdit = ev => {
-    if (saveOptionParams?.order_uuid == null) {
+    if (isNil(saveOptionParams?.order_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -567,7 +568,7 @@ export const orderRoute = () => {
   };
 
   const onAppend = ev => {
-    if (saveOptionParams?.order_uuid == null) {
+    if (isNil(saveOptionParams?.order_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }

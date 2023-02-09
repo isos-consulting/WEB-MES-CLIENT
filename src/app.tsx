@@ -19,6 +19,7 @@ import { CloudTenant } from './enums/types';
 import UserProfile, { Profile } from './models/user/profile';
 import { CurrentUser } from './models/user/user';
 import PgUpdatePassword from './components/pages/aut/update-password.page';
+import { isNil } from './helper/common';
 
 const Layout = lazy(() =>
   import('./components/UI/layout').then(module => ({ default: module.Layout })),
@@ -104,7 +105,7 @@ const App = () => {
           Object.keys(e.target).filter(key => key.includes('__reactFiber'))[0]
         ]?.stateNode.closest('button');
 
-      if (buttonComponent != null) {
+      if (!isNil(buttonComponent)) {
         if (typeof buttonComponent.innerText === 'object') {
           const buttonInnerText = buttonComponent.innerText.join('');
           useLogPayload.log_info =

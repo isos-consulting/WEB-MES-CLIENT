@@ -2,6 +2,7 @@ import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Label, PopupButton, Textbox } from '~/components/UI';
+import { isNil } from '~/helper/common';
 import Fonts from '~styles/font.style.module.scss';
 
 /**
@@ -18,7 +19,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
     infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: '_start_date', value });
 
     let datetime = value + ' ' + values?._start_time;
-    if (dayjs(datetime).isValid() === false || values?._start_time == null)
+    if (dayjs(datetime).isValid() === false || isNil(values?._start_time))
       datetime = null;
 
     infoDispatch({
@@ -34,7 +35,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
     infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: '_start_time', value });
 
     let datetime = values?._start_date + ' ' + value + ':00';
-    if (dayjs(datetime).isValid() === false || value == null) datetime = null;
+    if (dayjs(datetime).isValid() === false || isNil(value)) datetime = null;
 
     infoDispatch({
       type: 'CHANGE_ROUTING_INFO',
@@ -49,7 +50,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
     infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: '_end_date', value });
 
     let datetime = value + ' ' + values?._end_time;
-    if (dayjs(datetime).isValid() === false || values?._end_time == null)
+    if (dayjs(datetime).isValid() === false || isNil(values?._end_time))
       datetime = null;
 
     infoDispatch({
@@ -65,7 +66,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
     infoDispatch({ type: 'CHANGE_ROUTING_INFO', name: '_end_time', value });
 
     let datetime = values?._end_date + ' ' + value + ':00';
-    if (dayjs(datetime).isValid() === false || value == null) datetime = null;
+    if (dayjs(datetime).isValid() === false || isNil(value)) datetime = null;
 
     infoDispatch({
       type: 'CHANGE_ROUTING_INFO',

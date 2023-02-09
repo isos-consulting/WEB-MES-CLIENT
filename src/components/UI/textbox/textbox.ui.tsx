@@ -10,6 +10,7 @@ import Props from './textbox.ui.type';
 import { Space } from 'antd';
 import { Label } from '../label';
 import { afStringState } from '~recoils/recoil.atom-family';
+import { isNil } from '~/helper/common';
 
 /** 입력박스 */
 const Textbox: React.FC<Props> = props => {
@@ -60,7 +61,7 @@ const Textbox: React.FC<Props> = props => {
       <ScInputbox {...props} inputMode="text" onChange={onChangeTextValue} />
     );
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     return (
       <Space size={10} wrap hidden={props.hidden}>
         <Label text={props.label} important={props.important} />

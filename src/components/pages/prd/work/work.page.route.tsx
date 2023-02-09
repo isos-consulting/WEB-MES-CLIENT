@@ -21,6 +21,7 @@ import {
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import dayjs from 'dayjs';
 import { ENUM_DECIMAL } from '~/enums';
+import { isNil } from '~/helper/common';
 
 //#region 🔶✅공정순서
 /** 공정순서 */
@@ -223,7 +224,7 @@ export const ROUTING = () => {
   };
 
   const onEdit = ev => {
-    if ((searchParams as any)?.work_uuid == null) {
+    if (isNil((searchParams as any)?.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -268,7 +269,7 @@ export const ROUTING = () => {
           };
 
     await saveData[_gridMode + 'dRows']?.forEach(el => {
-      if (el['start_date'] != null && el['start_time'] != null) {
+      if (!isNil(el['start_date']) && !isNil(el['start_time'])) {
         let time = el['start_time'];
 
         if (String(time)?.length !== 5) {
@@ -282,7 +283,7 @@ export const ROUTING = () => {
           .format('YYYY-MM-DD HH:mm:ss');
       }
 
-      if (el['end_date'] != null && el['end_time'] != null) {
+      if (!isNil(el['end_date']) && !isNil(el['end_time'])) {
         let time = el['end_time'];
 
         if (String(time)?.length !== 5) {

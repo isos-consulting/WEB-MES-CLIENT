@@ -8,6 +8,7 @@ import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Profile } from '~/models/user/profile';
+import { isNil } from '~/helper/common';
 
 const pageId = uuidv4();
 const uriPath = 'aut/user/sign-in/';
@@ -17,7 +18,7 @@ const getLocalStorageId = () => {
 };
 
 const isSaveUserInfo = () => {
-  return localStorage.getItem('userInfo') != null;
+  return !isNil(localStorage.getItem('userInfo'));
 };
 
 /** 로그인 페이지 */
@@ -95,7 +96,7 @@ export const PgLogin = ({
     try {
       let factory: object = {};
 
-      if (cboFactoryCode != null && cboFactoryCode != '-') {
+      if (!isNil(cboFactoryCode) && cboFactoryCode != '-') {
         factory = JSON.parse(cboFactoryCode as string);
       } else {
         message.error('로그인 실패 : 공장을 선택해주세요.');

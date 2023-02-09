@@ -2,6 +2,7 @@ import TuiGrid from 'tui-grid';
 import { message } from 'antd';
 import { GridInstanceReference } from '~/components/UI';
 import Grid from '@toast-ui/react-grid';
+import { isNil } from '~/helper/common';
 
 export const showWorkPerformanceErrorMessage = type => {
   switch (type) {
@@ -26,7 +27,7 @@ const enableWorkPerformanceRegDate = ({
   const rowData = prodOrderDataGrid.getData()[rowKey];
 
   prodOrderDataGrid.setRow(rowKey, { ...rowData, complete_fg: false });
-  if (rowData.order_date == null)
+  if (isNil(rowData.order_date))
     prodOrderDataGrid.setValue(rowKey, 'order_date', rowData.reg_date);
 
   prodOrderDataGrid.enableCell(rowKey, 'reg_date');

@@ -18,6 +18,7 @@ import {
 } from '~/functions';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
+import { isNil } from '~/helper/common';
 
 const excelAction = {
   state: 'unload',
@@ -201,7 +202,7 @@ export const PgInvIncomeEcountERPInterface = () => {
       'post',
     );
 
-    if (uploadIncomData == null) {
+    if (isNil(uploadIncomData)) {
       return;
     }
 

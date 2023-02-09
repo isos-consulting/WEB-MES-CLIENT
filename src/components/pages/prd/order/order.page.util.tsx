@@ -9,6 +9,7 @@ import {
   isModified,
   saveGridData,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export const TAB_CODE = {
   투입품목관리: 'TUIP_PROD',
@@ -103,7 +104,7 @@ export const onDefaultGridSave = async (
 
             // alias에 따라 키값 변경
             columns?.forEach(column => {
-              if (column?.alias != null) {
+              if (!isNil(column?.alias)) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];
               }
@@ -126,7 +127,7 @@ export const onDefaultGridSave = async (
             details: detailDatas,
           };
 
-          if ((headerData as any)?._saveType != null) {
+          if (!isNil((headerData as any)?._saveType)) {
             _methodType = headerData['_saveType'];
           }
 

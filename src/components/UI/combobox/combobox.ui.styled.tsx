@@ -5,6 +5,7 @@ import Fonts from '~styles/font.style.module.scss';
 import styled from 'styled-components';
 import Props from './combobox.ui.type';
 import { Select } from 'antd';
+import { isNil } from '~/helper/common';
 
 interface IBaseSelect extends Omit<Props, 'id' | 'options'> {}
 
@@ -20,7 +21,7 @@ const getWidthSize = widthSize => {
     flex: '100%',
   };
 
-  if (widthSize == null) return Sizes.width_combobox_md;
+  if (isNil(widthSize)) return Sizes.width_combobox_md;
 
   if (width.hasOwnProperty(widthSize) === true) {
     return width[widthSize];

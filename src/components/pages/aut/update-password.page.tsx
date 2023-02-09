@@ -8,6 +8,7 @@ import crypto from 'crypto-js';
 import { Profile } from '~/models/user/profile';
 import { ico_lock } from '~/images';
 import { SENTENCE } from '~/constants/lang/ko';
+import { isNil } from '~/helper/common';
 
 export default ({
   profile,
@@ -140,7 +141,7 @@ const Password: React.FC & { Confirm: typeof PasswordConfirm } = () => {
           { required: true, message: SENTENCE.INPUT_PASSWORD },
           () => ({
             validator(_, value) {
-              if (value == null) return Promise.resolve();
+              if (isNil(value)) return Promise.resolve();
               if (value.length < 10) return Promise.reject(SENTENCE.OVER_8);
               if (value.length > 18) return Promise.reject(SENTENCE.UNDER_16);
               if (PasswordValidation.UPPER_CASE.test(value) === true)

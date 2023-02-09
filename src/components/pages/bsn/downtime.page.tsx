@@ -51,7 +51,7 @@ export const PgDownTimeReport = () => {
         setDownTime(
           downtimes.map(downtime => ({ ...downtime, fg: '비가동 시간' })),
         );
-        if (innerRef.current.values.workings_uuid == null) {
+        if (isNil(innerRef.current.values.workings_uuid)) {
           setWorkings(workings_columns);
         } else {
           setWorkings(

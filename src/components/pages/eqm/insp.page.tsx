@@ -14,6 +14,7 @@ import {
   isModified,
   onAsyncFunction,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import { EqmInspDetail } from './insp/detail/eqm-insp-detail';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
@@ -280,12 +281,12 @@ export const PgEqmInsp = () => {
   };
 
   const onSearchDetail = async uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
 
   const onSearchDetailSub = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailSubGrid(uuid);
   };
 
@@ -325,13 +326,13 @@ export const PgEqmInsp = () => {
   };
 
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.equip_uuid);
   }, [selectedHeaderRow]);
 
   useLayoutEffect(() => {
-    if (selectedDetailRow == null) return;
+    if (isNil(selectedDetailRow)) return;
     detailSubInputInfo.setValues(selectedDetailRow);
     onSearchDetailSub(selectedDetailRow?.insp_uuid);
   }, [selectedDetailRow]);
@@ -426,7 +427,7 @@ export const PgEqmInsp = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailSubInputInfo?.values?.insp_uuid == null) {
+    if (isNil(detailSubInputInfo?.values?.insp_uuid)) {
       message.warn('기준서를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

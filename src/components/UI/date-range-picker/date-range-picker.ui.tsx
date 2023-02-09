@@ -4,6 +4,7 @@ import { DatePicker } from '../date-picker';
 import { Space } from 'antd';
 import Props from './date-range-picker.ui.type';
 import dayjs from 'dayjs';
+import { isNil } from '~/helper/common';
 
 type RangePickerProps = {
   id: string[];
@@ -59,7 +60,7 @@ const DateRangePicker: React.FC<Props> = props => {
     }
   }, []);
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     return (
       <Space size={10} wrap>
         <Label text={props.label} important={props.important} />

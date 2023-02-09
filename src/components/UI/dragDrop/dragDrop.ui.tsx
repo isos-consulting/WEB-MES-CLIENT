@@ -147,7 +147,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   );
 
   const initDragEvents = useCallback((): void => {
-    if (dragRef.current !== null) {
+    if (!isNull(dragRef.current)) {
       dragRef.current.addEventListener('dragenter', handleDragIn);
       dragRef.current.addEventListener('dragleave', handleDragOut);
       dragRef.current.addEventListener('dragover', handleDragOver);
@@ -156,7 +156,7 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
 
   const resetDragEvents = useCallback((): void => {
-    if (dragRef.current !== null) {
+    if (!isNull(dragRef.current)) {
       dragRef.current.removeEventListener('dragenter', handleDragIn);
       dragRef.current.removeEventListener('dragleave', handleDragOut);
       dragRef.current.removeEventListener('dragover', handleDragOver);

@@ -19,10 +19,9 @@ export class DatagridNumberEditor {
     rootDiv.name = name;
 
     // 넘겨받은 값으로 default value를 지정합니다.
-    rootDiv.value =
-      props.value == null
-        ? props.value
-        : String(Number(props?.value).toFixed(decimal));
+    rootDiv.value = isNil(props.value)
+      ? props.value
+      : String(Number(props?.value).toFixed(decimal));
 
     if (decimal === 0) {
       rootDiv.step = '1';
@@ -94,7 +93,7 @@ export class DatagridNumberRenderer {
   }
 
   render(props) {
-    if (props?.value == null) {
+    if (isNil(props?.value)) {
       this.el.innerText = null;
     } else {
       if (isNumber(props?.value || null)) {

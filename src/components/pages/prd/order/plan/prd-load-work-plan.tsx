@@ -14,6 +14,7 @@ import { FieldStore } from '~/constants/fields';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { getData, getToday } from '~/functions';
 import { injectClassNameAttributesInColumn } from '~/functions/tui-grid/class-name';
+import { isNil } from '~/helper/common';
 import prdDailyWorkPlanColumns from '../../work/plan/daily/prd-daily-work-plan-columns';
 import prdLoadWorkPlanColumnNames from './prd-load-work-plan-column-names';
 
@@ -181,7 +182,7 @@ export const getDailyWorkPlanModalProps = async ({
 
         const newProdOrder = columnNames.reduce(
           (newProdOrder, { original, popup }) => {
-            if (popup != null) {
+            if (!isNil(popup)) {
               return {
                 ...newProdOrder,
                 [original]: prodOrder[popup],
@@ -190,8 +191,8 @@ export const getDailyWorkPlanModalProps = async ({
 
             const column = columns.filter(el => el.name === original)[0];
 
-            if (column == null) throw new Error('DataGrid Column null');
-            if (column.defaultValue == null)
+            if (isNil(column)) throw new Error('DataGrid Column null');
+            if (isNil(column.defaultValue))
               throw new Error('DataGrid Column defaultValue Key null');
             if (typeof column.defaultValue === 'function') {
               return {

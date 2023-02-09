@@ -8,6 +8,7 @@ import {
 } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { getData, getToday } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export const PgWorkerProductivityReport = () => {
   const [productivities, setProductivity] = useState([]);
@@ -71,7 +72,7 @@ export const PgWorkerProductivityReport = () => {
       productivities.reduce((acc, cur) => {
         const key = cur.workings_nm;
 
-        if (acc[`${key}sum`] == null) {
+        if (isNil(acc[`${key}sum`])) {
           acc[`${key}sum`] = 0;
         }
 

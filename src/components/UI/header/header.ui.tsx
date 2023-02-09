@@ -18,6 +18,7 @@ import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
 import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 import { WORD } from '~/constants/lang/ko/word';
 import { SENTENCE } from '~/constants/lang/ko/sentence';
+import { isNil } from '~/helper/common';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -73,7 +74,7 @@ const Header: React.FC<Props> = props => {
             {props.description}
           </ScTitleBodyDescription>
 
-          {props.title == null ? null : (
+          {isNil(props.title) ? null : (
             <BookmarkButton
               uuid={props.uuid}
               key={`bookmark-button-${props.uuid}`}

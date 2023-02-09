@@ -90,7 +90,7 @@ export class DatagridPercentRenderer {
   }
 
   render(props) {
-    if (props?.value == null) {
+    if (isNil(props?.value)) {
       this.el.innerText = null;
     } else {
       if (isNumber(props?.value || null)) {

@@ -1,5 +1,6 @@
 import { Space } from 'antd';
 import React, { useCallback } from 'react';
+import { isNil } from '~/helper/common';
 import BaseRangePicker, {
   BaseRangeDatePickerProps,
 } from './base-date-range-picker';
@@ -15,7 +16,7 @@ const RangePicker: <T>(
     (dates, dateStrings) => {
       let returnValue = props.returnType === 'dateString' ? dateStrings : dates;
 
-      if ((returnValue === '' || returnValue == null) && props.defaultValue)
+      if ((returnValue === '' || isNil(returnValue)) && props.defaultValue)
         returnValue = props.defaultValue;
 
       if (props.onChange) props.onChange(returnValue);

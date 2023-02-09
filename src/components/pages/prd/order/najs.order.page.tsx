@@ -23,6 +23,7 @@ import {
   getPermissions,
   saveGridData,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import { onDefaultGridSave } from './order.page.util';
 import { getDailyWorkPlanModalProps } from './plan/prd-load-work-plan';
 import prdOrderRowAddpopups from './prd-order-row-addpopups';
@@ -217,7 +218,7 @@ export const PgPrdNajsOrder = () => {
             column => column.name === columnName,
           );
 
-          if (rowKey == null) {
+          if (isNil(rowKey)) {
             message.warn('취소할 행을 선택해주세요');
             return;
           }

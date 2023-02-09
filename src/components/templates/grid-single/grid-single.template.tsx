@@ -14,6 +14,7 @@ import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-single.template.type';
 import { getPermissions } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export const TpSingleGrid: React.FC<Props> = props => {
   /** 🔶권한 */
@@ -27,10 +28,11 @@ export const TpSingleGrid: React.FC<Props> = props => {
 
   const gridPopup = {
     ...props.popupGridInfo[0],
-    disabledAutoDateColumn:
-      props.popupGridInfo[0]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfo[0]?.disabledAutoDateColumn,
+    disabledAutoDateColumn: isNil(
+      props.popupGridInfo[0]?.disabledAutoDateColumn,
+    )
+      ? true
+      : props.popupGridInfo[0]?.disabledAutoDateColumn,
   };
   const gridPopupRef = props.popupGridRef[0];
   const gridPopupVisible = props.popupVisible[0];
@@ -47,10 +49,11 @@ export const TpSingleGrid: React.FC<Props> = props => {
 
   const gridUpdatePopup = {
     ...props.popupGridInfo[1],
-    disabledAutoDateColumn:
-      props.popupGridInfo[1]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfo[1]?.disabledAutoDateColumn,
+    disabledAutoDateColumn: isNil(
+      props.popupGridInfo[1]?.disabledAutoDateColumn,
+    )
+      ? true
+      : props.popupGridInfo[1]?.disabledAutoDateColumn,
   };
   const gridUpdatePopupRef = props.popupGridRef[1];
   const gridUpdatePopupVisible = props.popupVisible[1];
@@ -284,7 +287,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
   const gridElement = useMemo(() => {
     return (
       <>
-        {inputProps != null ? (
+        {!isNil(inputProps) ? (
           inputboxVisible ? (
             <InputGroupbox {...inputProps} />
           ) : null
@@ -336,7 +339,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
               {btnCreate}
             </Space>
             <Space size={[5, 0]}>
-              {searchProps?.searchItems == null || !searchboxVisible
+              {isNil(searchProps?.searchItems) || !searchboxVisible
                 ? btnSearch
                 : null}
               {extraButtons}
@@ -351,7 +354,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
               : { width: '100%' }
           }
         >
-          {searchProps != null ? (
+          {!isNil(searchProps) ? (
             searchboxVisible ? (
               <Searchbox {...searchProps} />
             ) : null
@@ -359,7 +362,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
         </div>
         {gridElement}
 
-        {gridPopup == null || !gridPopupVisible ? null : (
+        {isNil(gridPopup) || !gridPopupVisible ? null : (
           <GridPopup
             {...gridPopup}
             popupId={gridPopup.gridId + '_POPUP'}
@@ -398,7 +401,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
           />
         )}
 
-        {gridUpdatePopup == null || !gridUpdatePopupVisible ? null : (
+        {isNil(gridUpdatePopup) || !gridUpdatePopupVisible ? null : (
           <GridPopup
             {...gridUpdatePopup}
             popupId={gridUpdatePopup.gridId + '_POPUP'}

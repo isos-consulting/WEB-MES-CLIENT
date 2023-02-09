@@ -27,6 +27,7 @@ import IModalProps from '../modal/modal.ui.type';
 import RangePicker from '../date-picker/range/date-range-picker';
 import moment from 'moment';
 import { MultiSelectableCombobox } from '../combobox/multi-select/multi-selectable.combobox.ui';
+import { isNil } from '~/helper/common';
 
 export interface IInputGroupboxItem {
   /** UI의 아이디 */
@@ -176,7 +177,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
       let result = {};
 
       inputItems?.forEach(item => {
-        if (item.ids != null) {
+        if (!isNil(item.ids)) {
           item?.ids?.forEach((subItem, index) => {
             if (item?.names) result[item?.names[index]] = item?.defaults[index];
             else result[item?.ids[index]] = item?.defaults[index];

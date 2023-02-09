@@ -17,6 +17,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
 const priceFormula = (params, props) => {
@@ -334,7 +335,7 @@ export const PgOutReceive = () => {
         filter: 'number',
         requiredField: true,
         defaultValue: (props, row) => {
-          if (row == null) return;
+          if (isNil(row)) return;
           return Number(row?.qty) * Number(row?.price) * Number(row?.exchange);
         },
       },
@@ -712,7 +713,7 @@ export const PgOutReceive = () => {
             inputValues = addDataPopupInputInfo.ref.current.values;
           }
 
-          if (inputValues != null) {
+          if (!isNil(inputValues)) {
             params = {
               uuid: newDataPopupGridVisible ? null : inputValues?.receive_uuid,
               partner_uuid: inputValues?.partner_uuid,
@@ -729,9 +730,9 @@ export const PgOutReceive = () => {
             onInterlock: () => {
               let showPopup: boolean = false;
 
-              if (params?.date == null) {
+              if (isNil(params?.date)) {
                 message.warn('입하일을 입력하신 후 다시 시도해주세요.');
-              } else if (params?.partner_uuid == null) {
+              } else if (isNil(params?.partner_uuid)) {
                 message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               } else {
                 showPopup = true;
@@ -839,7 +840,7 @@ export const PgOutReceive = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -956,7 +957,7 @@ export const PgOutReceive = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -1030,7 +1031,7 @@ export const PgOutReceive = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.receive_uuid == null) {
+    if (isNil(detailInputInfo?.values?.receive_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

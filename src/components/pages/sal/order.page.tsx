@@ -16,6 +16,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 완료상태 컬럼 renderer 조건 */
 const completeCondition = [
@@ -583,7 +584,7 @@ export const PgSalOrder = () => {
           inputValues = addDataPopupInputInfo.ref.current.values;
         }
 
-        if (inputValues != null) {
+        if (!isNil(inputValues)) {
           params = {
             uuid: newDataPopupGridVisible ? null : inputValues.order_uuid,
             partner_uuid: inputValues?.partner_uuid,
@@ -599,9 +600,9 @@ export const PgSalOrder = () => {
           onInterlock: () => {
             let showPopup: boolean = false;
 
-            if (params?.date == null) {
+            if (isNil(params?.date)) {
               message.warn('수주일을 입력하신 후 다시 시도해주세요.');
-            } else if (params?.partner_uuid == null) {
+            } else if (isNil(params?.partner_uuid)) {
               message.warn('거래처를 선택하신 후 다시 시도해주세요.');
             } else {
               showPopup = true;
@@ -707,7 +708,7 @@ export const PgSalOrder = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -818,7 +819,7 @@ export const PgSalOrder = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -892,7 +893,7 @@ export const PgSalOrder = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.order_uuid == null) {
+    if (isNil(detailInputInfo?.values?.order_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

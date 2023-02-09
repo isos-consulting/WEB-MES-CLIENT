@@ -22,6 +22,7 @@ import {
 import { onErrorMessage, TAB_CODE } from './work.page.util';
 import { cloneDeep, pick } from 'lodash';
 import { ENUM_DECIMAL } from '~/enums';
+import { isNil } from '~/helper/common';
 
 const DATA_PICKUP_INFO = {
   create: [
@@ -343,8 +344,8 @@ export const REJECT = () => {
   /** 조작 가능 여부 판단 */
   const onCheckAccessAllow = (): boolean => {
     if (
-      searchParams?.['work_uuid'] == null ||
-      searchParams?.['work_routing_uuid'] == null
+      isNil(searchParams?.['work_uuid']) ||
+      isNil(searchParams?.['work_routing_uuid'])
     ) {
       onErrorMessage('하위이력작업시도');
       return false;

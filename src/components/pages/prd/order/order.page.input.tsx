@@ -19,6 +19,7 @@ import {
   getPermissions,
   saveGridData,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import { onDefaultGridSave, onErrorMessage, TAB_CODE } from './order.page.util';
 
 /** 작업지시 - 자재투입 */
@@ -801,7 +802,7 @@ export const orderInput = () => {
   };
 
   const onAppend = ev => {
-    if (saveOptionParams?.order_uuid == null) {
+    if (isNil(saveOptionParams?.order_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -809,7 +810,7 @@ export const orderInput = () => {
   };
 
   const onEdit = ev => {
-    if (saveOptionParams?.order_uuid == null) {
+    if (isNil(saveOptionParams?.order_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -817,7 +818,7 @@ export const orderInput = () => {
   };
 
   const onDelete = () => {
-    if (saveOptionParams?.order_uuid == null) {
+    if (isNil(saveOptionParams?.order_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }

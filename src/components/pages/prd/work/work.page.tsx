@@ -56,6 +56,7 @@ import {
 } from './work-performance/components/Modal';
 import { TuiGridEvent } from 'tui-grid/types/event';
 import TuiGrid from 'tui-grid';
+import { isNil } from '~/helper/common';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -199,7 +200,7 @@ export const PgPrdWork = () => {
 
   /** 작업 취소 처리 */
   const onCancelWork = () => {
-    if (workInfo.work_uuid == null) {
+    if (isNil(workInfo.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -246,7 +247,7 @@ export const PgPrdWork = () => {
 
   /** 실적 삭제 처리 */
   const onDeleteWork = () => {
-    if (workInfo.work_uuid == null) {
+    if (isNil(workInfo.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -320,12 +321,12 @@ export const PgPrdWork = () => {
 
   /** 생산실적 중간저장 처리 */
   const onSaveWork = async () => {
-    if (workInfo.work_uuid == null) {
+    if (isNil(workInfo.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
 
-    if (routingInfo.work_routing_uuid == null) {
+    if (isNil(routingInfo.work_routing_uuid)) {
       onErrorMessage('공정순서이력작업시도');
       return;
     }
@@ -377,7 +378,7 @@ export const PgPrdWork = () => {
 
   /** 생산실적 완료 처리 */
   const onCompleteWork = async () => {
-    if (workInfo.work_uuid == null) {
+    if (isNil(workInfo.work_uuid)) {
       onErrorMessage('하위이력작업시도');
       return;
     }
@@ -710,7 +711,7 @@ export const PgPrdWork = () => {
             workInput.setParentParams(searchParams);
             workInput.setGridMode('view');
           });
-        } else if (work_uuid != null) {
+        } else if (!isNil(work_uuid)) {
           getData(
             {
               work_uuid: String(work_uuid),
@@ -969,7 +970,7 @@ export const PgPrdWork = () => {
           workDowntime={workDowntime}
           TAB_CODE={TAB_CODE}
           isWorkRoutingStarted={
-            infoState.routingInfo?.work_routing_uuid != null
+            !isNil(infoState.routingInfo?.work_routing_uuid)
           }
         />
       ) : (

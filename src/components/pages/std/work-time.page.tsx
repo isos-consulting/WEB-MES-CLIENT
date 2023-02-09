@@ -12,6 +12,7 @@ import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import { HeaderIncludedModalContext } from '../adm/excel-upload-type/hooks/header-included-modal';
 import { FormikProps, FormikValues } from 'formik';
 import ComboStore from '~/constants/combos';
+import { isNil } from '~/helper/common';
 
 const { confirm } = Modal;
 const WORK_TYPE_GRID_COLUMNS = ColumnStore.WORK_TYPE.filter(
@@ -222,7 +223,7 @@ export const PgStdWorkTime = () => {
   const showEditWorkTimeModal = () => {
     const { work_type_uuid, work_type_nm } = userSelectedWorkTypeData;
 
-    if (work_type_uuid == null) {
+    if (isNil(work_type_uuid)) {
       message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
       return;
     }
@@ -245,7 +246,7 @@ export const PgStdWorkTime = () => {
   const showAddWorkTimeModal = () => {
     const { work_type_uuid, work_type_nm } = userSelectedWorkTypeData;
 
-    if (work_type_uuid == null) {
+    if (isNil(work_type_uuid)) {
       message.warn(SENTENCE.NO_SELECTED_WORK_TYPE);
       return;
     }
@@ -361,7 +362,7 @@ export const PgStdWorkTime = () => {
                 rowKey: number;
                 instance: TuiGrid;
               }) => {
-                if (rowKey == null) return;
+                if (isNil(rowKey)) return;
 
                 setUserSelectedWorkTypeData(instance.getRowAt(rowKey));
               }}

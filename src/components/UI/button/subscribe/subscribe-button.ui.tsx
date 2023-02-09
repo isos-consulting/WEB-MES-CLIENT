@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { isNil } from '~/helper/common';
 
 const StarButton = (props: SubscribeButtonProps) => {
   return <span {...props}>★</span>;
@@ -26,7 +27,7 @@ const SubscribeButton = (
   const [checked, toggle] = useState<boolean>(buttonProps.checked ?? false);
 
   const onClick = () => {
-    if (buttonProps.onClick != null) {
+    if (!isNil(buttonProps.onClick)) {
       buttonProps.onClick(checked, toggle);
     } else {
       toggle(!checked);

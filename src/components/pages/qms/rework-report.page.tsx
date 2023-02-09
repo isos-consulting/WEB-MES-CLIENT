@@ -11,6 +11,7 @@ import Modal from 'antd/lib/modal/Modal';
 import { TpDoubleGrid } from '~/components/templates';
 import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
 import { ColumnStore } from '~/constants/columns';
+import { isNil } from '~/helper/common';
 
 export const PgQmsReworkReport = () => {
   const title = getPageName();
@@ -55,7 +56,7 @@ export const PgQmsReworkReport = () => {
   };
 
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       onSearchDetail(selectedHeaderRow?.rework_uuid);
@@ -83,7 +84,7 @@ export const PgQmsReworkReport = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
 
     const searchParams: any = {
       rework_uuid: uuid,

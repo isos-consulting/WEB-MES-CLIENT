@@ -16,6 +16,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** BOM 관리 */
 export const PgStdBom = () => {
@@ -942,7 +943,7 @@ export const PgStdBom = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
     reloadDetailSubGrid(uuid);
   };
@@ -976,7 +977,7 @@ export const PgStdBom = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.prod_uuid);
   }, [selectedHeaderRow]);
@@ -1046,7 +1047,7 @@ export const PgStdBom = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.prod_uuid == null) {
+    if (isNil(detailInputInfo?.values.prod_uuid)) {
       message.warn('품목을 선택하신 후 다시 시도해 주세요.');
       return false;
     }

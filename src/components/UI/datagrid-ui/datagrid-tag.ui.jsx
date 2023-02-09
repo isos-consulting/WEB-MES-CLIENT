@@ -29,10 +29,10 @@ export class DatagridTagRenderer {
   render(props) {
     const element = document.getElementById(this.state?.elementId);
 
-    if (this.el != null) {
+    if (!isNil(this.el)) {
       this.el.className = convTagClassName(this.state?.conditions, props.value);
       this.el.innerText = convTagValue(this.state?.conditions, props?.value);
-    } else if (element != null) {
+    } else if (!isNil(element)) {
       element.className = convTagClassName(this.state?.conditions, props.value);
       element.innerText = convTagValue(this.state?.conditions, props?.value);
     }

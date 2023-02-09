@@ -22,7 +22,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
-import { isNull } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
@@ -368,11 +368,11 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       message.warn('처리결과를 등록해주세요.');
       return;
     }
-    if (emp_uuid == null) {
+    if (isNil(emp_uuid)) {
       message.warn('검사자를 등록해주세요.');
       return;
     }
-    if (reg_date_time == null) {
+    if (isNil(reg_date_time)) {
       message.warn('검사시간을 등록해주세요.');
       return;
     }
@@ -385,37 +385,37 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (insp_handling_type_cd === 'INCOME') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
     }
 
     if (insp_handling_type_cd === 'RETURN') {
-      if (reject_uuid == null) {
+      if (isNil(reject_uuid)) {
         message.warn('불량유형을 등록해주세요.');
         return;
       }
 
-      if (reject_store_uuid == null || reject_store_uuid === '') {
+      if (isNil(reject_store_uuid) || reject_store_uuid === '') {
         message.warn('불량창고를 등록해주세요.');
         return;
       }
     }
 
     if (insp_handling_type_cd === 'SELECTION') {
-      if (to_store_uuid == null || to_store_uuid === '') {
+      if (isNil(to_store_uuid) || to_store_uuid === '') {
         message.warn('입고창고를 등록해주세요.');
         return;
       }
 
       if (reject_qty > 0) {
-        if (reject_uuid == null) {
+        if (isNil(reject_uuid)) {
           message.warn('불량유형을 등록해주세요.');
           return;
         }
 
-        if (reject_store_uuid == null || reject_store_uuid === '') {
+        if (isNil(reject_store_uuid) || reject_store_uuid === '') {
           message.warn('불량창고를 등록해주세요.');
           return;
         }
@@ -443,7 +443,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     const isUserInputAllCell = inspectionSampleResults.every(cells =>
-      cells.every(cell => cell !== null),
+      cells.every(cell => !isNull(cell)),
     );
 
     const saveData = saveInspectionData(
@@ -564,11 +564,12 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
   }, [receiveInputData]);
 
   useLayoutEffect(() => {
-    const inspectionHandlingTypeCode =
-      inputInspResult?.values?.insp_handling_type != null
-        ? JSON.parse(inputInspResult?.values?.insp_handling_type)
-            .insp_handling_type_cd
-        : null;
+    const inspectionHandlingTypeCode = !isNil(
+      inputInspResult?.values?.insp_handling_type,
+    )
+      ? JSON.parse(inputInspResult?.values?.insp_handling_type)
+          .insp_handling_type_cd
+      : null;
 
     handleInspectionHandlingTypeChange(
       inspectionHandlingTypeCode,

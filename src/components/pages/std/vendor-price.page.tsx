@@ -16,6 +16,7 @@ import { useInputGroup } from '~/components/UI/input-groupbox';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 구매단가관리 */
 export const PgStdVendorPrice = () => {
@@ -589,7 +590,7 @@ export const PgStdVendorPrice = () => {
   };
 
   const onSearchDetail = (uuid, searchValues) => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid, searchValues);
   };
   //#endregion
@@ -636,7 +637,7 @@ export const PgStdVendorPrice = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.partner_uuid, detailSearchInfo.values);
   }, [selectedHeaderRow]);
@@ -706,7 +707,7 @@ export const PgStdVendorPrice = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.partner_uuid == null) {
+    if (isNil(detailInputInfo?.values.partner_uuid)) {
       message.warn('거래처를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

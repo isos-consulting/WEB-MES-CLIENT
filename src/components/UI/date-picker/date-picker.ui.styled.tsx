@@ -5,6 +5,7 @@ import Fonts from '~styles/font.style.module.scss';
 import styled from 'styled-components';
 import { DatePicker } from 'antd';
 import Props from './date-picker.ui.type';
+import { isNil } from '~/helper/common';
 
 type TAntdDatePicker = {
   showTime: boolean;
@@ -25,7 +26,7 @@ const getDatePickerWidthSize = widthSize => {
     flex: '100%',
   };
 
-  if (widthSize == null) return Sizes.width_datepicker_md;
+  if (isNil(widthSize)) return Sizes.width_datepicker_md;
 
   if (width.hasOwnProperty(widthSize) === true) {
     return width[widthSize];

@@ -17,6 +17,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 /** 제품출하지시 */
 export const PgSalOutgoOrder = () => {
@@ -280,7 +281,7 @@ export const PgSalOutgoOrder = () => {
             inputValues = addDataPopupInputInfo.ref.current.values;
           }
 
-          if (inputValues != null) {
+          if (!isNil(inputValues)) {
             params = {
               uuid: newDataPopupGridVisible
                 ? null
@@ -298,9 +299,9 @@ export const PgSalOutgoOrder = () => {
             onInterlock: () => {
               let showPopup: boolean = false;
 
-              if (params?.date == null) {
+              if (isNil(params?.date)) {
                 message.warn('발주일을 입력하신 후 다시 시도해주세요.');
-              } else if (params?.partner_uuid == null) {
+              } else if (isNil(params?.partner_uuid)) {
                 message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               } else {
                 showPopup = true;
@@ -336,7 +337,7 @@ export const PgSalOutgoOrder = () => {
                 addDataPopupInputInfo.ref.current.values?.partner_uuid;
             }
 
-            if (params?.partner_uuid == null) {
+            if (isNil(params?.partner_uuid)) {
               message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               return;
             }
@@ -495,10 +496,11 @@ export const PgSalOutgoOrder = () => {
                     if (typeof row === 'object') {
                       updateColumns.forEach(columnName => {
                         // 값 설정
-                        newRow[columnName.original] =
-                          row[columnName.popup] != null
-                            ? row[columnName.popup]
-                            : null;
+                        newRow[columnName.original] = !isNil(
+                          row[columnName.popup],
+                        )
+                          ? row[columnName.popup]
+                          : null;
                       });
                       // 행 추가
                       onAppendRow(newRow);
@@ -596,7 +598,7 @@ export const PgSalOutgoOrder = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
@@ -694,7 +696,7 @@ export const PgSalOutgoOrder = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.outgo_order_uuid);
   }, [selectedHeaderRow]);
@@ -765,7 +767,7 @@ export const PgSalOutgoOrder = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.outgo_order_uuid == null) {
+    if (isNil(detailInputInfo?.values?.outgo_order_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

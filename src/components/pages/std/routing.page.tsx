@@ -23,6 +23,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { FormikProps, FormikValues } from 'formik';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 const WORKING_INPUT_ITEMS: IInputGroupboxItem[] = [
   {
@@ -891,14 +892,14 @@ export const PgStdRouting = () => {
   };
 
   const onSearchDetail = uuid => {
-    if (uuid == null) return;
+    if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
   //#endregion
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.prod_uuid);
   }, [selectedHeaderRow]);
@@ -969,7 +970,7 @@ export const PgStdRouting = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values.prod_uuid == null) {
+    if (isNil(detailInputInfo?.values.prod_uuid)) {
       message.warn('품목을 선택하신 후 다시 시도해 주세요.');
       return false;
     }

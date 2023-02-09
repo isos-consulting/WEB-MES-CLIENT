@@ -1,5 +1,6 @@
 import { FormikErrors, FormikProps, FormikValues } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
+import { isNil } from '~/helper/common';
 import ISearchboxProps, { ISearchItem } from './searchbox.ui.type';
 
 export const searchboxModel = (props: {
@@ -90,7 +91,7 @@ const createInitialValues = inputItems => {
   let result = {};
 
   inputItems?.forEach(item => {
-    if (item.ids != null) {
+    if (!isNil(item.ids)) {
       item?.ids?.forEach((subItem, index) => {
         if (item?.names) result[item?.names[index]] = item?.defaults[index];
         else result[item?.ids[index]] = item?.defaults[index];

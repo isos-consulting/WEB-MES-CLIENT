@@ -8,6 +8,7 @@ import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
 import { executeData, getData, getToday } from '~/functions';
+import { isNil } from '~/helper/common';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import stdWorkCalendarColumns from './work-calendar/std-work-calendar-columns';
 
@@ -102,7 +103,7 @@ export const PgStdWorkCalendar = () => {
 
     if (
       updatedWorkCalendarDatas.some(({ day_value }) => {
-        if (day_value == null) return true;
+        if (isNil(day_value)) return true;
         if (day_value === '') return true;
 
         return Number.isNaN(Number(day_value)) === true;
@@ -115,7 +116,7 @@ export const PgStdWorkCalendar = () => {
     executeData(
       updatedWorkCalendarDatas.map(
         ({ day_no, day_value, work_type_uuid, ...workDayRest }) => {
-          if (work_type_uuid == null)
+          if (isNil(work_type_uuid))
             return {
               day_no: `${workMonth.format('YYYY-MM')}-${day_no}`,
               day_value: Number(day_value),
@@ -143,7 +144,7 @@ export const PgStdWorkCalendar = () => {
     const { work_type_uuid, ...changedWorkCalendarDataRest } =
       workCalendarDataGridInstance.getRowAt(rowKey);
 
-    if (work_type_uuid == null) {
+    if (isNil(work_type_uuid)) {
       workCalendarDataGridInstance.setRow(rowKey, {
         ...changedWorkCalendarDataRest,
         work_type_uuid,

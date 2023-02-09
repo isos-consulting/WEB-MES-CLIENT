@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Container, Datagrid, layoutStore, Searchbox } from '~/components/UI';
 import { getToday } from '~/functions';
+import { isNil } from '~/helper/common';
 import {
   getDailyProductionOrderWorkRate,
   getMonthlyProductionOrderWorkRate,
@@ -58,19 +59,19 @@ export const PgBsnProductionOrderWorkRate = () => {
       month,
     );
 
-    if (monthlyproductionOrderWorkRate == null) {
+    if (isNil(monthlyproductionOrderWorkRate)) {
       setYearData(BsnProductionOrderWorkRateService.emptyData());
     } else {
       setYearData(service.monthData(monthlyproductionOrderWorkRate));
     }
 
-    if (weeklyProductionOrderWorkRate == null) {
+    if (isNil(weeklyProductionOrderWorkRate)) {
       setWeekData(BsnProductionOrderWorkRateService.emptyData());
     } else {
       setWeekData(service.weekData(weeklyProductionOrderWorkRate));
     }
 
-    if (dailyProductionOrderWorkRate == null) {
+    if (isNil(dailyProductionOrderWorkRate)) {
       setDateData(BsnProductionOrderWorkRateService.emptyData());
     } else {
       setDateData(service.dateData(dailyProductionOrderWorkRate));

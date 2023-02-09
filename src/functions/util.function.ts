@@ -15,6 +15,7 @@ import { atSideNavMenuContent } from '~/components/UI/side-navbar';
 import { useLocation } from 'react-router-dom';
 
 import { isNumber } from './number';
+import { isNil } from '~/helper/common';
 
 /**
  * xlsx => json으로 convert하는 함수입니다.
@@ -50,7 +51,7 @@ export const convExcelToJson = async (
           // 첫행은 컬럼name, 두번째 행은 컬럼header라고 가정
           // 컬럼 매칭 (엑셀에 컬럼명과 그리드의 header명이 일치하는 col의 위치를 추출)
           if (COLUMN_ROW_FLAG) {
-            if (columnRowIndex == null) {
+            if (isNil(columnRowIndex)) {
               for (let i = 0; i < row.values.length; i++) {
                 for (let z = 0; z < columns?.length; z++) {
                   if (columns[z].name === row.values[i]) {
@@ -64,7 +65,7 @@ export const convExcelToJson = async (
               }
             }
 
-            if (columnRowIndex == null) {
+            if (isNil(columnRowIndex)) {
               columnRowIndex = rowIndex;
             } else {
               COLUMN_ROW_FLAG = false;
@@ -480,7 +481,7 @@ export const cleanupKeyOfObject = (
  * @returns
  */
 export const cloneObject = (obj: object | any[]): any => {
-  if (obj == null) return obj;
+  if (isNil(obj)) return obj;
 
   if (Array.isArray(obj)) {
     // object 배열인 경우
@@ -521,7 +522,7 @@ export const cloneObject = (obj: object | any[]): any => {
 };
 
 export const blankThenNull = (value: any) => {
-  if (value == null || value === '') {
+  if (isNil(value) || value === '') {
     return null;
   } else {
     return value;

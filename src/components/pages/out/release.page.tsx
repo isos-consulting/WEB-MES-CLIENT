@@ -17,6 +17,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
 const priceFormula = (params, props) => {
@@ -313,7 +314,7 @@ export const PgOutRelease = () => {
         decimal: ENUM_DECIMAL.DEC_PRICE,
         filter: 'number',
         defaultValue: (props, row) => {
-          if (row == null) return;
+          if (isNil(row)) return;
           return Number(row?.qty) * Number(row?.price) * Number(row?.exchange);
         },
       },
@@ -661,7 +662,7 @@ export const PgOutRelease = () => {
             inputValues = addDataPopupInputInfo.ref.current.values;
           }
 
-          if (inputValues != null) {
+          if (!isNil(inputValues)) {
             params = {
               stock_type: 'available',
               grouped_type: 'all',
@@ -680,9 +681,9 @@ export const PgOutRelease = () => {
             onInterlock: () => {
               let showPopup: boolean = false;
 
-              if (params?.reg_date == null) {
+              if (isNil(params?.reg_date)) {
                 message.warn('출고일을 입력하신 후 다시 시도해주세요.');
-              } else if (params?.partner_uuid == null) {
+              } else if (isNil(params?.partner_uuid)) {
                 message.warn('거래처를 입력하신 후 다시 시도해주세요.');
               } else {
                 showPopup = true;
@@ -895,7 +896,7 @@ export const PgOutRelease = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) {
+    if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
     } else {
       detailInputInfo.setValues(selectedHeaderRow);
@@ -969,7 +970,7 @@ export const PgOutRelease = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.release_uuid == null) {
+    if (isNil(detailInputInfo?.values?.release_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

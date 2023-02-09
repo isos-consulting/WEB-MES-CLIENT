@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import EXPRESSSIONS from '~/constants/expressions';
+import { isNull } from '~/helper/common';
 
 /** 날짜 포멧 에디터 */
 export class DatagridDateEditor {
@@ -37,7 +38,7 @@ export class DatagridDateEditor {
       rootDiv.max = '9999-12';
     } else {
       rootDiv.max = '9999-12-31T23:59:59';
-      if (props.value !== null) {
+      if (!isNull(props.value)) {
         let value = String(props.value);
 
         this.state = {
@@ -45,8 +46,9 @@ export class DatagridDateEditor {
           value: value?.replace('.000', '')?.trim(),
         };
 
-        rootDiv.value =
-          props.value == null ? props.value : dayjs(value).format(dateFormat);
+        rootDiv.value = isNil(props.value)
+          ? props.value
+          : dayjs(value).format(dateFormat);
       } else {
         rootDiv.value = props.value;
       }
@@ -62,7 +64,7 @@ export class DatagridDateEditor {
 
   getValue() {
     if (this.state.type === 'datetime') {
-      if (this.el?.value !== null) {
+      if (!isNull(this.el?.value)) {
         const value = String(this.el?.value);
         const stateValue = dayjs(this.state.value)
           .locale('ko')
@@ -71,7 +73,7 @@ export class DatagridDateEditor {
         // 값이 기존 값과 동일하면 원래 값을 그대로 출력합니다.
         if (stateValue === value) return this.state.rawValue;
 
-        return this.el?.value == null
+        return isNil(this.el?.value)
           ? props.value
           : dayjs(value).format('YYYY-MM-DD HH:mm:ss');
       } else {
@@ -122,7 +124,7 @@ export class DatagridDateRenderer {
       this.el.innerText = value;
     } else {
       if (dayjs(props.value).isValid()) {
-        if (props.value == null) this.el.innerText = null;
+        if (isNil(props.value)) this.el.innerText = null;
         else
           this.el.innerText = `${dayjs(props.value)
             .locale('ko')

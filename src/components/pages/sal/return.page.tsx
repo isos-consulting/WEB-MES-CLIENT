@@ -18,6 +18,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
+import { isNil } from '~/helper/common';
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
 const priceFormula = (params, props) => {
@@ -433,7 +434,7 @@ export const PgSalReturn = () => {
             inputValues = addDataPopupInputInfo.ref.current.values;
           }
 
-          if (inputValues != null) {
+          if (!isNil(inputValues)) {
             params = {
               partner_uuid: inputValues?.partner_uuid,
               stock_type: 'outgo',
@@ -451,9 +452,9 @@ export const PgSalReturn = () => {
             onInterlock: () => {
               let showPopup: boolean = false;
 
-              if (params?.reg_date == null) {
+              if (isNil(params?.reg_date)) {
                 message.warn('반입일을 입력하신 후 다시 시도해주세요.');
-              } else if (params?.partner_uuid == null) {
+              } else if (isNil(params?.partner_uuid)) {
                 message.warn('거래처를 선택하신 후 다시 시도해주세요.');
               } else {
                 showPopup = true;
@@ -650,7 +651,7 @@ export const PgSalReturn = () => {
 
   //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
-    if (selectedHeaderRow == null) return;
+    if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
     onSearchDetail(selectedHeaderRow?.return_uuid);
   }, [selectedHeaderRow]);
@@ -721,7 +722,7 @@ export const PgSalReturn = () => {
   };
 
   const onCheckUuid = (): boolean => {
-    if (detailInputInfo?.values?.return_uuid == null) {
+    if (isNil(detailInputInfo?.values?.return_uuid)) {
       message.warn('전표를 선택하신 후 다시 시도해 주세요.');
       return false;
     }

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { IGridColumn } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
-import { isNull } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 import { isNumber } from '../number';
 
 type ColumnNames = { columnName: string }[];
@@ -35,7 +35,7 @@ export const getInspectSamples = (
     const isNumberMinMaxFlags = getRangeNumberResults(ranges[index]);
     const inspectType = getInspectTool(isNumberMinMaxFlags);
     return items.map(([_key, sample]) => {
-      if (sample == null) return null;
+      if (isNil(sample)) return null;
 
       if (typeof sample !== 'string' && typeof sample !== 'number')
         throw new Error('unexpected type of inpsection sample');
@@ -78,7 +78,7 @@ export const getInspectResult = (inspectItems: InspectionResult[]) => {
 
 export const getSampleIndex = (sample: string) => {
   const index = sample.replace('_insp_value', '').slice(1).match(/\d+$/);
-  if (index == null) throw new Error('unexpected sample format');
+  if (isNil(index)) throw new Error('unexpected sample format');
   return Number(index[0]) - 1;
 };
 
@@ -162,10 +162,10 @@ export const getDateTimeFormat = (dateTime: string) => {
 };
 
 export const getMissingValueInspectResult = (result: InspectionResult[]) => {
-  if (result[0] == null) return true;
+  if (isNil(result[0])) return true;
 
   for (let index = 1; index < result.length; index++) {
-    if (result[index - 1] == null && result[index] != null) return true;
+    if (isNil(result[index - 1]) && !isNil(result[index])) return true;
   }
 
   return false;

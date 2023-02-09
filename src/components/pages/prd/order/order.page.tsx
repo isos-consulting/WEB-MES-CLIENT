@@ -23,6 +23,7 @@ import {
   getToday,
   saveGridData,
 } from '~/functions';
+import { isNil } from '~/helper/common';
 import { orderInput, orderRoute, TAB_CODE } from '../order';
 import prdOrderEditModalColumns from './modal/prd-order-edit-modal-columns';
 import prdOrderNewModalColumns from './modal/prd-order-new-modal-columns';
@@ -420,19 +421,19 @@ export const PgPrdOrder = () => {
         onChange={activeKey => {
           switch (activeKey) {
             case TAB_CODE.투입품목관리:
-              if ((ORDER_INPUT.saveOptionParams as any)?.order_uuid != null) {
+              if (!isNil((ORDER_INPUT.saveOptionParams as any)?.order_uuid)) {
                 ORDER_INPUT.onSearch();
               }
               break;
 
             case TAB_CODE.투입인원관리:
-              if ((ORDER_WORKER.saveOptionParams as any)?.order_uuid != null) {
+              if (!isNil((ORDER_WORKER.saveOptionParams as any)?.order_uuid)) {
                 ORDER_WORKER.onSearch();
               }
               break;
 
             case TAB_CODE.공정순서:
-              if ((ORDER_ROUTE.saveOptionParams as any)?.order_uuid != null) {
+              if (!isNil((ORDER_ROUTE.saveOptionParams as any)?.order_uuid)) {
                 ORDER_ROUTE.onSearch();
               }
               break;

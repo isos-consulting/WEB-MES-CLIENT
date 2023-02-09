@@ -1,5 +1,6 @@
 import { COLUMN_CODE, EDIT_ACTION_CODE } from '~/components/UI';
 import { getData } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export const inspCloneModalInfo = () => {
   return {
@@ -25,5 +26,5 @@ export const inspCloneData = async inspHeaderData => {
   return [];
 };
 
-export const isInspTypeCodeNotAllocated = inspTypeCode => inspTypeCode == null;
-export const isProdUuidNotAllocated = prodUuid => prodUuid == null;
+export const isInspTypeCodeNotAllocated = inspTypeCode => isNil(inspTypeCode);
+export const isProdUuidNotAllocated = prodUuid => isNil(prodUuid);

@@ -22,6 +22,7 @@ import {
   useExcelUploadDataGrid,
 } from './excel-upload/hooks';
 import { message } from 'antd';
+import { isNil } from '~/helper/common';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
@@ -35,7 +36,7 @@ const importXLSXFile = async (
   const columnNames: string[] = uploadData.model.keywords.split(', ');
 
   const convertCellValue = (format: string, value: Excel.CellValue) => {
-    if (value == null) return null;
+    if (isNil(value)) return null;
     if (['text', 'popup'].includes(format) === true) return value.toString();
     if (format === 'number') return Number(value);
 
@@ -219,7 +220,7 @@ export const PgStdExcelUpload: React.FC = () => {
       'std/partners/excel-validation',
       'post',
     );
-    if (validatedDatas == null) return;
+    if (isNil(validatedDatas)) return;
     setGridProps({
       columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
         ...uploadGridProps.columns.slice(1),
@@ -247,7 +248,7 @@ export const PgStdExcelUpload: React.FC = () => {
       selectableMenu.item.menu_uri,
       'post',
     );
-    if (validatedDatas == null) return;
+    if (isNil(validatedDatas)) return;
     setGridProps({
       columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
         ...uploadGridProps.columns.slice(1),

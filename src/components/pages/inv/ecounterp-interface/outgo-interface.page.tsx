@@ -18,6 +18,7 @@ import {
 } from '~/functions';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
+import { isNil } from '~/helper/common';
 
 const outgoInterfaceInterlockAction = {
   state: 'unload',
@@ -202,7 +203,7 @@ export const PgInvOutgoEcountERPInterface = () => {
       'post',
     );
 
-    if (uploadOutgoData == null) {
+    if (isNil(uploadOutgoData)) {
       return;
     }
 

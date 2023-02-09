@@ -42,9 +42,9 @@ export class DatagridTextIconRenderer {
   render(props) {
     const element = document.getElementById(this.state?.elementId);
 
-    if (this.el != null) {
+    if (!isNil(this.el)) {
       this.el.value = props?.value;
-    } else if (element != null) {
+    } else if (!isNil(element)) {
       element.value = props?.value;
     }
   }

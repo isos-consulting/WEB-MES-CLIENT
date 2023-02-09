@@ -2,6 +2,7 @@ import { FormikProps, FormikValues } from 'formik';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { SetterOrUpdater } from 'recoil';
 import { cloneObject } from '~/functions';
+import { isNil } from '~/helper/common';
 import { IInputGroupboxItem, IInputGroupboxProps } from './input-groupbox.ui';
 
 type InputGroupboxSpecifier = 'id' | 'inputItems' | 'innerRef';
@@ -160,7 +161,7 @@ const onIncludeAliasValues = (inputItems, values) => {
     const alias = inputItems[i]?.alias;
     const originalKeyName = inputItems[i]?.id;
     if (alias) {
-      if (values == null) {
+      if (isNil(values)) {
         result[alias] = null;
       } else {
         if (Object.keys(values).includes(originalKeyName)) {
@@ -184,8 +185,8 @@ const getModifiedInputGroupValues = (
   let result = {};
 
   // 초기값과 비교해서 달라진 항목만 출력합니다.
-  const oldKeys = oldValues == null ? [] : Object.keys(oldValues);
-  const newKeys = newValues == null ? [] : Object.keys(newValues);
+  const oldKeys = isNil(oldValues) ? [] : Object.keys(oldValues);
+  const newKeys = isNil(newValues) ? [] : Object.keys(newValues);
 
   let keys = oldKeys.concat(newKeys);
   keys = keys?.filter((value, index) => keys?.indexOf(value) === index);

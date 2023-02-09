@@ -13,11 +13,11 @@ import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import { Result } from '../result';
 import { nullify } from '~/functions/object';
-import { isUndefined } from '~/helper/common';
+import { isNil, isUndefined } from '~/helper/common';
 
 /** 팝업키를 사용하지 않고 수기로 작성된 정보로 팝업을 설정합니다. */
 const setPopupButtonData = (props: Props) => {
-  if (props?.dataApiSettings == null || props.datagridSettings == null) return;
+  if (isNil(props?.dataApiSettings) || isNil(props.datagridSettings)) return;
 
   const { dataApiSettings, datagridSettings } = props;
   const modalSettings = props?.modalSettings;
@@ -37,12 +37,12 @@ const setPopupButtonData = (props: Props) => {
 };
 
 const getPopupButtonForm = ({ popupKey, params, props }) => {
-  if (popupKey == null)
+  if (isNil(popupKey))
     return {
       ...setPopupButtonData(props),
     };
 
-  if (getPopupForm(popupKey) == null) return null;
+  if (isNil(getPopupForm(popupKey))) return null;
 
   return {
     ...getPopupForm(popupKey),
@@ -120,7 +120,7 @@ const PopupButton: React.FC<Props> = props => {
             props,
           });
 
-          if (popupContent == null) return;
+          if (isNil(popupContent)) return;
 
           const childGridId = uuidv4();
 
@@ -133,7 +133,7 @@ const PopupButton: React.FC<Props> = props => {
           const word =
             words.hasOwnProperty(gridMode) === true ? words[gridMode] : '';
 
-          if (title != null && title !== '')
+          if (!isNil(title) && title !== '')
             confirmDialogContext.title = `${title} - ${word}`;
           else confirmDialogContext.title = word;
 

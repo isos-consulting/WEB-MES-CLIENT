@@ -5,6 +5,7 @@ import { RadioChangeEvent, Space } from 'antd';
 import { Label } from '../label';
 import { ScRadio } from './radio.ui.styled';
 import { afStringState } from '~recoils/recoil.atom-family';
+import { isNil } from '~/helper/common';
 
 /** 라디오 버튼 */
 const Radio: React.FC<Props> = props => {
@@ -24,7 +25,7 @@ const Radio: React.FC<Props> = props => {
     };
   }, []);
 
-  if (props?.label != null) {
+  if (!isNil(props?.label)) {
     return (
       <Space size={10}>
         <Label text={props.label} important={props.important} />

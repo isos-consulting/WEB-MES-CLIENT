@@ -15,6 +15,7 @@ import { useRecoilValue } from 'recoil';
 import { layoutStore } from '~/components/UI/layout';
 import Props from './grid-double.template.type';
 import { getPermissions } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export const TpDoubleGrid: React.FC<Props> = props => {
   /** 🔶권한 */
@@ -33,10 +34,11 @@ export const TpDoubleGrid: React.FC<Props> = props => {
 
   const headerPopup = {
     ...props.popupGridInfos[0],
-    disabledAutoDateColumn:
-      props.popupGridInfos[0]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfos[0]?.disabledAutoDateColumn,
+    disabledAutoDateColumn: isNil(
+      props.popupGridInfos[0]?.disabledAutoDateColumn,
+    )
+      ? true
+      : props.popupGridInfos[0]?.disabledAutoDateColumn,
   };
   const headerPopupRef = props.popupGridRefs[0];
   const headerPopupVisible = props.popupVisibles[0];
@@ -50,10 +52,11 @@ export const TpDoubleGrid: React.FC<Props> = props => {
 
   const detailPopup = {
     ...props.popupGridInfos[1],
-    disabledAutoDateColumn:
-      props.popupGridInfos[1]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfos[1]?.disabledAutoDateColumn,
+    disabledAutoDateColumn: isNil(
+      props.popupGridInfos[1]?.disabledAutoDateColumn,
+    )
+      ? true
+      : props.popupGridInfos[1]?.disabledAutoDateColumn,
   };
   const detailPopupRef = props.popupGridRefs[1];
   const detailPopupVisible = props.popupVisibles[1];
@@ -67,10 +70,11 @@ export const TpDoubleGrid: React.FC<Props> = props => {
 
   const editPopup = {
     ...props.popupGridInfos[2],
-    disabledAutoDateColumn:
-      props.popupGridInfos[2]?.disabledAutoDateColumn == null
-        ? true
-        : props.popupGridInfos[2]?.disabledAutoDateColumn,
+    disabledAutoDateColumn: isNil(
+      props.popupGridInfos[2]?.disabledAutoDateColumn,
+    )
+      ? true
+      : props.popupGridInfos[2]?.disabledAutoDateColumn,
   };
   const editPopupRef = props.popupGridRefs[2];
   const editPopupVisible = props.popupVisibles[2];
@@ -393,12 +397,12 @@ export const TpDoubleGrid: React.FC<Props> = props => {
         : headerGridHeight;
     return (
       <>
-        {headerSearchProps != null ? (
+        {!isNil(headerSearchProps) ? (
           headerSearchboxVisible ? (
             <Searchbox {...headerSearchProps} />
           ) : null
         ) : null}
-        {headerInputProps != null ? (
+        {!isNil(headerInputProps) ? (
           headerInputboxVisible ? (
             <InputGroupbox {...headerInputProps} />
           ) : null
@@ -430,12 +434,12 @@ export const TpDoubleGrid: React.FC<Props> = props => {
         : detailGridHeight;
     return (
       <>
-        {detailSearchProps != null ? (
+        {!isNil(detailSearchProps) ? (
           detailSearchboxVisible ? (
             <Searchbox {...detailSearchProps} />
           ) : null
         ) : null}
-        {detailInputProps != null ? (
+        {!isNil(detailInputProps) ? (
           detailInputboxVisible ? (
             <InputGroupbox {...detailInputProps} />
           ) : null
@@ -478,7 +482,7 @@ export const TpDoubleGrid: React.FC<Props> = props => {
               {btnAdd}
             </Space>
             <Space size={[5, 0]}>
-              {headerSearchProps?.searchItems == null || !headerSearchboxVisible
+              {isNil(headerSearchProps?.searchItems) || !headerSearchboxVisible
                 ? btnSearch
                 : null}
               {btnCreate}
@@ -500,7 +504,7 @@ export const TpDoubleGrid: React.FC<Props> = props => {
             <Col span={16}>{detailGridElement}</Col>
           </>
         )}
-        {headerPopup == null || !headerPopupVisible ? null : (
+        {isNil(headerPopup) || !headerPopupVisible ? null : (
           <GridPopup
             {...headerPopup}
             popupId={headerPopup.gridId + '_POPUP'}
@@ -541,7 +545,7 @@ export const TpDoubleGrid: React.FC<Props> = props => {
           />
         )}
 
-        {detailPopup == null || !detailPopupVisible ? null : (
+        {isNil(detailPopup) || !detailPopupVisible ? null : (
           <GridPopup
             {...detailPopup}
             popupId={detailPopup.gridId + '_POPUP'}
@@ -582,7 +586,7 @@ export const TpDoubleGrid: React.FC<Props> = props => {
           />
         )}
 
-        {editPopup == null || !editPopupVisible ? null : (
+        {isNil(editPopup) || !editPopupVisible ? null : (
           <GridPopup
             {...editPopup}
             popupId={editPopup.gridId + '_POPUP'}

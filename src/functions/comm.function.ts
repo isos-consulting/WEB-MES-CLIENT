@@ -21,6 +21,7 @@ import { useRecoilValue } from 'recoil';
 import { JSXElement } from '@babel/types';
 import { errorState } from '~/enums/response.enum';
 import { getStorageValue, getUserRefreshToken } from '.';
+import { isNil } from '~/helper/common';
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -137,7 +138,7 @@ export async function getData<T = any[]>(
 
   try {
     // session 유저 정보의 키와 params로 넘길 키가 중복되는게 있는지 확인 (중복이면 유저 정보에 있는 키는 사용안함)
-    if (params != null && getUserInfoKeys() != null) {
+    if (!isNil(params) && !isNil(getUserInfoKeys())) {
       if (
         getObjectKeyDuplicateCheck(Object.keys(params), getUserInfoKeys()) ===
         true

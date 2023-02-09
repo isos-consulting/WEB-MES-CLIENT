@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { COLOROURS } from '~/styles/palette';
 import { Button } from '~/components/UI';
+import { isNil } from '~/helper/common';
 
 interface FlexBoxProps {
   justifyContent: string;
@@ -11,8 +12,8 @@ interface FlexBoxProps {
 
 const ButtonWrapper = styled(Button)`
   ${({ primary, colorType }) => {
-    const buttonColor = colorType == null ? COLOROURS.PRIMARY[900] : colorType;
-    if (primary != null) {
+    const buttonColor = isNil(colorType) ? COLOROURS.PRIMARY[900] : colorType;
+    if (!isNil(primary)) {
       return `
         background-color: ${buttonColor};
             `;

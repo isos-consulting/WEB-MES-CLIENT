@@ -43,7 +43,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
-import { isNull } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 import {
   TGetPrdWork,
   TGetQmsProcInspIncludeDetails,
@@ -825,10 +825,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       insp_qty: 0,
       pass_qty: 0,
       reject_qty: 0,
-      remark:
-        inputInspResultValues?.remark == null
-          ? null
-          : `${inputInspResultValues?.remark}`,
+      remark: isNil(inputInspResultValues?.remark)
+        ? null
+        : `${inputInspResultValues?.remark}`,
     };
 
     const inspectionDatas = inspectionGridInstance.getData();
@@ -853,8 +852,8 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                 `x${sampleIndex + 1}_insp_result_detail_value_uuid`
               ];
 
-            if (sampleUuid == null && currentSample == null) return samples;
-            if (currentSample == null)
+            if (isNil(sampleUuid) && isNil(currentSample)) return samples;
+            if (isNil(currentSample))
               return [
                 ...samples,
                 {
@@ -869,7 +868,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
                 `x${sampleIndex + 1}_insp_value`
               ].toString();
 
-            const uuid = sampleUuid == null ? null : `${sampleUuid}`;
+            const uuid = isNil(sampleUuid) ? null : `${sampleUuid}`;
 
             return [
               ...samples,
@@ -891,10 +890,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
             itemIndex
           ].insp_result_detail_info_uuid.toString(),
           insp_result_fg: Boolean(inspectionDatas[itemIndex].insp_result_fg),
-          remark:
-            inputInspResultValues?.remark == null
-              ? null
-              : `${inspectionDatas[itemIndex].remark}`,
+          remark: isNil(inputInspResultValues?.remark)
+            ? null
+            : `${inspectionDatas[itemIndex].remark}`,
           values: editedSamples,
         };
       });

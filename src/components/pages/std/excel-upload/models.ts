@@ -1,3 +1,5 @@
+import { isNil } from '~/helper/common';
+
 export type ExcelSample = {
   file_extension: string;
   file_name: string;
@@ -37,7 +39,7 @@ export class UserSelectableMenu {
   }
 
   isSelected() {
-    return this.item != null;
+    return !isNil(this.item);
   }
 }
 
