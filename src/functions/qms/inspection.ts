@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { IGridColumn } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
+import { isNull } from '~/helper/common';
 import { isNumber } from '../number';
 
 type ColumnNames = { columnName: string }[];
@@ -64,13 +65,13 @@ export const getInspectSamples = (
 
 export const getInspectItems = (inspectResults: InspectResults) =>
   inspectResults.map(item => {
-    if (item.every(result => result === null)) return null;
-    if (item.some(result => result === false)) return false;
+    if (item.every(result => isNull(result))) return null;
+    if (item.some(result => isNull(result))) return false;
     return true;
   });
 
 export const getInspectResult = (inspectItems: InspectionResult[]) => {
-  if (inspectItems.some(item => item === null)) return null;
+  if (inspectItems.some(item => isNull(item))) return null;
   if (inspectItems.some(item => item === false)) return false;
   return true;
 };
@@ -84,7 +85,7 @@ export const getSampleIndex = (sample: string) => {
 export const getInspectResultText = (
   result: InspectionResult,
 ): InspectResultText => {
-  if (result === null) return null;
+  if (isNull(result)) return null;
   if (result === false) return '불합격';
   return '합격';
 };

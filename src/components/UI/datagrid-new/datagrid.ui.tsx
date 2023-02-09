@@ -61,6 +61,7 @@ import {
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
 import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
+import { isNull } from '~/helper/common';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -1303,7 +1304,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     const columns = instance?.store?.column?.visibleColumns;
     const columnIndex = columns?.findIndex(el => el?.name === columnName);
 
-    if (rowKey === null) {
+    if (isNull(rowKey)) {
       message.warn('취소할 행을 선택해주세요.');
     }
 

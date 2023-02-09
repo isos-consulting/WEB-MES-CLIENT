@@ -1,3 +1,4 @@
+import { isBoolean, isNull } from '~/helper/common';
 import {
   extract_insp_ItemEntriesAtCounts,
   getInspectItems,
@@ -26,10 +27,10 @@ class ReceiveInspectionReportViewController extends InspectionReportViewControll
     const result = this.getReportResult(datagrid, inputform);
     const service = new InspectionReportService(datagrid, inputform);
 
-    if (result === null || result === true) {
+    if (isNull(result)) {
       service.disableHandlingType(true);
-    } else {
-      service.disableHandlingType(false);
+    } else if (isBoolean(result)) {
+      service.disableHandlingType(result);
     }
   }
 

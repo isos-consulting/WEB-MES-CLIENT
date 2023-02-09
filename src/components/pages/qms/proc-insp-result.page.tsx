@@ -43,6 +43,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
+import { isNull } from '~/helper/common';
 import {
   TGetPrdWork,
   TGetQmsProcInspIncludeDetails,
@@ -569,7 +570,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     const inspectionItems = inspectionSampleResults.map((item, itemIndex) => {
       const notNullSamples = item.reduce(
         (samples, currentSample, sampleIndex) => {
-          if (currentSample === null) {
+          if (isNull(currentSample)) {
             return samples;
           }
 

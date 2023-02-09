@@ -22,6 +22,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
+import { isNull } from '~/helper/common';
 import { InputForm, QuantityField } from '../models/fields';
 import { URI_PATH_POST_QMS_RECEIVE_INSP_RESULTS } from './constants';
 import InspectionHandlingServiceImpl from './service/inspection-handling.service.impl';
@@ -305,7 +306,7 @@ export const INSP_RESULT_CREATE_POPUP = (props: {
       inspectionSampleResults.map((item, itemIndex) => {
         const notNullSamples = item.reduce(
           (samples, currentSample, sampleIndex) => {
-            if (currentSample === null) {
+            if (isNull(currentSample)) {
               return samples;
             }
 
