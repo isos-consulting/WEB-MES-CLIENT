@@ -1,3 +1,5 @@
+import { isNil } from '~/helper/common';
+
 /** 체크박스 에디터 */
 export class DatagridCheckboxEditor {
   constructor(props) {

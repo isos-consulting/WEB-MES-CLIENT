@@ -1,3 +1,5 @@
+import { isNil } from '~/helper/common';
+
 /**
  * 셀 이미지 렌더러
  */

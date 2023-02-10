@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import { isNumber, setNumberToDigit } from '~/functions';
+import { isNil } from '~/helper/common';
 
 /** 그리드 퍼센트 인풋박스 */
 export class DatagridPercentEditor {

@@ -1,7 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import { Col, message, Modal, Row, Space, Spin } from 'antd';
 import { FormikProps, FormikValues } from 'formik';
-import { cloneDeep, isNull } from 'lodash';
+import { cloneDeep } from 'lodash';
 import React, {
   MutableRefObject,
   useEffect,
@@ -43,7 +43,7 @@ import {
   getTimeFormat,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
-import { isNil } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 import { SaveApiMethod } from '~/types/api/api.type';
 import {
   GetMaxSampleCntParams,

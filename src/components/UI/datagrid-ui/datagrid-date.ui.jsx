@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import EXPRESSSIONS from '~/constants/expressions';
-import { isNull } from '~/helper/common';
+import { isNil, isNull } from '~/helper/common';
 
 /** 날짜 포멧 에디터 */
 export class DatagridDateEditor {

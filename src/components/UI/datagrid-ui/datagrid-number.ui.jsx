@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { ENUM_DECIMAL } from '~/enums';
 import { isNumber, setNumberToDigit } from '~/functions';
+import { isNil } from '~/helper/common';
 
 /** 그리드 숫자 인풋박스 */
 export class DatagridNumberEditor {
