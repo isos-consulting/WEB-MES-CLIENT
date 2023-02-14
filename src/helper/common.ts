@@ -26,3 +26,7 @@ export function isEmpty(obj: any) {
     Object.keys(obj).length === 0
   );
 }
+
+export const isString = (value: unknown): value is string => {
+  return typeof value === 'string';
+};

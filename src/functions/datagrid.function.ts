@@ -10,7 +10,7 @@ import {
   IGridColumn,
   TGridMode,
 } from '~/components/UI/datagrid-new';
-import { isEmpty, isNil } from '~/helper/common';
+import { isEmpty, isNil, isString } from '~/helper/common';
 import { IGridModifiedRows } from '../components/UI/datagrid-new/datagrid.ui.type';
 import { executeData, getData } from './comm.function';
 import { isNumber } from './number';
@@ -71,6 +71,7 @@ export const saveGridData = async (
             if (
               (columns[y]?.disableStringEmpty === true ||
                 columns[y]?.format !== 'text') &&
+              isString(saveData[editType[i]][z][columns[y].name]) &&
               isEmpty(saveData[editType[i]][z][columns[y].name])
             ) {
               delete saveData[editType[i]][z][columns[y].name];
