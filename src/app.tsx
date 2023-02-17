@@ -1,25 +1,24 @@
-import React, { lazy, Suspense, useLayoutEffect, useState } from 'react';
 import { Modal, Spin } from 'antd';
+import React, { lazy, Suspense, useLayoutEffect, useState } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { PgLogin } from './components/pages';
+import { layoutStore } from '~/components/UI/layout';
 import {
-  Result,
-  Container,
   atSideNavMenuContent,
   atSideNavMenuRawData,
+  Container,
+  Result,
 } from '~components/UI';
-import { useLoadingState } from './hooks';
-import { executeData, getData, getMenus } from './functions';
-import { layoutStore } from '~/components/UI/layout';
+import { TenantRemoteStore } from './apis/aut/tenant';
+import { PgLogin } from './components/pages';
+import PgUpdatePassword from './components/pages/aut/update-password.page';
 import { Dashboard } from './components/pages/dashboard.page';
-import { URL_PATH_AUT } from './enums';
 import { KeyStore } from './constants/keys';
-import { CloudTenant } from './enums/types';
+import { executeData, getMenus } from './functions';
+import { isEmpty, isNil } from './helper/common';
+import { useLoadingState } from './hooks';
 import UserProfile, { Profile } from './models/user/profile';
 import { CurrentUser } from './models/user/user';
-import PgUpdatePassword from './components/pages/aut/update-password.page';
-import { isEmpty, isNil } from './helper/common';
 
 const Layout = lazy(() =>
   import('./components/UI/layout').then(module => ({ default: module.Layout })),
@@ -29,53 +28,25 @@ const App = () => {
   const [, contextHolder] = Modal.useModal();
   const [teneunt, setTeneunt] = useState('');
 
-  const checkLocalEnviroment = (url: string) => {
-    return url === 'localhost' || url.includes('191.1.70');
-  };
-
-  const getTenantCode = (url: string) => {
-    return url.split('.')[0];
-  };
-
-  const tenantIsNotEmpty = (tenants: any[]) => {
-    return Array.from(tenants).length > 0;
-  };
-
   const getSerialTenantUuid = (uuid: string) => {
     return JSON.stringify({
       tenantUuid: uuid,
     });
   };
 
-  const tenantIsAllocated = tenant => {
-    return tenant !== '';
-  };
-
   const handleGetTeneuntInfo = async () => {
-    const hostName = window.location.hostname;
-    const webURL =
-      checkLocalEnviroment(hostName) === true
-        ? import.meta.env.VITE_NAJS_LOCAL_WEB_URL
-        : hostName;
+    const tenants = await TenantRemoteStore.get();
 
-    const tenants: Array<CloudTenant> = await getData(
-      { tenant_cd: getTenantCode(webURL) },
-      URL_PATH_AUT.TENANT.GET.TENANT,
-      'raws',
-      null,
-      true,
-      import.meta.env.VITE_TENANT_SERVER_URL,
-    );
-
-    if (tenantIsNotEmpty(tenants) === true) {
+    if (!isEmpty(tenants)) {
       const { uuid } = tenants[0];
       localStorage.setItem(KeyStore.tenantInfo, getSerialTenantUuid(uuid));
 
       setTeneunt(uuid);
     }
   };
+
   const routeLayout = () => {
-    return tenantIsAllocated(teneunt) === true ? (
+    return !isEmpty(teneunt) === true ? (
       <LayoutRoute />
     ) : (
       <span>테넌트 정보를 받아오는 중...</span>
