@@ -1,17 +1,17 @@
-import React, { useMemo, useState, useLayoutEffect } from 'react';
-import { message, Form } from 'antd';
+import { Form, message } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import crypto from 'crypto-js';
+import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { executeData, getData } from '../../functions';
-
+import { AuthenticationRemoteStore } from '~/apis/aut/authentication';
+import { Factory, FactoryRemoteStore } from '~/apis/std/factory';
+import { isNil } from '~/helper/common';
+import { Profile } from '~/models/user/profile';
+import { UserService } from '~/service/auth';
 import { TpLogin } from '../templates/login/login.template';
 import { IComboboxItem } from '../UI/combobox';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { Profile } from '~/models/user/profile';
-import { isNil } from '~/helper/common';
 
 const pageId = uuidv4();
-const uriPath = 'aut/user/sign-in/';
 
 const getLocalStorageId = () => {
   return localStorage.getItem('iso-user-id') || '';
@@ -21,7 +21,6 @@ const isSaveUserInfo = () => {
   return !isNil(localStorage.getItem('userInfo'));
 };
 
-/** 로그인 페이지 */
 export const PgLogin = ({
   profile,
   authenticatedCallback,
@@ -35,10 +34,8 @@ export const PgLogin = ({
   const [userId, setUserId] = useState<string>(getLocalStorageId() || null);
   const [userPw, setUserPw] = useState<string>(null);
 
-  // 공장 콤보박스 세팅용
   const [cboFactory, setCboFactory] = useState<IComboboxItem[]>([]);
 
-  // 공장 콤보박스 선택된 데이터
   const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');
 
   const defaultValue = getLocalStorageId();
@@ -56,17 +53,10 @@ export const PgLogin = ({
     }
   };
 
-  // constructor
   useLayoutEffect(() => {
-    // 이전에 저장된 아이디 불러오기
-    // const id = getLocalStorageId();
-    // setUserId(id);
-
-    // 공장 콤보박스 조회
     handleLoginCheck();
   }, []);
 
-  // 공장 콤보박스 값 세팅하기
   useLayoutEffect(() => {
     let auto_save_factory = localStorage.getItem('iso-factory');
     for (let i = 0; i < cboFactory.length; i++) {
@@ -77,13 +67,11 @@ export const PgLogin = ({
     }
   }, [cboFactory]);
 
-  // 아이디와 패스워드가 둘다 입력된 상태면 로그인 버튼 활성화
   const clickable = useMemo(
     () => !!userId?.length && !!userPw?.length,
     [userId, userPw],
   );
 
-  // 체크박스 체크 이벤트
   const onChecked = (e: CheckboxChangeEvent) => {
     const {
       target: { checked },
@@ -91,10 +79,13 @@ export const PgLogin = ({
     setChecked(checked);
   };
 
-  // 로그인 버튼 눌렀을시
   const onLogin = async () => {
     try {
-      let factory: object = {};
+      let factory: Factory = {
+        factory_uuid: '',
+        factory_cd: '',
+        factory_nm: '',
+      };
 
       if (!isNil(cboFactoryCode) && cboFactoryCode != '-') {
         factory = JSON.parse(cboFactoryCode as string);
@@ -103,67 +94,43 @@ export const PgLogin = ({
         return;
       }
 
-      let strResult: object;
-      strResult = [
+      const strResult = [
         {
           id: userId,
           pwd: crypto.AES.encrypt(userPw, 'secret').toString(),
         },
       ];
 
-      executeData(strResult, uriPath, 'post')
-        .then(res => {
-          const serialUserInfo = (raws, userId, factory) => {
-            return JSON.stringify({
-              uid: raws[0].uid,
-              id: userId,
-              user_nm: raws[0].user_nm,
-              factory_uuid: factory['factory_uuid'],
-              pwd_fg: raws[0].pwd_fg,
-              super_admin_fg: raws[0].super_admin_fg,
-            });
-          };
+      const authorizedUser = await AuthenticationRemoteStore.login(strResult);
+      message.success('로그인 성공');
 
-          const serialTokenInfo = raws => {
-            return JSON.stringify({
-              access_token: raws[0].access_token,
-              refresh_token: raws[0].refresh_token,
-            });
-          };
+      const userService = new UserService();
 
-          const { success, datas } = res;
-          const { raws } = datas;
-          if (success === true) {
-            message.success('로그인 성공');
-            localStorage.setItem(
-              'userInfo',
-              serialUserInfo(raws, userId, factory),
-            );
-            localStorage.setItem('tokenInfo', serialTokenInfo(raws));
+      const userInfo = userService.serializeUser(
+        authorizedUser[0],
+        userId,
+        factory,
+      );
+      const tokenInfo = userService.serializeToken(authorizedUser[0]);
 
-            if (checked) {
-              localStorage.setItem('iso-factory', cboFactoryCode as string);
-              localStorage.setItem('iso-user-id', userId);
-            } else {
-              localStorage.removeItem('iso-factory');
-              localStorage.removeItem('iso-user-id');
-            }
+      userService.setAutoLoginData(userInfo, tokenInfo);
+      if (checked) {
+        userService.rememberAutoInputData(cboFactoryCode, userId);
+      } else if (checked === false) {
+        userService.removeAutoInputData();
+      }
 
-            const passedUserProfile =
-              raws[0].pwd_fg === true
-                ? profile.authenticate().resetPassword('')
-                : profile.authenticate();
+      const passedUserProfile =
+        authorizedUser[0].pwd_fg === true
+          ? profile.authenticate().resetPassword('')
+          : profile.authenticate();
 
-            authenticatedCallback(passedUserProfile);
-          }
-        })
-        .catch(err => console.log(err));
+      authenticatedCallback(passedUserProfile);
     } catch (err) {
-      return message.error(err);
+      message.error(err.message);
     }
   };
 
-  // 공장 콤보박스 세팅하는 함수
   const getFactories = async () => {
     const serialFactoryInfo = (factory: object) => {
       return JSON.stringify({
@@ -184,7 +151,8 @@ export const PgLogin = ({
       return comboBoxDatas;
     };
 
-    const factories = await getData({}, 'std/factories/sign-in');
+    const factories = await FactoryRemoteStore.get();
+
     const cboData = pushFactoryComboDatas(factories);
 
     setCboFactory(cboData);
@@ -210,7 +178,6 @@ export const PgLogin = ({
       factoryValue={cboFactoryCode}
       defaultIdValue={defaultValue}
       idValue={userId}
-      // pwValue={userPw}
       onChangeCbo={onChangeCbo}
       onChangeId={onChangeId}
       onChangePw={onChangePw}

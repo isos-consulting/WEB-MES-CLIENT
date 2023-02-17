@@ -7,7 +7,6 @@ import { img_login_logo, img_login } from '~images/index';
 import { ScContainer, ScFooter, ScImg } from './login.template.styled';
 import Props from './login.template.interface';
 
-/** 로그인 템플릿 */
 export const TpLogin: React.FC<Props> = props => {
   const {
     id,
@@ -80,7 +79,7 @@ export const TpLogin: React.FC<Props> = props => {
                       textAlign: 'center',
                     }}
                   >
-                    <img //로고이미지
+                    <img
                       style={{
                         width: 170,
                         marginBottom: 50,
@@ -168,7 +167,6 @@ export const TpLogin: React.FC<Props> = props => {
                       btnType="buttonFill"
                       colorType="blue"
                       fontSize="large"
-                      // disabled={disabled}
                       onClick={onLogin}
                     >
                       로그인
@@ -180,7 +178,6 @@ export const TpLogin: React.FC<Props> = props => {
             </Space>
           </Space>
         </Flexbox>
-        {/* <McInputPopup {...InputPopupProps} /> */}
       </ScContainer>
     </>
   );
