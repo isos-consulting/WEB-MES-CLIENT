@@ -9,10 +9,7 @@ export type Factory = {
 type FactoryResponse = MESResponseType<Factory>;
 
 export const FactoryRemoteStore = class {
-  static async get() {
-    const res = await mesRequest.get<unknown, FactoryResponse>(
-      'std/factories/sign-in',
-    );
-    return res.data.datas.raws;
+  static get() {
+    return mesRequest.get<unknown, FactoryResponse>('std/factories/sign-in');
   }
 };

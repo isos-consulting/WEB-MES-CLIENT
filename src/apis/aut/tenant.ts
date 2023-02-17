@@ -14,14 +14,9 @@ type TenantResponse = AxiosResponse<{
 }>;
 
 export const TenantRemoteStore = class {
-  static async get() {
-    const res = await tenantRequest.get<unknown, TenantResponse>(
-      'tenant/auth',
-      {
-        params: { tenant_cd: import.meta.env.VITE_NAJS_LOCAL_WEB_URL },
-      },
-    );
-
-    return res.data.datas.raws;
+  static get() {
+    return tenantRequest.get<unknown, TenantResponse>('tenant/auth', {
+      params: { tenant_cd: import.meta.env.VITE_NAJS_LOCAL_WEB_URL },
+    });
   }
 };

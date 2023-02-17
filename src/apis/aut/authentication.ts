@@ -16,24 +16,7 @@ export type Authorization = {
 type LoginResponse = MESResponseType<Authorization>;
 
 export const AuthenticationRemoteStore = class {
-  static async login(body) {
-    try {
-      const res = await mesRequest.post<unknown, LoginResponse>(
-        'aut/user/sign-in/',
-        body,
-      );
-
-      this.validateLoginSuccess(res);
-
-      return res.data.datas.raws;
-    } catch (e) {
-      throw new Error(e.response.data.message.admin_message);
-    }
-  }
-
-  private static validateLoginSuccess(res: LoginResponse): asserts res {
-    if (res.data.success === false) {
-      throw new Error(res.data.message.user_message);
-    }
+  static login(body) {
+    return mesRequest.post<unknown, LoginResponse>('aut/user/sign-in/', body);
   }
 };

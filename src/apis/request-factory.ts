@@ -26,6 +26,19 @@ export const tenantRequest = axios.create({
   responseType: 'json',
 });
 
+tenantRequest.interceptors.response.use(
+  function (response) {
+    if (response.data.success === false) {
+      throw new Error(response.data.message);
+    }
+
+    return response.data.datas.raws;
+  },
+  function (error) {
+    return Promise.reject(error.response.data.message);
+  },
+);
+
 export const mesRequest = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   responseType: 'json',
@@ -48,3 +61,16 @@ mesRequest.interceptors.request.use(function (config) {
 
   return config;
 });
+
+mesRequest.interceptors.response.use(
+  function (response) {
+    if (response.data.success === false) {
+      throw new Error(response.data.message.admin_message);
+    }
+
+    return response.data.datas.raws;
+  },
+  function (error) {
+    return Promise.reject(error.response.data.message.admin_message);
+  },
+);

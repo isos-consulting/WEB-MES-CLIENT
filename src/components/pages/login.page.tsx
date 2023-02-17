@@ -127,7 +127,7 @@ export const PgLogin = ({
 
       authenticatedCallback(passedUserProfile);
     } catch (err) {
-      message.error(err.message);
+      message.error(err);
     }
   };
 
