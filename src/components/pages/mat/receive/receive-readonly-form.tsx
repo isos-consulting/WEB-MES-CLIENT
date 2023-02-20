@@ -3,11 +3,13 @@ import { Form, Input } from 'formik-antd';
 import React from 'react';
 import styled from 'styled-components';
 import { Container, Label } from '~/components/UI';
+import Fonts from '~styles/font.style.module.scss';
+import Sizes from '~styles/size.style.module.scss';
 
-const TextBox = styled(Input)`
+export const TextBox = styled(Input)`
   width: 221px;
-  height: 26px;
-  font-size: 12px;
+  height: ${Sizes.height_datepicker_default};
+  font-size: ${Fonts.fontSize_datepicker};
 `;
 
 export const MatReceiveReadOnlyForm = ({ formValues }) => {
