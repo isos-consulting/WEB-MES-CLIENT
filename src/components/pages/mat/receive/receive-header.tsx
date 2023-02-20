@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Div, Flexbox } from '~/components/UI';
 
-export const MatReceiveHeader = () => {
+export const MatReceiveHeader = ({ service }) => {
   return (
     <Div>
       <Flexbox width="100%" justifyContent="space-between">
@@ -12,9 +12,7 @@ export const MatReceiveHeader = () => {
           fontSize="small"
           heightSize="small"
           widthSize="large"
-          onClick={() => {
-            console.log('hello');
-          }}
+          onClick={service.toggle}
         >
           신규 항목 추가
         </Button>
