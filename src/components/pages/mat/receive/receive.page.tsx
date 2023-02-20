@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { ReceiveHeader, ReceiveRemoteStore } from '~/apis/mat/receive';
-import { Button, Div, Flexbox } from '~/components/UI';
+import { Flexbox, Modal } from '~/components/UI';
 import { isNil } from '~/helper/common';
 import { MatReceiveService } from '~/service/mat/ReceiveService';
 import { MatReceiveAside } from './receive-aside';
 import { MatReceiveContent } from './receive-content';
+import { MatReceiveHeader } from './receive-header';
 
 const matReceiveService = new MatReceiveService();
 const matReceiveRemoteStore = new ReceiveRemoteStore();
@@ -34,18 +35,7 @@ export const PgMatReceive = () => {
 
   return (
     <>
-      <Div>
-        <Flexbox width="100%" justifyContent="space-between">
-          <Button>신규 항목 추가</Button>
-          <div
-            style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
-          >
-            <Button>삭제</Button>
-            <Button>수정</Button>
-            <Button>세부 항목 추가</Button>
-          </div>
-        </Flexbox>
-      </Div>
+      <MatReceiveHeader />
       <Flexbox>
         <MatReceiveAside
           gridRef={asideGridRef}
@@ -60,6 +50,7 @@ export const PgMatReceive = () => {
           service={matReceiveService}
         />
       </Flexbox>
+      {/* <Modal visible={true} okText="저장하기"></Modal> */}
     </>
   );
 };
