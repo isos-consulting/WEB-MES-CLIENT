@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
+import { getUserFactoryUuid } from '~/functions';
+import { isNil } from '~/helper/common';
 
 export type MESResponseType<T> = AxiosResponse<{
   success: boolean;
@@ -54,9 +56,14 @@ mesRequest.interceptors.request.use(function (config) {
   const token = JSON.parse(localStorage.getItem('tokenInfo'));
   const tenant = JSON.parse(localStorage.getItem('tenantInfo'));
 
-  config.headers.authorization = `${import.meta.env.VITE_ACCESS_TOKEN_PREFIX} ${
-    token.access_token
-  }`;
+  if (!isNil(token)) {
+    config.headers.authorization = `${
+      import.meta.env.VITE_ACCESS_TOKEN_PREFIX
+    } ${token.access_token}`;
+
+    config.params = { ...config.params, factory_uuid: getUserFactoryUuid() };
+  }
+
   config.headers['restrict-access-to-tenants'] = tenant.tenantUuid;
 
   return config;
