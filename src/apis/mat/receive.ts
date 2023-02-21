@@ -90,7 +90,12 @@ type ReceiveDetailResponse = {
   }[];
 }[];
 
-export const ReceiveRemoteStore = class {
+export interface ReceiveRemoteStore {
+  getHeader(start_date: string, end_date: string): Promise<ReceiveResponse>;
+  getDetail(receive_uuid: string): Promise<ReceiveDetailResponse>;
+}
+
+export const ReceiveRemoteStoreInstance = class implements ReceiveRemoteStore {
   getHeader(start_date: string, end_date: string) {
     return mesRequest.get<unknown, ReceiveResponse>('mat/receives', {
       params: { start_date, end_date },
