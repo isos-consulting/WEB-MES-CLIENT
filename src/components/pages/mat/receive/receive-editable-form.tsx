@@ -50,7 +50,11 @@ export const MatReceiveEditableForm = ({
           </FieldArea>
           <FieldArea>
             <Label text="입하일" important={true} />
-            <DatePicker name="reg_date" allowClear={false} />
+            <DatePicker
+              name="reg_date"
+              allowClear={false}
+              onChange={service.setRegDate}
+            />
           </FieldArea>
           <FieldArea>
             <Label text="거래처" important={true} />
