@@ -1,12 +1,10 @@
-import { mesRequest, MESResponseType } from '../request-factory';
+import { mesRequest } from '../request-factory';
 
-export type Factory = {
+type FactoryResponse = {
   factory_uuid: string;
   factory_cd: string;
   factory_nm: string;
-};
-
-type FactoryResponse = MESResponseType<Factory>;
+}[];
 
 export const FactoryRemoteStore = class {
   static get() {
