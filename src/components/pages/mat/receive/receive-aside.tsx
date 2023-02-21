@@ -23,88 +23,72 @@ const RangePicker = styled(DatePicker.RangePicker)`
   }
 `;
 
-export const MatReceiveAside = ({
-  gridRef,
-  onGridClick,
-  gridData,
-  setGridData,
-  remoteStore,
-}) => {
-  const columns = [
-    {
-      header: '입하UUID',
-      name: 'receive_uuid',
-      hidden: true,
-    },
-    {
-      header: '전표번호',
-      name: 'stmt_no',
-      filter: 'text',
-      width: ENUM_WIDTH.M,
-    },
-    {
-      header: '입하일',
-      name: 'reg_date',
-      width: ENUM_WIDTH.M,
-      filter: 'text',
-    },
-    {
-      header: '거래처UUID',
-      name: 'partner_uuid',
-      hidden: true,
-    },
-    {
-      header: '거래처명',
-      name: 'partner_nm',
-      filter: 'text',
-      width: ENUM_WIDTH.M,
-    },
-    {
-      header: '공급처UUID',
-      name: 'supplier_uuid',
-      hidden: true,
-    },
-    {
-      header: '공급처명',
-      name: 'supplier_nm',
-      filter: 'text',
-      width: ENUM_WIDTH.M,
-    },
-    {
-      header: '합계금액',
-      name: 'total_price',
-      width: ENUM_WIDTH.M,
-      format: 'number',
-      decimal: ENUM_DECIMAL.DEC_PRICE,
-    },
-  ];
+const columns = [
+  {
+    header: '입하UUID',
+    name: 'receive_uuid',
+    hidden: true,
+  },
+  {
+    header: '전표번호',
+    name: 'stmt_no',
+    filter: 'text',
+    width: ENUM_WIDTH.M,
+  },
+  {
+    header: '입하일',
+    name: 'reg_date',
+    width: ENUM_WIDTH.M,
+    filter: 'text',
+  },
+  {
+    header: '거래처UUID',
+    name: 'partner_uuid',
+    hidden: true,
+  },
+  {
+    header: '거래처명',
+    name: 'partner_nm',
+    filter: 'text',
+    width: ENUM_WIDTH.M,
+  },
+  {
+    header: '공급처UUID',
+    name: 'supplier_uuid',
+    hidden: true,
+  },
+  {
+    header: '공급처명',
+    name: 'supplier_nm',
+    filter: 'text',
+    width: ENUM_WIDTH.M,
+  },
+  {
+    header: '합계금액',
+    name: 'total_price',
+    width: ENUM_WIDTH.M,
+    format: 'number',
+    decimal: ENUM_DECIMAL.DEC_PRICE,
+  },
+];
 
-  const handleSearch = async ({ receive_date }) => {
-    const receiveHeader = await remoteStore.getHeader(
-      receive_date[0].format('YYYY-MM-DD'),
-      receive_date[1].format('YYYY-MM-DD'),
-    );
-
-    setGridData(receiveHeader);
-  };
-
+export const MatReceiveAside = ({ service }) => {
   return (
     <Col span={8} style={{ paddingLeft: '8px', paddingRight: '8px' }}>
       <Formik
         initialValues={{
-          receive_date: [
+          date_range: [
             dayjs(getToday(-7), 'YYYY-MM-DD'),
             dayjs(getToday(), 'YYYY-MM-DD'),
           ],
-          end_date: getToday(),
         }}
-        onSubmit={handleSearch}
+        onSubmit={service.searchReceiveHeader}
       >
         <Form>
           <Container>
             <div style={{ display: 'flex', gap: '10px' }}>
               <Label text="입하일"></Label>
-              <RangePicker name="receive_date" allowClear={false} />
+              <RangePicker name="date_range" allowClear={false} />
               <SubmitButton>조회</SubmitButton>
             </div>
           </Container>
@@ -112,11 +96,10 @@ export const MatReceiveAside = ({
       </Formik>
       <Container>
         <Datagrid
-          ref={gridRef}
-          data={gridData}
+          data={service.receiveHeaderGridData}
           columns={columns}
           height={700}
-          onClick={onGridClick}
+          onClick={service.asideGridClick}
         />
       </Container>
     </Col>

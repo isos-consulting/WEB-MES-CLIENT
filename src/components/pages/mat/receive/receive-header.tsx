@@ -1,7 +1,12 @@
 import React from 'react';
 import { Button, Div, Flexbox } from '~/components/UI';
+import { MatReceiveModalService } from '~/service/mat/ReceiveService';
 
-export const MatReceiveHeader = ({ service }) => {
+export const MatReceiveHeader = ({
+  modalService,
+}: {
+  modalService: MatReceiveModalService;
+}) => {
   return (
     <Div>
       <Flexbox width="100%" justifyContent="space-between">
@@ -12,7 +17,7 @@ export const MatReceiveHeader = ({ service }) => {
           fontSize="small"
           heightSize="small"
           widthSize="large"
-          onClick={service.toggle}
+          onClick={modalService.openCreateReceive}
         >
           신규 항목 추가
         </Button>
