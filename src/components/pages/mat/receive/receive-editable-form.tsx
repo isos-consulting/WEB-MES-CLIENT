@@ -1,13 +1,12 @@
 import { Formik } from 'formik';
 import { DatePicker as AntdDatePicker, Form } from 'formik-antd';
 import React from 'react';
-import { getPopupForm, Label, PopupButton } from '~/components/UI';
-import { TextBox } from './receive-readonly-form';
 import styled from 'styled-components';
-import { URL_PATH_STD } from '~/enums';
-import { message } from 'antd';
+import { getPopupForm, Label, PopupButton } from '~/components/UI';
+import { MatReceiveModalService } from '~/service/mat/ReceiveService';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
+import { TextBox } from './receive-readonly-form';
 
 const DatePicker = styled(AntdDatePicker)`
   width: 221px;
@@ -28,7 +27,11 @@ const FieldArea = styled.div`
   align-items: center;
 `;
 
-export const MatReceiveEditableForm = ({ service }) => {
+export const MatReceiveEditableForm = ({
+  service,
+}: {
+  service: MatReceiveModalService;
+}) => {
   return (
     <Formik
       initialValues={service.formValues}
@@ -47,7 +50,7 @@ export const MatReceiveEditableForm = ({ service }) => {
           </FieldArea>
           <FieldArea>
             <Label text="입하일" important={true} />
-            <DatePicker name="reg_date" />
+            <DatePicker name="reg_date" allowClear={false} />
           </FieldArea>
           <FieldArea>
             <Label text="거래처" important={true} />
@@ -61,13 +64,7 @@ export const MatReceiveEditableForm = ({ service }) => {
                 popupKey="거래처관리"
                 popupKeys={['partner_uuid', 'partner_nm']}
                 params={{ partner_fg: 1 }}
-                handleChange={({ partner_uuid, partner_nm }) => {
-                  service.setFormValues({
-                    ...service.formValues,
-                    partner_uuid,
-                    partner_nm,
-                  });
-                }}
+                handleChange={service.setPartner}
               />
             </div>
           </FieldArea>
@@ -85,30 +82,9 @@ export const MatReceiveEditableForm = ({ service }) => {
                   gridId: null,
                   columns: getPopupForm('공급처관리').datagridProps.columns,
                 }}
-                dataApiSettings={el => {
-                  return {
-                    uriPath: URL_PATH_STD.SUPPLIER.GET.SUPPLIERS,
-                    params: {
-                      partner_uuid: service.formValues.partner_uuid,
-                    },
-                    onInterlock: () => {
-                      if (service.formValues.partner_uuid) {
-                        return true;
-                      } else {
-                        message.warning('거래처를 먼저 선택해주세요.');
-                        return false;
-                      }
-                    },
-                  };
-                }}
+                dataApiSettings={service.interlockSupplier}
                 modalSettings={{ title: '공급처 조회' }}
-                handleChange={({ supplier_uuid, supplier_nm }) => {
-                  service.setFormValues({
-                    ...service.formValues,
-                    supplier_uuid,
-                    supplier_nm,
-                  });
-                }}
+                handleChange={service.setSupplier}
               />
             </div>
           </FieldArea>
