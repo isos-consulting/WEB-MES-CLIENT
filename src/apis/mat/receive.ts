@@ -1,3 +1,7 @@
+import {
+  MatReceiveDetailDto,
+  MatReceiveHeaderDto,
+} from '~/models/mat/ReceiveDTO';
 import { mesRequest } from '../request-factory';
 
 export type ReceiveHeader = {
@@ -90,9 +94,67 @@ type ReceiveDetailResponse = {
   }[];
 }[];
 
+type ReceivePostResponseHeader = {
+  remark: null | string;
+  order_id: null | number;
+  supplier_id: null | number;
+  created_at: string;
+  reg_date: string;
+  stmt_no: string;
+  total_price: string;
+  total_qty: string;
+  updated_at: string;
+  uuid: string;
+  created_uid: number;
+  factory_id: number;
+  partner_id: number;
+  receive_id: number;
+  updated_uid: number;
+};
+
+type ReceivePostResponseDetail = {
+  barcode: null | string;
+  manufactured_lot_no: null | string;
+  order_detail_id: null | number;
+  remark: null | string;
+  to_location_id: null | number;
+  unit_qty: null | number;
+  created_at: string;
+  exchange: string;
+  lot_no: string;
+  price: string;
+  qty: string;
+  total_price: string;
+  updated_at: string;
+  uuid: string;
+  created_uid: number;
+  factory_id: number;
+  money_unit_id: number;
+  prod_id: number;
+  receive_detail_id: number;
+  receive_id: number;
+  seq: number;
+  to_store_id: number;
+  unit_id: number;
+  updated_uid: number;
+  insp_fg: boolean;
+  carry_fg: boolean;
+};
+
+type ReceivePostResponse = {
+  header: ReceivePostResponseHeader;
+  details: ReceivePostResponseDetail[];
+  income: unknown[];
+  store: unknown[];
+};
+
 export interface ReceiveRemoteStore {
   getHeader(start_date: string, end_date: string): Promise<ReceiveResponse>;
   getDetail(receive_uuid: string): Promise<ReceiveDetailResponse>;
+  add: (
+    header: MatReceiveHeaderDto,
+    details: MatReceiveDetailDto[],
+  ) => Promise<unknown>;
 }
 
 export const ReceiveRemoteStoreInstance = class implements ReceiveRemoteStore {
@@ -106,5 +168,12 @@ export const ReceiveRemoteStoreInstance = class implements ReceiveRemoteStore {
     return mesRequest.get<unknown, ReceiveDetailResponse>(
       `mat/receive/${receive_uuid}/include-details`,
     );
+  }
+
+  add(header, details) {
+    return mesRequest.post<unknown, ReceivePostResponse>('mat/receives', {
+      header,
+      details,
+    });
   }
 };
