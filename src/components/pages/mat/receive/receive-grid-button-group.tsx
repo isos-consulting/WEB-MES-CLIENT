@@ -20,7 +20,7 @@ export const MatReceiveGridInterfaceButtonGroup = ({ service }) => {
         fontSize="small"
         heightSize="small"
         widthSize="large"
-        onClick={() => console.log('hello')}
+        onClick={service.openOrderDetail}
       >
         발주 불러오기
       </Button>
