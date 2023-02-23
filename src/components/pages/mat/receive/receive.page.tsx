@@ -13,7 +13,9 @@ import { MatReceiveModal } from './receive-modal';
 export const PgMatReceive = () => {
   const matReceiveRemoteStore = new ReceiveRemoteStoreInstance();
   const matReceiveService = useMatReceiveService(matReceiveRemoteStore);
-  const matReceiveModalService = useMatReceiveModalServiceImpl();
+  const matReceiveModalService = useMatReceiveModalServiceImpl(
+    matReceiveRemoteStore,
+  );
 
   return (
     <>
