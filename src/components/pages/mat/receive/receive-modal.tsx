@@ -34,19 +34,10 @@ const gridPopupInfo = [
         filter: 'text',
       },
     ],
-    dataApiSettings: ev => {
-      const { rowKey, instance } = ev;
-      const { rawData } = instance?.store?.data;
-
-      return {
-        uriPath: '/std/stores',
-        params: { store_type: 'available' },
-        onAfterOk: () => {
-          rawData[rowKey].to_location_uuid = '';
-          rawData[rowKey].to_location_nm = '';
-        },
-      };
-    },
+    dataApiSettings: ev => ({
+      uriPath: '/std/stores',
+      params: { store_type: 'available' },
+    }),
     gridMode: 'select',
   },
   {
