@@ -218,6 +218,7 @@ export const MatReceiveContent = ({ service }: MatReceiveContentProps) => {
           data={service.receiveContentGridData}
           columns={columns}
           height={620}
+          gridMode="multi-select"
         />
       </Container>
     </Col>
