@@ -97,7 +97,7 @@ export const MatReceiveEditableForm = ({
             <TextBox
               name="total_qty"
               disabled={true}
-              placeholder="합계 수량은 자동으로 계산됩니다"
+              placeholder="수량은 데이터 저장 시 자동으로 계산됩니다"
             />
           </FieldArea>
           <FieldArea>
@@ -105,7 +105,7 @@ export const MatReceiveEditableForm = ({
             <TextBox
               name="total_price"
               disabled={true}
-              placeholder="합계 금액은 자동으로 계산됩니다"
+              placeholder="금액은 데이터 저장 시 자동으로 계산됩니다"
             />
           </FieldArea>
           <FieldArea>

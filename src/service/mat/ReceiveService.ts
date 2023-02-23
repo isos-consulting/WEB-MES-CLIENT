@@ -338,6 +338,17 @@ const getEmptyReceiveHeader = (): ReceiveHeader => ({
   updated_nm: '',
 });
 
+type TuiGridSelectionRange = {
+  start: number[];
+  end: number[];
+};
+
+type TuiFocusedCell = {
+  columnName: null | string;
+  rowKey: null | number;
+  value: null | string;
+};
+
 type TuiGridProtoType = {
   getRow: <T>(idx: number) => T;
   check: (idx: number) => void;
@@ -345,6 +356,10 @@ type TuiGridProtoType = {
   getCheckedRowKeys: () => number[];
   getData: <T>() => T[];
   appendRows: <T>(data: T[]) => void;
+  getSelectionRange: () => null | TuiGridSelectionRange;
+  getFocusedCell: () => TuiFocusedCell;
+  removeRow: (rowKey: number) => void;
+  refreshLayout: () => void;
 };
 
 type gridClickEvent<T> = {
@@ -440,6 +455,8 @@ export interface MatReceiveModalService {
   close: () => void;
   closeSubModal: () => void;
   selectSubModal: () => void;
+  deleteReceiveRow: () => void;
+  save: () => void;
 }
 
 export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
@@ -543,8 +560,33 @@ export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
       }));
 
       modalDatagridRef.current.getInstance().appendRows(checkedRows);
+      modalDatagridRef.current.getInstance().refreshLayout();
     }
     closeSubModal();
+  };
+
+  const deleteReceiveRow = () => {
+    const instance = modalDatagridRef.current.getInstance();
+    const { rowKey } = instance.getFocusedCell();
+    const selectionRange = instance.getSelectionRange();
+
+    if (!isNil(selectionRange)) {
+      const receiveData = instance.getData<{ rowKey: number }>();
+      const { start, end } = selectionRange;
+      const rowKeys = new Array(end[0] - start[0] + 1)
+        .fill(start[0])
+        .map((dataIndex, idx) => receiveData[dataIndex + idx].rowKey);
+
+      for (const rowKey of rowKeys) {
+        instance.removeRow(rowKey);
+      }
+    } else if (!isNil(rowKey)) {
+      instance.removeRow(rowKey);
+    }
+  };
+
+  const save = () => {
+    close();
   };
 
   return {
@@ -567,5 +609,7 @@ export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
     close,
     closeSubModal,
     selectSubModal,
+    deleteReceiveRow,
+    save,
   };
 };

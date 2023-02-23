@@ -43,7 +43,7 @@ export const MatReceiveGridInterfaceButtonGroup = ({ service }) => {
           fontSize="small"
           heightSize="small"
           widthSize="medium"
-          onClick={() => console.log('hello')}
+          onClick={service.deleteReceiveRow}
         >
           행취소
         </Button>

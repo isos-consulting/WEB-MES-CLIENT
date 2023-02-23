@@ -342,6 +342,7 @@ export const MatReceiveModal = ({
       title={modalService.modalTitle}
       visible={modalService.modalVisible}
       okText="저장하기"
+      onOk={() => modalService.save()}
       onCancel={() => {
         modalService.close();
       }}
