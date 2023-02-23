@@ -9,6 +9,44 @@ import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import { getToday } from '~/functions';
 import { isEmpty, isNil } from '~/helper/common';
 
+const modalClassNames = {
+  column: {
+    receive_detail_uuid: ['create'],
+    receive_uuid: ['create'],
+    order_detail_uuid: ['create'],
+    income_uuid: ['create'],
+    prod_uuid: ['create'],
+    item_type_nm: ['create'],
+    prod_type_nm: ['create'],
+    prod_no: ['create'],
+    prod_nm: ['create'],
+    model_nm: ['create'],
+    rev: ['create'],
+    prod_std: ['create'],
+    safe_stock: ['create'],
+    unit_uuid: ['create', 'editor', 'popup'],
+    unit_nm: ['create'],
+    lot_no: ['create', 'editor'],
+    money_unit_uuid: ['create', 'editor', 'popup'],
+    money_unit_nm: ['create'],
+    price: ['create', 'editor'],
+    exchange: ['create', 'editor'],
+    qty: ['create', 'editor'],
+    insp_fg: ['create'],
+    carry_fg: ['create', 'editor'],
+    to_store_uuid: ['create', 'editor', 'popup'],
+    to_store_nm: ['create', 'editor', 'popup'],
+    to_location_uuid: ['create', 'editor', 'popup'],
+    to_location_nm: ['create', 'editor', 'popup'],
+    unit_qty: ['create', 'editor'],
+    remark: ['create', 'editor'],
+    created_at: ['create'],
+    created_nm: ['create'],
+    updated_at: ['create'],
+    updated_nm: ['create'],
+  },
+};
+
 const vendorPriceColumns = [
   {
     header: '품목UUID',
@@ -301,10 +339,12 @@ const getEmptyReceiveHeader = (): ReceiveHeader => ({
 });
 
 type TuiGridProtoType = {
-  getRow: (idx: number) => T;
+  getRow: <T>(idx: number) => T;
   check: (idx: number) => void;
   uncheck: (idx: number) => void;
   getCheckedRowKeys: () => number[];
+  getData: <T>() => T[];
+  appendRows: <T>(data: T[]) => void;
 };
 
 type gridClickEvent<T> = {
@@ -328,7 +368,7 @@ export const useMatReceiveService = (
 
   const asideGridClick = async (e: gridClickEvent<ReceiveHeader>) => {
     if (!isNil(e.rowKey)) {
-      const selectedRow = e.instance.getRow(e.rowKey);
+      const selectedRow = e.instance.getRow<ReceiveHeader>(e.rowKey);
       const receiveContents = await matReceiveRemoteStore.getDetail(
         selectedRow.receive_uuid,
       );
@@ -383,8 +423,8 @@ type showModalDatagridRef = { current: undefined | TuiGridInstance };
 export interface MatReceiveModalService {
   modalTitle: string;
   modalVisible: boolean;
-  modalDatagridDatas: unknown[];
   formValues: ReceiveHeader;
+  modalDatagridRef: showModalDatagridRef;
   subModalTitle: string;
   subModalVisible: boolean;
   subModalDatagridColumns: IGridColumn[];
@@ -405,10 +445,10 @@ export interface MatReceiveModalService {
 export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
   const [modalTitle, setModalTitle] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [modalDatagridDatas, setModalDatagridDatas] = useState<unknown>([]);
   const [formValues, setFormValues] = useState<ReceiveHeader>(
     getEmptyReceiveHeader(),
   );
+  const modalDatagridRef: showModalDatagridRef = useRef();
 
   const [subModalTitle, setSubModalTitle] = useState<string>('');
   const [subModalVisible, setSubModalVisible] = useState<boolean>(false);
@@ -459,20 +499,23 @@ export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
     if (isEmpty(formValues.partner_uuid)) {
       message.warn('거래처를 선택해주세요.');
     } else if (!isEmpty(formValues.partner_uuid)) {
+      setSubModalTitle('구매단가 - 다중 선택');
+      setSubModalVisible(true);
+      setSubModalDatagridColumns(vendorPriceColumns);
+
       const vendorPrice = await VendorPriceRemoteStore.get(
         formValues.reg_date,
         formValues.partner_uuid,
       );
-
-      setSubModalTitle('구매단가 - 다중 선택');
-      setSubModalVisible(true);
-      setSubModalDatagridColumns(vendorPriceColumns);
       setSubModalDatagridDatas(vendorPrice);
     }
   };
 
   const close = () => {
-    setModalVisible(false);
+    if (subModalVisible === false) {
+      setModalTitle('');
+      setModalVisible(false);
+    }
   };
 
   const closeSubModal = () => {
@@ -494,9 +537,12 @@ export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
         ...subModalDatagridDatas[index],
         lot_no: dayjs(formValues.reg_date).format('YYYYMMDD'),
         _edit: 'C',
+        _attributes: {
+          className: modalClassNames,
+        },
       }));
 
-      setModalDatagridDatas(modalDatagridDatas.concat(checkedRows));
+      modalDatagridRef.current.getInstance().appendRows(checkedRows);
     }
     closeSubModal();
   };
@@ -504,8 +550,8 @@ export const useMatReceiveModalServiceImpl = (): MatReceiveModalService => {
   return {
     modalTitle,
     modalVisible,
-    modalDatagridDatas,
     formValues,
+    modalDatagridRef,
     subModalTitle,
     subModalVisible,
     subModalDatagridColumns,

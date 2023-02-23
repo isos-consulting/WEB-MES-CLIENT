@@ -325,6 +325,18 @@ export const MatReceiveModal = ({
     },
   ];
 
+  const memorizedDatagrid = React.useMemo(
+    () => (
+      <Datagrid
+        ref={modalService.modalDatagridRef}
+        columns={columns}
+        gridMode="create"
+        gridPopupInfo={gridPopupInfo}
+      />
+    ),
+    [modalService.modalVisible],
+  );
+
   return (
     <Modal
       title={modalService.modalTitle}
@@ -336,12 +348,7 @@ export const MatReceiveModal = ({
     >
       <MatReceiveEditableForm service={modalService} />
       <MatReceiveGridInterfaceButtonGroup service={modalService} />
-      <Datagrid
-        columns={columns}
-        gridMode="create"
-        gridPopupInfo={gridPopupInfo}
-        data={modalService.modalDatagridDatas}
-      />
+      {memorizedDatagrid}
       <Modal
         title={modalService.subModalTitle}
         visible={modalService.subModalVisible}
