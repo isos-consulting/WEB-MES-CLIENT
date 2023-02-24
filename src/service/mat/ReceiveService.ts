@@ -18,8 +18,10 @@ import { arrayToEntities, objectToEntity } from '~/helper/entity';
 import {
   MatReceiveDeleteDetailDto,
   MatReceiveDeleteHeaderDto,
-  MatReceiveDetailDto,
-  MatReceiveHeaderDto,
+  MatReceiveCreateDetailDto,
+  MatReceiveCreateHeaderDto,
+  MatReceiveUpdateHeaderDto,
+  MatReceiveUpdateDetailDto,
 } from '~/models/mat/ReceiveDTO';
 
 const modalClassNames = {
@@ -511,12 +513,12 @@ type ReceiveAsideForm = { date_range: dayjs.Dayjs[] };
 
 export interface MatReceiveService {
   receiveHeaderGridData: ReceiveHeader[];
-  receiveContentGridData: ReceiveHeader[];
+  receiveContentGridData: ReceiveDetail[];
   receiveAsideFormData: ReceiveAsideForm;
   contentGridRef: showModalDatagridRef;
   getContentFormValues: () => ReceiveHeader;
   setRegDate: (date_range: dayjs.Dayjs[]) => void;
-  searchReceiveHeader: ({ date_range }: { date_range: any }) => Promise<void>;
+  searchReceiveHeader: () => Promise<void>;
   asideGridClick: (e: gridClickEvent<ReceiveHeader>) => Promise<void>;
   deleteReceiveContent: () => void;
 }
@@ -646,6 +648,8 @@ export interface MatReceiveModalService {
   modalTitle: string;
   modalVisible: boolean;
   formValues: ReceiveHeader;
+  formEditable: boolean;
+  modalMode: Mode;
   modalDatagridRef: showModalDatagridRef;
   subModalTitle: string;
   subModalVisible: boolean;
@@ -657,7 +661,6 @@ export interface MatReceiveModalService {
   setPartner: (partner: Partner) => void;
   setSupplier: (supplier: Supplier) => void;
   interlockSupplier: (ev: any) => TApiSettings;
-  setFormValues: () => void;
   openVendorPrice: () => void;
   close: () => void;
   closeSubModal: () => void;
@@ -666,21 +669,42 @@ export interface MatReceiveModalService {
   save: () => void;
   openOrderDetail: () => void;
   openCreateReceiveDetail: () => void;
+  openUpdateReceiveDetail: () => void;
+  appendReceiveDetails: (rows: ReceiveDetail[]) => void;
 }
+
+export enum EDIT_TYPE {
+  empty = '',
+  create = 'C',
+  update = 'U',
+}
+
+export enum Mode {
+  EMPTY = 'empty',
+  CREATE = 'create',
+  UPDATE = 'update',
+}
+
+type ModalState<T> = [T, (nextState: T) => void];
 
 export const useMatReceiveModalServiceImpl = (
   matReceiveRemoteStore: ReceiveRemoteStore,
   matReceiveService: MatReceiveService,
 ): MatReceiveModalService => {
-  const [modalTitle, setModalTitle] = useState<string>('');
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState<ReceiveHeader>(
+  const [modalTitle, setModalTitle]: ModalState<string> = useState('');
+  const [modalVisible, setModalVisible]: ModalState<boolean> =
+    useState<boolean>(false);
+  const [formValues, setFormValues]: ModalState<ReceiveHeader> = useState(
     getEmptyReceiveHeader(),
   );
+  const [formEditable, setFormEditable]: ModalState<boolean> = useState(true);
+  const [modalMode, setModalMode]: ModalState<Mode> = useState(Mode.EMPTY);
   const modalDatagridRef: showModalDatagridRef = useRef();
 
-  const [subModalTitle, setSubModalTitle] = useState<string>('');
-  const [subModalVisible, setSubModalVisible] = useState<boolean>(false);
+  const [subModalTitle, setSubModalTitle]: ModalState<string> =
+    useState<string>('');
+  const [subModalVisible, setSubModalVisible]: ModalState<boolean> =
+    useState<boolean>(false);
   const [subModalDatagridColumns, setSubModalDatagridColumns] = useState<
     IGridColumn[]
   >([]);
@@ -692,7 +716,9 @@ export const useMatReceiveModalServiceImpl = (
   const openCreateReceive = () => {
     setModalTitle('입하 전표 추가');
     setFormValues({ ...getEmptyReceiveHeader(), reg_date: getToday() });
+    setFormEditable(true);
     setModalVisible(true);
+    setModalMode(Mode.CREATE);
   };
 
   const setRegDate = (_moment, reg_date) => {
@@ -745,6 +771,9 @@ export const useMatReceiveModalServiceImpl = (
     if (subModalVisible === false) {
       setModalTitle('');
       setModalVisible(false);
+      setFormEditable(false);
+      setModalMode(Mode.EMPTY);
+      modalDatagridRef.current.getInstance().resetData([]);
     }
   };
 
@@ -767,15 +796,11 @@ export const useMatReceiveModalServiceImpl = (
         ...subModalDatagridDatas[index],
         lot_no: dayjs(formValues.reg_date).format('YYYYMMDD'),
         insp_fg: subModalDatagridDatas[index].qms_receive_insp_fg,
-        qty: subModalDatagridDatas[index].balance ?? 0,
-        _edit: 'C',
-        _attributes: {
-          className: modalClassNames,
-        },
+        qty: subModalDatagridDatas[index].balance,
+        receive_uuid: formValues.receive_uuid,
       }));
 
-      modalDatagridRef.current.getInstance().appendRows(checkedRows);
-      modalDatagridRef.current.getInstance().refreshLayout();
+      appendReceiveDetails(checkedRows);
     }
     closeSubModal();
   };
@@ -800,7 +825,7 @@ export const useMatReceiveModalServiceImpl = (
     }
   };
 
-  const validateHeader = (receiveHeader: MatReceiveHeaderDto) => {
+  const validateHeader = (receiveHeader: MatReceiveCreateHeaderDto) => {
     const headerSchema = object({
       partner_uuid: string().required('거래처를 입력해주세요').uuid(),
       partner_nm: string().required('거래처를 입력해주세요'),
@@ -818,9 +843,20 @@ export const useMatReceiveModalServiceImpl = (
     }
   };
 
-  const validateDetail = (receiveDetails: MatReceiveDetailDto[]) => {
+  const validateUpdateHeader = (receiveHeader: MatReceiveUpdateHeaderDto) => {
+    const headerSchema = object({
+      uuid: string().required('입하전표를 선택해주세요').uuid(),
+    });
+    try {
+      headerSchema.validateSync(receiveHeader, { abortEarly: false });
+    } catch (err) {
+      throw new Error(err.errors[0]);
+    }
+    validateHeader(receiveHeader);
+  };
+
+  const validateDetail = (receiveDetails: MatReceiveCreateDetailDto[]) => {
     const detailSchema = object({
-      receive_uuid: string().nullable().uuid(),
       prod_uuid: string().required('품목을 입력해주세요').uuid(),
       unit_uuid: string().required('단위를 입력해주세요').uuid(),
       lot_no: string().required('LOT NO를 입력해주세요'),
@@ -831,16 +867,20 @@ export const useMatReceiveModalServiceImpl = (
       to_location_uuid: string().nullable().uuid(),
       remark: string().nullable(),
       barcode: string().nullable(),
-      qty: number().required('수량을 입력해주세요'),
+      qty: number()
+        .required('수량을 입력해주세요')
+        .typeError('수량을 입력해주세요'),
       price: number().required('단가를 입력해주세요'),
       unit_qty: number().nullable(),
-      exchange: number().required('환율을 입력해주세요'),
+      exchange: number()
+        .required('환율을 입력해주세요')
+        .typeError('환율을 입력해주세요'),
       insp_fg: boolean().required('수입검사 여부를 입력해주세요'),
       carry_fg: boolean().required('이월 여부를 입력해주세요'),
     });
 
     if (receiveDetails.length === 0) {
-      throw new Error('입하 품목을 추가해주세요.');
+      throw new Error('입하 항목을 추가해주세요.');
     } else if (receiveDetails.length > 0) {
       for (const detail of receiveDetails) {
         detailSchema.validateSync(detail, { abortEarly: false });
@@ -848,10 +888,26 @@ export const useMatReceiveModalServiceImpl = (
     }
   };
 
-  const save = async () => {
+  const validateUpdateDetail = (
+    receiveDetails: MatReceiveUpdateDetailDto[],
+  ) => {
+    const detailSchema = object({
+      uuid: string().required('입하 전표 항목을 선택해주세요').uuid(),
+    });
+
+    if (receiveDetails.length === 0) {
+      throw new Error('입하 전표 항목을 추가해주세요.');
+    } else if (receiveDetails.length > 0) {
+      for (const detail of receiveDetails) {
+        detailSchema.validateSync(detail, { abortEarly: false });
+      }
+    }
+  };
+
+  const createReceive = () => {
     const receiveHeader = objectToEntity(
       { ...formValues },
-      MatReceiveHeaderDto,
+      MatReceiveCreateHeaderDto,
     );
     const receiveDetails = arrayToEntities(
       modalDatagridRef.current
@@ -861,14 +917,45 @@ export const useMatReceiveModalServiceImpl = (
           ...detail,
           carry_fg: detail.carry_fg ?? false,
         })),
-      MatReceiveDetailDto,
+      MatReceiveCreateDetailDto,
     );
 
+    validateHeader(receiveHeader);
+    validateDetail(receiveDetails);
+    matReceiveRemoteStore.add(receiveHeader, receiveDetails);
+    message.success('입하 등록이 완료되었습니다.');
+  };
+
+  const updateReceive = () => {
+    const receiveHeader = objectToEntity(
+      { ...formValues },
+      MatReceiveUpdateHeaderDto,
+    );
+    const receiveDetails = arrayToEntities(
+      modalDatagridRef.current
+        .getInstance()
+        .getData<{ [key: string]: any }>()
+        .map(detail => ({
+          ...detail,
+          carry_fg: detail.carry_fg ?? false,
+        })),
+      MatReceiveUpdateDetailDto,
+    );
+
+    validateUpdateHeader(receiveHeader);
+    validateUpdateDetail(receiveDetails);
+    matReceiveRemoteStore.update(receiveHeader, receiveDetails);
+    message.success('입하 수정이 완료되었습니다.');
+  };
+
+  const save = async () => {
     try {
-      validateHeader(receiveHeader);
-      validateDetail(receiveDetails);
-      matReceiveRemoteStore.add(receiveHeader, receiveDetails);
-      message.success('입하 등록이 완료되었습니다.');
+      if (modalMode === Mode.CREATE) {
+        createReceive();
+      } else if (modalMode === Mode.UPDATE) {
+        updateReceive();
+      }
+      await matReceiveService.searchReceiveHeader();
       close();
     } catch (error) {
       if (isEmpty(error.errors)) {
@@ -902,14 +989,47 @@ export const useMatReceiveModalServiceImpl = (
     } else {
       setModalTitle('입하 전표 항목 추가');
       setFormValues({ ...receiveDetailForm });
+      setFormEditable(false);
       setModalVisible(true);
+      setModalMode(Mode.CREATE);
     }
+  };
+
+  const openUpdateReceiveDetail = () => {
+    const receiveDetailForm = matReceiveService.getContentFormValues();
+    if (isEmpty(receiveDetailForm.receive_uuid)) {
+      message.warn('입하 전표를 선택해주세요');
+    } else {
+      setModalTitle('입하 전표 항목 수정');
+      setFormValues({ ...receiveDetailForm });
+      setFormEditable(false);
+      setModalVisible(true);
+      setModalMode(Mode.UPDATE);
+    }
+  };
+
+  const appendReceiveDetails = (details: ReceiveDetail[]) => {
+    const newReceiveDetails = details.map(detail => ({
+      ...detail,
+      _edit: EDIT_TYPE[modalMode],
+      _attributes: {
+        className: modalClassNames,
+      },
+    }));
+
+    modalDatagridRef.current.getInstance().appendRows(newReceiveDetails);
+
+    Promise.resolve(() => {}).then(() =>
+      modalDatagridRef.current.getInstance().refreshLayout(),
+    );
   };
 
   return {
     modalTitle,
     modalVisible,
     formValues,
+    formEditable,
+    modalMode,
     modalDatagridRef,
     subModalTitle,
     subModalVisible,
@@ -921,7 +1041,6 @@ export const useMatReceiveModalServiceImpl = (
     setPartner,
     setSupplier,
     interlockSupplier,
-    setFormValues,
     openVendorPrice,
     close,
     closeSubModal,
@@ -930,5 +1049,7 @@ export const useMatReceiveModalServiceImpl = (
     save,
     openOrderDetail,
     openCreateReceiveDetail,
+    openUpdateReceiveDetail,
+    appendReceiveDetails,
   };
 };

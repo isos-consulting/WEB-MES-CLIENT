@@ -36,12 +36,20 @@ export const MatReceiveHeader = ({
             disabled={false}
             fontSize="small"
             heightSize="small"
-            onClick={() => {
-              service.deleteReceiveContent();
-            }}
+            onClick={service.deleteReceiveContent}
             widthSize="medium"
           />
-          <Button>수정</Button>
+          <Button
+            ImageType="edit"
+            btnType="buttonFill"
+            children="수정"
+            colorType="blue"
+            disabled={false}
+            fontSize="small"
+            heightSize="small"
+            onClick={modalService.openUpdateReceiveDetail}
+            widthSize="medium"
+          />
           <Button
             btnType="buttonFill"
             children="입하 전표 항목 추가"

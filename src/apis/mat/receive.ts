@@ -1,8 +1,10 @@
 import {
   MatReceiveDeleteDetailDto,
   MatReceiveDeleteHeaderDto,
-  MatReceiveDetailDto,
-  MatReceiveHeaderDto,
+  MatReceiveCreateDetailDto,
+  MatReceiveCreateHeaderDto,
+  MatReceiveUpdateHeaderDto,
+  MatReceiveUpdateDetailDto,
 } from '~/models/mat/ReceiveDTO';
 import { mesRequest } from '../request-factory';
 
@@ -156,9 +158,13 @@ export interface ReceiveRemoteStore {
   getHeader(start_date: string, end_date: string): Promise<ReceiveResponse>;
   getDetail(receive_uuid: string): Promise<ReceiveDetailResponse>;
   add: (
-    header: MatReceiveHeaderDto,
-    details: MatReceiveDetailDto[],
+    header: MatReceiveCreateHeaderDto,
+    details: MatReceiveCreateDetailDto[],
   ) => Promise<ReceivePostResponse>;
+  update: (
+    header: MatReceiveUpdateHeaderDto,
+    details: MatReceiveUpdateDetailDto[],
+  ) => Promise<unknown>;
   delete: (
     header: MatReceiveDeleteHeaderDto,
     details: MatReceiveDeleteDetailDto[],
@@ -180,6 +186,13 @@ export const ReceiveRemoteStoreInstance = class implements ReceiveRemoteStore {
 
   add(header, details) {
     return mesRequest.post<unknown, ReceivePostResponse>('mat/receives', {
+      header,
+      details,
+    });
+  }
+
+  update(header, details) {
+    return mesRequest.put<unknown, unknown>('mat/receives', {
       header,
       details,
     });

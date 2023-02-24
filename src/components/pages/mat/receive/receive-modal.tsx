@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Datagrid, Modal } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { MatReceiveModalService } from '~/service/mat/ReceiveService';
+import {
+  MatReceiveModalService,
+  MatReceiveService,
+  Mode,
+} from '~/service/mat/ReceiveService';
 import { MatReceiveEditableForm } from './receive-editable-form';
 import { MatReceiveGridInterfaceButtonGroup } from './receive-grid-button-group';
+import { MatReceiveReadOnlyForm } from './receive-readonly-form';
 
 const gridPopupInfo = [
   {
@@ -83,8 +88,10 @@ const gridPopupInfo = [
 ];
 
 export const MatReceiveModal = ({
+  service,
   modalService,
 }: {
+  service: MatReceiveService;
   modalService: MatReceiveModalService;
 }) => {
   const columns = [
@@ -316,30 +323,40 @@ export const MatReceiveModal = ({
     },
   ];
 
-  const memorizedDatagrid = React.useMemo(
+  const memorizedDatagrid = useMemo(
     () => (
       <Datagrid
         ref={modalService.modalDatagridRef}
         columns={columns}
-        gridMode="create"
+        gridMode={modalService.modalMode}
         gridPopupInfo={gridPopupInfo}
       />
     ),
-    [modalService.modalVisible],
+    [modalService.modalVisible, modalService.modalMode],
   );
+
+  useEffect(() => {
+    if (modalService.modalMode === Mode.UPDATE) {
+      modalService.appendReceiveDetails(service.receiveContentGridData);
+    }
+  }, [modalService.modalMode]);
 
   return (
     <Modal
       title={modalService.modalTitle}
       visible={modalService.modalVisible}
       okText="저장하기"
-      onOk={() => modalService.save()}
-      onCancel={() => {
-        modalService.close();
-      }}
+      onOk={modalService.save}
+      onCancel={modalService.close}
     >
-      <MatReceiveEditableForm service={modalService} />
-      <MatReceiveGridInterfaceButtonGroup service={modalService} />
+      {modalService.formEditable ? (
+        <MatReceiveEditableForm service={modalService} />
+      ) : (
+        <MatReceiveReadOnlyForm formValues={modalService.formValues} />
+      )}
+      {modalService.modalMode === Mode.CREATE ? (
+        <MatReceiveGridInterfaceButtonGroup service={modalService} />
+      ) : null}
       {memorizedDatagrid}
       <Modal
         title={modalService.subModalTitle}
