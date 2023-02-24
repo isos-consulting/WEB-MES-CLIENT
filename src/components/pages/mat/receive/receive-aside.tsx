@@ -38,6 +38,7 @@ const columns = [
     name: 'reg_date',
     width: ENUM_WIDTH.M,
     filter: 'text',
+    format: 'date',
   },
   {
     header: '거래처UUID',
