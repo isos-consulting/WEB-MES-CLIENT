@@ -1,11 +1,11 @@
 import { Authorization } from '~/apis/aut/authentication';
-import { Factory } from '~/apis/std/factory';
+import { FactoryResponse } from '~/apis/std/factory';
 
 export const UserService = class {
   serializeUser(
     { uid, user_nm, pwd_fg, super_admin_fg }: Authorization,
     id: string,
-    { factory_uuid }: Factory,
+    { factory_uuid }: FactoryResponse,
   ) {
     return JSON.stringify({
       uid,

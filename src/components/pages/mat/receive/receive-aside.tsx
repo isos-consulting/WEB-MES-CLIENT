@@ -1,12 +1,10 @@
 import { Col } from 'antd';
-import dayjs from 'dayjs';
 import { Formik } from 'formik';
 import { DatePicker, Form, SubmitButton } from 'formik-antd';
 import React from 'react';
 import styled from 'styled-components';
 import { Container, Datagrid, Label } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { getToday } from '~/functions';
 import Colors from '~styles/color.style.module.scss';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';

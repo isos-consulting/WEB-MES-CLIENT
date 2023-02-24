@@ -4,7 +4,7 @@ import crypto from 'crypto-js';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthenticationRemoteStore } from '~/apis/aut/authentication';
-import { Factory, FactoryRemoteStore } from '~/apis/std/factory';
+import { FactoryResponse, FactoryRemoteStore } from '~/apis/std/factory';
 import { isNil } from '~/helper/common';
 import { Profile } from '~/models/user/profile';
 import { UserService } from '~/service/auth';
@@ -81,7 +81,7 @@ export const PgLogin = ({
 
   const onLogin = async () => {
     try {
-      let factory: Factory = {
+      let factory: FactoryResponse = {
         factory_uuid: '',
         factory_cd: '',
         factory_nm: '',
