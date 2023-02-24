@@ -61,7 +61,32 @@ mesRequest.interceptors.request.use(function (config) {
       import.meta.env.VITE_ACCESS_TOKEN_PREFIX
     } ${token.access_token}`;
 
-    config.params = { ...config.params, factory_uuid: getUserFactoryUuid() };
+    switch (config.method) {
+      case 'get':
+        config.params = {
+          ...config.params,
+          factory_uuid: getUserFactoryUuid(),
+        };
+        break;
+      case 'post':
+      case 'put':
+        for (const [key, value] of Object.entries(config.data)) {
+          if (Array.isArray(value)) {
+            config.data[key] = value.map(item => ({
+              ...item,
+              factory_uuid: getUserFactoryUuid(),
+            }));
+          } else if (typeof value === 'object') {
+            config.data[key] = {
+              ...value,
+              factory_uuid: getUserFactoryUuid(),
+            };
+          }
+        }
+        break;
+      case 'delete':
+        break;
+    }
   }
 
   config.headers['restrict-access-to-tenants'] = tenant.tenantUuid;
