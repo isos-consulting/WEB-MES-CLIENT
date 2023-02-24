@@ -76,19 +76,18 @@ export const MatReceiveAside = ({ service }) => {
   return (
     <Col span={8} style={{ paddingLeft: '8px', paddingRight: '8px' }}>
       <Formik
-        initialValues={{
-          date_range: [
-            dayjs(getToday(-7), 'YYYY-MM-DD'),
-            dayjs(getToday(), 'YYYY-MM-DD'),
-          ],
-        }}
+        initialValues={service.receiveAsideFormData}
         onSubmit={service.searchReceiveHeader}
       >
         <Form>
           <Container>
             <div style={{ display: 'flex', gap: '10px' }}>
               <Label text="입하일"></Label>
-              <RangePicker name="date_range" allowClear={false} />
+              <RangePicker
+                name="date_range"
+                allowClear={false}
+                onChange={service.setRegDate}
+              />
               <SubmitButton>조회</SubmitButton>
             </div>
           </Container>

@@ -1,10 +1,15 @@
 import React from 'react';
 import { Button, Div, Flexbox } from '~/components/UI';
-import { MatReceiveModalService } from '~/service/mat/ReceiveService';
+import {
+  MatReceiveModalService,
+  MatReceiveService,
+} from '~/service/mat/ReceiveService';
 
 export const MatReceiveHeader = ({
+  service,
   modalService,
 }: {
+  service: MatReceiveService;
   modalService: MatReceiveModalService;
 }) => {
   return (
@@ -13,18 +18,29 @@ export const MatReceiveHeader = ({
         <Button
           ImageType="add"
           btnType="buttonFill"
+          children="신규 항목 추가"
           colorType="blue"
           fontSize="small"
           heightSize="small"
           widthSize="large"
           onClick={modalService.openCreateReceive}
-        >
-          신규 항목 추가
-        </Button>
+        />
         <div
           style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}
         >
-          <Button>삭제</Button>
+          <Button
+            ImageType="delete"
+            btnType="buttonFill"
+            children="삭제"
+            colorType="delete"
+            disabled={false}
+            fontSize="small"
+            heightSize="small"
+            onClick={() => {
+              service.deleteReceiveContent();
+            }}
+            widthSize="medium"
+          />
           <Button>수정</Button>
           <Button>세부 항목 추가</Button>
         </div>

@@ -2,10 +2,11 @@ import { Col } from 'antd';
 import React from 'react';
 import { Container, Datagrid } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { MatReceiveService } from '~/service/mat/ReceiveService';
 import { MatReceiveReadOnlyForm } from './receive-readonly-form';
 
 type MatReceiveContentProps = {
-  service: any;
+  service: MatReceiveService;
 };
 
 const columns = [
@@ -215,6 +216,7 @@ export const MatReceiveContent = ({ service }: MatReceiveContentProps) => {
       <MatReceiveReadOnlyForm formValues={service.getContentFormValues()} />
       <Container>
         <Datagrid
+          ref={service.contentGridRef}
           data={service.receiveContentGridData}
           columns={columns}
           height={620}

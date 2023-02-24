@@ -1,17 +1,23 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import { Moment } from 'moment';
 import { useRef, useState } from 'react';
 import { boolean, date, number, object, string } from 'yup';
 import { OrderRemoteStore } from '~/apis/mat/order';
-import { ReceiveHeader, ReceiveRemoteStore } from '~/apis/mat/receive';
+import {
+  ReceiveDetail,
+  ReceiveHeader,
+  ReceiveRemoteStore,
+} from '~/apis/mat/receive';
 import { VendorPriceRemoteStore } from '~/apis/std/vendor-price';
 import { IGridColumn, TApiSettings } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
-import { getToday, getUserFactoryUuid } from '~/functions';
+import { getToday } from '~/functions';
 import { isEmpty, isNil } from '~/helper/common';
 import { arrayToEntities, objectToEntity } from '~/helper/entity';
 import {
+  MatReceiveDeleteDetailDto,
+  MatReceiveDeleteHeaderDto,
   MatReceiveDetailDto,
   MatReceiveHeaderDto,
 } from '~/models/mat/ReceiveDTO';
@@ -492,6 +498,7 @@ type TuiGridProtoType = {
   removeRow: (rowKey: number) => void;
   refreshLayout: () => void;
   resetData: <T>(data: T[], options?: {}) => void;
+  getCheckedRows: <T>() => T[];
 };
 
 type gridClickEvent<T> = {
@@ -500,18 +507,45 @@ type gridClickEvent<T> = {
   instance: TuiGridProtoType;
 };
 
+type ReceiveAsideForm = { date_range: dayjs.Dayjs[] };
+
+export interface MatReceiveService {
+  receiveHeaderGridData: ReceiveHeader[];
+  receiveContentGridData: ReceiveHeader[];
+  receiveAsideFormData: ReceiveAsideForm;
+  contentGridRef: showModalDatagridRef;
+  getContentFormValues: () => ReceiveHeader;
+  setRegDate: (date_range: dayjs.Dayjs[]) => void;
+  searchReceiveHeader: ({ date_range }: { date_range: any }) => Promise<void>;
+  asideGridClick: (e: gridClickEvent<ReceiveHeader>) => Promise<void>;
+  deleteReceiveContent: () => void;
+}
+
 export const useMatReceiveService = (
   matReceiveRemoteStore: ReceiveRemoteStore,
-) => {
+): MatReceiveService => {
   const [receiveHeaderGridData, setHeaderGridData] = useState<ReceiveHeader[]>(
     [],
   );
+
+  const [receiveAsideFormData, setAsideFormData]: [
+    ReceiveAsideForm,
+    (newForm: ReceiveAsideForm) => void,
+  ] = useState({
+    date_range: [
+      dayjs(getToday(-7), 'YYYY-MM-DD'),
+      dayjs(getToday(), 'YYYY-MM-DD'),
+    ],
+  });
+
   const [receiveContentFormData, setContentFormData] = useState<ReceiveHeader>(
     getEmptyReceiveHeader(),
   );
   const [receiveContentGridData, setContentGridData] = useState<
     ReceiveHeader[]
   >([]);
+
+  const contentGridRef: showModalDatagridRef = useRef();
 
   const asideGridClick = async (e: gridClickEvent<ReceiveHeader>) => {
     if (!isNil(e.rowKey)) {
@@ -540,7 +574,9 @@ export const useMatReceiveService = (
     };
   };
 
-  const searchReceiveHeader = async ({ date_range }) => {
+  const searchReceiveHeader = async () => {
+    const { date_range } = receiveAsideFormData;
+
     const header = await matReceiveRemoteStore.getHeader(
       date_range[0].format('YYYY-MM-DD'),
       date_range[1].format('YYYY-MM-DD'),
@@ -551,12 +587,51 @@ export const useMatReceiveService = (
     setContentGridData([]);
   };
 
+  const deleteReceiveContent = () => {
+    const receiveDetails = arrayToEntities(
+      contentGridRef.current.getInstance().getCheckedRows<ReceiveDetail>(),
+      MatReceiveDeleteDetailDto,
+    );
+
+    if (isEmpty(receiveDetails)) {
+      message.warn('삭제할 입하 내역을 선택해주세요.');
+    } else {
+      Modal.confirm({
+        title: `${receiveDetails.length}건의 입하 내역을 삭제하시겠습니까?`,
+        okText: '삭제',
+        okType: 'danger',
+        content: '삭제된 입하 내역은 복구할 수 없습니다',
+        onOk: async () => {
+          try {
+            const receiveHeader = objectToEntity(
+              receiveContentFormData,
+              MatReceiveDeleteHeaderDto,
+            );
+            await matReceiveRemoteStore.delete(receiveHeader, receiveDetails);
+            message.success('입하 내역이 삭제되었습니다.');
+            await searchReceiveHeader();
+          } catch (e) {
+            message.error(e.message);
+          }
+        },
+      });
+    }
+  };
+
+  const setRegDate = (date_range: dayjs.Dayjs[]) => {
+    setAsideFormData({ date_range });
+  };
+
   return {
     receiveHeaderGridData,
+    receiveAsideFormData,
     receiveContentGridData,
+    contentGridRef,
     getContentFormValues,
     searchReceiveHeader,
     asideGridClick,
+    deleteReceiveContent,
+    setRegDate,
   };
 };
 
@@ -624,7 +699,7 @@ export const useMatReceiveModalServiceImpl = (
 
   const setPartner = ({ partner_uuid, partner_nm }: Partner) => {
     setFormValues({ ...formValues, partner_uuid, partner_nm });
-    console.log(modalDatagridRef.current.getInstance().resetData([]));
+    modalDatagridRef.current.getInstance().resetData([]);
   };
 
   const setSupplier = ({ supplier_uuid, supplier_nm }: Supplier) => {
@@ -725,7 +800,6 @@ export const useMatReceiveModalServiceImpl = (
 
   const validateHeader = (receiveHeader: MatReceiveHeaderDto) => {
     const headerSchema = object({
-      factory_uuid: string().required('공장 정보를 입력해주세요').uuid(),
       partner_uuid: string().required('거래처를 입력해주세요').uuid(),
       partner_nm: string().required('거래처를 입력해주세요'),
       reg_date: date().required('입하일을 입력해주세요'),
@@ -745,7 +819,6 @@ export const useMatReceiveModalServiceImpl = (
   const validateDetail = (receiveDetails: MatReceiveDetailDto[]) => {
     const detailSchema = object({
       receive_uuid: string().nullable().uuid(),
-      factory_uuid: string().required('공장 정보를 입력해주세요').uuid(),
       prod_uuid: string().required('품목을 입력해주세요').uuid(),
       unit_uuid: string().required('단위를 입력해주세요').uuid(),
       lot_no: string().required('LOT NO를 입력해주세요'),
@@ -775,7 +848,7 @@ export const useMatReceiveModalServiceImpl = (
 
   const save = async () => {
     const receiveHeader = objectToEntity(
-      { ...formValues, factory_uuid: getUserFactoryUuid() },
+      { ...formValues },
       MatReceiveHeaderDto,
     );
     const receiveDetails = arrayToEntities(
@@ -784,7 +857,6 @@ export const useMatReceiveModalServiceImpl = (
         .getData<{ [key: string]: any }>()
         .map(detail => ({
           ...detail,
-          factory_uuid: getUserFactoryUuid(),
           carry_fg: detail.carry_fg ?? false,
         })),
       MatReceiveDetailDto,
@@ -797,7 +869,6 @@ export const useMatReceiveModalServiceImpl = (
       message.success('입하 등록이 완료되었습니다.');
       close();
     } catch (error) {
-      console.log({ error });
       if (isEmpty(error.errors)) {
         message.warn(error.message);
       } else if (!isEmpty(error.errors)) {

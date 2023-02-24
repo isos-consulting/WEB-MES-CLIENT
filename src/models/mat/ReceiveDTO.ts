@@ -1,5 +1,6 @@
+import { ReceiveDetail, ReceiveHeader } from '~/apis/mat/receive';
+
 export class MatReceiveHeaderDto {
-  readonly factory_uuid: string;
   readonly partner_uuid: string;
   readonly partner_nm: string;
   readonly reg_date: string;
@@ -7,20 +8,18 @@ export class MatReceiveHeaderDto {
   readonly stmt_no: string;
   readonly remark: string;
 
-  constructor(target: unknown) {
-    this.factory_uuid = target['factory_uuid'];
-    this.partner_uuid = target['partner_uuid'];
-    this.partner_nm = target['partner_nm'];
-    this.reg_date = target['reg_date'];
-    this.supplier_uuid = target['supplier_uuid'];
-    this.stmt_no = target['stmt_no'];
-    this.remark = target['remark'];
+  constructor(target: ReceiveHeader) {
+    this.partner_uuid = target.partner_uuid;
+    this.partner_nm = target.partner_nm;
+    this.reg_date = target.reg_date;
+    this.supplier_uuid = target.supplier_uuid;
+    this.stmt_no = target.stmt_no;
+    this.remark = target.remark;
   }
 }
 
 export class MatReceiveDetailDto {
   readonly receive_uuid: string;
-  readonly factory_uuid: string;
   readonly prod_uuid: string;
   readonly unit_uuid: string;
   readonly lot_no: string;
@@ -38,24 +37,39 @@ export class MatReceiveDetailDto {
   readonly insp_fg: boolean;
   readonly carry_fg: boolean;
 
-  constructor(target: unknown) {
-    this.receive_uuid = target['receive_uuid'];
-    this.factory_uuid = target['factory_uuid'];
-    this.prod_uuid = target['prod_uuid'];
-    this.unit_uuid = target['unit_uuid'];
-    this.lot_no = target['lot_no'];
-    this.manufactured_lot_no = target['manufactured_lot_no'];
-    this.money_unit_uuid = target['money_unit_uuid'];
-    this.order_detail_uuid = target['order_detail_uuid'];
-    this.to_store_uuid = target['to_store_uuid'];
-    this.to_location_uuid = target['to_location_uuid'];
-    this.remark = target['remark'];
-    this.barcode = target['barcode'];
-    this.qty = Number(target['qty']);
-    this.price = Number(target['price']);
-    this.unit_qty = Number(target['unit_qty']);
-    this.exchange = Number(target['exchange']);
-    this.insp_fg = target['insp_fg'];
-    this.carry_fg = target['carry_fg'];
+  constructor(target: ReceiveDetail) {
+    this.receive_uuid = target.receive_uuid;
+    this.prod_uuid = target.prod_uuid;
+    this.unit_uuid = target.unit_uuid;
+    this.lot_no = target.lot_no;
+    this.manufactured_lot_no = target.manufactured_lot_no;
+    this.money_unit_uuid = target.money_unit_uuid;
+    this.order_detail_uuid = target.order_detail_uuid;
+    this.to_store_uuid = target.to_store_uuid;
+    this.to_location_uuid = target.to_location_uuid;
+    this.remark = target.remark;
+    this.barcode = target.barcode;
+    this.qty = Number(target.qty);
+    this.price = Number(target.price);
+    this.unit_qty = Number(target.unit_qty);
+    this.exchange = Number(target.exchange);
+    this.insp_fg = target.insp_fg;
+    this.carry_fg = target.carry_fg;
+  }
+}
+
+export class MatReceiveDeleteHeaderDto {
+  readonly uuid: string;
+
+  constructor(target: ReceiveHeader) {
+    this.uuid = target.receive_uuid;
+  }
+}
+
+export class MatReceiveDeleteDetailDto {
+  readonly uuid: string;
+
+  constructor(target: ReceiveDetail) {
+    this.uuid = target.receive_detail_uuid;
   }
 }
