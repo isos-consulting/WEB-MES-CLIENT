@@ -594,13 +594,13 @@ export const useMatReceiveService = (
     );
 
     if (isEmpty(receiveDetails)) {
-      message.warn('삭제할 입하 내역을 선택해주세요.');
+      message.warn('삭제할 입하 항목을 선택해주세요.');
     } else {
       Modal.confirm({
-        title: `${receiveDetails.length}건의 입하 내역을 삭제하시겠습니까?`,
+        title: `${receiveDetails.length}건의 입하 항목을 삭제하시겠습니까?`,
         okText: '삭제',
         okType: 'danger',
-        content: '삭제된 입하 내역은 복구할 수 없습니다',
+        content: '삭제된 입하 항목은 복구할 수 없습니다',
         onOk: async () => {
           try {
             const receiveHeader = objectToEntity(
@@ -608,7 +608,7 @@ export const useMatReceiveService = (
               MatReceiveDeleteHeaderDto,
             );
             await matReceiveRemoteStore.delete(receiveHeader, receiveDetails);
-            message.success('입하 내역이 삭제되었습니다.');
+            message.success('입하 항목이 삭제되었습니다.');
             await searchReceiveHeader();
           } catch (e) {
             message.error(e.message);
@@ -665,10 +665,12 @@ export interface MatReceiveModalService {
   deleteReceiveRow: () => void;
   save: () => void;
   openOrderDetail: () => void;
+  openCreateReceiveDetail: () => void;
 }
 
 export const useMatReceiveModalServiceImpl = (
   matReceiveRemoteStore: ReceiveRemoteStore,
+  matReceiveService: MatReceiveService,
 ): MatReceiveModalService => {
   const [modalTitle, setModalTitle] = useState<string>('');
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -688,7 +690,7 @@ export const useMatReceiveModalServiceImpl = (
   const subModalDatagridRef: showModalDatagridRef = useRef();
 
   const openCreateReceive = () => {
-    setModalTitle('입하 신규 항목 추가');
+    setModalTitle('입하 전표 추가');
     setFormValues({ ...getEmptyReceiveHeader(), reg_date: getToday() });
     setModalVisible(true);
   };
@@ -893,6 +895,17 @@ export const useMatReceiveModalServiceImpl = (
     }
   };
 
+  const openCreateReceiveDetail = () => {
+    const receiveDetailForm = matReceiveService.getContentFormValues();
+    if (isEmpty(receiveDetailForm.receive_uuid)) {
+      message.warn('입하 전표를 선택해주세요');
+    } else {
+      setModalTitle('입하 전표 항목 추가');
+      setFormValues({ ...receiveDetailForm });
+      setModalVisible(true);
+    }
+  };
+
   return {
     modalTitle,
     modalVisible,
@@ -916,5 +929,6 @@ export const useMatReceiveModalServiceImpl = (
     deleteReceiveRow,
     save,
     openOrderDetail,
+    openCreateReceiveDetail,
   };
 };

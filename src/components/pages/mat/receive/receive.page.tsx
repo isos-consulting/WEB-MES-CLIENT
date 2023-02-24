@@ -15,6 +15,7 @@ export const PgMatReceive = () => {
   const matReceiveService = useMatReceiveService(matReceiveRemoteStore);
   const matReceiveModalService = useMatReceiveModalServiceImpl(
     matReceiveRemoteStore,
+    matReceiveService,
   );
 
   return (

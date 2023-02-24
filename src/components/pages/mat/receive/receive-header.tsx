@@ -18,7 +18,7 @@ export const MatReceiveHeader = ({
         <Button
           ImageType="add"
           btnType="buttonFill"
-          children="신규 항목 추가"
+          children="입하 전표 추가"
           colorType="blue"
           fontSize="small"
           heightSize="small"
@@ -42,7 +42,15 @@ export const MatReceiveHeader = ({
             widthSize="medium"
           />
           <Button>수정</Button>
-          <Button>세부 항목 추가</Button>
+          <Button
+            btnType="buttonFill"
+            children="입하 전표 항목 추가"
+            colorType="blue"
+            fontSize="small"
+            heightSize="small"
+            widthSize="large"
+            onClick={modalService.openCreateReceiveDetail}
+          ></Button>
         </div>
       </Flexbox>
     </Div>
