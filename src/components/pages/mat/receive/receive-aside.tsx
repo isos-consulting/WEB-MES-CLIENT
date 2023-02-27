@@ -8,6 +8,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import Colors from '~styles/color.style.module.scss';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
+import MatReceiveAsideStyleModule from './receive-aside.module.css';
 
 const RangePicker = styled(DatePicker.RangePicker)`
   width: 'auto';
@@ -92,14 +93,14 @@ export const MatReceiveAside = ({ service }) => {
           </Container>
         </Form>
       </Formik>
-      <Container>
+      <div className={MatReceiveAsideStyleModule.reactiveHeight}>
         <Datagrid
           data={service.receiveHeaderGridData}
           columns={columns}
-          height={700}
+          height="fitToParent"
           onClick={service.asideGridClick}
         />
-      </Container>
+      </div>
     </Col>
   );
 };

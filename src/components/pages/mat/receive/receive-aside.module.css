@@ -1,0 +1,16 @@
+.reactiveHeight {
+  height: Calc(100vh - 190px);
+  /* min-height: 150px; */
+}
+
+@media (max-width: 1248px) {
+  .reactiveHeight {
+    height: Calc(100vh - 202px);
+  }
+}
+
+@media (max-width: 977px) {
+  .reactiveHeight {
+    height: Calc(100vh - 221px);
+  }
+}

@@ -4,6 +4,7 @@ import { Container, Datagrid } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { MatReceiveService } from '~/service/mat/ReceiveService';
 import { MatReceiveReadOnlyForm } from './receive-readonly-form';
+import MatReceiveContentStyleModule from './receive-content.module.css';
 
 type MatReceiveContentProps = {
   service: MatReceiveService;
@@ -214,15 +215,15 @@ export const MatReceiveContent = ({ service }: MatReceiveContentProps) => {
   return (
     <Col span={16} style={{ paddingLeft: '8px', paddingRight: '8px' }}>
       <MatReceiveReadOnlyForm formValues={service.getContentFormValues()} />
-      <Container>
+      <div className={MatReceiveContentStyleModule.reactiveHeight}>
         <Datagrid
           ref={service.contentGridRef}
           data={service.receiveContentGridData}
           columns={columns}
-          height={620}
+          height="fitToParent"
           gridMode="multi-select"
         />
-      </Container>
+      </div>
     </Col>
   );
 };
