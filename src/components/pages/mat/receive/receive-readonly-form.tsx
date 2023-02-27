@@ -5,14 +5,14 @@ import styled from 'styled-components';
 import { Container, Label } from '~/components/UI';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
+import MatReceiveReadOnlyFormStyleModule from './receive-readonly-form.module.css';
 
 export const TextBox = styled(Input)`
-  width: 221px;
   height: ${Sizes.height_datepicker_default};
   font-size: ${Fonts.fontSize_datepicker};
 `;
 
-export const MatReceiveReadOnlyForm = ({ formValues }) => {
+export const MatReceiveReadOnlyForm = ({ formValues, fieldClassName }) => {
   return (
     <Formik
       initialValues={formValues}
@@ -21,90 +21,99 @@ export const MatReceiveReadOnlyForm = ({ formValues }) => {
     >
       <Form>
         <Container>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 10px' }}>
+          <div
+            className={MatReceiveReadOnlyFormStyleModule.flexibleFormContainer}
+          >
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="전표번호" />
-              <TextBox name="stmt_no" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="stmt_no"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="입하일" />
-              <TextBox name="reg_date" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="reg_date"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="거래처" />
-              <TextBox name="partner_nm" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="partner_nm"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="공급처" />
-              <TextBox name="supplier_nm" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="supplier_nm"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="합계수량" />
-              <TextBox name="total_qty" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="total_qty"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="합계금액" />
-              <TextBox name="total_price" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="total_price"
+                disabled={true}
+              />
             </div>
             <div
-              style={{
-                width: '380px',
-                height: '36px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className={[
+                MatReceiveReadOnlyFormStyleModule.textBoxArea,
+                fieldClassName,
+              ].join(' ')}
             >
               <Label text="비고" />
-              <TextBox name="remark" disabled={true} />
+              <TextBox
+                className={MatReceiveReadOnlyFormStyleModule.textBox}
+                name="remark"
+                disabled={true}
+              />
             </div>
           </div>
         </Container>

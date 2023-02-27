@@ -3,20 +3,52 @@
   min-height: 150px;
 }
 
+.fieldResizable {
+  width: Calc(62vw / 5.1);
+  min-width: 270px;
+}
+
 @media (max-width: 2469px) {
   .reactiveHeight {
-    height: Calc(100vh - 270px);
+    height: Calc(100vh - 236px);
+  }
+  .fieldResizable {
+    width: Calc(62vw / 4.2);
   }
 }
 
-@media (max-width: 1885px) {
+@media (max-width: 1800px) {
   .reactiveHeight {
-    height: Calc(100vh - 310px);
+    height: Calc(100vh - 273px);
+  }
+
+  .fieldResizable {
+    width: Calc(62vw / 3.2);
   }
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1370px) {
   .reactiveHeight {
-    height: Calc(100vh - 416px);
+    height: Calc(100vh - 308px);
+  }
+
+  .fieldResizable {
+    width: Calc(62vw / 2.15);
+  }
+}
+
+@media (max-width: 1200px) {
+  .fieldResizable {
+    width: Calc(62vw / 2.25);
+  }
+}
+
+@media (max-width: 975px) {
+  .reactiveHeight {
+    height: Calc(100vh - 415px);
+  }
+
+  .fieldResizable {
+    width: Calc(62vw / 1.1);
   }
 }

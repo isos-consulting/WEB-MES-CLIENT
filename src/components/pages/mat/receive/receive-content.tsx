@@ -1,10 +1,10 @@
 import { Col } from 'antd';
 import React from 'react';
-import { Container, Datagrid } from '~/components/UI';
+import { Datagrid } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { MatReceiveService } from '~/service/mat/ReceiveService';
-import { MatReceiveReadOnlyForm } from './receive-readonly-form';
 import MatReceiveContentStyleModule from './receive-content.module.css';
+import { MatReceiveReadOnlyForm } from './receive-readonly-form';
 
 type MatReceiveContentProps = {
   service: MatReceiveService;
@@ -214,7 +214,10 @@ const columns = [
 export const MatReceiveContent = ({ service }: MatReceiveContentProps) => {
   return (
     <Col span={16} style={{ paddingLeft: '8px', paddingRight: '8px' }}>
-      <MatReceiveReadOnlyForm formValues={service.getContentFormValues()} />
+      <MatReceiveReadOnlyForm
+        fieldClassName={MatReceiveContentStyleModule.fieldResizable}
+        formValues={service.getContentFormValues()}
+      />
       <div className={MatReceiveContentStyleModule.reactiveHeight}>
         <Datagrid
           ref={service.contentGridRef}

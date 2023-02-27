@@ -313,207 +313,222 @@ export const PgSalOutgoOrder = () => {
         },
         gridMode: 'multi-select',
       },
-      extraButtons: [
-        {
-          buttonProps: { text: '수주 불러오기' },
-          buttonAction: (ev, props, options) => {
-            const { childGridRef, modal, onAppendRow } = options;
-            const updateColumns: { original: string; popup: string }[] =
-              props.rowAddPopupInfo.columnNames;
+      extraButtons:
+        editDataPopupGridVisible === true
+          ? []
+          : [
+              {
+                buttonProps: { text: '수주 불러오기' },
+                buttonAction: (ev, props, options) => {
+                  const { childGridRef, modal, onAppendRow } = options;
+                  const updateColumns: { original: string; popup: string }[] =
+                    props.rowAddPopupInfo.columnNames;
 
-            let params = {
-              complete_state: 'all',
-              partner_uuid: null,
-            };
+                  let params = {
+                    complete_state: 'all',
+                    partner_uuid: null,
+                  };
 
-            if (newDataPopupGridVisible) {
-              params['partner_uuid'] =
-                newDataPopupInputInfo.ref.current.values?.partner_uuid;
-            } else if (editDataPopupGridVisible) {
-              params['partner_uuid'] =
-                editDataPopupInputInfo.ref.current.values?.partner_uuid;
-            } else if (addDataPopupGridVisible) {
-              params['partner_uuid'] =
-                addDataPopupInputInfo.ref.current.values?.partner_uuid;
-            }
+                  if (newDataPopupGridVisible) {
+                    params['partner_uuid'] =
+                      newDataPopupInputInfo.ref.current.values?.partner_uuid;
+                  } else if (editDataPopupGridVisible) {
+                    params['partner_uuid'] =
+                      editDataPopupInputInfo.ref.current.values?.partner_uuid;
+                  } else if (addDataPopupGridVisible) {
+                    params['partner_uuid'] =
+                      addDataPopupInputInfo.ref.current.values?.partner_uuid;
+                  }
 
-            if (isNil(params?.partner_uuid)) {
-              message.warn('거래처를 선택하신 후 다시 시도해주세요.');
-              return;
-            }
+                  if (isNil(params?.partner_uuid)) {
+                    message.warn('거래처를 선택하신 후 다시 시도해주세요.');
+                    return;
+                  }
 
-            getData(params, '/sal/order-details').then(res => {
-              modal.confirm({
-                title: '수주품목 - 다중선택',
-                width: '80%',
-                content: (
-                  <>
-                    <Datagrid
-                      ref={childGridRef}
-                      gridId={'GRID_POPUP_ORDER'}
-                      columns={[
-                        {
-                          header: '수주UUID',
-                          name: 'order_uuid',
-                          hidden: true,
-                        },
-                        {
-                          header: '세부수주UUID',
-                          name: 'order_detail_uuid',
-                          hidden: true,
-                        },
-                        {
-                          header: '완료구분',
-                          name: 'complete_state',
-                          width: ENUM_WIDTH.S,
-                          align: 'center',
-                        },
-                        {
-                          header: '전표번호',
-                          name: 'stmt_no',
-                          width: ENUM_WIDTH.M,
-                        },
-                        {
-                          header: '납기일',
-                          name: 'due_date',
-                          width: ENUM_WIDTH.M,
-                          format: 'date',
-                          filter: 'text',
-                        },
-                        { header: '품목UUID', name: 'prod_uuid', hidden: true },
-                        {
-                          header: '품목유형',
-                          name: 'item_type_nm',
-                          width: ENUM_WIDTH.M,
-                          filter: 'text',
-                          align: 'center',
-                        },
-                        {
-                          header: '제품유형',
-                          name: 'prod_type_nm',
-                          width: ENUM_WIDTH.M,
-                          filter: 'text',
-                          align: 'center',
-                        },
-                        {
-                          header: '품번',
-                          name: 'prod_no',
-                          width: ENUM_WIDTH.M,
-                          filter: 'text',
-                        },
-                        {
-                          header: '품명',
-                          name: 'prod_nm',
-                          width: ENUM_WIDTH.L,
-                          filter: 'text',
-                        },
-                        {
-                          header: '모델',
-                          name: 'model_nm',
-                          width: ENUM_WIDTH.M,
-                          filter: 'text',
-                        },
-                        { header: 'Rev', name: 'rev', width: ENUM_WIDTH.S },
-                        {
-                          header: '규격',
-                          name: 'prod_std',
-                          width: ENUM_WIDTH.L,
-                        },
-                        {
-                          header: '안전재고',
-                          name: 'safe_stock',
-                          width: ENUM_WIDTH.S,
-                          decimal: ENUM_DECIMAL.DEC_STCOK,
-                        },
-                        { header: '단위UUID', name: 'unit_uuid', hidden: true },
-                        {
-                          header: '단위',
-                          name: 'unit_nm',
-                          width: ENUM_WIDTH.XS,
-                        },
-                        {
-                          header: '수주량',
-                          name: 'qty',
-                          width: ENUM_WIDTH.S,
-                          format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_STCOK,
-                        },
-                        {
-                          header: '미납량',
-                          name: 'balance',
-                          width: ENUM_WIDTH.S,
-                          format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_STCOK,
-                        },
-                        {
-                          header: '화폐단위UUID',
-                          name: 'money_unit_uuid',
-                          hidden: true,
-                        },
-                        {
-                          header: '화폐단위',
-                          name: 'money_unit_nm',
-                          width: ENUM_WIDTH.M,
-                        },
-                        {
-                          header: '단가유형UUID',
-                          name: 'price_type_uuid',
-                          hidden: true,
-                        },
-                        {
-                          header: '단가유형',
-                          name: 'price_type_nm',
-                          width: ENUM_WIDTH.M,
-                        },
-                        {
-                          header: '단가',
-                          name: 'price',
-                          width: ENUM_WIDTH.S,
-                          format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_PRICE,
-                        },
-                        {
-                          header: '환율',
-                          name: 'exchange',
-                          width: ENUM_WIDTH.S,
-                          format: 'number',
-                          decimal: ENUM_DECIMAL.DEC_PRICE,
-                        },
-                      ]}
-                      gridMode="multi-select"
-                      data={res}
-                    />
-                  </>
-                ),
-                icon: null,
-                okText: '선택',
-                onOk: () => {
-                  const child = childGridRef.current;
-                  const rows = child.getInstance().getCheckedRows();
+                  getData(params, '/sal/order-details').then(res => {
+                    modal.confirm({
+                      title: '수주품목 - 다중선택',
+                      width: '80%',
+                      content: (
+                        <>
+                          <Datagrid
+                            ref={childGridRef}
+                            gridId={'GRID_POPUP_ORDER'}
+                            columns={[
+                              {
+                                header: '수주UUID',
+                                name: 'order_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '세부수주UUID',
+                                name: 'order_detail_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '완료구분',
+                                name: 'complete_state',
+                                width: ENUM_WIDTH.S,
+                                align: 'center',
+                              },
+                              {
+                                header: '전표번호',
+                                name: 'stmt_no',
+                                width: ENUM_WIDTH.M,
+                              },
+                              {
+                                header: '납기일',
+                                name: 'due_date',
+                                width: ENUM_WIDTH.M,
+                                format: 'date',
+                                filter: 'text',
+                              },
+                              {
+                                header: '품목UUID',
+                                name: 'prod_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '품목유형',
+                                name: 'item_type_nm',
+                                width: ENUM_WIDTH.M,
+                                filter: 'text',
+                                align: 'center',
+                              },
+                              {
+                                header: '제품유형',
+                                name: 'prod_type_nm',
+                                width: ENUM_WIDTH.M,
+                                filter: 'text',
+                                align: 'center',
+                              },
+                              {
+                                header: '품번',
+                                name: 'prod_no',
+                                width: ENUM_WIDTH.M,
+                                filter: 'text',
+                              },
+                              {
+                                header: '품명',
+                                name: 'prod_nm',
+                                width: ENUM_WIDTH.L,
+                                filter: 'text',
+                              },
+                              {
+                                header: '모델',
+                                name: 'model_nm',
+                                width: ENUM_WIDTH.M,
+                                filter: 'text',
+                              },
+                              {
+                                header: 'Rev',
+                                name: 'rev',
+                                width: ENUM_WIDTH.S,
+                              },
+                              {
+                                header: '규격',
+                                name: 'prod_std',
+                                width: ENUM_WIDTH.L,
+                              },
+                              {
+                                header: '안전재고',
+                                name: 'safe_stock',
+                                width: ENUM_WIDTH.S,
+                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                              },
+                              {
+                                header: '단위UUID',
+                                name: 'unit_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '단위',
+                                name: 'unit_nm',
+                                width: ENUM_WIDTH.XS,
+                              },
+                              {
+                                header: '수주량',
+                                name: 'qty',
+                                width: ENUM_WIDTH.S,
+                                format: 'number',
+                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                              },
+                              {
+                                header: '미납량',
+                                name: 'balance',
+                                width: ENUM_WIDTH.S,
+                                format: 'number',
+                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                              },
+                              {
+                                header: '화폐단위UUID',
+                                name: 'money_unit_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '화폐단위',
+                                name: 'money_unit_nm',
+                                width: ENUM_WIDTH.M,
+                              },
+                              {
+                                header: '단가유형UUID',
+                                name: 'price_type_uuid',
+                                hidden: true,
+                              },
+                              {
+                                header: '단가유형',
+                                name: 'price_type_nm',
+                                width: ENUM_WIDTH.M,
+                              },
+                              {
+                                header: '단가',
+                                name: 'price',
+                                width: ENUM_WIDTH.S,
+                                format: 'number',
+                                decimal: ENUM_DECIMAL.DEC_PRICE,
+                              },
+                              {
+                                header: '환율',
+                                name: 'exchange',
+                                width: ENUM_WIDTH.S,
+                                format: 'number',
+                                decimal: ENUM_DECIMAL.DEC_PRICE,
+                              },
+                            ]}
+                            gridMode="multi-select"
+                            data={res}
+                          />
+                        </>
+                      ),
+                      icon: null,
+                      okText: '선택',
+                      onOk: () => {
+                        const child = childGridRef.current;
+                        const rows = child.getInstance().getCheckedRows();
 
-                  rows?.forEach(row => {
-                    let newRow = {};
-                    if (typeof row === 'object') {
-                      updateColumns.forEach(columnName => {
-                        // 값 설정
-                        newRow[columnName.original] = !isNil(
-                          row[columnName.popup],
-                        )
-                          ? row[columnName.popup]
-                          : null;
-                      });
-                      // 행 추가
-                      onAppendRow(newRow);
-                    }
+                        rows?.forEach(row => {
+                          let newRow = {};
+                          if (typeof row === 'object') {
+                            updateColumns.forEach(columnName => {
+                              // 값 설정
+                              newRow[columnName.original] = !isNil(
+                                row[columnName.popup],
+                              )
+                                ? row[columnName.popup]
+                                : null;
+                            });
+                            // 행 추가
+                            onAppendRow(newRow);
+                          }
+                        });
+                      },
+                      cancelText: '취소',
+                      maskClosable: false,
+                    });
                   });
                 },
-                cancelText: '취소',
-                maskClosable: false,
-              });
-            });
-          },
-        },
-      ],
+              },
+            ],
     },
   );
 
@@ -647,6 +662,7 @@ export const PgSalOutgoOrder = () => {
       label: '납품처UUID',
       disabled: true,
       hidden: true,
+      required: true,
     },
     {
       type: 'text',

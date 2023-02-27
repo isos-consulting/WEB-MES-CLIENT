@@ -81,7 +81,7 @@ export const MatReceiveAside = ({ service }) => {
       >
         <Form>
           <Container>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className={MatReceiveAsideStyleModule.flexibleFormContainer}>
               <Label text="입하일"></Label>
               <RangePicker
                 name="date_range"

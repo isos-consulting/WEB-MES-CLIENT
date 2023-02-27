@@ -352,7 +352,10 @@ export const MatReceiveModal = ({
       {modalService.formEditable ? (
         <MatReceiveEditableForm service={modalService} />
       ) : (
-        <MatReceiveReadOnlyForm formValues={modalService.formValues} />
+        <MatReceiveReadOnlyForm
+          fieldClassName=""
+          formValues={modalService.formValues}
+        />
       )}
       {modalService.modalMode === Mode.CREATE ? (
         <MatReceiveGridInterfaceButtonGroup service={modalService} />

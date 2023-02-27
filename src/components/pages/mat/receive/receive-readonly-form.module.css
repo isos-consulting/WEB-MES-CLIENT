@@ -1,0 +1,17 @@
+.flexibleFormContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+}
+
+.textBoxArea {
+  width: 380px;
+  height: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.textBox {
+  width: 221px;
+}
