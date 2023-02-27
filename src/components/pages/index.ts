@@ -94,7 +94,7 @@ export * from './mat/release.page';
 export * from './mat/release-report.page';
 export * from './mat/return.page';
 export * from './mat/order.page';
-export * from './mat/receive.page';
+export * from './mat/receive/receive.page';
 export * from './mat/receive-report.page';
 export * from './mat/recevie-lot-tracking.page';
 export * from './mat/return.page';
