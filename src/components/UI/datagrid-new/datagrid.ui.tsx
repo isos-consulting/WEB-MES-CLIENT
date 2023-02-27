@@ -2419,7 +2419,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   }, [props.extraButtons]);
 
   return (
-    <div>
+    <>
       {props.gridMode === 'create' && props.hiddenActionButtons !== true ? (
         <div className="modalButton">
           {props?.extraButtons ? (
@@ -2541,7 +2541,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         draggable={props.draggable}
       />
       {contextHolder}
-    </div>
+    </>
   );
 });
 
