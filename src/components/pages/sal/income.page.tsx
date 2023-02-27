@@ -164,15 +164,6 @@ export const PgSalIncome = () => {
         requiredField: true,
       },
       {
-        header: '출고창고코드',
-        name: 'from_store_cd',
-        width: ENUM_WIDTH.M,
-        filter: 'text',
-        format: 'popup',
-        hidden: true,
-        requiredField: true,
-      },
-      {
         header: '출고창고명',
         name: 'from_store_nm',
         width: ENUM_WIDTH.M,
@@ -180,7 +171,6 @@ export const PgSalIncome = () => {
         format: 'popup',
         requiredField: true,
       },
-
       {
         header: '출고위치아이디',
         name: 'from_location_uuid',
@@ -282,7 +272,7 @@ export const PgSalIncome = () => {
           ],
           dataApiSettings: {
             uriPath: '/std/stores',
-            params: { store_type: 'available' },
+            params: { store_type: 'outgo' },
           },
           gridMode: 'select',
         },
