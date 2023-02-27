@@ -18,6 +18,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { OutgoOrderService } from '~/service/sal/OutgoOrderService';
 
 /** 제품출하지시 */
 export const PgSalOutgoOrder = () => {
@@ -866,7 +867,7 @@ export const PgSalOutgoOrder = () => {
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
     if (!isSuccess) return;
-    const savedUuid = savedData[0]?.outgo_order?.header[0]?.uuid;
+    const savedUuid = savedData[0]?.header?.uuid;
 
     // 헤더 그리드 재조회
     onSearchHeader(headerSearchInfo?.values).then(searchResult => {
@@ -911,6 +912,21 @@ export const PgSalOutgoOrder = () => {
     );
   };
 
+  const addSalOutgoOrder = async createdGridInstance => {
+    const service = new OutgoOrderService();
+
+    try {
+      const savedOutgoOrder = await service.addOutgoOrder(
+        newDataPopupInputInfo?.props.innerRef.current.values,
+        createdGridInstance.current.getInstance().getData(),
+      );
+      message.success('출하지시가 등록되었습니다.');
+      onAfterSaveNewData(true, savedOutgoOrder);
+    } catch (err) {
+      message.error(err.message);
+    }
+  };
+
   //#region 🔶템플릿에 값 전달
   const props: ITpDoubleGridProps = {
     title,
@@ -929,7 +945,10 @@ export const PgSalOutgoOrder = () => {
       editDataPopupGrid.gridRef,
     ],
     popupGridInfos: [
-      newDataPopupGrid.gridInfo,
+      {
+        ...newDataPopupGrid.gridInfo,
+        onOk: addSalOutgoOrder,
+      },
       addDataPopupGrid.gridInfo,
       editDataPopupGrid.gridInfo,
     ],
