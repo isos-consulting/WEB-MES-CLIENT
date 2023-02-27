@@ -304,7 +304,7 @@ export const PgSalRelease = () => {
           ],
           dataApiSettings: {
             uriPath: '/std/stores',
-            params: { store_type: 'available' },
+            params: { store_type: 'outgo' },
           },
           gridMode: 'select',
         },
@@ -570,7 +570,8 @@ export const PgSalRelease = () => {
         dataApiSettings: () => {
           // 출고일 기준으로 재고조회
           const params = {
-            reg_date: newDataPopupInputInfo?.ref?.cureent?.values?.reg_date,
+            reg_date:
+              newDataPopupInputInfo.props.innerRef.current.values.reg_date,
             stock_type: 'available',
             grouped_type: 'all',
             price_type: 'all',
