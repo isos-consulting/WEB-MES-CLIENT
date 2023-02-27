@@ -24,7 +24,7 @@ export const PgMatReceive = () => {
         service={matReceiveService}
         modalService={matReceiveModalService}
       />
-      <Flexbox>
+      <Flexbox alignItems="flex-start">
         <MatReceiveAside service={matReceiveService} />
         <MatReceiveContent service={matReceiveService} />
       </Flexbox>
