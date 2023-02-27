@@ -307,14 +307,12 @@ export const PgMatReturn = () => {
         width: 150,
         filter: 'text',
         hidden: true,
-        requiredField: true,
       },
       {
         header: '출고위치',
         name: 'from_location_nm',
         width: 150,
         filter: 'text',
-        requiredField: true,
       },
       {
         header: '비고',
