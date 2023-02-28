@@ -66,7 +66,7 @@ export const getInspectSamples = (
 export const getInspectItems = (inspectResults: InspectResults) =>
   inspectResults.map(item => {
     if (item.every(result => isNull(result))) return null;
-    if (item.some(result => isNull(result))) return false;
+    if (item.some(result => result === false)) return false;
     return true;
   });
 
