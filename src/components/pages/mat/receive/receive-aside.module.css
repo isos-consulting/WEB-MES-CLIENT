@@ -1,11 +1,11 @@
 .reactiveHeight {
-  height: Calc(100vh - 190px);
+  height: Calc(100vh - 153px);
   min-height: 345px;
 }
 
 @media (max-width: 1248px) {
   .reactiveHeight {
-    height: Calc(100vh - 202px);
+    height: Calc(100vh - 165px);
   }
 }
 

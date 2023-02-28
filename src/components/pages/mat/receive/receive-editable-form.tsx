@@ -7,6 +7,7 @@ import { MatReceiveModalService } from '~/service/mat/ReceiveService';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
 import { TextBox } from './receive-readonly-form';
+import MatReceiveEditableFormStyleModule from './receive-editable-form.module.css';
 
 const DatePicker = styled(AntdDatePicker)`
   width: 221px;
@@ -19,13 +20,14 @@ const DatePicker = styled(AntdDatePicker)`
   }
 `;
 
-const FieldArea = styled.div`
-  width: 380px;
-  height: 36px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
+interface FieldAreaProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const FieldArea = ({ className, children }: FieldAreaProps) => (
+  <div className={className}>{children}</div>
+);
 
 export const MatReceiveEditableForm = ({
   service,
@@ -40,15 +42,16 @@ export const MatReceiveEditableForm = ({
     >
       <Form>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0px 10px' }}>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="전표번호" />
             <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
               name="stmt_no"
               disabled={true}
               placeholder="전표번호는 자동으로 생성됩니다"
             />
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="입하일" important={true} />
             <DatePicker
               name="reg_date"
@@ -56,9 +59,10 @@ export const MatReceiveEditableForm = ({
               onChange={service.setRegDate}
             />
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="거래처" important={true} />
             <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
               name="partner_nm"
               disabled={true}
               placeholder="버튼을 눌러 거래처를 선택해주세요"
@@ -72,9 +76,10 @@ export const MatReceiveEditableForm = ({
               />
             </div>
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="공급처" />
             <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
               name="supplier_nm"
               disabled={true}
               placeholder="버튼을 눌러 공급처를 선택해주세요"
@@ -92,25 +97,31 @@ export const MatReceiveEditableForm = ({
               />
             </div>
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="합계수량" />
             <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
               name="total_qty"
               disabled={true}
               placeholder="수량은 데이터 저장 시 자동으로 계산됩니다"
             />
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="합계금액" />
             <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
               name="total_price"
               disabled={true}
               placeholder="금액은 데이터 저장 시 자동으로 계산됩니다"
             />
           </FieldArea>
-          <FieldArea>
+          <FieldArea className={MatReceiveEditableFormStyleModule.fieldArea}>
             <Label text="비고" />
-            <TextBox name="remark" placeholder="비고 값을 입력해주세요" />
+            <TextBox
+              className={MatReceiveEditableFormStyleModule.textBox}
+              name="remark"
+              placeholder="비고 값을 입력해주세요"
+            />
           </FieldArea>
         </div>
       </Form>

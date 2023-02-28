@@ -1,0 +1,11 @@
+.textBox {
+  width: 221px;
+}
+
+.fieldArea {
+  width: 380px;
+  height: 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,5 +1,5 @@
 .reactiveHeight {
-  height: Calc(100vh - 236px);
+  height: Calc(100vh - 200px);
   min-height: 150px;
 }
 
@@ -17,7 +17,7 @@
   }
 }
 
-@media (max-width: 1800px) {
+@media (max-width: 1885px) {
   .reactiveHeight {
     height: Calc(100vh - 273px);
   }
@@ -29,11 +29,17 @@
 
 @media (max-width: 1370px) {
   .reactiveHeight {
-    height: Calc(100vh - 308px);
+    height: Calc(100vh - 273px);
   }
 
   .fieldResizable {
     width: Calc(62vw / 2.15);
+  }
+}
+
+@media (max-width: 1299px) {
+  .reactiveHeight {
+    height: Calc(100vh - 379px);
   }
 }
 
