@@ -43,7 +43,7 @@ import {
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
 import InspectionReportViewController from '~/functions/qms/InspectionReportViewController';
-import { isNil, isNull } from '~/helper/common';
+import { isEmpty, isNil, isNull } from '~/helper/common';
 import {
   TGetPrdWork,
   TGetQmsProcInspIncludeDetails,
@@ -119,8 +119,8 @@ export const PgQmsProcInspResult = () => {
     });
   };
 
-  const onCreate = ev => {
-    if (!workData) {
+  const onCreate = (_ev: unknown) => {
+    if (isEmpty(workData)) {
       message.warning(SENTENCE.BEFORE_INPUT_WORK_AND_ADD_RECORD);
       return;
     }
