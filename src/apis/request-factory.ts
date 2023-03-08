@@ -98,6 +98,8 @@ mesRequest.interceptors.response.use(
   function (response) {
     if (response.data.success === false) {
       throw new Error(response.data.message.admin_message);
+    } else if (response.data.datas.value.count === 0) {
+      throw new Error('조회된 데이터가 없습니다.');
     }
 
     return response.data.datas.raws;
