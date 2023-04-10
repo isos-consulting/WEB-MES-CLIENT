@@ -11,7 +11,6 @@ export class MatReceiveCreateHeaderDto {
   readonly remark: string;
 
   constructor(target: ReceiveHeader) {
-    this.uuid = target.receive_uuid;
     this.partner_uuid = target.partner_uuid;
     this.partner_nm = target.partner_nm;
     this.reg_date = target.reg_date;
