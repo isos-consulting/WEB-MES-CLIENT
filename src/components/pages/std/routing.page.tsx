@@ -974,6 +974,12 @@ export const PgStdRouting = () => {
       message.warn('품목을 선택하신 후 다시 시도해 주세요.');
       return false;
     }
+
+    if (isNil(detailInputInfo?.values.factory_uuid)) {
+      message.warn('품목의 작업장을 등록하신 후 다시 시도해 주세요.');
+      return false;
+    }
+
     return true;
   };
 
