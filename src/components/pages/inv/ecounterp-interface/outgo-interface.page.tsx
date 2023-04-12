@@ -54,11 +54,11 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
     }
 
     const data = selectedSheet[0].getSheetValues();
-    const dataWithoutHeader = data.filter(row => row.length > 2);
+    const dataWithoutHeader = data.filter(row => (row.length as number) > 2);
 
     const filterdData = dataWithoutHeader.slice(1).map(row => {
       const obj = {};
-      for (let i = 1; i < row.length; i++) {
+      for (let i = 1; i < (row.length as number); i++) {
         const excelColumnName = ColumnStore.OUT_STORE_ECOUNT_INTERFACE.find(
           column => column.header === dataWithoutHeader[0][i],
         ).name;

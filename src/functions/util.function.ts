@@ -52,7 +52,7 @@ export const convExcelToJson = async (
           // 컬럼 매칭 (엑셀에 컬럼명과 그리드의 header명이 일치하는 col의 위치를 추출)
           if (COLUMN_ROW_FLAG) {
             if (isNil(columnRowIndex)) {
-              for (let i = 0; i < row.values.length; i++) {
+              for (let i = 0; i < (row.values.length as number); i++) {
                 for (let z = 0; z < columns?.length; z++) {
                   if (columns[z].name === row.values[i]) {
                     columnInfos.push({

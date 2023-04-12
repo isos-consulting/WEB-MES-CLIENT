@@ -36,6 +36,7 @@
     "noImplicitAny": false, // 타입 지정 안할시 any로 간주, 타입을 명시하도록 에러를 보고합니다.
     "strictNullChecks": false, // null 검사를 엄격하게 합니다. (null과 undefined를 서브타입(ex: type test = 'string' | null)으로 사용하지 못하게 합니다. 'string' | any 형식으로 작성해야 합니다.)
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
     "noUnusedLocals": true //사용하지 않는 지역 변수에 대한 오류를 보고합니다.
   },
   "exclude": [

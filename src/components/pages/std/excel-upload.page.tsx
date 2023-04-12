@@ -47,7 +47,7 @@ const importXLSXFile = async (
     const row = sheet.getRow(i);
 
     if (Array.isArray(row.values) === true) {
-      if (row.values.length > 0) {
+      if ((row.values.length as number) > 0) {
         const data = new Map<string, string | number | boolean>();
 
         columnNames.forEach((columnName: string, index: number) => {
