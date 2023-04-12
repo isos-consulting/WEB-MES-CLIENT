@@ -299,8 +299,10 @@ export const PgPrdWork = () => {
           mold_uuid: routingData?.['mold_uuid'],
           mold_cavity: Number(routingData?.['mold_cavity']),
           qty: Number(routingData?.['qty']),
-          start_date: routingData?.['start_date'],
-          end_date: routingData?.['end_date'],
+          start_date: dayjs(routingData?.['start_date'])
+            .locale('ko')
+            .toISOString(),
+          end_date: dayjs(routingData?.['end_date']).locale('ko').toISOString(),
           ongoing_fg: routingData?.['ongoing_fg'],
           prd_signal_cnt: routingData?.['prd_signal_cnt'],
           remark: routingData?.['remark'],
