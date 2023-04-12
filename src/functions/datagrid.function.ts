@@ -227,7 +227,7 @@ export const checkGridData = async (
               for (let z = 0; z < chkData[editType[y]]?.length; z++) {
                 const value = chkData[editType[y]][z][chkColumn[i].name];
 
-                if (isEmpty(value)) {
+                if (isNil(value) || String(value).length === 0) {
                   // 숫자 타입이지만 빈 값이면 저장 데이터에 미포함
                   // ❗ 극단적으로 인자값 자체를 바꾸는 형태라 나중에 수정해야할 수도 있음
                   delete data[editType[y]][z][chkColumn[i].name];
