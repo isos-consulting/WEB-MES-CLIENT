@@ -38,6 +38,7 @@ export const saveGridData = async (
   disableResultMessage: boolean = false,
   methodType?: { create?: string; update?: string; delete?: string },
 ): Promise<{ success: boolean; count: number; savedData: any[] }> => {
+  throw new Error('해당 함수는 사용하지 않습니다. (saveGridData)');
   let resultChk: boolean = true;
   let resultCount: number = 0;
   let saveData = cloneDeep(data);

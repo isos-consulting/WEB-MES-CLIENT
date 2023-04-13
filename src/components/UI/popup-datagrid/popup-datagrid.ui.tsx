@@ -101,7 +101,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
               if (props?.onAfterOk) props.onAfterOk(true, savedData);
             })
             .catch(e => {
-              console.log('Error', e);
+              console.trace('Error', e);
 
               if (props?.onAfterOk) props.onAfterOk(false, null);
             });

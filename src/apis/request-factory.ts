@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { getUserFactoryUuid } from '~/functions';
 import { isNil } from '~/helper/common';
+import { MesServerException } from '~/v2/core/MesServerException';
 
 export type MESResponseType<T> = AxiosResponse<{
   success: boolean;
@@ -96,6 +97,7 @@ mesRequest.interceptors.request.use(function (config) {
 
 mesRequest.interceptors.response.use(
   function (response) {
+    console.log({ response });
     if (response.data.success === false) {
       throw new Error(response.data.message.admin_message);
     } else if (response.data.datas.value.count === 0) {
@@ -105,6 +107,12 @@ mesRequest.interceptors.response.use(
     return response.data.datas.raws;
   },
   function (error) {
+    const { message } = error.response.data;
+
+    if (typeof message === 'string') {
+      return Promise.reject(new MesServerException(message));
+    }
+
     return Promise.reject(error.response.data.message.admin_message);
   },
 );

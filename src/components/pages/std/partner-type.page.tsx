@@ -1,16 +1,24 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
 import React, { useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
+import { TpSingleGrid } from '~/components/templates';
+import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { ENUM_WIDTH } from '~/enums';
 import {
   dataGridEvents,
   getData,
   getModifiedRows,
   getPageName,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { ENUM_WIDTH } from '~/enums';
-import { message } from 'antd';
+import {
+  PartnerTypeGetResponseEntity,
+  PartnerTypeUpdateRequestDTO,
+} from '~/v2/api/model/PartnerTypeDTO';
+import { GridRef } from '~/v2/core/ToastGrid';
+import { PartnerTypeService } from '~/v2/service/PatnerTypeService';
+import { ServiceUtil } from '~/v2/util/CallbackServices';
+import { DialogUtil } from '~/v2/util/DialogUtil';
 
 /** 거래처유형관리 */
 export const PgStdPartnerType = () => {
@@ -136,14 +144,24 @@ export const PgStdPartnerType = () => {
 
     /** 삭제 */
     delete: () => {
-      if (
-        getModifiedRows(grid.gridRef, grid.gridInfo.columns)?.deletedRows
-          ?.length === 0
-      ) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
+      DialogUtil.valueOf(modal).confirm({
+        title: '삭제확인',
+        message: '삭제하시겠습니까?',
+        onOk: () => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              PartnerTypeService.getInstance().deletePartnerType,
+              grid.gridRef,
+            )
+            .then(_ => {
+              message.success('삭제되었습니다.');
+              onSearch(searchInfo?.values);
+            })
+            .catch((error: unknown) => {
+              message.warn(error.toString());
+            });
+        },
+      });
     },
 
     /** 신규 추가 */
@@ -179,9 +197,45 @@ export const PgStdPartnerType = () => {
       onSearch,
     },
     inputProps: null,
-
     popupGridRef: [newDataPopupGrid.gridRef, editDataPopupGrid.gridRef],
-    popupGridInfo: [newDataPopupGrid.gridInfo, editDataPopupGrid.gridInfo],
+    popupGridInfo: [
+      {
+        ...newDataPopupGrid.gridInfo,
+        onOk: (partnerTypeGridRef: GridRef) => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              PartnerTypeService.getInstance().createPartnerType,
+              partnerTypeGridRef,
+            )
+            .then(_ => {
+              message.success('저장되었습니다.');
+              setNewDataPopupGridVisible(false);
+              onSearch(searchInfo?.values);
+            })
+            .catch((error: unknown) => {
+              message.warn(error.toString());
+            });
+        },
+      },
+      {
+        ...editDataPopupGrid.gridInfo,
+        onOk: (partnerTypeGridRef: GridRef) => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              PartnerTypeService.getInstance().updatePartnerType,
+              partnerTypeGridRef,
+            )
+            .then(_ => {
+              message.success('수정되었습니다.');
+              setEditDataPopupGridVisible(false);
+              onSearch(searchInfo?.values);
+            })
+            .catch((error: unknown) => {
+              message.warn(error.toString());
+            });
+        },
+      },
+    ],
     popupVisible: [newDataPopupGridVisible, editDataPopupGridVisible],
     setPopupVisible: [setNewDataPopupGridVisible, setEditDataPopupGridVisible],
     popupInputProps: [
