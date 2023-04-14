@@ -1,20 +1,24 @@
+import { Modal, message } from 'antd';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
 import { getPopupForm, useGrid } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
   getData,
-  getModifiedRows,
   getPageName,
   isModified,
 } from '~/functions';
-import { Modal, message } from 'antd';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridRef } from '~/v2/core/ToastGrid';
+import { UnitConvertService } from '~/v2/service/UnitConvertService';
+import { ServiceUtil } from '~/v2/util/CallbackServices';
+import { DialogUtil } from '~/v2/util/DialogUtil';
 
 /** 단위 변환값 관리 */
 export const PgStdUnitConvert = () => {
@@ -608,23 +612,28 @@ export const PgStdUnitConvert = () => {
 
     /** 삭제 */
     delete: () => {
-      if (
-        getModifiedRows(detailGrid.gridRef, detailGrid.gridInfo.columns)
-          ?.deletedRows?.length === 0
-      ) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
+      DialogUtil.valueOf(modal).confirm({
+        title: MESSAGE.UNIT_CONVERT_DELETE,
+        message: MESSAGE.UNIT_CONVERT_DELETE_QUESTION,
+        onOk: () => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              UnitConvertService.getInstance().deleteUnitConvert,
+              detailGrid.gridRef,
+            )
+            .then(_ => {
+              message.success(MESSAGE.UNIT_CONVERT_DELETE_SUCCESS);
+              onSearchDetail(selectedHeaderRow?.unit_uuid, {});
+            })
+            .catch((error: unknown) => {
+              message.warn(error.toString());
+            });
+        },
+      });
     },
 
     /** 신규 추가 */
     create: null,
-    // create: () => {
-    //   newDataPopupInputInfo?.instance?.resetForm();
-    //   newDataPopupGrid?.setGridData([]);
-    //   setNewDataPopupGridVisible(true);
-    // },
 
     /** 상세 신규 추가 */
     createDetail: () => {
@@ -740,10 +749,41 @@ export const PgStdUnitConvert = () => {
       {
         ...addDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: addDataPopupInputInfo.values.unit_uuid },
+        onOk: (unitConvertGridRef: GridRef) => {
+          UnitConvertService.getInstance()
+            .createUnitConvert(
+              unitConvertGridRef.current.getInstance(),
+              detailInputInfo?.values.unit_uuid,
+            )
+            .then((_: unknown) => {
+              message.success(MESSAGE.UNIT_CONVERT_CREATE_SUCCESS);
+              setAddDataPopupGridVisible(false);
+              onSearchDetail(selectedHeaderRow?.unit_uuid, {});
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
       },
       {
         ...editDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: editDataPopupInputInfo.values.unit_uuid },
+        onOk: (unitConvertGridRef: GridRef) => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              UnitConvertService.getInstance().updateUnitConvert,
+              unitConvertGridRef,
+            )
+            .then((_: unknown) => {
+              message.success(MESSAGE.UNIT_CONVERT_UPDATE_SUCCESS);
+              setEditDataPopupGridVisible(false);
+              onSearchDetail(selectedHeaderRow?.unit_uuid, {});
+            })
+            .catch((error: unknown) => {
+              message.error(error.toString());
+            });
+        },
       },
     ],
     searchProps: [
