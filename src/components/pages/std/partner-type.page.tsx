@@ -7,7 +7,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { ENUM_WIDTH } from '~/enums';
 import { dataGridEvents, getData, getPageName } from '~/functions';
 import { GridRef } from '~/v2/core/ToastGrid';
-import { PartnerTypeService } from '~/v2/service/PatnerTypeService';
+import { PartnerTypeService } from '~/v2/service/PartnerTypeService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
 

@@ -49,7 +49,7 @@ export class PartnerTypeService {
 
     const partnerTypeDtoList = partnerTypes.map(PartnerTypeCreateRequestDTO.of);
 
-    return RepositoryModule.PartnerType().create(partnerTypeDtoList);
+    return RepositoryModule.partnerType().create(partnerTypeDtoList);
   }
 
   public updatePartnerType(gridInstance: GridInstance) {
@@ -62,7 +62,7 @@ export class PartnerTypeService {
 
     const partnerTypeDtoList = updatedRows.map(PartnerTypeUpdateRequestDTO.of);
 
-    return RepositoryModule.PartnerType().update(partnerTypeDtoList);
+    return RepositoryModule.partnerType().update(partnerTypeDtoList);
   }
 
   public deletePartnerType(gridInstance: GridInstance) {
@@ -75,6 +75,6 @@ export class PartnerTypeService {
 
     const partnerTypeDtoList = updatedRows.map(PartnerTypeDeleteRequestDTO.of);
 
-    return RepositoryModule.PartnerType().delete(partnerTypeDtoList);
+    return RepositoryModule.partnerType().delete(partnerTypeDtoList);
   }
 }

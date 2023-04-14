@@ -6,7 +6,7 @@ export class RepositoryModule {
 
   private constructor() {}
 
-  public static PartnerType() {
+  public static partnerType() {
     if (isNil(this.partnerTypeRepository)) {
       this.partnerTypeRepository = new PartnerTypeRepository();
     }
