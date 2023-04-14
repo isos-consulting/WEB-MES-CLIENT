@@ -5,16 +5,7 @@ import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
-import {
-  dataGridEvents,
-  getData,
-  getModifiedRows,
-  getPageName,
-} from '~/functions';
-import {
-  PartnerTypeGetResponseEntity,
-  PartnerTypeUpdateRequestDTO,
-} from '~/v2/api/model/PartnerTypeDTO';
+import { dataGridEvents, getData, getPageName } from '~/functions';
 import { GridRef } from '~/v2/core/ToastGrid';
 import { PartnerTypeService } from '~/v2/service/PatnerTypeService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
