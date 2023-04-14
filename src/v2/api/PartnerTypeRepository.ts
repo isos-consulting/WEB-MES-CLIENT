@@ -13,6 +13,7 @@ export class PartnerTypeRepository {
    * @returns
    * @description This method is used to create a partner type
    * @memberof PartnerTypeRepository
+   * @throws MesServerException
    * @example
    * new PartnerTypeRepository().create(partnerTypeDTOList);
    *
@@ -24,6 +25,17 @@ export class PartnerTypeRepository {
     );
   }
 
+  /**
+   *
+   * @param partnerTypeDTOList
+   * @returns
+   * @description This method is used to update a partner type
+   * @memberof PartnerTypeRepository
+   * @throws MesServerException
+   * @example
+   * new PartnerTypeRepository().update(partnerTypeDTOList);
+   *
+   */
   public update(partnerTypeDTOList: PartnerTypeUpdateRequestDTO[]) {
     return mesRequest.put<unknown, PartnerTypeResponseEntity[]>(
       'std/partner-types',
@@ -31,6 +43,17 @@ export class PartnerTypeRepository {
     );
   }
 
+  /**
+   *
+   * @param partnerTypeDTOList
+   * @returns
+   * @description This method is used to delete a partner type
+   * @memberof PartnerTypeRepository
+   * @throws MesServerException
+   * @example
+   * new PartnerTypeRepository().delete(partnerTypeDTOList);
+   *
+   */
   public delete(partnerTypeDTOList: PartnerTypeDeleteRequestDTO[]) {
     return mesRequest.delete<unknown, PartnerTypeResponseEntity[]>(
       'std/partner-types',
