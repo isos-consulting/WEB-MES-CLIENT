@@ -5,6 +5,7 @@ export type GridInstance = {
     deletedRows: E[];
     updatedRows: E[];
   };
+  getCheckedRows: <E>() => E[];
 };
 
 export type GridRef = {
