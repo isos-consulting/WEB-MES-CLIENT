@@ -8,7 +8,7 @@ import {
   PartnerTypeUpdateRequestDTO,
 } from '../api/model/PartnerTypeDTO';
 import { GridInstance } from '../core/ToastGrid';
-import { ZeroHandlingDataException } from '../core/ZeroCreateDataException';
+import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
 import { MESSAGE } from '../core/Message';
 
 export class PartnerTypeService {
@@ -47,7 +47,7 @@ export class PartnerTypeService {
 
     if (isEmpty(partnerTypes)) {
       throw new ZeroHandlingDataException(
-        MESSAGE.PARTNERTYPE_CREATABLE_NOT_FOUND,
+        MESSAGE.PARTNER_TYPE_CREATABLE_NOT_FOUND,
       );
     }
 
@@ -73,7 +73,7 @@ export class PartnerTypeService {
 
     if (isEmpty(updatedRows)) {
       throw new ZeroHandlingDataException(
-        MESSAGE.PARTNERTYPE_UPDATABLE_NOT_FOUND,
+        MESSAGE.PARTNER_TYPE_UPDATABLE_NOT_FOUND,
       );
     }
 
@@ -94,16 +94,18 @@ export class PartnerTypeService {
    *
    */
   public deletePartnerType(gridInstance: GridInstance) {
-    const { updatedRows } =
-      gridInstance.getModifiedRows<PartnerTypeGetResponseEntity>();
+    const deletedPartnerTypes =
+      gridInstance.getCheckedRows<PartnerTypeGetResponseEntity>();
 
-    if (isEmpty(updatedRows)) {
+    if (isEmpty(deletedPartnerTypes)) {
       throw new ZeroHandlingDataException(
-        MESSAGE.PARTNERTYPE_DELETABLE_NOT_FOUND,
+        MESSAGE.PARTNER_TYPE_DELETABLE_NOT_FOUND,
       );
     }
 
-    const partnerTypeDtoList = updatedRows.map(PartnerTypeDeleteRequestDTO.of);
+    const partnerTypeDtoList = deletedPartnerTypes.map(
+      PartnerTypeDeleteRequestDTO.of,
+    );
 
     return RepositoryModule.partnerType().delete(partnerTypeDtoList);
   }
