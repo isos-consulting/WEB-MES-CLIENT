@@ -1,29 +1,33 @@
 import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { FormikProps, FormikValues } from 'formik';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { IGridColumn, useGrid, getPopupForm } from '~/components/UI';
+import { IGridColumn, getPopupForm, useGrid } from '~/components/UI';
+import {
+  IInputGroupboxItem,
+  useInputGroup,
+} from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps, {
+  TExtraGridPopups,
+} from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   cloneObject,
   dataGridEvents,
   getData,
-  getModifiedRows,
   getPageName,
   isModified,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps, {
-  TExtraGridPopups,
-} from '~/components/templates/grid-double/grid-double.template.type';
-import {
-  IInputGroupboxItem,
-  useInputGroup,
-} from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { FormikProps, FormikValues } from 'formik';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridRef } from '~/v2/core/ToastGrid';
+import { RoutingService } from '~/v2/service/RoutingService';
+import { ServiceUtil } from '~/v2/util/CallbackServices';
+import { DialogUtil } from '~/v2/util/DialogUtil';
 
 const WORKING_INPUT_ITEMS: IInputGroupboxItem[] = [
   {
@@ -998,14 +1002,24 @@ export const PgStdRouting = () => {
 
     /** 삭제 */
     delete: () => {
-      if (
-        getModifiedRows(detailGrid.gridRef, detailGrid.gridInfo.columns)
-          ?.deletedRows?.length === 0
-      ) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
+      DialogUtil.valueOf(modal).confirm({
+        title: MESSAGE.ROUTING_DELETE,
+        message: MESSAGE.ROUTING_DELETE_QUESTION,
+        onOk: () => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              RoutingService.getInstance().deleteRouting,
+              detailGrid.gridRef,
+            )
+            .then(_ => {
+              message.success(MESSAGE.ROUTING_DELETE_SUCCESS);
+              onSearchDetail(detailInputInfo.values.prod_uuid);
+            })
+            .catch((error: unknown) => {
+              message.warn(error.toString());
+            });
+        },
+      });
     },
 
     /** 신규 추가 */
@@ -1109,8 +1123,42 @@ export const PgStdRouting = () => {
         saveParams: {
           prod_uuid: addDataPopupInputInfo?.values?.prod_uuid,
         },
+        onOk: (routingGridRef: GridRef) => {
+          RoutingService.getInstance()
+            .createRouting(
+              routingGridRef.current.getInstance(),
+              detailInputInfo?.values.prod_uuid,
+            )
+            .then((_: unknown) => {
+              message.success(MESSAGE.ROUTING_CREATE_SUCCESS);
+              onSearchDetail(detailInputInfo.values.prod_uuid);
+              setAddDataPopupGridVisible(false);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
       },
-      editDataPopupGrid.gridInfo,
+      {
+        ...editDataPopupGrid.gridInfo,
+        onOk: (routingGridRef: GridRef) => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              RoutingService.getInstance().updateRouting,
+              routingGridRef,
+            )
+            .then((_: unknown) => {
+              message.success(MESSAGE.ROUTING_UPDATE_SUCCESS);
+              onSearchDetail(detailInputInfo.values.prod_uuid);
+              setEditDataPopupGridVisible(false);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
+      },
     ],
     searchProps: [
       {

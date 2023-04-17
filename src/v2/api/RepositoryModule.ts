@@ -1,10 +1,12 @@
 import { isNil } from '~/helper/common';
 import { PartnerTypeRepository } from './PartnerTypeRepository';
 import { UnitConvertRepository } from './UnitConvertRepository';
+import { RoutingRepository } from './RoutingRepository';
 
 export class RepositoryModule {
   private static partnerTypeRepository: PartnerTypeRepository;
   private static unitConvertRepository: UnitConvertRepository;
+  private static routingRepository: RoutingRepository;
 
   private constructor() {}
 
@@ -36,5 +38,21 @@ export class RepositoryModule {
       this.unitConvertRepository = new UnitConvertRepository();
     }
     return this.unitConvertRepository;
+  }
+
+  /**
+   *
+   * @returns {RoutingRepository}
+   * @memberof RepositoryModule
+   * @example
+   * RepositoryModule.routing();
+   *
+   */
+  public static routing() {
+    if (isNil(this.routingRepository)) {
+      this.routingRepository = new RoutingRepository();
+    }
+
+    return this.routingRepository;
   }
 }
