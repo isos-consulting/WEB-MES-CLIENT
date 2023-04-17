@@ -2,8 +2,9 @@ import { isEmpty } from 'lodash';
 import { isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
 import { RequiredFieldException } from '~/v2/core/RequiredFieldException';
+import { MESEntity } from './MESEntity';
 
-export type RoutingGetResponseEntity = {
+export interface RoutingGetResponseEntity extends MESEntity {
   auto_work_fg: boolean;
   created_at: string;
   created_nm: string;
@@ -37,9 +38,9 @@ export type RoutingGetResponseEntity = {
   updated_at: string;
   updated_nm: string;
   uph: number;
-};
+}
 
-export type RoutingCreateRequestEntity = {
+export interface RoutingCreateRequestEntity extends MESEntity {
   prod_uuid: string;
   proc_uuid: string;
   proc_no: number;
@@ -47,9 +48,9 @@ export type RoutingCreateRequestEntity = {
   cycle_time: number;
   prd_signal_cnt: number;
   uph: number;
-};
+}
 
-export type RoutingCreateResponseEntity = {
+export interface RoutingCreateResponseEntity extends MESEntity {
   auto_work_fg: boolean;
   created_at: string;
   created_uid: number;
@@ -63,9 +64,9 @@ export type RoutingCreateResponseEntity = {
   updated_uid: number;
   uph: number;
   uuid: string;
-};
+}
 
-export type RoutingResponseEntity = {
+export interface RoutingResponseEntity extends MESEntity {
   auto_work_fg: boolean;
   created_at: string;
   cycle_time: number;
@@ -77,7 +78,7 @@ export type RoutingResponseEntity = {
   updated_at: string;
   uph: number;
   uuid: string;
-};
+}
 
 export class RoutingCreateRequestDTO {
   private readonly prod_uuid: string;

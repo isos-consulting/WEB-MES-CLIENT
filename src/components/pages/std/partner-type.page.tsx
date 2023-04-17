@@ -7,7 +7,7 @@ import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.t
 import { ENUM_WIDTH } from '~/enums';
 import { dataGridEvents, getData, getPageName } from '~/functions';
 import { GridRef } from '~/v2/core/ToastGrid';
-import { PartnerTypeService } from '~/v2/service/PartnerTypeService';
+import { PartnerTypeServiceImpl } from '~/v2/service/PartnerTypeService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
 
@@ -141,7 +141,7 @@ export const PgStdPartnerType = () => {
         onOk: () => {
           ServiceUtil.getInstance()
             .callMethod(
-              PartnerTypeService.getInstance().deletePartnerType,
+              PartnerTypeServiceImpl.getInstance().delete,
               grid.gridRef,
             )
             .then(_ => {
@@ -195,7 +195,7 @@ export const PgStdPartnerType = () => {
         onOk: (partnerTypeGridRef: GridRef) => {
           ServiceUtil.getInstance()
             .callMethod(
-              PartnerTypeService.getInstance().createPartnerType,
+              PartnerTypeServiceImpl.getInstance().create,
               partnerTypeGridRef,
             )
             .then(_ => {
@@ -213,7 +213,7 @@ export const PgStdPartnerType = () => {
         onOk: (partnerTypeGridRef: GridRef) => {
           ServiceUtil.getInstance()
             .callMethod(
-              PartnerTypeService.getInstance().updatePartnerType,
+              PartnerTypeServiceImpl.getInstance().update,
               partnerTypeGridRef,
             )
             .then(_ => {

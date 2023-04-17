@@ -10,22 +10,23 @@ import {
 import { GridInstance } from '../core/ToastGrid';
 import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
 import { MESSAGE } from '../core/Message';
+import { MESService } from './MesService';
 
-export class PartnerTypeService {
-  private static instance: PartnerTypeService;
+export class PartnerTypeServiceImpl implements MESService {
+  private static instance: PartnerTypeServiceImpl;
   private constructor() {}
 
   /**
-   * @description This method is used to get a instance of PartnerTypeService
-   * @returns {PartnerTypeService}
-   * @memberof PartnerTypeService
+   * @description This method is used to get a instance of PartnerTypeServiceImpl
+   * @returns {PartnerTypeServiceImpl}
+   * @memberof PartnerTypeServiceImpl
    * @example
-   * PartnerTypeService.getInstance();
+   * PartnerTypeServiceImpl.getInstance();
    *
    */
   public static getInstance() {
     if (isNil(this.instance)) {
-      this.instance = new PartnerTypeService();
+      this.instance = new PartnerTypeServiceImpl();
     }
 
     return this.instance;
@@ -36,13 +37,13 @@ export class PartnerTypeService {
    * @param gridInstance
    * @returns
    * @description This method is used to create a partner type
-   * @memberof PartnerTypeService
+   * @memberof PartnerTypeServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * PartnerTypeService.getInstance().createPartner(gridInstance);
+   * PartnerTypeServiceImpl.getInstance().create(gridInstance);
    *
    */
-  public createPartnerType(gridInstance: GridInstance) {
+  public create(gridInstance: GridInstance) {
     const partnerTypes = gridInstance.getData<PartnerTypeCreateRequestEntity>();
 
     if (isEmpty(partnerTypes)) {
@@ -61,13 +62,13 @@ export class PartnerTypeService {
    * @param gridInstance
    * @returns
    * @description This method is used to update a partner type
-   * @memberof PartnerTypeService
+   * @memberof PartnerTypeServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * PartnerTypeService.getInstance().updatePartner(gridInstance);
+   * PartnerTypeServiceImpl.getInstance().update(gridInstance);
    *
    */
-  public updatePartnerType(gridInstance: GridInstance) {
+  public update(gridInstance: GridInstance) {
     const { updatedRows } =
       gridInstance.getModifiedRows<PartnerTypeGetResponseEntity>();
 
@@ -87,13 +88,13 @@ export class PartnerTypeService {
    * @param gridInstance
    * @returns
    * @description This method is used to delete a partner type
-   * @memberof PartnerTypeService
+   * @memberof PartnerTypeServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * PartnerTypeService.getInstance().deletePartner(gridInstance);
+   * PartnerTypeServiceImpl.getInstance().delete(gridInstance);
    *
    */
-  public deletePartnerType(gridInstance: GridInstance) {
+  public delete(gridInstance: GridInstance) {
     const deletedPartnerTypes =
       gridInstance.getCheckedRows<PartnerTypeGetResponseEntity>();
 

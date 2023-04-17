@@ -1,8 +1,9 @@
 import { isEmpty, isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
 import { RequiredFieldException } from '~/v2/core/RequiredFieldException';
+import { MESEntity } from './MESEntity';
 
-export type UnitConvertGetResponseEntity = {
+export interface UnitConvertGetResponseEntity extends MESEntity {
   readonly convert_value: string;
   readonly unit_convert_uuid: string;
   readonly from_unit_uuid: string;
@@ -15,9 +16,9 @@ export type UnitConvertGetResponseEntity = {
   readonly create_nm: string;
   readonly updated_at: number;
   readonly updated_nm: string;
-};
+}
 
-export type UnitConvertCreateRequestEntity = {
+export interface UnitConvertCreateRequestEntity extends MESEntity {
   readonly unit_uuid: string;
   readonly to_unit_uuid: string;
   readonly from_value: number;
@@ -25,9 +26,9 @@ export type UnitConvertCreateRequestEntity = {
   readonly convert_value: number;
   readonly prod_uuid: string;
   readonly remark: string;
-};
+}
 
-export type UnitConvertCreateResponseEntity = {
+export interface UnitConvertCreateResponseEntity extends MESEntity {
   convert_value: string;
   created_at: string;
   created_uid: number;
@@ -41,7 +42,7 @@ export type UnitConvertCreateResponseEntity = {
   updated_at: string;
   updated_uid: number;
   uuid: string;
-};
+}
 
 export class UnitConvertCreateRequestDTO {
   private readonly from_unit_uuid: string;

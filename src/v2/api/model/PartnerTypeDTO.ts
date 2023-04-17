@@ -1,7 +1,8 @@
 import { isNil } from '~/helper/common';
 import { RequiredFieldException } from '~/v2/core/RequiredFieldException';
+import { MESEntity } from './MESEntity';
 
-export type PartnerTypeGetResponseEntity = {
+export interface PartnerTypeGetResponseEntity extends MESEntity {
   readonly partner_type_uuid: string;
   readonly partner_type_cd: string;
   readonly partner_type_nm: string;
@@ -9,20 +10,20 @@ export type PartnerTypeGetResponseEntity = {
   readonly created_nm: string;
   readonly updated_at: string;
   readonly updated_nm: string;
-};
+}
 
-export type PartnerTypeCreateRequestEntity = {
+export interface PartnerTypeCreateRequestEntity extends MESEntity {
   readonly partner_type_cd: string;
   readonly partner_type_nm: string;
-};
+}
 
-export type PartnerTypeResponseEntity = {
+export interface PartnerTypeResponseEntity extends MESEntity {
   readonly uuid: string;
   readonly partner_type_cd: string;
   readonly partner_type_nm: string;
   readonly created_at: string;
   readonly updated_at: string;
-};
+}
 
 export class PartnerTypeCreateRequestDTO {
   private readonly partner_type_cd: string;

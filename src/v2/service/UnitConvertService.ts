@@ -9,24 +9,26 @@ import {
   UnitConvertUpdateRequestDTO,
 } from '../api/model/UnitConvertDTO';
 import { MESSAGE } from '../core/Message';
+import { NotImplementedException } from '../core/NotImplementedException';
 import { GridInstance } from '../core/ToastGrid';
 import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
+import { MESService, MESWithUuidService } from './MesService';
 
-export class UnitConvertService {
-  private static instance: UnitConvertService;
+export class UnitConvertServiceImpl implements MESService, MESWithUuidService {
+  private static instance: UnitConvertServiceImpl;
   private constructor() {}
 
   /**
    * @description This method is used to get a instance of UnitConvertService
-   * @returns {UnitConvertService}
-   * @memberof UnitConvertService
+   * @returns {UnitConvertServiceImpl}
+   * @memberof UnitConvertServiceImpl
    * @example
-   * UnitConvertService.getInstance();
+   * UnitConvertServiceImpl.getInstance();
    *
    */
   public static getInstance() {
     if (isNil(this.instance)) {
-      this.instance = new UnitConvertService();
+      this.instance = new UnitConvertServiceImpl();
     }
 
     return this.instance;
@@ -35,16 +37,31 @@ export class UnitConvertService {
   /**
    *
    * @param gridInstance
+   * @returns
+   * @description This method is not implemented
+   * @memberof UnitConvertServiceImpl
+   * @throws NotImplementedException
+   *
+   */
+  public create(gridInstance: GridInstance) {
+    return Promise.reject(
+      new NotImplementedException('UnitConvertServiceImpl.create'),
+    );
+  }
+
+  /**
+   *
+   * @param gridInstance
    * @param unitUuid
    * @returns
    * @description This method is used to create a unit convert
-   * @memberof UnitConvertService
+   * @memberof UnitConvertServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * UnitConvertService.getInstance().createUnitConvert(gridInstance, unitUuid);
+   * UnitConvertServiceImpl.getInstance().createWithUuid(gridInstance, unitUuid);
    *
    */
-  public createUnitConvert(gridInstance: GridInstance, unitUuid: string) {
+  public createWithUuid(gridInstance: GridInstance, unitUuid: string) {
     const unitConverts = gridInstance.getData<UnitConvertCreateRequestEntity>();
 
     if (isEmpty(unitConverts)) {
@@ -72,13 +89,13 @@ export class UnitConvertService {
    * @param gridInstance
    * @returns
    * @description This method is used to update a unit convert
-   * @memberof UnitConvertService
+   * @memberof UnitConvertServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * UnitConvertService.getInstance().updateUnitConvert(gridInstance);
+   * UnitConvertServiceImpl.getInstance().update(gridInstance);
    *
    */
-  public updateUnitConvert(gridInstance: GridInstance) {
+  public update(gridInstance: GridInstance) {
     const { updatedRows } =
       gridInstance.getModifiedRows<UnitConvertGetResponseEntity>();
 
@@ -104,13 +121,13 @@ export class UnitConvertService {
    * @param gridInstance
    * @returns
    * @description This method is used to delete a unit convert
-   * @memberof UnitConvertService
+   * @memberof UnitConvertServiceImpl
    * @throws ZeroHandlingDataException
    * @example
-   * UnitConvertService.getInstance().deleteUnitConvert(gridInstance);
+   * UnitConvertServiceImpl.getInstance().delete(gridInstance);
    *
    */
-  public deleteUnitConvert(gridInstance: GridInstance) {
+  public delete(gridInstance: GridInstance) {
     const deletedUnitConverts =
       gridInstance.getCheckedRows<UnitConvertGetResponseEntity>();
 

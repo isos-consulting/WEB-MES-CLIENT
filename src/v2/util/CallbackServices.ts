@@ -7,7 +7,7 @@ export const ServiceUtil = class {
    * @description This method is used to call a method from a service
    * @param {Function} methodRef
    * @param {GridRef} gridRef
-   * @returns {Promise<boolean>}
+   * @returns {Promise<ServiceUtil>}
    * @memberof ServiceUtil
    * @example
    * const serviceUtil = ServiceUtil.getInstance();
@@ -23,15 +23,15 @@ export const ServiceUtil = class {
    * @description This method is used to call a method from a service
    * @param {Function} methodRef
    * @param {GridRef} gridRef
-   * @returns {Promise<void>}
+   * @returns {Promise<R>}
    * @memberof ServiceUtil
    * @example
    * const serviceUtil = ServiceUtil.getInstance();
-   * serviceUtil.callMethod(PartnerTypeService.getInstance().createPartner, gridRef);
+   * serviceUtil.callMethod(PartnerTypeServiceImpl.getInstance().create, gridRef);
    *
    */
-  public async callMethod<E>(
-    methodRef: (gridInstance: GridInstance) => Promise<E>,
+  public async callMethod<R>(
+    methodRef: (gridInstance: GridInstance) => Promise<R>,
     gridRef: GridRef,
   ) {
     try {

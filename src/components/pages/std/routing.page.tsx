@@ -25,7 +25,7 @@ import {
 import { isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
 import { GridRef } from '~/v2/core/ToastGrid';
-import { RoutingService } from '~/v2/service/RoutingService';
+import { RoutingServiceImpl } from '~/v2/service/RoutingService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
 
@@ -1008,7 +1008,7 @@ export const PgStdRouting = () => {
         onOk: () => {
           ServiceUtil.getInstance()
             .callMethod(
-              RoutingService.getInstance().deleteRouting,
+              RoutingServiceImpl.getInstance().delete,
               detailGrid.gridRef,
             )
             .then(_ => {
@@ -1124,8 +1124,8 @@ export const PgStdRouting = () => {
           prod_uuid: addDataPopupInputInfo?.values?.prod_uuid,
         },
         onOk: (routingGridRef: GridRef) => {
-          RoutingService.getInstance()
-            .createRouting(
+          RoutingServiceImpl.getInstance()
+            .createWithUuid(
               routingGridRef.current.getInstance(),
               detailInputInfo?.values.prod_uuid,
             )
@@ -1144,10 +1144,7 @@ export const PgStdRouting = () => {
         ...editDataPopupGrid.gridInfo,
         onOk: (routingGridRef: GridRef) => {
           ServiceUtil.getInstance()
-            .callMethod(
-              RoutingService.getInstance().updateRouting,
-              routingGridRef,
-            )
+            .callMethod(RoutingServiceImpl.getInstance().update, routingGridRef)
             .then((_: unknown) => {
               message.success(MESSAGE.ROUTING_UPDATE_SUCCESS);
               onSearchDetail(detailInputInfo.values.prod_uuid);

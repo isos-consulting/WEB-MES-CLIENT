@@ -16,7 +16,7 @@ import {
 import { isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
 import { GridRef } from '~/v2/core/ToastGrid';
-import { UnitConvertService } from '~/v2/service/UnitConvertService';
+import { UnitConvertServiceImpl } from '~/v2/service/UnitConvertService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
 
@@ -618,7 +618,7 @@ export const PgStdUnitConvert = () => {
         onOk: () => {
           ServiceUtil.getInstance()
             .callMethod(
-              UnitConvertService.getInstance().deleteUnitConvert,
+              UnitConvertServiceImpl.getInstance().delete,
               detailGrid.gridRef,
             )
             .then(_ => {
@@ -750,8 +750,8 @@ export const PgStdUnitConvert = () => {
         ...addDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: addDataPopupInputInfo.values.unit_uuid },
         onOk: (unitConvertGridRef: GridRef) => {
-          UnitConvertService.getInstance()
-            .createUnitConvert(
+          UnitConvertServiceImpl.getInstance()
+            .createWithUuid(
               unitConvertGridRef.current.getInstance(),
               detailInputInfo?.values.unit_uuid,
             )
@@ -772,7 +772,7 @@ export const PgStdUnitConvert = () => {
         onOk: (unitConvertGridRef: GridRef) => {
           ServiceUtil.getInstance()
             .callMethod(
-              UnitConvertService.getInstance().updateUnitConvert,
+              UnitConvertServiceImpl.getInstance().update,
               unitConvertGridRef,
             )
             .then((_: unknown) => {

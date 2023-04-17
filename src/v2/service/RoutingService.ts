@@ -8,31 +8,59 @@ import {
   RoutingUpdateRequestDTO,
 } from '../api/model/RoutingDTO';
 import { MESSAGE } from '../core/Message';
+import { NotImplementedException } from '../core/NotImplementedException';
 import { GridInstance } from '../core/ToastGrid';
 import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
+import { MESWithUuidService, MESService } from './MesService';
 
-export class RoutingService {
-  private static instance: RoutingService;
+export class RoutingServiceImpl implements MESService, MESWithUuidService {
+  private static instance: RoutingServiceImpl;
   private constructor() {}
 
   /**
    *
-   * @description This method is used to get a instance of RoutingService
-   * @returns {RoutingService}
-   * @memberof RoutingService
+   * @description This method is used to get a instance of RoutingServiceImpl
+   * @returns {RoutingServiceImpl}
+   * @memberof RoutingServiceImpl
    * @example
-   * RoutingService.getInstance();
+   * RoutingServiceImpl.getInstance();
    *
    */
   public static getInstance() {
     if (isNil(this.instance)) {
-      this.instance = new RoutingService();
+      this.instance = new RoutingServiceImpl();
     }
 
     return this.instance;
   }
 
-  public createRouting(gridInstance: GridInstance, prodUuid: string) {
+  /**
+   *
+   * @param gridInstance
+   * @returns
+   * @description This method is not implemented
+   * @memberof RoutingServiceImpl
+   * @throws NotImplementedException
+   *
+   */
+  public create(gridInstance: GridInstance) {
+    return Promise.reject(
+      new NotImplementedException('RoutingServiceImpl.create'),
+    );
+  }
+
+  /**
+   *
+   * @param gridInstance
+   * @param prodUuid
+   * @returns
+   * @description This method is used to create a routing
+   * @memberof RoutingServiceImpl
+   * @throws ZeroHandlingDataException
+   * @example
+   * RoutingServiceImpl.getInstance().createWithUuid(gridInstance, prodUuid);
+   */
+  public createWithUuid(gridInstance: GridInstance, prodUuid: string) {
     const routings = gridInstance.getData<RoutingCreateRequestEntity>();
 
     if (isEmpty(routings)) {
@@ -55,7 +83,18 @@ export class RoutingService {
     }
   }
 
-  public updateRouting(gridInstance: GridInstance) {
+  /**
+   *
+   * @param gridInstance
+   * @returns
+   * @description This method is used to update a routing
+   * @memberof RoutingServiceImpl
+   * @throws ZeroHandlingDataException
+   * @example
+   * RoutingServiceImpl.getInstance().update(gridInstance);
+   *
+   */
+  public update(gridInstance: GridInstance) {
     const { updatedRows } =
       gridInstance.getModifiedRows<RoutingGetResponseEntity>();
 
@@ -74,7 +113,17 @@ export class RoutingService {
     }
   }
 
-  public deleteRouting(gridInstance: GridInstance) {
+  /**
+   * @description This method is used to delete a routing
+   * @param gridInstance
+   * @returns
+   * @memberof RoutingServiceImpl
+   * @throws ZeroHandlingDataException
+   * @example
+   * RoutingServiceImpl.getInstance().delete(gridInstance);
+   *
+   */
+  public delete(gridInstance: GridInstance) {
     const deletedRoutings =
       gridInstance.getCheckedRows<RoutingGetResponseEntity>();
 
