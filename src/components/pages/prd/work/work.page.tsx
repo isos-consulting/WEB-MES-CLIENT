@@ -1,62 +1,63 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import dayjs from 'dayjs';
-import React, {
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState,
-  useMemo,
-} from 'react';
-import { TGridMode, useSearchbox } from '~/components/UI';
-import {
-  executeData,
-  getData,
-  getPageName,
-  getPermissions,
-  getToday,
-  saveGridData,
-} from '~/functions';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import { INSP } from './work.page.insp';
-import { INPUT } from './work.page.input';
-import { WORKER } from './work.page.worker';
-import { REJECT } from './work.page.reject';
-import { DOWNTIME } from './work.page.downtime';
+import { cloneDeep } from 'lodash';
+import React, {
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import TuiGrid from 'tui-grid';
+import { TuiGridEvent } from 'tui-grid/types/event';
+import { TGridMode, useSearchbox } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import { URL_PATH_PRD } from '~/enums';
-import { cloneDeep, isEmpty, pick } from 'lodash';
+import {
+  executeData,
+  getData,
+  getPageName,
+  getPermissions,
+  getToday,
+} from '~/functions';
+import { isEmpty, isNil } from '~/helper/common';
+import { MESSAGE } from '~/v2/core/Message';
+import { ZeroHandlingDataException } from '~/v2/core/ZeroHandlingDataException';
+import { ProductionWorkServiceImpl } from '~/v2/service/ProductionWorkService';
 import { workRoutingStore } from './work-components';
-import EXPRESSSIONS from '~/constants/expressions';
-import { WORKERREADONLY } from './work.page.worker.readonly';
-import { REJECTREADONLY } from './work.page.reject.readonly';
-import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
+import { WorkPerformanceContent } from './work-performance/components/Content';
+import { WorkPerformanceSelectableHeader } from './work-performance/components/Header';
+import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
+import { CascadingSelectHeaderMessageBox } from './work-performance/components/MessageBox';
+import {
+  ProdOrderModalInWorkPerformancePage,
+  WorkRoutingHistoryModalInWorkPerformancePage,
+} from './work-performance/components/Modal';
 import {
   WORK_PERFORMANCE_FIXTURE,
   WORK_PERFORMANCE_TABS,
 } from './work-performance/fixture';
+import { setWorkPerformanceState } from './work-performance/model-controller';
 import {
   showWorkPerformanceErrorMessage,
   toggleWorkCompleteButton,
   toggleWorkStartButton,
 } from './work-performance/view-controller';
-import { setWorkPerformanceState } from './work-performance/model-controller';
-import { WorkPerformanceSelectableHeader } from './work-performance/components/Header';
-import { WorkPerformanceHeaderGrid } from './work-performance/components/HeaderGrid';
-import { ColumnStore } from '~/constants/columns';
-import { CascadingSelectHeaderMessageBox } from './work-performance/components/MessageBox';
-import { WorkPerformanceContent } from './work-performance/components/Content';
-import {
-  ProdOrderModalInWorkPerformancePage,
-  WorkRoutingHistoryModalInWorkPerformancePage,
-} from './work-performance/components/Modal';
-import { TuiGridEvent } from 'tui-grid/types/event';
-import TuiGrid from 'tui-grid';
-import { isNil } from '~/helper/common';
+import { DOWNTIME } from './work.page.downtime';
+import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
+import { INPUT } from './work.page.input';
+import { INSP } from './work.page.insp';
+import { REJECT } from './work.page.reject';
+import { REJECTREADONLY } from './work.page.reject.readonly';
+import { WORKER } from './work.page.worker';
+import { WORKERREADONLY } from './work.page.worker.readonly';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -130,6 +131,7 @@ export const PgPrdWork = () => {
   const showWorkRoutingHistory = () => {
     setWorkRoutingHistoryPopupVisible(true);
   };
+
   const hideWorkRoutingHistory = () => {
     setWorkRoutingHistoryPopupVisible(false);
   };
@@ -1082,10 +1084,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
 
   const searchParams = searchInfo.values;
 
-  const WORK_START_SAVE_URI_PATH = '/prd/works';
-  const COMPLETE_SAVE_URI_PATH = '/prd/orders/complete';
-  //#endregion
-
   useLayoutEffect(() => {
     if (!visible) {
       setData([]);
@@ -1104,143 +1102,34 @@ const ProdOrderModal = ({ visible, onClose }) => {
     return column;
   });
 
-  const handleSaveWorkDatas = workStartDatas => {
+  const onSave = async () => {
     try {
-      if (workStartDatas.length > 0) {
-        let errMessage: string = '';
-        workStartDatas.map(workSaveData => {
-          const reg_date = workSaveData.reg_date;
-          const workings_uuid = workSaveData.workings_uuid;
-          const lot_no = workSaveData.lot_no;
-          const shift_uuid = workSaveData.shift_uuid;
-          const to_store_uuid = workSaveData.to_store_uuid;
-
-          if (!reg_date) {
-            errMessage = '실적 일시를 확인해주세요.';
-          } else if (!workings_uuid) {
-            errMessage = '작업장 정보를 확인해주세요.';
-          } else if (!lot_no) {
-            errMessage = 'LOT NO를 확인해주세요.';
-          } else if (!shift_uuid) {
-            errMessage = '작업교대 정보를 확인해주세요';
-          } else if (!to_store_uuid) {
-            errMessage = '입고창고 정보를 확인해주세요';
-          }
-
-          if (errMessage !== '') throw errMessage;
-        });
-
-        const workSaveData = {
-          createdRows: workStartDatas,
-          updatedRows: undefined,
-          deletedRows: undefined,
-        };
-
-        saveGridData(
-          workSaveData as any,
-          PROD_ORDER_COLUMNS,
-          WORK_START_SAVE_URI_PATH,
-        )
-          .then(() => {
-            gridRef?.current?.getInstance()?.clearModifiedData();
-          })
-          .catch(e => {
-            throw new Error('myException');
-          });
+      if (
+        isEmpty(gridRef.current.getInstance().getModifiedRows().updatedRows)
+      ) {
+        throw new ZeroHandlingDataException(
+          MESSAGE.PRODUCTION_WORK_CREATABLE_NOT_FOUND,
+        );
       }
-      return true;
-    } catch (e) {
-      message.warn(e);
-      return false;
+      await ProductionWorkServiceImpl.getInstance().startWork(
+        gridRef.current.getInstance(),
+      );
+
+      if (searchParams?.complete_fg === 'complete') {
+        await ProductionWorkServiceImpl.getInstance().update(
+          gridRef.current.getInstance(),
+        );
+      } else {
+        await ProductionWorkServiceImpl.getInstance().finishWork(
+          gridRef.current.getInstance(),
+        );
+      }
+
+      message.success(MESSAGE.PRODUCTION_WORK_CREATE_SUCCESS);
+      onClose();
+    } catch (error: unknown) {
+      message.error(error.toString());
     }
-  };
-
-  class LotNumberGenerator {
-    private day: string;
-
-    constructor(day) {
-      this.day = day;
-    }
-
-    static today() {
-      return new LotNumberGenerator(getToday());
-    }
-
-    static workday(workday: string) {
-      return new LotNumberGenerator(workday);
-    }
-
-    generate() {
-      return this.day.replace(EXPRESSSIONS.NON_DIGIT_GLOBAL, '');
-    }
-  }
-
-  const onSave = () => {
-    let updatedRows = gridRef?.current?.getInstance().getModifiedRows()
-      ?.updatedRows as any[];
-    const start_date = getToday();
-
-    // 작업시작 처리
-    const workStartList = updatedRows
-      ?.filter(el => el?._work_start === true)
-      ?.map(row => {
-        let newRow = {
-          ...row,
-          lot_no: LotNumberGenerator.workday(row.reg_date).generate(),
-        };
-        newRow = pick(newRow, [
-          'factory_uuid',
-          'reg_date',
-          'order_uuid',
-          'order_date',
-          'workings_uuid',
-          'prod_uuid',
-          'lot_no',
-          'shift_uuid',
-          'to_store_uuid',
-          'to_location_uuid',
-          'remark',
-        ]);
-        return newRow;
-      });
-    if (!handleSaveWorkDatas(workStartList)) return;
-
-    // 마감 처리
-    let completeChkList = [];
-    if (searchParams?.complete_fg === 'complete') {
-      completeChkList = updatedRows?.map(el => ({
-        ...el,
-        uuid: el?.order_uuid,
-        complete_date: start_date,
-      }));
-    } else {
-      completeChkList = updatedRows
-        ?.filter(el => el?.complete_fg === true)
-        ?.map(el => ({
-          ...el,
-          uuid: el?.order_uuid,
-          complete_date: start_date,
-        }));
-    }
-
-    const completeSaveData = {
-      createdRows: undefined,
-      updatedRows: completeChkList,
-      deletedRows: undefined,
-    };
-
-    if (completeChkList?.length > 0) {
-      saveGridData(
-        completeSaveData as any,
-        PROD_ORDER_COLUMNS,
-        COMPLETE_SAVE_URI_PATH,
-      )
-        .then(() => {
-          gridRef?.current?.getInstance()?.clearModifiedData();
-        })
-        .catch(e => console.log(e));
-    }
-    onClose();
   };
   //#endregion
 

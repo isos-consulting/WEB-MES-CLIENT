@@ -2,11 +2,13 @@ import { isNil } from '~/helper/common';
 import { PartnerTypeRepository } from './PartnerTypeRepository';
 import { UnitConvertRepository } from './UnitConvertRepository';
 import { RoutingRepository } from './RoutingRepository';
+import { ProductionWorkRepository } from './ProductionWorkRepository';
 
 export class RepositoryModule {
   private static partnerTypeRepository: PartnerTypeRepository;
   private static unitConvertRepository: UnitConvertRepository;
   private static routingRepository: RoutingRepository;
+  private static productionWorkRepository: ProductionWorkRepository;
 
   private constructor() {}
 
@@ -54,5 +56,13 @@ export class RepositoryModule {
     }
 
     return this.routingRepository;
+  }
+
+  public static productionWork() {
+    if (isNil(this.productionWorkRepository)) {
+      this.productionWorkRepository = new ProductionWorkRepository();
+    }
+
+    return this.productionWorkRepository;
   }
 }

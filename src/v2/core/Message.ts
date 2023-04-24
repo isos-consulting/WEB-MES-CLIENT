@@ -27,4 +27,10 @@ export enum MESSAGE {
   ROUTING_UUID_IS_REQUIRED = '라우팅 데이터를 입력해주세요.',
   ROUTING_DELETE = '라우팅 삭제',
   ROUTING_DELETE_QUESTION = '라우팅 정보를 삭제하시겠습니까?',
+  PRODUCTION_WORK_CREATABLE_NOT_FOUND = '등록할 생산 실적 정보가 없습니다.',
+  PRODUCTION_WORK_REG_DATE_IS_REQUIRED = '실적 일시 데이터를 입력해주세요.',
+  PRODUCTION_WORK_WORKINGS_UUID_IS_REQUIRED = '작업장 데이터를 입력해주세요.',
+  PRODUCTION_WORK_SHIFT_UUID_IS_REQUIRED = '작업 교대 데이터를 입력해주세요.',
+  PRODUCTION_WORK_TO_STORE_UUID_IS_REQUIRED = '입고 창고 데이터를 입력해주세요.',
+  PRODUCTION_WORK_CREATE_SUCCESS = '생산 실적 정보가 등록되었습니다.',
 }

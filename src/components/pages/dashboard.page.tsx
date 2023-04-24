@@ -138,7 +138,6 @@ const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
     },
   ];
 
-  console.log(pieData);
   return (
     /*  @ts-ignore */
     <Card headStyle={{}}>
