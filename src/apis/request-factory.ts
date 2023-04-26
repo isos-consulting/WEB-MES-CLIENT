@@ -23,6 +23,13 @@ export type MESResponseType<T> = AxiosResponse<{
   };
 }>;
 
+enum HTTPRequestMethod {
+  GET = 'get',
+  POST = 'post',
+  PUT = 'put',
+  DELETE = 'delete',
+}
+
 export const tenantRequest = axios.create({
   baseURL: import.meta.env.VITE_TENANT_SERVER_URL,
   params: { tenant_cd: import.meta.env.VITE_NAJS_LOCAL_WEB_URL },
@@ -63,14 +70,14 @@ mesRequest.interceptors.request.use(function (config) {
     } ${token.access_token}`;
 
     switch (config.method) {
-      case 'get':
+      case HTTPRequestMethod.GET:
         config.params = {
           ...config.params,
           factory_uuid: getUserFactoryUuid(),
         };
         break;
-      case 'post':
-      case 'put':
+      case HTTPRequestMethod.POST:
+      case HTTPRequestMethod.PUT:
         for (const [key, value] of Object.entries(config.data)) {
           if (Array.isArray(value)) {
             config.data[key] = value.map(item => ({
@@ -85,7 +92,7 @@ mesRequest.interceptors.request.use(function (config) {
           }
         }
         break;
-      case 'delete':
+      case HTTPRequestMethod.DELETE:
         break;
     }
   }
