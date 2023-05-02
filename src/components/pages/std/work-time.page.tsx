@@ -43,7 +43,7 @@ const addWorkTimeHeaderIncludedModalContext = ({
   workTimePostApiCallback,
 }: {
   addWorkTimeModalTitle: string;
-  workTypeHeaderFormRef: React.Ref<FormikProps<FormikValues>>;
+  workTypeHeaderFormRef: React.MutableRefObject<FormikProps<FormikValues>>;
   workTypeUuid: string;
   workTypeName: string;
   workTimePostApiCallback: () => void;
@@ -107,7 +107,7 @@ const editWorkTimeHeaderIncludedModalContext = ({
 }: {
   editWorkTimeModalTitle: string;
   editWOrkTimeDatas: unknown[];
-  workTypeHeaderFormRef: React.Ref<FormikProps<FormikValues>>;
+  workTypeHeaderFormRef: React.MutableRefObject<FormikProps<FormikValues>>;
   workTypeUuid: string;
   workTypeName: string;
   workTimePutApiCallback: () => void;
@@ -163,11 +163,15 @@ const editWorkTimeHeaderIncludedModalContext = ({
     },
   });
 
+type DeletedWorkTimeParameters = {
+  uuid: string;
+};
+
 const deleteWorkTimeConfirmDialogContext = ({
   deletedWorkTimeDatas,
   workTimeDeleteApiCallback,
 }: {
-  deletedWorkTimeDatas: unknown[];
+  deletedWorkTimeDatas: DeletedWorkTimeParameters[];
   workTimeDeleteApiCallback: () => void;
 }) =>
   confirm({
@@ -200,21 +204,19 @@ export const PgStdWorkTime = () => {
   const wotkTimeModalHeaderRef = useRef(null);
 
   const showDeleteWorkTimeConfirmDialog = () => {
-    const userDeletedWorkTimeDatas = workTimeDataGridRef.current
+    const { updatedRows } = workTimeDataGridRef.current
       .getInstance()
-      .getModifiedRows().updatedRows;
+      .getModifiedRows();
 
-    if (userDeletedWorkTimeDatas.length === 0) {
+    if (updatedRows.length === 0) {
       message.warn(SENTENCE.NO_DELETE_ITEMS);
       return;
     }
 
     deleteWorkTimeConfirmDialogContext({
-      deletedWorkTimeDatas: userDeletedWorkTimeDatas.map(
-        ({ worktime_uuid }) => ({
-          uuid: worktime_uuid,
-        }),
-      ),
+      deletedWorkTimeDatas: updatedRows.map<DeletedWorkTimeParameters>(row => ({
+        uuid: isNil(row.worktime_uuid) ? '' : (row.worktime_uuid as string),
+      })),
       workTimeDeleteApiCallback: () =>
         afterWorkTimeApiSuccess(procedureAtAfterWorkTimeDeleteApiCall),
     });
@@ -235,8 +237,8 @@ export const PgStdWorkTime = () => {
           ...workTimeDataGridRef.current.getInstance().getData(),
         ],
         workTypeHeaderFormRef: wotkTimeModalHeaderRef,
-        workTypeUuid: work_type_uuid,
-        workTypeName: work_type_nm,
+        workTypeUuid: work_type_uuid as string,
+        workTypeName: work_type_nm as string,
         workTimePutApiCallback: () =>
           afterWorkTimeApiSuccess(procedureAtAfterWorkTimeSaveApiCall),
       }),
@@ -255,8 +257,8 @@ export const PgStdWorkTime = () => {
       addWorkTimeHeaderIncludedModalContext({
         addWorkTimeModalTitle: title,
         workTypeHeaderFormRef: wotkTimeModalHeaderRef,
-        workTypeUuid: work_type_uuid,
-        workTypeName: work_type_nm,
+        workTypeUuid: work_type_uuid as string,
+        workTypeName: work_type_nm as string,
         workTimePostApiCallback: () =>
           afterWorkTimeApiSuccess(procedureAtAfterWorkTimeSaveApiCall),
       }),
@@ -349,6 +351,7 @@ export const PgStdWorkTime = () => {
         <div style={{ width: '30%', marginRight: '10px' }}>
           <Container>
             <Datagrid
+              gridId="workTypeDataGrid"
               ref={workTimeDataGridRef}
               data={[...workTypeDatas]}
               columns={[...WORK_TYPE_GRID_COLUMNS]}
@@ -377,6 +380,7 @@ export const PgStdWorkTime = () => {
               readOnly={true}
             />
             <Datagrid
+              gridId="workTimeDataGrid"
               ref={workTimeDataGridRef}
               data={[...workTimeDatas]}
               height={document.getElementById('main-body')?.clientHeight}
