@@ -78,6 +78,9 @@ export interface ICreateMonitorProps {
   content: string;
   footer: string;
   status: string;
+  status_cd: string;
+  equip: string;
+  value: string;
 }
 
 const MonitorCard: React.FC<ICreateMonitorProps> = props => {
