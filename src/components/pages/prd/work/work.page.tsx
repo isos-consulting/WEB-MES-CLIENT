@@ -51,13 +51,13 @@ import {
   toggleWorkStartButton,
 } from './work-performance/view-controller';
 import { DOWNTIME } from './work.page.downtime';
-import { DOWNTIMEREADONLY } from './work.page.downtime.readonly';
+import { useReadonlyDownTimeManagement } from './work.page.downtime.readonly';
 import { INPUT } from './work.page.input';
 import { INSP } from './work.page.insp';
 import { REJECT } from './work.page.reject';
-import { REJECTREADONLY } from './work.page.reject.readonly';
+import { useReadonlyRejectManagement } from './work.page.reject.readonly';
 import { WORKER } from './work.page.worker';
-import { WORKERREADONLY } from './work.page.worker.readonly';
+import { useReadonlyWorkInjectManagement } from './work.page.worker.readonly';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -80,26 +80,15 @@ interface ToggleButtonColumnEvent extends TuiGridEvent {
   value: boolean;
 }
 
-//#region 🔶🚫생산실적
 /** 생산실적 */
 export const PgPrdWork = () => {
-  /** 페이지 제목 */
   const title = getPageName();
-
-  /** 권한 관련 */
   const permissions = getPermissions(title);
-
-  //#region ✅설정값
   const [modal, contextHolder] = Modal.useModal();
-
   const [gridMode] = useState<TGridMode>('view');
-
   const [workDatas, setWorkDatas] = useState([]);
-
   const [tabKey, setTabKey] = useState('');
-
   const gridRef = useRef<Grid>();
-
   const SEARCH_URI_PATH = '/prd/works';
 
   const workInsp = INSP();
@@ -117,9 +106,7 @@ export const PgPrdWork = () => {
   // 작업정보, 생산정보 관리
   const [infoState, infoDispatch] = useReducer(infoReducer, infoInit);
   const { orderInfo, workInfo, routingInfo } = infoState;
-  //#endregion
 
-  //#region 🚫함수
   const onProdOrder = () => {
     setProdOrderPopupVisible(true);
   };
@@ -475,7 +462,6 @@ export const PgPrdWork = () => {
       },
     });
   };
-  //#endregion
 
   const onCompleteWorkPerformance = () => {
     executeData(
@@ -490,7 +476,6 @@ export const PgPrdWork = () => {
     });
   };
 
-  //#region ✅조회조건
   const onSearch = (
     values,
     afterSearch: () => void = () => {
@@ -587,7 +572,6 @@ export const PgPrdWork = () => {
       searchInfo.setSearchItems(searchItems);
     }
   }, [searchInfo, searchItems]);
-  //#endregion
 
   // infoDispatch 실행
   const setInfoData = data => {
@@ -688,7 +672,6 @@ export const PgPrdWork = () => {
         const order_qty = row?.order_qty;
         const complete_fg = searchParams?.complete_fg;
 
-        //#region 하위 데이터들 조회
         // 공정검사 데이터 조회
         workInsp.onSearch({
           work_uuid,
@@ -744,7 +727,6 @@ export const PgPrdWork = () => {
         ).then(res => {
           workRouting.setData(res);
         });
-        //#endregion
       } catch (e) {
         console.log(e);
       } finally {
@@ -989,7 +971,7 @@ export const PgPrdWork = () => {
       ) : null}
 
       {contextHolder}
-      <WorkRoutingHisotryModal
+      <WorkRoutingHistoryModal
         visible={workRoutingHistoryPopupVisible}
         work_uuid={workInfo.work_uuid}
         onCancel={hideWorkRoutingHistory}
@@ -997,9 +979,7 @@ export const PgPrdWork = () => {
     </>
   );
 };
-//#endregion
 
-//#region 🔶✅작업지시관리 팝업 (지시/마감 처리)
 /** 작업지시관리 팝업 (지시/마감 처리) */
 const ProdOrderModal = ({ visible, onClose }) => {
   const gridRef = useRef<Grid>();
@@ -1034,7 +1014,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
     ];
   }, [completeChk]);
 
-  //#region ✅함수
   const onSearch = values => {
     const dateParams =
       values?.complete_fg === 'complete'
@@ -1131,7 +1110,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
       message.error(error.toString());
     }
   };
-  //#endregion
 
   return (
     <ProdOrderModalInWorkPerformancePage
@@ -1145,7 +1123,6 @@ const ProdOrderModal = ({ visible, onClose }) => {
     />
   );
 };
-//#endregion
 
 const callCancelWorkRoutingApi = ({
   uuid,
@@ -1189,7 +1166,7 @@ const confirmRemainModal = ({
   });
 };
 
-const WorkRoutingHisotryModal = ({
+const WorkRoutingHistoryModal = ({
   visible,
   work_uuid,
   onCancel,
@@ -1201,9 +1178,9 @@ const WorkRoutingHisotryModal = ({
   if (visible === false) return <></>;
   const [workRoutingHistory, setWorkRoutingHistory] = useState<unknown>(null);
 
-  const workerReadOnly = WORKERREADONLY();
-  const rejectReadOnly = REJECTREADONLY();
-  const downtimeReadOnly = DOWNTIMEREADONLY();
+  const workerReadOnly = useReadonlyWorkInjectManagement();
+  const rejectReadOnly = useReadonlyRejectManagement();
+  const downtimeReadOnly = useReadonlyDownTimeManagement();
 
   const cancelWorkRoutingState = (
     _,
