@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 import Props from './checkbox-group.ui.type';
 import { afAnyArrayState, afObjectState } from '~recoils/recoil.atom-family';
 import { isNil } from '~/helper/common';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 /** 체크박스 그룹 */
 const CheckboxGroup: React.FC<Props> = props => {
@@ -27,7 +28,7 @@ const CheckboxGroup: React.FC<Props> = props => {
   };
 
   /** 전체 체킹하는 체크박스 변경 이벤트 */
-  const onChangeAll = (e?: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeAll = (e?: CheckboxChangeEvent) => {
     setCheckboxGroupValues(
       e?.target.checked
         ? (props.options.map(value => value.code) as string[])
