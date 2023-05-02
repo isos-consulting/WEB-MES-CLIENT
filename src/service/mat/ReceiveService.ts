@@ -177,7 +177,7 @@ const vendorPriceColumns = [
     width: ENUM_WIDTH.M,
     filter: 'text',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '단위UUID',
@@ -268,7 +268,7 @@ const vendorPriceColumns = [
     width: ENUM_WIDTH.S,
     filter: 'text',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     hidden: true,
   },
   {
@@ -422,7 +422,7 @@ const orderDetailColumns = [
     width: ENUM_WIDTH.S,
     name: 'balance',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '금액',
@@ -436,7 +436,7 @@ const orderDetailColumns = [
     width: ENUM_WIDTH.M,
     name: 'unit_qty',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '납기일',

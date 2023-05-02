@@ -1349,7 +1349,7 @@ export const INPUT_POPUP_CREATE = (props: {
                 width: ENUM_WIDTH.M,
                 format: 'number',
                 filter: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
+                decimal: ENUM_DECIMAL.DEC_STOCK,
               },
             ],
             dataApiSettings: {

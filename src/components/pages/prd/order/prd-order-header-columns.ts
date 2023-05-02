@@ -39,7 +39,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     filter: 'number',
   },
   {
@@ -161,7 +161,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '지시수량',
@@ -169,7 +169,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
     requiredField: true,
   },
   { header: '지시순번', name: 'seq', width: ENUM_WIDTH.M, hidden: true },
@@ -209,7 +209,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     hidden: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '수주UUID',

@@ -613,7 +613,7 @@ export const PgQmsInsp = () => {
       name: 'position_no',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       filter: 'number',
     },
     {

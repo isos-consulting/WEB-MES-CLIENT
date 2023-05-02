@@ -77,7 +77,7 @@ const columns: IGridColumn[] = [
     header: '순서',
     name: 'order',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     editable: true,
     requiredField: true,
   },

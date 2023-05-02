@@ -150,7 +150,7 @@ export const PgSalIncome = () => {
         width: ENUM_WIDTH.M,
         filter: 'text',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },
@@ -451,7 +451,7 @@ export const PgSalIncome = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
         ],
         dataApiSettings: ev => {

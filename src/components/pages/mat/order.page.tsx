@@ -275,7 +275,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },
@@ -292,7 +292,7 @@ export const PgMatOrder = () => {
         width: ENUM_WIDTH.M,
         name: 'unit_qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
       },
       {
@@ -442,7 +442,7 @@ export const PgMatOrder = () => {
             name: 'unit_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '단위UUID',
@@ -521,7 +521,7 @@ export const PgMatOrder = () => {
             name: 'division',
             width: ENUM_WIDTH.S,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
             hidden: true,
           },
           {

@@ -3,7 +3,7 @@ export const ENUM_DECIMAL = {
   /** 0 */
   DEC_REPORT_STOCK: 0,
   /** 0 */
-  DEC_NOMAL: 0,
+  DEC_NORMAL: 0,
   /** 0 */
   DEC_PRICE: 0,
   /** 6 */
@@ -11,7 +11,7 @@ export const ENUM_DECIMAL = {
   /** 4 */
   DEC_USE_STOCK: 4,
   /** 2 */
-  DEC_STCOK: 2,
+  DEC_STOCK: 2,
   /** 2 */
   DEC_INSPECT_SPEC: 2,
 };

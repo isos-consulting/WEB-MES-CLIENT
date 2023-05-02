@@ -185,7 +185,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
           },
@@ -344,7 +344,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -504,7 +504,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
           },
@@ -645,7 +645,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -689,7 +689,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -738,7 +738,7 @@ export const PgOutReleaseReport = () => {
           {
             header: '출고수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',

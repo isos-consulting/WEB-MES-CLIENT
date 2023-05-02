@@ -15,7 +15,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     filter: 'number',
   },
   {
@@ -119,7 +119,7 @@ export default <IGridColumn[]>[
     name: 'plan_qty',
     width: ENUM_WIDTH.M,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '지시수량',
@@ -127,7 +127,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
     requiredField: true,
   },
   {
@@ -136,7 +136,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.S,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     hidden: true,
   },
   {

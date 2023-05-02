@@ -245,7 +245,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -253,7 +253,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -261,7 +261,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
 
@@ -447,7 +447,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -455,7 +455,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -463,7 +463,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
 
@@ -641,7 +641,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -649,7 +649,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -657,7 +657,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -805,7 +805,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -837,7 +837,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -845,7 +845,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];
@@ -872,7 +872,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -904,7 +904,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -912,7 +912,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];
@@ -944,7 +944,7 @@ export const PgMatOrderReport = () => {
             name: 'qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -976,7 +976,7 @@ export const PgMatOrderReport = () => {
             name: 'receive_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -984,7 +984,7 @@ export const PgMatOrderReport = () => {
             name: 'balance',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];

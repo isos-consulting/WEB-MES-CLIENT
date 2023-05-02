@@ -58,7 +58,7 @@ export const PgAdmBomInputType = () => {
         name: 'sortby',
         width: ENUM_WIDTH.L,
         filter: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
         editable: true,
       },
     ],

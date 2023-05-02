@@ -193,7 +193,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '발주소요일',
@@ -202,7 +202,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '재고관리여부',
@@ -219,7 +219,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '안전재고수량',
@@ -228,7 +228,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '입고창고UUID',
@@ -334,7 +334,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '생산최대수량',
@@ -343,7 +343,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '폭',
@@ -352,7 +352,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '길이',
@@ -361,7 +361,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '높이',
@@ -370,7 +370,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '중량',
@@ -379,7 +379,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '두께',
@@ -388,7 +388,7 @@ export default [
     editable: true,
     filter: 'number',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '재질',

@@ -198,7 +198,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
       },
       {
         header: '단위UUID',
@@ -276,7 +276,7 @@ export const PgSalReturn = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         requiredField: true,
         editable: true,
         formula: {

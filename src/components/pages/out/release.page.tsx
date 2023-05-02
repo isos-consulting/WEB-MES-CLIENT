@@ -288,7 +288,7 @@ export const PgOutRelease = () => {
         name: 'order_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         filter: 'number',
       },
       {
@@ -297,7 +297,7 @@ export const PgOutRelease = () => {
         width: ENUM_WIDTH.M,
         format: 'number',
         filter: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
         formula: {
@@ -365,7 +365,7 @@ export const PgOutRelease = () => {
         name: 'unit_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         filter: 'number',
       },
       {
@@ -534,7 +534,7 @@ export const PgOutRelease = () => {
             name: 'unit_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '단위UUID',

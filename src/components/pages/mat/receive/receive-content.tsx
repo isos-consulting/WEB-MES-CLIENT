@@ -140,7 +140,7 @@ const columns = [
     width: ENUM_WIDTH.S,
     name: 'qty',
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '금액',
@@ -202,7 +202,7 @@ const columns = [
     header: '단위수량',
     width: ENUM_WIDTH.M,
     name: 'unit_qty',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: '비고',

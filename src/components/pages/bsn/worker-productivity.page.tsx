@@ -117,14 +117,14 @@ export const PgWorkerProductivityReport = () => {
                 name: `${key}${k}`,
                 width: ENUM_WIDTH.M,
                 format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
+                decimal: ENUM_DECIMAL.DEC_STOCK,
               }))
               .concat({
                 header: '합계',
                 name: `${key}sum`,
                 width: ENUM_WIDTH.M,
                 format: 'number',
-                decimal: ENUM_DECIMAL.DEC_STCOK,
+                decimal: ENUM_DECIMAL.DEC_STOCK,
               });
 
             return [...acc, ...routingsPerWorking];

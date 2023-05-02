@@ -29,7 +29,7 @@ export default <IGridColumn[]>[
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   },
   {
     header: '주차',

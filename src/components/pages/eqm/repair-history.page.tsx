@@ -165,7 +165,7 @@ export const PgEqmRepairHistory = () => {
         name: 'repair_time',
         width: ENUM_WIDTH.S,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
       },
       {
         header: '수리장소',
@@ -179,7 +179,7 @@ export const PgEqmRepairHistory = () => {
         name: 'repair_price',
         width: ENUM_WIDTH.L,
         filter: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
         editable: true,
       },
       {

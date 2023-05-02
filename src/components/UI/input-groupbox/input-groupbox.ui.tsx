@@ -318,7 +318,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 value={Number(
                                   values[item.name || item.id],
                                 ).toFixed(
-                                  item?.decimal ?? ENUM_DECIMAL.DEC_NOMAL,
+                                  item?.decimal ?? ENUM_DECIMAL.DEC_NORMAL,
                                 )}
                                 defaultValue={
                                   defaultValues[item.name || item.id]
@@ -856,12 +856,12 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     value={Number(
                                       values[item.name || item.id],
                                     ).toFixed(
-                                      item?.decimal ?? ENUM_DECIMAL.DEC_NOMAL,
+                                      item?.decimal ?? ENUM_DECIMAL.DEC_NORMAL,
                                     )}
                                     defaultValue={Number(
                                       defaultValues[item.name || item.id],
                                     ).toFixed(
-                                      item?.decimal ?? ENUM_DECIMAL.DEC_NOMAL,
+                                      item?.decimal ?? ENUM_DECIMAL.DEC_NORMAL,
                                     )}
                                     onChange={async e => {
                                       await setFieldValued(

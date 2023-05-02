@@ -17,14 +17,14 @@ const columns: IGridColumn[] = [
     name: 'work_qty_month_sum',
     width: ENUM_WIDTH.S,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: `불량`,
     name: 'reject_qty_month_sum',
     width: ENUM_WIDTH.S,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   },
   {
     header: `불량율`,
@@ -57,14 +57,14 @@ for (let i = 0; i < 12; i++) {
     name: work,
     width: ENUM_WIDTH.S,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   });
   columns.push({
     header: `불량`,
     name: reject,
     width: ENUM_WIDTH.S,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
   });
   columns.push({
     header: `불량율`,

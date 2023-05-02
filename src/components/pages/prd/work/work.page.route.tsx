@@ -119,7 +119,7 @@ export const ROUTING = () => {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       editable: true,
     },
     {
@@ -160,7 +160,7 @@ export const ROUTING = () => {
       width: 100,
       hidden: true,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
     },
     {
       header: '비고',

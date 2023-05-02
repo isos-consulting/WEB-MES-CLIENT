@@ -210,7 +210,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -265,7 +265,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -273,7 +273,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',
@@ -375,7 +375,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -430,7 +430,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -438,7 +438,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',
@@ -540,7 +540,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -595,7 +595,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -603,7 +603,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',
@@ -681,7 +681,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -713,7 +713,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -721,7 +721,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',
@@ -741,7 +741,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -773,7 +773,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -781,7 +781,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',
@@ -806,7 +806,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '수주수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -838,7 +838,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -846,7 +846,7 @@ export const PgSalOrdersReport = () => {
           {
             header: '미납수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'balance',
             format: 'number',
             filter: 'number',

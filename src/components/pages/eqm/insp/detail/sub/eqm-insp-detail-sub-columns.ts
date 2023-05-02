@@ -147,7 +147,7 @@ export default [
     width: ENUM_WIDTH.M,
     editable: true,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
     filter: 'number',
   },
   {

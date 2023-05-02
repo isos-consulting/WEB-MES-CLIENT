@@ -44,7 +44,7 @@ columns.push(
           name,
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
   ),
 );
@@ -64,7 +64,7 @@ for (let i = 0; i < 12; i++) {
         name: `${name}${i + 1}`,
         width: ENUM_WIDTH.S,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
       });
     }
   }

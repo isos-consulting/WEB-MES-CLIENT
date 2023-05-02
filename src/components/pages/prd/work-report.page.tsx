@@ -197,7 +197,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -211,7 +211,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -219,7 +219,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -227,7 +227,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -360,7 +360,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -374,7 +374,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -382,7 +382,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -390,7 +390,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -518,7 +518,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -532,7 +532,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -540,7 +540,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -548,7 +548,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -615,7 +615,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -623,7 +623,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -631,7 +631,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -639,7 +639,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];
@@ -683,7 +683,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -691,7 +691,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -699,7 +699,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -707,7 +707,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];
@@ -727,7 +727,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'order_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -735,7 +735,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'total_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -743,7 +743,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
           {
@@ -751,7 +751,7 @@ export const PgPrdWorkReport = () => {
             width: ENUM_WIDTH.M,
             name: 'reject_qty',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             filter: 'number',
           },
         ];

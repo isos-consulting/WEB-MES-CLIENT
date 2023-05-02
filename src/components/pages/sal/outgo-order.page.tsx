@@ -201,7 +201,7 @@ export const PgSalOutgoOrder = () => {
         name: 'order_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         filter: 'text',
       },
       {
@@ -210,7 +210,7 @@ export const PgSalOutgoOrder = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },
@@ -219,7 +219,7 @@ export const PgSalOutgoOrder = () => {
         name: 'balance',
         width: ENUM_WIDTH.M,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         filter: 'text',
       },
       {
@@ -435,7 +435,7 @@ export const PgSalOutgoOrder = () => {
                                 header: '안전재고',
                                 name: 'safe_stock',
                                 width: ENUM_WIDTH.S,
-                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                                decimal: ENUM_DECIMAL.DEC_STOCK,
                               },
                               {
                                 header: '단위UUID',
@@ -452,14 +452,14 @@ export const PgSalOutgoOrder = () => {
                                 name: 'qty',
                                 width: ENUM_WIDTH.S,
                                 format: 'number',
-                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                                decimal: ENUM_DECIMAL.DEC_STOCK,
                               },
                               {
                                 header: '미납량',
                                 name: 'balance',
                                 width: ENUM_WIDTH.S,
                                 format: 'number',
-                                decimal: ENUM_DECIMAL.DEC_STCOK,
+                                decimal: ENUM_DECIMAL.DEC_STOCK,
                               },
                               {
                                 header: '화폐단위UUID',

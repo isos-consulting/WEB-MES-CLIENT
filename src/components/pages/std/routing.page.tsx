@@ -313,7 +313,7 @@ export const PgStdRouting = () => {
         editable: true,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
         requiredField: true,
       },
       {
@@ -354,7 +354,7 @@ export const PgStdRouting = () => {
         editable: true,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
       },
       {
         header: 'UPH',
@@ -363,7 +363,7 @@ export const PgStdRouting = () => {
         editable: true,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
       },
       {
         header: '신호 카운트',
@@ -372,7 +372,7 @@ export const PgStdRouting = () => {
         editable: true,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_NOMAL,
+        decimal: ENUM_DECIMAL.DEC_NORMAL,
       },
     ],
     {
@@ -457,7 +457,7 @@ export const PgStdRouting = () => {
       name: 'emp_cnt',
       width: ENUM_WIDTH.S,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       editable: true,
       requiredField: true,
     },
@@ -466,7 +466,7 @@ export const PgStdRouting = () => {
       name: 'cycle_time',
       width: ENUM_WIDTH.S,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       editable: true,
       requiredField: true,
     },
@@ -475,7 +475,7 @@ export const PgStdRouting = () => {
       name: 'uph',
       width: ENUM_WIDTH.S,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       editable: true,
     },
   ];

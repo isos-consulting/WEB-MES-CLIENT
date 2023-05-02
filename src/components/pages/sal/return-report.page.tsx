@@ -173,7 +173,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -227,7 +227,7 @@ export const PgSalReturnReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -308,7 +308,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -362,7 +362,7 @@ export const PgSalReturnReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -451,7 +451,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -505,7 +505,7 @@ export const PgSalReturnReport = () => {
           {
             header: '출하수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'outgo_qty',
             format: 'number',
             filter: 'number',
@@ -581,7 +581,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -625,7 +625,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',
@@ -674,7 +674,7 @@ export const PgSalReturnReport = () => {
           {
             header: '반입수량',
             width: ENUM_WIDTH.M,
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
             name: 'qty',
             format: 'number',
             filter: 'number',

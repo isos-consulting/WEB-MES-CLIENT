@@ -72,7 +72,7 @@ export const concreteProgressHistoryGridColumns: IGridColumn[] = [
     name: 'order_qty',
     width: ENUM_WIDTH.M,
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_STCOK,
+    decimal: ENUM_DECIMAL.DEC_STOCK,
     filter: 'number',
     align: 'center',
   },

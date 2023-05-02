@@ -237,7 +237,7 @@ export const PgQmsReceiveInspResultReport = () => {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '합격 수량',
@@ -245,7 +245,7 @@ export const PgQmsReceiveInspResultReport = () => {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '부적합 수량',
@@ -253,7 +253,7 @@ export const PgQmsReceiveInspResultReport = () => {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '입고 창고UUID',

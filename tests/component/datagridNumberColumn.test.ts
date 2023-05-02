@@ -22,10 +22,10 @@ class Datagrid implements GridProps {
 test('type이 number인경우 decimal값은 필수적으로 넘겨주어야 함', () => {
   const grid = new Datagrid({
     format: 'number',
-    decimal: ENUM_DECIMAL.DEC_NOMAL,
+    decimal: ENUM_DECIMAL.DEC_NORMAL,
   });
 
-  expect(grid).toEqual({ format: 'number', decimal: ENUM_DECIMAL.DEC_NOMAL });
+  expect(grid).toEqual({ format: 'number', decimal: ENUM_DECIMAL.DEC_NORMAL });
 });
 
 test('정상적으로 decimal값이 넘어온 경우 테스트에 통과함', () => {

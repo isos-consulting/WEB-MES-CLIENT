@@ -384,7 +384,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산 수량',
@@ -392,7 +392,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '양품 수량',
@@ -400,7 +400,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '부적합 수량',
@@ -408,7 +408,7 @@ export const PgQmsProcInspResultReport = () => {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산시작 일시',

@@ -79,7 +79,7 @@ export class DatagridNumberRenderer {
 
     this.state = {
       unit: unit ? ' ' + unit : '',
-      decimal: decimal ? decimal : ENUM_DECIMAL.DEC_NOMAL,
+      decimal: decimal ? decimal : ENUM_DECIMAL.DEC_NORMAL,
     };
 
     const rootDiv = document.createElement('div');

@@ -315,7 +315,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산 수량',
@@ -323,7 +323,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '양품 수량',
@@ -331,7 +331,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '부적합 수량',
@@ -339,7 +339,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산시작 일시',
@@ -724,7 +724,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
     },
     {
       header: '수주UUID',
@@ -1097,7 +1097,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       name: 'qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       filter: 'number',
     },
     {
@@ -1247,7 +1247,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       name: 'income_qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       filter: 'number',
     },
     {
@@ -1255,7 +1255,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       name: 'return_qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       filter: 'number',
     },
     {
@@ -1263,7 +1263,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       name: 'disposal_qty',
       width: ENUM_WIDTH.M,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       filter: 'number',
     },
     {
@@ -1322,7 +1322,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       editable: true,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       filter: 'number',
     },
     {
@@ -1445,7 +1445,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       editable: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       hidden: true,
     },
     {
@@ -1454,7 +1454,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       editable: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '지시수량',
@@ -1462,7 +1462,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       editable: true,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       requiredField: true,
     },
     {
@@ -1471,7 +1471,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.S,
       editable: true,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_NOMAL,
+      decimal: ENUM_DECIMAL.DEC_NORMAL,
       hidden: true,
     },
     {
@@ -1701,7 +1701,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '안전재고',
@@ -1709,7 +1709,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '입고 창고UUID',
@@ -2022,7 +2022,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산 수량',
@@ -2030,7 +2030,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '양품 수량',
@@ -2038,7 +2038,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '부적합 수량',
@@ -2046,7 +2046,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: 100,
       hidden: false,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '생산시작 일시',
@@ -2411,7 +2411,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     { header: 'LOT NO', name: 'lot_no', width: ENUM_WIDTH.M, filter: 'text' },
     {
@@ -2420,7 +2420,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '합격 수량',
@@ -2428,7 +2428,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '부적합 수량',
@@ -2436,7 +2436,7 @@ export const ColumnStore: Record<ColumnRecordKeys, IGridColumn[]> = {
       width: ENUM_WIDTH.M,
       filter: 'number',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     },
     {
       header: '입고 창고UUID',

@@ -294,7 +294,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
         formula: {
@@ -316,7 +316,7 @@ export const PgSalOrder = () => {
         width: ENUM_WIDTH.M,
         name: 'unit_qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
       },
       {
@@ -482,7 +482,7 @@ export const PgSalOrder = () => {
           name: 'unit_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '단위UUID',
@@ -561,7 +561,7 @@ export const PgSalOrder = () => {
           name: 'division',
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
           hidden: true,
         },
         {

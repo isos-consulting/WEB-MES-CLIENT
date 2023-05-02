@@ -594,7 +594,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
               type: DatagridNumberEditor,
               options: {
                 ...el?.options,
-                decimal: el?.decimal || ENUM_DECIMAL.DEC_NOMAL,
+                decimal: el?.decimal || ENUM_DECIMAL.DEC_NORMAL,
               },
             };
           }
@@ -605,7 +605,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
             options: {
               ...el?.options,
               unit: el?.unit, // 단위 설정
-              decimal: el?.decimal || ENUM_DECIMAL.DEC_NOMAL,
+              decimal: el?.decimal || ENUM_DECIMAL.DEC_NORMAL,
             },
           };
 

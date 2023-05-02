@@ -219,7 +219,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: 'LOT NO',
@@ -233,7 +233,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '입고창고아이디',
@@ -437,7 +437,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: 'LOT NO',
@@ -451,7 +451,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '입고창고아이디',
@@ -656,7 +656,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: 'LOT NO',
@@ -670,7 +670,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '입고창고아이디',
@@ -840,7 +840,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '출고수량',
@@ -848,7 +848,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
         ];
         break;
@@ -881,7 +881,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '출고수량',
@@ -889,7 +889,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
         ];
         break;
@@ -941,7 +941,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.L,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '출고수량',
@@ -949,7 +949,7 @@ export const PgMatReleaseReport = () => {
             width: ENUM_WIDTH.M,
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
         ];
         break;

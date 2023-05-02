@@ -156,7 +156,7 @@ export const PgPrdReturn = () => {
         name: 'qty',
         width: ENUM_WIDTH.S,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },

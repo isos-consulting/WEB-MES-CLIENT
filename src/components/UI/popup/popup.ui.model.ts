@@ -429,7 +429,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '발주 소요일',
@@ -458,7 +458,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '안전 재고수량',
@@ -466,7 +466,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '입고 창고아이디',
@@ -561,7 +561,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '최대값',
@@ -569,7 +569,7 @@ const getPI_StdProd = (
           width: 150,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '등록일자',
@@ -636,7 +636,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '길이',
@@ -644,7 +644,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '높이',
@@ -652,7 +652,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '재질',
@@ -674,7 +674,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '두께',
@@ -682,7 +682,7 @@ const getPI_StdProd = (
           width: 100,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '발주 사용유무',
@@ -807,7 +807,7 @@ const getPI_StdProd2 = (
           width: ENUM_WIDTH.M,
           filter: 'text',
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '단위UUID',
@@ -1738,7 +1738,7 @@ const getPI_StdVendorPrice = (
           filter: 'text',
           editable: true,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
         },
         {
           header: '등록일자',
@@ -1967,7 +1967,7 @@ const getPI_InvStore = (
           width: ENUM_WIDTH.M,
           format: 'number',
           filter: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '화폐단위UUID',
@@ -2177,7 +2177,7 @@ const getPI_StdCustomerPrice = (
           name: 'unit_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         { header: '단위UUID', name: 'unit_uuid', format: 'text', hidden: true },
         {
@@ -2372,7 +2372,7 @@ const getPI_SalOrderDetail = (
           width: ENUM_WIDTH.M,
           format: 'number',
           filter: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
         },
         {
           header: '단위UUID',
@@ -2394,7 +2394,7 @@ const getPI_SalOrderDetail = (
           name: 'qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
           filter: 'number',
         },
         {
@@ -2402,7 +2402,7 @@ const getPI_SalOrderDetail = (
           name: 'balance',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
           filter: 'number',
         },
         {
@@ -2599,7 +2599,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'order_qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
           filter: 'number',
         },
         {
@@ -2607,7 +2607,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'qty',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
           filter: 'number',
         },
         {
@@ -2615,7 +2615,7 @@ const getPI_SalOutgoOrderDetail = (
           name: 'balance',
           width: ENUM_WIDTH.M,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_STCOK,
+          decimal: ENUM_DECIMAL.DEC_STOCK,
           filter: 'number',
         },
         {
@@ -2683,7 +2683,7 @@ const getPI_MldMold = (
           name: 'cavity',
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
           editable: true,
           requiredField: true,
         },
@@ -2692,7 +2692,7 @@ const getPI_MldMold = (
           name: 'guarantee_cnt',
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
           editable: true,
           requiredField: true,
         },
@@ -2701,7 +2701,7 @@ const getPI_MldMold = (
           name: 'basic_cnt',
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
           editable: true,
           requiredField: true,
         },
@@ -2724,7 +2724,7 @@ const getPI_MldMold = (
           name: 'weight',
           width: ENUM_WIDTH.S,
           format: 'number',
-          decimal: ENUM_DECIMAL.DEC_NOMAL,
+          decimal: ENUM_DECIMAL.DEC_NORMAL,
           editable: true,
         },
         {

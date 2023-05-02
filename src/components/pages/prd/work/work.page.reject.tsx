@@ -112,7 +112,7 @@ export const REJECT = () => {
         name: 'qty',
         width: 100,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },

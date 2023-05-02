@@ -506,7 +506,7 @@ export const PgStdBom = () => {
             name: 'unit_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '단위UUID',
@@ -788,7 +788,7 @@ export const PgStdBom = () => {
               name: 'unit_qty',
               width: ENUM_WIDTH.M,
               format: 'number',
-              decimal: ENUM_DECIMAL.DEC_STCOK,
+              decimal: ENUM_DECIMAL.DEC_STOCK,
             },
             {
               header: '단위UUID',

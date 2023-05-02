@@ -290,7 +290,7 @@ export const PgMatReceive = () => {
         width: ENUM_WIDTH.S,
         name: 'qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
       },
@@ -365,7 +365,7 @@ export const PgMatReceive = () => {
         width: ENUM_WIDTH.M,
         name: 'unit_qty',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
       },
       {
@@ -743,7 +743,7 @@ export const PgMatReceive = () => {
                       width: ENUM_WIDTH.S,
                       name: 'balance',
                       format: 'number',
-                      decimal: ENUM_DECIMAL.DEC_STCOK,
+                      decimal: ENUM_DECIMAL.DEC_STOCK,
                     },
                     {
                       header: '금액',
@@ -757,7 +757,7 @@ export const PgMatReceive = () => {
                       width: ENUM_WIDTH.M,
                       name: 'unit_qty',
                       format: 'number',
-                      decimal: ENUM_DECIMAL.DEC_STCOK,
+                      decimal: ENUM_DECIMAL.DEC_STOCK,
                     },
                     {
                       header: '납기일',
@@ -982,7 +982,7 @@ export const PgMatReceive = () => {
             width: ENUM_WIDTH.M,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '단위UUID',
@@ -1073,7 +1073,7 @@ export const PgMatReceive = () => {
             width: ENUM_WIDTH.S,
             filter: 'text',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
             hidden: true,
           },
           {

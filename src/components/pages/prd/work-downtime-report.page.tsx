@@ -199,7 +199,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '비고',
@@ -306,7 +306,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '비고',
@@ -413,7 +413,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '비고',
@@ -513,7 +513,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '비고',
@@ -554,7 +554,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
         ];
         break;
@@ -580,7 +580,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
         ];
         break;
@@ -619,7 +619,7 @@ export const PgPrdWorkDowntimeReport = () => {
             name: 'downtime',
             filter: 'number',
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
         ];
         break;

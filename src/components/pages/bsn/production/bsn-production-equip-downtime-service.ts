@@ -130,7 +130,7 @@ export class BsnProductionEquipDowntimeService {
       header: `${week}주차`,
       name: `${week}`,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     }));
 
     return [
@@ -255,7 +255,7 @@ export class BsnProductionEquipDowntimeService {
       header: `${Number(month)}월`,
       name: `${year}-${month}`,
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
     }));
 
     return [

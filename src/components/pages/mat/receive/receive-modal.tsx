@@ -255,7 +255,7 @@ export const MatReceiveModal = ({
       width: ENUM_WIDTH.S,
       name: 'qty',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       editable: true,
       requiredField: true,
     },
@@ -312,7 +312,7 @@ export const MatReceiveModal = ({
       width: ENUM_WIDTH.M,
       name: 'unit_qty',
       format: 'number',
-      decimal: ENUM_DECIMAL.DEC_STCOK,
+      decimal: ENUM_DECIMAL.DEC_STOCK,
       editable: true,
     },
     {

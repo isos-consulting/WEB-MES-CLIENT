@@ -309,7 +309,7 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
       },
       {
         header: '수량',
@@ -317,7 +317,7 @@ export const PgOutReceive = () => {
         width: ENUM_WIDTH.M,
         filter: 'number',
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         editable: true,
         requiredField: true,
         formula: {
@@ -395,7 +395,7 @@ export const PgOutReceive = () => {
         name: 'unit_qty',
         width: ENUM_WIDTH.M,
         format: 'number',
-        decimal: ENUM_DECIMAL.DEC_STCOK,
+        decimal: ENUM_DECIMAL.DEC_STOCK,
         filter: 'number',
       },
       {
@@ -572,14 +572,14 @@ export const PgOutReceive = () => {
             name: 'safe_stock',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: '단위수량',
             name: 'unit_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_NOMAL,
+            decimal: ENUM_DECIMAL.DEC_NORMAL,
           },
           {
             header: '단위UUID',
@@ -685,7 +685,7 @@ export const PgOutReceive = () => {
             name: 'mat_order_min_qty',
             width: ENUM_WIDTH.M,
             format: 'number',
-            decimal: ENUM_DECIMAL.DEC_STCOK,
+            decimal: ENUM_DECIMAL.DEC_STOCK,
           },
           {
             header: 'LOT_NO',
