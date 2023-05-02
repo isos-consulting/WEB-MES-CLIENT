@@ -8,7 +8,15 @@ export default interface IDatePickerProps extends IDatepickerStyles {
   name?: string;
 
   /** 날짜 선택기 유형 */
-  picker?: 'date' | 'week' | 'month' | 'quarter' | 'year' | 'time' | 'datetime';
+  picker?:
+    | 'date'
+    | 'week'
+    | 'month'
+    | 'quarter'
+    | 'year'
+    | 'time'
+    | 'datetime'
+    | 'dateym';
 
   /** 날짜 선택기 포맷 (기본값:YYYY-MM-DD) */
   format?: string;
