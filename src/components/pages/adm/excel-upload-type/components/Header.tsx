@@ -5,8 +5,8 @@ import { Button } from '~/components/UI';
 import { isNil } from '~/helper/common';
 
 interface FlexBoxProps {
-  justifyContent: string;
-  gap: string;
+  justifyContent?: string;
+  gap?: string;
   children: React.ReactNode;
 }
 
