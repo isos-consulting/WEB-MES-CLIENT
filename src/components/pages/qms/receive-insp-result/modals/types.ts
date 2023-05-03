@@ -63,6 +63,7 @@ export type TReceiveInspDetail = {
   remark?: string;
 };
 export type TReceiveDetail = {
+  insp_detail_type_uuid?: string;
   receive_detail_uuid?: string;
   receive_uuid?: string;
   seq?: number;
