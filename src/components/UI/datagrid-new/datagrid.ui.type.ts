@@ -72,6 +72,8 @@ export default interface IDatagridProps extends GridProps {
   onAfterClick?: (ev) => void;
   onAfterChange?: (ev) => void;
   onAfterKeyDown?: (ev) => void;
+
+  onOk?: (ev) => void;
 }
 
 /** 그리드 summary를 세팅하기 위한 커스텀 옵션 입니다. */
