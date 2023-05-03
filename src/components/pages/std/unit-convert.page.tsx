@@ -619,7 +619,7 @@ export const PgStdUnitConvert = () => {
           ServiceUtil.getInstance()
             .callMethod(
               UnitConvertServiceImpl.getInstance().delete,
-              detailGrid.gridRef,
+              detailGrid.gridRef as GridRef,
             )
             .then(_ => {
               message.success(MESSAGE.UNIT_CONVERT_DELETE_SUCCESS);

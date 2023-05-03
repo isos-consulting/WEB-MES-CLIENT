@@ -8,8 +8,6 @@ export type GridInstance = {
   getCheckedRows: <E>() => E[];
 };
 
-export type GridRef = {
-  current: {
-    getInstance: () => GridInstance;
-  };
-};
+export type GridRef = React.MutableRefObject<{
+  getInstance: () => GridInstance;
+}>;
