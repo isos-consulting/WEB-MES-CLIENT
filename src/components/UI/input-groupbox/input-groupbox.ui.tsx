@@ -132,7 +132,7 @@ export interface IInputGroupboxProps extends IInputUiGroupboxStyles {
   isNotCheckRequired?: boolean;
   isNotCheckType?: boolean;
 
-  innerRef?: React.Ref<FormikProps<FormikValues>>;
+  innerRef?: React.MutableRefObject<FormikProps<FormikValues>>;
   buttonText?: string;
 
   type?: 'input' | 'search';

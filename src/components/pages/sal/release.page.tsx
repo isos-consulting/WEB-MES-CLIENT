@@ -22,6 +22,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
 import dayjs from 'dayjs';
+import { GridEventProps } from 'tui-grid/types/event';
 
 const changeNameToAlias = (data: object, items: any[]) => {
   let newData = cloneObject(data);
@@ -336,7 +337,7 @@ export const PgSalRelease = () => {
               filter: 'text',
             },
           ],
-          dataApiSettings: ev => {
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = ev;
             const { rawData } = instance?.store?.data;
 
@@ -1137,8 +1138,9 @@ export const PgSalRelease = () => {
       saveUriPath: '/sal/releases',
       okText: '저장하기',
       onCancel: ev => {
-        const releaseRequestData =
-          orderProdPopupGrid?.gridRef.current.gridInst?.getData();
+        const releaseRequestData = orderProdPopupGrid?.gridRef.current
+          .getInstance()
+          .getData();
 
         if (releaseRequestData?.length > 0) {
           modal.warning({
@@ -1152,8 +1154,9 @@ export const PgSalRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData =
-          orderProdPopupGrid?.gridRef.current.gridInst?.getData();
+        const releaseRequestData = orderProdPopupGrid?.gridRef.current
+          .getInstance()
+          .getData();
 
         if (releaseRequestData?.length > 0) {
           // inputbox에 있는 항목 추가로 셀에 넣은 후 append
@@ -1190,8 +1193,9 @@ export const PgSalRelease = () => {
       saveUriPath: '/sal/releases',
       okText: '저장하기',
       onCancel: ev => {
-        const releaseRequestData =
-          outgoOrderPopupGrid?.gridRef.current.gridInst?.getData();
+        const releaseRequestData = outgoOrderPopupGrid?.gridRef.current
+          .getInstance()
+          .getData();
 
         if (releaseRequestData?.length > 0) {
           modal.warning({
@@ -1205,8 +1209,9 @@ export const PgSalRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData =
-          outgoOrderPopupGrid?.gridRef.current.gridInst?.getData();
+        const releaseRequestData = outgoOrderPopupGrid?.gridRef.current
+          .getInstance()
+          .getData();
 
         if (releaseRequestData?.length > 0) {
           // inputbox에 있는 항목 추가로 셀에 넣은 후 append
