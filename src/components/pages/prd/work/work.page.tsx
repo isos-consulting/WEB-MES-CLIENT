@@ -17,7 +17,7 @@ import React, {
 } from 'react';
 import TuiGrid from 'tui-grid';
 import { TuiGridEvent } from 'tui-grid/types/event';
-import { TGridMode, useSearchbox } from '~/components/UI';
+import { ISearchItem, TGridMode, useSearchbox } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import { URL_PATH_PRD } from '~/enums';
 import {
@@ -58,6 +58,7 @@ import { REJECT } from './work.page.reject';
 import { useReadonlyRejectManagement } from './work.page.reject.readonly';
 import { WORKER } from './work.page.worker';
 import { useReadonlyWorkInjectManagement } from './work.page.worker.readonly';
+import { GridInstance } from '~/v2/core/ToastGrid';
 
 // 날짜 로케일 설정
 dayjs.locale('ko-kr');
@@ -528,7 +529,7 @@ export const PgPrdWork = () => {
   };
 
   const [completeChk, setCompleteChk] = useState<boolean>(false);
-  const searchItems = useMemo(() => {
+  const searchItems: ISearchItem[] = useMemo(() => {
     return [
       {
         type: 'date',
@@ -987,7 +988,7 @@ const ProdOrderModal = ({ visible, onClose }) => {
   const [data, setData] = useState([]);
   const [completeChk, setCompleteChk] = useState<boolean>(false);
 
-  const searchItems = useMemo(() => {
+  const searchItems: ISearchItem[] = useMemo(() => {
     return [
       {
         type: 'radio',
@@ -1091,16 +1092,16 @@ const ProdOrderModal = ({ visible, onClose }) => {
         );
       }
       await ProductionWorkServiceImpl.getInstance().startWork(
-        gridRef.current.getInstance(),
+        gridRef.current.getInstance() as GridInstance,
       );
 
       if (searchParams?.complete_fg === 'complete') {
         await ProductionWorkServiceImpl.getInstance().update(
-          gridRef.current.getInstance(),
+          gridRef.current.getInstance() as GridInstance,
         );
       } else {
         await ProductionWorkServiceImpl.getInstance().finishWork(
-          gridRef.current.getInstance(),
+          gridRef.current.getInstance() as GridInstance,
         );
       }
 
@@ -1200,14 +1201,16 @@ const WorkRoutingHistoryModal = ({
     await getData({ work_uuid, complete_fg: true }, '/prd/work-routings').then(
       workRoutings => {
         setWorkRoutingHistory(workRoutings);
-        workerReadOnly.setData();
-        rejectReadOnly.setData();
-        downtimeReadOnly.setData();
+        workerReadOnly.setData([]);
+        rejectReadOnly.setData([]);
+        downtimeReadOnly.setData([]);
       },
     );
   };
 
-  useLayoutEffect(refreshWorkRoutings, []);
+  useLayoutEffect(() => {
+    refreshWorkRoutings();
+  }, []);
 
   return (
     <WorkRoutingHistoryModalInWorkPerformancePage
