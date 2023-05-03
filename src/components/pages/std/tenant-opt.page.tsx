@@ -1,13 +1,14 @@
 import Modal from 'antd/lib/modal/Modal';
 import React, { useState } from 'react';
 import { TpSingleGrid } from '~/components/templates';
+import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { useGrid } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 import { dataGridEvents, getData, getPageName } from '~/functions';
 
 enum TenantHeaderOptions {
   gridName = 'Grid',
-  gridMode = 'View',
+  gridMode = 'view',
   searchUriPath = '/std/tenant-opts',
   saveUriPath = '/std/tenant-opts',
 }
@@ -87,7 +88,7 @@ export const PgStdTenantOption = () => {
       },
     ],
     {
-      serchUriPath: TenantHeaderOptions.searchUriPath,
+      searchUriPath: TenantHeaderOptions.searchUriPath,
       saveUriPath: TenantHeaderOptions.saveUriPath,
       gridMode: TenantHeaderOptions.gridMode,
       rowHeight: 'auto',
@@ -95,11 +96,16 @@ export const PgStdTenantOption = () => {
   );
 
   const buttonActions = {
-    search: handleSearchButtonClick,
+    search: () => {
+      handleSearchButtonClick();
+    },
     update: () => {
       toggle(!editTenantDataModalVisible);
     },
     save: handleSaveButtonClick,
+    delete: () => {},
+    create: () => {},
+    printExcel: () => {},
     cancelEdit: handleEditCancelAction,
   };
 
@@ -109,13 +115,13 @@ export const PgStdTenantOption = () => {
     'EDIT_MODAL_GRID',
     grid.gridInfo.columns,
     {
-      seachUriPath: TenantHeaderOptions.searchUriPath,
+      searchUriPath: TenantHeaderOptions.searchUriPath,
       saveUriPath: TenantHeaderOptions.saveUriPath,
       rowHeight: 'auto',
     },
   );
 
-  const tenantOptionTemplateProps = {
+  const tenantOptionTemplateProps: ITpSingleGridProps = {
     title: getPageName(),
     dataSaveType: 'basic',
     gridRef: grid.gridRef,
