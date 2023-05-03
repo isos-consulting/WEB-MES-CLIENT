@@ -1,33 +1,35 @@
-import React, { createRef, useState, useEffect } from 'react';
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Excel, { CellValue } from 'exceljs';
+import React, { createRef, useEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
   Button,
   Container,
   Datagrid,
+  IGridColumn,
   ISearchItem,
   Searchbox,
+  TGridPopupInfos,
   useSearchbox,
 } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
-import Excel, { CellValue } from 'exceljs';
 import { executeData, getData, getStorageValue } from '~/functions';
-import Grid from '@toast-ui/react-grid';
-import {
-  DataGridColumns,
-  DataGridDatas,
-  ExcelSample,
-  SampleUploadableMenu,
-} from './excel-upload/models';
+import { isEmpty, isNil } from '~/helper/common';
 import {
   useButtonDisableWhenMenuSelectablePolicy,
   useExcelUploadDataGrid,
 } from './excel-upload/hooks';
-import { message } from 'antd';
-import { isEmpty, isNil } from '~/helper/common';
+import {
+  DataGridDatas,
+  ExcelSample,
+  SampleUploadableMenu,
+} from './excel-upload/models';
 
 const importXLSXFile = async (
   uploadExcelBuffer: Excel.Buffer,
   start: number,
-  columns: DataGridColumns[],
+  columns: IGridColumn[],
 ) => {
   const workBook = new Excel.Workbook();
   const uploadData = await workBook.xlsx.load(uploadExcelBuffer);
@@ -103,7 +105,7 @@ const gridColumns = async (excelFormCode: string) => {
         width: ENUM_WIDTH.M,
       }),
     ),
-  );
+  ) as IGridColumn[];
 };
 
 const menus = () =>
@@ -111,13 +113,13 @@ const menus = () =>
 
 export const PgStdExcelUpload: React.FC = () => {
   const [uploadGridProps, setGridProps] = useState<{
-    columns: DataGridColumns[];
+    columns: IGridColumn[];
   }>(INITIAL_UPLOAD_GRID_PROPS);
 
   const { selectableMenu } = useButtonDisableWhenMenuSelectablePolicy();
   const { excelDataGrid } = useExcelUploadDataGrid();
 
-  const dataGridRef = createRef<Grid>(null);
+  const dataGridRef = createRef<Grid>();
 
   const menuCombobox: ISearchItem = {
     type: 'combo',
@@ -222,9 +224,9 @@ export const PgStdExcelUpload: React.FC = () => {
     );
     if (isNil(validatedDatas)) return;
     setGridProps({
-      columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
-        ...uploadGridProps.columns.slice(1),
-      ),
+      columns: [
+        { ...uploadGridProps.columns[0], hidden: false } as IGridColumn,
+      ].concat(...uploadGridProps.columns.slice(1)),
     });
 
     excelDataGrid.setData(validatedDatas.datas.raws);
@@ -250,9 +252,9 @@ export const PgStdExcelUpload: React.FC = () => {
     );
     if (isNil(validatedDatas)) return;
     setGridProps({
-      columns: [{ ...uploadGridProps.columns[0], hidden: false }].concat(
-        ...uploadGridProps.columns.slice(1),
-      ),
+      columns: [
+        { ...uploadGridProps.columns[0], hidden: false } as IGridColumn,
+      ].concat(...uploadGridProps.columns.slice(1)),
     });
     excelDataGrid.clear();
   };
@@ -299,7 +301,7 @@ const INITIAL_UPLOAD_GRID_PROPS = {
   columns: [],
 };
 
-const POPUP_COLUMN_INFO = [
+const POPUP_COLUMN_INFO: TGridPopupInfos = [
   {
     // 거래처유형 팝업
     columnNames: [
@@ -362,7 +364,7 @@ const POPUP_COLUMN_INFO = [
         filter: 'text',
       },
     ],
-    dataApiSettings: ev => {
+    dataApiSettings: (ev: GridEventProps & { instance: any }) => {
       const { rowKey, instance } = ev;
       const { rawData } = instance?.store?.data;
 
@@ -405,7 +407,7 @@ const POPUP_COLUMN_INFO = [
         filter: 'text',
       },
     ],
-    dataApiSettings: ev => {
+    dataApiSettings: (ev: GridEventProps & { instance: any }) => {
       const { rowKey, instance } = ev;
       const { rawData } = instance?.store?.data;
 

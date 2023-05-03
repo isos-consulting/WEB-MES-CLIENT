@@ -13,12 +13,6 @@ export type SampleUploadableMenu = {
   menu_uri: string;
 };
 
-export type DataGridColumns = {
-  header: string;
-  name: string;
-  format: string;
-};
-
 export type DataGridDatas = {
   [key: string]: string | number | boolean | Array<unknown>;
 };
