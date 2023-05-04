@@ -1,5 +1,12 @@
+import { GridEventProps } from 'tui-grid/types/event';
 import React, { useMemo, useEffect } from 'react';
-import { Datagrid, Modal } from '~/components/UI';
+import {
+  Datagrid,
+  IGridColumn,
+  Modal,
+  TGridMode,
+  TGridPopupInfos,
+} from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   MatReceiveModalService,
@@ -10,7 +17,7 @@ import { MatReceiveEditableForm } from './receive-editable-form';
 import { MatReceiveGridInterfaceButtonGroup } from './receive-grid-button-group';
 import { MatReceiveReadOnlyForm } from './receive-readonly-form';
 
-const gridPopupInfo = [
+const gridPopupInfo: TGridPopupInfos = [
   {
     // 창고팝업
     columnNames: [
@@ -73,7 +80,7 @@ const gridPopupInfo = [
         filter: 'text',
       },
     ],
-    dataApiSettings: ev => {
+    dataApiSettings: (ev: GridEventProps & { instance: any }) => {
       const { rowKey, instance } = ev;
       const { rawData } = instance?.store?.data;
 
@@ -94,7 +101,7 @@ export const MatReceiveModal = ({
   service: MatReceiveService;
   modalService: MatReceiveModalService;
 }) => {
-  const columns = [
+  const columns: IGridColumn[] = [
     {
       header: '세부입하UUID',
       name: 'receive_detail_uuid',
@@ -326,9 +333,10 @@ export const MatReceiveModal = ({
   const memorizedDatagrid = useMemo(
     () => (
       <Datagrid
+        gridId="matReceiveDatagrid"
         ref={modalService.modalDatagridRef}
         columns={columns}
-        gridMode={modalService.modalMode}
+        gridMode={modalService.modalMode as TGridMode}
         gridPopupInfo={gridPopupInfo}
       />
     ),
@@ -369,6 +377,7 @@ export const MatReceiveModal = ({
         onCancel={modalService.closeSubModal}
       >
         <Datagrid
+          gridId="matReceiveSubModalDatagrid"
           ref={modalService.subModalDatagridRef}
           columns={modalService.subModalDatagridColumns}
           data={modalService.subModalDatagridDatas}
