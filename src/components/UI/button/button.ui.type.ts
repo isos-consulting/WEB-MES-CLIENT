@@ -57,7 +57,8 @@ export interface IButtonStyles {
     | 'plus'
     | 'print'
     | 'search'
-    | 'popup';
+    | 'popup'
+    | 'check';
 
   hoverAnimation?: boolean;
   shape?: 'circle' | 'round';
