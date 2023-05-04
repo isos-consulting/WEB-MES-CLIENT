@@ -27,7 +27,7 @@ export default interface IDatagridProps extends GridProps {
   width?: number;
 
   /** 그리드 고정 높이 */
-  height?: number;
+  height?: number | 'fitToParent';
 
   /** 숨김여부 */
   hidden?: boolean;
