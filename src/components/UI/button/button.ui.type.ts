@@ -16,6 +16,8 @@ export default interface IButtonProps extends IButtonStyles {
 
   type?: string;
 
+  style?: any;
+
   /** 버튼 클릭 이벤트 */
   onClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }
