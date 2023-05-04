@@ -22,7 +22,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
     <Upload
       name="file"
       action={action}
-      headres={headers}
+      headers={headers}
       onChange={onChange}
       maxCount={1}
       beforeUpload={beforeUpload}
