@@ -794,7 +794,9 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
           const parseRes = res as unknown as {
             header: { reg_date: any; pass_qty: any };
           };
-          setFinalInspResultIncludeDetails(res);
+          setFinalInspResultIncludeDetails(
+            res as TGetQmsFinalInspResultIncludeDetails,
+          );
           inputInspResult.setValues({
             ...parseRes.header,
             reg_date_time: parseRes.header.reg_date,
