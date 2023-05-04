@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { useGrid } from '~/components/UI';
+import { IGridPopupInfo, useGrid } from '~/components/UI';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -133,7 +133,7 @@ export const PgStdProcEquip = () => {
     },
   );
 
-  const equipPopupInfo = {
+  const equipPopupInfo: IGridPopupInfo = {
     columnNames: [
       { original: 'equip_type_uuid', popup: 'equip_type_uuid' },
       { original: 'equip_type_nm', popup: 'equip_type_nm' },
