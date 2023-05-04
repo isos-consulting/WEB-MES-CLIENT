@@ -1,6 +1,6 @@
 import Grid from '@toast-ui/react-grid';
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import { Container, Datagrid, IGridColumn } from '~/components/UI';
+import { Container, Datagrid, IGridColumn, TGridMode } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 
 /**
@@ -12,7 +12,7 @@ export const workRoutingStore = () => {
   const [selectedRow, setSelectedRow] = useState({});
 
   useLayoutEffect(() => {
-    if (data?.lenght > 0) setSelectedRow(data[0]);
+    if (data?.length > 0) setSelectedRow(data[0]);
   }, [data]);
 
   const infos = {
@@ -182,7 +182,7 @@ export const RoutingInfo = ({
     disabledAutoDateColumn: true,
     gridId: 'WORK_ROUTING_GRID',
     ref: gridRef,
-    gridMode: 'view',
+    gridMode: 'view' as TGridMode,
     columns: columns,
     data: data,
   };
