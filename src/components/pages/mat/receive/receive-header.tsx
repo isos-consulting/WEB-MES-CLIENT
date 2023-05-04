@@ -13,7 +13,7 @@ export const MatReceiveHeader = ({
   modalService: MatReceiveModalService;
 }) => {
   return (
-    <Div>
+    <Div divType="singleGridButtonsDiv" optionType={{}}>
       <Flexbox width="100%" justifyContent="space-between">
         <Button
           ImageType="add"
