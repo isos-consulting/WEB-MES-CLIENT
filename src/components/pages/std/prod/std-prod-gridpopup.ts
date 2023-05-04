@@ -1,3 +1,5 @@
+import { GridEventProps } from 'tui-grid/types/event';
+import { TGridPopupInfos } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 
 export default [
@@ -261,7 +263,7 @@ export default [
         filter: 'text',
       },
     ],
-    dataApiSettings: ev => {
+    dataApiSettings: (ev: GridEventProps & { instance: any }) => {
       const { rowKey, instance } = ev;
       const { rawData } = instance?.store?.data;
 
@@ -273,4 +275,4 @@ export default [
     },
     gridMode: 'select',
   },
-];
+] as TGridPopupInfos;
