@@ -60,6 +60,7 @@ export default interface IDatagridProps extends GridProps {
 
   /** 모달에 새로 버튼을 추가합니다. */
   extraButtons?: TGridExtraButtons[];
+  saveOptionParams?: any;
 
   onClick?: (ev) => void;
   onDblclick?: (ev) => void;

@@ -30,7 +30,9 @@ export const orderWorker = () => {
 
   const [modal, contextHolder] = Modal.useModal();
 
-  const [saveOptionParams, setSaveOptionParams] = useState({});
+  const [saveOptionParams, setSaveOptionParams] = useState<{
+    order_uuid?: string;
+  }>({});
 
   //#region 🔶 메인 그리드 관련
   const gridRef = useRef<Grid>();
@@ -161,7 +163,7 @@ export const orderWorker = () => {
       console.log('saveOptionParams', saveOptionParams);
       saveGridData(
         getModifiedRows(
-          gridRef,
+          gridRef as unknown as React.MutableRefObject<Grid>,
           newGridPopupInfo.columns,
           newGridPopupInfo.data,
         ),
