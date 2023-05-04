@@ -41,7 +41,8 @@ export interface IButtonStyles {
     | 'save'
     | 'blue'
     | 'primary'
-    | 'red';
+    | 'red'
+    | 'gray';
 
   /** 버튼 폰트 사이즈 유형 */
   fontSize?: 'small' | 'medium' | 'large';
