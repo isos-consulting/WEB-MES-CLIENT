@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Datagrid, Searchbox } from '~/components/UI';
+import { Container, Datagrid, ISearchItem, Searchbox } from '~/components/UI';
 import { PieChart } from '~/components/UI/graph/chart-pie.ui';
 import { getToday } from '~/functions';
 import { BsnProductionEquipDowntimeService } from './production/bsn-production-equip-downtime-service';
@@ -9,24 +9,29 @@ export const PgProductionEquipDowntimeType = () => {
   const [weeklyData, setWeelkyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
 
-  useEffect(async () => {
-    const service = new BsnProductionEquipDowntimeService();
+  useEffect(() => {
+    async () => {
+      const service = new BsnProductionEquipDowntimeService();
 
-    setWeelkyData(await service.weeklyData({ reg_date: month }));
-    setMonthlyData(await service.monthlyData({ reg_date: month }));
+      setWeelkyData(await service.weeklyData({ reg_date: month }));
+      setMonthlyData(await service.monthlyData({ reg_date: month }));
+    };
   }, [month]);
 
   return (
     <>
       <Searchbox
-        searchItems={[
-          {
-            id: 'reg_date',
-            label: '생산 월',
-            type: 'dateym',
-            default: getToday(),
-          },
-        ]}
+        id="searchbox"
+        searchItems={
+          [
+            {
+              id: 'reg_date',
+              label: '생산 월',
+              type: 'dateym',
+              default: getToday(),
+            },
+          ] as ISearchItem[]
+        }
         onSearch={({ reg_date }: { reg_date: string }) => {
           setMonth(reg_date.substring(0, 7));
         }}
@@ -34,6 +39,7 @@ export const PgProductionEquipDowntimeType = () => {
       <div style={{ display: 'flex', flexDirection: 'row', gap: '0px 15px' }}>
         <Container style={{ width: '50%' }}>
           <Datagrid
+            gridId="weekly"
             data={weeklyData.map(data => {
               return Object.entries(data).reduce((acc, [key, value]) => {
                 return {
@@ -64,6 +70,7 @@ export const PgProductionEquipDowntimeType = () => {
       <Container style={{ minHeight: '150px' }}></Container>
       <Container>
         <Datagrid
+          gridId="monthly"
           data={monthlyData.map(({ fg, avg, ...months }) => {
             return Object.entries(months).reduce(
               (acc, [key, value]) => {

@@ -1,12 +1,18 @@
 import Grid from '@toast-ui/react-grid';
 import React from 'react';
-import { Button, Container, Datagrid, IGridColumn } from '~/components/UI';
+import {
+  Button,
+  Container,
+  Datagrid,
+  IGridColumn,
+  TGridMode,
+} from '~/components/UI';
 
 type EqmInspHeaderProps = {
   gridRef: React.MutableRefObject<Grid>;
   columns: IGridColumn[];
   data: any[];
-  gridMode: string;
+  gridMode: TGridMode;
   onAfterClick: (ev: any) => void;
   onSearch: () => void;
   onCreate: () => void;
@@ -65,6 +71,7 @@ export const EqmInspHeader = ({
 
       <Container>
         <Datagrid
+          gridId="eqmInspHeader"
           ref={gridRef}
           columns={columns}
           data={data}

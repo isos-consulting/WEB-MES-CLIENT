@@ -109,12 +109,16 @@ export const PgFacilityProductive = () => {
 
   return (
     <>
-      <Searchbox {...{ searchItems, innerRef, onSearch }} />
+      <Searchbox
+        id="SEARCH_INPUTBOX"
+        {...{ searchItems, innerRef, onSearch }}
+      />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
+          gridId="facility-productive-datagrid"
           disabledAutoDateColumn={true}
           {...{
             data,

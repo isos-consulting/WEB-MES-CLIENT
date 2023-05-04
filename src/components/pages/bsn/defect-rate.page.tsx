@@ -155,12 +155,16 @@ export const PgDefectRateReport = () => {
 
   return (
     <>
-      <Searchbox {...{ onSearch, searchItems, innerRef }} />
+      <Searchbox
+        id="SEARCH_INPUTBOX"
+        {...{ onSearch, searchItems, innerRef }}
+      />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
+          gridId="DEFECT_RATE_REPORT"
           data={defects.map(defect => {
             let workQtyMonthSum = 0;
             let rejectQtyMonthSum = 0;

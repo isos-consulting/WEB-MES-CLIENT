@@ -105,12 +105,16 @@ export const PgDownTimeReport = () => {
 
   return (
     <>
-      <Searchbox {...{ searchItems, onSearch, innerRef }} />
+      <Searchbox
+        id="SEARCH_INPUTBOX"
+        {...{ searchItems, onSearch, innerRef }}
+      />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
+          gridId="PG_DOWN_TIME_REPORT"
           data={downtime}
           columns={[{ header: '구분', name: 'fg' }].concat(
             workings.map(({ workings_cd, workings_nm }) => ({
