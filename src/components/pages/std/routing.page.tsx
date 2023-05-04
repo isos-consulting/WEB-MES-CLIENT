@@ -1009,7 +1009,7 @@ export const PgStdRouting = () => {
           ServiceUtil.getInstance()
             .callMethod(
               RoutingServiceImpl.getInstance().delete,
-              detailGrid.gridRef,
+              detailGrid.gridRef as GridRef,
             )
             .then(_ => {
               message.success(MESSAGE.ROUTING_DELETE_SUCCESS);
