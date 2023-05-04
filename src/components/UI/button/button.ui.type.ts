@@ -40,7 +40,8 @@ export interface IButtonStyles {
     | 'excel'
     | 'save'
     | 'blue'
-    | 'primary';
+    | 'primary'
+    | 'red';
 
   /** 버튼 폰트 사이즈 유형 */
   fontSize?: 'small' | 'medium' | 'large';
