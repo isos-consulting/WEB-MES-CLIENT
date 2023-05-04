@@ -8,4 +8,6 @@ export default interface ILabelProps {
 
   /** 중요 여부 */
   important?: boolean;
+
+  width?: number;
 }
