@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { DatePicker, Form, SubmitButton } from 'formik-antd';
 import React from 'react';
 import styled from 'styled-components';
-import { Container, Datagrid, Label } from '~/components/UI';
+import { Container, Datagrid, IGridColumn, Label } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import Colors from '~styles/color.style.module.scss';
 import Fonts from '~styles/font.style.module.scss';
@@ -22,7 +22,7 @@ const RangePicker = styled(DatePicker.RangePicker)`
   }
 `;
 
-const columns = [
+const columns: IGridColumn[] = [
   {
     header: '입하UUID',
     name: 'receive_uuid',
@@ -95,6 +95,7 @@ export const MatReceiveAside = ({ service }) => {
       </Formik>
       <div className={MatReceiveAsideStyleModule.reactiveHeight}>
         <Datagrid
+          gridId="receiveHeaderGrid"
           data={service.receiveHeaderGridData}
           columns={columns}
           height="fitToParent"

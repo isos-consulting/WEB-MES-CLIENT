@@ -1,6 +1,6 @@
 import { Col } from 'antd';
 import React from 'react';
-import { Datagrid } from '~/components/UI';
+import { Datagrid, IGridColumn } from '~/components/UI';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { MatReceiveService } from '~/service/mat/ReceiveService';
 import MatReceiveContentStyleModule from './receive-content.module.css';
@@ -10,7 +10,7 @@ type MatReceiveContentProps = {
   service: MatReceiveService;
 };
 
-const columns = [
+const columns: IGridColumn[] = [
   {
     header: '세부입하UUID',
     name: 'receive_detail_uuid',
@@ -220,6 +220,7 @@ export const MatReceiveContent = ({ service }: MatReceiveContentProps) => {
       />
       <div className={MatReceiveContentStyleModule.reactiveHeight}>
         <Datagrid
+          gridId="mat-receive-content-grid"
           ref={service.contentGridRef}
           data={service.receiveContentGridData}
           columns={columns}
