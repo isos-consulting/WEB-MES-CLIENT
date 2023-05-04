@@ -1,5 +1,13 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { cloneDeep } from 'lodash';
 import React, { useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpSingleGrid } from '~/components/templates';
+import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -8,13 +16,6 @@ import {
   getPageName,
   getToday,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { cloneDeep } from 'lodash';
 
 /** 제품입고 */
 export const PgInvMove = () => {
@@ -497,7 +498,7 @@ export const PgInvMove = () => {
               filter: 'text',
             },
           ],
-          dataApiSettings: ev => {
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = ev;
             const { rawData } = instance?.store?.data;
 

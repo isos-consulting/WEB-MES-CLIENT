@@ -1,5 +1,14 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import { Datagrid, getPopupForm, useGrid, useSearchbox } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import {
   cleanupKeyOfObject,
   cloneObject,
@@ -9,14 +18,6 @@ import {
   getToday,
   isModified,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
-import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
 
 /** 완료상태 컬럼 renderer 조건 */
@@ -408,7 +409,7 @@ export const PgMatReceive = () => {
               filter: 'text',
             },
           ],
-          dataApiSettings: ev => {
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = ev;
             const { rawData } = instance?.store?.data;
 
@@ -451,7 +452,7 @@ export const PgMatReceive = () => {
               filter: 'text',
             },
           ],
-          dataApiSettings: ev => {
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = ev;
             const { rawData } = instance?.store?.data;
 

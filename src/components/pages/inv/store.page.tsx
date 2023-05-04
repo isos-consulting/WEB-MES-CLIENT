@@ -1,21 +1,18 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
-  getPopupForm,
   IGridColumn,
   ISearchItem,
   TGridMode,
+  getPopupForm,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
-import {
-  cleanupKeyOfObject,
-  dataGridEvents,
-  getData,
-  getPageName,
-  getToday,
-} from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
 import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps, {
   IExtraButton,
@@ -23,10 +20,14 @@ import ITpSingleGridProps, {
   TExtraGridPopups,
 } from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
+import {
+  cleanupKeyOfObject,
+  dataGridEvents,
+  getData,
+  getPageName,
+  getToday,
+} from '~/functions';
 import { onDefaultGridSave } from '../prd/work';
-import Grid from '@toast-ui/react-grid';
-import { message } from 'antd';
 
 /** 재고실사관리 */
 export const PgInvStore = () => {
@@ -254,7 +255,7 @@ export const PgInvStore = () => {
             { original: 'location_nm', popup: 'location_nm' },
           ],
           columns: LOCATION_POPUP.datagridProps?.columns,
-          dataApiSettings: el => {
+          dataApiSettings: (el: GridEventProps & { instance: any }) => {
             const rowKey = el?.rowKey;
             const rowData = el?.instance?.store?.data?.rawData.find(
               el => el.rowKey === rowKey,
@@ -924,7 +925,7 @@ export const PgInvStore = () => {
     onOk: gridRef => {
       onDefaultGridSave(
         'basic',
-        gridRef,
+        gridRef as unknown as React.MutableRefObject<Grid>,
         invStoreColumns,
         invStroeUriPath,
         {},
