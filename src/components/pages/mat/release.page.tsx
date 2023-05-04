@@ -1,10 +1,20 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
-  getPopupForm,
   TGridMode,
+  getPopupForm,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpSingleGrid } from '~/components/templates';
+import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
+import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   cloneObject,
@@ -14,15 +24,6 @@ import {
   getPageName,
   getToday,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpSingleGrid } from '~/components/templates';
-import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { TExtraGridPopups } from '~/components/templates/grid-double/grid-double.template.type';
-import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
 
 const changeNameToAlias = (data: object, items: any[]) => {
   let newData = cloneObject(data);
@@ -331,7 +332,7 @@ export const PgMatRelease = () => {
               filter: 'text',
             },
           ],
-          dataApiSettings: ev => {
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = ev;
             const { rawData } = instance?.store?.data;
 
@@ -1072,7 +1073,6 @@ export const PgMatRelease = () => {
             cancelText: '아니오',
             cancelButtonProps: {
               hidden: false,
-              visible: true,
             },
           });
         } else {
@@ -1080,8 +1080,9 @@ export const PgMatRelease = () => {
         }
       },
       onOk: () => {
-        const releaseRequestData =
-          releaseRequestPopupGrid?.gridRef.current.gridInst?.getData();
+        const releaseRequestData = releaseRequestPopupGrid?.gridRef.current
+          .getInstance()
+          .getData();
         if (releaseRequestData?.length > 0) {
           newDataPopupGrid?.gridInstance?.appendRows(releaseRequestData);
           setReleaseRequestPopupVisible(false);
