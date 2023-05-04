@@ -1,12 +1,23 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { FormikValues } from 'formik';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
   COLUMN_CODE,
   EDIT_ACTION_CODE,
-  getPopupForm,
   TGridMode,
+  getPopupForm,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates';
+import ITpDoubleGridProps, {
+  TExtraGridPopups,
+} from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -15,16 +26,6 @@ import {
   getPageName,
   getToday,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import ITpDoubleGridProps, {
-  TExtraGridPopups,
-} from '~/components/templates/grid-double/grid-double.template.type';
-import { FormikValues } from 'formik';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
 
 const changeNameToAlias = (data: object, items: any[]) => {
@@ -355,7 +356,7 @@ export const PgQmsRework = () => {
             { original: 'to_location_nm', popup: 'location_nm' },
           ],
           columns: LOCATION_POPUP.datagridProps?.columns,
-          dataApiSettings: el => {
+          dataApiSettings: (el: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = el;
             const { rawData } = instance?.store.data;
 
