@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Datagrid, Searchbox } from '~/components/UI';
+import { Container, Datagrid, ISearchItem, Searchbox } from '~/components/UI';
 import { getData, getToday } from '~/functions';
 import UserLoginHistory, {
   LoginHistoryApiResponse,
@@ -10,18 +10,6 @@ interface LoginHistoryRequestQueryString {
   user_nm: string;
   start_date: string;
   end_date: string;
-}
-
-interface DefaultItem {
-  readonly id: string;
-  readonly type: string;
-  readonly label: string;
-  readonly default: string;
-}
-
-interface DateReangeItem extends DefaultItem {
-  readonly ids: string[];
-  readonly defaults: string[];
 }
 
 const fetchLoginHistory = async ({
@@ -39,7 +27,7 @@ const fetchLoginHistory = async ({
 };
 
 const store: {
-  searchItems: (DefaultItem | DateReangeItem)[];
+  searchItems: ISearchItem[];
   columns: { header: string; name: string }[];
 } = {
   searchItems: [
@@ -94,7 +82,11 @@ export const PgStdLoginHistory = () => {
         boxShadow={false}
       />
       <Container>
-        <Datagrid data={loginHistoryData} columns={store.columns} />
+        <Datagrid
+          gridId="login-history"
+          data={loginHistoryData}
+          columns={store.columns}
+        />
       </Container>
     </>
   );
