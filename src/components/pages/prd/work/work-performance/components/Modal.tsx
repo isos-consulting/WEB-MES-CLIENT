@@ -144,6 +144,7 @@ export const WorkRoutingHistoryModalInWorkPerformancePage = ({
     >
       <Container>
         <Datagrid
+          gridId="WORK_ROUTING_HISTORY_GRID"
           columns={columns}
           height={300}
           data={data}
