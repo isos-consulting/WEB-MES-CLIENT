@@ -45,6 +45,8 @@ export default interface ITextboxProps extends ITextboxStyles {
 
   hidden?: boolean;
 
+  type?: 'date' | 'time' | 'number';
+
   /** 값 변경 이벤트 */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 

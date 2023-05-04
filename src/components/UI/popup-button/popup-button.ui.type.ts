@@ -35,6 +35,8 @@ export default interface IPopupButtonProps {
   /** 첫줄에 빈칸 생성 */
   firstItemEmpty?: boolean;
 
+  widthSize: 'medium';
+
   setValues?: (values: any, shouldValidate?: boolean) => void;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
   handleChange?: (value) => void;
