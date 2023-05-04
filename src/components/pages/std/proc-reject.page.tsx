@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { useGrid } from '~/components/UI';
+import { IGridPopupInfo, useGrid } from '~/components/UI';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -149,7 +149,7 @@ export const PgStdProcReject = () => {
     },
   );
 
-  const rejectPopupInfo = {
+  const rejectPopupInfo: IGridPopupInfo = {
     columnNames: [
       { original: 'reject_type_uuid', popup: 'reject_type_uuid' },
       { original: 'reject_type_nm', popup: 'reject_type_nm' },
