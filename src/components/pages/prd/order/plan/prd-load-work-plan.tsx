@@ -7,6 +7,7 @@ import {
   IGridColumn,
   IGridPopupColumnInfo,
   Searchbox,
+  TGridMode,
   TPopupKey,
 } from '~/components/UI';
 import { IPopupItemsRetrunProps } from '~/components/UI/popup/popup.ui.type';
@@ -29,7 +30,7 @@ type WorkPlanRowAddPopupInfo = {
   onAfterOk: () => void;
   onBeforeOk: () => void;
   columnNames: IGridPopupColumnInfo[];
-  gridMode: string;
+  gridMode: TGridMode;
 };
 
 type WorkPlanRowAddPopupDataApiSettingParams = {
