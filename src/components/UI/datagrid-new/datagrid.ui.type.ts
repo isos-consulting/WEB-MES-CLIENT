@@ -1,5 +1,5 @@
 import React from 'react';
-import { Props as GridProps } from '@toast-ui/react-grid';
+import Grid, { Props as GridProps } from '@toast-ui/react-grid';
 import { TPopupKey } from '../popup';
 import { ColumnOptions, ModifiedRows } from 'tui-grid/types';
 import { GridEventProps } from 'tui-grid/types/event';
@@ -8,6 +8,7 @@ import IModalProps from '../modal/modal.ui.type';
 
 /** 데이터 그리드 속성 인터페이스 */
 export default interface IDatagridProps extends GridProps {
+  ref?: React.MutableRefObject<Grid>;
   /** 제목 */
   title?: string;
 
