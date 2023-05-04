@@ -80,7 +80,7 @@ export const PgQmsInsp = () => {
   const amendDataPopupSearchInfo = null;
 
   const [inspType, setInspType] = useState([]);
-  const [inspInfo, setInspInfo] = useState({});
+  const [inspInfo, setInspInfo] = useState<{ insp_uuid?: string }>({});
 
   const [workerInspFg, setWorkerInspFg] = useState(false);
   const [inspectorInspFg, setInspectorInspFg] = useState(false);
@@ -831,6 +831,7 @@ export const PgQmsInsp = () => {
               onOk: cloneInspItems,
               content: (
                 <Datagrid
+                  gridId="insp-clone-datagrid"
                   ref={childGridRef}
                   data={[...createdInspData]}
                   columns={ColumnStore.INSP_CLONE}
