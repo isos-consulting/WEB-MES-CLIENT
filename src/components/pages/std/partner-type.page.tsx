@@ -142,7 +142,7 @@ export const PgStdPartnerType = () => {
           ServiceUtil.getInstance()
             .callMethod(
               PartnerTypeServiceImpl.getInstance().delete,
-              grid.gridRef,
+              grid.gridRef as GridRef,
             )
             .then(_ => {
               message.success('삭제되었습니다.');
