@@ -47,6 +47,8 @@ export default interface ITextboxProps extends ITextboxStyles {
 
   type?: 'date' | 'time' | 'number';
 
+  autoComplete?: string;
+
   /** 값 변경 이벤트 */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
