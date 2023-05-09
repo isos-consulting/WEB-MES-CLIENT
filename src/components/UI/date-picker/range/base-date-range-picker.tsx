@@ -71,7 +71,7 @@ const BaseRangePicker: React.FC<BaseRangeDatePickerProps> = props => {
     <ReangePickerWrapper
       ids={props.ids}
       names={props.names}
-      defaultValue={props.defalutValue}
+      defaultValue={props.defaultValue}
       onChange={props.onChange}
       disabledDate={disabledDate}
       placeholder={props.placeholder}
