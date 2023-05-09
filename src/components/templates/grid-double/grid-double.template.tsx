@@ -306,12 +306,12 @@ export const TpDoubleGrid: React.FC<Props> = props => {
   //#region 🔶그리드 자동 높이 맞춤
   const layoutState = useRecoilValue(layoutStore.state);
 
-  const [headerGridHeight, setHeaderGridHeight] = useState<number>(
-    headerGrid?.height ?? document.getElementById('main-body')?.clientHeight,
-  );
-  const [detailGridHeight, setDetailGridHeight] = useState<number>(
-    detailGrid?.height ?? document.getElementById('main-body')?.clientHeight,
-  );
+  const [headerGridHeight, setHeaderGridHeight] = useState<
+    number | 'fitToParent'
+  >(headerGrid?.height ?? document.getElementById('main-body')?.clientHeight);
+  const [detailGridHeight, setDetailGridHeight] = useState<
+    number | 'fitToParent'
+  >(detailGrid?.height ?? document.getElementById('main-body')?.clientHeight);
 
   const onResize = (ev?) => {
     const mainBody = Number(

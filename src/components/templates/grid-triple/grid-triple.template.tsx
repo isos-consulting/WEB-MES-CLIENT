@@ -362,7 +362,9 @@ export const TpTripleGrid: React.FC<Props> = props => {
       ? fixHeight
       : document.getElementById('main-body')?.clientHeight,
   );
-  const [detailSubGridHeight, setDetailSubGridHeight] = useState<number>(
+  const [detailSubGridHeight, setDetailSubGridHeight] = useState<
+    number | 'fitToParent'
+  >(
     detailSubGrid?.height ?? document.getElementById('main-body')?.clientHeight,
   );
 

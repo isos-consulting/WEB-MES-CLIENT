@@ -112,7 +112,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
   //#region 🔶 그리드 자동 높이 맞춤
   const layoutState = useRecoilValue(layoutStore.state);
 
-  const [gridHeight, setGridHeight] = useState<number>(
+  const [gridHeight, setGridHeight] = useState<number | 'fitToParent'>(
     grid?.height ?? document.getElementById('main-body')?.clientHeight,
   );
 
