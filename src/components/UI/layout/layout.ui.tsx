@@ -76,7 +76,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         </ScContent>
 
         <Footer
-          id="main-footer"
           height={layoutState.bottomSpacing}
           left={layoutState.leftSpacing}
         />
