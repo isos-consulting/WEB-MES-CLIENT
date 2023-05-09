@@ -134,7 +134,7 @@ const Header: React.FC<Props> = props => {
 interface BookmarkButtonProps {
   uuid: string;
   key: string;
-  flush: () => void;
+  flush: React.Dispatch<React.SetStateAction<any[]>>;
   items: any[];
 }
 
