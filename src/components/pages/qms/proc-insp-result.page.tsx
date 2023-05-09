@@ -924,13 +924,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       });
   };
 
-  interface InspectionGridInstanceReference<GridInstance> {
-    current: GridInstance;
-  }
-
-  const onSave = async (
-    inspectionGridRef: InspectionGridInstanceReference<Grid>,
-  ) => {
+  const onSave = async (inspectionGridRef: React.MutableRefObject<Grid>) => {
     const fetchOptionFilledQualityAllInspectionResult = await getData(
       { tenant_opt_cd: 'QMS_INSP_RESULT_FULL' },
       '/std/tenant-opts',
@@ -1035,7 +1029,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   return (
     <GridPopup
       title={SENTENCE.DO_UPDATE_DATA}
-      onOk={onSave}
+      onOk={okEvent => {
+        onSave(okEvent as unknown as React.MutableRefObject<Grid>);
+      }}
       okText={WORD.SAVE}
       cancelText={WORD.CANCEL}
       onCancel={onCancel}

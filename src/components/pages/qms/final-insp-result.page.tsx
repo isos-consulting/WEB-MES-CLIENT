@@ -1102,13 +1102,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       });
   };
 
-  interface InspectionGridInstanceReference<GridInstance> {
-    current: GridInstance;
-  }
-
-  const onSave = async (
-    inspectionGridRef: InspectionGridInstanceReference<Grid>,
-  ) => {
+  const onSave = async (inspectionGridRef: React.MutableRefObject<Grid>) => {
     const { insp_handling_type, emp_uuid, reg_date_time, insp_result_fg } =
       inputInspResult?.ref?.current?.values;
     const { to_store_uuid } = inputInspResultIncome?.ref?.current?.values;
@@ -1452,7 +1446,9 @@ const INSP_RESULT_CREATE_POPUP = (props: {
   return (
     <GridPopup
       title={SENTENCE.DO_ADD_DATA}
-      onOk={onSave}
+      onOk={okEvent => {
+        onSave(okEvent as unknown as React.MutableRefObject<Grid>);
+      }}
       okText={WORD.SAVE}
       cancelText={WORD.CANCEL}
       onCancel={onCancel}
@@ -2147,7 +2143,9 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   return (
     <GridPopup
       title={SENTENCE.DO_UPDATE_DATA}
-      onOk={onSave}
+      onOk={okEvent => {
+        onSave(okEvent as unknown as React.MutableRefObject<Grid>);
+      }}
       okText={WORD.SAVE}
       cancelText={WORD.CANCEL}
       onCancel={onCancel}
