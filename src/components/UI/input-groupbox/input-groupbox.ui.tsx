@@ -98,7 +98,7 @@ export interface IInputGroupboxItem {
 
   default?: any;
 
-  onAfterChange?: (e) => void;
+  onAfterChange?: (e, option?: any) => void;
   handleChange?: (values) => void;
 
   //----
@@ -114,7 +114,7 @@ export type TDataApiSettings = {
   params?: object;
 };
 
-type TDataSettingOpionsReturn = {
+export type TDataSettingOpionsReturn = {
   uriPath: string;
   params?: object;
   codeName?: string;
@@ -579,8 +579,8 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                             ) : item.type === 'rangepicker' ? (
                               <RangePicker
                                 id={item.id}
-                                ids={item.ids}
-                                names={item.names}
+                                ids={item.ids as unknown as string}
+                                names={item.names as unknown as string}
                                 children={
                                   item.useCheckbox ? (
                                     <Checkbox
@@ -611,7 +611,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   ) : null
                                 }
                                 placeholder={item.placeholder}
-                                defalutValue={[
+                                defaultValue={[
                                   moment(
                                     _initialValues[
                                       item.names?.[0] ?? item.ids?.[0]
@@ -691,7 +691,12 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                               <Combobox
                                 id={item.id}
                                 name={item.name || item.id}
-                                widthSize={item.widthSize || 'default'}
+                                widthSize={
+                                  (item.widthSize || 'default') as
+                                    | 'auto'
+                                    | 'flex'
+                                    | 'default'
+                                }
                                 options={item.options as IComboboxItem[]}
                                 important={item.important}
                                 label={item.label}
@@ -1179,7 +1184,12 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                   <Combobox
                                     id={item.id}
                                     name={item.name || item.id}
-                                    widthSize={item.widthSize || 'flex'}
+                                    widthSize={
+                                      (item.widthSize || 'flex') as
+                                        | 'auto'
+                                        | 'flex'
+                                        | 'default'
+                                    }
                                     options={item.options as IComboboxItem[]}
                                     important={item.important}
                                     label={props?.onSubmit ? item.label : null}
