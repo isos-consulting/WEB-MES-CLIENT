@@ -43,7 +43,7 @@ export default interface IDatePickerProps extends IDatepickerStyles {
   returnType?: 'date' | 'dateString';
 
   /** 날짜 변경 이벤트 */
-  onChange?: (date: Dayjs, dateString?: string) => void; //(value: any | null, dateString: string) => void;
+  onChange?: (date: any, dateString: string) => void; //(value: any | null, dateString: string) => void;
 }
 
 /** 날짜선택기 스타일 인터페이스 */
