@@ -8,6 +8,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 import { Label } from '../label';
 import { ScCombobox } from './combobox.ui.styled';
 import Props from './combobox.ui.type';
+import { TDataSettingOpionsReturn } from '../input-groupbox';
 
 /** 콤보박스 */
 const Combobox: React.FC<Props> = props => {
@@ -58,7 +59,8 @@ const Combobox: React.FC<Props> = props => {
 
   /** 서버 데이터로 콤보박스 데이터 구성 */
   const getComboDatas = () => {
-    const { uriPath, params, codeName, textName } = props?.dataSettingOptions;
+    const { uriPath, params, codeName, textName } =
+      props?.dataSettingOptions as TDataSettingOpionsReturn;
 
     getData<any[]>(params, uriPath).then(apiResponseOptions => {
       const comboData = getCodeTextPairList({
