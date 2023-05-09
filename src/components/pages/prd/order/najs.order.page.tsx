@@ -142,7 +142,9 @@ export const PgPrdNajsOrder = () => {
     popupId: 'NAJS_PROD_ORDER_NEW_MODAL',
     title: SENTENCE.CHILD_PROD_ORDER_REGISTER,
     okText: SENTENCE.SAVE_DATA,
-    onOk: gridRef => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
       const { createdRows, ...otherRows } = getModifiedRows(
         gridRef,
         newGridPopupInfo.columns,

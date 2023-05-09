@@ -32,7 +32,9 @@ export const orderInput = () => {
 
   const [modal, contextHolder] = Modal.useModal();
 
-  const [saveOptionParams, setSaveOptionParams] = useState({});
+  const [saveOptionParams, setSaveOptionParams] = useState<{
+    order_uuid?: string;
+  }>({});
 
   //#region 🔶메인 그리드 관련
   const gridRef = useRef<Grid>();
@@ -689,7 +691,9 @@ export const orderInput = () => {
     title: '투입품목 등록',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: gridRef => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
       saveGridData(
         getModifiedRows(
           gridRef,

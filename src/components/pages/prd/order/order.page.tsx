@@ -180,7 +180,9 @@ export const PgPrdOrder = () => {
     popupId: 'ORDER_NEW_GRID_POPUP',
     title: '작업지시 등록',
     okText: '저장하기',
-    onOk: gridRef => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
       saveGridData(
         getModifiedRows(
           gridRef,
