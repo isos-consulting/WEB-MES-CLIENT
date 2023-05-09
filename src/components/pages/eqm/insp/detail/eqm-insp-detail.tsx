@@ -30,6 +30,7 @@ export const EqmInspDetail = ({
       </div>
       <Container>
         <Datagrid
+          gridId="eqm-insp-detail"
           ref={gridRef}
           columns={columns}
           data={data}
