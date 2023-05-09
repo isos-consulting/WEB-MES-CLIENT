@@ -1,3 +1,5 @@
+import { TDataSettingOpionsReturn } from '../input-groupbox';
+
 /** 콤보박스 속성 인터페이스 */
 export default interface IComboboxProps extends IComboboxPropsStyles {
   /** 콤보박스 아이디 */
@@ -29,12 +31,9 @@ export default interface IComboboxProps extends IComboboxPropsStyles {
   onChange?: (value: any, option: any) => void;
 
   /** 서버 데이터로 콤보박스 리스트를 구성하기 위한 요소 */
-  dataSettingOptions?: {
-    uriPath: string;
-    params?: object;
-    codeName: string;
-    textName: string;
-  };
+  dataSettingOptions?:
+    | TDataSettingOpionsReturn
+    | Promise<TDataSettingOpionsReturn>;
 }
 
 export type TComboFirstItemType = 'none' | 'empty' | 'all' | undefined;
