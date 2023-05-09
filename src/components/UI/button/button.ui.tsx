@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { MouseEvent, useMemo, useState } from 'react';
 import { ScButton } from './button.ui.styled';
 import Colors from '~styles/color.style.module.scss';
 import {
@@ -21,9 +21,9 @@ const Button: React.FC<Props> & { Upload: typeof UploadButton } = props => {
   const { ImageType, ...otherProps } = props;
   let iconElement = useMemo(() => setIcon(ImageType), [ImageType]);
 
-  const handleClick = async () => {
+  const handleClick = async (clickEvent: MouseEvent<HTMLElement>) => {
     setLoading(true);
-    await props.onClick();
+    await props.onClick(clickEvent);
     setLoading(false);
   };
 

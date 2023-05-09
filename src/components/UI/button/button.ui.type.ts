@@ -19,7 +19,7 @@ export default interface IButtonProps extends IButtonStyles {
   style?: any;
 
   /** 버튼 클릭 이벤트 */
-  onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void | Promise<void>;
 }
 
 /** 버튼 스타일 인터페이스 */
