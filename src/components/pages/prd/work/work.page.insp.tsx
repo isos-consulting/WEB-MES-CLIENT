@@ -79,7 +79,10 @@ export const INSP = () => {
   const [headerSaveOptionParams, setHeaderSaveOptionParams] = useState({});
   const [detailSaveOptionParams, setDetailSaveOptionParams] = useState({});
 
-  const [selectedRow, setSelectedRow] = useState({});
+  const [selectedRow, setSelectedRow] = useState<{
+    insp_result_uuid?: string;
+    work_uuid?: string;
+  }>({});
 
   const HEADER_SEARCH_URI_PATH = '/qms/proc/insp-results';
   const DETAIL_STD_SEARCH_URI_PATH = '/qms/proc/insp/include-details';
@@ -469,7 +472,7 @@ export const INSP = () => {
         ) => {
           const values = [];
 
-          for (let k = 1; k <= sample_cnt; k++) {
+          for (let k = 1; k <= (sample_cnt as number); k++) {
             const value = inspectionItem['x' + k + '_insp_value'];
             if (value) {
               values.push({
