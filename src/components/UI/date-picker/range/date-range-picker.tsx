@@ -11,7 +11,7 @@ export interface RangeDatePickerProps<T> extends BaseRangeDatePickerProps {
 
 const RangePicker: <T>(
   t: React.PropsWithChildren<RangeDatePickerProps<T>>,
-) => React.ReactElementRangeDatePickerProps<T> = ({ children, ...props }) => {
+) => JSX.Element = ({ children, ...props }) => {
   const onChange = useCallback(
     (dates, dateStrings) => {
       let returnValue = props.returnType === 'dateString' ? dateStrings : dates;
