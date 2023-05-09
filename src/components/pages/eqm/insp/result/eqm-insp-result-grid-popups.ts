@@ -1,3 +1,4 @@
+import { TGridPopupInfos } from '~/components/UI';
 import { ENUM_WIDTH } from '~/enums';
 
 export default [
@@ -29,4 +30,4 @@ export default [
     },
     gridMode: 'select',
   },
-];
+] as TGridPopupInfos;

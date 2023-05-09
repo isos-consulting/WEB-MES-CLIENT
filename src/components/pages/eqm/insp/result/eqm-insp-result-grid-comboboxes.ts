@@ -1,3 +1,5 @@
+import { TGridComboInfos } from '~/components/UI';
+
 export default [
   {
     columnNames: [
@@ -13,8 +15,8 @@ export default [
       },
     ],
     itemList: [
-      { code: false, text: '불합격' },
-      { code: true, text: '합격' },
+      { code: 'false', text: '불합격' },
+      { code: 'true', text: '합격' },
     ],
   },
-];
+] as TGridComboInfos;
