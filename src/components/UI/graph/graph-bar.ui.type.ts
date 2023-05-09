@@ -15,7 +15,7 @@ type BarGraphOptions = {
   onClick?: (event: any, elements: any) => void;
 };
 
-type BarGraphData = {
+export type BarGraphData = {
   labels: string[];
   datasets: {
     label: string;
@@ -27,4 +27,5 @@ type BarGraphData = {
 export interface BarGraphProps {
   options: BarGraphOptions;
   data: BarGraphData;
+  dataKeys: string[];
 }
