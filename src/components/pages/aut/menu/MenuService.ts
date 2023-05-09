@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { FormikValues } from 'formik';
 import IDatagridProps from '~/components/UI/datagrid-new/datagrid.ui.type';
 import { getData } from '~/functions';
 import { isEmpty } from '~/helper/common';
@@ -106,11 +107,11 @@ const MenuService = class {
     this.modalHook(false);
   };
 
-  isNewReocrd = ({ uuid }) => {
+  isNewReocrd = ({ uuid }: FormikValues) => {
     return isEmpty(uuid);
   };
 
-  isDeleteReocrd = ({ parent_uuid, sortby }) => {
+  isDeleteReocrd = ({ parent_uuid, sortby }: FormikValues) => {
     return isEmpty(parent_uuid) && isEmpty(sortby);
   };
 
@@ -119,7 +120,10 @@ const MenuService = class {
     return false;
   };
 
-  newRecordValid = ({ parent_uuid, menu_nm, menu_uri }, { prefix, surfix }) => {
+  newRecordValid = (
+    { parent_uuid, menu_nm, menu_uri }: FormikValues,
+    { prefix, surfix },
+  ) => {
     return isEmpty(parent_uuid)
       ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
       : isEmpty(menu_nm)
@@ -135,7 +139,7 @@ const MenuService = class {
   };
 
   updateRecordValid = (
-    { parent_uuid, menu_nm, menu_uri },
+    { parent_uuid, menu_nm, menu_uri }: FormikValues,
     { prefix, surfix },
   ) => {
     return isEmpty(parent_uuid)
