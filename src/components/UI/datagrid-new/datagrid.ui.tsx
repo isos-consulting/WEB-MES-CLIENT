@@ -1,21 +1,34 @@
+import G from '@toast-ui/react-grid';
+import { Modal, Space, message } from 'antd';
+import { cloneDeep } from 'lodash';
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
-  useMemo,
 } from 'react';
+import { useRecoilValue } from 'recoil';
+import 'tui-date-picker/dist/tui-date-picker.css';
+import TuiGrid from 'tui-grid';
+import 'tui-grid/dist/tui-grid.css';
+import { OptColumnHeaderInfo, OptFilter } from 'tui-grid/types/options';
+import 'tui-time-picker/dist/tui-time-picker.css';
 import { v4 as uuidv4 } from 'uuid';
-import Props, {
-  IGridComboColumnInfo,
-  IGridComboInfo,
-  IGridPopupInfo,
-  TGridComboItems,
-  COLUMN_CODE,
-  EDIT_ACTION_CODE,
-} from './datagrid.ui.type';
+import {
+  DatagridCheckboxRenderer,
+  DatagridComboboxEditor,
+  DatagridDateEditor,
+  DatagridDateRenderer,
+  DatagridNumberEditor,
+  DatagridNumberRenderer,
+  DatagridPercentEditor,
+  DatagridPercentRenderer,
+  DatagridTagRenderer,
+} from '~/components/UI/datagrid-ui';
+import { ENUM_DECIMAL, ENUM_FORMAT, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 import {
   executeData,
   getData,
@@ -23,46 +36,33 @@ import {
   setGridFocus,
   setNumberToDigit,
 } from '~/functions';
-import { message, Modal, Space } from 'antd';
-import TuiGrid from 'tui-grid';
-import G from '@toast-ui/react-grid';
-import {
-  DatagridComboboxEditor,
-  DatagridNumberEditor,
-  DatagridNumberRenderer,
-  DatagridDateEditor,
-  DatagridDateRenderer,
-  DatagridCheckboxRenderer,
-  DatagridTagRenderer,
-  DatagridPercentEditor,
-  DatagridPercentRenderer,
-} from '~/components/UI/datagrid-ui';
-import '~styles/grid.style.scss';
-import 'tui-date-picker/dist/tui-date-picker.css';
-import 'tui-time-picker/dist/tui-time-picker.css';
-import { getPopupForm, IPopupItemsRetrunProps } from '../popup';
-import { Result } from '../result';
-import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
-import { Button } from '../button';
-import 'tui-grid/dist/tui-grid.css';
 import Colors from '~styles/color.style.module.scss';
+import '~styles/grid.style.scss';
 import { COLUMN_NAME } from '.';
-import { layoutStore } from '../layout/layout.ui.hook';
-import { useRecoilValue } from 'recoil';
-import { ENUM_DECIMAL, ENUM_FORMAT, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
-import { InputGroupbox } from '../input-groupbox';
-import { Searchbox } from '../searchbox';
-import { cloneDeep } from 'lodash';
+import { Button } from '../button';
+import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
 import { DragDrop } from '../dragDrop';
-import { OptColumnHeaderInfo } from 'tui-grid/types/options';
+import { InputGroupbox } from '../input-groupbox';
+import { layoutStore } from '../layout/layout.ui.hook';
+import { IPopupItemsRetrunProps, getPopupForm } from '../popup';
+import { Result } from '../result';
+import { Searchbox } from '../searchbox';
+import Props, {
+  COLUMN_CODE,
+  EDIT_ACTION_CODE,
+  IGridComboColumnInfo,
+  IGridComboInfo,
+  IGridPopupInfo,
+  TGridComboItems,
+} from './datagrid.ui.type';
 
 import { errorRequireDecimal } from '~/error';
+import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
+import { isEmpty, isNil, isNull } from '~/helper/common';
 import {
   getFilterdDataForDateFormat,
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
-import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
-import { isEmpty, isNil, isNull } from '~/helper/common';
 
 //#region 🔶Tui-Grid 설정 관련
 // 그리드 언어 설정
@@ -2199,7 +2199,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       const { columnName, instance } = ev;
       const {
         filter: { type },
-      } = columns?.find(el => el?.name === columnName);
+      } = columns?.find(el => el?.name === columnName) as { filter: OptFilter };
 
       const filterdState = instance.getFilterState();
       if (filterdState.length === 1) {
