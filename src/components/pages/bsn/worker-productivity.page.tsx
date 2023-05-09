@@ -53,11 +53,12 @@ export const PgWorkerProductivityReport = () => {
       datasets: [
         {
           label: '합계',
-          data: productivities.map(productivity =>
-            Object.keys(productivity)
-              .filter(workingKey => workingKey !== 'workings_nm')
-              .reduce((acc, cur) => acc + Number(productivity[cur]), 0)
-              .toFixed(2),
+          data: productivities.map(
+            productivity =>
+              Object.keys(productivity)
+                .filter(workingKey => workingKey !== 'workings_nm')
+                .reduce((acc, cur) => acc + Number(productivity[cur]), 0)
+                .toFixed(2) as unknown as number,
           ),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
         },
@@ -100,12 +101,16 @@ export const PgWorkerProductivityReport = () => {
 
   return (
     <>
-      <Searchbox {...{ onSearch, searchItems, innerRef }} />
+      <Searchbox
+        id="SEARCH_INPUTBOX"
+        {...{ onSearch, searchItems, innerRef }}
+      />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
+          gridId="WORKER_PRODUCTIVITY"
           data={productivitiesGridData()}
           columns={productivities.reduce((acc, cur) => {
             const key = cur.workings_nm;

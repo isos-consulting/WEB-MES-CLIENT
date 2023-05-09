@@ -87,6 +87,7 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
   return (
     <>
       <Searchbox
+        id="bsn-production-worker-work-price-searchbox"
         searchItems={[
           {
             id: 'reg_date',
@@ -146,24 +147,28 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
       <Container>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Datagrid
+            gridId="bsn-production-worker-work-price-month-datagrid"
             columns={dateFirstHalfColumns}
             data={dateData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-worker-work-price-week-datagrid"
             columns={dateLastHalfColumns}
             data={dateData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-worker-work-price-date-datagrid"
             columns={weekColumns}
             data={weekData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-worker-work-price-year-datagrid"
             columns={monthColumns}
             data={yearData}
             disabledAutoDateColumn={true}

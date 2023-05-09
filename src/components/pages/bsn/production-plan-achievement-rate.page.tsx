@@ -173,12 +173,16 @@ export const PgProductionPlanAchievementRateReport = () => {
 
   return (
     <>
-      <Searchbox {...{ onSearch, searchItems, innerRef }} />
+      <Searchbox
+        id="SEARCH_INPUTBOX"
+        {...{ onSearch, searchItems, innerRef }}
+      />
       <Container>
         <BarGraph {...barGraphProps} />
       </Container>
       <Container>
         <Datagrid
+          gridId="DATAGRID_1"
           data={data()}
           columns={[...columns]}
           header={{
