@@ -79,7 +79,9 @@ const addWorkTimeHeaderIncludedModalContext = ({
         ],
       },
     ],
-    onOk: addedWorkTimeDataGrid => {
+    onOk: okEvent => {
+      const addedWorkTimeDataGrid =
+        okEvent as unknown as React.MutableRefObject<Grid>;
       executeData(
         addedWorkTimeDataGrid.current
           .getInstance()
@@ -143,7 +145,10 @@ const editWorkTimeHeaderIncludedModalContext = ({
         ],
       },
     ],
-    onOk: addedWorkTimeDataGrid => {
+    onOk: okEvent => {
+      const addedWorkTimeDataGrid =
+        okEvent as unknown as React.MutableRefObject<Grid>;
+
       executeData(
         addedWorkTimeDataGrid.current
           .getInstance()

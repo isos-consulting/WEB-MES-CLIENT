@@ -1,19 +1,15 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import {
-  Container,
-  Datagrid,
-  GridInstanceReference,
-  GridPopup,
-} from '~/components/UI';
-import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
+import { Container, Datagrid, GridPopup } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
-import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
+import BasicModalContext, {
+  BasicGridPopupProps,
+} from '../adm/excel-upload-type/hooks/modal';
 
 const { confirm } = Modal;
 const WORK_TIME_TYPE_GRID_COLUMNS = ColumnStore.WORK_TIME_TYPE;
@@ -42,12 +38,10 @@ const addWorkTimeTypeBasicModalContext = ({
   BasicModalContext.add({
     ...displayHiddenBasicModalContext(),
     title: addWorkTypeBasicModalTitle,
-    onOk: (workTimeTypeAddGridRef: GridInstanceReference<Grid>) => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
       executeData(
-        [
-          ...workTimeTypeAddGridRef.current.getInstance().getModifiedRows()
-            .createdRows,
-        ],
+        [...gridRef.current.getInstance().getModifiedRows().createdRows],
         '/std/worktime-types',
         'post',
       ).then(({ success }) => {
@@ -71,9 +65,11 @@ const editWorkTimeTypeBasicModalContext = ({
     ...displayHiddenBasicModalContext(),
     title: editWorkTimeTypeModalTitle,
     data: editWorkTimeTypeModalDatas,
-    onOk: (workTimeTypeEditGridRef: GridInstanceReference<Grid>) => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
       executeData(
-        workTimeTypeEditGridRef.current
+        gridRef.current
           .getInstance()
           .getModifiedRows()
           .updatedRows.map(updatedRow => ({
@@ -113,9 +109,8 @@ const fetchWorkTimeTypesGetApi = () => getData({}, 'std/worktime-types');
 
 export const PgStdWorkTimeType = () => {
   const title = getPageName();
-  const [modalContextStore, setModalContextStore] = useState<IGridPopupProps>(
-    displayHiddenBasicModalContext,
-  );
+  const [modalContextStore, setModalContextStore] =
+    useState<BasicGridPopupProps>(displayHiddenBasicModalContext);
   const [workTimeTypeDatas, setWorkTimeTypeDatas] = React.useState<any[]>([]);
   const workTimeTypeDataGridRef = useRef<Grid>(null);
 
@@ -229,6 +224,7 @@ export const PgStdWorkTimeType = () => {
       </Header>
       <Container>
         <Datagrid
+          gridId="workTimeTypeDataGrid"
           ref={workTimeTypeDataGridRef}
           data={[...workTimeTypeDatas]}
           columns={WORK_TIME_TYPE_GRID_COLUMNS}

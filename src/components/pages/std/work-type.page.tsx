@@ -1,19 +1,15 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import {
-  Container,
-  Datagrid,
-  GridInstanceReference,
-  GridPopup,
-} from '~/components/UI';
-import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
+import { Container, Datagrid, GridPopup } from '~/components/UI';
+import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
-import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
-import { ColumnStore } from '~/constants/columns';
+import BasicModalContext, {
+  BasicGridPopupProps,
+} from '../adm/excel-upload-type/hooks/modal';
 
 const { confirm } = Modal;
 const WORK_TYPE_GRID_COLUMNS = ColumnStore.WORK_TYPE;
@@ -42,7 +38,10 @@ const addWorkTypeBasicModalContext = ({
   BasicModalContext.add({
     ...displayHiddenWorkTypeBasicModalContext(),
     title: addWorkTypeModalTitle,
-    onOk: (workTypeAddGridRef: GridInstanceReference<Grid>) => {
+    onOk: okEvent => {
+      const workTypeAddGridRef =
+        okEvent as unknown as React.MutableRefObject<Grid>;
+
       executeData(
         [
           ...workTypeAddGridRef.current.getInstance().getModifiedRows()
@@ -71,7 +70,10 @@ const editWorkTypeBasicModalContext = ({
     ...displayHiddenWorkTypeBasicModalContext(),
     title: editWorkTypeModalTitle,
     data: [...editWorkTypeDatas],
-    onOk: (workTypeEditGridRef: GridInstanceReference<Grid>) => {
+    onOk: okEvent => {
+      const workTypeEditGridRef =
+        okEvent as unknown as React.MutableRefObject<Grid>;
+
       executeData(
         workTypeEditGridRef.current
           .getInstance()
@@ -112,9 +114,8 @@ const fetchWorkTypesGetApi = () => getData({}, 'std/work-types');
 
 export const PgStdWorkType = () => {
   const title = getPageName();
-  const [modalContextStore, setModalContextStore] = useState<IGridPopupProps>(
-    displayHiddenWorkTypeBasicModalContext(),
-  );
+  const [modalContextStore, setModalContextStore] =
+    useState<BasicGridPopupProps>(displayHiddenWorkTypeBasicModalContext());
   const [workTypeDatas, setWorkTypeDatas] = React.useState<any[]>([]);
   const workTypeDataGridRef = useRef<Grid>(null);
 
@@ -209,6 +210,7 @@ export const PgStdWorkType = () => {
       </Header>
       <Container>
         <Datagrid
+          gridId="workTypeDataGrid"
           ref={workTypeDataGridRef}
           data={[...workTypeDatas]}
           columns={WORK_TYPE_GRID_COLUMNS}
