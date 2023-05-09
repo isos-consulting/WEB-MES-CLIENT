@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { MouseEvent, useEffect, useRef } from 'react';
 import { Modal } from '../modal';
 import { Form } from '../form';
 import { FormItem } from '../form-item';
@@ -47,7 +47,7 @@ const InputPopup: React.FC<Props> = (props, visible) => {
   return (
     <AntForm.Provider
       onFormFinish={(name, { values, forms }) => {
-        props.modalProps.onOk(values);
+        props.modalProps.onOk(values as MouseEvent<HTMLElement>);
       }}
     >
       <Modal {...props.modalProps} onOk={onOk}>
