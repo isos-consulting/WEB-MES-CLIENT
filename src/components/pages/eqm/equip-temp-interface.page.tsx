@@ -4,6 +4,7 @@ import { getData, getToday } from '~/functions';
 import LineChart from '~/components/UI/graph/chart-line.ui';
 import { message } from 'antd';
 import dayjs from 'dayjs';
+import IComboboxProps from '~/components/UI/combobox/combobox.ui.type';
 
 enum TimeAxisScale {
   'year' = '연',
@@ -160,7 +161,8 @@ export const PgEqmTempInterface = () => {
     data,
   };
 
-  const comboBoxProps = {
+  const comboBoxProps: IComboboxProps = {
+    id: 'timeAxis',
     firstItemType: 'none',
     options: timeAixsComboLists,
     value: timeAxis,
@@ -173,6 +175,7 @@ export const PgEqmTempInterface = () => {
       <Searchbox {...props} />
       <Container>
         <Combobox {...comboBoxProps} />
+        {/* @ts-ignore */}
         <LineChart {...lineChartPorps} />
       </Container>
     </>
