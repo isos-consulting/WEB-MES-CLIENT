@@ -1,5 +1,3 @@
-import { Dayjs } from 'dayjs';
-
 /** 날짜선택기 속성 인터페이스 */
 export default interface IDatePickerProps extends IDatepickerStyles {
   /** 날짜 선택기 아이디 */
