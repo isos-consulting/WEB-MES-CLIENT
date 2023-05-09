@@ -367,7 +367,7 @@ export const getModifiedRows = (
   datas?,
 ) => {
   const _columns = cloneDeep(ref.current.props.columns);
-  const _datas = cloneDeep(ref.current.gridInst.getData());
+  const _datas = cloneDeep(ref.current.getInstance().getData());
   const instance = ref?.current?.getInstance()?.getModifiedRows();
   const modifiedData = {
     createdRows:

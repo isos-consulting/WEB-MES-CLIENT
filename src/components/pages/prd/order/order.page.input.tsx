@@ -752,12 +752,14 @@ export const orderInput = () => {
     title: '투입품목 수정',
     /** 포지티브 버튼 글자 */
     okText: '저장하기',
-    onOk: gridRef => {
+    onOk: (clickEvent: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      const gridRef = clickEvent as unknown as React.MutableRefObject<Grid>;
+
       saveGridData(
         getModifiedRows(
           gridRef,
           gridRef.current.props.columns,
-          gridRef.current.gridInst.getData(),
+          gridRef.current.getInstance().getData(),
         ),
         editGridPopupInfo.columns,
         editGridPopupInfo.saveUriPath,
