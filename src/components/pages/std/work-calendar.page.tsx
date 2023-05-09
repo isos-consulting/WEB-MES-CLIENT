@@ -3,7 +3,7 @@ import { message } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useRef } from 'react';
 import TuiGrid from 'tui-grid';
-import { Container, Datagrid, DatePicker } from '~/components/UI';
+import { Container, Datagrid, DatePicker, IGridColumn } from '~/components/UI';
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { ENUM_WIDTH } from '~/enums';
@@ -99,7 +99,11 @@ export const PgStdWorkCalendar = () => {
     workCalendarDataGridRef.current.getInstance().finishEditing();
     const updatedWorkCalendarDatas = workCalendarDataGridRef.current
       .getInstance()
-      .getModifiedRows().updatedRows;
+      .getModifiedRows().updatedRows as unknown as {
+      day_no: number;
+      day_value: string;
+      work_type_uuid: string;
+    }[];
 
     if (
       updatedWorkCalendarDatas.some(({ day_value }) => {
@@ -142,7 +146,9 @@ export const PgStdWorkCalendar = () => {
     const workCalendarDataGridInstance =
       workCalendarDataGridRef.current.getInstance();
     const { work_type_uuid, ...changedWorkCalendarDataRest } =
-      workCalendarDataGridInstance.getRowAt(rowKey);
+      workCalendarDataGridInstance.getRowAt(rowKey) as unknown as {
+        work_type_uuid: string;
+      };
 
     if (isNil(work_type_uuid)) {
       workCalendarDataGridInstance.setRow(rowKey, {
@@ -211,6 +217,7 @@ export const PgStdWorkCalendar = () => {
       </Header>
       <Container>
         <DatePicker
+          id="workMonth"
           picker="month"
           format="YYYY-MM"
           label={WORD.WORK_MONTH}
@@ -220,38 +227,41 @@ export const PgStdWorkCalendar = () => {
       </Container>
       <Container>
         <Datagrid
+          gridId="workCalendarDataGrid"
           ref={workCalendarDataGridRef}
           data={[...workCalendarData]}
           gridMode="update"
           height={700}
-          columns={[
-            ...stdWorkCalendarColumns.map(
-              ({ name, ...workCalendarColumnsRest }) => {
-                if (name === 'work_type_nm') {
+          columns={
+            [
+              ...stdWorkCalendarColumns.map(
+                ({ name, ...workCalendarColumnsRest }) => {
+                  if (name === 'work_type_nm') {
+                    return {
+                      ...workCalendarColumnsRest,
+                      name,
+                      onAfterChange: handleChangeWorkTypeNameCombobox,
+                    };
+                  }
                   return {
                     ...workCalendarColumnsRest,
                     name,
-                    onAfterChange: handleChangeWorkTypeNameCombobox,
                   };
-                }
-                return {
-                  ...workCalendarColumnsRest,
-                  name,
-                };
+                },
+              ),
+              {
+                header: '행 초기화',
+                name: 'reset',
+                width: ENUM_WIDTH.S,
+                editable: false,
+                format: 'button',
+                options: {
+                  value: `${WORD.RESET}`,
+                  onClick: resetWorkCalendarData,
+                },
               },
-            ),
-            {
-              header: '행 초기화',
-              name: 'reset',
-              width: ENUM_WIDTH.S,
-              editable: false,
-              format: 'button',
-              options: {
-                value: `${WORD.RESET}`,
-                onClick: resetWorkCalendarData,
-              },
-            },
-          ]}
+            ] as IGridColumn[]
+          }
           gridComboInfo={[ComboStore.USED_WORK_TYPE]}
           disabledAutoDateColumn={true}
         ></Datagrid>
