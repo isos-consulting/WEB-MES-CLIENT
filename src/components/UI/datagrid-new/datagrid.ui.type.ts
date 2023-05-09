@@ -117,7 +117,7 @@ export interface IGridColumn extends ColumnOptions {
 
   /** 저장시 문자열 공백일 경우 제외 됨 */
   disableStringEmpty?: boolean;
-  options?: object;
+  options?: { [key: string]: any };
   decimal?: number;
   unit?: string;
 
