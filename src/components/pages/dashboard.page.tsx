@@ -68,6 +68,7 @@ export const Dashboard = () => {
                 height: 'Calc(59vh - 70px)',
               }}
             >
+              {/*  @ts-ignore */}
               <LineChart
                 options={{
                   responsive: true,
@@ -95,13 +96,16 @@ type TPieData = {
   id?: string;
   label?: string;
   value?: number;
+  unit?: number;
 };
 
 type TPercentPie = {
+  id?: string;
   title: string;
   extra?: React.ReactNode;
   height: number;
   data: TPieData[];
+  color: string[];
 };
 
 const RealTimeCharts = ({ data }) => {
@@ -143,6 +147,7 @@ const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
     <Card headStyle={{}}>
       <Row style={{ height: height }}>
         <Col span={24} style={{ height: '100%' }}>
+          {/*  @ts-ignore */}
           <PieGraph
             maxVal={0}
             data={pieData}
