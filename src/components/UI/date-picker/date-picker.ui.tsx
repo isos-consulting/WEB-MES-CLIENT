@@ -49,7 +49,7 @@ const BaseDatePicker: React.FC<Props> = props => {
       if (isEmpty(returnValue) && props.defaultValue)
         returnValue = props.defaultValue;
 
-      if (props.onChange) props.onChange(returnValue);
+      if (props.onChange) props.onChange(returnValue, dateString);
     },
     [props.onChange],
   );
