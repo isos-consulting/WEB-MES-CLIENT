@@ -29,7 +29,9 @@ type EditBasicModalContextProps<T> = Omit<
   'visible' | 'gridMode'
 >;
 
-interface BasicGridPopupProps extends IGridPopupProps {}
+export interface BasicGridPopupProps extends IGridPopupProps {
+  info(): IGridPopupProps;
+}
 
 export default class BasicModalContext<T> implements BasicGridPopupProps {
   readonly popupId: string;

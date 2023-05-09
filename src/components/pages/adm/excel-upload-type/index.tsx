@@ -1,14 +1,7 @@
 import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
-import React, { useState, useRef } from 'react';
-import {
-  Container,
-  Datagrid,
-  GridInstanceReference,
-  GridPopup,
-  IGridColumn,
-} from '~/components/UI';
-import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
+import React, { MouseEvent, useRef, useState } from 'react';
+import { Container, Datagrid, GridPopup, IGridColumn } from '~/components/UI';
 import ComboStore from '~/constants/combos';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import ModalStore from '~/constants/modals';
@@ -18,7 +11,7 @@ import ExcelUploadType from '~/models/user/excel-upload-type';
 import { COLOROURS } from '~/styles/palette';
 import Header, { Button } from './components/Header';
 import { excelUploadTypeList } from './hooks/excel-upload-type';
-import BasicModalContext from './hooks/modal';
+import BasicModalContext, { BasicGridPopupProps } from './hooks/modal';
 
 const { confirm } = Modal;
 
@@ -106,10 +99,9 @@ export const PgAdmExcelUploadType: React.FC = () => {
     searchExcelUploadTypeList();
   };
 
-  const createExcelUploadType = (
-    excelUploadTypeGridRef: GridInstanceReference<Grid>,
-  ) => {
-    const createdExcelUploadTypeList = excelUploadTypeGridRef.current
+  const createExcelUploadType = (okEvent: MouseEvent<HTMLElement>) => {
+    const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+    const createdExcelUploadTypeList = gridRef.current
       .getInstance()
       .getModifiedRows()
       .createdRows.map(createdRow =>
@@ -125,10 +117,10 @@ export const PgAdmExcelUploadType: React.FC = () => {
     );
   };
 
-  const updateExcelUploadType = (
-    excelUploadTypeGridRef: GridInstanceReference<Grid>,
-  ) => {
-    const updatedExcelUploadTypeList = excelUploadTypeGridRef.current
+  const updateExcelUploadType = (okEvent: MouseEvent<HTMLElement>) => {
+    const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
+    const updatedExcelUploadTypeList = gridRef.current
       .getInstance()
       .getModifiedRows()
       .updatedRows.map(createdRow =>
@@ -157,7 +149,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
     },
   });
   const [modalContextStore, setModalContextStore] =
-    useState<IGridPopupProps>(basicModalContext);
+    useState<BasicGridPopupProps>(basicModalContext);
 
   return (
     <>
@@ -269,6 +261,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
       </Header>
       <Container>
         <Datagrid
+          gridId="excelUploadTypeGrid"
           ref={excelUploadTypeGridRef}
           data={excelUploadTypeListData}
           columns={columns}
