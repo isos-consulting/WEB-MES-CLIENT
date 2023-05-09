@@ -21,9 +21,7 @@ interface SubscribeButtonProps {
   key: string;
 }
 
-const SubscribeButton = (
-  buttonProps: SubscribeButtonProps,
-): React.FC<SubscribeButtonProps> => {
+const SubscribeButton = (buttonProps: SubscribeButtonProps) => {
   const [checked, toggle] = useState<boolean>(buttonProps.checked ?? false);
 
   const onClick = () => {
