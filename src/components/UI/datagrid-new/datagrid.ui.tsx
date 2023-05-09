@@ -186,7 +186,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
   const [originData, setOriginData] = useState<any[]>([]);
 
-  const childFileGridRef = useRef<typeof Grid>();
+  const childFileGridRef = useRef<G>();
   const childGridRef = useRef<typeof Grid>();
   const [modal, contextHolder] = Modal.useModal();
   const [columnComboState, setColumnComboState] = useState<IColumnComboState[]>(
