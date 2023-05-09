@@ -93,6 +93,7 @@ export const PgBsnProductionOrderWorkRate = () => {
   return (
     <>
       <Searchbox
+        id="bsn-production-order-work-rate-searchbox"
         searchItems={[
           {
             id: 'reg_date',
@@ -152,24 +153,28 @@ export const PgBsnProductionOrderWorkRate = () => {
       <Container>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Datagrid
+            gridId="bsn-production-order-work-rate-datagrid"
             columns={dateFirstHalfColumns}
             data={dateData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-order-work-rate-datagrid"
             columns={dateLastHalfColumns}
             data={dateData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-order-work-rate-datagrid"
             columns={weekColumns}
             data={weekData}
             disabledAutoDateColumn={true}
             height={80}
           />
           <Datagrid
+            gridId="bsn-production-order-work-rate-datagrid"
             columns={monthColumns}
             data={yearData}
             disabledAutoDateColumn={true}
