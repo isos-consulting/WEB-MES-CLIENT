@@ -36,6 +36,7 @@ export default interface IPopupButtonProps {
   firstItemEmpty?: boolean;
 
   widthSize?: 'medium';
+  values?: any;
 
   setValues?: (values: any, shouldValidate?: boolean) => void;
   setFieldValue?: (field: string, value: any, shouldValidate?: boolean) => void;
