@@ -64,15 +64,15 @@ const DateRangePicker: React.FC<Props> = props => {
     return (
       <Space size={10} wrap>
         <Label text={props.label} important={props.important} />
-        <DatePicker {...getDatePickerProps(0)} />
-        <DatePicker {...getDatePickerProps(1)} />
+        <DatePicker id="start_date" {...getDatePickerProps(0)} />
+        <DatePicker id="end_date" {...getDatePickerProps(1)} />
       </Space>
     );
   } else {
     return (
       <Space size={[10, 0]} wrap>
-        <DatePicker {...getDatePickerProps(0)} />
-        <DatePicker {...getDatePickerProps(1)} />
+        <DatePicker id="start_date" {...getDatePickerProps(0)} />
+        <DatePicker id="end_date" {...getDatePickerProps(1)} />
       </Space>
     );
   }
