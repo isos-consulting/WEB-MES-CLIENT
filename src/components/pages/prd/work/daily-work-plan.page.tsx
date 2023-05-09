@@ -23,6 +23,7 @@ import {
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
 import prdDailyWorkPlanColumns from './plan/daily/prd-daily-work-plan-columns';
+import Grid from '@toast-ui/react-grid';
 
 const hiddenWorkPlanModal = new BasicModalContext({
   title: '',
@@ -57,7 +58,7 @@ export const PgDailyWorkPlan = () => {
   const [workPlanModalContext, modalContextSwitch] =
     useState(hiddenWorkPlanModal);
 
-  const workPlanDataGridRef = useRef();
+  const workPlanDataGridRef = useRef<Grid>();
 
   const fetchDailyWorkPlanGetApi = ({ plan_date }: { plan_date: string }) =>
     getData({ plan_month: plan_date, wait_task_fg: false }, '/prd/plan-daily');
@@ -65,7 +66,9 @@ export const PgDailyWorkPlan = () => {
   const hideWorkPlanModal = () => modalContextSwitch(hiddenWorkPlanModal);
 
   const getWorkPlanData = () =>
-    fetchDailyWorkPlanGetApi(workPlanSearchInfo.ref.current.values);
+    fetchDailyWorkPlanGetApi(
+      workPlanSearchInfo.ref.current.values as { plan_date: string },
+    );
 
   const confirmBeforeAddWorkPlan = grid => {
     Modal.confirm({
@@ -289,6 +292,7 @@ export const PgDailyWorkPlan = () => {
           <ButtonGroup btnItems={headerButtonGroups} />
         </FlexBox>
         <Searchbox
+          id="workPlanSearchInfo"
           innerRef={workPlanSearchInfo.props.innerRef}
           searchItems={workPlanSearchInfo.searchItems}
           onSearch={workPlanSearchInfo.onSearch}
@@ -297,6 +301,7 @@ export const PgDailyWorkPlan = () => {
       <main>
         <Container>
           <Datagrid
+            gridId="workPlanDataGrid"
             ref={workPlanDataGridRef}
             data={workPlanData}
             columns={prdDailyWorkPlanColumns}
