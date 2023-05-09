@@ -1,10 +1,9 @@
-import Grid from '@toast-ui/react-grid';
+import { MouseEvent } from 'react';
 import {
-  GridInstanceReference,
   IGridColumn,
+  TGridComboInfos,
   TGridMode,
   TGridPopupInfos,
-  TGridComboInfos,
 } from '~/components/UI';
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
@@ -18,7 +17,7 @@ type BasicModalContextProps<T> = {
   data: T[];
   gridPopupInfo: TGridPopupInfos;
   gridComboInfo: TGridComboInfos;
-  onOk: (excelUploadTypeGridRef: GridInstanceReference<Grid>) => void;
+  onOk: (gridRef: MouseEvent<HTMLElement>) => void;
 };
 
 type AddBasicModalContextProps<T> = Omit<
@@ -46,7 +45,7 @@ export default class BasicModalContext<T> implements BasicGridPopupProps {
   readonly data: T[];
   readonly gridPopupInfo: TGridPopupInfos;
   readonly gridComboInfo: TGridComboInfos;
-  readonly onOk: (excelUploadTypeGridRef: GridInstanceReference<Grid>) => void;
+  readonly onOk: (gridRef: MouseEvent<HTMLElement>) => void;
 
   constructor({
     title,
