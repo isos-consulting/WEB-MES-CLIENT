@@ -30,6 +30,4 @@ ChartJS.register(
   Tooltip,
   Legend,
 );
-export default (props: ILineChartProps): React.FC<ILineChartProps> => (
-  <Line {...props} />
-);
+export default (props: ILineChartProps) => <Line {...props} />;
