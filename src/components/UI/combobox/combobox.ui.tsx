@@ -21,7 +21,7 @@ const Combobox: React.FC<Props> = props => {
       setComboTextValue(option.children);
       setComboValue(changedValue);
 
-      if (props.onChange) props.onChange(changedValue);
+      if (props.onChange) props.onChange(changedValue, option);
     },
     [props.onChange],
   );
