@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BarGraph, PieGraph } from '../graph';
+import { BarGraph, BarGraphData, PieGraph } from '../graph';
 import { Container } from '../container';
 import Props from './graph.ui.type';
 
@@ -42,8 +42,14 @@ const Graph: React.FC<Props> = props => {
       case 'Bar':
         return (
           <BarGraph
+            options={{
+              plugins: {
+                legend: { position: 'bottom' },
+                title: { display: false, text: '' },
+              },
+            }}
             {...props}
-            data={data}
+            data={data as unknown as BarGraphData}
             dataKeys={props.dataKeysName ? props.dataKeysName : props.dataKeys}
           />
         );
@@ -66,9 +72,27 @@ const Graph: React.FC<Props> = props => {
           sumData = 0;
         }
 
-        return <PieGraph {...props} data={pieData} maxVal={sumData} />;
+        return (
+          <PieGraph
+            radialLabel={{}}
+            {...props}
+            data={pieData}
+            maxVal={sumData}
+          />
+        );
       default:
-        return <BarGraph {...props} />;
+        return (
+          <BarGraph
+            options={{
+              plugins: {
+                legend: { position: 'bottom' },
+                title: { display: false, text: '' },
+              },
+            }}
+            {...props}
+            data={data as unknown as BarGraphData}
+          />
+        );
     }
   };
 
