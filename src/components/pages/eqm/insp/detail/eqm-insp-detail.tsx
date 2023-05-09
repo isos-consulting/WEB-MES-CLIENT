@@ -1,6 +1,6 @@
 import Grid from '@toast-ui/react-grid';
 import React from 'react';
-import { Container, Datagrid, IGridColumn } from '~/components/UI';
+import { Container, Datagrid, IGridColumn, TGridMode } from '~/components/UI';
 import {
   IInputGroupboxProps,
   InputGroupbox,
@@ -11,7 +11,7 @@ type EqmInspDetailProps = {
   gridRef: React.MutableRefObject<Grid>;
   columns: IGridColumn[];
   data: any[];
-  gridMode: string;
+  gridMode: TGridMode;
   onAfterClick: (ev: any) => void;
 };
 

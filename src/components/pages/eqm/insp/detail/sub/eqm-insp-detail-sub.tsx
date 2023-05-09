@@ -1,6 +1,12 @@
 import Grid from '@toast-ui/react-grid';
 import React from 'react';
-import { Button, Container, Datagrid, IGridColumn } from '~/components/UI';
+import {
+  Button,
+  Container,
+  Datagrid,
+  IGridColumn,
+  TGridMode,
+} from '~/components/UI';
 import {
   IInputGroupboxProps,
   InputGroupbox,
@@ -11,7 +17,7 @@ type EqmInspDetailSubProps = {
   gridRef: React.MutableRefObject<Grid>;
   columns: IGridColumn[];
   data: any[];
-  gridMode: string;
+  gridMode: TGridMode;
   onCreateDetail: () => void;
   onUpdate: () => void;
   onDelete: () => void;
@@ -69,6 +75,7 @@ export const EqmInspDetailSub = ({
       <InputGroupbox {...inputProps} />
       <Container>
         <Datagrid
+          gridId="eqm-insp-detail-sub"
           ref={gridRef}
           columns={columns}
           data={data}
