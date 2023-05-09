@@ -26,6 +26,7 @@ import eqmInspResultSearchboxes from './insp/result/eqm-insp-result-searchboxes'
 import eqmInspResultEditModalColumns from './insp/result/modal/eqm-insp-result-edit-modal-columns';
 import eqmInspResultNewModalColumns from './insp/result/modal/eqm-insp-result-new-modal-columns';
 import eqmInspResultNewModalInputboxes from './insp/result/modal/eqm-insp-result-new-modal-inputboxes';
+import { FormikValues } from 'formik';
 
 export const PgEqmInspResult = () => {
   const title = getPageName();
@@ -49,7 +50,7 @@ export const PgEqmInspResult = () => {
     gridComboInfo: eqmInspResultGridComboboxes,
   });
 
-  const [newDataSaveParams, setNewDataSaveParams] = useState();
+  const [newDataSaveParams, setNewDataSaveParams] = useState<FormikValues>();
 
   const newDataPopupGrid = useGrid(
     'NEW_DATA_POPUP_GRID',
