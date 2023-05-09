@@ -1,13 +1,12 @@
-import Grid from '@toast-ui/react-grid';
+import { MouseEvent } from 'react';
 import {
-  GridInstanceReference,
   IGridColumn,
   TGridComboInfos,
   TGridMode,
   TGridPopupInfos,
 } from '~/components/UI';
-import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { IInputGroupboxProps } from '~/components/UI/input-groupbox';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { encryptedString } from '~/functions/encrypt';
 
@@ -19,7 +18,7 @@ type HeaderIncludedModalContextProps<T> = {
   data: T[];
   gridPopupInfo: TGridPopupInfos;
   gridComboInfo: TGridComboInfos;
-  onOk: (headerIncludedModalDataGridRef: GridInstanceReference<Grid>) => void;
+  onOk: (headerIncludedModalDataGridRef: MouseEvent<HTMLElement>) => void;
   inputProps: IInputGroupboxProps[];
 };
 
@@ -42,7 +41,7 @@ export class HeaderIncludedModalContext<T>
   readonly gridPopupInfo: TGridPopupInfos;
   readonly gridComboInfo: TGridComboInfos;
   readonly onOk: (
-    headerIncludedModalDataGridRef: GridInstanceReference<Grid>,
+    headerIncludedModalDataGridRef: MouseEvent<HTMLElement>,
   ) => void;
   readonly inputProps: IInputGroupboxProps[];
 
