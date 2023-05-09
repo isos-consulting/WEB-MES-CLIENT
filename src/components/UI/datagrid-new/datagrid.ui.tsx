@@ -54,6 +54,7 @@ import { InputGroupbox } from '../input-groupbox';
 import { Searchbox } from '../searchbox';
 import { cloneDeep } from 'lodash';
 import { DragDrop } from '../dragDrop';
+import { OptColumnHeaderInfo } from 'tui-grid/types/options';
 
 import { errorRequireDecimal } from '~/error';
 import {
@@ -848,7 +849,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           case 'number':
           case 'select':
             el['filter'] = {
-              type: el?.filter,
+              type: el?.filter as 'text' | 'number' | 'date',
               showClearBtn: true,
             };
             break;
@@ -1036,7 +1037,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
     if (props.header?.complexColumns) {
       header['height'] = 60;
-      header['columns'] = columns;
+      header['columns'] = columns as OptColumnHeaderInfo[];
     } else {
       header['height'] = 30;
     }
@@ -1326,9 +1327,9 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
   //#region ⛔그리드 더블클릭 액션
   type TDblPopup = {
-    popupId: string;
-    gridRef: any;
-    data: any[];
+    popupId?: string;
+    gridRef?: any;
+    data?: any[];
   };
   const [dblPopupInfo, setDblPopupInfo] = useState<TDblPopup>({});
 
