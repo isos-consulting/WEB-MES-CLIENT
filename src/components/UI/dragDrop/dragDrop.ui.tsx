@@ -1,19 +1,19 @@
+import Grid from '@toast-ui/react-grid';
 import React, {
   ChangeEvent,
+  forwardRef,
   useCallback,
+  useEffect,
   useRef,
   useState,
-  useEffect,
-  forwardRef,
 } from 'react';
-import { OptRow } from 'tui-grid/types/options';
-import { executeData, getStorageValue } from '~/functions';
-import { Button } from '..';
-import './dragDrop.ui.styled.scss';
-import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
+import { OptAppendRow, OptRow } from 'tui-grid/types/options';
 import { WORD } from '~/constants/lang/ko';
+import { executeData, getStorageValue } from '~/functions';
 import { isNull } from '~/helper/common';
-import Grid from '@toast-ui/react-grid';
+import { Button } from '..';
+import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
+import './dragDrop.ui.styled.scss';
 
 interface IFileType {
   id: number;
@@ -35,7 +35,7 @@ function getFileNameType(filename: string, returnType?: 'name' | 'ext') {
 
 const BaseDragDrop = forwardRef(
   (
-    props: { onAppendRow(row: OptRow): void },
+    props: { onAppendRow?: (row?: OptRow, options?: OptAppendRow) => void },
     gridRef: React.MutableRefObject<Grid>,
   ) => {
     const [, setIsDragging] = useState<boolean>(false);
