@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { useGrid } from '~/components/UI';
+import { IGridPopupInfo, useGrid } from '~/components/UI';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -276,7 +276,7 @@ export const PgMldProdMold = () => {
     },
   );
 
-  const moldPopupInfo = {
+  const moldPopupInfo: IGridPopupInfo = {
     columnNames: [
       { original: 'mold_uuid', popup: 'mold_uuid' },
       { original: 'mold_cd', popup: 'mold_cd' },
