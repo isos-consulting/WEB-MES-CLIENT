@@ -13,11 +13,14 @@ import './dragDrop.ui.styled.scss';
 import { EDIT_ACTION_CODE } from '../datagrid-new/datagrid.ui.type';
 import { WORD } from '~/constants/lang/ko';
 import { isNull } from '~/helper/common';
+import Grid from '@toast-ui/react-grid';
 
-interface IFileTypes {
+interface IFileType {
   id: number;
   object: File;
 }
+
+type IFileTypes = IFileType[] & FileList;
 
 function getFileNameType(filename: string, returnType?: 'name' | 'ext') {
   if (returnType === 'name') {
@@ -30,197 +33,207 @@ function getFileNameType(filename: string, returnType?: 'name' | 'ext') {
   }
 }
 
-const BaseDragDrop = forwardRef((props, gridRef) => {
-  const [, setIsDragging] = useState<boolean>(false);
-  const [files, setFiles] = useState<IFileTypes[]>([]);
+const BaseDragDrop = forwardRef(
+  (
+    props: { onAppendRow(row: OptRow): void },
+    gridRef: React.MutableRefObject<Grid>,
+  ) => {
+    const [, setIsDragging] = useState<boolean>(false);
+    const [files, setFiles] = useState<IFileTypes>([] as IFileTypes);
 
-  const dragRef = useRef<HTMLLabelElement | null>(null);
+    const dragRef = useRef<HTMLLabelElement | null>(null);
 
-  const newForm = (bodyContent: any) => {
-    const formData = new FormData();
+    const newForm = (bodyContent: any) => {
+      const formData = new FormData();
 
-    Object.keys(bodyContent).forEach((key: string) => {
-      formData.append(key, bodyContent[key]);
-    });
+      Object.keys(bodyContent).forEach((key: string) => {
+        formData.append(key, bodyContent[key]);
+      });
 
-    return formData;
-  };
+      return formData;
+    };
 
-  const uploadUserFile = async (requestHeader: Object) => {
-    let fileInfo: OptRow = {};
+    const uploadUserFile = async (requestHeader: Object) => {
+      let fileInfo: OptRow = {};
 
-    const response = await executeData(
-      requestHeader,
-      '/temp/file',
-      'post',
-      'data',
-      false,
-      import.meta.env.VITE_FILE_SERVER_URL,
+      const response = await executeData(
+        requestHeader,
+        '/temp/file',
+        'post',
+        'data',
+        false,
+        import.meta.env.VITE_FILE_SERVER_URL,
+      );
+
+      if (response.success) {
+        fileInfo = response.datas.raws[0];
+      }
+      return fileInfo;
+    };
+
+    const appendRow = file => {
+      gridRef.current?.getInstance().appendRow({
+        ...file,
+        save_type: 'CREATE',
+        _edit: EDIT_ACTION_CODE.CREATE,
+      });
+    };
+
+    const putUserFileInfo = async (userFile: File) => {
+      const requestHeader: Object = newForm({
+        file: userFile,
+        file_nm: getFileNameType(userFile.name, 'name'),
+        file_extension: getFileNameType(userFile.name, 'ext'),
+        tenant: getStorageValue({
+          storageName: 'tenantInfo',
+          keyName: 'tenantUuid',
+        }),
+      });
+      const rowInfo = await uploadUserFile(requestHeader);
+
+      if (props?.onAppendRow) {
+        props?.onAppendRow(rowInfo);
+      } else {
+        appendRow(rowInfo);
+      }
+    };
+
+    const putStorage = async (fileList: FileList | null) => {
+      const concreatedFileList: FileList = isNull(files)
+        ? new FileList()
+        : files;
+      const requests = Array.from(concreatedFileList).map(userFile =>
+        putUserFileInfo(userFile),
+      );
+
+      await Promise.all(requests);
+    };
+
+    const onChangeFiles = useCallback(
+      (e: ChangeEvent<HTMLInputElement> | any): void => {
+        putStorage(e.target.files);
+      },
+      [files],
     );
 
-    if (response.success) {
-      fileInfo = response.datas.raws[0];
-    }
-    return fileInfo;
-  };
+    const handleFilterFile = useCallback(
+      (id: number): void => {
+        const filteredFiles = files.filter(
+          file => file.id !== id,
+        ) as IFileTypes;
 
-  const appendRow = file => {
-    gridRef.current?.getInstance().appendRow({
-      ...file,
-      save_type: 'CREATE',
-      _edit: EDIT_ACTION_CODE.CREATE,
-    });
-  };
-
-  const putUserFileInfo = async (userFile: File) => {
-    const requestHeader: Object = newForm({
-      file: userFile,
-      file_nm: getFileNameType(userFile.name, 'name'),
-      file_extension: getFileNameType(userFile.name, 'ext'),
-      tenant: getStorageValue({
-        storageName: 'tenantInfo',
-        keyName: 'tenantUuid',
-      }),
-    });
-    const rowInfo = await uploadUserFile(requestHeader);
-
-    if (props?.onAppendRow) {
-      props?.onAppendRow(rowInfo);
-    } else {
-      appendRow(rowInfo);
-    }
-  };
-
-  const putStorage = async (fileList: FileList | null) => {
-    const concreatedFileList: FileList = isNull(files) ? new FileList() : files;
-    const requests = Array.from(concreatedFileList).map(userFile =>
-      putUserFileInfo(userFile),
+        setFiles(filteredFiles);
+      },
+      [files],
     );
 
-    await Promise.all(requests);
-  };
+    const handleDragIn = useCallback((e: DragEvent): void => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, []);
 
-  const onChangeFiles = useCallback(
-    (e: ChangeEvent<HTMLInputElement> | any): void => {
-      putStorage(e.target.files);
-    },
-    [files],
-  );
-
-  const handleFilterFile = useCallback(
-    (id: number): void => {
-      setFiles(files.filter((file: IFileTypes) => file.id !== id));
-    },
-    [files],
-  );
-
-  const handleDragIn = useCallback((e: DragEvent): void => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  const handleDragOut = useCallback((e: DragEvent): void => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsDragging(false);
-  }, []);
-
-  const handleDragOver = useCallback((e: DragEvent): void => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (e.dataTransfer?.files) {
-      setIsDragging(true);
-    }
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: DragEvent): void => {
+    const handleDragOut = useCallback((e: DragEvent): void => {
       e.preventDefault();
       e.stopPropagation();
 
-      onChangeFiles(e);
       setIsDragging(false);
-    },
-    [onChangeFiles],
-  );
+    }, []);
 
-  const initDragEvents = useCallback((): void => {
-    if (!isNull(dragRef.current)) {
-      dragRef.current.addEventListener('dragenter', handleDragIn);
-      dragRef.current.addEventListener('dragleave', handleDragOut);
-      dragRef.current.addEventListener('dragover', handleDragOver);
-      dragRef.current.addEventListener('drop', handleDrop);
-    }
-  }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
+    const handleDragOver = useCallback((e: DragEvent): void => {
+      e.preventDefault();
+      e.stopPropagation();
 
-  const resetDragEvents = useCallback((): void => {
-    if (!isNull(dragRef.current)) {
-      dragRef.current.removeEventListener('dragenter', handleDragIn);
-      dragRef.current.removeEventListener('dragleave', handleDragOut);
-      dragRef.current.removeEventListener('dragover', handleDragOver);
-      dragRef.current.removeEventListener('drop', handleDrop);
-    }
-  }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
+      if (e.dataTransfer?.files) {
+        setIsDragging(true);
+      }
+    }, []);
 
-  useEffect(() => {
-    initDragEvents();
+    const handleDrop = useCallback(
+      (e: DragEvent): void => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    return () => resetDragEvents();
-  }, [initDragEvents, resetDragEvents]);
+        onChangeFiles(e);
+        setIsDragging(false);
+      },
+      [onChangeFiles],
+    );
 
-  return (
-    <div className="DragDrop">
-      <input
-        type="file"
-        id="fileUpload"
-        style={{ display: 'none' }}
-        multiple={true}
-        onChange={onChangeFiles}
-      />
-      <Button
-        id="fileUpload"
-        btnType="buttonFill"
-        widthSize="medium"
-        heightSize="small"
-        fontSize="small"
-        ImageType="cancel"
-        onClick={() => {
-          let input = document.createElement('input');
-          input.type = 'file';
-          input.multiple = true;
-          input.onchange = onChangeFiles;
-          input.click();
-        }}
-      >
-        {WORD.LOAD}
-      </Button>
+    const initDragEvents = useCallback((): void => {
+      if (!isNull(dragRef.current)) {
+        dragRef.current.addEventListener('dragenter', handleDragIn);
+        dragRef.current.addEventListener('dragleave', handleDragOut);
+        dragRef.current.addEventListener('dragover', handleDragOver);
+        dragRef.current.addEventListener('drop', handleDrop);
+      }
+    }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
 
-      <div className="DragDrop-Files">
-        {files.length > 0 &&
-          files.map((file: IFileTypes) => {
-            const {
-              id,
-              object: { name },
-            } = file;
+    const resetDragEvents = useCallback((): void => {
+      if (!isNull(dragRef.current)) {
+        dragRef.current.removeEventListener('dragenter', handleDragIn);
+        dragRef.current.removeEventListener('dragleave', handleDragOut);
+        dragRef.current.removeEventListener('dragover', handleDragOver);
+        dragRef.current.removeEventListener('drop', handleDrop);
+      }
+    }, [handleDragIn, handleDragOut, handleDragOver, handleDrop]);
 
-            return (
-              <div key={id}>
-                <div>{name}</div>
-                <div
-                  className="DragDrop-Files-Filter"
-                  onClick={() => handleFilterFile(id)}
-                >
-                  X
+    useEffect(() => {
+      initDragEvents();
+
+      return () => resetDragEvents();
+    }, [initDragEvents, resetDragEvents]);
+
+    return (
+      <div className="DragDrop">
+        <input
+          type="file"
+          id="fileUpload"
+          style={{ display: 'none' }}
+          multiple={true}
+          onChange={onChangeFiles}
+        />
+        <Button
+          btnType="buttonFill"
+          widthSize="medium"
+          heightSize="small"
+          fontSize="small"
+          ImageType="cancel"
+          onClick={() => {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.onchange = onChangeFiles;
+            input.click();
+          }}
+        >
+          {WORD.LOAD}
+        </Button>
+
+        <div className="DragDrop-Files">
+          {files.length > 0 &&
+            files.map((file: IFileType) => {
+              const {
+                id,
+                object: { name },
+              } = file;
+
+              return (
+                <div key={id}>
+                  <div>{name}</div>
+                  <div
+                    className="DragDrop-Files-Filter"
+                    onClick={() => handleFilterFile(id)}
+                  >
+                    X
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 const DragDrop = React.memo(BaseDragDrop);
 
