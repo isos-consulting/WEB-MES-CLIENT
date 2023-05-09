@@ -7,6 +7,20 @@ export default interface IPieGraphProps {
   maxVal?: number;
 
   radialLabel: any;
+
+  theme?: any;
+  margin?: any;
+  innerRadius?: number;
+  valueFormat?: any;
+  colors?: string;
+  borderWidth?: number;
+  isInteractive?: boolean;
+  radialLabelsSkipAngle?: number;
+  radialLabelsTextColor?: string;
+  sliceLabelsRadiusOffset?: number;
+  sliceLabelsSkipAngle?: number;
+  sliceLabelsTextColor?: string;
+  centerStr?: string;
 }
 
 type data = {
