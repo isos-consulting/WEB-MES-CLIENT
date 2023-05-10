@@ -30,7 +30,7 @@ export const PgAutMenu = () => {
   detailModalProps.visible = menuModalVisible;
   detailModalProps.onCancel = menuService.afterCloseMenuModal;
   detailModalProps.afterClose = () => {
-    inputGroups.ref.current.setValues('');
+    inputGroups.ref.current.setValues({});
   };
 
   detailModalProps.onOk = async () => {
