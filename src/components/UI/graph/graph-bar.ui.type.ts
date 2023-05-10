@@ -27,5 +27,5 @@ export type BarGraphData = {
 export interface BarGraphProps {
   options: BarGraphOptions;
   data: BarGraphData;
-  dataKeys: string[];
+  dataKeys?: string[];
 }
