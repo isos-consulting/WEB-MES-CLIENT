@@ -11,7 +11,9 @@ const Result: React.FC<Props> = props => {
     case 'custom':
       returnElement = (
         <>
+          {/* @ts-ignore */}
           <AntResult
+            /* @ts-ignore */
             status={props.status}
             title={props.title}
             subTitle={props.subTitle}
@@ -23,7 +25,9 @@ const Result: React.FC<Props> = props => {
     case 'loadFailed':
       returnElement = (
         <>
+          {/* @ts-ignore */}
           <AntResult
+            /* @ts-ignore */
             status="500"
             title="Load Failed"
             subTitle="불러오기에 실패했습니다. 관리자에게 문의 바랍니다."
