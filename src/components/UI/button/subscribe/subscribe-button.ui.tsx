@@ -17,7 +17,7 @@ const StarButtonWrapper = styled(StarButton)`
 
 interface SubscribeButtonProps {
   checked?: boolean;
-  onClick?: (prev, setState) => void;
+  onClick?: (clickEvent: React.MouseEvent<HTMLElement>) => void;
   key: string;
 }
 
@@ -26,7 +26,10 @@ const SubscribeButton = (buttonProps: SubscribeButtonProps) => {
 
   const onClick = () => {
     if (!isNil(buttonProps.onClick)) {
-      buttonProps.onClick(checked, toggle);
+      buttonProps.onClick({
+        checked,
+        toggle,
+      } as unknown as React.MouseEvent<HTMLElement>);
     } else {
       toggle(!checked);
     }
