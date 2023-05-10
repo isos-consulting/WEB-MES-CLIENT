@@ -4,6 +4,7 @@ import { ModalStaticFunctions } from 'antd/lib/modal/confirm';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import React, { MutableRefObject } from 'react';
+import { ColumnOptions, Row } from 'tui-grid';
 import {
   COLUMN_CODE,
   EDIT_ACTION_CODE,
@@ -380,8 +381,8 @@ export const getModifiedRows = (
       _datas?.filter(el => el[COLUMN_CODE.EDIT] === EDIT_ACTION_CODE.UPDATE) ??
       instance?.updatedRows,
   };
-  const createdRows = modifiedData?.createdRows?.filter(el => {
-    _columns.forEach(column => {
+  const createdRows = (modifiedData?.createdRows as Row[])?.filter(el => {
+    _columns.forEach((column: ColumnOptions & { noSave?: boolean }) => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
@@ -393,8 +394,8 @@ export const getModifiedRows = (
     return el;
   });
 
-  const deletedRows = modifiedData?.deletedRows?.filter(el => {
-    _columns.forEach(column => {
+  const deletedRows = (modifiedData?.deletedRows as Row[])?.filter(el => {
+    _columns.forEach((column: ColumnOptions & { noSave?: boolean }) => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
@@ -406,8 +407,8 @@ export const getModifiedRows = (
     return el;
   });
 
-  const updatedRows = modifiedData?.updatedRows?.filter(el => {
-    _columns.forEach(column => {
+  const updatedRows = (modifiedData?.updatedRows as Row[])?.filter(el => {
+    _columns.forEach((column: ColumnOptions & { noSave?: boolean }) => {
       if (
         column?.noSave === true ||
         column.name === COLUMN_CODE.EDIT ||
