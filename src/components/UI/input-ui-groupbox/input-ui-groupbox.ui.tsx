@@ -1,15 +1,7 @@
-import React, { useMemo } from 'react';
-import { Container } from '../container';
-import { DatePicker } from '../date-picker';
-import { DateRangePicker } from '../date-range-picker';
-import { Textbox } from '../textbox';
-import { Combobox } from '../combobox';
-import { CheckboxGroup } from '../checkbox-group';
-import { RadioGroup } from '../radio-group';
-import { PopupButton } from '../popup-button';
 import { Space } from 'antd';
-import Props, { IInputUiGroupItem } from './input-ui-groupbox.ui.type';
+import React, { useMemo } from 'react';
 import { selectorFamily } from 'recoil';
+import { isNil } from '~/helper/common';
 import {
   afAnyArrayState,
   afBooleanState,
@@ -19,7 +11,15 @@ import {
   afStringArrayState,
   afStringState,
 } from '~/recoils/recoil.atom-family';
-import { isNil } from '~/helper/common';
+import { CheckboxGroup } from '../checkbox-group';
+import { Combobox } from '../combobox';
+import { Container } from '../container';
+import { DatePicker } from '../date-picker';
+import { DateRangePicker } from '../date-range-picker';
+import { PopupButton } from '../popup-button';
+import { RadioGroup } from '../radio-group';
+import { Textbox } from '../textbox';
+import Props, { IInputUiGroupItem } from './input-ui-groupbox.ui.type';
 
 export const sfInputbox = selectorFamily({
   key: 'sfInputbox',
@@ -76,6 +76,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
                     returnJSX = (
                       <Textbox
                         {...value}
+                        type={value.type as 'number' | 'time' | 'date'}
                         id={value.id as string}
                         name={value.name}
                         value={value?.value}
@@ -155,6 +156,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
                           id={value.id as string}
                           popupKey={value.popupKey}
                           disabled={disabled}
+                          popupKeys={value.popupKeys}
                         />
                       </div>
                     );
