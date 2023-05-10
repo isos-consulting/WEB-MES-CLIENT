@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { Moment } from 'moment';
 import { useRef, useState } from 'react';
 import { boolean, date, number, object, string } from 'yup';
-import { OrderRemoteStore } from '~/apis/mat/order';
+import { OrderDetailResponse, OrderRemoteStore } from '~/apis/mat/order';
 import {
   ReceiveDetail,
   ReceiveHeader,
@@ -16,12 +16,12 @@ import { getToday } from '~/functions';
 import { isEmpty, isNil } from '~/helper/common';
 import { arrayToEntities, objectToEntity } from '~/helper/entity';
 import {
-  MatReceiveDeleteDetailDto,
-  MatReceiveDeleteHeaderDto,
   MatReceiveCreateDetailDto,
   MatReceiveCreateHeaderDto,
-  MatReceiveUpdateHeaderDto,
+  MatReceiveDeleteDetailDto,
+  MatReceiveDeleteHeaderDto,
   MatReceiveUpdateDetailDto,
+  MatReceiveUpdateHeaderDto,
 } from '~/models/mat/ReceiveDTO';
 
 const modalClassNames = {
@@ -62,7 +62,7 @@ const modalClassNames = {
   },
 };
 
-const vendorPriceColumns = [
+const vendorPriceColumns: IGridColumn[] = [
   {
     header: '품목UUID',
     name: 'prod_uuid',
@@ -327,7 +327,7 @@ const vendorPriceColumns = [
   },
 ];
 
-const orderDetailColumns = [
+const orderDetailColumns: IGridColumn[] = [
   {
     header: '세부발주UUID',
     name: 'order_detail_uuid',
@@ -544,7 +544,7 @@ export const useMatReceiveService = (
     getEmptyReceiveHeader(),
   );
   const [receiveContentGridData, setContentGridData] = useState<
-    ReceiveHeader[]
+    ReceiveDetail[]
   >([]);
 
   const contentGridRef: showModalDatagridRef = useRef();
@@ -698,7 +698,7 @@ export const useMatReceiveModalServiceImpl = (
     getEmptyReceiveHeader(),
   );
   const [formEditable, setFormEditable]: ModalState<boolean> = useState(true);
-  const [modalMode, setModalMode]: ModalState<Mode> = useState(Mode.EMPTY);
+  const [modalMode, setModalMode] = useState<Mode>(Mode.EMPTY);
   const modalDatagridRef: showModalDatagridRef = useRef();
 
   const [subModalTitle, setSubModalTitle]: ModalState<string> =
@@ -708,9 +708,9 @@ export const useMatReceiveModalServiceImpl = (
   const [subModalDatagridColumns, setSubModalDatagridColumns] = useState<
     IGridColumn[]
   >([]);
-  const [subModalDatagridDatas, setSubModalDatagridDatas] = useState<unknown[]>(
-    [],
-  );
+  const [subModalDatagridDatas, setSubModalDatagridDatas] = useState<
+    OrderDetailResponse[]
+  >([]);
   const subModalDatagridRef: showModalDatagridRef = useRef();
 
   const openCreateReceive = () => {
@@ -763,7 +763,7 @@ export const useMatReceiveModalServiceImpl = (
         formValues.reg_date,
         formValues.partner_uuid,
       );
-      setSubModalDatagridDatas(vendorPrice);
+      setSubModalDatagridDatas(vendorPrice as unknown as OrderDetailResponse[]);
     }
   };
 
@@ -798,7 +798,7 @@ export const useMatReceiveModalServiceImpl = (
         insp_fg: subModalDatagridDatas[index].qms_receive_insp_fg,
         qty: subModalDatagridDatas[index].balance,
         receive_uuid: formValues.receive_uuid,
-      }));
+      })) as unknown as ReceiveDetail[];
 
       appendReceiveDetails(checkedRows);
     }
@@ -978,7 +978,7 @@ export const useMatReceiveModalServiceImpl = (
         formValues.partner_uuid,
       );
 
-      setSubModalDatagridDatas(orderDetail);
+      setSubModalDatagridDatas(orderDetail as unknown as OrderDetailResponse[]);
     }
   };
 
