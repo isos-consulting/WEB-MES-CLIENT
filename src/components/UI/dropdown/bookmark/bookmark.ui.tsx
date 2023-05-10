@@ -18,9 +18,7 @@ const SubMenuWrapper = styled(Menu.SubMenu)`
   margin-left: 5px;
 `;
 
-const MenuList: React.FC<BookmarkProps> & { Item: typeof MenuItem } = (
-  props: BookmarkProps,
-) => {
+const MenuList = (props: BookmarkProps) => {
   return <SubMenuWrapper {...props} />;
 };
 
@@ -54,7 +52,10 @@ const MenuItem = (props: BookmarkItemProps) => {
   );
 };
 
-const Bookmark = MenuList;
+const Bookmark = MenuList as React.FC<BookmarkProps> & {
+  Item: typeof MenuItem;
+};
+
 Bookmark.Item = MenuItem;
 
 export default Bookmark;
