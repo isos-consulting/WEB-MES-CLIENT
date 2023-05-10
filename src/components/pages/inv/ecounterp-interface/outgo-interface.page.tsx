@@ -19,6 +19,7 @@ import {
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { message } from 'antd';
 import { isNil } from '~/helper/common';
+import { ExtraModalContext } from './income-interface.page';
 
 const outgoInterfaceInterlockAction = {
   state: 'unload',
@@ -71,8 +72,12 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
   };
 };
 
-const extractModalContext = name => {
+const extractModalContext = (_name: unknown): ExtraModalContext => {
   return {
+    popupId: '',
+    saveUriPath: '',
+    saveType: 'basic',
+    gridId: '',
     title: `생산불출 등록`,
     columns: [
       ColumnStore.OUT_STORE_ECOUNT_INTERFACE[0],
@@ -224,7 +229,17 @@ export const PgInvOutgoEcountERPInterface = () => {
   const uploadButtons = [
     {
       ...ButtonStore.EXCEL_UPLOAD,
-      ImageType: 'popup',
+      ImageType: 'popup' as
+        | 'add'
+        | 'cancel'
+        | 'delete'
+        | 'edit'
+        | 'ok'
+        | 'plus'
+        | 'print'
+        | 'search'
+        | 'popup'
+        | 'check',
       children: `생산불출 ${WORD.UPLOAD}`,
       onClick: () => openModal('생산불출'),
     },
@@ -234,12 +249,14 @@ export const PgInvOutgoEcountERPInterface = () => {
     <>
       <ButtonGroup btnItems={uploadButtons} />
       <Searchbox
+        id="SEARCH_ERP_CONDITION"
         searchItems={searchInfo.searchItems}
         innerRef={searchInfo.props.innerRef}
         onSearch={searchHistoryOfOutgoERP}
       />
       <Container>
         <Datagrid
+          gridId="ERP_OUTGO_HISTORY"
           columns={ColumnStore.OUT_STORE_ECOUNT_INTERFACE}
           data={outgoHistory}
           disabledAutoDateColumn={true}

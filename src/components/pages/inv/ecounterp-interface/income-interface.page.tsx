@@ -1,23 +1,25 @@
+import { message } from 'antd';
+import Excel from 'exceljs';
 import React, { useState } from 'react';
 import {
   ButtonGroup,
   Container,
   Datagrid,
   GridPopup,
+  IGridColumn,
   Searchbox,
   useSearchbox,
 } from '~/components/UI';
+import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { ButtonStore } from '~/constants/buttons';
 import { ColumnStore } from '~/constants/columns';
-import Excel from 'exceljs';
+import { SENTENCE, WORD } from '~/constants/lang/ko';
 import {
   executeData,
   getData,
   getToday,
   getUserFactoryUuid,
 } from '~/functions';
-import { SENTENCE, WORD } from '~/constants/lang/ko';
-import { message } from 'antd';
 import { isNil } from '~/helper/common';
 
 const excelAction = {
@@ -71,8 +73,31 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
   };
 };
 
-const extractModalContext = name => {
+export type ExtraModalContext = IGridPopupProps & {
+  title: string;
+  columns: IGridColumn[];
+  okButtonProps: {
+    hidden: boolean;
+  };
+  extraButtons: {
+    align?: 'left' | 'right';
+    buttonProps: {
+      text: string;
+    };
+    buttonAction?: (
+      _event: any,
+      _buttonProps: any,
+      gridProps: any,
+    ) => void | Promise<void>;
+  }[];
+};
+
+const extractModalContext = (_name: unknown): ExtraModalContext => {
   return {
+    popupId: '',
+    saveUriPath: '',
+    saveType: 'basic',
+    gridId: '',
     title: `구매 등록`,
     columns: [
       ColumnStore.INCOME_STORE_ECOUNT_INTERFACE[0],
@@ -223,7 +248,17 @@ export const PgInvIncomeEcountERPInterface = () => {
   const uploadButtons = [
     {
       ...ButtonStore.EXCEL_UPLOAD,
-      ImageType: 'popup',
+      ImageType: 'popup' as
+        | 'add'
+        | 'cancel'
+        | 'delete'
+        | 'edit'
+        | 'ok'
+        | 'plus'
+        | 'print'
+        | 'search'
+        | 'popup'
+        | 'check',
       children: `구매 ${WORD.UPLOAD}`,
       onClick: () => openModal('구매'),
     },
@@ -233,12 +268,14 @@ export const PgInvIncomeEcountERPInterface = () => {
     <>
       <ButtonGroup btnItems={uploadButtons} />
       <Searchbox
+        id="SEARCH_ERP_CONDITION"
         searchItems={searchInfo.searchItems}
         innerRef={searchInfo.props.innerRef}
         onSearch={searchHistoryOfIncomeERP}
       />
       <Container>
         <Datagrid
+          gridId="GRID_PG_INV_INCOME_ECOUNT_ERP_INTERFACE"
           columns={ColumnStore.INCOME_STORE_ECOUNT_INTERFACE}
           data={incomeHistory}
           disabledAutoDateColumn={true}
