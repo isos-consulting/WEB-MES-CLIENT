@@ -30,6 +30,7 @@ export interface IInputUiGroupItem {
   picker?: any;
   format?: string;
   popupKey?: TPopupKey;
+  popupKeys?: string[];
   insertable?: boolean;
   hidden?: boolean;
   disabled?: boolean;
