@@ -1,3 +1,5 @@
+import { IMenuState } from '../layout';
+
 /** 사이드바 속성 인터페이스 */
 export default interface ISideBarProps {
   /** 위쪽 여백 */
@@ -11,6 +13,7 @@ export default interface ISideBarProps {
 export interface ILevel2Props {
   /** 활성 여부 */
   active: boolean;
+  menuState?: IMenuState;
 }
 
 /** 메뉴 구성용 인터페이스 */

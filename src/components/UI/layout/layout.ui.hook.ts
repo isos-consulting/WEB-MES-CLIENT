@@ -1,7 +1,7 @@
 import { atom, RecoilState } from 'recoil';
 
 /** 메뉴 구성 인터페이스 */
-interface IMenuState {
+export interface IMenuState {
   selectedLevel1?: string;
   selectedLevel2?: string[];
 }
