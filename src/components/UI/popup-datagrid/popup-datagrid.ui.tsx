@@ -1,12 +1,19 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import dayjs from 'dayjs';
 import React, {
+  MouseEvent,
   forwardRef,
+  useCallback,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
-  useMemo,
-  useCallback,
 } from 'react';
+import { useRecoilState } from 'recoil';
+import { Datagrid } from '~/components/UI/datagrid-new';
+import { Searchbox } from '~/components/UI/searchbox';
 import {
   checkGridData,
   executeData,
@@ -15,21 +22,15 @@ import {
   saveGridData,
   setGridFocus,
 } from '~/functions';
-import { message } from 'antd';
-import Grid from '@toast-ui/react-grid';
-import { Datagrid } from '~/components/UI/datagrid-new';
-import { useRecoilState } from 'recoil';
-import { afPopupVisible } from './popup-datagrid.ui.recoil';
-import { Searchbox } from '~/components/UI/searchbox';
-import { Modal } from '../modal';
-import Props from './popup-datagrid.ui.type';
-import { InputGroupbox } from '../input-groupbox/input-groupbox.ui';
-import { useLoadingState } from '~/hooks';
-import { v4 as uuidv4 } from 'uuid';
-import dayjs from 'dayjs';
 import { isEmpty, isNil } from '~/helper/common';
-
-const gridPopupUuid = uuidv4();
+import { useLoadingState } from '~/hooks';
+import {
+  IInputGroupboxProps,
+  InputGroupbox,
+} from '../input-groupbox/input-groupbox.ui';
+import { Modal } from '../modal';
+import { afPopupVisible } from './popup-datagrid.ui.recoil';
+import Props from './popup-datagrid.ui.type';
 
 /** ⛔그리드 팝업 */
 const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
@@ -79,7 +80,9 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
             const optionKeys = Object.keys(optionValues);
 
             optionKeys.forEach(optionKey => {
-              const alias = props.inputProps?.inputItems?.find(
+              const inputProps = props.inputProps as IInputGroupboxProps;
+
+              const alias = inputProps?.inputItems?.find(
                 el => el?.id === optionKey,
               )?.alias;
               if (alias) inputDatas[alias] = optionValues[optionKey];
@@ -181,7 +184,9 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
           let headerData: { [key: string]: any } = {};
 
           optionKeys.forEach(optionKey => {
-            const alias = props.inputProps?.inputItems?.find(
+            const inputProps = props.inputProps as IInputGroupboxProps;
+
+            const alias = inputProps?.inputItems?.find(
               el => el?.id === optionKey,
             )?.alias;
 
@@ -251,7 +256,7 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
       return () => {
         const instance = gridRef?.current?.getInstance();
         instance?.finishEditing();
-        props.onOk(gridRef);
+        props.onOk(gridRef as unknown as MouseEvent<HTMLElement>);
       };
     } else {
       // 기본 동작 액션
@@ -409,7 +414,6 @@ const BaseGridPopup = forwardRef<Grid, Props>((props, ref) => {
 
   return (
     <Modal
-      id={gridPopupUuid}
       title={props.title}
       okButtonProps={props.okButtonProps}
       okText={props.okText}
