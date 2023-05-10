@@ -1123,10 +1123,12 @@ export const PgStdRouting = () => {
         saveParams: {
           prod_uuid: addDataPopupInputInfo?.values?.prod_uuid,
         },
-        onOk: (routingGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           RoutingServiceImpl.getInstance()
             .createWithUuid(
-              routingGridRef.current.getInstance(),
+              gridRef.current.getInstance(),
               detailInputInfo?.values.prod_uuid,
             )
             .then((_: unknown) => {
@@ -1142,9 +1144,11 @@ export const PgStdRouting = () => {
       },
       {
         ...editDataPopupGrid.gridInfo,
-        onOk: (routingGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           ServiceUtil.getInstance()
-            .callMethod(RoutingServiceImpl.getInstance().update, routingGridRef)
+            .callMethod(RoutingServiceImpl.getInstance().update, gridRef)
             .then((_: unknown) => {
               message.success(MESSAGE.ROUTING_UPDATE_SUCCESS);
               onSearchDetail(detailInputInfo.values.prod_uuid);

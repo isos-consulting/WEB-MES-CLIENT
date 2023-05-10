@@ -749,10 +749,12 @@ export const PgStdUnitConvert = () => {
       {
         ...addDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: addDataPopupInputInfo.values.unit_uuid },
-        onOk: (unitConvertGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           UnitConvertServiceImpl.getInstance()
             .createWithUuid(
-              unitConvertGridRef.current.getInstance(),
+              gridRef.current.getInstance(),
               detailInputInfo?.values.unit_uuid,
             )
             .then((_: unknown) => {
@@ -769,12 +771,11 @@ export const PgStdUnitConvert = () => {
       {
         ...editDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: editDataPopupInputInfo.values.unit_uuid },
-        onOk: (unitConvertGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           ServiceUtil.getInstance()
-            .callMethod(
-              UnitConvertServiceImpl.getInstance().update,
-              unitConvertGridRef,
-            )
+            .callMethod(UnitConvertServiceImpl.getInstance().update, gridRef)
             .then((_: unknown) => {
               message.success(MESSAGE.UNIT_CONVERT_UPDATE_SUCCESS);
               setEditDataPopupGridVisible(false);

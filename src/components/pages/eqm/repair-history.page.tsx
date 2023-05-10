@@ -26,6 +26,7 @@ import { message } from 'antd';
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
 import { isNil } from '~/helper/common';
+import Grid from '@toast-ui/react-grid';
 
 /** 설비수리이력관리 */
 export const PgEqmRepairHistory = () => {
@@ -274,7 +275,9 @@ export const PgEqmRepairHistory = () => {
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
-      onOk: gridRef => {
+      onOk: okEvent => {
+        const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
         const instance = gridRef.current.getInstance();
 
         instance.blur();
@@ -527,7 +530,9 @@ export const PgEqmRepairHistory = () => {
   const editDataPopupGrid = useGrid('EDIT_POPUP_GRID', grid.gridInfo.columns, {
     searchUriPath: searchUriPath,
     saveUriPath: saveUriPath,
-    onOk: gridRef => {
+    onOk: okEvent => {
+      const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
+
       const instance = gridRef.current.getInstance();
 
       instance.blur();

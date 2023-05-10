@@ -192,12 +192,11 @@ export const PgStdPartnerType = () => {
     popupGridInfo: [
       {
         ...newDataPopupGrid.gridInfo,
-        onOk: (partnerTypeGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           ServiceUtil.getInstance()
-            .callMethod(
-              PartnerTypeServiceImpl.getInstance().create,
-              partnerTypeGridRef,
-            )
+            .callMethod(PartnerTypeServiceImpl.getInstance().create, gridRef)
             .then(_ => {
               message.success('저장되었습니다.');
               setNewDataPopupGridVisible(false);
@@ -210,12 +209,11 @@ export const PgStdPartnerType = () => {
       },
       {
         ...editDataPopupGrid.gridInfo,
-        onOk: (partnerTypeGridRef: GridRef) => {
+        onOk: okEvent => {
+          const gridRef = okEvent as unknown as GridRef;
+
           ServiceUtil.getInstance()
-            .callMethod(
-              PartnerTypeServiceImpl.getInstance().update,
-              partnerTypeGridRef,
-            )
+            .callMethod(PartnerTypeServiceImpl.getInstance().update, gridRef)
             .then(_ => {
               message.success('수정되었습니다.');
               setEditDataPopupGridVisible(false);
