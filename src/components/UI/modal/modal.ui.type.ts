@@ -7,10 +7,10 @@ export default interface IModalProps extends ModalProps {
   title?: string | React.ReactNode;
 
   /** 포지티브 버튼 이벤트 */
-  okText?: string;
+  okText?: React.ReactNode;
 
   /** 네거티브 버튼 이벤트 */
-  cancelText?: string;
+  cancelText?: React.ReactNode;
 
   /** 모달 고정 너비 */
   width?: number | string | 'sm' | 'md' | 'lg';
