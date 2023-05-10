@@ -21,7 +21,9 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
-import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
+import BasicModalContext, {
+  BasicGridPopupProps,
+} from '../../adm/excel-upload-type/hooks/modal';
 import prdDailyWorkPlanColumns from './plan/daily/prd-daily-work-plan-columns';
 import Grid from '@toast-ui/react-grid';
 
@@ -56,7 +58,7 @@ export const PgDailyWorkPlan = () => {
 
   const [workPlanData, setWorkPlanData] = useState([]);
   const [workPlanModalContext, modalContextSwitch] =
-    useState(hiddenWorkPlanModal);
+    useState<BasicGridPopupProps>(hiddenWorkPlanModal);
 
   const workPlanDataGridRef = useRef<Grid>();
 
@@ -188,7 +190,7 @@ export const PgDailyWorkPlan = () => {
 
   const showAddWorkPlanModal = () => {
     modalContextSwitch({
-      ...BasicModalContext.add({
+      ...BasicModalContext.add<any>({
         title: `${workPlanSearchInfo.ref.current.values.plan_date} ${title}`,
         columns: prdDailyWorkPlanColumns,
         gridPopupInfo: [

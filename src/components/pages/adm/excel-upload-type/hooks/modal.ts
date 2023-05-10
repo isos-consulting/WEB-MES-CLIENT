@@ -30,7 +30,7 @@ type EditBasicModalContextProps<T> = Omit<
 >;
 
 export interface BasicGridPopupProps extends IGridPopupProps {
-  info(): IGridPopupProps;
+  info?: () => IGridPopupProps;
 }
 
 export default class BasicModalContext<T> implements BasicGridPopupProps {

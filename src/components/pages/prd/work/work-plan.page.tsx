@@ -22,7 +22,9 @@ import {
   getUserFactoryUuid,
 } from '~/functions';
 import { FlexBox } from '../../adm/excel-upload-type/components/Header';
-import BasicModalContext from '../../adm/excel-upload-type/hooks/modal';
+import BasicModalContext, {
+  BasicGridPopupProps,
+} from '../../adm/excel-upload-type/hooks/modal';
 import Grid from '@toast-ui/react-grid';
 
 const hiddenWorkPlanModal = new BasicModalContext({
@@ -56,7 +58,7 @@ export const PgWorkPlan = () => {
 
   const [workPlanData, setWorkPlanData] = useState([]);
   const [workPlanModalContext, modalContextSwitch] =
-    useState(hiddenWorkPlanModal);
+    useState<BasicGridPopupProps>(hiddenWorkPlanModal);
 
   const workPlanDataGridRef = useRef<Grid>();
 
