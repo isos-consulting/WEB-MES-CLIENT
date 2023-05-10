@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { getData, getToday } from '~/functions';
 import { Card, Col, Row } from 'antd';
-import { PieGraph } from '~components/UI/graph';
+import { PieGraph, TPieData } from '~components/UI/graph';
 import { URL_PATH_DAS } from '~/enums';
 import Meta from 'antd/lib/card/Meta';
 import LineChart from '../UI/graph/chart-line.ui';
@@ -92,13 +92,6 @@ export const Dashboard = () => {
   );
 };
 
-type TPieData = {
-  id?: string;
-  label?: string;
-  value?: number;
-  unit?: number;
-};
-
 type TPercentPie = {
   id?: string;
   title: string;
@@ -154,7 +147,7 @@ const PercentPie: React.FC<TPercentPie> = ({ title, data, height, color }) => {
             centerStr={`${data[0].value}${data[0].unit}`}
             isInteractive={false}
             valueFormat=" >-.2%"
-            colors={color}
+            colors={color as unknown as string}
             padAngle={0.1}
             innerRadius={0.85}
             cornerRadius={10}
