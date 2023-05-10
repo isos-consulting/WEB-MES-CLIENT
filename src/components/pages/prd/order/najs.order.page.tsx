@@ -155,13 +155,13 @@ export const PgPrdNajsOrder = () => {
         if (row.lv === '0') {
           return {
             ...row,
-            worker_nm: row.worker_nm?.split(',') ?? [],
+            worker_nm: (row.worker_nm as string)?.split(',') ?? [],
           };
         }
 
         return {
           ...row,
-          worker_nm: row.worker_nm?.split(',') ?? [],
+          worker_nm: (row.worker_nm as string)?.split(',') ?? [],
           plan_daily_uuid: null,
         };
       });
