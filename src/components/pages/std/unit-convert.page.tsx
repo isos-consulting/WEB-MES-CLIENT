@@ -1,3 +1,4 @@
+import Grid from '@toast-ui/react-grid';
 import { Modal, message } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
@@ -15,7 +16,7 @@ import {
 } from '~/functions';
 import { isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
-import { GridRef } from '~/v2/core/ToastGrid';
+import { GridInstance } from '~/v2/core/ToastGrid';
 import { UnitConvertServiceImpl } from '~/v2/service/UnitConvertService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
@@ -619,7 +620,7 @@ export const PgStdUnitConvert = () => {
           ServiceUtil.getInstance()
             .callMethod(
               UnitConvertServiceImpl.getInstance().delete,
-              detailGrid.gridRef as GridRef,
+              detailGrid.gridRef as React.MutableRefObject<Grid>,
             )
             .then(_ => {
               message.success(MESSAGE.UNIT_CONVERT_DELETE_SUCCESS);
@@ -750,11 +751,11 @@ export const PgStdUnitConvert = () => {
         ...addDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: addDataPopupInputInfo.values.unit_uuid },
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           UnitConvertServiceImpl.getInstance()
             .createWithUuid(
-              gridRef.current.getInstance(),
+              gridRef.current.getInstance() as GridInstance,
               detailInputInfo?.values.unit_uuid,
             )
             .then((_: unknown) => {
@@ -772,7 +773,7 @@ export const PgStdUnitConvert = () => {
         ...editDataPopupGrid.gridInfo,
         saveParams: { from_unit_uuid: editDataPopupInputInfo.values.unit_uuid },
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           ServiceUtil.getInstance()
             .callMethod(UnitConvertServiceImpl.getInstance().update, gridRef)

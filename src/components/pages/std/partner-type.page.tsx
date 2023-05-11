@@ -1,3 +1,4 @@
+import Grid from '@toast-ui/react-grid';
 import { message } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import React, { useState } from 'react';
@@ -6,7 +7,6 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { ENUM_WIDTH } from '~/enums';
 import { dataGridEvents, getData, getPageName } from '~/functions';
-import { GridRef } from '~/v2/core/ToastGrid';
 import { PartnerTypeServiceImpl } from '~/v2/service/PartnerTypeService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
@@ -142,7 +142,7 @@ export const PgStdPartnerType = () => {
           ServiceUtil.getInstance()
             .callMethod(
               PartnerTypeServiceImpl.getInstance().delete,
-              grid.gridRef as GridRef,
+              grid.gridRef as React.MutableRefObject<Grid>,
             )
             .then(_ => {
               message.success('삭제되었습니다.');
@@ -193,7 +193,7 @@ export const PgStdPartnerType = () => {
       {
         ...newDataPopupGrid.gridInfo,
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           ServiceUtil.getInstance()
             .callMethod(PartnerTypeServiceImpl.getInstance().create, gridRef)
@@ -210,7 +210,7 @@ export const PgStdPartnerType = () => {
       {
         ...editDataPopupGrid.gridInfo,
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           ServiceUtil.getInstance()
             .callMethod(PartnerTypeServiceImpl.getInstance().update, gridRef)

@@ -1,4 +1,5 @@
-import { GridInstance, GridRef } from '../core/ToastGrid';
+import Grid from '@toast-ui/react-grid';
+import { GridInstance } from '../core/ToastGrid';
 
 export const ServiceUtil = class {
   private constructor() {}
@@ -22,7 +23,7 @@ export const ServiceUtil = class {
    * @memberof ServiceUtil
    * @description This method is used to call a method from a service
    * @param {Function} methodRef
-   * @param {GridRef} gridRef
+   * @param {React.MutableRefObject<Grid>} gridRef
    * @returns {Promise<R>}
    * @memberof ServiceUtil
    * @example
@@ -32,10 +33,10 @@ export const ServiceUtil = class {
    */
   public async callMethod<R>(
     methodRef: (gridInstance: GridInstance) => Promise<R>,
-    gridRef: GridRef,
+    gridRef: React.MutableRefObject<Grid>,
   ) {
     try {
-      return methodRef(gridRef.current.getInstance());
+      return methodRef(gridRef.current.getInstance() as GridInstance);
     } catch (error: unknown) {
       console.error(error);
 

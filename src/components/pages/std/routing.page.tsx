@@ -24,7 +24,7 @@ import {
 } from '~/functions';
 import { isNil } from '~/helper/common';
 import { MESSAGE } from '~/v2/core/Message';
-import { GridRef } from '~/v2/core/ToastGrid';
+import { GridInstance } from '~/v2/core/ToastGrid';
 import { RoutingServiceImpl } from '~/v2/service/RoutingService';
 import { ServiceUtil } from '~/v2/util/CallbackServices';
 import { DialogUtil } from '~/v2/util/DialogUtil';
@@ -1009,7 +1009,7 @@ export const PgStdRouting = () => {
           ServiceUtil.getInstance()
             .callMethod(
               RoutingServiceImpl.getInstance().delete,
-              detailGrid.gridRef as GridRef,
+              detailGrid.gridRef as React.MutableRefObject<Grid>,
             )
             .then(_ => {
               message.success(MESSAGE.ROUTING_DELETE_SUCCESS);
@@ -1124,11 +1124,11 @@ export const PgStdRouting = () => {
           prod_uuid: addDataPopupInputInfo?.values?.prod_uuid,
         },
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           RoutingServiceImpl.getInstance()
             .createWithUuid(
-              gridRef.current.getInstance(),
+              gridRef.current.getInstance() as GridInstance,
               detailInputInfo?.values.prod_uuid,
             )
             .then((_: unknown) => {
@@ -1145,7 +1145,7 @@ export const PgStdRouting = () => {
       {
         ...editDataPopupGrid.gridInfo,
         onOk: okEvent => {
-          const gridRef = okEvent as unknown as GridRef;
+          const gridRef = okEvent as unknown as React.MutableRefObject<Grid>;
 
           ServiceUtil.getInstance()
             .callMethod(RoutingServiceImpl.getInstance().update, gridRef)
