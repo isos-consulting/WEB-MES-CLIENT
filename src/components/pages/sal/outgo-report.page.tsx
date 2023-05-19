@@ -45,7 +45,7 @@ export const PgSalOutgoReport = () => {
     {
       type: 'daterange',
       id: 'reg_date',
-      ids: ['start_reg_date', 'end_reg_date'],
+      ids: ['start_date', 'end_date'],
       defaults: [getToday(-7), getToday()],
       label: '출하일',
     },
