@@ -20,6 +20,7 @@ import { TpSingleGrid } from '~/components/templates';
 import ITpSingleGridProps from '~/components/templates/grid-single/grid-single.template.type';
 import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
+import { GridEventProps } from 'tui-grid/types/event';
 
 /** 자재출고요청관리 */
 export const PgPrdDemand = () => {
@@ -274,9 +275,15 @@ export const PgPrdDemand = () => {
             { original: 'to_location_nm', popup: 'location_nm' },
           ],
           columns: LOCATION_POPUP.datagridProps?.columns,
-          dataApiSettings: {
-            uriPath: LOCATION_POPUP.uriPath,
-            params: {},
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
+            const { rowKey, instance } = ev;
+            const data = instance.getData();
+            const storeUuid = data[rowKey].to_store_uuid;
+
+            return {
+              uriPath: LOCATION_POPUP.uriPath,
+              params: { store_uuid: storeUuid ?? null },
+            };
           },
           gridMode: 'select',
         },

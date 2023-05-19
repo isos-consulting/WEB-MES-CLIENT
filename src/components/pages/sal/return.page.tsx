@@ -19,6 +19,7 @@ import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_SAL } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { GridEventProps } from 'tui-grid/types/event';
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
 const priceFormula = (params, props) => {
@@ -46,6 +47,7 @@ export const PgSalReturn = () => {
   const detailSearchUriPath = '/sal/return/$/include-details';
   const detailSaveUriPath = '/sal/returns';
   const searchInitKeys = ['start_date', 'end_date'];
+  const LOCATION_POPUP = getPopupForm('위치관리');
 
   /** 팝업 Visible 상태 관리 */
   const [newDataPopupGridVisible, setNewDataPopupGridVisible] =
@@ -366,12 +368,21 @@ export const PgSalReturn = () => {
           gridMode: 'select',
         },
         {
-          // 입고위치
-          popupKey: '위치관리',
           columnNames: [
             { original: 'to_location_uuid', popup: 'location_uuid' },
             { original: 'to_location_nm', popup: 'location_nm' },
           ],
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
+            const { rowKey, instance } = ev;
+            const data = instance.getData();
+            const storeUuid = data[rowKey].to_store_uuid;
+
+            return {
+              uriPath: LOCATION_POPUP.uriPath,
+              params: { store_uuid: storeUuid ?? null },
+            };
+          },
+          columns: LOCATION_POPUP.datagridProps.columns,
           gridMode: 'select',
         },
         {

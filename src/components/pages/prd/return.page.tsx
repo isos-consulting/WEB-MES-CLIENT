@@ -21,6 +21,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import { useInputGroup } from '~/components/UI/input-groupbox';
 import { isNil } from '~/helper/common';
+import { GridEventProps } from 'tui-grid/types/event';
 
 /** 자재반납 */
 export const PgPrdReturn = () => {
@@ -257,9 +258,15 @@ export const PgPrdReturn = () => {
             { original: 'to_location_uuid', popup: 'location_uuid' },
             { original: 'to_location_nm', popup: 'location_nm' },
           ],
-          dataApiSettings: {
-            uriPath: LOCATION_POPUP.uriPath,
-            params: {},
+          dataApiSettings: (ev: GridEventProps & { instance: any }) => {
+            const { rowKey, instance } = ev;
+            const data = instance.getData();
+            const storeUuid = data[rowKey].to_store_uuid;
+
+            return {
+              uriPath: LOCATION_POPUP.uriPath,
+              params: { store_uuid: storeUuid ?? null },
+            };
           },
           columns: LOCATION_POPUP.datagridProps.columns,
           gridMode: 'select',
