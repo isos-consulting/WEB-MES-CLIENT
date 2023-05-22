@@ -58,7 +58,6 @@ export const PgSalReturn = () => {
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
 
-  //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
   const headerGrid = useGrid(
     'HEADER_GRID',
@@ -361,7 +360,7 @@ export const PgSalReturn = () => {
           dataApiSettings: {
             uriPath: getPopupForm('창고관리')?.uriPath,
             params: {
-              store_type: 'all',
+              store_type: 'return',
             },
           },
           gridMode: 'select',
@@ -516,9 +515,7 @@ export const PgSalReturn = () => {
     if (targetType !== 'cell') return;
     setSelectedHeaderRow(headerRow);
   };
-  //#endregion
 
-  //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = useSearchbox('HEADER_SEARCH_INPUTBOX', [
     {
@@ -564,9 +561,7 @@ export const PgSalReturn = () => {
       detailGrid.setGridData([]);
     }
   };
-  //#endregion
 
-  //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {
       type: 'text',
@@ -647,9 +642,7 @@ export const PgSalReturn = () => {
     'ADD_DATA_POPUP_INPUTBOX',
     detailInputInfo.props?.inputItems,
   );
-  //#endregion
 
-  //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
     if (isNil(selectedHeaderRow)) return;
     detailInputInfo.setValues(selectedHeaderRow);
@@ -686,7 +679,6 @@ export const PgSalReturn = () => {
     detailInputInfo.values,
     detailGrid.gridInfo.data,
   ]);
-  //#endregion
 
   const onSave = () => {
     const { gridRef, setGridMode } = detailGrid;
@@ -729,7 +721,6 @@ export const PgSalReturn = () => {
     return true;
   };
 
-  //#region 🔶작동될 버튼들의 기능 정의 (By Template)
   const buttonActions = {
     /** 조회 */
     search: () => {
@@ -800,7 +791,6 @@ export const PgSalReturn = () => {
 
     printExcel: dataGridEvents.printExcel,
   };
-  //#endregion
 
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
@@ -850,7 +840,6 @@ export const PgSalReturn = () => {
     );
   };
 
-  //#region 🔶템플릿에 값 전달
   const props: ITpDoubleGridProps = {
     title,
     dataSaveType: 'headerInclude',
@@ -910,7 +899,6 @@ export const PgSalReturn = () => {
     onAfterOkEditDataPopup: onAfterSaveEditData,
     onAfterOkAddDataPopup: onAfterSaveAddData,
   };
-  //#endregion
 
   return <TpDoubleGrid {...props} />;
 };
