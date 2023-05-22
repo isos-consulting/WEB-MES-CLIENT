@@ -13,3 +13,10 @@ export interface MESWithUuidService {
     uuid: string,
   ): Promise<MESEntity[]>;
 }
+
+export interface MESWithHeaderDetailService {
+  updateWithHeaderDetail(
+    GridInstance: GridInstance,
+    header: MESEntity,
+  ): Promise<MESEntity>;
+}

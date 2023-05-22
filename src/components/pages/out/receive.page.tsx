@@ -1,5 +1,15 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import { getPopupForm, useGrid, useSearchbox } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -9,16 +19,11 @@ import {
   getToday,
   isModified,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_STD } from '~/enums';
-import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
-import { GridEventProps } from 'tui-grid/types/event';
+import { OutReceiveGetResponseEntity } from '~/v2/api/model/OutReceiveDTO';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { OutReceiveService } from '~/v2/service/OutReceiveService';
 
 // 금액 컬럼 계산 (단가 * 수량 * 환율)
 const priceFormula = (params, props) => {
@@ -135,6 +140,7 @@ export const PgOutReceive = () => {
         header: '외주입하상세UUID',
         name: 'receive_detail_uuid',
         alias: 'uuid',
+        format: 'text',
         hidden: true,
       },
       {
@@ -1192,7 +1198,29 @@ export const PgOutReceive = () => {
     popupGridInfos: [
       newDataPopupGrid.gridInfo,
       addDataPopupGrid.gridInfo,
-      editDataPopupGrid.gridInfo,
+      {
+        ...editDataPopupGrid.gridInfo,
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          OutReceiveService.getInstance()
+            .updateWithHeaderDetail(
+              instance as GridInstance,
+              selectedHeaderRow as OutReceiveGetResponseEntity,
+            )
+            .then(_ => {
+              message.success(MESSAGE.OUT_RECEIVE_UPDATE_SUCCESS);
+              setEditDataPopupGridVisible(false);
+              onSearchHeader(headerSearchInfo?.values);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
+      },
     ],
     searchProps: [
       {

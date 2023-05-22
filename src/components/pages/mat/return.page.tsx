@@ -1,5 +1,14 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import dayjs from 'dayjs';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
 import { useGrid, useSearchbox } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -8,15 +17,11 @@ import {
   getToday,
   isModified,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import dayjs from 'dayjs';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { MaterialReturnGetResponseEntity } from '~/v2/api/model/MaterialReturnDTO';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { MaterialReturnService } from '~/v2/service/MaterialReturnService';
 
 const URI_PATH_GET_INV_STORES_STOCKS_RETURN = '/inv/stores/stocks/return';
 const URI_PATH_GET_MAT_RETURNS = '/mat/returns';
@@ -1087,7 +1092,29 @@ export const PgMatReturn = () => {
     popupGridInfos: [
       newDataPopupGrid.gridInfo,
       addDataPopupGrid.gridInfo,
-      editDataPopupGrid.gridInfo,
+      {
+        ...editDataPopupGrid.gridInfo,
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          MaterialReturnService.getInstance()
+            .updateWithHeaderDetail(
+              instance as GridInstance,
+              selectedHeaderRow as MaterialReturnGetResponseEntity,
+            )
+            .then(_ => {
+              message.success(MESSAGE.MATERIAL_RETURN_UPDATE_SUCCESS);
+              setEditDataPopupGridVisible(false);
+              onSearchHeader(headerSearchInfo.values);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
+      },
     ],
     searchProps: [
       {

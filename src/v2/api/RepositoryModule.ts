@@ -4,6 +4,10 @@ import { UnitConvertRepository } from './UnitConvertRepository';
 import { RoutingRepository } from './RoutingRepository';
 import { ProductionWorkRepository } from './ProductionWorkRepository';
 import { MoldProductRepository } from './MoldProductRepository';
+import { MaterialOrderRepository } from './MaterialOrderRepository';
+import { MaterialReturnRepository } from './MaterialReturnRepository';
+import { SalesReturnRepository } from './SalesReturnRepository';
+import { OutReceiveRepository } from './OutReceiveRepository';
 
 export class RepositoryModule {
   private static partnerTypeRepository: PartnerTypeRepository;
@@ -11,6 +15,10 @@ export class RepositoryModule {
   private static routingRepository: RoutingRepository;
   private static productionWorkRepository: ProductionWorkRepository;
   private static moldProductRepository: MoldProductRepository;
+  private static materialOrderRepository: MaterialOrderRepository;
+  private static materialReturnRepository: MaterialReturnRepository;
+  private static salesReturnRepository: SalesReturnRepository;
+  private static outReceiveRepository: OutReceiveRepository;
 
   private constructor() {}
 
@@ -74,5 +82,37 @@ export class RepositoryModule {
     }
 
     return this.moldProductRepository;
+  }
+
+  public static materialOrder() {
+    if (isNil(this.materialOrderRepository)) {
+      this.materialOrderRepository = new MaterialOrderRepository();
+    }
+
+    return this.materialOrderRepository;
+  }
+
+  public static materialReturn() {
+    if (isNil(this.materialReturnRepository)) {
+      this.materialReturnRepository = new MaterialReturnRepository();
+    }
+
+    return this.materialReturnRepository;
+  }
+
+  public static salesReturn() {
+    if (isNil(this.salesReturnRepository)) {
+      this.salesReturnRepository = new SalesReturnRepository();
+    }
+
+    return this.salesReturnRepository;
+  }
+
+  public static outReceive() {
+    if (isNil(this.outReceiveRepository)) {
+      this.outReceiveRepository = new OutReceiveRepository();
+    }
+
+    return this.outReceiveRepository;
   }
 }

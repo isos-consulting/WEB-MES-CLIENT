@@ -17,6 +17,11 @@ import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import dayjs from 'dayjs';
 import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import Grid from '@toast-ui/react-grid';
+import { MaterialOrderService } from '~/v2/service/MaterialOrderService';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { MaterialOrderGetResponseEntity } from '~/v2/api/model/MaterialOrderDTO';
+import { MESSAGE } from '~/v2/core/Message';
 
 /** 완료상태 컬럼 renderer 조건 */
 const completeCondition = [
@@ -1003,7 +1008,29 @@ export const PgMatOrder = () => {
     popupGridInfos: [
       newDataPopupGrid.gridInfo,
       addDataPopupGrid.gridInfo,
-      editDataPopupGrid.gridInfo,
+      {
+        ...editDataPopupGrid.gridInfo,
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          MaterialOrderService.getInstance()
+            .updateWithHeaderDetail(
+              instance as GridInstance,
+              selectedHeaderRow as MaterialOrderGetResponseEntity,
+            )
+            .then(_ => {
+              message.success(MESSAGE.MATERIAL_ORDER_UPDATE_SUCCESS);
+              setEditDataPopupGridVisible(false);
+              onSearchHeader(headerSearchInfo.values);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
+      },
     ],
     searchProps: [
       {
