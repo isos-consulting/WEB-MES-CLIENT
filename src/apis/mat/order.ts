@@ -1,6 +1,6 @@
 import { mesRequest } from '../request-factory';
 
-type OrderDetailResponse = {
+export type OrderDetailResponse = {
   balance: string;
   complete_fg: boolean;
   complete_state: string;

@@ -1,12 +1,23 @@
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { FormikValues } from 'formik';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
+import { GridEventProps } from 'tui-grid/types/event';
 import {
   COLUMN_CODE,
   EDIT_ACTION_CODE,
-  getPopupForm,
   TGridMode,
+  getPopupForm,
   useGrid,
   useSearchbox,
 } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates';
+import ITpDoubleGridProps, {
+  TExtraGridPopups,
+} from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
@@ -15,16 +26,6 @@ import {
   getPageName,
   getToday,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates';
-import { message } from 'antd';
-import { ENUM_DECIMAL, ENUM_WIDTH } from '~/enums';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import ITpDoubleGridProps, {
-  TExtraGridPopups,
-} from '~/components/templates/grid-double/grid-double.template.type';
-import { FormikValues } from 'formik';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
 
 const changeNameToAlias = (data: object, items: any[]) => {
@@ -355,7 +356,7 @@ export const PgQmsRework = () => {
             { original: 'to_location_nm', popup: 'location_nm' },
           ],
           columns: LOCATION_POPUP.datagridProps?.columns,
-          dataApiSettings: el => {
+          dataApiSettings: (el: GridEventProps & { instance: any }) => {
             const { rowKey, instance } = el;
             const { rawData } = instance?.store.data;
 
@@ -847,34 +848,33 @@ export const PgQmsRework = () => {
     printExcel: dataGridEvents.printExcel,
   };
 
-  const fomulaQty = (fomulaParams, props, columnType: '입고' | '반출') => {
-    const instance = fomulaParams?.gridRef?.current?.getInstance();
-    const inputValue = Number(fomulaParams?.value);
+  const formulaQty = (formulaParams, props, columnType: '입고' | '반출') => {
+    const instance = formulaParams?.gridRef?.current?.getInstance();
+    const inputValue = Number(formulaParams?.value);
     const targetValue = Number(
-      fomulaParams?.targetValues[fomulaParams?.targetColumnNames[0]],
+      formulaParams?.targetValues[formulaParams?.targetColumnNames[0]],
     );
     const maxValue = Number(
-      fomulaParams?.targetValues[fomulaParams?.targetColumnNames[1]],
+      formulaParams?.targetValues[formulaParams?.targetColumnNames[1]],
     );
 
     const compareValue = maxValue - (inputValue + targetValue);
 
     if (inputValue + targetValue > maxValue) {
       message.error(`판정 수량보다 더 많이 ${columnType}시킬 수 없습니다.`);
-      instance?.setValue(fomulaParams?.rowKey, fomulaParams?.columnName, 0);
+      instance?.setValue(formulaParams?.rowKey, formulaParams?.columnName, 0);
       return maxValue - targetValue;
     }
 
     if (inputValue < 0) {
       message.error(`마이너스로 ${columnType}시킬 수 없습니다.`);
-      instance?.setValue(fomulaParams?.rowKey, fomulaParams?.columnName, 0);
+      instance?.setValue(formulaParams?.rowKey, formulaParams?.columnName, 0);
       return maxValue - targetValue;
     }
 
     return compareValue;
   };
 
-  //#region 🔶 분해이력 관리
   const disassemblePopupGrid = useGrid(
     'DISASSEMBLE_GRID',
     [
@@ -980,8 +980,8 @@ export const PgQmsRework = () => {
         formula: {
           targetColumnNames: ['return_qty', 'qty'],
           resultColumnName: 'disposal_qty',
-          formula: (fomulaParams, props) =>
-            fomulaQty(fomulaParams, props, '입고'),
+          formula: (formulaParams, props) =>
+            formulaQty(formulaParams, props, '입고'),
         },
       },
       {
@@ -1024,8 +1024,8 @@ export const PgQmsRework = () => {
         formula: {
           targetColumnNames: ['income_qty', 'qty'],
           resultColumnName: 'disposal_qty',
-          formula: (fomulaParams, props) =>
-            fomulaQty(fomulaParams, props, '반출'),
+          formula: (formulaParams, props) =>
+            formulaQty(formulaParams, props, '반출'),
         },
       },
       {
@@ -1276,7 +1276,6 @@ export const PgQmsRework = () => {
       disassemblePopupGrid?.setGridData(res || []);
     });
   }, [disassemblePopupInputInfo?.values?.prod_uuid]);
-  //#endregion
 
   const extraGridPopups: TExtraGridPopups = [
     {
@@ -1356,6 +1355,14 @@ export const PgQmsRework = () => {
 
     buttonActions,
     modalContext,
+    popupSearchProps: [
+      { id: '' },
+      { id: '' },
+      {
+        id: '',
+        onSearch: () => {},
+      },
+    ],
   };
 
   return <TpDoubleGrid {...props} />;

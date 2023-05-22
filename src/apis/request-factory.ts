@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { getUserFactoryUuid } from '~/functions';
 import { isNil } from '~/helper/common';
 import { MesServerException } from '~/v2/core/MesServerException';
+import { ZeroHandlingDataException } from '~/v2/core/ZeroHandlingDataException';
 
 export type MESResponseType<T> = AxiosResponse<{
   success: boolean;
@@ -104,11 +105,10 @@ mesRequest.interceptors.request.use(function (config) {
 
 mesRequest.interceptors.response.use(
   function (response) {
-    console.log({ response });
     if (response.data.success === false) {
       throw new Error(response.data.message.admin_message);
     } else if (response.data.datas.value.count === 0) {
-      throw new Error('조회된 데이터가 없습니다.');
+      throw new ZeroHandlingDataException(response.data.message.admin_message);
     }
 
     return response.data.datas.raws;
