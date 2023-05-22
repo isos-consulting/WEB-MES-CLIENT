@@ -1,21 +1,26 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
+import Modal from 'antd/lib/modal/Modal';
+import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
-import { useGrid } from '~/components/UI';
+import { IGridPopupInfo, useGrid } from '~/components/UI';
+import { useInputGroup } from '~/components/UI/input-groupbox';
+import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
+import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
+import { ENUM_WIDTH, URL_PATH_MLD } from '~/enums';
 import {
   cleanupKeyOfObject,
   dataGridEvents,
   getData,
-  getModifiedRows,
   getPageName,
   isModified,
 } from '~/functions';
-import Modal from 'antd/lib/modal/Modal';
-import { TpDoubleGrid } from '~/components/templates/grid-double/grid-double.template';
-import ITpDoubleGridProps from '~/components/templates/grid-double/grid-double.template.type';
-import { useInputGroup } from '~/components/UI/input-groupbox';
-import { message } from 'antd';
-import { ENUM_WIDTH, URL_PATH_MLD } from '~/enums';
-import { cloneDeep } from 'lodash';
 import { isNil } from '~/helper/common';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { MoldProductService } from '~/v2/service/MoldProductService';
+import { ServiceUtil } from '~/v2/util/CallbackServices';
+import { DialogUtil } from '~/v2/util/DialogUtil';
 
 /** 품목별 금형정보 */
 export const PgMldProdMold = () => {
@@ -46,7 +51,6 @@ export const PgMldProdMold = () => {
   /** 헤더 클릭시 해당 Row 상태 관리 */
   const [selectedHeaderRow, setSelectedHeaderRow] = useState(null);
 
-  //#region 🔶그리드 상태 관리
   /** 화면 Grid View */
   const headerGrid = useGrid(
     'HEADER_GRID',
@@ -276,7 +280,7 @@ export const PgMldProdMold = () => {
     },
   );
 
-  const moldPopupInfo = {
+  const moldPopupInfo: IGridPopupInfo = {
     columnNames: [
       { original: 'mold_uuid', popup: 'mold_uuid' },
       { original: 'mold_cd', popup: 'mold_cd' },
@@ -365,9 +369,7 @@ export const PgMldProdMold = () => {
       detailGrid.setGridData(res || []);
     });
   };
-  //#endregion
 
-  //#region 🔶조회조건 관리
   /** 조회조건 View */
   const headerSearchInfo = null;
   const detailSearchInfo = null;
@@ -397,9 +399,7 @@ export const PgMldProdMold = () => {
     if (isNil(uuid)) return;
     reloadDetailGrid(uuid);
   };
-  //#endregion
 
-  //#region 🔶입력상자 관리
   const detailInputInfo = useInputGroup('DETAIL_INPUTBOX', [
     {
       type: 'text',
@@ -500,9 +500,7 @@ export const PgMldProdMold = () => {
     'EDIT_DATA_POPUP_INPUTBOX',
     detailInputInfo.props.inputItems,
   );
-  //#endregion
 
-  //#region 🔶페이지 액션 관리
   useLayoutEffect(() => {
     if (isNil(selectedHeaderRow)) {
       detailGrid.setGridData([]);
@@ -542,7 +540,6 @@ export const PgMldProdMold = () => {
     detailInputInfo.values,
     detailGrid.gridInfo.data,
   ]);
-  //#endregion
 
   const onSave = () => {
     const { gridRef, setGridMode } = detailGrid;
@@ -584,7 +581,6 @@ export const PgMldProdMold = () => {
     return true;
   };
 
-  //#region 🔶작동될 버튼들의 기능 정의 (By Template)
   const buttonActions = {
     /** 조회 */
     search: () => {
@@ -599,23 +595,30 @@ export const PgMldProdMold = () => {
 
     /** 삭제 */
     delete: () => {
-      if (
-        getModifiedRows(detailGrid.gridRef, detailGrid.gridInfo.columns)
-          ?.deletedRows?.length === 0
-      ) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
+      DialogUtil.valueOf(modal).confirm({
+        title: MESSAGE.MOLD_PRODUCT_DELETE,
+        message: MESSAGE.MOLD_PRODUCT_DELETE_QUESTION,
+        onOk: () => {
+          ServiceUtil.getInstance()
+            .callMethod(
+              MoldProductService.getInstance().delete,
+              detailGrid.gridRef as React.MutableRefObject<Grid>,
+            )
+            .then(_ => {
+              message.success(MESSAGE.MOLD_PRODUCT_DELETE_SUCCESS);
+              onSearchHeader(headerSearchInfo?.values).then(searchResult => {
+                onAfterSaveAction(searchResult, selectedHeaderRow?.prod_uuid);
+              });
+            })
+            .catch((error: unknown) => {
+              message.error(error.toString());
+            });
+        },
+      });
     },
 
     /** 신규 추가 */
     create: null,
-    // create: () => {
-    //   newDataPopupInputInfo?.instance?.resetForm();
-    //   newDataPopupGrid?.setGridData([]);
-    //   setNewDataPopupGridVisible(true);
-    // },
 
     /** 상세 신규 추가 */
     createDetail: () => {
@@ -656,7 +659,6 @@ export const PgMldProdMold = () => {
 
     printExcel: dataGridEvents.printExcel,
   };
-  //#endregion
 
   /** 신규 저장 이후 수행될 함수 */
   const onAfterSaveNewData = (isSuccess, savedData?) => {
@@ -706,7 +708,6 @@ export const PgMldProdMold = () => {
     );
   };
 
-  //#region 🔶템플릿에 값 전달
   const props: ITpDoubleGridProps = {
     title,
     dataSaveType,
@@ -731,10 +732,49 @@ export const PgMldProdMold = () => {
       {
         ...addDataPopupGrid.gridInfo,
         saveParams: addDataPopupInputInfo.values,
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          MoldProductService.getInstance()
+            .createWithUuid(
+              instance as GridInstance,
+              detailInputInfo.values.prod_uuid,
+            )
+            .then(_ => {
+              message.success(MESSAGE.MOLD_PRODUCT_CREATE_SUCCESS);
+              onAfterSaveAddData(true, [
+                { prod_uuid: detailInputInfo.values.prod_uuid },
+              ]);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
       },
       {
         ...editDataPopupGrid.gridInfo,
         saveParams: editDataPopupInputInfo.values,
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          MoldProductService.getInstance()
+            .update(instance as GridInstance)
+            .then(_ => {
+              message.success(MESSAGE.MOLD_PRODUCT_CREATE_SUCCESS);
+              onAfterSaveEditData(true, [
+                { prod_uuid: detailInputInfo.values.prod_uuid },
+              ]);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
       },
     ],
     searchProps: [
@@ -775,7 +815,6 @@ export const PgMldProdMold = () => {
     onAfterOkAddDataPopup: onAfterSaveAddData,
     onAfterOkEditDataPopup: onAfterSaveEditData,
   };
-  //#endregion
 
   return <TpDoubleGrid {...props} />;
 };

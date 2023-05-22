@@ -70,7 +70,7 @@ export class UnitConvertCreateRequestDTO {
       );
     } else if (isEmpty(String(entity.convert_value))) {
       throw new RequiredFieldException(
-        MESSAGE.UNIT_CONVERT_CONVER_VALUE_IS_REQUIRED,
+        MESSAGE.UNIT_CONVERT_CONVERT_VALUE_IS_REQUIRED,
       );
     }
 
@@ -126,7 +126,7 @@ export class UnitConvertUpdateRequestDTO {
       );
     } else if (isEmpty(String(entity.convert_value))) {
       throw new RequiredFieldException(
-        MESSAGE.UNIT_CONVERT_CONVER_VALUE_IS_REQUIRED,
+        MESSAGE.UNIT_CONVERT_CONVERT_VALUE_IS_REQUIRED,
       );
     }
 
