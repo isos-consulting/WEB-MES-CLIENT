@@ -35,6 +35,12 @@ export class DatagridNumberEditor {
       rootDiv.step = `0.${zeros}1`;
     }
 
+    rootDiv.addEventListener('focus', ({ target }) => {
+      if (target.value === '') {
+        target.value = 0;
+      }
+    });
+
     // 만들어진 sel element를 사용
     this.el = rootDiv;
   }
