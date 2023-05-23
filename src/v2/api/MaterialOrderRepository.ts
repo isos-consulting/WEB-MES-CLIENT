@@ -10,9 +10,12 @@ export class MaterialOrderRepository {
     header: MaterialOrderRequestDTO,
     detailList: MaterialOrderDetailRequestDTO[],
   ) {
-    return mesRequest.put<unknown, MaterialOrderResponseEntity>('mat/orders', {
-      header,
-      details: detailList,
-    });
+    return mesRequest.put<unknown, MaterialOrderResponseEntity[]>(
+      'mat/orders',
+      {
+        header,
+        details: detailList,
+      },
+    );
   }
 }

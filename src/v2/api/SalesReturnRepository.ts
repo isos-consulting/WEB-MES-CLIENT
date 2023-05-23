@@ -10,7 +10,7 @@ export class SalesReturnRepository {
     header: SalesReturnRequestDTO,
     detailList: SalesReturnDetailRequestDTO[],
   ) {
-    return mesRequest.put<unknown, SalesReturnResponseEntity>('sal/returns', {
+    return mesRequest.put<unknown, SalesReturnResponseEntity[]>('sal/returns', {
       header,
       details: detailList,
     });

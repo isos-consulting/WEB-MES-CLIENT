@@ -610,11 +610,15 @@ export const dataGridEvents = {
               }
 
               if (
-                (column?.disableStringEmpty === true ||
-                  column?.format !== 'text') &&
-                isEmpty(detailDatas[i][column?.name])
+                column?.disableStringEmpty === true ||
+                column?.format !== 'text'
               ) {
-                delete detailDatas[i][column?.name];
+                if (
+                  isString(detailDatas[i][column?.name]) &&
+                  isEmpty(detailDatas[i][column?.name])
+                ) {
+                  delete detailDatas[i][column?.name];
+                }
               } else if (!isNil(column?.alias)) {
                 detailDatas[i][column?.alias] = detailDatas[i][column?.name];
                 delete detailDatas[i][column?.name];

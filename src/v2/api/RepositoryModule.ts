@@ -8,6 +8,7 @@ import { MaterialOrderRepository } from './MaterialOrderRepository';
 import { MaterialReturnRepository } from './MaterialReturnRepository';
 import { SalesReturnRepository } from './SalesReturnRepository';
 import { OutReceiveRepository } from './OutReceiveRepository';
+import { QualityInspectReportRepository } from './QualityInspectReportRepository';
 
 export class RepositoryModule {
   private static partnerTypeRepository: PartnerTypeRepository;
@@ -19,6 +20,7 @@ export class RepositoryModule {
   private static materialReturnRepository: MaterialReturnRepository;
   private static salesReturnRepository: SalesReturnRepository;
   private static outReceiveRepository: OutReceiveRepository;
+  private static qualityInspectReportRepository: QualityInspectReportRepository;
 
   private constructor() {}
 
@@ -114,5 +116,14 @@ export class RepositoryModule {
     }
 
     return this.outReceiveRepository;
+  }
+
+  public static qualityInspectReport() {
+    if (isNil(this.qualityInspectReportRepository)) {
+      this.qualityInspectReportRepository =
+        new QualityInspectReportRepository();
+    }
+
+    return this.qualityInspectReportRepository;
   }
 }

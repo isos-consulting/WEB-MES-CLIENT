@@ -10,7 +10,7 @@ export class MaterialReturnRepository {
     header: MaterialReturnRequestDTO,
     detailList: MaterialReturnDetailRequestDTO[],
   ) {
-    return mesRequest.put<unknown, MaterialReturnResponseEntity>(
+    return mesRequest.put<unknown, MaterialReturnResponseEntity[]>(
       'mat/returns',
       {
         header,

@@ -81,4 +81,10 @@ export enum MESSAGE {
   MAT_RECEIVE_IS_SELECT = '자재 입고 정보를 선택해주세요.',
   MAT_RECEIVE_DETAIL_CREATE = '자재 입고 상세 등록',
   MAT_RECEIVE_DETAIL_UPDATE = '자재 입고 상세 수정',
+  QUALITY_INSPECT_REPORT_UPDATABLE_NOT_FOUND = '수정할 검사 기준 정보가 없습니다.',
+  POSITION_NO_IS_REQUIRED = '위치 번호는 필수 입력입니다.',
+  SPEC_STD_IS_REQUIRED = '검사 기준은 필수 입력입니다.',
+  QUALITY_INSPECT_REPORT_UPDATE_SUCCESS = '검사 기준 정보가 수정되었습니다.',
+  QUALITY_INSPECT_REPORT_AMENDABLE_NOT_FOUND = '개정할 검사 기준 정보가 없습니다.',
+  QUALITY_INSPECT_REPORT_AMEND_SUCCESS = '검사 기준 정보가 개정되었습니다.',
 }

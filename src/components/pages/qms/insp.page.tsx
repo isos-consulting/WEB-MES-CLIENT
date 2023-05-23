@@ -42,6 +42,11 @@ import {
   isInspTypeCodeNotAllocated,
   isProdUuidNotAllocated,
 } from './insp/insp-clone.modal';
+import { QualityInspectReportService } from '~/v2/service/QualityInspectReportService';
+import Grid from '@toast-ui/react-grid';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { MESSAGE } from '~/v2/core/Message';
+import { QualityInspectReportGetResponseEntity } from '~/v2/api/model/QualityInspectReportDTO';
 
 /** 검사기준서관리 */
 export const PgQmsInsp = () => {
@@ -570,6 +575,7 @@ export const PgQmsInsp = () => {
       alias: 'uuid',
       width: ENUM_WIDTH.M,
       hidden: true,
+      format: 'text',
     },
     {
       header: '세부기준서번호',
@@ -1354,7 +1360,27 @@ export const PgQmsInsp = () => {
     defaultVisible: false,
     visible: amendDataPopupGridVisible,
     okText: '개정하기',
-    onOk: gridRef => handleAmendInsp(gridRef, '개정', 'amend'),
+    onOk: clickEvent => {
+      const instance = (
+        clickEvent as unknown as React.MutableRefObject<Grid>
+      ).current.getInstance();
+
+      QualityInspectReportService.getInstance()
+        .amend(
+          instance as GridInstance,
+          amendDataPopupInputInfo.ref.current
+            .values as QualityInspectReportGetResponseEntity,
+        )
+        .then(_ => {
+          message.success(MESSAGE.QUALITY_INSPECT_REPORT_AMEND_SUCCESS);
+          setAmendDataPopupGridVisible(false);
+          handleSearchHeader(headerSearchInfo?.values);
+        })
+        .catch((error: unknown) => {
+          console.error(error);
+          message.error(error.toString());
+        });
+    },
     cancelText: '취소',
     onCancel: () => setAmendDataPopupGridVisible(false),
     ref: amendDataPopupGrid?.gridRef,
@@ -1423,7 +1449,27 @@ export const PgQmsInsp = () => {
       },
       {
         ...editDataPopupGrid?.gridInfo,
-        footer: popupFooter(),
+        onOk: clickEvent => {
+          const instance = (
+            clickEvent as unknown as React.MutableRefObject<Grid>
+          ).current.getInstance();
+
+          QualityInspectReportService.getInstance()
+            .updateWithHeaderDetail(
+              instance as GridInstance,
+              editDataPopupInputInfo.ref.current
+                .values as QualityInspectReportGetResponseEntity,
+            )
+            .then(_ => {
+              message.success(MESSAGE.QUALITY_INSPECT_REPORT_UPDATE_SUCCESS);
+              setEditDataPopupGridVisible(false);
+              handleSearchHeader(headerSearchInfo?.values);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
       },
     ],
     searchProps: [

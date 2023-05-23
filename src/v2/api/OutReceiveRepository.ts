@@ -10,7 +10,7 @@ export class OutReceiveRepository {
     header: OutReceiveRequestDTO,
     detailList: OutReceiveDetailRequestDTO[],
   ) {
-    return mesRequest.put<unknown, OutReceiveResponseEntity>('out/receives', {
+    return mesRequest.put<unknown, OutReceiveResponseEntity[]>('out/receives', {
       header,
       details: detailList,
     });

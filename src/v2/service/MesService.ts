@@ -16,7 +16,11 @@ export interface MESWithUuidService {
 
 export interface MESWithHeaderDetailService {
   updateWithHeaderDetail(
-    GridInstance: GridInstance,
+    gridInstance: GridInstance,
     header: MESEntity,
-  ): Promise<MESEntity>;
+  ): Promise<MESEntity[]>;
+}
+
+export interface InspectReportService {
+  amend(gridInstance: GridInstance, header: MESEntity): Promise<MESEntity[]>;
 }
