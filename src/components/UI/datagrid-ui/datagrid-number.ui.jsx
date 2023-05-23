@@ -97,7 +97,7 @@ export class DatagridNumberRenderer {
     if (isNil(props?.value)) {
       this.el.innerText = null;
     } else {
-      if (isNumber(props?.value || null)) {
+      if (isNumber(props?.value)) {
         this.el.innerText =
           setNumberToDigit(Number(props?.value).toFixed(this.state?.decimal)) +
           this.state?.unit;
