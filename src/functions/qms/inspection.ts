@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { IGridColumn } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
-import { isEmpty, isNil, isNull } from '~/helper/common';
+import { isEmpty, isNil, isNull, isString } from '~/helper/common';
 import { isNumber } from '../number';
 
 type ColumnNames = { columnName: string }[];
@@ -40,7 +40,7 @@ export const getInspectSamples = (
       if (typeof sample !== 'string' && typeof sample !== 'number')
         throw new Error('unexpected type of inpsection sample');
 
-      if (isEmpty(sample)) return null;
+      if (isString(sample) && isEmpty(sample)) return null;
 
       if (inspectType === 'string') return `${sample}`.toUpperCase() === 'OK';
 
