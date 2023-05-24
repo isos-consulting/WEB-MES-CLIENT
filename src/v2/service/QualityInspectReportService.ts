@@ -16,7 +16,6 @@ import {
   MESService,
   MESWithHeaderDetailService,
 } from './MesService';
-import { MESEntity } from '../api/model/MESEntity';
 
 export class QualityInspectReportService
   implements MESService, MESWithHeaderDetailService, InspectReportService
