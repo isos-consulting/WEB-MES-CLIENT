@@ -1,3 +1,4 @@
+import Grid from '@toast-ui/react-grid';
 import { message, Modal } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useLayoutEffect, useState } from 'react';
@@ -9,12 +10,15 @@ import {
   dataGridEvents,
   executeData,
   getData,
-  getModifiedRows,
   getPageName,
   isModified,
   onAsyncFunction,
 } from '~/functions';
 import { isNil } from '~/helper/common';
+import { EquipmentInspectReportGetResponseEntity } from '~/v2/api/model/EquipmentInspectReportDTO';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { EquipmentInspectReportService } from '~/v2/service/EquipmentInspectReportService';
+import { DialogUtil } from '~/v2/util/DialogUtil';
 import { EqmInspDetail } from './insp/detail/eqm-insp-detail';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
 import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
@@ -33,6 +37,7 @@ import { EquipInspDetailEditModal } from './insp/modal/equip-insp-detail-edit-mo
 import { EquipInspDetailNewModal } from './insp/modal/equip-insp-detail-new-modal';
 import { EquipInspDetailReviseModal } from './insp/modal/equip-insp-detail-revise-modal';
 import { EquipInspNewModal } from './insp/modal/equip-insp-new-modal';
+import { MESSAGE } from '~/v2/core/Message';
 
 type TPopup = 'new' | 'add' | 'edit' | null;
 
@@ -446,16 +451,27 @@ export const PgEqmInsp = () => {
     },
 
     delete: () => {
-      if (
-        getModifiedRows(
-          detailSubGrid?.gridRef,
-          detailSubGrid?.gridInfo?.columns,
-        )?.deletedRows?.length === 0
-      ) {
-        message.warn('편집된 데이터가 없습니다.');
-        return;
-      }
-      onSave();
+      DialogUtil.valueOf(modal).confirm({
+        title: '삭제하시겠습니까?',
+        message: '삭제된 데이터는 복구할 수 없습니다.',
+        onOk: () => {
+          EquipmentInspectReportService.getInstance()
+            .deleteWithHeaderDetail(
+              (
+                detailSubGrid.gridRef as unknown as React.MutableRefObject<Grid>
+              ).current.getInstance() as GridInstance,
+              selectedDetailRow as EquipmentInspectReportGetResponseEntity,
+            )
+            .then(_ => {
+              message.success(MESSAGE.EQUIPMENT_INSPECT_REPORT_DELETE_SUCCESS);
+              onSearchDetail(selectedHeaderRow?.equip_uuid);
+            })
+            .catch((error: unknown) => {
+              console.error(error);
+              message.error(error.toString());
+            });
+        },
+      });
     },
 
     create: () => {
@@ -872,7 +888,6 @@ export const PgEqmInsp = () => {
         gridComboInfo={editDataPopupGrid.gridInfo.gridComboInfo}
         gridPopupInfo={editDataPopupGrid.gridInfo.gridPopupInfo}
         rowAddPopupInfo={editDataPopupGrid.gridInfo.rowAddPopupInfo}
-        popupFooter={popupFooter()}
       />
       <EquipInspDetailReviseModal
         gridId={reviseDataPopupGrid.gridInfo.gridId}

@@ -1,5 +1,11 @@
+import Grid from '@toast-ui/react-grid';
+import { message } from 'antd';
 import React from 'react';
 import { GridPopup } from '~/components/UI';
+import { EquipmentInspectReportGetResponseEntity } from '~/v2/api/model/EquipmentInspectReportDTO';
+import { MESSAGE } from '~/v2/core/Message';
+import { GridInstance } from '~/v2/core/ToastGrid';
+import { EquipmentInspectReportService } from '~/v2/service/EquipmentInspectReportService';
 
 export const EquipInspDetailEditModal = ({
   gridId,
@@ -21,7 +27,6 @@ export const EquipInspDetailEditModal = ({
   gridComboInfo,
   gridPopupInfo,
   rowAddPopupInfo,
-  popupFooter,
 }) => {
   return (
     <GridPopup
@@ -31,9 +36,6 @@ export const EquipInspDetailEditModal = ({
       visible={visible}
       okText="저장하기"
       cancelText="취소"
-      onAfterOk={(isSuccess, savedData) => {
-        onAfterApiExecuted(isSuccess, savedData);
-      }}
       disabledAutoDateColumn={true}
       onCancel={onCancel}
       ref={modalRef}
@@ -52,7 +54,26 @@ export const EquipInspDetailEditModal = ({
       gridComboInfo={gridComboInfo}
       gridPopupInfo={gridPopupInfo}
       rowAddPopupInfo={rowAddPopupInfo}
-      footer={popupFooter}
+      onOk={(clickEvent: React.MouseEvent<HTMLElement>) => {
+        const instance = (
+          clickEvent as unknown as React.MutableRefObject<Grid>
+        ).current.getInstance();
+
+        EquipmentInspectReportService.getInstance()
+          .updateWithHeaderDetail(
+            instance as GridInstance,
+            inputProps.innerRef.current
+              .values as EquipmentInspectReportGetResponseEntity,
+          )
+          .then(_ => {
+            message.success(MESSAGE.EQUIPMENT_INSPECT_REPORT_UPDATE_SUCCESS);
+            onAfterApiExecuted(true, {});
+          })
+          .catch((error: unknown) => {
+            console.error(error);
+            message.error(error.toString());
+          });
+      }}
     />
   );
 };
