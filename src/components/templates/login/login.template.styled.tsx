@@ -19,18 +19,18 @@ export const ScContainer = styled.div`
   .ant-checkbox-checked .ant-checkbox-inner {
     border-radius: ${Sizes.borderRadius_common};
     margin-left: 5px;
-    border-color: ${Colors.bg_chkeckBox_border};
+    border-color: ${Colors.bg_checkBox_border};
   }
 
   //체크박스
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: ${Colors.bg_chkeckBox_selectedInner};
+    background-color: ${Colors.bg_checkBox_selectedInner};
   }
   .ant-checkbox-input {
     border: none;
   }
   a:hover {
-    color: ${Colors.bg_chkeckBox_selectedInner};
+    color: ${Colors.bg_checkBox_selectedInner};
   }
 
   .ant-checkbox-checked::after {

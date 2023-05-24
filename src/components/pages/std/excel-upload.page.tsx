@@ -195,7 +195,7 @@ export const PgStdExcelUpload: React.FC = () => {
     }
   };
 
-  const beforeSelecedExcelFile = async uploadFile => {
+  const beforeSelectedExcelFile = async uploadFile => {
     const converted = await importXLSXFile(
       uploadFile,
       11,
@@ -265,7 +265,7 @@ export const PgStdExcelUpload: React.FC = () => {
       <Button onClick={downloadFile}>다운로드</Button>
       <Button.Upload
         text="업로드 파일 선택하기"
-        beforeUpload={beforeSelecedExcelFile}
+        beforeUpload={beforeSelectedExcelFile}
         onClick={activeDialog}
         openFileDialogOnClick={selectableMenu.isSelected() === true}
       />

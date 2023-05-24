@@ -153,7 +153,7 @@ describe('SaveGridData 함수 리팩터링, 추가,수정,삭제한 데이터 �
       _disabledPriority: {},
     };
     const updatedRow: Row = {
-      property_uuid: 'abcd-efgh',
+      property_uuid: 'abcd-uuid',
       uuid: '',
       name: 'c',
       rowKey: 1,
@@ -215,7 +215,7 @@ describe('SaveGridData 함수 리팩터링, 추가,수정,삭제한 데이터 �
       ],
       updatedRows: [
         {
-          uuid: 'abcd-efgh',
+          uuid: 'abcd-uuid',
           name: 'c',
           rowKey: 1,
           sortKey: 1,

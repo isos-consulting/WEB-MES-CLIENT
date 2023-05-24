@@ -56,7 +56,7 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
     const data = selectedSheet[0].getSheetValues();
     const dataWithoutHeader = data.filter(row => (row.length as number) > 2);
 
-    const filterdData = dataWithoutHeader.slice(1).map(row => {
+    const filteredData = dataWithoutHeader.slice(1).map(row => {
       const obj = {};
       for (let i = 1; i < (row.length as number); i++) {
         const excelColumnName = ColumnStore.INCOME_STORE_ECOUNT_INTERFACE.find(
@@ -67,7 +67,7 @@ const importExcelFile = (excelFile: File, sheetName: string) => {
 
       return obj;
     });
-    gridProps.gridRef.current.getInstance().resetData(filterdData);
+    gridProps.gridRef.current.getInstance().resetData(filteredData);
   };
 };
 
@@ -190,7 +190,7 @@ export const PgInvIncomeEcountERPInterface = () => {
       return;
     }
 
-    const uploadIncomData = await executeData(
+    const uploadIncomeData = await executeData(
       gridProps.gridRef.current
         .getInstance()
         .getData()
@@ -202,7 +202,7 @@ export const PgInvIncomeEcountERPInterface = () => {
       'post',
     );
 
-    if (isNil(uploadIncomData)) {
+    if (isNil(uploadIncomeData)) {
       return;
     }
 

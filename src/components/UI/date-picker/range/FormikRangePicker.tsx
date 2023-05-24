@@ -5,7 +5,7 @@ import Sizes from '~styles/size.style.module.scss';
 
 export const RangePicker = styled(DatePicker.RangePicker)`
   width: 230px;
-  height: ${Sizes.height_datepicker_default};
+  height: ${Sizes.height_datePicker_default};
   border-radius: ${Sizes.borderRadius_common};
-  border-color: ${Colors.bg_datepicker_border};
+  border-color: ${Colors.bg_datePicker_border};
 `;

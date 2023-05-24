@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,
-  convDataToSubTotal,
+  convertDataToSubTotal,
   dataGridEvents,
   getData,
   getPageName,
@@ -552,7 +552,7 @@ export const PgPrdReturnReport = () => {
   // subTotal 데이터 세팅
   useLayoutEffect(() => {
     if (grid?.gridInfo?.data?.length <= 0) return;
-    const curculationColumnNames = ['qty'];
+    const calculationColumnNames = ['qty'];
     const standardNames =
       searchInfo.values?.sort_type === 'prod'
         ? [
@@ -577,9 +577,9 @@ export const PgPrdReturnReport = () => {
         ? ['reg_date']
         : null;
     const subGridData =
-      convDataToSubTotal(grid?.gridInfo?.data, {
+      convertDataToSubTotal(grid?.gridInfo?.data, {
         standardNames: standardNames,
-        curculations: [{ names: curculationColumnNames, type: 'sum' }],
+        calculations: [{ names: calculationColumnNames, type: 'sum' }],
       }).subTotals || [];
 
     subGrid.setGridData(subGridData);

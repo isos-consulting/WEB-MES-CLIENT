@@ -128,7 +128,7 @@ export const PgQmsReceiveInspResultReport = () => {
 
   //#endregion
 
-  const INPUT_ITEMS_RECIEVE: IInputGroupboxItem[] = [
+  const INPUT_ITEMS_RECEIVE: IInputGroupboxItem[] = [
     { id: 'partner_nm', label: '거래처', type: 'text', disabled: true },
     { id: 'receive_date', label: '입하일', type: 'date', disabled: true },
     { id: 'receive_type', label: '입하구분', type: 'text', disabled: true },
@@ -140,7 +140,7 @@ export const PgQmsReceiveInspResultReport = () => {
     { id: 'receive_qty', label: '입하수량', type: 'number', disabled: true },
   ];
 
-  const inputReceive = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_RECIEVE);
+  const inputReceive = useInputGroup('INPUT_ITEMS_WORK', INPUT_ITEMS_RECEIVE);
 
   //#region ✅조회조건
   const SEARCH_ITEMS: ISearchItem[] = [
@@ -692,7 +692,7 @@ const INSP_RESULT_DETAIL_GRID = (props: {
     setReceiveInspDetailData([]);
   };
 
-  const onSesrchInspResultDetail = insp_result_uuid => {
+  const onSearchInspResultDetail = insp_result_uuid => {
     const searchUriPath =
       URI_PATH_GET_QMS_RECEIVE_INSP_RESULT_INCLUDE_DETAILS.replace(
         '{uuid}',
@@ -722,7 +722,7 @@ const INSP_RESULT_DETAIL_GRID = (props: {
   //#region Hook 함수
   useLayoutEffect(() => {
     if (props.inspResultUuid) {
-      onSesrchInspResultDetail(props.inspResultUuid);
+      onSearchInspResultDetail(props.inspResultUuid);
     } else {
       onClear();
     }

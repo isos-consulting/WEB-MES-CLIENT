@@ -26,7 +26,7 @@ const Layout = lazy(() =>
 
 const App = () => {
   const [, contextHolder] = Modal.useModal();
-  const [teneunt, setTeneunt] = useState('');
+  const [tenant, setTenant] = useState('');
 
   const getSerialTenantUuid = (uuid: string) => {
     return JSON.stringify({
@@ -34,19 +34,19 @@ const App = () => {
     });
   };
 
-  const handleGetTeneuntInfo = async () => {
+  const handleGetTenantInfo = async () => {
     const tenants = await TenantRemoteStore.get();
 
     if (!isEmpty(tenants)) {
       const { uuid } = tenants[0];
       localStorage.setItem(KeyStore.tenantInfo, getSerialTenantUuid(uuid));
 
-      setTeneunt(uuid);
+      setTenant(uuid);
     }
   };
 
   const routeLayout = () => {
-    return !isEmpty(teneunt) === true ? (
+    return !isEmpty(tenant) === true ? (
       <LayoutRoute />
     ) : (
       <span>테넌트 정보를 받아오는 중...</span>
@@ -54,7 +54,7 @@ const App = () => {
   };
 
   useLayoutEffect(() => {
-    handleGetTeneuntInfo();
+    handleGetTenantInfo();
   }, []);
 
   const handleAppComponentClick = e => {

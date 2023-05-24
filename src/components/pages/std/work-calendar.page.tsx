@@ -51,11 +51,11 @@ const workCalendarLists = (userSelectedLastMonth: dayjs.Dayjs) => {
 };
 
 const syncWorkCalendar = () => {
-  const initilizedMonth = dayjs(getToday()).format('YYYY-MM');
+  const initializedMonth = dayjs(getToday()).format('YYYY-MM');
 
   return fetchWorkCalendarGetApi({
-    start_date: `${initilizedMonth}-01`,
-    end_date: `${initilizedMonth}-${dayjs(initilizedMonth)
+    start_date: `${initializedMonth}-01`,
+    end_date: `${initializedMonth}-${dayjs(initializedMonth)
       .endOf('month')
       .format('DD')}`,
   });

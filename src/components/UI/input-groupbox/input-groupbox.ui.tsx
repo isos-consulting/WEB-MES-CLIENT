@@ -7,7 +7,7 @@ import {
   FormikProps,
 } from 'formik/dist/types';
 import { atomFamily } from 'recoil';
-import { Textbox } from '../textbox';
+import { TextBox } from '../textbox';
 import { DatePicker } from '../date-picker';
 import { CheckboxGroup, ICheckboxItem } from '../checkbox-group';
 import { IRadioItem, RadioGroup } from '../radio-group';
@@ -16,7 +16,7 @@ import { TPopupKey } from '../popup';
 import { Container } from '../container';
 import dayjs from 'dayjs';
 import { Col, Row, Space } from 'antd';
-import { Combobox, IComboboxItem } from '../combobox';
+import { ComboBox, IComboBoxItem } from '../combobox';
 import { TComboFirstItemType } from '../combobox/combobox.ui.type';
 import { Label } from '../label';
 import { Checkbox } from '../checkbox';
@@ -32,7 +32,7 @@ import { isNil } from '~/helper/common';
 export interface IInputGroupboxItem {
   /** UI의 아이디 */
   id: string;
-  /** initailState의 key값과 동일하게 작성해야 합니다. */
+  /** initialState의 key값과 동일하게 작성해야 합니다. */
   name?: string;
   alias?: string;
   label?: string;
@@ -50,7 +50,7 @@ export interface IInputGroupboxItem {
     | 'dateym'
     | 'multi-combo';
   widthSize?: 'auto' | 'flex' | number | string;
-  options?: IRadioItem[] | ICheckboxItem[] | IComboboxItem[];
+  options?: IRadioItem[] | ICheckboxItem[] | IComboBoxItem[];
   placeholder?: string;
   suffix?: string;
   decimal?: number;
@@ -63,9 +63,9 @@ export interface IInputGroupboxItem {
   };
 
   dataSettingOptions?:
-    | TDataSettingOpionsReturn
-    | ((ev?) => TDataSettingOpionsReturn)
-    | ((ev?) => Promise<TDataSettingOpionsReturn>);
+    | TDataSettingOptionsReturn
+    | ((ev?) => TDataSettingOptionsReturn)
+    | ((ev?) => Promise<TDataSettingOptionsReturn>);
 
   /** 팝업 버튼에 세팅될 옵션 */
   popupButtonSettings?: {
@@ -114,7 +114,7 @@ export type TDataApiSettings = {
   params?: object;
 };
 
-type TDataSettingOpionsReturn = {
+type TDataSettingOptionsReturn = {
   uriPath: string;
   params?: object;
   codeName?: string;
@@ -262,7 +262,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                           {props?.type ? (
                             item.type === 'text' ? (
                               <div style={{ display: 'flex' }}>
-                                <Textbox
+                                <TextBox
                                   id={item.id}
                                   name={item.name || item.id}
                                   important={item.important}
@@ -305,7 +305,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 ) : null}
                               </div>
                             ) : item.type === 'number' ? (
-                              <Textbox
+                              <TextBox
                                 id={item.id}
                                 name={item.name || item.id}
                                 important={item.important}
@@ -688,11 +688,11 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 }}
                               />
                             ) : item.type === 'combo' ? (
-                              <Combobox
+                              <ComboBox
                                 id={item.id}
                                 name={item.name || item.id}
                                 widthSize={item.widthSize || 'default'}
-                                options={item.options as IComboboxItem[]}
+                                options={item.options as IComboBoxItem[]}
                                 important={item.important}
                                 label={item.label}
                                 disabled={item.disabled}
@@ -735,7 +735,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                 widthSize={item.widthSize || 'default'}
                                 id={item.id}
                                 name={item.name || item.id}
-                                options={item.options as IComboboxItem[]}
+                                options={item.options as IComboBoxItem[]}
                                 dataSettingOptions={
                                   typeof item?.dataSettingOptions === 'function'
                                     ? item.dataSettingOptions({
@@ -789,7 +789,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                               >
                                 {item.type === 'text' ? (
                                   <div>
-                                    <Textbox
+                                    <TextBox
                                       id={item.id}
                                       name={item.name || item.id}
                                       important={item.important}
@@ -842,7 +842,7 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     </div>
                                   </div>
                                 ) : item.type === 'number' ? (
-                                  <Textbox
+                                  <TextBox
                                     id={item.id}
                                     name={item.name || item.id}
                                     important={item.important}
@@ -1176,11 +1176,11 @@ const BaseInputGroupbox: React.FC<IInputGroupboxProps> = props => {
                                     }}
                                   />
                                 ) : item.type === 'combo' ? (
-                                  <Combobox
+                                  <ComboBox
                                     id={item.id}
                                     name={item.name || item.id}
                                     widthSize={item.widthSize || 'flex'}
-                                    options={item.options as IComboboxItem[]}
+                                    options={item.options as IComboBoxItem[]}
                                     important={item.important}
                                     label={props?.onSubmit ? item.label : null}
                                     disabled={item.disabled}

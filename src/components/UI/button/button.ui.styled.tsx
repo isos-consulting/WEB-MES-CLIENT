@@ -28,7 +28,7 @@ const fillStyles = ({
     'border-style': 'none',
   };
 
-  const fillStyleSurfix = `.anticon.anticon-retweet{
+  const fillStyleSuffix = `.anticon.anticon-retweet{
     margin-left: -5px;
   }
 
@@ -42,7 +42,7 @@ const fillStyles = ({
     small: Sizes.width_button_sm,
     medium: Sizes.width_button_md,
     large: Sizes.width_button_lg,
-    xlarge: Sizes.width_button_xlg,
+    xLarge: Sizes.width_button_xlg,
   };
 
   const height = {
@@ -77,7 +77,7 @@ const fillStyles = ({
   return `${Object.entries(style).reduce(
     (acc, [key, value]) => acc + `${key}: ${value};`,
     '',
-  )}${fillStyleSurfix}
+  )}${fillStyleSuffix}
   `;
 };
 

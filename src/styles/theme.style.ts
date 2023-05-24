@@ -70,7 +70,7 @@ export const GlobalStyles = createGlobalStyle`
   padding-top: 3px !important;
 }
 
-/* GRAPHGRID (그래프 옵션 이미지) */
+/* GRAPH_GRID (그래프 옵션 이미지) */
 .graphOption {
   width: ${Sizes.width_graph_default};
   text-align: right; 
@@ -394,24 +394,24 @@ tr.tui-grid-row{
   // 콤보박스에 적용
   &-selector{
     width: ${Sizes.width_common};
-    height: ${Sizes.height_combobox_default};
+    height: ${Sizes.height_comboBox_default};
     border-radius: ${Sizes.borderRadius_common};
     color: ${Colors.fg_comboBoxSelector_default};
-    border: 2px solid ${Colors.bg_comboboxFocus_border};
+    border: 2px solid ${Colors.bg_comboBoxFocus_border};
     font-size: ${Fonts.fontSize_cbo};
     font-family: ${Fonts.fontFamily_default};
     outline: none;
     &:focus{
-      order: 2px solid ${Colors.bg_comboboxFocus_border};
+      order: 2px solid ${Colors.bg_comboBoxFocus_border};
     }
   }
 }
 
 // searchbox안에서 사용
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
-    height: ${Sizes.height_combobox_default};
+    height: ${Sizes.height_comboBox_default};
     & .ant-select-selection-search-input{
-      height: ${Sizes.height_combobox_default};
+      height: ${Sizes.height_comboBox_default};
     }
 }
 
@@ -426,7 +426,7 @@ tr.tui-grid-row{
 .tui-grid{
   &-content-date{
     width: ${Sizes.width_common};
-    height: ${Sizes.height_datepicker_default};
+    height: ${Sizes.height_datePicker_default};
     outline: none;
   }
   &-content-date:focus{

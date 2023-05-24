@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   ScInputbox,
-  ScInputPasswordbox,
-  ScInputNumberbox,
-  ScInputIdbox,
+  ScInputPassWordBox,
+  ScInputNumberBox,
+  ScInputIdBox,
 } from './textbox.ui.styled';
 import Props from './textbox.ui.type';
 import { Space } from 'antd';
@@ -13,7 +13,7 @@ import { afStringState } from '~recoils/recoil.atom-family';
 import { isNil } from '~/helper/common';
 
 /** 입력박스 */
-const Textbox: React.FC<Props> = props => {
+const TextBox: React.FC<Props> = props => {
   const [, setValue] = useRecoilState(afStringState(props.id));
   const [, setTextHiddenValue] = useRecoilState(afStringState(props.id));
 
@@ -42,16 +42,16 @@ const Textbox: React.FC<Props> = props => {
 
   const textboxComponent =
     props.inputType === 'number' ? (
-      <ScInputNumberbox
+      <ScInputNumberBox
         {...props}
         inputMode="numeric"
         type="number"
         onChange={onChangeTextValue}
       />
     ) : props.inputType === 'id' ? (
-      <ScInputIdbox {...props} onChange={onChangeTextValue} />
+      <ScInputIdBox {...props} onChange={onChangeTextValue} />
     ) : props.inputType === 'password' ? (
-      <ScInputPasswordbox
+      <ScInputPassWordBox
         {...props}
         inputType="password"
         type="password"
@@ -73,4 +73,4 @@ const Textbox: React.FC<Props> = props => {
   }
 };
 
-export default Textbox;
+export default TextBox;

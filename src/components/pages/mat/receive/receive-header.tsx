@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Div, Flexbox } from '~/components/UI';
+import { Button, Div, FlexBox } from '~/components/UI';
 import {
   MatReceiveModalService,
   MatReceiveService,
@@ -14,7 +14,7 @@ export const MatReceiveHeader = ({
 }) => {
   return (
     <Div>
-      <Flexbox width="100%" justifyContent="space-between">
+      <FlexBox width="100%" justifyContent="space-between">
         <Button
           ImageType="add"
           btnType="buttonFill"
@@ -60,7 +60,7 @@ export const MatReceiveHeader = ({
             onClick={modalService.openCreateReceiveDetail}
           ></Button>
         </div>
-      </Flexbox>
+      </FlexBox>
     </Div>
   );
 };

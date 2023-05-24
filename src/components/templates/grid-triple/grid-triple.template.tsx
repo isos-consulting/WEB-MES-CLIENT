@@ -396,17 +396,17 @@ export const TpTripleGrid: React.FC<Props> = props => {
     );
 
     const datagridHeaderHeight = 30;
-    const bodyVertialMargin = 32;
+    const bodyVerticalMargin = 32;
 
-    let headerSubtracttHeight = 0;
-    let detailSubtracttHeight = 0;
+    let headerSubtractHeight = 0;
+    let detailSubtractHeight = 0;
     let detailSubSubtractHeight = 0;
     let headerHeight = 0;
     let detailHeight = 0;
     let detailSubHeight = 0;
 
     if (templateOrientation === 'filledLayoutLeft') {
-      headerSubtracttHeight =
+      headerSubtractHeight =
         ((buttons > 0 ? 1 : 0) +
           (headerSearch > 0 ? 1 : 0) +
           (headerInput > 0 ? 1 : 0)) *
@@ -416,7 +416,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
         headerInput +
         mainFooter +
         datagridHeaderHeight +
-        bodyVertialMargin;
+        bodyVerticalMargin;
       detailSubSubtractHeight =
         ((buttons > 0 ? 1 : 0) +
           (detailSearch > 0 ? 1 : 0) +
@@ -432,14 +432,14 @@ export const TpTripleGrid: React.FC<Props> = props => {
         detailSubInput +
         mainFooter +
         datagridHeaderHeight +
-        bodyVertialMargin +
+        bodyVerticalMargin +
         (fixHeight + datagridHeaderHeight);
 
-      headerHeight = mainBody - headerSubtracttHeight;
+      headerHeight = mainBody - headerSubtractHeight;
       detailHeight = fixHeight;
       detailSubHeight = mainBody - detailSubSubtractHeight;
     } else if (templateOrientation === 'filledLayoutRight') {
-      detailSubtracttHeight =
+      detailSubtractHeight =
         ((buttons > 0 ? 1 : 0) +
           (headerSearch > 0 ? 1 : 0) +
           (headerInput > 0 ? 1 : 0) +
@@ -454,7 +454,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
         detailInput +
         mainFooter +
         datagridHeaderHeight +
-        bodyVertialMargin +
+        bodyVerticalMargin +
         (fixHeight + datagridHeaderHeight);
       detailSubSubtractHeight =
         ((buttons > 0 ? 1 : 0) +
@@ -466,10 +466,10 @@ export const TpTripleGrid: React.FC<Props> = props => {
         detailSubInput +
         mainFooter +
         datagridHeaderHeight +
-        bodyVertialMargin;
+        bodyVerticalMargin;
 
       headerHeight = fixHeight;
-      detailHeight = mainBody - detailSubtracttHeight;
+      detailHeight = mainBody - detailSubtractHeight;
       detailSubHeight = mainBody - detailSubSubtractHeight;
     }
 
@@ -479,7 +479,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
   };
 
   /** 강제로 리사이징을 하기 위한 함수 입니다. */
-  const forceReszing = () => {
+  const forceResizing = () => {
     onResize();
     clearTimeout(1000);
   };
@@ -487,7 +487,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
   useLayoutEffect(() => {
     if (headerGrid.height) return;
     window.addEventListener('resize', onResize);
-    setTimeout(forceReszing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
+    setTimeout(forceResizing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -620,7 +620,7 @@ export const TpTripleGrid: React.FC<Props> = props => {
               <Div
                 id="template-buttons"
                 divType="singleGridButtonsDiv"
-                optionType={{ singleGridtype: 'view' }}
+                optionType={{ singleGridType: 'view' }}
               >
                 <Space size={[5, 0]}>
                   {btnDelete}

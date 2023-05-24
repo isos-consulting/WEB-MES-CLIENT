@@ -568,7 +568,7 @@ export const PgQmsInsp = () => {
     { header: '비고', name: 'remark', width: ENUM_WIDTH.L, filter: 'text' },
   ];
 
-  const deatilSubGridColumns: IGridColumn[] = [
+  const detailSubGridColumns: IGridColumn[] = [
     {
       header: '세부기준서UUID',
       name: 'insp_detail_uuid',
@@ -705,7 +705,7 @@ export const PgQmsInsp = () => {
   ];
 
   const newDataPopupGridColumns: IGridColumn[] = cloneDeep(
-    deatilSubGridColumns,
+    detailSubGridColumns,
   )?.map(el => {
     if (['insp_item_type_nm', 'insp_item_nm'].includes(el?.name) === false) {
       el['editable'] = true;
@@ -741,7 +741,7 @@ export const PgQmsInsp = () => {
     gridMode: detailDefaultGridMode,
   });
 
-  const detailSubGrid = useGrid('DETAIL_SUB_GRID', deatilSubGridColumns, {
+  const detailSubGrid = useGrid('DETAIL_SUB_GRID', detailSubGridColumns, {
     searchUriPath: detailSubSearchUriPath,
     saveUriPath: detailSubSaveUriPath,
     gridMode: detailDefaultGridMode,
@@ -963,7 +963,7 @@ export const PgQmsInsp = () => {
   }, []);
 
   useLayoutEffect(() => {
-    detailSubGrid.setGridColumns(deatilSubGridColumns);
+    detailSubGrid.setGridColumns(detailSubGridColumns);
   }, [inspectorInspFg, workerInspFg]);
 
   useLayoutEffect(() => {

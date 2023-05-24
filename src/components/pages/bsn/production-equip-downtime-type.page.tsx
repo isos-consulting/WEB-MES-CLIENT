@@ -6,13 +6,13 @@ import { BsnProductionEquipDowntimeService } from './production/bsn-production-e
 
 export const PgProductionEquipDowntimeType = () => {
   const [month, setMonth] = useState(getToday().substring(0, 7));
-  const [weeklyData, setWeelkyData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
 
   useEffect(async () => {
     const service = new BsnProductionEquipDowntimeService();
 
-    setWeelkyData(await service.weeklyData({ reg_date: month }));
+    setWeeklyData(await service.weeklyData({ reg_date: month }));
     setMonthlyData(await service.monthlyData({ reg_date: month }));
   }, [month]);
 

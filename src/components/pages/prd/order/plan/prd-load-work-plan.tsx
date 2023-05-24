@@ -1,5 +1,5 @@
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import {
   COLUMN_CODE,
   Datagrid,
@@ -9,7 +9,7 @@ import {
   Searchbox,
   TPopupKey,
 } from '~/components/UI';
-import { IPopupItemsRetrunProps } from '~/components/UI/popup/popup.ui.type';
+import { IPopupItemsReturnProps } from '~/components/UI/popup/popup.ui.type';
 import { FieldStore } from '~/constants/fields';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { getData, getToday } from '~/functions';
@@ -40,7 +40,7 @@ type WorkPlanRowAddPopupDataApiSettingParams = {
   };
 };
 
-const putDueDateFielLabel = (field, index, replacedLabel) => {
+const putDueDateFieldLabel = (field, index, replacedLabel) => {
   if (index === 0)
     return {
       ...field,
@@ -72,7 +72,7 @@ export const getDailyWorkPlanModalProps = async ({
     modalProps,
     datagridProps,
     gridMode,
-  }: IPopupItemsRetrunProps &
+  }: IPopupItemsReturnProps &
     WorkPlanRowAddPopupInfo &
     WorkPlanRowAddPopupDataApiSettingParams = {
     columnNames: prdLoadWorkPlanColumnNames,
@@ -106,7 +106,7 @@ export const getDailyWorkPlanModalProps = async ({
       id: 'workPlanSearch',
       searchItems: [
         ...FieldStore.DUE_DATE_RANGE_SEVEN.map((field, index) =>
-          putDueDateFielLabel(field, index, WORD.WORK_PLAN_DATE_RANGE),
+          putDueDateFieldLabel(field, index, WORD.WORK_PLAN_DATE_RANGE),
         ),
         {
           id: 'wait_task_fg',
@@ -126,9 +126,9 @@ export const getDailyWorkPlanModalProps = async ({
     uriPath: '/prd/plan-daily',
   };
 
-  const dailyWrokPlans = await getData(params, uriPath);
+  const dailyWorkPlans = await getData(params, uriPath);
 
-  if (typeof dailyWrokPlans === 'undefined') {
+  if (typeof dailyWorkPlans === 'undefined') {
     throw new Error(SENTENCE.ERROR_OCCURRED);
   }
 
@@ -144,10 +144,10 @@ export const getDailyWorkPlanModalProps = async ({
         <Searchbox {...searchProps} />
         <Datagrid
           ref={childGridRef}
-          gridId={uuidv4()}
+          gridId={uuidV4()}
           columns={datagridProps.columns}
           gridMode={gridMode}
-          data={dailyWrokPlans}
+          data={dailyWorkPlans}
         />
       </>
     ),

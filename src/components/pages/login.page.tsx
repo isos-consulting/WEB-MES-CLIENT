@@ -2,16 +2,16 @@ import { Form, message } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import crypto from 'crypto-js';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import { AuthenticationRemoteStore } from '~/apis/aut/authentication';
 import { FactoryResponse, FactoryRemoteStore } from '~/apis/std/factory';
 import { isNil } from '~/helper/common';
 import { Profile } from '~/models/user/profile';
 import { UserService } from '~/service/auth';
 import { TpLogin } from '../templates/login/login.template';
-import { IComboboxItem } from '../UI/combobox';
+import { IComboBoxItem } from '../UI/combobox';
 
-const pageId = uuidv4();
+const pageId = uuidV4();
 
 const getLocalStorageId = () => {
   return localStorage.getItem('iso-user-id') || '';
@@ -34,7 +34,7 @@ export const PgLogin = ({
   const [userId, setUserId] = useState<string>(getLocalStorageId() || null);
   const [userPw, setUserPw] = useState<string>(null);
 
-  const [cboFactory, setCboFactory] = useState<IComboboxItem[]>([]);
+  const [cboFactory, setCboFactory] = useState<IComboBoxItem[]>([]);
 
   const [cboFactoryCode, setCboFactoryCode] = useState<string>('-');
 

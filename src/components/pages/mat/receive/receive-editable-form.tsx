@@ -11,11 +11,11 @@ import MatReceiveEditableFormStyleModule from './receive-editable-form.module.cs
 
 const DatePicker = styled(AntdDatePicker)`
   width: 221px;
-  height: ${Sizes.height_datepicker_default};
-  font-size: ${Fonts.fontSize_datepicker};
+  height: ${Sizes.height_datePicker_default};
+  font-size: ${Fonts.fontSize_datePicker};
 
   .ant-picker-input > input {
-    font-size: ${Fonts.fontSize_datepicker};
+    font-size: ${Fonts.fontSize_datePicker};
     letter-spacing: ${Sizes.letterSpacing_common};
   }
 `;

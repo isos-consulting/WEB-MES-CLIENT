@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import EXPRESSSIONS from '~/constants/expressions';
+import EXPRESSIONS from '~/constants/expressions';
 import { isNil, isNull } from '~/helper/common';
 
 /** 날짜 포멧 에디터 */
@@ -115,8 +115,8 @@ export class DatagridDateRenderer {
     if (this.state.type === 'time') {
       let value = props.value;
       if (
-        EXPRESSSIONS.HOUR_MINUTE.test(value) === false &&
-        EXPRESSSIONS.HOUR_MINUTE_SECOND.test(value) === false &&
+        EXPRESSIONS.HOUR_MINUTE.test(value) === false &&
+        EXPRESSIONS.HOUR_MINUTE_SECOND.test(value) === false &&
         dayjs(value).isValid()
       ) {
         value = dayjs(value).format('HH:mm');

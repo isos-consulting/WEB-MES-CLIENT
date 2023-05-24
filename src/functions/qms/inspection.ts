@@ -38,7 +38,7 @@ export const getInspectSamples = (
       if (isNil(sample)) return null;
 
       if (typeof sample !== 'string' && typeof sample !== 'number')
-        throw new Error('unexpected type of inpsection sample');
+        throw new Error('unexpected type of inspection sample');
 
       if (isString(sample) && isEmpty(sample)) return null;
 
@@ -145,12 +145,12 @@ export const getDateFormat = (date: string) => {
   return date;
 };
 
-export const getTimeFormat = (tiemIncludedDate: string) => {
-  if (dayjs(tiemIncludedDate).isValid()) {
-    return dayjs(tiemIncludedDate).format('HH:mm:ss');
+export const getTimeFormat = (timeIncludedDate: string) => {
+  if (dayjs(timeIncludedDate).isValid()) {
+    return dayjs(timeIncludedDate).format('HH:mm:ss');
   }
 
-  return tiemIncludedDate;
+  return timeIncludedDate;
 };
 
 export const getDateTimeFormat = (dateTime: string) => {
@@ -182,8 +182,8 @@ const createInspectionSamples = sampleCount => {
 
   for (let sampleIndex = 1; sampleIndex <= sampleCount; sampleIndex++) {
     const sampleColumns = ColumnStore.INSP_CHECK_CELL.map(
-      ({ header, name, ...resetedSample }) => {
-        return createSample({ header, name, ...resetedSample }, sampleIndex);
+      ({ header, name, ...restedSample }) => {
+        return createSample({ header, name, ...restedSample }, sampleIndex);
       },
     );
 
@@ -194,10 +194,10 @@ const createInspectionSamples = sampleCount => {
 };
 
 const createSample = (
-  { header, name, ...resetedSample },
+  { header, name, ...restedSample },
   sampleIndex,
 ): IGridColumn => ({
-  ...resetedSample,
+  ...restedSample,
   header: `x${sampleIndex}${header}`,
   name: `x${sampleIndex}${name}`,
 });

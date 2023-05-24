@@ -15,7 +15,7 @@ export default interface ICheckboxGroupProps {
   label?: string;
 
   /** 전체 체크박스 생성 허용 */
-  allCheckedable?: boolean;
+  allCheckable?: boolean;
 
   /** 체크박스 배열 */
   options: ICheckboxItem[];

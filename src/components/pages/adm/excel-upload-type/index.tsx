@@ -15,7 +15,7 @@ import ModalStore from '~/constants/modals';
 import { ENUM_DECIMAL } from '~/enums';
 import { executeData, getModifiedRows, getPageName } from '~/functions';
 import ExcelUploadType from '~/models/user/excel-upload-type';
-import { COLOROURS } from '~/styles/palette';
+import { COLORS } from '~/styles/palette';
 import Header, { Button } from './components/Header';
 import { excelUploadTypeList } from './hooks/excel-upload-type';
 import BasicModalContext from './hooks/modal';
@@ -190,7 +190,7 @@ export const PgAdmExcelUploadType: React.FC = () => {
               heightSize="small"
               fontSize="small"
               ImageType="delete"
-              colorType={COLOROURS.SECONDARY.ORANGE[500]}
+              colorType={COLORS.SECONDARY.ORANGE[500]}
               onClick={() => {
                 confirm({
                   icon: null,

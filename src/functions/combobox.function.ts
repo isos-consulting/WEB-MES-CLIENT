@@ -1,4 +1,4 @@
-import { IComboboxItem } from '~/components/UI/combobox/combobox.ui.type';
+import { IComboBoxItem } from '~/components/UI/combobox/combobox.ui.type';
 
 type ComboTextPairProps = {
   codeName: string;
@@ -10,7 +10,7 @@ export const getCodeTextPairList = ({
   codeName,
   textName,
   options,
-}: ComboTextPairProps): IComboboxItem[] => {
+}: ComboTextPairProps): IComboBoxItem[] => {
   return options.reduce((list, option) => {
     const { code, text } = {
       code: option[codeName],

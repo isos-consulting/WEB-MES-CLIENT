@@ -17,8 +17,8 @@ export class DatagridTagRenderer {
     const tag = document.createElement('span');
 
     tag.id = name + rowKey;
-    tag.className = convTagClassName(conditions, props.value);
-    tag.innerText = convTagValue(conditions, props.value);
+    tag.className = convertTagClassName(conditions, props.value);
+    tag.innerText = convertTagValue(conditions, props.value);
 
     this.el = tag;
     this.render(props);
@@ -32,16 +32,22 @@ export class DatagridTagRenderer {
     const element = document.getElementById(this.state?.elementId);
 
     if (!isNil(this.el)) {
-      this.el.className = convTagClassName(this.state?.conditions, props.value);
-      this.el.innerText = convTagValue(this.state?.conditions, props?.value);
+      this.el.className = convertTagClassName(
+        this.state?.conditions,
+        props.value,
+      );
+      this.el.innerText = convertTagValue(this.state?.conditions, props?.value);
     } else if (!isNil(element)) {
-      element.className = convTagClassName(this.state?.conditions, props.value);
-      element.innerText = convTagValue(this.state?.conditions, props?.value);
+      element.className = convertTagClassName(
+        this.state?.conditions,
+        props.value,
+      );
+      element.innerText = convertTagValue(this.state?.conditions, props?.value);
     }
   }
 }
 
-const convTagClassName = (conditions, value) => {
+const convertTagClassName = (conditions, value) => {
   for (const condition of conditions) {
     if (condition?.value === value) {
       if (condition?.className) return condition?.className;
@@ -51,7 +57,7 @@ const convTagClassName = (conditions, value) => {
   return 'ant-tag ant-tag-custom hidden';
 };
 
-const convTagValue = (conditions, value) => {
+const convertTagValue = (conditions, value) => {
   for (const condition of conditions) {
     if (condition?.value === value) {
       return condition?.text;

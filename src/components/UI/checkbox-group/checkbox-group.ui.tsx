@@ -66,7 +66,7 @@ const CheckboxGroup: React.FC<Props> = props => {
             defaultValue={props.defaultValue}
             onChange={props.onChange || onChangeValues}
           >
-            {props.allCheckedable ? (
+            {props.allCheckable ? (
               <Checkbox
                 indeterminate={allCheckValue['indeterminate']}
                 onChange={onChangeAll}
@@ -104,7 +104,7 @@ const CheckboxGroup: React.FC<Props> = props => {
           defaultValue={props.defaultValue}
           onChange={props.onChange || onChangeValues}
         >
-          {props.allCheckedable ? (
+          {props.allCheckable ? (
             <Checkbox
               indeterminate={allCheckValue['indeterminate']}
               onChange={onChangeAll}

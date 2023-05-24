@@ -77,13 +77,13 @@ export const getRangeDateAtMonthForWeek = (year, month, week) => {
     .endOf('month')
     .format('YYYY-MM-DD');
 
-  const filterdDates = dates.filter(
+  const filteredDates = dates.filter(
     date =>
       moment(date).isSameOrAfter(moment(startOfDateForMonth)) &&
       moment(date).isSameOrBefore(moment(endOfDateForMonth)),
   );
 
-  return filterdDates.map(date => date.date());
+  return filteredDates.map(date => date.date());
 };
 
 export const getRangeDateAtFiftyThreeWeeks = year => {

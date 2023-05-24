@@ -107,7 +107,7 @@ export const PgStdBom = () => {
     'DETAIL_GRID',
     [
       {
-        header: 'BOMUUID',
+        header: 'BOM_UUID',
         name: 'bom_uuid',
         alias: 'uuid',
         width: ENUM_WIDTH.L,
@@ -269,7 +269,7 @@ export const PgStdBom = () => {
     'DETAIL_SUB_GRID',
     [
       {
-        header: 'BOMUUID',
+        header: 'BOM_UUID',
         name: 'bom_uuid',
         alias: 'uuid',
         width: ENUM_WIDTH.L,
@@ -883,7 +883,7 @@ export const PgStdBom = () => {
     },
   );
 
-  const deleteUnitUuid = ({ unit_uuid, ...rawdData }) => rawdData;
+  const deleteUnitUuid = ({ unit_uuid, ...rawData }) => rawData;
 
   /** 헤더 클릭 이벤트 */
   const onClickHeader = ev => {

@@ -3,11 +3,11 @@ import TuiGrid, { Dictionary } from 'tui-grid';
 import { CellValue } from 'tui-grid/types/store/data';
 import { message, Modal } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
-import { Container, Datagrid, GridPopup, Textbox } from '~/components/UI';
+import { Container, Datagrid, GridPopup, TextBox } from '~/components/UI';
 import { ColumnStore } from '~/constants/columns';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
-import { COLOROURS } from '~/styles/palette';
+import { COLORS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import { HeaderIncludedModalContext } from '../adm/excel-upload-type/hooks/header-included-modal';
 import { FormikProps, FormikValues } from 'formik';
@@ -197,7 +197,7 @@ export const PgStdWorkTime = () => {
     Dictionary<CellValue>
   >({});
   const workTimeDataGridRef = useRef<Grid>(null);
-  const wotkTimeModalHeaderRef = useRef(null);
+  const workTimeModalHeaderRef = useRef(null);
 
   const showDeleteWorkTimeConfirmDialog = () => {
     const userDeletedWorkTimeDatas = workTimeDataGridRef.current
@@ -234,7 +234,7 @@ export const PgStdWorkTime = () => {
         editWOrkTimeDatas: [
           ...workTimeDataGridRef.current.getInstance().getData(),
         ],
-        workTypeHeaderFormRef: wotkTimeModalHeaderRef,
+        workTypeHeaderFormRef: workTimeModalHeaderRef,
         workTypeUuid: work_type_uuid,
         workTypeName: work_type_nm,
         workTimePutApiCallback: () =>
@@ -254,7 +254,7 @@ export const PgStdWorkTime = () => {
     setWorkTimeModalContext(
       addWorkTimeHeaderIncludedModalContext({
         addWorkTimeModalTitle: title,
-        workTypeHeaderFormRef: wotkTimeModalHeaderRef,
+        workTypeHeaderFormRef: workTimeModalHeaderRef,
         workTypeUuid: work_type_uuid,
         workTypeName: work_type_nm,
         workTimePostApiCallback: () =>
@@ -264,9 +264,9 @@ export const PgStdWorkTime = () => {
   };
 
   const afterWorkTimeApiSuccess = (
-    afterworkTimeApiCallbackSuccess: Function,
+    afterWorkTimeApiCallbackSuccess: Function,
   ) => {
-    afterworkTimeApiCallbackSuccess();
+    afterWorkTimeApiCallbackSuccess();
     searchWorkTimesRelatedWithWorkType({ ...userSelectedWorkTypeData });
   };
 
@@ -315,7 +315,7 @@ export const PgStdWorkTime = () => {
               heightSize="small"
               fontSize="small"
               ImageType="delete"
-              colorType={COLOROURS.SECONDARY.ORANGE[500]}
+              colorType={COLORS.SECONDARY.ORANGE[500]}
               onClick={showDeleteWorkTimeConfirmDialog}
             >
               {WORD.DELETE}
@@ -371,7 +371,7 @@ export const PgStdWorkTime = () => {
         </div>
         <div style={{ width: '70%' }}>
           <Container>
-            <Textbox
+            <TextBox
               label="선택한 근무유형"
               value={userSelectedWorkTypeData.work_type_nm}
               readOnly={true}

@@ -10,7 +10,7 @@ import { ScCombobox } from './combobox.ui.styled';
 import Props from './combobox.ui.type';
 
 /** 콤보박스 */
-const Combobox: React.FC<Props> = props => {
+const ComboBox: React.FC<Props> = props => {
   const [, setComboValue] = useRecoilState(afStringState(props.id));
   const [, setComboTextValue] = useRecoilState(afStringState(props.id));
   const [options, setOptions] = useState([]);
@@ -219,4 +219,4 @@ const Combobox: React.FC<Props> = props => {
   }
 };
 
-export default Combobox;
+export default ComboBox;

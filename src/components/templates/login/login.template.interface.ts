@@ -1,5 +1,5 @@
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { IComboboxItem } from 'components/UI/combobox';
+import { IComboBoxItem } from 'components/UI/combobox';
 import React from 'react';
 
 /**
@@ -14,7 +14,7 @@ export default interface ILoginProps {
   factoryValue: string;
   disabled?: boolean;
   savedIdChecked?: boolean;
-  factoryList: IComboboxItem[];
+  factoryList: IComboBoxItem[];
   form: any;
   onChangeCbo?: (ev) => void;
   onChangeId?: (ev) => void;

@@ -17,7 +17,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   const [menuContent] = useRecoilState(atSideNavMenuContent);
 
-  const getCrruentRouter = async () => {
+  const getCurrentRouter = async () => {
     const menus = pathname.split('/');
     const menu1 = menus[1];
     const menu2 = menus[2];
@@ -37,7 +37,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
   };
 
   useEffect(() => {
-    getCrruentRouter();
+    getCurrentRouter();
   }, [pathname, menuContent]);
 
   return (

@@ -6,7 +6,7 @@ const aObject = {
   e: '5',
 };
 
-test('object-keylist-find', () => {
+test('object-keyList-find', () => {
   // given
   const aList: string[] = Object.keys(aObject);
 

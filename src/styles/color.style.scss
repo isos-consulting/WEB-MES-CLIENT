@@ -19,7 +19,7 @@ $palettes_skyblue: #e6f7ff;
 $palettes_blue: #1890ff;
 $palettes_lightgreen: #c2eea0;
 $palettes_green: #99d77f;
-$palettes_lightred: #ffb1ad;
+$palettes_lightRed: #ffb1ad;
 $palettes_orange: #ff6f27;
 $palettes_lightgray: #dfdfdf;
 $palettes_gray: #919191;
@@ -35,8 +35,8 @@ $palettes_progressBar: #3378ec;
 $palettes_dots: #38bcb2;
 $palettes_lines: #eed312;
 $palettes_statistic: #40a9ff;
-$palettes_maipLast: #f4c2be;
-$palettes_maipThis: #e0483e;
+$palettes_mapLast: #f4c2be;
+$palettes_mapThis: #e0483e;
 $palettes_salesLast: #b2d6e7;
 $palettes_salesThis: #1a85b9;
 $palettes_hoverBtn: #3ca0fe;
@@ -138,12 +138,12 @@ $bg_menuLevel2_default: $palettes_white;
 $bg_menuLevel2_selected: $palettes_skyblue;
 $fg_menuLevel2_selected: $palettes_blue;
 $bg_menuLevel2_selectedBar: $palettes_blue;
-$bg_colorbox_operation: $palettes_lightgreen;
-$bg_colorbox_operationBar: $palettes_green;
-$bg_colorbox_downtime: $palettes_lightred;
-$bg_colorbox_downtimeBar: $palettes_orange;
-$bg_colorbox_stop: $palettes_lightgray;
-$bg_colorbox_stopBar: $palettes_gray;
+$bg_colorBox_operation: $palettes_lightgreen;
+$bg_colorBox_operationBar: $palettes_green;
+$bg_colorBox_downtime: $palettes_lightRed;
+$bg_colorBox_downtimeBar: $palettes_orange;
+$bg_colorBox_stop: $palettes_lightgray;
+$bg_colorBox_stopBar: $palettes_gray;
 /* #endregion */
 
 /* #region 🔶button */
@@ -161,14 +161,14 @@ $bg_submitButton_default: $palettes_submit;
 /* #endregion */
 
 /* #region 🔶checkbox  */
-$bg_chkeckBox_border: $palettes_primary;
-$bg_chkeckBox_selectedInner: $palettes_primary;
+$bg_checkBox_border: $palettes_primary;
+$bg_checkBox_selectedInner: $palettes_primary;
 /* #endregion */
 
 /* #region 🔶comboBox  */
 $bg_comboBox_border: $palettes_primary;
 $bg_comboBox_selectedInner: $palettes_primary;
-$bg_comboboxFocus_border: $palettes_blue;
+$bg_comboBoxFocus_border: $palettes_blue;
 /* #endregion */
 
 /* #region 🔶container  */
@@ -176,11 +176,11 @@ $bg_container_default: $palettes_white;
 $bg_container_border: $palettes_white;
 /* #endregion */
 
-/* #region 🔶datepicker  */
-$bg_datepicker_border: $palettes_border;
-$bg_datepicker_selection: $palettes_primary;
-$fg_datepicker_selection: $palettes_white;
-$bg_datepickerFocus_border: $palettes_blue;
+/* #region 🔶datePicker  */
+$bg_datePicker_border: $palettes_border;
+$bg_datePicker_selection: $palettes_primary;
+$fg_datePicker_selection: $palettes_white;
+$bg_datePickerFocus_border: $palettes_blue;
 /* #endregion */
 
 /* #region 🔶radio  */
@@ -189,7 +189,7 @@ $bg_radio_checkedInner: $palettes_primary;
 $bg_radio_border: $palettes_border;
 /* #endregion */
 
-/* #region 🔶textbox  */
+/* #region 🔶textBox  */
 $bg_input_wrapper: $palettes_primary;
 $bg_input_active: $palettes_primary;
 /* #endregion */
@@ -214,7 +214,7 @@ $bg_graphGrid_border: $palettes_graphGrid;
 
 /* #region 🔶gridCard */
 $fg_gridCard_default: $palettes_gridFontColor;
-$bg_gridCard_downtime: $palettes_lightred;
+$bg_gridCard_downtime: $palettes_lightRed;
 $bg_gridCard_default: $palettes_white;
 $bg_card_boxShadow: $palettes_cardShadow;
 /* #endregion */
@@ -235,8 +235,8 @@ $fg_statistic_achievement: $palettes_statistic;
 /* #endregion */
 
 /* #region 🔶this, last year */
-$bg_maipData_lastYear: $palettes_maipLast;
-$bg_maipData_thisYear: $palettes_maipThis;
+$bg_mapData_lastYear: $palettes_mapLast;
+$bg_mapData_thisYear: $palettes_mapThis;
 $bg_salesData_lastYear: $palettes_salesLast;
 $bg_salesData_thisYear: $palettes_salesThis;
 /* #endregion */
@@ -285,7 +285,7 @@ $bg_gridRowHeader_default: $palettes_gridHeader;
 $bg_gridRowHeader_border: $palettes_gridCellBorder;
 $bg_evenRow_default: $palettes_evenRow;
 $bg_grid_selectedHeader: $palettes_selectedHeader;
-$bg_danger_default: $palettes_maipThis;
+$bg_danger_default: $palettes_mapThis;
 $bg_gridHeader_area: $palettes_gridHeader;
 $bg_gridLayer_selection: $palettes_gridLayer;
 $bg_gridRow_checked: $palettes_gridRow;

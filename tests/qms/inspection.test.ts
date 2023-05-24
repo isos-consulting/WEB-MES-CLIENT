@@ -17,21 +17,21 @@ import {
 test('x1_insp_value 문자열은 거짓을 반환한다', () => {
   const x1_insp_value = 'x1_insp_value';
 
-  const falsyx1_insp_value = isColumnNamesNotEndWith_insp_value([
+  const falsy_x1_insp_value = isColumnNamesNotEndWith_insp_value([
     { columnName: x1_insp_value },
   ]);
 
-  expect(falsyx1_insp_value).toBe(false);
+  expect(falsy_x1_insp_value).toBe(false);
 });
 
 test('마지막에 "_insp_value" 문자열을 포함하지 않는 x1_insp_state 문자열은 참을 반환한다', () => {
   const x1_insp_value = 'x1_insp_state';
 
-  const falsyx1_insp_value = isColumnNamesNotEndWith_insp_value([
+  const falsy_x1_insp_value = isColumnNamesNotEndWith_insp_value([
     { columnName: x1_insp_value },
   ]);
 
-  expect(falsyx1_insp_value).toBe(true);
+  expect(falsy_x1_insp_value).toBe(true);
 });
 
 test('_insp_value를 포함하는 배열은 0개 이상의 요소를 반환한다', () => {
@@ -202,11 +202,11 @@ test('시간은 HH:mm:ss 형식의 문자열이다', () => {
 });
 
 test('일시는 YYYY-MM-DD HH:mm:ss 형식의 문자열이다', () => {
-  const datetime = new Date().toString();
+  const dateTime = new Date().toString();
 
-  const datetimeText = getDateTimeFormat(datetime);
+  const dateTimeText = getDateTimeFormat(dateTime);
 
-  expect(datetimeText).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
+  expect(dateTimeText).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/);
 });
 
 test('0번쨰 시료 결과 값이 null이면 결측치 검사는 true를 반환한다', () => {

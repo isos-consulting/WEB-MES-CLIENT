@@ -1,5 +1,5 @@
 /** 콤보박스 속성 인터페이스 */
-export default interface IComboboxProps extends IComboboxPropsStyles {
+export default interface IComboBoxProps extends IComboBoxPropsStyles {
   /** 콤보박스 아이디 */
   id: string;
 
@@ -10,7 +10,7 @@ export default interface IComboboxProps extends IComboboxPropsStyles {
   label?: string;
 
   /** 콤보박스 리스트 배열 */
-  options: IComboboxItem[];
+  options: IComboBoxItem[];
 
   /** 기본 선택값 */
   defaultValue?: string;
@@ -40,7 +40,7 @@ export default interface IComboboxProps extends IComboboxPropsStyles {
 export type TComboFirstItemType = 'none' | 'empty' | 'all' | undefined;
 
 /** 콤보박스 리스트 값 인터페이스 */
-export interface IComboboxItem {
+export interface IComboBoxItem {
   /** 숨은 값 */
   code: string;
 
@@ -51,7 +51,7 @@ export interface IComboboxItem {
   disabled?: boolean;
 }
 
-export interface IComboboxPropsStyles {
+export interface IComboBoxPropsStyles {
   widthSize?: 'default' | 'auto' | 'flex';
   fontSize?: 'default' | 'large';
 }

@@ -8,15 +8,15 @@ import {
   isRangeAllNotNumber,
   SampleRange,
 } from './inspection';
-import { InsepctionDataGridChange } from './InspectionReportViewController';
+import { InspectionDataGridChange } from './InspectionReportViewController';
 
-type InsepctionSampleArgs = {
-  changes: InsepctionDataGridChange[];
+type InspectionSampleArgs = {
+  changes: InspectionDataGridChange[];
   samples: boolean[][];
   ranges: SampleRange[];
 };
 
-type InsepctionSampleValueArgs = {
+type InspectionSampleValueArgs = {
   rowKey: number;
   columnName: string;
   range: SampleRange;
@@ -40,7 +40,7 @@ class InspectionReportService {
     changes,
     samples,
     ranges,
-  }: InsepctionSampleArgs) {
+  }: InspectionSampleArgs) {
     for (const { rowKey, columnName } of changes) {
       if (isColumnNameEndWith_insp_value(columnName)) {
         const sampleIndex = getSampleIndex(columnName);
@@ -69,7 +69,7 @@ class InspectionReportService {
     columnName,
     range,
     value,
-  }: InsepctionSampleValueArgs) {
+  }: InspectionSampleValueArgs) {
     const isNumberMinMaxFlags = getRangeNumberResults(range);
     const eyeInsectValueText = getEyeInspectionValueText(value);
 

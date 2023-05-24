@@ -92,7 +92,7 @@ const gridComboColumnNames = [
     textColName: menuGridComboTextColName,
   },
 ];
-const gridCoboDataApiSettings = {
+const gridComboDataApiSettings = {
   uriPath: URL_PATH_AUT.MENU_TYPE.GET.MENU_TYPES,
   params: {},
 };
@@ -106,7 +106,7 @@ const menuGridTreeColumnOptions = {
 const menuGridComboInfo = [
   {
     columnNames: gridComboColumnNames,
-    dataApiSettings: gridCoboDataApiSettings,
+    dataApiSettings: gridComboDataApiSettings,
   },
 ];
 
@@ -150,7 +150,7 @@ const menuUsedRadios = [
   { code: 'true', disabled: false, text: '사용' },
   { code: 'false', disabled: false, text: '미사용' },
 ];
-export const menuInputGroupBoxs: IInputGroupboxItem[] = [
+export const menuInputGroupBoxes: IInputGroupboxItem[] = [
   {
     type: 'text',
     id: 'parent_nm',
@@ -258,10 +258,10 @@ export const detailModalProps: IModalProps = {
   width: '60%',
 };
 export const messages = {
-  wargning: {
-    post: { prefix: '메뉴를 생성 하시려면', surfix: '을 입력하세요!' },
-    put: { prefix: '메뉴를 수정 하시려면', surfix: '을 입력하세요!' },
-    delete: { prefix: '', surfix: '' },
+  warning: {
+    post: { prefix: '메뉴를 생성 하시려면', suffix: '을 입력하세요!' },
+    put: { prefix: '메뉴를 수정 하시려면', suffix: '을 입력하세요!' },
+    delete: { prefix: '', suffix: '' },
   },
   confirm: { post: '생성', put: '수정', delete: '삭제' },
   complete: '메뉴 적용은 재시작이 필요합니다.',

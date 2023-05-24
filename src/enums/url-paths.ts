@@ -270,19 +270,19 @@ const URL_PATH = {
       GET: {
         /** UUID 문자열 변환 필요 */
         FILE_MGMT: '/adm/file-mgmt/{uuid}',
-        FILE_MGMTS: '/adm/file-mgmts',
+        PLURAL_FILE_MGMT: '/adm/file-mgmts',
       },
       POST: {
-        FILE_MGMTS: '/adm/file-mgmts',
+        PLURAL_FILE_MGMT: '/adm/file-mgmts',
       },
       PUT: {
-        FILE_MGMTS: '/adm/file-mgmts',
+        PLURAL_FILE_MGMT: '/adm/file-mgmts',
       },
       PATCH: {
-        FILE_MGMTS: '/adm/file-mgmts',
+        PLURAL_FILE_MGMT: '/adm/file-mgmts',
       },
       DELETE: {
-        FILE_MGMTS: '/adm/file-mgmts',
+        PLURAL_FILE_MGMT: '/adm/file-mgmts',
       },
     },
     FILE_MGMT_TYPE: {
@@ -304,23 +304,23 @@ const URL_PATH = {
         FILE_MGMT_TYPES: '/adm/file-mgmt-types',
       },
     },
-    FILE_MGMT_DETAIL_TYPE: {
+    FILE_MANAGEMENT_DETAIL_TYPE: {
       GET: {
         /** UUID 문자열 변환 필요 */
         FILE_MGMT_DETAIL_TYPE: '/adm/file-mgmt-detail-type/{uuid}',
-        FILE_MGMT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
+        FILE_MANAGEMENT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
       },
       POST: {
-        FILE_MGMT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
+        FILE_MANAGEMENT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
       },
       PUT: {
-        FILE_MGMT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
+        FILE_MANAGEMENT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
       },
       PATCH: {
-        FILE_MGMT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
+        FILE_MANAGEMENT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
       },
       DELETE: {
-        FILE_MGMT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
+        FILE_MANAGEMENT_DETAIL_TYPES: '/adm/file-mgmt-detail-types',
       },
     },
     INTERFACE_STATE: {
@@ -817,16 +817,16 @@ const URL_PATH = {
         INCLUDE_DETAILS: '/sal/return/{uuid}/include-details',
       },
       POST: {
-        RETRUNS: '/sal/returns',
+        RETURNS: '/sal/returns',
       },
       PUT: {
-        RETRUNS: '/sal/returns',
+        RETURNS: '/sal/returns',
       },
       PATCH: {
-        RETRUNS: '/sal/returns',
+        RETURNS: '/sal/returns',
       },
       DELETE: {
-        RETRUNS: '/sal/returns',
+        RETURNS: '/sal/returns',
       },
     },
     RETURN_DETAIL: {
@@ -950,23 +950,23 @@ const URL_PATH = {
         REPORT: '/sal/outgos/report',
         /** UUID 문자열 변환 필요 */
         OUTGO: '/sal/outgo/{uuid}',
-        OUTGOS: '/sal/outgos',
+        OUTGOES: '/sal/outgos',
         /** UUID 문자열 변환 필요 */
         DETAILS: '/sal/outgo/{uuid}/details',
         /** UUID 문자열 변환 필요 */
         INCLUDE_DETAILS: '/sal/outgo/{uuid}/include-details',
       },
       POST: {
-        OUTGOS: '/sal/outgos',
+        OUTGOES: '/sal/outgos',
       },
       PUT: {
-        OUTGOS: '/sal/outgos',
+        OUTGOES: '/sal/outgos',
       },
       PATCH: {
-        OUTGOS: '/sal/outgos',
+        OUTGOES: '/sal/outgos',
       },
       DELETE: {
-        OUTGOS: '/sal/outgos',
+        OUTGOES: '/sal/outgos',
       },
     },
     OUTGO_DETAIL: {
@@ -982,19 +982,19 @@ const URL_PATH = {
       GET: {
         TREES: '/std/boms/trees',
         BOM: '/std/bom/{uuid}',
-        BOMS: '/std/boms',
+        PLURAL_BOM: '/std/boms',
       },
       POST: {
-        BOMS: '/std/boms',
+        PLURAL_BOM: '/std/boms',
       },
       PUT: {
-        BOMS: '/std/boms',
+        PLURAL_BOM: '/std/boms',
       },
       PATCH: {
-        BOMS: '/std/boms',
+        PLURAL_BOM: '/std/boms',
       },
       DELETE: {
-        BOMS: '/std/boms',
+        PLURAL_BOM: '/std/boms',
       },
     },
     PARTNER_TYPE: {
@@ -1191,20 +1191,20 @@ const URL_PATH = {
     PROC: {
       GET: {
         PROC: '/std/proc/{uuid}',
-        PROCS: '/std/procs',
+        PLURAL_PROC: '/std/procs',
       },
       POST: {
         EXCEL_UPLOAD: '/std/procs',
-        PROCS: '/std/procs',
+        PLURAL_PROC: '/std/procs',
       },
       PUT: {
-        PROCS: '/std/procs',
+        PLURAL_PROC: '/std/procs',
       },
       PATCH: {
-        PROCS: '/std/procs',
+        PLURAL_PROC: '/std/procs',
       },
       DELETE: {
-        PROCS: '/std/procs',
+        PLURAL_PROC: '/std/procs',
       },
     },
     PROC_EQUIP: {
@@ -1322,7 +1322,7 @@ const URL_PATH = {
     },
     ROUTING: {
       GET: {
-        ACTIVED_PROD: '/std/routings/actived-prod',
+        ACTIVATED_PROD: '/std/routings/actived-prod',
         ROUTING: '/std/routing/{uuid}',
         ROUTINGS: '/std/routings',
       },
@@ -1361,20 +1361,20 @@ const URL_PATH = {
     DEPT: {
       GET: {
         DEPT: '/std/dept/{uuid}',
-        DEPTS: '/std/depts',
+        PLURAL_DEPT: '/std/depts',
       },
       POST: {
         EXCEL_UPLOAD: '/std/depts/excel-upload',
-        DEPTS: '/std/depts',
+        PLURAL_DEPT: '/std/depts',
       },
       PUT: {
-        DEPTS: '/std/depts',
+        PLURAL_DEPT: '/std/depts',
       },
       PATCH: {
-        DEPTS: '/std/depts',
+        PLURAL_DEPT: '/std/depts',
       },
       DELETE: {
-        DEPTS: '/std/depts',
+        PLURAL_DEPT: '/std/depts',
       },
     },
     REJECT_TYPE: {
@@ -1456,20 +1456,20 @@ const URL_PATH = {
     EMP: {
       GET: {
         EMP: '/std/emp/{uuid}',
-        EMPS: '/std/emps',
+        EMPLOYERS: '/std/emps',
       },
       POST: {
         EXCEL_UPLOAD: '/std/emps/excel-upload',
-        EMPS: '/std/emps',
+        EMPLOYERS: '/std/emps',
       },
       PUT: {
-        EMPS: '/std/emps',
+        EMPLOYERS: '/std/emps',
       },
       PATCH: {
-        EMPS: '/std/emps',
+        EMPLOYERS: '/std/emps',
       },
       DELETE: {
-        EMPS: '/std/emps',
+        EMPLOYERS: '/std/emps',
       },
     },
     ROUTING_RESOURCE: {
@@ -1588,20 +1588,20 @@ const URL_PATH = {
     WORKINGS: {
       GET: {
         WORKINGS: '/std/workings/{uuid}',
-        WORKINGSES: '/std/workingses',
+        PLURAL_WORKINGS: '/std/workingses',
       },
       POST: {
         EXCEL_UPLOAD: '/std/workingses/excel-upload',
-        WORKINGSES: '/std/workingses',
+        PLURAL_WORKINGS: '/std/workingses',
       },
       PUT: {
-        WORKINGSES: '/std/workingses',
+        PLURAL_WORKINGS: '/std/workingses',
       },
       PATCH: {
-        WORKINGSES: '/std/workingses',
+        PLURAL_WORKINGS: '/std/workingses',
       },
       DELETE: {
-        WORKINGSES: '/std/workingses',
+        PLURAL_WORKINGS: '/std/workingses',
       },
     },
     WORKER_GROUP: {
@@ -1702,19 +1702,19 @@ const URL_PATH = {
     ROUTING_WORKINGS: {
       GET: {
         ROUTING_WORKINGS: '/std/routing-workings/{uuid}',
-        ROUTING_WORKINGSES: '/std/routing-workingses',
+        ROUTING_PLURAL_WORKINGS: '/std/routing-workingses',
       },
       POST: {
-        ROUTING_WORKINGSES: '/std/routing-workingses',
+        ROUTING_PLURAL_WORKINGS: '/std/routing-workingses',
       },
       PUT: {
-        ROUTING_WORKINGSES: '/std/routing-workingses',
+        ROUTING_PLURAL_WORKINGS: '/std/routing-workingses',
       },
       PATCH: {
-        ROUTING_WORKINGSES: '/std/routing-workingses',
+        ROUTING_PLURAL_WORKINGS: '/std/routing-workingses',
       },
       DELETE: {
-        ROUTING_WORKINGSES: '/std/routing-workingses',
+        ROUTING_PLURAL_WORKINGS: '/std/routing-workingses',
       },
     },
     ITEM_TYPE: {
@@ -1817,25 +1817,25 @@ const URL_PATH = {
     INSP: {
       GET: {
         INSP: '/qms/insp/{uuid}',
-        INSPS: '/qms/insps',
+        PLURAL_INSP: '/qms/insps',
         DETAILS: '/qms/insp/{uuid}/details',
         INCLUDE_DETAILS: '/qms/insp/{uuid}/include-details',
         RECEIVE_INCLUDE_DETAILS: '/qms/insp/receive/include-details',
         PROC_INCLUDE_DETAILS: '/qms/insp/proc/include-details',
       },
       POST: {
-        INSPS: '/qms/insps',
+        PLURAL_INSP: '/qms/insps',
       },
       PUT: {
         APPLY: '/qms/insps/apply',
         CANCEL_APPLY: '/qms/insps/cancel-apply',
-        INSPS: '/qms/insps',
+        PLURAL_INSP: '/qms/insps',
       },
       PATCH: {
-        INSPS: '/qms/insps',
+        PLURAL_INSP: '/qms/insps',
       },
       DELETE: {
-        INSPS: '/qms/insps',
+        PLURAL_INSP: '/qms/insps',
       },
     },
     INSP_DETAIL: {
@@ -2077,23 +2077,23 @@ const URL_PATH = {
     INSP: {
       GET: {
         INSP: '/eqm/insp/{uuid}',
-        INSPS: '/eqm/insps',
+        PLURAL_INSP: '/eqm/insps',
         DETAILS: '/eqm/insp/{uuid}/details',
         INCLUDE_DETAILS: '/eqm/insp/{uuid}/include-details',
       },
       POST: {
-        INSPS: '/eqm/insps',
+        PLURAL_INSP: '/eqm/insps',
       },
       PUT: {
         APPLY: '/eqm/insp/apply',
         CANCEL_APPLY: '/eqm/insp/cancel-apply',
-        INSPS: '/eqm/insps',
+        PLURAL_INSP: '/eqm/insps',
       },
       PATCH: {
-        INSPS: '/eqm/insps',
+        PLURAL_INSP: '/eqm/insps',
       },
       DELETE: {
-        INSPS: '/eqm/insps',
+        PLURAL_INSP: '/eqm/insps',
       },
     },
     INSP_DETAIL: {

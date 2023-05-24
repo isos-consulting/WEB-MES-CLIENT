@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Combobox, Container, Searchbox, useSearchbox } from '~/components/UI';
+import { ComboBox, Container, Searchbox, useSearchbox } from '~/components/UI';
 import { getData, getToday } from '~/functions';
 import LineChart from '~/components/UI/graph/chart-line.ui';
 import { message } from 'antd';
@@ -33,7 +33,7 @@ const getTimeAxisComboBoxDatas = () => {
 };
 
 export const PgEqmTempInterface = () => {
-  const timeAixsComboLists = getTimeAxisComboBoxDatas();
+  const timeAxisComboLists = getTimeAxisComboBoxDatas();
 
   const [graph, setGraph] = useState([]);
   const [timeAxis, setTimeAxis] = useState('minute');
@@ -155,14 +155,14 @@ export const PgEqmTempInterface = () => {
     datasets: graph,
   };
 
-  const lineChartPorps = {
+  const lineChartProps = {
     options,
     data,
   };
 
   const comboBoxProps = {
     firstItemType: 'none',
-    options: timeAixsComboLists,
+    options: timeAxisComboLists,
     value: timeAxis,
     onChange: handleChangeComboData,
     label: '시간 축 단위 선택',
@@ -172,8 +172,8 @@ export const PgEqmTempInterface = () => {
     <>
       <Searchbox {...props} />
       <Container>
-        <Combobox {...comboBoxProps} />
-        <LineChart {...lineChartPorps} />
+        <ComboBox {...comboBoxProps} />
+        <LineChart {...lineChartProps} />
       </Container>
     </>
   );

@@ -9,7 +9,7 @@ import {
   detailModalProps,
   menuGridColumns,
   menuGridOptions,
-  menuInputGroupBoxs,
+  menuInputGroupBoxes,
   menuSearchButtonProps,
   messages,
 } from './menu/constant/constant';
@@ -18,7 +18,7 @@ import MenuService from './menu/MenuService';
 export const PgAutMenu = () => {
   const [menuModalVisible, setMenuModalVisible] = useState<boolean>(false);
   const grid = useGrid('GRID', menuGridColumns, menuGridOptions);
-  const inputGroups = useInputGroup('MENU_INPUTBOX', menuInputGroupBoxs);
+  const inputGroups = useInputGroup('MENU_INPUTBOX', menuInputGroupBoxes);
   const menuService = new MenuService(
     URL_PATH_AUT.MENU.GET.MENUS,
     grid,
@@ -35,16 +35,16 @@ export const PgAutMenu = () => {
 
   detailModalProps.onOk = async () => {
     const record = inputGroups.ref.current.values;
-    const type = menuService.isNewReocrd(record)
+    const type = menuService.isNewRecord(record)
       ? 'post'
-      : menuService.isDeleteReocrd(record)
+      : menuService.isDeleteRecord(record)
       ? 'delete'
       : 'put';
-    const isValid = menuService.isNewReocrd(record)
-      ? menuService.newRecordValid(record, messages.wargning[type])
-      : menuService.isDeleteReocrd(record)
+    const isValid = menuService.isNewRecord(record)
+      ? menuService.newRecordValid(record, messages.warning[type])
+      : menuService.isDeleteRecord(record)
       ? menuService.deleteRecordValid(record)
-      : menuService.updateRecordValid(record, messages.wargning[type]);
+      : menuService.updateRecordValid(record, messages.warning[type]);
 
     if (
       isValid
@@ -61,7 +61,7 @@ export const PgAutMenu = () => {
       ))
         ? alert(messages.complete)
         : console.trace(
-            '%cmenu 정보 저장 API 요청 결과 실패함',
+            '%c menu 정보 저장 API 요청 결과 실패함',
             'color: red; font-size: 15px;',
           );
     }

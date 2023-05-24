@@ -37,7 +37,7 @@ export interface BaseRangeDatePickerProps {
   onChange?: (date: Dayjs, dateString?: string) => void;
 }
 
-export const ReangePickerWrapper = styled(DatePicker.RangePicker)`
+export const RangePickerWrapper = styled(DatePicker.RangePicker)`
   width: ${props =>
     props.widthSize === 'flex'
       ? '100%'
@@ -45,33 +45,33 @@ export const ReangePickerWrapper = styled(DatePicker.RangePicker)`
       ? 'auto'
       : props.widthSize
       ? `${props.widthSize}px`
-      : Sizes.width_datepicker_md};
+      : Sizes.width_datePicker_md};
 
-  height: ${Sizes.height_datepicker_default};
+  height: ${Sizes.height_datePicker_default};
   border-radius: ${Sizes.borderRadius_common};
-  border-color: ${Colors.bg_datepicker_border};
+  border-color: ${Colors.bg_datePicker_border};
   /* margin-bottom: 8px; */
 
   &:hover,
   &:focus {
-    border-color: ${Colors.bg_datepicker_border};
+    border-color: ${Colors.bg_datePicker_border};
   }
   ::selection {
-    color: ${Colors.fg_datepicker_selection};
-    background: ${Colors.bg_datepicker_selection};
+    color: ${Colors.fg_datePicker_selection};
+    background: ${Colors.bg_datePicker_selection};
   }
   .ant-picker-input > input {
-    font-size: ${Fonts.fontSize_datepicker};
+    font-size: ${Fonts.fontSize_datePicker};
     letter-spacing: ${Sizes.letterSpacing_common};
   }
 `;
 
 const BaseRangePicker: React.FC<BaseRangeDatePickerProps> = props => {
   return (
-    <ReangePickerWrapper
+    <RangePickerWrapper
       ids={props.ids}
       names={props.names}
-      defaultValue={props.defalutValue}
+      defaultValue={props.defaultValue}
       onChange={props.onChange}
       disabledDate={disabledDate}
       placeholder={props.placeholder}

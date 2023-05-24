@@ -753,9 +753,9 @@ type TGroupInfos = {
   originalValues: any[];
   groupKey: string;
 }[];
-type TConvDataToSubTotalProps = {
+type TConvertDataToSubTotalProps = {
   standardNames: string[];
-  curculations: {
+  calculations: {
     names: string[];
     type: 'sum' | 'min' | 'max' | 'avg';
   }[];
@@ -764,16 +764,16 @@ type TConvDataToSubTotalProps = {
     type?: 'asc' | 'desc';
   };
 };
-export const convDataToSubTotal = (
+export const convertDataToSubTotal = (
   data: any[] = [],
-  options: TConvDataToSubTotalProps,
+  options: TConvertDataToSubTotalProps,
 ): TSubTotal => {
   let result: TSubTotal = {
     subTotals: [],
     total: {},
   };
   let groupInfos: TGroupInfos = [];
-  const { standardNames, curculations, sortby } = options;
+  const { standardNames, calculations, sortby } = options;
 
   if (data?.length <= 1) {
     const _data = cloneDeep(data);
@@ -788,16 +788,16 @@ export const convDataToSubTotal = (
 
   try {
     // 계산할 키 추출하기
-    let curculationNames = [];
-    cloneDeep(curculations).forEach(el => {
-      curculationNames = curculationNames.concat(el.names);
+    let calculationNames = [];
+    cloneDeep(calculations).forEach(el => {
+      calculationNames = calculationNames.concat(el.names);
     });
 
     // 필요한 데이터만 추출
     let tempData: any[] = cloneDeep(data).map(el => {
       const keys = Object.keys(el);
       keys.forEach(key => {
-        if (standardNames.concat(curculationNames).includes(key) === false) {
+        if (standardNames.concat(calculationNames).includes(key) === false) {
           delete el[key];
         }
       });
@@ -842,12 +842,12 @@ export const convDataToSubTotal = (
       )?.groupKey;
       let count: { groupKey: string; cnt: number }[] = [];
 
-      curculationNames.forEach(curlName => {
+      calculationNames.forEach(curlName => {
         if (!sumData[groupKey]) {
           sumData[groupKey] = { [curlName]: null };
         }
 
-        const curlType = curculations.find(el =>
+        const curlType = calculations.find(el =>
           el.names.includes(curlName),
         )?.type;
         const previousValue: number = Number(sumData[groupKey][curlName] || 0);

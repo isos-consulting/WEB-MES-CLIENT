@@ -7,7 +7,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import Props, {
   IGridComboColumnInfo,
   IGridComboInfo,
@@ -40,7 +40,7 @@ import {
 import '~styles/grid.style.scss';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
-import { getPopupForm, IPopupItemsRetrunProps } from '../popup';
+import { getPopupForm, IPopupItemsReturnProps } from '../popup';
 import { Result } from '../result';
 import { DatagridButtonRenderer } from '../datagrid-ui/datagrid-button.ui';
 import { Button } from '../button';
@@ -57,7 +57,7 @@ import { DragDrop } from '../dragDrop';
 
 import { errorRequireDecimal } from '~/error';
 import {
-  getFilterdDataForDateFormat,
+  getFilteredDataForDateFormat,
   isEnabledDateColumnFilter,
 } from './datagrid.utils';
 import { isOriginalsIncludesColumnName } from '~/functions/datagrid-new.function';
@@ -244,7 +244,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
         case 'file':
           // 렌더러
-          const fileUploadGridId = uuidv4();
+          const fileUploadGridId = uuidV4();
 
           if (isNil(el?.options?.ok_type)) {
             if (props.gridMode === 'delete') {
@@ -273,7 +273,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 if (okType === 'save') {
                   await getData(
                     searchParams,
-                    URL_PATH_ADM.FILE_MGMT.GET.FILE_MGMTS,
+                    URL_PATH_ADM.FILE_MGMT.GET.PLURAL_FILE_MGMT,
                     'raws',
                   ).then(res => {
                     result = cloneDeep(res);
@@ -458,8 +458,8 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                             ],
                             dataApiSettings: {
                               uriPath:
-                                URL_PATH_ADM.FILE_MGMT_DETAIL_TYPE.GET
-                                  .FILE_MGMT_DETAIL_TYPES,
+                                URL_PATH_ADM.FILE_MANAGEMENT_DETAIL_TYPE.GET
+                                  .FILE_MANAGEMENT_DETAIL_TYPES,
                               params: {
                                 file_mgmt_type_cd:
                                   el?.options?.file_mgmt_type_cd,
@@ -549,7 +549,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         case 'combo': // 콤보박스 세팅
           if (el?.editable === true) {
             // 에디터
-            const comboId = uuidv4();
+            const comboId = uuidV4();
             const comboItem = columnComboState?.find(
               item => item.columnName === el.name,
             );
@@ -1075,13 +1075,13 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
     if (!props.summaryOptions) return undefined;
 
     const position = props.summaryOptions.position || 'bottom';
-    const avgs = props.summaryOptions.avgColumns || [];
-    const cnts = props.summaryOptions.cntColumns || [];
-    const filtereds = props.summaryOptions.filteredColumns || [];
-    const maxs = props.summaryOptions.maxColumns || [];
-    const mins = props.summaryOptions.minColumns || [];
-    const sums = props.summaryOptions.sumColumns || [];
-    const texts = props.summaryOptions.textColumns || [];
+    const averageList = props.summaryOptions.avgColumns || [];
+    const countList = props.summaryOptions.cntColumns || [];
+    const filteredList = props.summaryOptions.filteredColumns || [];
+    const maxList = props.summaryOptions.maxColumns || [];
+    const minList = props.summaryOptions.minColumns || [];
+    const summaryList = props.summaryOptions.sumColumns || [];
+    const textList = props.summaryOptions.textColumns || [];
 
     let result = {
       height: rowHeight,
@@ -1090,19 +1090,19 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
     let columnContent: object = {};
 
-    type TItems = { mapKey: string; contetns: string[] }[];
+    type TItems = { mapKey: string; contents: string[] }[];
     const items: TItems = [
-      { mapKey: 'avg', contetns: avgs },
-      { mapKey: 'cnt', contetns: cnts },
-      { mapKey: 'filtered', contetns: filtereds },
-      { mapKey: 'max', contetns: maxs },
-      { mapKey: 'min', contetns: mins },
-      { mapKey: 'sum', contetns: sums },
+      { mapKey: 'avg', contents: averageList },
+      { mapKey: 'cnt', contents: countList },
+      { mapKey: 'filtered', contents: filteredList },
+      { mapKey: 'max', contents: maxList },
+      { mapKey: 'min', contents: minList },
+      { mapKey: 'sum', contents: summaryList },
     ];
 
     items?.forEach(el => {
-      const { mapKey, contetns } = el;
-      contetns?.forEach(columnName => {
+      const { mapKey, contents } = el;
+      contents?.forEach(columnName => {
         const decimal: number =
           columns?.find(el => el?.name === columnName)?.decimal | 0;
         columnContent[columnName] = {
@@ -1116,7 +1116,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
       });
     });
 
-    texts?.forEach(el => {
+    textList?.forEach(el => {
       const { columnName, content } = el;
 
       columnContent[columnName] = {
@@ -1197,7 +1197,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
   //#region 🔶그리드 액션
   /** ✅행 추가 : 1행에 행을 하나 추가합니다. */
-  const onPrepentRow = useCallback(
+  const onPrependRow = useCallback(
     (newRow: object = {}) => {
       // 클래스명 삽입 하기
       let classNames = { column: {} };
@@ -1639,8 +1639,8 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 */
   const onCheckAll = useCallback(
     ev => {
-      const filterdDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
-      const rowCount: number = filterdDatas?.length;
+      const filteredDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
+      const rowCount: number = filteredDatas?.length;
 
       if (props.gridMode === 'select') {
         onUncheckRows();
@@ -1649,7 +1649,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
       if (rowCount > 0) {
         for (let i = 0; i < rowCount; i++) {
-          const rowKey = filterdDatas[i]?.rowKey;
+          const rowKey = filteredDatas[i]?.rowKey;
           switch (props.gridMode) {
             case 'delete':
               gridRef.current
@@ -1668,7 +1668,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
           }
 
           // row에 특정 클래스네임이 있는 경우 추가
-          const className = filterdDatas[i]?._attributes?.className?.row;
+          const className = filteredDatas[i]?._attributes?.className?.row;
           if (Array.isArray(className) || isNil(className)) {
             if (className?.includes('selected-row') === false) {
               gridRef.current
@@ -1685,12 +1685,12 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   /** ✅체크박스(_checked)에 전체 체크 해제 */
   const onUncheckAll = useCallback(
     ev => {
-      const filterdDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
-      const rowCount: number = filterdDatas?.length;
+      const filteredDatas: any[] = ev?.instance?.store?.data?.filteredRawData;
+      const rowCount: number = filteredDatas?.length;
 
       if (rowCount > 0) {
         for (let i = 0; i < rowCount; i++) {
-          const rowKey = filterdDatas[i]?.rowKey;
+          const rowKey = filteredDatas[i]?.rowKey;
           if (!isNil(rowKey)) {
             switch (props.gridMode) {
               case 'delete':
@@ -1713,7 +1713,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
   const onAddPopupRow = async () => {
     const { rowAddPopupInfo } = props;
     // 팝업 부르기
-    let popupContent: IPopupItemsRetrunProps = {
+    let popupContent: IPopupItemsReturnProps = {
       datagridProps: {
         gridId: null,
         columns: null,
@@ -1779,7 +1779,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
     const updateColumns: { original: string; popup: string }[] =
       rowAddPopupInfo.columnNames;
-    const childGridId = uuidv4();
+    const childGridId = uuidV4();
 
     let title = popupContent?.modalProps?.title;
     const word = '다중선택';
@@ -1906,7 +1906,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
             }
 
             if (isNil(popupInfo)) return;
-            let popupContent: IPopupItemsRetrunProps = {
+            let popupContent: IPopupItemsReturnProps = {
               datagridProps: {
                 gridId: null,
                 columns: null,
@@ -1969,7 +1969,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
               popupContent['params'] = {};
             }
 
-            const childGridId = uuidv4();
+            const childGridId = uuidV4();
 
             getData<any[]>(popupContent.params, popupContent.uriPath)
               .then(res => {
@@ -2176,14 +2176,14 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
 
       if (isEnabledDateColumnFilter(type) === false) return;
 
-      const filterdData = getFilterdDataForDateFormat(
+      const filteredData = getFilteredDataForDateFormat(
         originData,
         columnName,
         code,
         value,
       );
 
-      instance.resetData(filterdData, {
+      instance.resetData(filteredData, {
         filterState: { columnName, columnFilterState },
       });
 
@@ -2200,8 +2200,8 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
         filter: { type },
       } = columns?.find(el => el?.name === columnName);
 
-      const filterdState = instance.getFilterState();
-      if (filterdState.length === 1) {
+      const filteredState = instance.getFilterState();
+      if (filteredState.length === 1) {
         setStoredFilterState([]);
       } else {
         setStoredFilterState(instance.getFilterState() ?? []);
@@ -2467,7 +2467,7 @@ const BaseDatagrid = forwardRef<typeof Grid, Props>((props, ref) => {
                 heightSize="small"
                 fontSize="small"
                 ImageType="plus"
-                onClick={() => onPrepentRow()}
+                onClick={() => onPrependRow()}
               >
                 행 추가
               </Button>

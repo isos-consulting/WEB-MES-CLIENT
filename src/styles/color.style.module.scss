@@ -2,17 +2,17 @@
 
 :export {
   fg_fontColor_default: $fg_fontColor_default;
-  bg_colorbox_operation: $bg_colorbox_operation;
-  bg_colorbox_operationBar: $bg_colorbox_operationBar;
-  bg_colorbox_downtime: $bg_colorbox_downtime;
-  bg_colorbox_downtimeBar: $bg_colorbox_downtimeBar;
-  bg_colorbox_stop: $bg_colorbox_stop;
-  bg_colorbox_stopBar: $bg_colorbox_stopBar;
+  bg_colorBox_operation: $bg_colorBox_operation;
+  bg_colorBox_operationBar: $bg_colorBox_operationBar;
+  bg_colorBox_downtime: $bg_colorBox_downtime;
+  bg_colorBox_downtimeBar: $bg_colorBox_downtimeBar;
+  bg_colorBox_stop: $bg_colorBox_stop;
+  bg_colorBox_stopBar: $bg_colorBox_stopBar;
   fg_statistic_plan: $fg_statistic_plan;
   fg_statistic_amount: $fg_statistic_amount;
   fg_statistic_achievement: $fg_statistic_achievement;
-  bg_maipData_lastYear: $palettes_maipLast;
-  bg_maipData_thisYear: $bg_maipData_thisYear;
+  bg_mapData_lastYear: $palettes_mapLast;
+  bg_mapData_thisYear: $bg_mapData_thisYear;
   bg_salesData_lastYear: $bg_salesData_lastYear;
   bg_salesData_thisYear: $bg_salesData_thisYear;
   bg_nivo_dots: $bg_nivo_dots;
@@ -51,15 +51,15 @@
   fg_button_default: $fg_button_default;
   fg_submitButton_default: $fg_submitButton_default;
   bg_submitButton_default: $bg_submitButton_default;
-  bg_chkeckBox_border: $bg_chkeckBox_border;
-  bg_chkeckBox_selectedInner: $bg_chkeckBox_selectedInner;
+  bg_checkBox_border: $bg_checkBox_border;
+  bg_checkBox_selectedInner: $bg_checkBox_selectedInner;
   bg_comboBox_selectedInner: $bg_comboBox_selectedInner;
   bg_comboBox_border: $bg_comboBox_border;
   bg_container_default: $bg_container_default;
   bg_container_border: $bg_container_border;
-  bg_datepicker_border: $bg_datepicker_border;
-  bg_datepicker_selection: $bg_datepicker_selection;
-  fg_datepicker_selection: $fg_datepicker_selection;
+  bg_datePicker_border: $bg_datePicker_border;
+  bg_datePicker_selection: $bg_datePicker_selection;
+  fg_datePicker_selection: $fg_datePicker_selection;
   bg_radio_checkedBorder: $bg_radio_checkedBorder;
   bg_radio_checkedInner: $bg_radio_checkedInner;
   bg_radio_border: $bg_radio_border;
@@ -129,8 +129,8 @@
   bg_scrollbar_area: $bg_scrollbar_area;
   bg_numberInput_border: $bg_numberInput_border;
   bg_numberInputFocus_border: $bg_numberInputFocus_border;
-  bg_comboboxFocus_border: $bg_comboboxFocus_border;
-  bg_datepickerFocus_border: $bg_datepickerFocus_border;
+  bg_comboBoxFocus_border: $bg_comboBoxFocus_border;
+  bg_datePickerFocus_border: $bg_datePickerFocus_border;
   bg_gridRow_checked: $bg_gridRow_checked;
   bg_background: $bg_background;
 }

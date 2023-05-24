@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,
-  convDataToSubTotal,
+  convertDataToSubTotal,
   dataGridEvents,
   getData,
   getPageName,
@@ -652,7 +652,7 @@ export const PgPrdWorkDowntimeReport = () => {
 
   const setSubTotalDatas = (data: object[]) => {
     if (data?.length > 0) {
-      const curculationColumnNames = ['downtime'];
+      const calculationColumnNames = ['downtime'];
       const standardNames =
         searchInfo.values?.sort_type === 'equip'
           ? ['equip_uuid', 'equip_nm']
@@ -667,9 +667,9 @@ export const PgPrdWorkDowntimeReport = () => {
             ]
           : null;
       const subGridData =
-        convDataToSubTotal(grid?.gridInfo?.data, {
+        convertDataToSubTotal(grid?.gridInfo?.data, {
           standardNames: standardNames,
-          curculations: [{ names: curculationColumnNames, type: 'sum' }],
+          calculations: [{ names: calculationColumnNames, type: 'sum' }],
         }).subTotals || [];
 
       subGrid.setGridData(subGridData);

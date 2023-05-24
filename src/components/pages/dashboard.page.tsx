@@ -8,7 +8,7 @@ import LineChart from '../UI/graph/chart-line.ui';
 import { encryptedString } from '~/functions/encrypt';
 
 export const Dashboard = () => {
-  const [current, chageTarget] = useState<string>('byDay');
+  const [current, changeTarget] = useState<string>('byDay');
   const graphSets = getData(
     { reg_date: getToday() },
     URL_PATH_DAS.OVERALL_STATUS.GET.OVERALL_STATUS,
@@ -42,21 +42,21 @@ export const Dashboard = () => {
                 <>
                   <button
                     onClick={() => {
-                      chageTarget('byDay');
+                      changeTarget('byDay');
                     }}
                   >
                     일별
                   </button>
                   <button
                     onClick={() => {
-                      chageTarget('byMonth');
+                      changeTarget('byMonth');
                     }}
                   >
                     월별
                   </button>
                   <button
                     onClick={() => {
-                      chageTarget('byYear');
+                      changeTarget('byYear');
                     }}
                   >
                     연도별

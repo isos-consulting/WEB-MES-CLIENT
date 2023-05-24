@@ -20,7 +20,7 @@ export interface IPopupOptionType {
 }
 
 /** 팝업 템플릿 함수의 반환 유형 인터페이스 */
-export interface IPopupItemsRetrunProps {
+export interface IPopupItemsReturnProps {
   /** 모달 속성 */
   modalProps?: IModalProps;
 

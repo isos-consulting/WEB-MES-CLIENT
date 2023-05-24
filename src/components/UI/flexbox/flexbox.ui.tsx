@@ -3,7 +3,7 @@ import Props from './flexbox.ui.type';
 import { ScFlexContainer } from './flexbox.ui.styled';
 
 /** 플렉스 박스 (자동 맞춤 박스) */
-const Flexbox: React.FC<Props> = props => (
+const FlexBox: React.FC<Props> = props => (
   <ScFlexContainer
     onClick={props.onClick}
     width={props.width}
@@ -18,4 +18,4 @@ const Flexbox: React.FC<Props> = props => (
   </ScFlexContainer>
 );
 
-export default Flexbox;
+export default FlexBox;

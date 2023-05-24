@@ -3,7 +3,7 @@ import Colors from '~styles/color.style.module.scss';
 import Fonts from '~styles/font.style.module.scss';
 import Sizes from '~styles/size.style.module.scss';
 import Props from './side-navbar.ui.type';
-import { Flexbox } from '../flexbox';
+import { FlexBox } from '../flexbox';
 import { Link } from 'react-router-dom';
 
 export const ScContainer = styled.div<Props>`
@@ -31,7 +31,7 @@ export const ScMenuTitle = styled.span`
 `;
 
 // 1level 메뉴
-export const ScLevel1Menu = styled(Flexbox)<{ paddingTop: number }>`
+export const ScLevel1Menu = styled(FlexBox)<{ paddingTop: number }>`
   background-color: ${Colors.bg_menuLevel1_default};
   width: ${Sizes.width_level1Menu_default};
   height: 100%;
@@ -56,7 +56,7 @@ export const ScLevel1Menu = styled(Flexbox)<{ paddingTop: number }>`
 `;
 
 // 2level 메뉴
-export const ScLevel2Menu = styled(Flexbox)<{ paddingTop: number }>`
+export const ScLevel2Menu = styled(FlexBox)<{ paddingTop: number }>`
   position: relative;
   padding-top: ${props => props.paddingTop}px;
   width: ${Sizes.width_level2Menu_default};

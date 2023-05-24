@@ -21,18 +21,18 @@ import { EquipmentInspectReportService } from '~/v2/service/EquipmentInspectRepo
 import { DialogUtil } from '~/v2/util/DialogUtil';
 import { EqmInspDetail } from './insp/detail/eqm-insp-detail';
 import eqmInspDetailColumns from './insp/detail/eqm-insp-detail-columns';
-import eqmInspDetailInputboxes from './insp/detail/eqm-insp-detail-inputboxes';
+import eqmInspDetailInputBoxes from './insp/detail/eqm-insp-detail-input-boxes';
 import { EqmInspDetailSub } from './insp/detail/sub/eqm-insp-detail-sub';
 import eqmInspDetailSubColumns from './insp/detail/sub/eqm-insp-detail-sub-columns';
-import eqmInspDetailSubInputboxes from './insp/detail/sub/eqm-insp-detail-sub-inputboxes';
+import eqmInspDetailSubInputBoxes from './insp/detail/sub/eqm-insp-detail-sub-input-boxes';
 import { EqmInspHeader } from './insp/header/eqm-insp-header';
 import eqmInspHeaderColumns from './insp/header/eqm-insp-header-columns';
-import eqmInspDetailSubModalInputboxes from './insp/modal/eqm-insp-detail-sub-modal-inputboxes';
-import eqmInspDetailSubReviseModalInputboxes from './insp/modal/eqm-insp-detail-sub-revise-modal-inputboxes';
+import eqmInspDetailSubModalInputBoxes from './insp/modal/eqm-insp-detail-sub-modal-input-boxes';
+import eqmInspDetailSubReviseModalInputBoxes from './insp/modal/eqm-insp-detail-sub-revise-modal-input-boxes';
 import eqmInspModalGridComboboxes from './insp/modal/eqm-insp-modal-grid-comboboxes';
 import eqmInspModalGridPopups from './insp/modal/eqm-insp-modal-grid-popups';
-import eqmInspModalGridRowaddpopups from './insp/modal/eqm-insp-modal-grid-rowaddpopups';
-import eqmInspNewModalInputboxes from './insp/modal/eqm-insp-new-modal-inputboxes';
+import eqmInspModalGridRowAddPopups from './insp/modal/eqm-insp-modal-grid-row-add-popups';
+import eqmInspNewModalInputBoxes from './insp/modal/eqm-insp-new-modal-input-boxes';
 import { EquipInspDetailEditModal } from './insp/modal/equip-insp-detail-edit-modal';
 import { EquipInspDetailNewModal } from './insp/modal/equip-insp-detail-new-modal';
 import { EquipInspDetailReviseModal } from './insp/modal/equip-insp-detail-revise-modal';
@@ -48,8 +48,8 @@ export const PgEqmInsp = () => {
 
   const headerSearchUriPath = URL_PATH_STD.EQUIP.GET.EQUIPS;
 
-  const detailSearchUriPath = URL_PATH_EQM.INSP.GET.INSPS;
-  const detailSaveUriPath = URL_PATH_EQM.INSP.POST.INSPS;
+  const detailSearchUriPath = URL_PATH_EQM.INSP.GET.PLURAL_INSP;
+  const detailSaveUriPath = URL_PATH_EQM.INSP.POST.PLURAL_INSP;
 
   const detailSubSearchUriPath = URL_PATH_EQM.INSP.GET.DETAILS;
 
@@ -157,7 +157,7 @@ export const PgEqmInsp = () => {
 
   const detailSubGrid = useGrid('DETAIL_SUB_GRID', eqmInspDetailSubColumns, {
     searchUriPath: detailSubSearchUriPath,
-    saveUriPath: URL_PATH_EQM.INSP.POST.INSPS,
+    saveUriPath: URL_PATH_EQM.INSP.POST.PLURAL_INSP,
     gridMode: 'delete',
   });
 
@@ -174,7 +174,7 @@ export const PgEqmInsp = () => {
     saveParams: { apply_fg: true },
     header: detailSubGrid?.gridInfo?.header,
     gridComboInfo: eqmInspModalGridComboboxes,
-    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    rowAddPopupInfo: eqmInspModalGridRowAddPopups,
     gridPopupInfo: eqmInspModalGridPopups,
   });
 
@@ -183,7 +183,7 @@ export const PgEqmInsp = () => {
     saveUriPath: detailSaveUriPath,
     header: detailSubGrid?.gridInfo?.header,
     gridComboInfo: eqmInspModalGridComboboxes,
-    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    rowAddPopupInfo: eqmInspModalGridRowAddPopups,
     gridPopupInfo: eqmInspModalGridPopups,
   });
 
@@ -192,7 +192,7 @@ export const PgEqmInsp = () => {
     saveUriPath: detailSaveUriPath,
     header: detailSubGrid?.gridInfo?.header,
     gridComboInfo: eqmInspModalGridComboboxes,
-    rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+    rowAddPopupInfo: eqmInspModalGridRowAddPopups,
     gridPopupInfo: eqmInspModalGridPopups,
   });
 
@@ -204,7 +204,7 @@ export const PgEqmInsp = () => {
       saveUriPath: detailSaveUriPath,
       header: detailSubGrid?.gridInfo?.header,
       gridComboInfo: eqmInspModalGridComboboxes,
-      rowAddPopupInfo: eqmInspModalGridRowaddpopups,
+      rowAddPopupInfo: eqmInspModalGridRowAddPopups,
       gridPopupInfo: eqmInspModalGridPopups,
     },
   );
@@ -297,29 +297,29 @@ export const PgEqmInsp = () => {
 
   const detailInputInfo = useInputGroup(
     'DETAIL_INPUTBOX',
-    eqmInspDetailInputboxes,
+    eqmInspDetailInputBoxes,
   );
 
   const detailSubInputInfo = useInputGroup(
     'DETAIL_SUB_INPUTBOX',
-    eqmInspDetailSubInputboxes,
+    eqmInspDetailSubInputBoxes,
   );
 
   const newDataPopupInputInfo = useInputGroup(
     'NEW_DATA_POPUP_INPUTBOX',
-    eqmInspNewModalInputboxes,
+    eqmInspNewModalInputBoxes,
   );
   const addDataPopupInputInfo = useInputGroup(
     'ADD_DATA_POPUP_INPUTBOX',
-    eqmInspDetailSubModalInputboxes,
+    eqmInspDetailSubModalInputBoxes,
   );
   const editDataPopupInputInfo = useInputGroup(
     'EDIT_DATA_POPUP_INPUTBOX',
-    eqmInspDetailSubModalInputboxes,
+    eqmInspDetailSubModalInputBoxes,
   );
   const reviseDataPopupInputInfo = useInputGroup(
     'REVISE_DATA_POPUP_INPUTBOX',
-    eqmInspDetailSubReviseModalInputboxes,
+    eqmInspDetailSubReviseModalInputBoxes,
   );
 
   const onReset = async () => {
@@ -528,7 +528,7 @@ export const PgEqmInsp = () => {
     const headerRow = newDataPopupInputInfo?.values;
 
     onSearchHeader(headerSearchInfo?.values).then(searchResult => {
-      onAfterSaveAction(searchResult, headerRow?.qeuip_uuid, null);
+      onAfterSaveAction(searchResult, headerRow?.equip_uuid, null);
     });
     setNewDataPopupGridVisible(false);
   };

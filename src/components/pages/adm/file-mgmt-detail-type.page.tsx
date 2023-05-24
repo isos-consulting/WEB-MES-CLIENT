@@ -13,7 +13,7 @@ import { message } from 'antd';
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_ADM } from '~/enums';
 
 /** 주기단위 */
-export const PgAdmFileMgmtDetailType = () => {
+export const PgAdmFileManagementDetailType = () => {
   /** 페이지 제목 */
   const title = getPageName();
 
@@ -23,9 +23,9 @@ export const PgAdmFileMgmtDetailType = () => {
   /** INIT */
   const defaultGridMode: TGridMode = 'delete';
   const searchUriPath =
-    URL_PATH_ADM.FILE_MGMT_DETAIL_TYPE.GET.FILE_MGMT_DETAIL_TYPES;
+    URL_PATH_ADM.FILE_MANAGEMENT_DETAIL_TYPE.GET.FILE_MANAGEMENT_DETAIL_TYPES;
   const saveUriPath =
-    URL_PATH_ADM.FILE_MGMT_DETAIL_TYPE.PUT.FILE_MGMT_DETAIL_TYPES;
+    URL_PATH_ADM.FILE_MANAGEMENT_DETAIL_TYPE.PUT.FILE_MANAGEMENT_DETAIL_TYPES;
 
   /** 그리드 상태를 관리 */
   const grid = useGrid(

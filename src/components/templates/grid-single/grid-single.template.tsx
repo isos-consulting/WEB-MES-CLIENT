@@ -136,8 +136,8 @@ export const TpSingleGrid: React.FC<Props> = props => {
       subTotalGrid && !subTotalGrid?.hidden ? 230 + 30 + 35 + 16 : 0;
 
     const datagridHeight = 30;
-    const bodyVertialMargin = 32;
-    const subtracttHeight =
+    const bodyVerticalMargin = 32;
+    const subtractHeight =
       ((buttons > 0 ? 1 : 0) +
         (search > 0 ? 1 : 0) +
         (Input > 0 ? 1 : 0) +
@@ -148,16 +148,16 @@ export const TpSingleGrid: React.FC<Props> = props => {
       Input +
       mainFooter +
       datagridHeight +
-      bodyVertialMargin +
+      bodyVerticalMargin +
       subTotalHeight;
 
-    const height = mainBody - subtracttHeight;
+    const height = mainBody - subtractHeight;
 
     setGridHeight(height);
   };
 
   /** 강제로 리사이징을 하기 위한 함수 입니다. */
-  const forceReszing = () => {
+  const forceResizing = () => {
     onResize();
     clearTimeout(1000);
   };
@@ -165,7 +165,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
   useLayoutEffect(() => {
     if (grid.height) return;
     window.addEventListener('resize', onResize);
-    setTimeout(forceReszing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
+    setTimeout(forceResizing); // setTimeout을 이용해 최초 1번 강제로 onResize()를 실행합니다.
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -331,7 +331,7 @@ export const TpSingleGrid: React.FC<Props> = props => {
           <Div
             id="template_buttons"
             divType="singleGridButtonsDiv"
-            optionType={{ singleGridtype: 'view' }}
+            optionType={{ singleGridType: 'view' }}
           >
             <Space size={[5, 0]}>
               {btnDelete}

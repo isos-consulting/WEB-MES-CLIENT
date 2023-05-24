@@ -47,7 +47,7 @@ import {
   getMissingValueInspectResult,
   getSampleOkOrNgOrDefaultSampleValue,
 } from '~/functions/qms/inspection';
-import { InsepctionDataGridChange } from '~/functions/qms/InspectionReportViewController';
+import { InspectionDataGridChange } from '~/functions/qms/InspectionReportViewController';
 import ReceiveInspectionReportViewController from '~/functions/qms/ReceiveInspectionReportViewController';
 import { isEmpty, isNil, isNull } from '~/helper/common';
 import InspectionHandlingServiceImpl from './receive-insp-result/modals/service/inspection-handling.service.impl';
@@ -1081,7 +1081,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     };
   };
 
-  const fetchInsepctionPostAPI = async (
+  const fetchInspectionPostAPI = async (
     inspectionPostApiPayload: TPostQmsFinalInspResults,
   ) => {
     await executeData(
@@ -1116,7 +1116,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       inputInspResultReject?.ref?.current?.values;
 
     if (isEmpty(insp_handling_type)) {
-      message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
+      message.warn(SENTENCE.BEFORE_INPUT_HANDLING_TYPE);
       return;
     }
     if (isNil(emp_uuid)) {
@@ -1200,7 +1200,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
       createInspectionPostApiPayload(inspectionGridRef.current.getInstance());
 
     if (isFilledAllInspectionSample === true) {
-      fetchInsepctionPostAPI(inspectionPostApiPayload);
+      fetchInspectionPostAPI(inspectionPostApiPayload);
       return;
     }
 
@@ -1216,7 +1216,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
     }
 
     if (fetchOptionFilledQualityAllInspectionResultFlags[0].value === 0) {
-      fetchInsepctionPostAPI(inspectionPostApiPayload);
+      fetchInspectionPostAPI(inspectionPostApiPayload);
       return;
     }
 
@@ -1235,7 +1235,7 @@ const INSP_RESULT_CREATE_POPUP = (props: {
             inspectionGridRef.current.getInstance(),
           );
 
-          await fetchInsepctionPostAPI(inspectionPostApiPayload);
+          await fetchInspectionPostAPI(inspectionPostApiPayload);
           close();
         },
         onCancel: () => {
@@ -1686,7 +1686,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
   };
 
   interface InspectionSampleAfterChangeProps extends GridEventProps {
-    changes: InsepctionDataGridChange[];
+    changes: InspectionDataGridChange[];
     instance: TuiGrid;
   }
 
@@ -1858,7 +1858,7 @@ const INSP_RESULT_EDIT_POPUP = (props: {
       inputInspResultReject?.ref?.current?.values;
 
     if (isEmpty(insp_handling_type)) {
-      message.warn(SENTENCE.BEFORE_INPUT_HADLING_TYPE);
+      message.warn(SENTENCE.BEFORE_INPUT_HANDLING_TYPE);
       return;
     }
     if (isNil(emp_uuid)) {

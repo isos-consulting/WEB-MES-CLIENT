@@ -92,8 +92,8 @@ const BaseDragDrop = forwardRef((props, gridRef) => {
   };
 
   const putStorage = async (fileList: FileList | null) => {
-    const concreatedFileList: FileList = isNull(files) ? new FileList() : files;
-    const requests = Array.from(concreatedFileList).map(userFile =>
+    const concretedFileList: FileList = isNull(files) ? new FileList() : files;
+    const requests = Array.from(concretedFileList).map(userFile =>
       putUserFileInfo(userFile),
     );
 

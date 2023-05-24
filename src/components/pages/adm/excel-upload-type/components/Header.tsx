@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { COLOROURS } from '~/styles/palette';
+import { COLORS } from '~/styles/palette';
 import { Button } from '~/components/UI';
 import { isNil } from '~/helper/common';
 
@@ -12,7 +12,7 @@ interface FlexBoxProps {
 
 const ButtonWrapper = styled(Button)`
   ${({ primary, colorType }) => {
-    const buttonColor = isNil(colorType) ? COLOROURS.PRIMARY[900] : colorType;
+    const buttonColor = isNil(colorType) ? COLORS.PRIMARY[900] : colorType;
     if (!isNil(primary)) {
       return `
         background-color: ${buttonColor};

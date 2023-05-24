@@ -142,7 +142,7 @@ export class UnitConvertUpdateRequestDTO {
   }
 
   public toString() {
-    return `UnitConvertupdateRequestDTO {
+    return `UnitConvertUpdateRequestDTO {
         uuid: "${this.uuid}",
         from_value: "${this.from_value}",
         to_value: "${this.to_value}",

@@ -49,7 +49,7 @@ export const PgBsnProductionOrderWorkRate = () => {
   const setDataGridData = async month => {
     const service = new BsnProductionOrderWorkRateService(month);
 
-    const monthlyproductionOrderWorkRate =
+    const monthlyProductionOrderWorkRate =
       await getMonthlyProductionOrderWorkRate(month);
 
     const weeklyProductionOrderWorkRate =
@@ -59,10 +59,10 @@ export const PgBsnProductionOrderWorkRate = () => {
       month,
     );
 
-    if (isNil(monthlyproductionOrderWorkRate)) {
+    if (isNil(monthlyProductionOrderWorkRate)) {
       setYearData(BsnProductionOrderWorkRateService.emptyData());
     } else {
-      setYearData(service.monthData(monthlyproductionOrderWorkRate));
+      setYearData(service.monthData(monthlyProductionOrderWorkRate));
     }
 
     if (isNil(weeklyProductionOrderWorkRate)) {

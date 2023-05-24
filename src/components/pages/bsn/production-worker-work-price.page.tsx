@@ -9,10 +9,10 @@ import {
   getMonthlyProductionWorkerWorkPrices,
   getWeeklyProductionWorkerWorkPrices,
 } from './production/bsn-production-worker-work-price-apis';
-import { BsnProductionWorkderWorkPriceService } from './production/bsn-production-worker-work-price-service';
+import { BsnProductionWorkerWorkPriceService } from './production/bsn-production-worker-work-price-service';
 
 export const PgPrdBsnProductionWorkerWorkPrice = () => {
-  const emptyKpiData = BsnProductionWorkderWorkPriceService.emptyData();
+  const emptyKpiData = BsnProductionWorkerWorkPriceService.emptyData();
   const [layoutState] = useRecoilState(layoutStore.state);
   const [isRefreshGraph, toggleRefreshGraph] = useState(true);
   const [weekLabel, setWeekLabel] = useState([]);
@@ -26,7 +26,7 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
   const [dateData, setDateData] = useState(emptyKpiData);
 
   const setDataGridColumns = month => {
-    const service = new BsnProductionWorkderWorkPriceService(month);
+    const service = new BsnProductionWorkerWorkPriceService(month);
 
     setMonthColumns(service.monthColumn());
     setWeekColumns(service.weekColumn());
@@ -35,16 +35,16 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
   };
 
   const setGraphLabels = month => {
-    const service = new BsnProductionWorkderWorkPriceService(month);
+    const service = new BsnProductionWorkerWorkPriceService(month);
 
     setWeekLabel(service.weekGraphLabel());
     setDateLabel(service.dateGraphLabel());
   };
 
   const setDataGridData = async month => {
-    const service = new BsnProductionWorkderWorkPriceService(month);
+    const service = new BsnProductionWorkerWorkPriceService(month);
 
-    const monthlyproductionOrderWorkRate =
+    const monthlyProductionOrderWorkRate =
       await getMonthlyProductionWorkerWorkPrices(month);
 
     const weeklyProductionOrderWorkRate =
@@ -53,10 +53,10 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
     const dailyProductionOrderWorkRate =
       await getDailyProductionWorkerWorkPrices(month);
 
-    if (isNil(monthlyproductionOrderWorkRate)) {
+    if (isNil(monthlyProductionOrderWorkRate)) {
       setYearData(emptyKpiData);
     } else {
-      setYearData(service.monthData(monthlyproductionOrderWorkRate));
+      setYearData(service.monthData(monthlyProductionOrderWorkRate));
     }
 
     if (isNil(weeklyProductionOrderWorkRate)) {
@@ -112,8 +112,8 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
           }}
         >
           <BsnProductionOrderWorkRateChart
-            graphLabels={BsnProductionWorkderWorkPriceService.monthGraphLabel()}
-            graphData={BsnProductionWorkderWorkPriceService.monthGraphData(
+            graphLabels={BsnProductionWorkerWorkPriceService.monthGraphLabel()}
+            graphData={BsnProductionWorkerWorkPriceService.monthGraphData(
               yearData[2],
             )}
             graphTitle="월별"
@@ -123,7 +123,7 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={weekLabel}
-            graphData={BsnProductionWorkderWorkPriceService.weekGraphData(
+            graphData={BsnProductionWorkerWorkPriceService.weekGraphData(
               weekData[2],
             )}
             graphTitle="주별"
@@ -133,7 +133,7 @@ export const PgPrdBsnProductionWorkerWorkPrice = () => {
           />
           <BsnProductionOrderWorkRateChart
             graphLabels={dateLabel}
-            graphData={BsnProductionWorkderWorkPriceService.dateGraphData(
+            graphData={BsnProductionWorkerWorkPriceService.dateGraphData(
               dateData[2],
             )}
             graphTitle="일별"

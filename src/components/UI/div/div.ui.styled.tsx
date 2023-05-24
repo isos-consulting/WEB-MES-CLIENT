@@ -11,8 +11,8 @@ const BaseDiv: React.FC<IDivProps> = props => {
 // 일분할 화면에서 조회, 수정, 삭제했을 때 버튼 사이 간격과 위치 적용
 export const ScSingleGridDiv = styled(BaseDiv)`
   ${({ optionType }) => {
-    const { singleGridtype } = optionType as ISingleGridProps;
-    switch (singleGridtype) {
+    const { singleGridType } = optionType as ISingleGridProps;
+    switch (singleGridType) {
       case 'view':
         return `
           width: 100%;
@@ -44,8 +44,8 @@ export const ScSingleGridDiv = styled(BaseDiv)`
 // 이분할 화면에서 조회, 수정, 삭제했을 때 버튼 사이 간격과 위치 적용, 그리드 스타일 적용
 export const ScDoubleGridDiv = styled(BaseDiv)`
   ${({ optionType }) => {
-    const { doubleGridtype } = optionType as IDoubleGridProps;
-    switch (doubleGridtype) {
+    const { doubleGridType } = optionType as IDoubleGridProps;
+    switch (doubleGridType) {
       case 'update':
         return `
           text-align: end;

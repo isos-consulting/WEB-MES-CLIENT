@@ -11,7 +11,7 @@ import { getData, getToday } from '~/functions';
 import { isNil } from '~/helper/common';
 
 export const PgWorkerProductivityReport = () => {
-  const [productivities, setProductivity] = useState([]);
+  const [productivityList, setProductivity] = useState([]);
   const {
     onSearch,
     searchItems,
@@ -49,11 +49,11 @@ export const PgWorkerProductivityReport = () => {
       },
     },
     data: {
-      labels: productivities.map(productivity => productivity.workings_nm),
+      labels: productivityList.map(productivity => productivity.workings_nm),
       datasets: [
         {
           label: '합계',
-          data: productivities.map(productivity =>
+          data: productivityList.map(productivity =>
             Object.keys(productivity)
               .filter(workingKey => workingKey !== 'workings_nm')
               .reduce((acc, cur) => acc + Number(productivity[cur]), 0)
@@ -65,11 +65,11 @@ export const PgWorkerProductivityReport = () => {
     },
   };
 
-  const productivitiesGridData = () => {
-    if (productivities.length === 0) return [];
+  const productivityListGridData = () => {
+    if (productivityList.length === 0) return [];
 
     return [
-      productivities.reduce((acc, cur) => {
+      productivityList.reduce((acc, cur) => {
         const key = cur.workings_nm;
 
         if (isNil(acc[`${key}sum`])) {
@@ -79,11 +79,11 @@ export const PgWorkerProductivityReport = () => {
         const routingsPerWorking = Object.keys(cur)
           .filter(key => key !== 'workings_nm')
           .map(k => {
-            const newWorkingProuctivity = {};
+            const newWorkingProductivity = {};
 
-            newWorkingProuctivity[`${key}${k}`] = Number(cur[k]).toFixed(2);
+            newWorkingProductivity[`${key}${k}`] = Number(cur[k]).toFixed(2);
 
-            return newWorkingProuctivity;
+            return newWorkingProductivity;
           });
 
         routingsPerWorking.forEach(item => {
@@ -106,8 +106,8 @@ export const PgWorkerProductivityReport = () => {
       </Container>
       <Container>
         <Datagrid
-          data={productivitiesGridData()}
-          columns={productivities.reduce((acc, cur) => {
+          data={productivityListGridData()}
+          columns={productivityList.reduce((acc, cur) => {
             const key = cur.workings_nm;
 
             const routingsPerWorking = Object.keys(cur)
@@ -130,7 +130,7 @@ export const PgWorkerProductivityReport = () => {
             return [...acc, ...routingsPerWorking];
           }, [])}
           header={{
-            complexColumns: productivities.map(productivity => ({
+            complexColumns: productivityList.map(productivity => ({
               header: productivity.workings_nm,
               name: productivity.workings_nm,
               childNames: Object.keys(productivity)

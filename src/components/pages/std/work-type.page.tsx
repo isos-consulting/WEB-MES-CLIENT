@@ -10,7 +10,7 @@ import {
 import IGridPopupProps from '~/components/UI/popup-datagrid/popup-datagrid.ui.type';
 import { SENTENCE, WORD } from '~/constants/lang/ko';
 import { executeData, getData, getPageName } from '~/functions';
-import { COLOROURS } from '~/styles/palette';
+import { COLORS } from '~/styles/palette';
 import Header, { Button } from '../adm/excel-upload-type/components/Header';
 import BasicModalContext from '../adm/excel-upload-type/hooks/modal';
 import { ColumnStore } from '~/constants/columns';
@@ -151,7 +151,7 @@ export const PgStdWorkType = () => {
               heightSize="small"
               fontSize="small"
               ImageType="delete"
-              colorType={COLOROURS.SECONDARY.ORANGE[500]}
+              colorType={COLORS.SECONDARY.ORANGE[500]}
               onClick={() =>
                 deleteWorkTypeConfirm({
                   deletedWorkTypeRows: workTypeDataGridRef.current

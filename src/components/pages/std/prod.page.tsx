@@ -13,7 +13,7 @@ import {
 import stdProdNewModalColumns from './prod/modal/std-prod-new-modal-columns';
 import stdProdColumns from './prod/std-prod-columns';
 import stdProdComplexColumns from './prod/std-prod-complex-columns';
-import stdProdGridpopup from './prod/std-prod-gridpopup';
+import stdProdGridPopup from './prod/std-prod-grid-popup';
 
 export const PgStdProd = () => {
   const title = getPageName();
@@ -30,7 +30,7 @@ export const PgStdProd = () => {
     header: {
       complexColumns: stdProdComplexColumns,
     },
-    gridPopupInfo: stdProdGridpopup,
+    gridPopupInfo: stdProdGridPopup,
   });
 
   const newDataPopupGrid = useGrid(

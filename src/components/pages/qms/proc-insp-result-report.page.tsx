@@ -873,7 +873,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
     }
   };
 
-  const onSesrchInspResultDetail = insp_result_uuid => {
+  const onSearchInspResultDetail = insp_result_uuid => {
     const searchUriPath =
       URI_PATH_GET_QMS_PROC_INSP_RESULT_INCLUDE_DETAILS.replace(
         '{uuid}',
@@ -919,7 +919,7 @@ const INSP_RESULT_DETAIL_GRID_INFO = () => {
                 const { rowKey, targetType } = ev;
                 if (targetType === 'cell') {
                   const row = ev?.instance?.store?.data?.rawData[rowKey];
-                  onSesrchInspResultDetail(row?.insp_result_uuid);
+                  onSearchInspResultDetail(row?.insp_result_uuid);
                 }
               }}
             />

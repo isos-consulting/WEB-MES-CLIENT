@@ -14,7 +14,7 @@ export const isNil = (value: unknown): value is null | undefined => {
   return isUndefined(value) || isNull(value);
 };
 /**
- * check the emptiness(included null) of object or array. if obj parameter is null or undefind, return true
+ * check the emptiness(included null) of object or array. if obj parameter is null or undefined, return true
  * @param obj - target object or array
  * @returns the emptiness of obj
  */

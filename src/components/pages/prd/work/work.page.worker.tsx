@@ -353,7 +353,7 @@ export const WORKER = () => {
   };
 
   const onSave = async (ref?, popupGridMode?) => {
-    const modifedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
+    const modifiedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
     const _gridMode = popupGridMode ?? gridInfo.gridMode;
 
     // date + time 작업을 해줘야함 (❗datetime picker 스타일 깨지는 문제 복구하거나 아예 editor를 만들고 나면 고쳐야함)
@@ -361,24 +361,24 @@ export const WORKER = () => {
     const saveData: IGridModifiedRows =
       _gridMode === 'create'
         ? {
-            createdRows: modifedRows.createdRows,
+            createdRows: modifiedRows.createdRows,
             updatedRows: [],
             deletedRows: [],
           }
         : _gridMode === 'update'
         ? {
             createdRows: [],
-            updatedRows: modifedRows.updatedRows,
+            updatedRows: modifiedRows.updatedRows,
             deletedRows: [],
           }
         : _gridMode === 'delete'
         ? {
             createdRows: [],
             updatedRows: [],
-            deletedRows: modifedRows.deletedRows,
+            deletedRows: modifiedRows.deletedRows,
           }
         : {
-            createdRows: modifedRows.createdRows,
+            createdRows: modifiedRows.createdRows,
             updatedRows: [],
             deletedRows: [],
           };

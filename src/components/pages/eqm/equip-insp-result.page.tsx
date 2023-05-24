@@ -22,10 +22,10 @@ import { isNil } from '~/helper/common';
 import eqmInspResultColumns from './insp/result/eqm-insp-result-columns';
 import eqmInspResultGridComboboxes from './insp/result/eqm-insp-result-grid-comboboxes';
 import eqmInspResultGridPopups from './insp/result/eqm-insp-result-grid-popups';
-import eqmInspResultSearchboxes from './insp/result/eqm-insp-result-searchboxes';
+import eqmInspResultSearchBoxes from './insp/result/eqm-insp-result-search-boxes';
 import eqmInspResultEditModalColumns from './insp/result/modal/eqm-insp-result-edit-modal-columns';
 import eqmInspResultNewModalColumns from './insp/result/modal/eqm-insp-result-new-modal-columns';
-import eqmInspResultNewModalInputboxes from './insp/result/modal/eqm-insp-result-new-modal-inputboxes';
+import eqmInspResultNewModalInputBoxes from './insp/result/modal/eqm-insp-result-new-modal-input-boxes';
 
 export const PgEqmInspResult = () => {
   const title = getPageName();
@@ -76,7 +76,7 @@ export const PgEqmInspResult = () => {
     },
   );
 
-  const searchInfo = useSearchbox('SEARCH_INPUTBOX', eqmInspResultSearchboxes);
+  const searchInfo = useSearchbox('SEARCH_INPUTBOX', eqmInspResultSearchBoxes);
 
   const createEquipInspResultNewModalInputValues = () => ({
     equip_nm: null,
@@ -148,8 +148,8 @@ export const PgEqmInspResult = () => {
     );
   }, [newDataPopupGridVisible]);
 
-  const allocatedEqmInspResultNewModalInputboxes =
-    eqmInspResultNewModalInputboxes.map(inputbox => {
+  const allocatedEqmInspResultNewModalInputBoxes =
+    eqmInspResultNewModalInputBoxes.map(inputbox => {
       if (inputbox.name === 'reg_date') {
         return {
           ...inputbox,
@@ -174,7 +174,7 @@ export const PgEqmInspResult = () => {
 
   const newDataPopupInputInfo = useInputGroup(
     'EDOT_DATA_POPUP_INPUT_BOX',
-    allocatedEqmInspResultNewModalInputboxes,
+    allocatedEqmInspResultNewModalInputBoxes,
   );
 
   const changeNewDataPopupInputValues = async values => {

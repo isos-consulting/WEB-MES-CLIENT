@@ -1,6 +1,6 @@
 // --- [sessionStorage에 있는 유저 정보 가져오는 함수들] --------------------------------------------
 
-type TgetStorageValueParams = {
+type TGetStorageValueParams = {
   storageName: 'userInfo' | 'tokenInfo' | 'tenantInfo';
   keyName:
     | 'uid'
@@ -12,7 +12,7 @@ type TgetStorageValueParams = {
 };
 
 /** 로그인 유저 정보를 session storage에서 가져옵니다. */
-export const getStorageValue = (props: TgetStorageValueParams) => {
+export const getStorageValue = (props: TGetStorageValueParams) => {
   return JSON.parse(localStorage.getItem(props.storageName))?.[props.keyName];
 };
 

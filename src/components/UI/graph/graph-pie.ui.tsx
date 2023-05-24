@@ -6,7 +6,7 @@ import { setNumberToDigit } from '~functions/util.function';
 
 /** 파이 그래프 */
 export default props => {
-  const responseivePieProps = {
+  const responsivePieProps = {
     theme: props.theme || {
       fontSize: 14,
       fontFamily: 'Noto Sans CJK KR',
@@ -64,7 +64,7 @@ export default props => {
       >
         {props?.centerStr}
       </span>
-      <ResponsivePie {...responseivePieProps} />
+      <ResponsivePie {...responsivePieProps} />
       {props.maxVal != 0 ? (
         <div style={ScPieGraph.overlay as object}>
           <span style={ScPieGraph.totalLabel}>Total</span>

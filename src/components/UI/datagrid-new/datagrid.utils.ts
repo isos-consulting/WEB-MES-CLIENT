@@ -21,7 +21,7 @@ export const isEnabledDateColumnFilter = (columnType: string) => {
   );
 };
 
-export const getFilterdDataForDateFormat = (
+export const getFilteredDataForDateFormat = (
   datas: unknown[],
   columnName: string,
   filterCode: string,

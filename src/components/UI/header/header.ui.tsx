@@ -92,7 +92,7 @@ const Header: React.FC<Props> = props => {
                   <Bookmark key={'bookmark-list'} title={WORD.FAVORITE}>
                     {bookmarkItems.length === 0 ? (
                       <Bookmark.Item
-                        key="bookmark-menu-noitem"
+                        key="bookmark-menu-noItem"
                         disabled={true}
                       />
                     ) : (

@@ -22,7 +22,7 @@ import { isNumber } from './number';
  * @param bufferData 엑셀파일 버퍼데이터
  * @returns 컬럼 및 object형식 데이터로 반환
  */
-export const convExcelToJson = async (
+export const convertExcelToJson = async (
   bufferData,
   columns: IGridColumn[],
 ): Promise<{ columns: IGridColumn[]; data: object[] }> => {
@@ -183,7 +183,7 @@ export const JSONToCSVConvertor = (
 
     //This loop will extract the label from 1st index of on array
     for (var index in arrData[0]) {
-      //Now convert each value to string and comma-seprated
+      //Now convert each value to string and comma-separated
       row += index + ',';
     }
     row = row.slice(0, -1);
@@ -196,7 +196,7 @@ export const JSONToCSVConvertor = (
   for (var i = 0; i < arrData.length; i++) {
     var row = '';
 
-    //2nd loop will extract each column and convert it in string comma-seprated
+    //2nd loop will extract each column and convert it in string comma-separated
     for (var index in arrData[i]) {
       row += '"' + arrData[i][index] + '",';
     }
@@ -236,7 +236,7 @@ export const JSONToCSVConvertor = (
   document.body.removeChild(link);
 };
 
-export const convViewportToPixels = (value: string) => {
+export const convertViewportToPixels = (value: string) => {
   var parts = value.match(/([0-9\.]+)(vh|vw)/);
   var q = Number(parts[1]);
   var side =
@@ -296,7 +296,7 @@ export const getItemState = (
  * @param data
  * @returns
  */
-export const convByteArrayToUTF8string = async (data): Promise<string> => {
+export const convertByteArrayToUTF8string = async (data): Promise<string> => {
   const extraByteMap = [1, 1, 1, 1, 2, 2, 3, 0];
   var count = data.length;
   var str = '';
@@ -427,7 +427,7 @@ export const addDate = (
  * 앞 글자를 대문자로 변경하여 반환합니다.
  * @returns hello => Hello
  */
-export const convUpperToFirstChar = (lowercaseFormatStr: string): string => {
+export const convertUpperToFirstChar = (lowercaseFormatStr: string): string => {
   return lowercaseFormatStr?.replace(/\b[a-z]/, (firstCharacter: string) =>
     firstCharacter.toUpperCase(),
   );
@@ -438,7 +438,7 @@ export const convUpperToFirstChar = (lowercaseFormatStr: string): string => {
  * @param value 문자열
  * @returns my_val => MyVal
  */
-export const convSnakeToPascal = (
+export const convertSnakeToPascal = (
   includesSlashSnakeFormatStr: string,
 ): string => {
   return includesSlashSnakeFormatStr
@@ -476,7 +476,7 @@ export const cleanupKeyOfObject = (
 /**
  * 오브젝트 또는 오브젝트 배열 변수를 복사합니다. (깊은 복사 & 참조 제거)
  *
- * ※※※ 오브젝트 내에 function값을 체크한 후 undfined가 되지 않게 복사 합니다.
+ * ※※※ 오브젝트 내에 function값을 체크한 후 undefined가 되지 않게 복사 합니다.
  * @param obj
  * @returns
  */

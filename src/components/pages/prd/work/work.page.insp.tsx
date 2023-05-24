@@ -49,7 +49,7 @@ import {
   GetMaxSampleCntParams,
   GetMaxSampleCntResponse,
   HeaderSaveOptionParams,
-  InsepctionDataGridOnChangeEvent,
+  InspectionDataGridOnChangeEvent,
   InspectionSampleComponentInstances,
 } from '~/types/qms/inspection.type';
 import { onDefaultGridSave } from '.';
@@ -118,7 +118,7 @@ export const INSP = () => {
   );
 
   const calculateResultForInspectionSample = (
-    { changes, instance }: InsepctionDataGridOnChangeEvent,
+    { changes, instance }: InspectionDataGridOnChangeEvent,
     { inputInstance }: InspectionSampleComponentInstances,
   ) => {
     viewController.dataGridChange(changes, instance, inputInstance);
@@ -385,8 +385,8 @@ export const INSP = () => {
     setCreatePopupVisible(true);
   };
 
-  const compareRequiredData = (compareDatas, requiredFileds) => {
-    requiredFileds.forEach(requiredFiled => {
+  const compareRequiredData = (compareDatas, requiredFields) => {
+    requiredFields.forEach(requiredFiled => {
       if (!compareDatas[requiredFiled.key])
         throw new Error(`${requiredFiled.name} 정보를 확인해주세요.`);
     });
@@ -421,7 +421,7 @@ export const INSP = () => {
         remark: saveInputValues?.remark,
       };
 
-      const requiredFileds = [
+      const requiredFields = [
         { key: 'factory_uuid', name: '공장' },
         { key: 'work_uuid', name: '생산실적' },
         { key: 'insp_detail_type_uuid', name: '검사유형' },
@@ -432,7 +432,7 @@ export const INSP = () => {
         { key: 'reg_date', name: '검사일시' },
       ];
 
-      compareRequiredData(headerData, requiredFileds);
+      compareRequiredData(headerData, requiredFields);
 
       const methodType: SaveApiMethod = createPopupVisible ? 'post' : 'put';
       const saveGridInstance = saveGridRef?.current?.getInstance();

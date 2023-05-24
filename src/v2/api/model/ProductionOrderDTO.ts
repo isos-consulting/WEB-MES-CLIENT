@@ -74,7 +74,7 @@ export interface ProductionOrderGetResponseEntity extends MESEntity {
   workings_uuid: string;
 }
 
-export interface ProdcutionOrderCustomField {
+export interface ProductionOrderCustomField {
   order_date: string;
   _work_start: boolean;
 }

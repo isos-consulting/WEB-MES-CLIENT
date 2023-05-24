@@ -32,7 +32,7 @@ export const PgAutUser = () => {
     const userPasswordResetResponse = await fetchUserPassword({ user_uuid });
 
     if (userPasswordResetResponse.success === true) {
-      message.success(`${SENTENCE.IS_RESETED_PASSWORD}`);
+      message.success(`${SENTENCE.DONE_RESET_PASSWORD}`);
     }
   };
 

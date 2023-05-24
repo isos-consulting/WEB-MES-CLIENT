@@ -11,7 +11,7 @@ import {
 } from './inspection';
 import InspectionReportService from './InspectionReportService';
 
-export type InsepctionDataGridChange = {
+export type InspectionDataGridChange = {
   columnName: string;
   rowKey: number;
   value: any;
@@ -29,13 +29,13 @@ class InspectionReportViewController {
   }
 
   public dataGridChange(
-    changes: InsepctionDataGridChange[],
+    changes: InspectionDataGridChange[],
     datagrid: InspectionDataGrid,
-    inputform: InspectionInputForm,
+    inputForm: InspectionInputForm,
   ) {
     if (isColumnNamesNotEndWith_insp_value(changes)) return;
 
-    const service = new InspectionReportService(datagrid, inputform);
+    const service = new InspectionReportService(datagrid, inputForm);
     const inspections = service.getInspections();
 
     const ranges = inspections.map((item: any) => ({

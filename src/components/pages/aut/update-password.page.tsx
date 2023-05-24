@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Form, Row } from 'antd';
-import { Button, Textbox } from '~/components/UI';
+import { Button, TextBox } from '~/components/UI';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import PasswordValidation from '~/models/user/password';
 import { executeData } from '~/functions';
@@ -69,7 +69,7 @@ export default ({
                 height: 230,
               }}
             >
-              <Textbox name="username" hidden={true} autoComplete="username" />
+              <TextBox name="username" hidden={true} autoComplete="username" />
               <Password />
               <Password.Confirm />
               <div
@@ -177,7 +177,7 @@ const Password: React.FC & { Confirm: typeof PasswordConfirm } = () => {
             </p>
           </Col>
           <Col span={8}>
-            <Textbox
+            <TextBox
               id="password"
               name="password"
               inputType="password"
@@ -240,7 +240,7 @@ const PasswordConfirm = () => {
             </p>
           </Col>
           <Col span={8}>
-            <Textbox
+            <TextBox
               id="confirm"
               name="confirm"
               inputType="password"

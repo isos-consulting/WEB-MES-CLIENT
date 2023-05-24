@@ -26,7 +26,7 @@ export interface IButtonStyles {
   btnType?: 'buttonFill' | 'buttonHover' | 'image';
 
   /** 버튼 너비 유형 */
-  widthSize?: 'small' | 'medium' | 'large' | 'xlarge' | 'auto' | 'flex';
+  widthSize?: 'small' | 'medium' | 'large' | 'xLarge' | 'auto' | 'flex';
 
   /** 버튼 높이 유형 */
   heightSize?: 'small' | 'medium';

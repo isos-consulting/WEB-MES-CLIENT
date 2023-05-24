@@ -10,6 +10,6 @@ export const ScCheckbox = styled(Checkbox)`
   //클릭, 마우스오버 했을 때 적용
   &:active,
   &:hover {
-    border-color: ${Colors.bg_chkeckBox_border};
+    border-color: ${Colors.bg_checkBox_border};
   }
 `;

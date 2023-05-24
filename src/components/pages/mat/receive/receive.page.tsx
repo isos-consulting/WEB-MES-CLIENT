@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReceiveRemoteStoreInstance } from '~/apis/mat/receive';
-import { Flexbox } from '~/components/UI';
+import { FlexBox } from '~/components/UI';
 import {
   useMatReceiveModalServiceImpl,
   useMatReceiveService,
@@ -24,10 +24,10 @@ export const PgMatReceive = () => {
         service={matReceiveService}
         modalService={matReceiveModalService}
       />
-      <Flexbox alignItems="flex-start">
+      <FlexBox alignItems="flex-start">
         <MatReceiveAside service={matReceiveService} />
         <MatReceiveContent service={matReceiveService} />
-      </Flexbox>
+      </FlexBox>
       <MatReceiveModal
         service={matReceiveService}
         modalService={matReceiveModalService}

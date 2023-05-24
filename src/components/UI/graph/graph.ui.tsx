@@ -19,7 +19,7 @@ const Graph: React.FC<Props> = props => {
       let cloneData = [];
 
       let oldKeys = props.dataKeys;
-      let newkeys = props.dataKeysName;
+      let newKeys = props.dataKeysName;
 
       //템플릿에 맞는 데이터로 key, value를 치환하여 가공
       for (let i = 0; i < datas.length; i++) {
@@ -27,7 +27,7 @@ const Graph: React.FC<Props> = props => {
         for (let z = 0; z < oldKeys.length; z++) {
           targetValue = cloneObj[oldKeys[z]];
           delete cloneObj[oldKeys[z]];
-          cloneObj[newkeys[z]] = targetValue;
+          cloneObj[newKeys[z]] = targetValue;
         }
         cloneData.push(cloneObj);
       }

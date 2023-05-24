@@ -32,7 +32,7 @@ export const PgEqmHistoryCard = () => {
   const grdRefHistory = useRef<Grid>();
   const inputRefHistory = useRef<FormikProps<FormikValues>>();
   const inputRefCreateHistory = useRef<FormikProps<FormikValues>>();
-  const inputRefUdateHistory = useRef<FormikProps<FormikValues>>();
+  const inputRefUpdateHistory = useRef<FormikProps<FormikValues>>();
 
   const [historyGridPopupVisible, setHistoryGridPopupVisible] =
     useState<boolean>(false);
@@ -331,7 +331,7 @@ export const PgEqmHistoryCard = () => {
     historyGridPopupUpdateVisible,
   ]);
 
-  const HISOTRY_INPUT_ITEMS: IInputGroupboxItem[] = [
+  const HISTORY_INPUT_ITEMS: IInputGroupboxItem[] = [
     {
       type: 'text',
       id: 'equip_uuid',
@@ -374,7 +374,7 @@ export const PgEqmHistoryCard = () => {
       ref: grdRefHistory,
       inputProps: {
         id: 'HISTORY_CARD_HISTORY_GRID_INPUT',
-        inputItems: HISOTRY_INPUT_ITEMS,
+        inputItems: HISTORY_INPUT_ITEMS,
         innerRef: inputRefHistory,
       },
       gridMode: 'delete',
@@ -461,7 +461,7 @@ export const PgEqmHistoryCard = () => {
       ],
       inputProps: {
         id: 'HISTORY_CARD_HISTORY_GRID_CREATE_INPUT',
-        inputItems: HISOTRY_INPUT_ITEMS,
+        inputItems: HISTORY_INPUT_ITEMS,
         innerRef: inputRefCreateHistory,
       },
       gridMode: 'create',
@@ -505,8 +505,8 @@ export const PgEqmHistoryCard = () => {
       ],
       inputProps: {
         id: 'HISTORY_CARD_HISTORY_GRID_UPDATE_INPUT',
-        inputItems: HISOTRY_INPUT_ITEMS,
-        innerRef: inputRefUdateHistory,
+        inputItems: HISTORY_INPUT_ITEMS,
+        innerRef: inputRefUpdateHistory,
       },
       gridMode: 'update',
       data: historyData,
@@ -547,7 +547,7 @@ export const PgEqmHistoryCard = () => {
         inputRefHistory?.current?.values,
       );
     } else if (historyGridPopupUpdateVisible === true) {
-      inputRefUdateHistory?.current?.setValues(
+      inputRefUpdateHistory?.current?.setValues(
         inputRefHistory?.current?.values,
       );
     }

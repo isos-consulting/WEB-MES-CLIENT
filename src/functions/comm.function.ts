@@ -252,7 +252,7 @@ export async function getData<T = any[]>(
  * 데이터를 저장시키기 위해 서버에 전송하는 함수
  * @param data 저장할 데이터
  * @param uriPath 도메인 뒤에 붙는 URL
- * @param mothodType 메소드 타입 post, put, patch, delete
+ * @param methodType 메소드 타입 post, put, patch, delete
  * @param returnType 반환 타입
  * @param disableErrorMessage 에러메시지 여부
  * @returns
@@ -260,7 +260,7 @@ export async function getData<T = any[]>(
 export const executeData = async (
   data: object[] | object,
   uriPath: string,
-  mothodType: 'post' | 'put' | 'patch' | 'delete',
+  methodType: 'post' | 'put' | 'patch' | 'delete',
   returnType:
     | 'data'
     | 'datas'
@@ -278,7 +278,7 @@ export const executeData = async (
   let datas: any;
   try {
     datas = await axios({
-      method: mothodType,
+      method: methodType,
       baseURL: optionBaseURL,
       url: uriPath,
       data: data,
@@ -305,7 +305,7 @@ export const executeData = async (
       await executeData(
         data,
         uriPath,
-        mothodType,
+        methodType,
         'original',
         disableErrorMessage,
       ).then(res => {
@@ -726,7 +726,7 @@ export const getMenus = async () => {
 /** 권한 정보를 가져오는 함수입니다.
  * recoil state를 사용하여 조회하므로 컴포넌트 최상단 로직에 사용해야 합니다.
  * @param pageName 페이지명
- * @returns TPermssion
+ * @returns TPermission
  */
 export const getPermissions = (pageName: string): TPermission => {
   const menuContent = useRecoilValue(atSideNavMenuContent);

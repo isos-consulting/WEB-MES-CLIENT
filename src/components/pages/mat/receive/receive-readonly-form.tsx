@@ -8,8 +8,8 @@ import Sizes from '~styles/size.style.module.scss';
 import MatReceiveReadOnlyFormStyleModule from './receive-readonly-form.module.css';
 
 export const TextBox = styled(Input)`
-  height: ${Sizes.height_datepicker_default};
-  font-size: ${Fonts.fontSize_datepicker};
+  height: ${Sizes.height_datePicker_default};
+  font-size: ${Fonts.fontSize_datePicker};
 `;
 
 export const MatReceiveReadOnlyForm = ({ formValues, fieldClassName }) => {

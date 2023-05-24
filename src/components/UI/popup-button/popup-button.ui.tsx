@@ -3,16 +3,16 @@ import { message } from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import { addKeyOfObject, cleanupKeyOfObject, getData } from '~/functions';
 import { nullify } from '~/functions/object';
 import { isEmpty, isNil, isUndefined } from '~/helper/common';
 import { Button } from '~components/UI/button';
 import { getPopupForm } from '~components/UI/popup/popup.ui.model';
-import { IPopupItemsRetrunProps } from '~components/UI/popup/popup.ui.type';
+import { IPopupItemsReturnProps } from '~components/UI/popup/popup.ui.type';
 import { Datagrid } from '../datagrid-new';
 import { Result } from '../result';
-import { afPopupReponseRow } from './popup-button.recoil';
+import { afPopupResponseRow } from './popup-button.recoil';
 import Props from './popup-button.ui.type';
 
 /** 팝업키를 사용하지 않고 수기로 작성된 정보로 팝업을 설정합니다. */
@@ -53,8 +53,8 @@ const getPopupButtonForm = ({ popupKey, params, props }) => {
 /** 팝업 호출용 버튼 */
 const PopupButton: React.FC<Props> = props => {
   const childGridRef = useRef<Grid>();
-  const [, setSelectedRow] = useRecoilState(afPopupReponseRow(props.id));
-  const [, setPopupItem] = useState<IPopupItemsRetrunProps>(null);
+  const [, setSelectedRow] = useRecoilState(afPopupResponseRow(props.id));
+  const [, setPopupItem] = useState<IPopupItemsReturnProps>(null);
   const [modal, contextHolder] = Modal.useModal();
 
   const allocateFromSelection = close => {
@@ -122,7 +122,7 @@ const PopupButton: React.FC<Props> = props => {
 
           if (isNil(popupContent)) return;
 
-          const childGridId = uuidv4();
+          const childGridId = uuidV4();
 
           if (popupContent?.onInterlock) {
             if (popupContent.onInterlock() === false) return;

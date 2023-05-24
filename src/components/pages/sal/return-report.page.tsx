@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { TGridMode, useGrid, useSearchbox } from '~/components/UI';
 import {
   cleanupKeyOfObject,
-  convDataToSubTotal,
+  convertDataToSubTotal,
   dataGridEvents,
   getData,
   getPageName,
@@ -747,7 +747,7 @@ export const PgSalReturnReport = () => {
 
   const setSubTotalDatas = (data: object[]) => {
     if (data?.length > 0) {
-      const curculationColumnNames = [
+      const calculationColumnNames = [
         'qty',
         'supply_price',
         'tax',
@@ -772,9 +772,9 @@ export const PgSalReturnReport = () => {
           ? ['reg_date']
           : null;
       const subGridData =
-        convDataToSubTotal(data, {
+        convertDataToSubTotal(data, {
           standardNames: standardNames,
-          curculations: [{ names: curculationColumnNames, type: 'sum' }],
+          calculations: [{ names: calculationColumnNames, type: 'sum' }],
         }).subTotals || [];
 
       subGrid.setGridData(subGridData);

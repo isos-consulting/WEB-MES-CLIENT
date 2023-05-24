@@ -110,27 +110,27 @@ tr.tui-grid-row {
 }
 /* #endregion */
 
-/* #region 🔶Combobox 그리드에서 사용되는 콤보박스 스타일 */
+/* #region 🔶ComboBox 그리드에서 사용되는 콤보박스 스타일 */
 .select {
   padding-top: 0.5px;
   // 콤보박스에 적용
   &-selector {
     width: 100%;
-    height: $height_combobox_default;
+    height: $height_comboBox_default;
     color: $fg_comboBoxSelector_default;
     border-radius: $borderRadius_common;
     font-size: $fontSize_cbo;
     font-family: $fontFamily_default;
     outline: none;
-    border: 2px solid $bg_comboboxFocus_border;
+    border: 2px solid $bg_comboBoxFocus_border;
   }
   &-selector:focus {
-    border: 2px solid $bg_comboboxFocus_border;
+    border: 2px solid $bg_comboBoxFocus_border;
   }
 }
 /* #endregion */
 
-/* #region 🔶Datepicker 그리드에서 사용되는 Datepicker 스타일 */
+/* #region 🔶DatePicker 그리드에서 사용되는 DatePicker 스타일 */
 .tui-grid {
   &-content-date {
     width: 100%;
@@ -138,7 +138,7 @@ tr.tui-grid-row {
     outline: none;
   }
   &-content-date:focus {
-    border: 2px solid $bg_datepickerFocus_border;
+    border: 2px solid $bg_datePickerFocus_border;
   }
   &-cell {
     border: none;

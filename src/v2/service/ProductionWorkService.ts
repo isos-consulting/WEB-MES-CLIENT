@@ -1,7 +1,7 @@
 import { isEmpty, isNil } from '~/helper/common';
 import { RepositoryModule } from '../api/RepositoryModule';
 import {
-  ProdcutionOrderCustomField,
+  ProductionOrderCustomField,
   ProductionOrderGetResponseEntity,
 } from '../api/model/ProductionOrderDTO';
 import {
@@ -60,7 +60,7 @@ export class ProductionWorkServiceImpl implements MESService {
    */
   public update(gridInstance: GridInstance) {
     const { updatedRows } = gridInstance.getModifiedRows<
-      ProductionOrderGetResponseEntity & ProdcutionOrderCustomField
+      ProductionOrderGetResponseEntity & ProductionOrderCustomField
     >();
 
     const workUpdatableDTOList = updatedRows.map(
@@ -99,15 +99,15 @@ export class ProductionWorkServiceImpl implements MESService {
    */
   public startWork(gridInstance: GridInstance) {
     const { updatedRows } = gridInstance.getModifiedRows<
-      ProductionOrderGetResponseEntity & ProdcutionOrderCustomField
+      ProductionOrderGetResponseEntity & ProductionOrderCustomField
     >();
 
-    const workStartableDTOList = updatedRows
+    const workStartAbleDTOList = updatedRows
       .filter(row => row._work_start === true)
       .map(ProductionWorkStartRequestDTO.of);
 
-    if (isEmpty(workStartableDTOList) === false) {
-      return RepositoryModule.productionWork().create(workStartableDTOList);
+    if (isEmpty(workStartAbleDTOList) === false) {
+      return RepositoryModule.productionWork().create(workStartAbleDTOList);
     }
   }
 
@@ -123,15 +123,15 @@ export class ProductionWorkServiceImpl implements MESService {
    */
   public finishWork(gridInstance: GridInstance) {
     const { updatedRows } = gridInstance.getModifiedRows<
-      ProductionOrderGetResponseEntity & ProdcutionOrderCustomField
+      ProductionOrderGetResponseEntity & ProductionOrderCustomField
     >();
 
-    const workFinishableDTOList = updatedRows
+    const workFinishAbleDTOList = updatedRows
       .filter(row => row.complete_fg === true)
       .map(ProductionWorkFinishRequestDTO.of);
 
-    if (isEmpty(workFinishableDTOList) === false) {
-      return RepositoryModule.productionWork().update(workFinishableDTOList);
+    if (isEmpty(workFinishAbleDTOList) === false) {
+      return RepositoryModule.productionWork().update(workFinishAbleDTOList);
     }
   }
 }

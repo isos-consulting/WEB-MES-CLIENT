@@ -37,7 +37,7 @@ const LinkWrapper = styled(ScExtendedLink)`
   color: #000000;
 `;
 
-const NoitemWrapper = styled.p`
+const NoItemWrapper = styled.p`
   padding: 5px 0px;
   margin: 0px;
 `;
@@ -46,7 +46,7 @@ const MenuItem = (props: BookmarkItemProps) => {
   return (
     <SubMenuItemWrapper {...props}>
       {isNil(props.location) ? (
-        <NoitemWrapper>메뉴가 없습니다</NoitemWrapper>
+        <NoItemWrapper>메뉴가 없습니다</NoItemWrapper>
       ) : (
         <LinkWrapper to={props.location}>{props.title}</LinkWrapper>
       )}

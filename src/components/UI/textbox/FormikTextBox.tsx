@@ -5,6 +5,6 @@ import Sizes from '~styles/size.style.module.scss';
 
 export const TextBox = styled(Input)`
   width: 221px;
-  height: ${Sizes.height_datepicker_default};
-  font-size: ${Fonts.fontSize_datepicker};
+  height: ${Sizes.height_datePicker_default};
+  font-size: ${Fonts.fontSize_datePicker};
 `;

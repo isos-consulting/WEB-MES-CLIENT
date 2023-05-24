@@ -106,11 +106,11 @@ const MenuService = class {
     this.modalHook(false);
   };
 
-  isNewReocrd = ({ uuid }) => {
+  isNewRecord = ({ uuid }) => {
     return isEmpty(uuid);
   };
 
-  isDeleteReocrd = ({ parent_uuid, sortby }) => {
+  isDeleteRecord = ({ parent_uuid, sortby }) => {
     return isEmpty(parent_uuid) && isEmpty(sortby);
   };
 
@@ -119,13 +119,13 @@ const MenuService = class {
     return false;
   };
 
-  newRecordValid = ({ parent_uuid, menu_nm, menu_uri }, { prefix, surfix }) => {
+  newRecordValid = ({ parent_uuid, menu_nm, menu_uri }, { prefix, suffix }) => {
     return isEmpty(parent_uuid)
-      ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      ? this.inValidError(`${prefix} [상위메뉴 이름]${suffix}`)
       : isEmpty(menu_nm)
-      ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
+      ? this.inValidError(`${prefix} [신규메뉴 이름]${suffix}`)
       : isEmpty(menu_uri)
-      ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
+      ? this.inValidError(`${prefix} [메뉴 URI]${suffix}`)
       : true;
   };
 
@@ -136,14 +136,14 @@ const MenuService = class {
 
   updateRecordValid = (
     { parent_uuid, menu_nm, menu_uri },
-    { prefix, surfix },
+    { prefix, suffix },
   ) => {
     return isEmpty(parent_uuid)
-      ? this.inValidError(`${prefix} [상위메뉴 이름]${surfix}`)
+      ? this.inValidError(`${prefix} [상위메뉴 이름]${suffix}`)
       : isEmpty(menu_nm)
-      ? this.inValidError(`${prefix} [신규메뉴 이름]${surfix}`)
+      ? this.inValidError(`${prefix} [신규메뉴 이름]${suffix}`)
       : isEmpty(menu_uri)
-      ? this.inValidError(`${prefix} [메뉴 URI]${surfix}`)
+      ? this.inValidError(`${prefix} [메뉴 URI]${suffix}`)
       : true;
   };
 };

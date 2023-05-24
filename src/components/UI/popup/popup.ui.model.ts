@@ -1,6 +1,6 @@
 import { ENUM_DECIMAL, ENUM_WIDTH, URL_PATH_AUT } from '~/enums';
 import { isUndefined } from '~/helper/common';
-import { IPopupItemOptionProps, IPopupItemsRetrunProps } from './popup.ui.type';
+import { IPopupItemOptionProps, IPopupItemsReturnProps } from './popup.ui.type';
 
 /**
  * 팝업키
@@ -61,7 +61,7 @@ export type TPopupKey =
 export const getPopupForm = (
   popupKey: TPopupKey,
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
+): IPopupItemsReturnProps => {
   if (modalModelMapping.has(popupKey) === false) return null;
 
   const modelFunction = modalModelMapping.get(popupKey);
@@ -74,8 +74,8 @@ export const getPopupForm = (
 // ====팝업 아이템 리스트=======================================================================================================
 const getPI_StdDept = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '부서관리',
       visible: true,
@@ -98,8 +98,8 @@ const getPI_StdDept = (
 
 const getPI_StdEquip = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '설비관리',
       visible: true,
@@ -145,8 +145,8 @@ const getPI_StdEquip = (
 
 const getPI_StdEquipType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '설비유형관리',
       visible: true,
@@ -179,8 +179,8 @@ const getPI_StdEquipType = (
 
 const getPI_StdFactory = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '공장 관리',
       visible: true,
@@ -203,8 +203,8 @@ const getPI_StdFactory = (
 
 const getPI_StdItemType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '품목유형관리',
       visible: true,
@@ -237,8 +237,8 @@ const getPI_StdItemType = (
 
 const getPI_StdLocation = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '위치관리',
       visible: true,
@@ -261,8 +261,8 @@ const getPI_StdLocation = (
 
 const getPI_StdModel = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '모델관리',
       visible: true,
@@ -285,8 +285,8 @@ const getPI_StdModel = (
 
 const getPI_StdProc = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '공정 관리',
       visible: true,
@@ -309,8 +309,8 @@ const getPI_StdProc = (
 
 const getPI_StdProd = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '품목관리',
       visible: true,
@@ -711,8 +711,8 @@ const getPI_StdProd = (
 
 const getPI_StdProd2 = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '품목관리',
       visible: true,
@@ -836,8 +836,8 @@ const getPI_StdProd2 = (
 
 const getPI_StdProdType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '제품유형관리',
       visible: true,
@@ -870,8 +870,8 @@ const getPI_StdProdType = (
 
 const getPI_StdRejectType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '불량유형관리',
       visible: true,
@@ -904,8 +904,8 @@ const getPI_StdRejectType = (
 
 const getPI_StdReject = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '부적합관리',
       visible: true,
@@ -934,8 +934,8 @@ const getPI_StdReject = (
 
 const getPI_StdStore = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '창고관리',
       visible: true,
@@ -958,8 +958,8 @@ const getPI_StdStore = (
 
 const getPI_AdmStoreType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '창고유형',
       visible: true,
@@ -992,8 +992,8 @@ const getPI_AdmStoreType = (
 
 const getPI_StdUnit = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '단위관리',
       visible: true,
@@ -1016,8 +1016,8 @@ const getPI_StdUnit = (
 
 const getPI_StdGrade = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '직급관리',
       visible: true,
@@ -1040,8 +1040,8 @@ const getPI_StdGrade = (
 
 const getPI_StdEmp = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '사원관리',
       visible: true,
@@ -1065,8 +1065,8 @@ const getPI_StdEmp = (
 
 const getPI_StdDowntime = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '비가동관리',
       visible: true,
@@ -1099,8 +1099,8 @@ const getPI_StdDowntime = (
 
 const getPI_StdDowntimeType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '비가동유형관리',
       visible: true,
@@ -1137,8 +1137,8 @@ const getPI_StdDowntimeType = (
 
 const getPI_StdMoneyUnit = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '화폐단위관리',
       visible: true,
@@ -1171,8 +1171,8 @@ const getPI_StdMoneyUnit = (
 
 const getPI_StdPartner = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '거래처관리',
       visible: true,
@@ -1201,8 +1201,8 @@ const getPI_StdPartner = (
 
 const getPI_StdPartnerType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '거래처유형관리',
       visible: true,
@@ -1235,8 +1235,8 @@ const getPI_StdPartnerType = (
 
 const getPI_StdSupplier = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '공급처관리',
       visible: true,
@@ -1264,8 +1264,8 @@ const getPI_StdSupplier = (
 
 const getPI_StdDelivery = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '납품처관리',
       visible: true,
@@ -1293,8 +1293,8 @@ const getPI_StdDelivery = (
 
 const getPI_StdPriceType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '단가유형관리',
       visible: true,
@@ -1327,8 +1327,8 @@ const getPI_StdPriceType = (
 
 const getPI_StdInspItem = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '검사기준관리',
       visible: true,
@@ -1361,8 +1361,8 @@ const getPI_StdInspItem = (
 
 const getPI_StdInspItemType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '검사기준유형관리',
       visible: true,
@@ -1399,8 +1399,8 @@ const getPI_StdInspItemType = (
 
 const getPI_StdInspType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '검사유형관리',
       visible: true,
@@ -1439,8 +1439,8 @@ const getPI_StdInspType = (
 
 const getPI_StdWorkings = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '작업장관리',
       visible: true,
@@ -1468,8 +1468,8 @@ const getPI_StdWorkings = (
 
 const getPI_StdWorkerGroups = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '작업조관리',
       visible: true,
@@ -1502,8 +1502,8 @@ const getPI_StdWorkerGroups = (
 
 const getPI_StdVendorPrice = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '협력사단가',
       visible: true,
@@ -1767,8 +1767,8 @@ const getPI_StdVendorPrice = (
 
 const getPI_StdInspTool = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '검사구관리',
       visible: true,
@@ -1831,11 +1831,11 @@ const getPI_StdInspTool = (
 
 const getPI_InvStore = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
+): IPopupItemsReturnProps => {
   const priceVisible: boolean = (option?.params as any)?.partner_uuid
     ? true
     : false;
-  let result: IPopupItemsRetrunProps = {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '재고관리',
       visible: true,
@@ -2032,8 +2032,8 @@ const getPI_InvStore = (
 
 const getPI_StdInspMethod = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '검사방법관리',
       visible: true,
@@ -2094,8 +2094,8 @@ const getPI_StdInspMethod = (
 
 const getPI_StdCustomerPrice = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '판매단가관리',
       visible: true,
@@ -2244,8 +2244,8 @@ const getPI_StdCustomerPrice = (
 
 const getPI_SalOrderDetail = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '수주품목',
       visible: true,
@@ -2463,8 +2463,8 @@ const getPI_SalOrderDetail = (
 
 const getPI_SalOutgoOrderDetail = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '출하지시품목',
       visible: true,
@@ -2637,8 +2637,8 @@ const getPI_SalOutgoOrderDetail = (
 
 const getPI_MldMold = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '금형관리',
       visible: true,
@@ -2754,8 +2754,8 @@ const getPI_MldMold = (
 
 const getPI_MldProblem = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '금형문제점관리',
       visible: true,
@@ -2788,8 +2788,8 @@ const getPI_MldProblem = (
 
 const getPI_AdmBomInputType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: 'BOM투입유형관리',
       visible: true,
@@ -2826,8 +2826,8 @@ const getPI_AdmBomInputType = (
 
 const getPI_AdmMenuInputType = (
   option?: IPopupItemOptionProps,
-): IPopupItemsRetrunProps => {
-  let result: IPopupItemsRetrunProps = {
+): IPopupItemsReturnProps => {
+  let result: IPopupItemsReturnProps = {
     modalProps: {
       title: '메뉴관리',
       visible: true,

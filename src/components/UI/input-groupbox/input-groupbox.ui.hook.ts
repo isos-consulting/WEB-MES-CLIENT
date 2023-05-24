@@ -63,11 +63,11 @@ export const useInputGroup = (
     );
 
   //#region 🔶disabled 관련
-  const setFieldDisabled = (fieldDisbables: { [key: string]: boolean }) => {
+  const setFieldDisabled = (fieldDisables: { [key: string]: boolean }) => {
     const changedInputItems = cloneObject(_inputItems)?.map(
       (item: IInputGroupboxItem) => {
-        if (Object.keys(fieldDisbables).includes(item?.id)) {
-          item['disabled'] = fieldDisbables[item?.id];
+        if (Object.keys(fieldDisables).includes(item?.id)) {
+          item['disabled'] = fieldDisables[item?.id];
         }
 
         return item;
@@ -150,7 +150,7 @@ export const useInputGroup = (
   });
 };
 
-/** ❗(임시 / select reponse키와 request키가 달라서 생긴 문제인데, 나중에 이 부분에 대해 reponse키와 request키를 통일할지, 이대로 변환하며 사용할지 결정해야함)
+/** ❗(임시 / select response키와 request키가 달라서 생긴 문제인데, 나중에 이 부분에 대해 response키와 request키를 통일할지, 이대로 변환하며 사용할지 결정해야함)
  *
  * 그룹입력상자에 alias 넣어주는 함수
  */

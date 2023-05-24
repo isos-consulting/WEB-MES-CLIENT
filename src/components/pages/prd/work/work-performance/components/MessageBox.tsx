@@ -1,5 +1,5 @@
 import React from 'react';
-import { workingtest } from '~/images';
+import { working_test } from '~/images';
 
 export const CascadingSelectHeaderMessageBox = () => {
   return (
@@ -33,7 +33,7 @@ export const CascadingSelectHeaderMessageBox = () => {
           style={{
             width: '100%',
             height: '100%',
-            backgroundImage: `url(${workingtest})`,
+            backgroundImage: `url(${working_test})`,
             backgroundSize: '100%',
             backgroundRepeat: 'no-repeat',
             filter: 'blur(5px)',

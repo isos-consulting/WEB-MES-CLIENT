@@ -36,7 +36,7 @@ export const PgDownTimeReport = () => {
         dataSettingOptions: {
           codeName: 'workings_uuid',
           textName: 'workings_nm',
-          uriPath: URL_PATH_STD.WORKINGS.GET.WORKINGSES,
+          uriPath: URL_PATH_STD.WORKINGS.GET.PLURAL_WORKINGS,
           params: { store_type: 'all' },
         },
       },
@@ -95,12 +95,13 @@ export const PgDownTimeReport = () => {
   };
 
   useEffect(() => {
-    getData({ store_type: 'all' }, URL_PATH_STD.WORKINGS.GET.WORKINGSES).then(
-      workings => {
-        workings_columns.length = 0;
-        workings_columns.push(...workings);
-      },
-    );
+    getData(
+      { store_type: 'all' },
+      URL_PATH_STD.WORKINGS.GET.PLURAL_WORKINGS,
+    ).then(workings => {
+      workings_columns.length = 0;
+      workings_columns.push(...workings);
+    });
   }, []);
 
   return (

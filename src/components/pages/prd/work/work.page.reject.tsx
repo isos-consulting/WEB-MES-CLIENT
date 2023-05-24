@@ -415,30 +415,30 @@ export const REJECT = () => {
 
   /** 저장 이벤트 */
   const onSave = async (ref?, popupGridMode?) => {
-    const modifedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
+    const modifiedRows = getModifiedRows(ref ?? gridRef, gridInfo.columns);
     const _gridMode = popupGridMode ?? gridInfo.gridMode;
 
     const saveData: IGridModifiedRows =
       _gridMode === 'create'
         ? {
-            createdRows: modifedRows.createdRows,
+            createdRows: modifiedRows.createdRows,
             updatedRows: [],
             deletedRows: [],
           }
         : _gridMode === 'update'
         ? {
             createdRows: [],
-            updatedRows: modifedRows.updatedRows,
+            updatedRows: modifiedRows.updatedRows,
             deletedRows: [],
           }
         : _gridMode === 'delete'
         ? {
             createdRows: [],
             updatedRows: [],
-            deletedRows: modifedRows.deletedRows,
+            deletedRows: modifiedRows.deletedRows,
           }
         : {
-            createdRows: modifedRows.createdRows,
+            createdRows: modifiedRows.createdRows,
             updatedRows: [],
             deletedRows: [],
           };

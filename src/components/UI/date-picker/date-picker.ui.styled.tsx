@@ -13,8 +13,8 @@ type TAntdDatePicker = {
 };
 type IBaseDatePicker = Props & TAntdDatePicker;
 
-const BaseDatepicker: React.FC<IBaseDatePicker> = props => {
-  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 Datepicker 컴포넌트에 넣어야 합니다.
+const BaseDatePicker: React.FC<IBaseDatePicker> = props => {
+  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 DatePicker 컴포넌트에 넣어야 합니다.
   const { widthSize, picker, ...otherProps } = props;
 
   return <DatePicker picker={picker} {...otherProps} />;
@@ -26,7 +26,7 @@ const getDatePickerWidthSize = widthSize => {
     flex: '100%',
   };
 
-  if (isNil(widthSize)) return Sizes.width_datepicker_md;
+  if (isNil(widthSize)) return Sizes.width_datePicker_md;
 
   if (width.hasOwnProperty(widthSize) === true) {
     return width[widthSize];
@@ -35,26 +35,26 @@ const getDatePickerWidthSize = widthSize => {
   return `${widthSize}px`;
 };
 
-/* Datepicker 스타일 */
-export const ScDatePicker = styled(BaseDatepicker)`
+/* DatePicker 스타일 */
+export const ScDatePicker = styled(BaseDatePicker)`
   width: ${props => getDatePickerWidthSize(props.widthSize)};
-  height: ${Sizes.height_datepicker_default};
+  height: ${Sizes.height_datePicker_default};
   border-radius: ${Sizes.borderRadius_common};
-  border-color: ${Colors.bg_datepicker_border};
+  border-color: ${Colors.bg_datePicker_border};
 
   // 포커스, 마우스오버 했을 때 적용
   &:hover,
   &:focus {
-    border-color: ${Colors.bg_datepicker_border};
+    border-color: ${Colors.bg_datePicker_border};
   }
   // 선택했을 때 했을 때 적용
   ::selection {
-    color: ${Colors.fg_datepicker_selection};
-    background: ${Colors.bg_datepicker_selection};
+    color: ${Colors.fg_datePicker_selection};
+    background: ${Colors.bg_datePicker_selection};
   }
-  // datepicker에서 선택한 날짜에 적용
+  // datePicker에서 선택한 날짜에 적용
   .ant-picker-input > input {
-    font-size: ${Fonts.fontSize_datepicker};
+    font-size: ${Fonts.fontSize_datePicker};
     letter-spacing: ${Sizes.letterSpacing_common};
   }
 `;

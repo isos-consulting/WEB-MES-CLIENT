@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getData } from '~/functions';
-import { IComboboxItem } from '../combobox.ui.type';
+import { IComboBoxItem } from '../combobox.ui.type';
 
 type ComboAlias = {
   codeName: string;
@@ -29,7 +29,7 @@ const pushFilteredData = ({ codeName, textName }: ComboAlias) => {
 };
 
 export const useComboDatas = ({ uriPath, params, codeName, textName }) => {
-  const [comboData, setComboData] = useState<IComboboxItem[]>([]);
+  const [comboData, setComboData] = useState<IComboBoxItem[]>([]);
 
   const comboApi = async () =>
     await getData(params, uriPath).then(res => {

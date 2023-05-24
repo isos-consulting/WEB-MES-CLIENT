@@ -48,7 +48,7 @@ describe('메뉴를 선택하면 다운로드, 업로드 버튼은 활성화 된
     selectableMenu.selectMenu({
       menu_uuid: 'uuid',
       menu_nm: '메뉴1',
-      menu_file_uuid: 'mfuuid',
+      menu_file_uuid: 'mf_uuid',
       file_extension: 'xlsx',
       file_name: '메뉴1.xlsx',
       file_type:
@@ -63,9 +63,9 @@ describe('엑셀 데이터 행 존재하면 데이터 검증이 활성화 된다
   test('엑셀 데이터 행이 없으면 true를 반환한다', () => {
     const { excelDataGrid } = useExcelUploadDataGrid();
 
-    const isEmptyWillTruty = excelDataGrid.isExcelDataEmpty();
+    const isEmptyWillTruthy = excelDataGrid.isExcelDataEmpty();
 
-    expect(isEmptyWillTruty).toBe(true);
+    expect(isEmptyWillTruthy).toBe(true);
   });
 
   test('엑셀 데이터 행이 있으면 false를 반환한다', () => {
@@ -97,9 +97,9 @@ describe('엑셀 데이터 검증이 통과하면 저장 버튼이 활성화 된
       { zoo: 'keeper', error: [] },
     ]);
 
-    const validateWillTruty = excelDataGrid.isValidate();
+    const validateWillTruthy = excelDataGrid.isValidate();
 
-    expect(validateWillTruty).toBe(true);
+    expect(validateWillTruthy).toBe(true);
   });
 
   test('검증할 데이터가 없는 경우 false를 반환한다', () => {

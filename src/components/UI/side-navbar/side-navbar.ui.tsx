@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import RightOutlined from '@ant-design/icons/RightOutlined';
 import { layoutStore } from '../layout/layout.ui.hook';
-import { Flexbox } from '../flexbox';
+import { FlexBox } from '../flexbox';
 import { Menu } from 'antd';
 import { atSideNavMenuRawData } from './side-navbar.ui.recoil';
 import * as Images from '~images/nav.index';
@@ -66,7 +66,7 @@ const SideNavbar: React.FC<Props> = props => {
 
   return (
     <ScContainer {...props}>
-      <Flexbox>
+      <FlexBox>
         <Level1
           selectedLevel1={menuState.selectedLevel1}
           onChangeLevel1State={onChangeLevel1State}
@@ -75,7 +75,7 @@ const SideNavbar: React.FC<Props> = props => {
           menuState={menuState}
           active={layoutState.leftSpacing === LEVEL1_Width}
         />
-      </Flexbox>
+      </FlexBox>
       {layoutState.showResizeBtn === false ? (
         ''
       ) : (

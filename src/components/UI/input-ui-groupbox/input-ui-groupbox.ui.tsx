@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { Container } from '../container';
 import { DatePicker } from '../date-picker';
 import { DateRangePicker } from '../date-range-picker';
-import { Textbox } from '../textbox';
-import { Combobox } from '../combobox';
+import { TextBox } from '../textbox';
+import { ComboBox } from '../combobox';
 import { CheckboxGroup } from '../checkbox-group';
 import { RadioGroup } from '../radio-group';
 import { PopupButton } from '../popup-button';
@@ -65,7 +65,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
 
                 if (
                   props.insertType === 'create' &&
-                  value?.insertable === true
+                  value?.insertAble === true
                 ) {
                   disabled = false;
                 }
@@ -74,7 +74,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
                 switch (value.type) {
                   case 'text':
                     returnJSX = (
-                      <Textbox
+                      <TextBox
                         {...value}
                         id={value.id as string}
                         name={value.name}
@@ -88,7 +88,7 @@ const InputUiGroupbox: React.FC<Props> = props => {
 
                   case 'combo':
                     returnJSX = (
-                      <Combobox
+                      <ComboBox
                         {...value}
                         id={value.id as string}
                         options={value.options}

@@ -1,6 +1,6 @@
 import { atomFamily } from 'recoil';
 
-export const afPopupReponseRow = atomFamily<object, string>({
-  key: 'afPopupReponseRow',
+export const afPopupResponseRow = atomFamily<object, string>({
+  key: 'afPopupResponseRow',
   default: null,
 });

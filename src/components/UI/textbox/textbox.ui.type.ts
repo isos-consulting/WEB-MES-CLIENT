@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** 입력박스 속성 인터페이스 */
-export default interface ITextboxProps extends ITextboxStyles {
+export default interface ITextBoxProps extends ITextBoxStyles {
   /** 입력바스 아이디 */
   id?: string;
 
@@ -53,7 +53,7 @@ export default interface ITextboxProps extends ITextboxStyles {
 }
 
 /** 입력박스 스타일 인터페이스 */
-export interface ITextboxStyles {
+export interface ITextBoxStyles {
   /** 입력박스 선택기 너비 유형 */
   widthSize?: 'default' | 'auto' | 'flex' | number | string;
 }

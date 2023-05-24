@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Modal } from '../modal';
 import { Form } from '../form';
 import { FormItem } from '../form-item';
-import { Textbox } from '../textbox';
+import { TextBox } from '../textbox';
 import { Form as AntForm } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import Props from './input-popup.ui.type';
@@ -57,7 +57,7 @@ const InputPopup: React.FC<Props> = (props, visible) => {
           formItem={props.formItemList.map(value => {
             return (
               <FormItem {...value.formItemProps}>
-                <Textbox
+                <TextBox
                   id={value.id}
                   name={value.name}
                   inputType={value.inputItemType}

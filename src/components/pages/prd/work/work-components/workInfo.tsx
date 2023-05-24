@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
-import { Label, PopupButton, Textbox } from '~/components/UI';
+import { Label, PopupButton, TextBox } from '~/components/UI';
 import { isNil } from '~/helper/common';
 import Fonts from '~styles/font.style.module.scss';
 
@@ -131,7 +131,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
       <Row gutter={[16, 16]}>
         <Col span={6} style={{ paddingLeft: 4 }}>
           <Label text="공정" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             id="proc_nm"
             value={values?.proc_nm}
@@ -141,7 +141,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={6}>
           <Label text="공정순서" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             id="proc_no"
             value={values?.proc_no}
@@ -151,7 +151,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={6}>
           <Label text="시작 일자" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="date"
             id="start_date"
@@ -162,7 +162,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={6} style={{ paddingRight: 4 }}>
           <Label text="시작 시간" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="time"
             id="start_time"
@@ -176,7 +176,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         <Col span={6} style={{ paddingLeft: 4 }}>
           <Label text="작업장" width={100} />
           <div style={{ display: 'flex' }}>
-            <Textbox
+            <TextBox
               {...textboxDefaultSettings}
               id="workings_nm"
               value={values?.workings_nm}
@@ -204,7 +204,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         <Col span={6}>
           <Label text="설비" width={100} />
           <div style={{ display: 'flex' }}>
-            <Textbox
+            <TextBox
               {...textboxDefaultSettings}
               id="equip_nm"
               value={values?.equip_nm}
@@ -231,7 +231,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={6}>
           <Label text="종료 일자" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="date"
             id="end_date"
@@ -242,7 +242,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={6} style={{ paddingRight: 4 }}>
           <Label text="종료 시간" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="time"
             id="end_time"
@@ -256,7 +256,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         <Col span={6} style={{ paddingLeft: 4 }}>
           <Label text="금형" />
           <div style={{ display: 'flex' }}>
-            <Textbox
+            <TextBox
               {...textboxDefaultSettings}
               id="mold_nm"
               value={values?.mold_nm}
@@ -283,7 +283,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={3}>
           <Label text="금형Cavity" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="number"
             id="mold_cavity"
@@ -294,7 +294,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={3}>
           <Label text="양품 수량" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="number"
             id="qty"
@@ -305,7 +305,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={3}>
           <Label text="설비 카운트" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             type="number"
             id="prd_signal_cnt"
@@ -316,7 +316,7 @@ const BaseWorkInfo = ({ permissions, values, infoState, infoDispatch }) => {
         </Col>
         <Col span={9} style={{ marginBottom: 16, paddingRight: 4 }}>
           <Label text="비고" width={100} />
-          <Textbox
+          <TextBox
             {...textboxDefaultSettings}
             id="remark"
             value={values?.remark}

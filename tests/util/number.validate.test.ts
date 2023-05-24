@@ -1,6 +1,6 @@
 import { isNumber } from '../../src/functions/number';
 
-describe('순차적인 숫자(sequencial)', () => {
+describe('순차적인 숫자(sequential)', () => {
   test('순차적인 숫자는 인식한다', () => {
     expect(isNumber('1')).toBe(true);
     expect(isNumber('12')).toBe(true);
@@ -88,7 +88,7 @@ describe('구분자(comma)', () => {
     expect(isNumber('100,0')).toBe(true);
   });
 
-  test('javascript 내장 객체 Number separtor 테스트', () => {
+  test('javascript 내장 객체 Number separator 테스트', () => {
     expect(Number.isNaN(1_000)).toBe(false);
     expect(Number.isNaN(1_000_000)).toBe(false);
     expect(Number.isNaN(1_000_000_000)).toBe(false);

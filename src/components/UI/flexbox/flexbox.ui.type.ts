@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** 플렉스 박스 속성 인터페이스 */
-export default interface IFlexboxProps {
+export default interface IFlexBoxProps {
   /** 클래스명 */
   className?: string;
 

@@ -54,7 +54,7 @@ yarn tsc
 ## 페이지 별 권한
 - getPermissions(title) 함수를 써서 해당 페이지에 적용될 권한 상태 값을 가져올 수 있습니다
 - 인자 값으로 페이지의 제목을 넣습니다, 페이지의 제목은 getPageName() 함수를 사용하여 가져올 수 있습니다
-- permssions 변수를 사용해 아래와 같이 응용하여 권한을 적용합니다
+- permissions 변수를 사용해 아래와 같이 응용하여 권한을 적용합니다
   (permission 변수는 페이지별 궎나 적용 코드 예시를 참고해주세요)
 ### 페이지별 권한 적용 코드 예시
 ```tsx
@@ -69,8 +69,8 @@ console.log(permissions); // {
                           // }
 
 return (
-     <Button disabled={!permissons?.delete_at}>삭제</Button>
-     <Button disabled={!permissons?.update_at}>수정</Button>
-     <Button disabled={!permissons?.create_at}>신규등록</Button>
+     <Button disabled={!permissions?.delete_at}>삭제</Button>
+     <Button disabled={!permissions?.update_at}>수정</Button>
+     <Button disabled={!permissions?.create_at}>신규등록</Button>
 )
 ```

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Flexbox } from '~components/UI/flexbox';
-import { Button, Textbox, Checkbox, Combobox } from '~components/UI';
+import { FlexBox } from '~components/UI/flexbox';
+import { Button, TextBox, Checkbox, ComboBox } from '~components/UI';
 import { Space, Form } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { img_login_logo, img_login } from '~images/index';
@@ -26,7 +26,7 @@ export const TpLogin: React.FC<Props> = props => {
   return (
     <>
       <ScContainer>
-        <Flexbox height="100vh" width="100%">
+        <FlexBox height="100vh" width="100%">
           <Space
             direction="horizontal"
             style={{ height: '100%', backgroundColor: '#F1f3f5' }}
@@ -96,7 +96,7 @@ export const TpLogin: React.FC<Props> = props => {
                     }}
                     size="small"
                   >
-                    <Combobox
+                    <ComboBox
                       id={id + 'factory'}
                       label="공장"
                       onChange={onChangeCbo}
@@ -113,7 +113,7 @@ export const TpLogin: React.FC<Props> = props => {
                       ]}
                       style={{ margin: 0, marginTop: 15 }}
                     >
-                      <Textbox
+                      <TextBox
                         id="userId"
                         name="id"
                         inputType="id"
@@ -134,7 +134,7 @@ export const TpLogin: React.FC<Props> = props => {
                       label="비밀번호"
                       style={{ margin: 0, marginTop: 5 }}
                     >
-                      <Textbox
+                      <TextBox
                         id="userPw"
                         name="password"
                         inputType="password"
@@ -147,7 +147,7 @@ export const TpLogin: React.FC<Props> = props => {
                         onPressEnter={onLogin}
                       />
                     </Form.Item>
-                    <Flexbox
+                    <FlexBox
                       alignItems="center"
                       justifyContent="flex-start"
                       currentStyles={{
@@ -161,7 +161,7 @@ export const TpLogin: React.FC<Props> = props => {
                         onChange={onSavedIdChecked}
                         text="아이디 저장"
                       />
-                    </Flexbox>
+                    </FlexBox>
 
                     <Button
                       btnType="buttonFill"
@@ -177,7 +177,7 @@ export const TpLogin: React.FC<Props> = props => {
               <ScFooter>Copyright 2020.000 All Right Reserved.</ScFooter>
             </Space>
           </Space>
-        </Flexbox>
+        </FlexBox>
       </ScContainer>
     </>
   );

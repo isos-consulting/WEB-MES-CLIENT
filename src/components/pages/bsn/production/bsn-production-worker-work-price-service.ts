@@ -7,7 +7,7 @@ import {
   getWeeksAtMonth,
 } from '~/functions/date.function';
 
-export class BsnProductionWorkderWorkPriceService {
+export class BsnProductionWorkerWorkPriceService {
   private month: string;
 
   constructor(month: string) {
@@ -67,7 +67,7 @@ export class BsnProductionWorkderWorkPriceService {
   }
 
   monthData(data) {
-    const service = new BsnProductionWorkderWorkPriceService('');
+    const service = new BsnProductionWorkerWorkPriceService('');
     const workerCount = service.calcTotal(data[0]);
     const actualTotalPrice = service.calcTotal(data[1]);
     const pricePerWorker = service.calcTotal(data[2]);
@@ -138,7 +138,7 @@ export class BsnProductionWorkderWorkPriceService {
   }
 
   weekData(data) {
-    const service = new BsnProductionWorkderWorkPriceService('');
+    const service = new BsnProductionWorkerWorkPriceService('');
     const workerCount = service.calcTotal(data[0]);
     const actualTotalPrice = service.calcTotal(data[1]);
     const pricePerWorker = service.calcTotal(data[2]);
@@ -216,7 +216,7 @@ export class BsnProductionWorkderWorkPriceService {
   }
 
   dateData(data) {
-    const service = new BsnProductionWorkderWorkPriceService('');
+    const service = new BsnProductionWorkerWorkPriceService('');
     const workerCount = service.calcTotal(data[0]);
     const actualTotalPrice = service.calcTotal(data[1]);
     const pricePerWorker = service.calcTotal(data[2]);

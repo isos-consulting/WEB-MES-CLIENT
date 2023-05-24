@@ -1,11 +1,11 @@
 import {
-  InsepctionDataGridChange,
+  InspectionDataGridChange,
   InspectionDataGrid,
   InspectionInputForm,
 } from '~/functions/qms/InspectionReportViewController';
 
-export type InsepctionDataGridOnChangeEvent = {
-  changes: InsepctionDataGridChange[];
+export type InspectionDataGridOnChangeEvent = {
+  changes: InspectionDataGridChange[];
   instance: InspectionDataGrid;
 };
 

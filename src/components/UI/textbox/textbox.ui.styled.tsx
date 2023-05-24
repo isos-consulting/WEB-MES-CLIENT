@@ -4,19 +4,19 @@ import Sizes from '~styles/size.style.module.scss';
 import styled from 'styled-components';
 import { Input } from 'antd';
 import { InputProps as IAntInputProps } from 'antd/lib/input/';
-import ITextboxProps from './textbox.ui.type';
+import ITextBoxProps from './textbox.ui.type';
 
-type Props = IAntInputProps & ITextboxProps;
+type Props = IAntInputProps & ITextBoxProps;
 
 const BaseInput: React.FC<Props> = props => {
-  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 Datepicker 컴포넌트에 넣어야 합니다.
+  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 DatePicker 컴포넌트에 넣어야 합니다.
   const { widthSize, ...otherProps } = props;
 
   return <Input {...otherProps} />;
 };
 
 const PasswordInput: React.FC<Props> = props => {
-  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 Datepicker 컴포넌트에 넣어야 합니다.
+  // 커스텀으로 사용될 속성들을 제외한 기본 속성만 DatePicker 컴포넌트에 넣어야 합니다.
   const { widthSize, ...otherProps } = props;
 
   return <Input.Password {...otherProps} />;
@@ -44,7 +44,7 @@ export const ScInputbox = styled(BaseInput)`
 `;
 
 /* TextBox-password 스타일 */
-export const ScInputPasswordbox = styled(PasswordInput)`
+export const ScInputPassWordBox = styled(PasswordInput)`
   width: ${props =>
     props.widthSize === 'default'
       ? Sizes.width_input_lg
@@ -65,7 +65,7 @@ export const ScInputPasswordbox = styled(PasswordInput)`
 `;
 
 /* TextBox-id 스타일 */
-export const ScInputIdbox = styled(BaseInput)`
+export const ScInputIdBox = styled(BaseInput)`
   width: ${props =>
     props.widthSize === 'default'
       ? Sizes.width_input_lg
@@ -86,7 +86,7 @@ export const ScInputIdbox = styled(BaseInput)`
 `;
 
 /* TextBox 스타일 */
-export const ScInputNumberbox = styled(BaseInput)`
+export const ScInputNumberBox = styled(BaseInput)`
   width: ${props =>
     props.widthSize === 'default'
       ? Sizes.width_inputNumber_md

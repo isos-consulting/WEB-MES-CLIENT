@@ -1,7 +1,7 @@
 //ISOS 아이에스오에스컨설팅
 import img_logo from './logo/logo_isos_horizontal.png';
 //ISOS
-import img_logo2 from './logo/logo_isos_symbolmark.png';
+import img_logo2 from './logo/logo_isos_symbol_mark.png';
 //로그인 로고
 import img_login_logo from './logo/logo_isos_vertical.png';
 //푸터 흰색 ISOS 아이에스오에스컨설팅
@@ -10,7 +10,7 @@ import img_footer_logo from './logo/logo_isos_white.png';
 import img_login from './background/bg_login_left.png';
 
 //마이페이지 아이콘
-import ico_mypage_profile from './icon/ico_account_circle_gray.png';
+import ico_my_page_profile from './icon/ico_account_circle_gray.png';
 //마이페이지 이미지 추가 아이콘
 import ico_pic_plus from './icon/ico_add_circle_blue.png';
 
@@ -58,7 +58,7 @@ import ico_search from './menu/ico_search_outline_blue.png';
 //#endregion
 
 import ico_lock from './icon/ico_lock.png';
-import workingtest from './workingtest.png';
+import working_test from './working_test.png';
 
 export {
   img_logo,
@@ -66,7 +66,7 @@ export {
   img_login_logo,
   img_login,
   ico_pic_plus,
-  ico_mypage_profile,
+  ico_my_page_profile,
   img_footer_logo,
   ico_back,
   ico_copy,
@@ -92,5 +92,5 @@ export {
   ico_corporate,
   ico_popup,
   ico_lock,
-  workingtest,
+  working_test,
 };

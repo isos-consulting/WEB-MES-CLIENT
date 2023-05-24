@@ -36,12 +36,12 @@ test('검사 시료의 개수가 0개이면 [합격 여부, 판정, 비고] 배�
 test('검사 시료의 개수가 1개이면 [공정 검사 컬럼, x1, x1_판정, 합격 여부, 판정, 비고] 배열을 반환한다', () => {
   const procInspectColumns = ColumnStore.PROC_INSP_RESULT_DETAIL_ITEM;
 
-  const sampleConcatedColumns = createInspectionReportColumns(
+  const sampleConcatenatedColumns = createInspectionReportColumns(
     procInspectColumns,
     1,
   );
 
-  expect(sampleConcatedColumns).toEqual([
+  expect(sampleConcatenatedColumns).toEqual([
     {
       header: '검사기준서 상세UUID',
       name: 'insp_detail_uuid',

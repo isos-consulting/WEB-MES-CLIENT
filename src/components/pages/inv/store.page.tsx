@@ -716,7 +716,7 @@ export const PgInvStore = () => {
   const [invStorePopupVisible, setInvStorePopupVisible] =
     useState<boolean>(false);
   const invStoreGridRef = useRef<Grid>();
-  const invStroeUriPath = '/inv/stores';
+  const invStoreUriPath = '/inv/stores';
   const invStoreSearchItems: ISearchItem[] = [
     {
       type: 'daterange',
@@ -886,12 +886,12 @@ export const PgInvStore = () => {
         ...searchParams,
         tran_type_cd: 'INVENTORY',
       },
-      invStroeUriPath,
+      invStoreUriPath,
     ).then(res => {
       setInvStoreData(res);
     });
   };
-  const onInvStroeOkAfterEvent = ({ success }) => {
+  const onInvStoreOkAfterEvent = ({ success }) => {
     if (success) {
       //저장성공
       setInvStorePopupVisible(false);
@@ -909,14 +909,14 @@ export const PgInvStore = () => {
     ref: invStoreGridRef,
     gridMode: 'delete',
     saveType: 'basic',
-    saveUriPath: invStroeUriPath,
+    saveUriPath: invStoreUriPath,
     searchProps: {
       id: 'EXTRA_INV_STORE_SEARCHBOX',
       boxShadow: false,
       searchItems: invStoreSearchItems,
       onSearch: getInvStoreData,
     },
-    searchUriPath: invStroeUriPath,
+    searchUriPath: invStoreUriPath,
     visible: invStorePopupVisible,
     cancelButtonProps: { hidden: true },
     onCancel: () => setInvStorePopupVisible(false),
@@ -926,10 +926,10 @@ export const PgInvStore = () => {
         'basic',
         gridRef,
         invStoreColumns,
-        invStroeUriPath,
+        invStoreUriPath,
         {},
         modal,
-        onInvStroeOkAfterEvent,
+        onInvStoreOkAfterEvent,
       );
     },
   };
