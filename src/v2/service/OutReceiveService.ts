@@ -1,6 +1,5 @@
 import { isEmpty } from '~/helper/common';
 import { RepositoryModule } from '../api/RepositoryModule';
-import { MESEntity } from '../api/model/MESEntity';
 import {
   OutReceiveDetailRequestDTO,
   OutReceiveGetResponseEntity,
@@ -10,10 +9,10 @@ import { MESSAGE } from '../core/Message';
 import { NotImplementedException } from '../core/NotImplementedException';
 import { GridInstance } from '../core/ToastGrid';
 import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
-import { MESWithHeaderDetailService } from './MesService';
+import { MESService, MESWithHeaderDetailService } from './MesService';
 
 export class OutReceiveService
-  implements MESEntity, MESWithHeaderDetailService
+  implements MESService, MESWithHeaderDetailService
 {
   private static instance: OutReceiveService;
 
@@ -70,6 +69,15 @@ export class OutReceiveService
   public delete(gridInstance: GridInstance) {
     return Promise.reject(
       new NotImplementedException('OutReceiveService.delete'),
+    );
+  }
+
+  public deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: OutReceiveGetResponseEntity,
+  ) {
+    return Promise.reject(
+      new NotImplementedException('OutReceiveService.deleteWithHeaderDetail'),
     );
   }
 }

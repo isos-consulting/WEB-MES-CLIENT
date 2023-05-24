@@ -1,5 +1,5 @@
 import { isEmpty } from '~/helper/common';
-import { MESEntity } from '../api/model/MESEntity';
+import { RepositoryModule } from '../api/RepositoryModule';
 import {
   MaterialOrderDetailGetResponseEntity,
   MaterialOrderDetailRequestDTO,
@@ -11,7 +11,6 @@ import { NotImplementedException } from '../core/NotImplementedException';
 import { GridInstance } from '../core/ToastGrid';
 import { ZeroHandlingDataException } from '../core/ZeroHandlingDataException';
 import { MESService, MESWithHeaderDetailService } from './MesService';
-import { RepositoryModule } from '../api/RepositoryModule';
 
 export class MaterialOrderService
   implements MESService, MESWithHeaderDetailService
@@ -111,9 +110,20 @@ export class MaterialOrderService
    * MaterialOrderService.getInstance().delete(gridInstance);
    *
    */
-  delete(gridInstance: GridInstance): Promise<MESEntity[]> {
+  delete(gridInstance: GridInstance) {
     return Promise.reject(
       new NotImplementedException('MaterialOrderService.delete'),
+    );
+  }
+
+  deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: MaterialOrderGetResponseEntity,
+  ) {
+    return Promise.reject(
+      new NotImplementedException(
+        'MaterialOrderService.deleteWithHeaderDetail',
+      ),
     );
   }
 }

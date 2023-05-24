@@ -19,6 +19,11 @@ export interface MESWithHeaderDetailService {
     gridInstance: GridInstance,
     header: MESEntity,
   ): Promise<MESEntity[]>;
+
+  deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: MESEntity,
+  ): Promise<MESEntity[]>;
 }
 
 export interface InspectReportService {

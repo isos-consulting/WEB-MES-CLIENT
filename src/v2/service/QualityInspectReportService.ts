@@ -16,6 +16,7 @@ import {
   MESService,
   MESWithHeaderDetailService,
 } from './MesService';
+import { MESEntity } from '../api/model/MESEntity';
 
 export class QualityInspectReportService
   implements MESService, MESWithHeaderDetailService, InspectReportService
@@ -33,15 +34,11 @@ export class QualityInspectReportService
   }
 
   create(gridInstance: GridInstance) {
-    return Promise.reject(
-      new Error('QualityInspectReportService.create is not implemented'),
-    );
+    return Promise.reject(new Error('QualityInspectReportService.create'));
   }
 
   update(gridInstance: GridInstance) {
-    return Promise.reject(
-      new Error('QualityInspectReportService.update is not implemented'),
-    );
+    return Promise.reject(new Error('QualityInspectReportService.update'));
   }
 
   updateWithHeaderDetail(
@@ -115,8 +112,15 @@ export class QualityInspectReportService
   }
 
   delete(gridInstance: GridInstance) {
+    return Promise.reject(new Error('QualityInspectReportService.delete'));
+  }
+
+  deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: QualityInspectReportGetResponseEntity,
+  ) {
     return Promise.reject(
-      new Error('QualityInspectReportService.delete is not implemented'),
+      new Error('QualityInspectReportService.deleteWithHeaderDetail'),
     );
   }
 }

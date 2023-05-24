@@ -73,4 +73,13 @@ export class SalesReturnService
       new NotImplementedException('SalesReturnService.delete'),
     );
   }
+
+  public deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: SalesReturnGetResponseEntity,
+  ) {
+    return Promise.reject(
+      new NotImplementedException('SalesReturnService.deleteWithHeaderDetail'),
+    );
+  }
 }

@@ -75,4 +75,15 @@ export class MaterialReturnService
       new NotImplementedException('MaterialReturnService.delete'),
     );
   }
+
+  deleteWithHeaderDetail(
+    gridInstance: GridInstance,
+    header: MaterialReturnGetResponseEntity,
+  ) {
+    return Promise.reject(
+      new NotImplementedException(
+        'MaterialReturnService.deleteWithHeaderDetail',
+      ),
+    );
+  }
 }

@@ -1,6 +1,5 @@
 import { isEmpty } from '~/helper/common';
 import { RepositoryModule } from '../api/RepositoryModule';
-import { MESEntity } from '../api/model/MESEntity';
 import {
   MoldProductCreateRequestDTO,
   MoldProductCreateRequestEntity,
@@ -129,7 +128,7 @@ export class MoldProductService implements MESService, MESWithUuidService {
    * MoldProductService.getInstance().delete(gridInstance);
    *
    */
-  delete(gridInstance: GridInstance): Promise<MESEntity[]> {
+  delete(gridInstance: GridInstance) {
     const deletedMoldProducts =
       gridInstance.getCheckedRows<MoldProductGetResponseEntity>();
 
