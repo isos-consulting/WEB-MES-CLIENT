@@ -53,7 +53,7 @@ export class SalesReturnService
     }
 
     try {
-      const salesReturnRequestDTO = SalesReturnRequestDTO.of(header);
+      const salesReturnRequestDTO = SalesReturnRequestDTO.from(header);
 
       const salesReturnDetailList = updatedRows.map(
         SalesReturnDetailRequestDTO.of,

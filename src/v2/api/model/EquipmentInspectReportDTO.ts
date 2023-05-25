@@ -129,7 +129,7 @@ export class EquipmentInspectReportDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: EquipmentInspectReportGetResponseEntity) {
+  public static from(entity: EquipmentInspectReportGetResponseEntity) {
     return new EquipmentInspectReportDTO(entity);
   }
 
@@ -202,7 +202,7 @@ export class equipmentInspectReportDetailDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: EquipmentInspectReportDetailGetResponseEntity) {
+  public static from(entity: EquipmentInspectReportDetailGetResponseEntity) {
     return new equipmentInspectReportDetailDTO(entity);
   }
 
@@ -233,7 +233,7 @@ export class EquipmentInspectReportDeleteRequestDTO {
     this.uuid = entity.insp_uuid;
   }
 
-  public static of(entity: EquipmentInspectReportGetResponseEntity) {
+  public static from(entity: EquipmentInspectReportGetResponseEntity) {
     return new EquipmentInspectReportDeleteRequestDTO(entity);
   }
 
@@ -251,7 +251,7 @@ export class EquipmentInspectReportDetailDeleteRequestDTO {
     this.uuid = entity.insp_detail_uuid;
   }
 
-  public static of(entity: EquipmentInspectReportDetailGetResponseEntity) {
+  public static from(entity: EquipmentInspectReportDetailGetResponseEntity) {
     return new EquipmentInspectReportDetailDeleteRequestDTO(entity);
   }
 

@@ -51,7 +51,7 @@ export class OutReceiveService
     }
 
     try {
-      const outReceiveRequestDTO = OutReceiveRequestDTO.of(header);
+      const outReceiveRequestDTO = OutReceiveRequestDTO.from(header);
 
       const outReceiveDetailList = updatedRows.map(
         OutReceiveDetailRequestDTO.of,

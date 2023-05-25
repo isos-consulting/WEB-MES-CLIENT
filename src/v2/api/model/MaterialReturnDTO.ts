@@ -174,7 +174,7 @@ export class MaterialReturnRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: MaterialReturnGetResponseEntity) {
+  public static from(entity: MaterialReturnGetResponseEntity) {
     return new MaterialReturnRequestDTO(entity);
   }
 
@@ -221,7 +221,7 @@ export class MaterialReturnDetailRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: MaterialReturnDetailGetResponseEntity) {
+  public static from(entity: MaterialReturnDetailGetResponseEntity) {
     return new MaterialReturnDetailRequestDTO(entity);
   }
 

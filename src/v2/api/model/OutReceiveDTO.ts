@@ -234,7 +234,7 @@ export class OutReceiveRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: OutReceiveGetResponseEntity) {
+  public static from(entity: OutReceiveGetResponseEntity) {
     return new OutReceiveRequestDTO(entity);
   }
 
@@ -285,7 +285,7 @@ export class OutReceiveDetailRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: OutReceiveDetailGetResponseEntity) {
+  public static from(entity: OutReceiveDetailGetResponseEntity) {
     return new OutReceiveDetailRequestDTO(entity);
   }
 

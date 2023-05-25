@@ -72,7 +72,7 @@ export class UnitConvertServiceImpl implements MESService, MESWithUuidService {
 
     try {
       const unitConvertDTOList = unitConverts.map(unitConvert =>
-        UnitConvertCreateRequestDTO.of({
+        UnitConvertCreateRequestDTO.from({
           ...unitConvert,
           unit_uuid: unitUuid,
         }),
@@ -107,7 +107,7 @@ export class UnitConvertServiceImpl implements MESService, MESWithUuidService {
 
     try {
       const unitConvertDTOList = updatedRows.map(unitConvert =>
-        UnitConvertUpdateRequestDTO.of(unitConvert),
+        UnitConvertUpdateRequestDTO.from(unitConvert),
       );
 
       return RepositoryModule.unitConvert().update(unitConvertDTOList);

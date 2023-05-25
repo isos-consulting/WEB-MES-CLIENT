@@ -84,7 +84,7 @@ export class MaterialOrderService
     }
 
     try {
-      const materialOrderRequestDTO = MaterialOrderRequestDTO.of(header);
+      const materialOrderRequestDTO = MaterialOrderRequestDTO.from(header);
 
       const materialOrderDetailList = updatedRows.map(
         MaterialOrderDetailRequestDTO.of,

@@ -144,7 +144,7 @@ export class QualityInspectReportUpdateRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: QualityInspectReportGetResponseEntity) {
+  public static from(entity: QualityInspectReportGetResponseEntity) {
     return new QualityInspectReportUpdateRequestDTO(entity);
   }
 
@@ -245,7 +245,7 @@ export class QualityInspectReportDetailUpdateRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: QualityInspectReportDetailGetResponseEntity) {
+  public static from(entity: QualityInspectReportDetailGetResponseEntity) {
     return new QualityInspectReportDetailUpdateRequestDTO(entity);
   }
 
@@ -293,7 +293,7 @@ export class QualityInspectReportAmendRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: QualityInspectReportGetResponseEntity) {
+  public static from(entity: QualityInspectReportGetResponseEntity) {
     return new QualityInspectReportAmendRequestDTO(entity);
   }
 
@@ -397,7 +397,7 @@ export class QualityInspectReportDetailAmendRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: QualityInspectReportDetailGetResponseEntity) {
+  public static from(entity: QualityInspectReportDetailGetResponseEntity) {
     return new QualityInspectReportDetailAmendRequestDTO(entity);
   }
 

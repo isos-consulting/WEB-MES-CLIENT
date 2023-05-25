@@ -71,7 +71,7 @@ export class RoutingServiceImpl implements MESService, MESWithUuidService {
 
     try {
       const routingDTOList = routings.map(routing =>
-        RoutingCreateRequestDTO.of({
+        RoutingCreateRequestDTO.from({
           ...routing,
           prod_uuid: prodUuid,
         }),

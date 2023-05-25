@@ -136,7 +136,7 @@ export class MaterialOrderDetailRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: MaterialOrderDetailGetResponseEntity) {
+  public static from(entity: MaterialOrderDetailGetResponseEntity) {
     return new MaterialOrderDetailRequestDTO(entity);
   }
 
@@ -166,7 +166,7 @@ export class MaterialOrderRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: MaterialOrderGetResponseEntity) {
+  public static from(entity: MaterialOrderGetResponseEntity) {
     return new MaterialOrderRequestDTO(entity);
   }
 

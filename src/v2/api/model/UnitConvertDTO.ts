@@ -89,7 +89,7 @@ export class UnitConvertCreateRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: UnitConvertCreateRequestEntity) {
+  public static from(entity: UnitConvertCreateRequestEntity) {
     return new UnitConvertCreateRequestDTO(entity);
   }
 
@@ -137,7 +137,7 @@ export class UnitConvertUpdateRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: UnitConvertGetResponseEntity) {
+  public static from(entity: UnitConvertGetResponseEntity) {
     return new UnitConvertUpdateRequestDTO(entity);
   }
 
@@ -163,7 +163,7 @@ export class UnitConvertDeleteRequestDTO {
     this.uuid = entity.unit_convert_uuid;
   }
 
-  public static of(entity: UnitConvertGetResponseEntity) {
+  public static from(entity: UnitConvertGetResponseEntity) {
     return new UnitConvertDeleteRequestDTO(entity);
   }
 

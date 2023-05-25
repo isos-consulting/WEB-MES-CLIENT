@@ -199,10 +199,10 @@ export class ProductionWorkStartRequestDTO {
    * @returns
    * @throws {RequiredFieldException}
    * @example
-   * const dto = ProductionWorkStartRequestDTO.of({ factory_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', reg_date: '2021-01-01', order_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', order_date: '2021-01-01', workings_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', shift_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', to_store_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', to_location_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', remark: 'remark' });
+   * const dto = ProductionWorkStartRequestDTO.from({ factory_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', reg_date: '2021-01-01', order_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', order_date: '2021-01-01', workings_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', shift_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', to_store_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', to_location_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', remark: 'remark' });
    *
    */
-  public static of(entity: ProductionWorkStartRequestEntity) {
+  public static from(entity: ProductionWorkStartRequestEntity) {
     return new ProductionWorkStartRequestDTO(entity);
   }
 
@@ -241,10 +241,10 @@ export class ProductionWorkFinishRequestDTO {
    * @returns
    * @throws {RequiredFieldException}
    * @example
-   * const dto = ProductionWorkFinishRequestDTO.of({ factory_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', complete_fg: true });
+   * const dto = ProductionWorkFinishRequestDTO.from({ factory_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', complete_fg: true });
    *
    */
-  public static of(entity: ProductionWorkFinishRequestEntity) {
+  public static from(entity: ProductionWorkFinishRequestEntity) {
     return new ProductionWorkFinishRequestDTO(entity);
   }
 

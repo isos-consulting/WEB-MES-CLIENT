@@ -73,9 +73,9 @@ export class MoldProductCreateRequestDTO {
    * @param {MoldProductCreateRequestEntity} entity
    * @memberof MoldProductCreateRequestDTO
    * @example
-   * MoldProductCreateRequestDTO.of(entity);
+   * MoldProductCreateRequestDTO.from(entity);
    */
-  public static of(entity: MoldProductCreateRequestEntity) {
+  public static from(entity: MoldProductCreateRequestEntity) {
     return new MoldProductCreateRequestDTO(entity);
   }
 
@@ -110,7 +110,7 @@ export class MoldProductRequestDTO {
    * @param entity
    * @returns
    */
-  public static of(entity: MoldProductGetResponseEntity) {
+  public static from(entity: MoldProductGetResponseEntity) {
     return new MoldProductRequestDTO(entity);
   }
 
@@ -143,7 +143,7 @@ export class MoldProductDeleteRequestDTO {
    * @param entity
    * @returns
    */
-  public static of(entity: MoldProductGetResponseEntity) {
+  public static from(entity: MoldProductGetResponseEntity) {
     return new MoldProductDeleteRequestDTO(entity);
   }
 

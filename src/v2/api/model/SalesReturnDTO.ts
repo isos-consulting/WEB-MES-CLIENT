@@ -108,7 +108,7 @@ export class SalesReturnRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: SalesReturnGetResponseEntity) {
+  public static from(entity: SalesReturnGetResponseEntity) {
     return new SalesReturnRequestDTO(entity);
   }
 
@@ -151,7 +151,7 @@ export class SalesReturnDetailRequestDTO {
     this.remark = entity.remark;
   }
 
-  public static of(entity: SalesReturnDetailGetResponseEntity) {
+  public static from(entity: SalesReturnDetailGetResponseEntity) {
     return new SalesReturnDetailRequestDTO(entity);
   }
 

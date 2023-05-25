@@ -46,9 +46,9 @@ export class PartnerTypeCreateRequestDTO {
    * @returns
    * @throws RequiredFieldException
    * @example
-   * PartnerTypeCreateRequestDTO.of({ partner_type_cd: '01', partner_type_nm: 'Customer' });
+   * PartnerTypeCreateRequestDTO.from({ partner_type_cd: '01', partner_type_nm: 'Customer' });
    */
-  public static of(entity: PartnerTypeCreateRequestEntity) {
+  public static from(entity: PartnerTypeCreateRequestEntity) {
     return new PartnerTypeCreateRequestDTO(entity);
   }
 
@@ -56,7 +56,7 @@ export class PartnerTypeCreateRequestDTO {
    *
    * @returns
    * @example
-   * PartnerTypeCreateRequestDTO.of({ partner_type_cd: '01', partner_type_nm: 'Customer' }).toString();
+   * PartnerTypeCreateRequestDTO.from({ partner_type_cd: '01', partner_type_nm: 'Customer' }).toString();
    *
    */
   public toString() {
@@ -87,17 +87,17 @@ export class PartnerTypeCreateResponseDTO {
    * @param entity
    * @returns
    * @example
-   * PartnerTypeCreateResponseDTO.of({ uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer', created_at: '2023-04-14 00:00:00', updated_at: '2023-04-14 00:00:00' });
+   * PartnerTypeCreateResponseDTO.from({ uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer', created_at: '2023-04-14 00:00:00', updated_at: '2023-04-14 00:00:00' });
    *
    */
-  public static of(entity: PartnerTypeResponseEntity) {
+  public static from(entity: PartnerTypeResponseEntity) {
     return new PartnerTypeCreateResponseDTO(entity);
   }
 
   /**
    * @returns
    * @example
-   * PartnerTypeCreateResponseDTO.of({ uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer', created_at: '2023-04-14 00:00:00', updated_at: '2023-04-14 00:00:00' }).toString();
+   * PartnerTypeCreateResponseDTO.from({ uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer', created_at: '2023-04-14 00:00:00', updated_at: '2023-04-14 00:00:00' }).toString();
    */
   public toString() {
     return `PartnerTypeCreateResponseDTO {
@@ -135,10 +135,10 @@ export class PartnerTypeUpdateRequestDTO {
    * @returns
    * @throws RequiredFieldException
    * @example
-   * PartnerTypeUpdateRequestDTO.of({ partner_type_uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer' });
+   * PartnerTypeUpdateRequestDTO.from({ partner_type_uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer' });
    *
    */
-  public static of(entity: PartnerTypeGetResponseEntity) {
+  public static from(entity: PartnerTypeGetResponseEntity) {
     return new PartnerTypeUpdateRequestDTO(entity);
   }
 
@@ -146,7 +146,7 @@ export class PartnerTypeUpdateRequestDTO {
    *
    * @returns
    * @example
-   * PartnerTypeUpdateRequestDTO.of({ partner_type_uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer' }).toString();
+   * PartnerTypeUpdateRequestDTO.from({ partner_type_uuid: 'uuid', partner_type_cd: '01', partner_type_nm: 'Customer' }).toString();
    *
    */
   public toString() {
@@ -175,9 +175,9 @@ export class PartnerTypeDeleteRequestDTO {
    * @returns
    * @throws RequiredFieldException
    * @example
-   * PartnerTypeDeleteRequestDTO.of({ partner_type_uuid: 'uuid' });
+   * PartnerTypeDeleteRequestDTO.from({ partner_type_uuid: 'uuid' });
    */
-  public static of(entity: PartnerTypeGetResponseEntity) {
+  public static from(entity: PartnerTypeGetResponseEntity) {
     return new PartnerTypeDeleteRequestDTO(entity);
   }
 
@@ -185,7 +185,7 @@ export class PartnerTypeDeleteRequestDTO {
    *
    * @returns
    * @example
-   * PartnerTypeDeleteRequestDTO.of({ partner_type_uuid: 'uuid' }).toString();
+   * PartnerTypeDeleteRequestDTO.from({ partner_type_uuid: 'uuid' }).toString();
    */
   public toString() {
     return `PartnerTypeDeleteRequestDTO {

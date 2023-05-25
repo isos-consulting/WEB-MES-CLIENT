@@ -73,7 +73,7 @@ export class MoldProductService implements MESService, MESWithUuidService {
 
     try {
       const moldProductDTOList = moldProducts.map(moldProduct =>
-        MoldProductCreateRequestDTO.of({
+        MoldProductCreateRequestDTO.from({
           ...moldProduct,
           prod_uuid: prodUuid,
         }),

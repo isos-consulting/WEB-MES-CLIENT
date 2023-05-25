@@ -55,7 +55,7 @@ export class MaterialReturnService
     }
 
     try {
-      const materialReturnRequestDTO = MaterialReturnRequestDTO.of(header);
+      const materialReturnRequestDTO = MaterialReturnRequestDTO.from(header);
 
       const materialReturnDetailList = updatedRows.map(
         MaterialReturnDetailRequestDTO.of,

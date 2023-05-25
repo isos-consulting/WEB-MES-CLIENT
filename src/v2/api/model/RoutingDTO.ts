@@ -110,16 +110,13 @@ export class RoutingCreateRequestDTO {
   /**
    * Creates an instance of RoutingCreateRequestDTO.
    * @param {RoutingCreateRequestEntity} entity
-   * @returns {RoutingCreateRequestDTO}
    * @memberof RoutingCreateRequestDTO
    * @throws {RequiredFieldException}
    * @example
-   * RoutingCreateRequestDTO.of({ prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', proc_uuid: '4410858e-330d-4fe3-b119-e6e312ba3bd1', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 });
+   * RoutingCreateRequestDTO.from({ prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', proc_uuid: '4410858e-330d-4fe3-b119-e6e312ba3bd1', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 });
    *
    */
-  public static of(
-    entity: RoutingCreateRequestEntity,
-  ): RoutingCreateRequestDTO {
+  public static from(entity: RoutingCreateRequestEntity) {
     return new RoutingCreateRequestDTO(entity);
   }
 
@@ -128,7 +125,7 @@ export class RoutingCreateRequestDTO {
    * @returns
    * @memberof RoutingCreateRequestDTO
    * @example
-   * RoutingCreateRequestDTO.of({ prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', proc_uuid: '4410858e-330d-4fe3-b119-e6e312ba3bd1', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 }).toString();
+   * RoutingCreateRequestDTO.from({ prod_uuid: '6620f4b8-84a6-440a-b0a1-db8246de57a7', proc_uuid: '4410858e-330d-4fe3-b119-e6e312ba3bd1', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 }).toString();
    */
   public toString() {
     return `RoutingCreateRequestDTO {
@@ -171,13 +168,12 @@ export class RoutingUpdateRequestDTO {
   /**
    *
    * @param {RoutingGetResponseEntity} entity
-   * @returns {RoutingUpdateRequestDTO}
    * @memberof RoutingUpdateRequestDTO
    * @throws {RequiredFieldException}
    * @example
-   * RoutingUpdateRequestDTO.of({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 });
+   * RoutingUpdateRequestDTO.from({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 });
    */
-  public static of(entity: RoutingGetResponseEntity) {
+  public static from(entity: RoutingGetResponseEntity) {
     return new RoutingUpdateRequestDTO(entity);
   }
 
@@ -185,7 +181,7 @@ export class RoutingUpdateRequestDTO {
    *
    * @returns
    * @example
-   * RoutingUpdateRequestDTO.of({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 }).toString();
+   * RoutingUpdateRequestDTO.from({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051', proc_no: 1, auto_work_fg: true, cycle_time: 1, prd_signal_cnt: 1, uph: 1 }).toString();
    */
   public toString() {
     return `RoutingUpdateRequestDTO {
@@ -213,13 +209,12 @@ export class RoutingDeleteRequestDTO {
   /**
    *
    * @param {RoutingGetResponseEntity} entity
-   * @returns {RoutingDeleteRequestDTO}
    * @memberof RoutingDeleteRequestDTO
    * @throws {RequiredFieldException}
    * @example
-   * RoutingDeleteRequestDTO.of({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051' });
+   * RoutingDeleteRequestDTO.from({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051' });
    */
-  public static of(entity: RoutingGetResponseEntity) {
+  public static from(entity: RoutingGetResponseEntity) {
     return new RoutingDeleteRequestDTO(entity);
   }
 
@@ -227,7 +222,7 @@ export class RoutingDeleteRequestDTO {
    *
    * @returns
    * @example
-   * RoutingDeleteRequestDTO.of({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051' }).toString();
+   * RoutingDeleteRequestDTO.from({ routing_uuid: '91c56239-4677-4cb7-9048-8e9ff7fce051' }).toString();
    */
   public toString() {
     return `RoutingDeleteRequestDTO {

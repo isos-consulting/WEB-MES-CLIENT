@@ -60,7 +60,7 @@ export class QualityInspectReportService
         gridInstance.getData<QualityInspectReportDetailGetResponseEntity>();
 
       const qualityInspectReportDTO =
-        QualityInspectReportUpdateRequestDTO.of(header);
+        QualityInspectReportUpdateRequestDTO.from(header);
 
       const qualityInspectReportDetailList = datas.map(
         QualityInspectReportDetailUpdateRequestDTO.of,
@@ -95,7 +95,7 @@ export class QualityInspectReportService
         gridInstance.getData<QualityInspectReportDetailGetResponseEntity>();
 
       const qualityInspectReportDTO =
-        QualityInspectReportAmendRequestDTO.of(header);
+        QualityInspectReportAmendRequestDTO.from(header);
 
       const qualityInspectReportDetailList = datas
         .filter(({ delete_row }) => delete_row !== true)

@@ -63,7 +63,7 @@ export class EquipmentInspectReportService
     }
 
     try {
-      const equipmentInspectReportDTO = EquipmentInspectReportDTO.of(header);
+      const equipmentInspectReportDTO = EquipmentInspectReportDTO.from(header);
 
       const equipmentInspectReportDetailList = updatedRows.map(
         equipmentInspectReportDetailDTO.of,
@@ -101,7 +101,7 @@ export class EquipmentInspectReportService
 
     try {
       const equipmentInspectReportDeleteRequestDTO =
-        EquipmentInspectReportDeleteRequestDTO.of(header);
+        EquipmentInspectReportDeleteRequestDTO.from(header);
 
       const equipmentInspectReportDetailUuidList =
         deletedEquipmentInspectItems.map(
