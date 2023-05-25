@@ -65,7 +65,7 @@ export enum MESSAGE {
   OUT_RECEIVE_DETAIL_UUID_IS_REQUIRED = '외주 입하 상세 데이터를 입력해주세요.',
   UNIT_QTY_IS_REQUIRED = '단위 수량은 필수 입력입니다.',
   CARRY_FG_IS_REQUIRED = '이월 여부는 필수 입력입니다.',
-  MAT_RECEIVE_NOT_REGISTERED = '등록되지 않은 자재 입고 정보입니다.',
+  MAT_RECEIVE_NOT_REGISTERED = '등록된 자재 입고 정보가 없습니다.',
   MAT_RECEIVE_DELETABLE_NOT_FOUND = '삭제할 자재 입고 정보가 없습니다.',
   MAT_RECEIVE_DELETE_QUESTION = '자재 입고 정보를 삭제하시겠습니까?',
   DELETE = '삭제',
