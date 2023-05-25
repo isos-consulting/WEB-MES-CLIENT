@@ -39,7 +39,7 @@ export const PgPrdReturnReport = () => {
     {
       type: 'daterange',
       id: 'reg_date',
-      ids: ['start_reg_date', 'end_reg_date'],
+      ids: ['start_date', 'end_date'],
       defaults: [getToday(-7), getToday()],
       label: '납입일',
     },
@@ -587,15 +587,15 @@ export const PgPrdReturnReport = () => {
 
   /** 검색 */
   const onSearch = values => {
-    const searchKeys = ['start_reg_date', 'end_reg_date', 'sort_type'];
+    const searchKeys = ['start_date', 'end_date', 'sort_type'];
     const searchParams: { [key: string]: any } = cleanupKeyOfObject(
       values,
       searchKeys,
     );
 
     //입력된 두 개의 날짜 전후 비교
-    const firstDate = new Date(searchParams.start_reg_date);
-    const secondDate = new Date(searchParams.end_reg_date);
+    const firstDate = new Date(searchParams.start_date);
+    const secondDate = new Date(searchParams.end_date);
 
     if (firstDate > secondDate) {
       message.error('조회 기간의 순서가 올바른지 확인하세요.');
