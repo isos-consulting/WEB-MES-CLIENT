@@ -1049,7 +1049,10 @@ export const PgSalRelease = () => {
         popupButtonSettings: {
           dataApiSettings: {
             uriPath: OUTGO_ORDER_POPUP?.uriPath,
-            params: OUTGO_ORDER_POPUP?.params,
+            params: {
+              ...OUTGO_ORDER_POPUP?.params,
+              complete_state: 'incomplete',
+            },
           },
           datagridSettings: {
             gridId: 'GET_RELEASE_REQUEST_GRID',
