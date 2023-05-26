@@ -109,17 +109,17 @@ export const PgMatReceiveLotTracking = () => {
         filter: 'text',
       },
       {
-        header: '입하일자',
+        header: '출하일자',
         name: 'out_reg_date',
         width: ENUM_WIDTH.M,
         format: 'date',
         filter: 'text',
       },
 
-      { header: 'lv', name: 'lv', width: ENUM_WIDTH.M, filter: 'text' },
+      { header: 'lv', name: 'level', width: ENUM_WIDTH.M, filter: 'text' },
       {
         header: 'sortBy',
-        name: 'sortBy',
+        name: 'sortby',
         width: ENUM_WIDTH.M,
         filter: 'text',
         hidden: true,
