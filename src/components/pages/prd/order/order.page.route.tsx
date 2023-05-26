@@ -213,7 +213,7 @@ export const orderRoute = () => {
       },
       {
         header: '금형Cavity',
-        name: 'cavity',
+        name: 'mold_cavity',
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
@@ -376,7 +376,7 @@ export const orderRoute = () => {
       },
       {
         header: '금형Cavity',
-        name: 'cavity',
+        name: 'mold_cavity',
         width: ENUM_WIDTH.M,
         editable: true,
         format: 'number',
