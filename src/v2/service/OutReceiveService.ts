@@ -54,7 +54,7 @@ export class OutReceiveService
       const outReceiveRequestDTO = OutReceiveRequestDTO.from(header);
 
       const outReceiveDetailList = updatedRows.map(
-        OutReceiveDetailRequestDTO.of,
+        OutReceiveDetailRequestDTO.from,
       );
 
       return RepositoryModule.outReceive().update(

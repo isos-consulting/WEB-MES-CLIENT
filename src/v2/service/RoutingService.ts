@@ -105,7 +105,7 @@ export class RoutingServiceImpl implements MESService, MESWithUuidService {
     }
 
     try {
-      const routingDTOList = updatedRows.map(RoutingUpdateRequestDTO.of);
+      const routingDTOList = updatedRows.map(RoutingUpdateRequestDTO.from);
 
       return RepositoryModule.routing().update(routingDTOList);
     } catch (error: unknown) {
@@ -133,7 +133,7 @@ export class RoutingServiceImpl implements MESService, MESWithUuidService {
       );
     }
 
-    const routingDTOList = deletedRoutings.map(RoutingDeleteRequestDTO.of);
+    const routingDTOList = deletedRoutings.map(RoutingDeleteRequestDTO.from);
 
     return RepositoryModule.routing().delete(routingDTOList);
   }

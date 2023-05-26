@@ -87,7 +87,7 @@ export class MaterialOrderService
       const materialOrderRequestDTO = MaterialOrderRequestDTO.from(header);
 
       const materialOrderDetailList = updatedRows.map(
-        MaterialOrderDetailRequestDTO.of,
+        MaterialOrderDetailRequestDTO.from,
       );
 
       return RepositoryModule.materialOrder().update(

@@ -58,7 +58,7 @@ export class MaterialReturnService
       const materialReturnRequestDTO = MaterialReturnRequestDTO.from(header);
 
       const materialReturnDetailList = updatedRows.map(
-        MaterialReturnDetailRequestDTO.of,
+        MaterialReturnDetailRequestDTO.from,
       );
 
       return RepositoryModule.materialReturn().update(

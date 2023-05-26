@@ -64,7 +64,7 @@ export class ProductionWorkServiceImpl implements MESService {
     >();
 
     const workUpdatableDTOList = updatedRows.map(
-      ProductionWorkFinishRequestDTO.of,
+      ProductionWorkFinishRequestDTO.from,
     );
 
     if (isEmpty(workUpdatableDTOList) === false) {
@@ -104,7 +104,7 @@ export class ProductionWorkServiceImpl implements MESService {
 
     const workStartAbleDTOList = updatedRows
       .filter(row => row._work_start === true)
-      .map(ProductionWorkStartRequestDTO.of);
+      .map(ProductionWorkStartRequestDTO.from);
 
     if (isEmpty(workStartAbleDTOList) === false) {
       return RepositoryModule.productionWork().create(workStartAbleDTOList);
@@ -128,7 +128,7 @@ export class ProductionWorkServiceImpl implements MESService {
 
     const workFinishAbleDTOList = updatedRows
       .filter(row => row.complete_fg === true)
-      .map(ProductionWorkFinishRequestDTO.of);
+      .map(ProductionWorkFinishRequestDTO.from);
 
     if (isEmpty(workFinishAbleDTOList) === false) {
       return RepositoryModule.productionWork().update(workFinishAbleDTOList);

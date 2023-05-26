@@ -56,7 +56,7 @@ export class SalesReturnService
       const salesReturnRequestDTO = SalesReturnRequestDTO.from(header);
 
       const salesReturnDetailList = updatedRows.map(
-        SalesReturnDetailRequestDTO.of,
+        SalesReturnDetailRequestDTO.from,
       );
 
       return RepositoryModule.salesReturn().update(

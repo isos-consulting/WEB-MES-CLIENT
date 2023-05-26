@@ -52,7 +52,9 @@ export class PartnerTypeServiceImpl implements MESService {
       );
     }
 
-    const partnerTypeDTOList = partnerTypes.map(PartnerTypeCreateRequestDTO.of);
+    const partnerTypeDTOList = partnerTypes.map(
+      PartnerTypeCreateRequestDTO.from,
+    );
 
     return RepositoryModule.partnerType().create(partnerTypeDTOList);
   }
@@ -78,7 +80,9 @@ export class PartnerTypeServiceImpl implements MESService {
       );
     }
 
-    const partnerTypeDTOList = updatedRows.map(PartnerTypeUpdateRequestDTO.of);
+    const partnerTypeDTOList = updatedRows.map(
+      PartnerTypeUpdateRequestDTO.from,
+    );
 
     return RepositoryModule.partnerType().update(partnerTypeDTOList);
   }
@@ -105,7 +109,7 @@ export class PartnerTypeServiceImpl implements MESService {
     }
 
     const partnerTypeDTOList = deletedPartnerTypes.map(
-      PartnerTypeDeleteRequestDTO.of,
+      PartnerTypeDeleteRequestDTO.from,
     );
 
     return RepositoryModule.partnerType().delete(partnerTypeDTOList);

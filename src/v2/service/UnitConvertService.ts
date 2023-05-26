@@ -138,7 +138,7 @@ export class UnitConvertServiceImpl implements MESService, MESWithUuidService {
     }
 
     const unitConvertDTOList = deletedUnitConverts.map(
-      UnitConvertDeleteRequestDTO.of,
+      UnitConvertDeleteRequestDTO.from,
     );
 
     return RepositoryModule.unitConvert().delete(unitConvertDTOList);

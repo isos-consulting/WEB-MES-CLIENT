@@ -66,7 +66,7 @@ export class EquipmentInspectReportService
       const equipmentInspectReportDTO = EquipmentInspectReportDTO.from(header);
 
       const equipmentInspectReportDetailList = updatedRows.map(
-        equipmentInspectReportDetailDTO.of,
+        equipmentInspectReportDetailDTO.from,
       );
 
       return RepositoryModule.equipmentInspectReport().update(
@@ -105,7 +105,7 @@ export class EquipmentInspectReportService
 
       const equipmentInspectReportDetailUuidList =
         deletedEquipmentInspectItems.map(
-          EquipmentInspectReportDetailDeleteRequestDTO.of,
+          EquipmentInspectReportDetailDeleteRequestDTO.from,
         );
 
       return RepositoryModule.equipmentInspectReport().delete(

@@ -63,7 +63,7 @@ export class QualityInspectReportService
         QualityInspectReportUpdateRequestDTO.from(header);
 
       const qualityInspectReportDetailList = datas.map(
-        QualityInspectReportDetailUpdateRequestDTO.of,
+        QualityInspectReportDetailUpdateRequestDTO.from,
       );
 
       return RepositoryModule.qualityInspectReport().update(
@@ -99,7 +99,7 @@ export class QualityInspectReportService
 
       const qualityInspectReportDetailList = datas
         .filter(({ delete_row }) => delete_row !== true)
-        .map(QualityInspectReportDetailAmendRequestDTO.of);
+        .map(QualityInspectReportDetailAmendRequestDTO.from);
 
       return RepositoryModule.qualityInspectReport().create(
         qualityInspectReportDTO,

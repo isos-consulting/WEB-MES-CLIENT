@@ -108,7 +108,7 @@ export class MoldProductService implements MESService, MESWithUuidService {
 
     try {
       const moldProductUpdatableDTOList = updatedRows.map(
-        MoldProductRequestDTO.of,
+        MoldProductRequestDTO.from,
       );
 
       return RepositoryModule.moldProduct().update(moldProductUpdatableDTOList);
@@ -140,7 +140,7 @@ export class MoldProductService implements MESService, MESWithUuidService {
 
     try {
       const moldProductUuidList = deletedMoldProducts.map(
-        MoldProductDeleteRequestDTO.of,
+        MoldProductDeleteRequestDTO.from,
       );
 
       return RepositoryModule.moldProduct().delete(moldProductUuidList);
