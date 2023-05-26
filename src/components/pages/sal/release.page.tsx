@@ -855,7 +855,10 @@ export const PgSalRelease = () => {
         popupButtonSettings: {
           dataApiSettings: {
             uriPath: ORDER_PROD_POPUP?.uriPath,
-            params: ORDER_PROD_POPUP?.params,
+            params: {
+              ...ORDER_PROD_POPUP?.params,
+              complete_state: 'incomplete',
+            },
           },
           datagridSettings: {
             gridId: 'GET_RELEASE_REQUEST_GRID',
