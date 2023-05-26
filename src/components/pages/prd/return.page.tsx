@@ -344,7 +344,15 @@ export const PgPrdReturn = () => {
   );
   const editDataPopupGrid = useGrid(
     'EDIT_POPUP_GRID',
-    cloneObject(newDataPopupGrid.gridInfo.columns),
+    newDataPopupGrid.gridInfo.columns.map(column => {
+      if (['to_store_nm', 'to_location_nm'].includes(column.name)) {
+        return {
+          ...column,
+          editable: false,
+        };
+      }
+      return column;
+    }),
     {
       searchUriPath: searchUriPath,
       saveUriPath: saveUriPath,
