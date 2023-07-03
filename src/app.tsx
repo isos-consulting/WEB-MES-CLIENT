@@ -43,8 +43,6 @@ const App = () => {
       //tenantRequest
     ).get();
 
-    console.log({ tenants });
-
     if (!isEmpty(tenants)) {
       const { uuid } = tenants[0];
       localStorage.setItem(KeyStore.tenantInfo, getSerialTenantUuid(uuid));

@@ -4,12 +4,14 @@ import crypto from 'crypto-js';
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { AuthenticationRemoteStore } from '~/apis/aut/authentication';
-import { FactoryResponse, FactoryRemoteStore } from '~/apis/std/factory';
+import { FactoryResponse, FactoryRepository } from '~/v2/api/FactoryRepository';
 import { isNil } from '~/helper/common';
 import { Profile } from '~/models/user/profile';
 import { UserService } from '~/service/auth';
 import { TpLogin } from '../templates/login/login.template';
 import { IComboBoxItem } from '../UI/combobox';
+import { TestMESRequest } from '~/v2/api/stub/TestMESRequest';
+// import { mesRequest } from '~/apis/request-factory';
 
 const pageId = uuidV4();
 
@@ -151,7 +153,11 @@ export const PgLogin = ({
       return comboBoxDatas;
     };
 
-    const factories = await FactoryRemoteStore.get();
+    const factories = await FactoryRepository.getInstance(
+      TestMESRequest,
+      // this TestMESRequest will replace to mesRequest.
+      // mesRequest
+    ).get();
 
     const cboData = pushFactoryComboDatas(factories);
 
