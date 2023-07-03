@@ -19,6 +19,8 @@ import { isEmpty, isNil } from './helper/common';
 import { useLoadingState } from './hooks';
 import UserProfile, { Profile } from './models/user/profile';
 import { CurrentUser } from './models/user/user';
+// import { tenantRequest } from './apis/request-factory';
+import { TestTenantRequest } from './v2/api/stub/TestTenantRequest';
 
 const Layout = lazy(() =>
   import('./components/UI/layout').then(module => ({ default: module.Layout })),
@@ -35,7 +37,13 @@ const App = () => {
   };
 
   const handleGetTenantInfo = async () => {
-    const tenants = await TenantRemoteStore.get();
+    // this request replace to tenantRequest
+    const tenants = await TenantRemoteStore.getInstance(
+      TestTenantRequest,
+      //tenantRequest
+    ).get();
+
+    console.log({ tenants });
 
     if (!isEmpty(tenants)) {
       const { uuid } = tenants[0];
