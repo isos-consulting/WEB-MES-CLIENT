@@ -1,5 +1,5 @@
 # Documents
-스마트 팩토리 사업을 위한 생산 관리 시스템 관리자 페이지입니다
+스마트 팩토리 생산 관리 시스템의 관리자 페이지입니다
 
 ## Develop
 웹 애플리케이션을 시작하려면 이 명령어를 실행해주세요
@@ -41,10 +41,6 @@ yarn e2e:codegen-dev
 yarn tsc
 ```
 
-## 애플리케이션 개발 워크 플로
-![image](https://user-images.githubusercontent.com/49608580/217984502-2ddbbbe7-8675-4813-90cc-85ef44a9d08e.png)
-
-
 ## 코드스니펫
 - 코드 스니펫을 적용하려면 아래 방법을 따라해주세요
 - [File > Preferences > User Snippets > typescriptreact]을 선택합니다
@@ -74,3 +70,19 @@ return (
      <Button disabled={!permissions?.create_at}>신규등록</Button>
 )
 ```
+
+## 개선 목록
+앞으로 이 프로젝트를 개선하기 위해 진행할 개선 목록입니다.
+
+### 코드 품질 개선
+- [ ] [#46](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/46) react typescript 의존성 추가
+- [ ] [#47](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/47) CUD API를 요청하는 공통 함수를 사용하지 않도록 변경
+- [ ] [#48](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/48) template 화면의 커스터마이즈를 유연하게 할 수 있도록 변경
+
+### 사용자 경험 개선
+- [ ] [#49](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/49) 데이터 조회 속도 최적화
+- [ ] [#50](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/50) 사용자가 선택한 행의 포커스를 유지할 수 있게 변경
+- [ ] [#51](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/51) 사용자 매뉴얼 추가
+- [ ] [#52](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/52) 데이터 등록할 때 필수 조건에 대한 설정을 편리하게 할 수 있도록 변경 수 있도록 변경
+- [ ] [#53](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/53) 한 화면에서 데이터 생성, 수정을 처리할 수 있게 변경
+- [ ] [#54](https://github.com/isos-consulting/WEB-MES-CLIENT/issues/54) 메뉴 클릭시 화면 전환이 아닌 탭을 추가하는 방식으로 변경
