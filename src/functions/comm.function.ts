@@ -22,6 +22,8 @@ import { JSXElement } from '@babel/types';
 import { errorState } from '~/enums/response.enum';
 import { getStorageValue, getUserRefreshToken } from '.';
 import { isNil } from '~/helper/common';
+import { MenuRepository } from '~/v2/api/MenuRepository';
+import { TestMESRequest } from '~/v2/api/stub/TestMESRequest';
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -361,9 +363,10 @@ export const getMenus = async () => {
   let rawData = []; //미가동 메뉴 데이터
   let data = {};
 
-  await getData({}, '/aut/menus/permission')
+  await MenuRepository.getInstance(TestMESRequest)
+    .getPermissionMenus()
     .then(res => {
-      rawData = res;
+      rawData = res as unknown as any[];
     })
     .finally(() => {
       let result = {};

@@ -1,22 +1,21 @@
-import React, { useLayoutEffect, useState } from 'react';
-import { getData, getToday } from '~/functions';
 import { Card, Col, Row } from 'antd';
-import { PieGraph } from '~components/UI/graph';
-import { URL_PATH_DAS } from '~/enums';
 import Meta from 'antd/lib/card/Meta';
-import LineChart from '../UI/graph/chart-line.ui';
+import React, { useLayoutEffect, useState } from 'react';
+import { getToday } from '~/functions';
 import { encryptedString } from '~/functions/encrypt';
+import { DasRepository } from '~/v2/api/DasRepository';
+import { TestMESRequest } from '~/v2/api/stub/TestMESRequest';
+import { PieGraph } from '~components/UI/graph';
+import LineChart from '../UI/graph/chart-line.ui';
 
 export const Dashboard = () => {
   const [current, changeTarget] = useState<string>('byDay');
-  const graphSets = getData(
-    { reg_date: getToday() },
-    URL_PATH_DAS.OVERALL_STATUS.GET.OVERALL_STATUS,
-  );
-  const chartSets = getData(
-    { reg_date: getToday() },
-    URL_PATH_DAS.REALTIME_STATUS.GET.REALTIME_STATUS,
-  );
+  const today = getToday();
+  const dasRepository = DasRepository.getInstance(TestMESRequest);
+
+  const graphSets = dasRepository.getOverallStatus(today);
+  const chartSets = dasRepository.getRealtimeStatus(today);
+
   const [totalGraphDataSets, setTotalGraphDataSets] = useState<object>([]);
   const [realTimeChartDataSets, setRealTimeChartDataSets] = useState<object>(
     [],

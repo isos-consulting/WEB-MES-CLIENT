@@ -1,5 +1,5 @@
 import { Authorization } from '~/apis/aut/authentication';
-import { FactoryResponse } from '~/apis/std/factory';
+import { FactoryResponse } from '~/v2/api/FactoryRepository';
 
 export const UserService = class {
   serializeUser(

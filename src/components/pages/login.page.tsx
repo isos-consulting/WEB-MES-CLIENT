@@ -11,7 +11,6 @@ import { UserService } from '~/service/auth';
 import { TpLogin } from '../templates/login/login.template';
 import { IComboBoxItem } from '../UI/combobox';
 import { TestMESRequest } from '~/v2/api/stub/TestMESRequest';
-// import { mesRequest } from '~/apis/request-factory';
 
 const pageId = uuidV4();
 
@@ -103,7 +102,10 @@ export const PgLogin = ({
         },
       ];
 
-      const authorizedUser = await AuthenticationRemoteStore.login(strResult);
+      const authorizedUser = await AuthenticationRemoteStore.getInstance(
+        TestMESRequest,
+      ).login(strResult);
+
       message.success('로그인 성공');
 
       const userService = new UserService();
@@ -153,11 +155,7 @@ export const PgLogin = ({
       return comboBoxDatas;
     };
 
-    const factories = await FactoryRepository.getInstance(
-      TestMESRequest,
-      // this TestMESRequest will replace to mesRequest.
-      // mesRequest
-    ).get();
+    const factories = await FactoryRepository.getInstance(TestMESRequest).get();
 
     const cboData = pushFactoryComboDatas(factories);
 

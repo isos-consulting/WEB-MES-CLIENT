@@ -1,24 +1,26 @@
-import React, { lazy, Suspense, useMemo, useState, useEffect } from 'react';
-import { Dropdown, Menu, message, Space } from 'antd';
-import UserOutlined from '@ant-design/icons/UserOutlined';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
-import { useSetRecoilState } from 'recoil';
-import { img_logo2 } from '~images/index';
+import UserOutlined from '@ant-design/icons/UserOutlined';
+import { Dropdown, Menu, Space, message } from 'antd';
+import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { SENTENCE } from '~/constants/lang/ko/sentence';
+import { WORD } from '~/constants/lang/ko/word';
+import { executeData, getUserInfo, setLogout } from '~/functions';
+import { isNil } from '~/helper/common';
+import { UserBookmarkRepository } from '~/v2/api/UserBookmarkRepository';
+import { TestMESRequest } from '~/v2/api/stub/TestMESRequest';
+import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
 import { layoutStore } from '~hooks/index';
-import Props from './header.ui.type';
+import { img_logo2 } from '~images/index';
+import SubscribeButton from '../button/subscribe/subscribe-button.ui';
 import {
   ScMyPageText,
   ScRightWrapper,
   ScTitleBodyDescription,
   ScUserLogo,
 } from './header.ui.styled';
-import { executeData, getData, getUserInfo, setLogout } from '~/functions';
-import Bookmark from '~components/UI/dropdown/bookmark/bookmark.ui';
-import SubscribeButton from '../button/subscribe/subscribe-button.ui';
-import { WORD } from '~/constants/lang/ko/word';
-import { SENTENCE } from '~/constants/lang/ko/sentence';
-import { isNil } from '~/helper/common';
+import Props from './header.ui.type';
 
 const ScContainer = lazy(() =>
   import('./header.ui.styled').then(module => ({
@@ -29,10 +31,15 @@ const ScLogo = lazy(() =>
   import('./header.ui.styled').then(module => ({ default: module.ScLogo })),
 );
 
-const fetchBookmarks = () =>
-  getData({}, '/aut/bookmarks', 'raws', {}, false, null, {
-    disabledZeroMessage: true,
-  });
+const fetchBookmarks = () => {
+  const userBookmarkRepository =
+    UserBookmarkRepository.getInstance(TestMESRequest);
+
+  return userBookmarkRepository.getBookmarks();
+  // getData({}, '/aut/bookmarks', 'raws', {}, false, null, {
+  //   disabledZeroMessage: true,
+  // });
+};
 
 const Header: React.FC<Props> = props => {
   const userInfo = getUserInfo();

@@ -1,4 +1,5 @@
-import { mesRequest, MESResponseType } from '../request-factory';
+import { AxiosInstance } from 'axios';
+import { MESResponseType } from '../request-factory';
 
 export type Authorization = {
   access_token: string;
@@ -15,8 +16,24 @@ export type Authorization = {
 
 type LoginResponse = MESResponseType<Authorization>;
 
-export const AuthenticationRemoteStore = class {
-  static login(body) {
-    return mesRequest.post<unknown, LoginResponse>('aut/user/sign-in/', body);
+export class AuthenticationRemoteStore {
+  private static instance: AuthenticationRemoteStore;
+  private request: AxiosInstance;
+
+  private constructor(request: AxiosInstance) {
+    this.request = request;
   }
-};
+
+  static getInstance(request: AxiosInstance) {
+    if (!AuthenticationRemoteStore.instance) {
+      AuthenticationRemoteStore.instance = new AuthenticationRemoteStore(
+        request,
+      );
+    }
+    return AuthenticationRemoteStore.instance;
+  }
+
+  login(body) {
+    return this.request.post<unknown, LoginResponse>('aut/user/sign-in/', body);
+  }
+}
